@@ -44,6 +44,9 @@ uv run pytest
    `catalog/frameworks/` mapped to common controls (ADR-011).
 10. Framework requirement texts are copied from official sources and reviewed, never written
     from memory.
+11. English only for all code, identifiers, comments, docstrings, tests, commits, PRs, ADRs and
+    specs. Spanish appears only in user-facing strings via i18n files (ES first, EN second) and in
+    official framework texts quoted in catalog packs.
 
 ## Definition of done
 
