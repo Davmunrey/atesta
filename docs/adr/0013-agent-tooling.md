@@ -1,6 +1,6 @@
 # ADR-013: Third-party agent tooling is vendored, pinned and reviewed
 
-- Status: proposed (2026-11-12)
+- Status: accepted (2026-11-12)
 
 ## Context
 Claude Code skills, plugins and MCP servers are prompts and scripts that run with full repo

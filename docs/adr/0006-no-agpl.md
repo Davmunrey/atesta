@@ -13,7 +13,7 @@ No AGPL/GPL code in services exposed over the network. License checker in CI (Ph
 Some open-source GRC components cannot be reused; framework content is rebuilt from official
 sources.
 
-## Amendment 1 (proposed 2026-11-12): LGPL libraries
+## Amendment 1 (accepted 2026-11-12): LGPL libraries
 LGPL-licensed libraries are allowed when used unmodified as installed dependencies (dynamic
 linking, no copied or patched source). LGPL has no network-use clause. Trigger: psycopg 3
 (LGPL-3.0) is required by Procrastinate (ADR-003) and serves as the SQLAlchemy driver. AGPL and

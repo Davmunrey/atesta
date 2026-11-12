@@ -1,6 +1,6 @@
 # ADR-012: Tenant isolation with Postgres row-level security
 
-- Status: proposed (2026-11-12)
+- Status: accepted (2026-11-12)
 
 ## Context
 CLAUDE.md rule 3 requires `organization_id` on every table. Two kinds of data have no single
