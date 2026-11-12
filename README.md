@@ -1,10 +1,12 @@
 # Atesta
 
-Continuous ENS / NIS2 audit readiness for Spanish SMEs.
+Continuous audit readiness for every compliance framework. Test once, comply with many.
+Starting with ENS (RD 311/2022) and NIS2 for Spanish SMEs; ISO 27001, RGPD, DORA and SOC 2 follow
+as framework packs.
 
-Connect Microsoft 365 or Google Workspace with read-only access. Atesta scans daily, maps every
-result to ENS (RD 311/2022) Annex II measures, guides the organizational measures and exports an
-auditor-ready evidence pack.
+Connect Microsoft 365 or Google Workspace with read-only access. Atesta scans daily, maps results
+to common controls, scores every selected framework from the same evidence, guides the
+organizational measures and exports an auditor-ready evidence pack.
 
 > Readiness tool. Atesta does not issue certificates.
 

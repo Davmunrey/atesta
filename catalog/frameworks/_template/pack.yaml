@@ -1,0 +1,8 @@
+# Framework pack template. Copy the _template folder to catalog/frameworks/<pack>/.
+id: ""            # e.g. ens_rd311_2022, iso27001_2022, nis2
+name: ""
+version: ""
+jurisdiction: ""  # e.g. ES, EU, international
+source: ""        # official URL or legal reference
+license_notes: "" # reuse terms of the official text
+status: draft     # draft | reviewed | released

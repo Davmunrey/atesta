@@ -1,0 +1,7 @@
+# Requirements copied from the official text. Never from memory.
+requirements:
+  - id: ""          # as written in the official text
+    title_es: ""
+    title_en: ""
+    applies_to: []  # optional levels/categories, e.g. [basica, media, alta]
+    source: ""      # section/page reference

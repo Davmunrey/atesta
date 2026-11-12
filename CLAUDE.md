@@ -4,9 +4,11 @@ Guidance for Claude Code sessions in this repository.
 
 ## What Atesta is
 
-SaaS that monitors ENS (RD 311/2022) and NIS2 readiness for Spanish SMEs. Read-only connectors
-(Microsoft 365, Google Workspace; AWS from v1.1) feed a pinned Prowler scanner. Atesta maps
-findings to its own ENS catalog, scores them, and builds evidence packs for auditors.
+Multi-framework compliance platform: continuous audit readiness for any framework, starting with
+ENS (RD 311/2022) and NIS2 for Spanish SMEs. Read-only connectors (Microsoft 365, Google
+Workspace; AWS from v1.1) feed a pinned Prowler scanner. Results land on common controls;
+framework packs map their requirements to those controls (ADR-011), so one scan scores every
+framework. Atesta builds evidence packs for auditors.
 
 ## Architecture (see docs/adr)
 
@@ -38,6 +40,10 @@ uv run pytest
 6. AI outputs must cite retrieved chunks; outputs with invalid citations are rejected.
 7. New feature = spec in `docs/specs/` first, then code, then tests. PRs under ~400 lines.
 8. Do not import another module's internals; add what you need to its `api.py`.
+9. Never add framework-specific tables or code paths. Frameworks are content packs in
+   `catalog/frameworks/` mapped to common controls (ADR-011).
+10. Framework requirement texts are copied from official sources and reviewed, never written
+    from memory.
 
 ## Definition of done
 

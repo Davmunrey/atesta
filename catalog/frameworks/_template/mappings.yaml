@@ -1,0 +1,7 @@
+# Requirement -> common control mappings (many-to-many).
+mappings:
+  - requirement_id: ""
+    control_id: ""     # id from catalog/controls/
+    rationale: ""
+    source: ""
+    reviewed_by: ""

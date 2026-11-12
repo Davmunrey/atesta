@@ -1,21 +1,27 @@
 # Control catalog
 
-Atesta's core IP: ENS (RD 311/2022) Annex II measures, levels per category, and mappings to
-Prowler check ids and Atesta custom checks. Versioned with the code; every catalog release
-re-indexes the RAG corpus (ADR-010).
+Atesta's core IP, framework-agnostic (ADR-011): common controls, framework packs, and the
+many-to-many mappings between them. Versioned with the code; every catalog release re-indexes the
+RAG corpus (ADR-010).
 
 ## Layout
 
 ```text
 catalog/
-  ens/        One YAML file per ENS measure
-  nis2/       Art. 21 measures, mapped to ENS controls (v2)
-  iso27001/   Annex A cross-mapping (v3)
+  controls/                 Common Atesta controls, one YAML per control
+  frameworks/<pack>/
+    pack.yaml               Framework metadata and version
+    requirements.yaml       Requirements copied from the official text
+    mappings.yaml           Requirement -> control mappings
 ```
+
+Pack order: ENS (wedge) -> NIS2 -> ISO 27001 -> RGPD art. 32 -> DORA -> SOC 2 and others on demand.
 
 ## Rules
 
-- Measure codes, titles and levels are copied from the official RD 311/2022 text and verified by
-  an ENS auditor before release. Never written from memory.
+- Requirement ids, titles and levels are copied from official sources and verified by a qualified
+  reviewer before release. Never written from memory.
+- Every mapping records `source` and `reviewed_by` (MF-06).
 - Every `prowler_checks` id must exist in the pinned Prowler version (CI validation, Phase 2).
-- `manual: true` measures are organizational: evidence comes from documents, not scans.
+- `manual: true` controls are organizational: evidence comes from documents, not scans.
+- A new pack ships only with 3+ customers/deals asking and >= 60% mapping to existing controls.

@@ -1,0 +1,11 @@
+# Common control template. Framework-independent: describes what is true in the customer's
+# environment, not what a framework says. Frameworks map to it in their mappings.yaml.
+id: ""                # e.g. ctl.mfa_all_users
+title_es: ""
+title_en: ""
+description_es: ""
+description_en: ""
+manual: false         # true = organizational, evidence from documents
+prowler_checks: []    # Prowler check ids (must exist in pinned version)
+atesta_checks: []     # custom check ids
+remediation_refs: []  # e.g. CCN-STIC guide sections, vendor docs
