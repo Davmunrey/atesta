@@ -11,7 +11,7 @@ from typing import Any
 from atesta_core.frameworks import Mapping as CoreMapping
 from atesta_core.frameworks import framework_results, group_scores
 from atesta_core.scoring import ControlResult, Status, score
-from sqlalchemy import ColumnElement, and_, select, text
+from sqlalchemy import ColumnElement, and_, or_, select, text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
@@ -46,9 +46,20 @@ def include_drafts() -> bool:
 
 
 def _scoreable() -> ColumnElement[bool]:
-    """The one rule-10 gate: listing and scoring see only active released frameworks."""
+    """Visibility gate: drafts need explicit development access."""
     active = Framework.retired_at.is_(None)
     return active if include_drafts() else and_(active, Framework.status == "released")
+
+
+def _assessable() -> ColumnElement[bool]:
+    """Preparation content stays readable without letting scans create assessments."""
+    return and_(
+        _scoreable(),
+        or_(
+            ~Framework.attributes.has_key("assessment_enabled"),
+            Framework.attributes.contains({"assessment_enabled": True}),
+        ),
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,7 +101,7 @@ def snapshot_framework(
         raise RuntimeError("scoring needs REPEATABLE READ so a catalog load cannot mix versions")
     applicability = dict(applicability or {})
     framework = session.execute(
-        select(Framework).where(Framework.key == framework_key, _scoreable())
+        select(Framework).where(Framework.key == framework_key, _assessable())
     ).scalar()
     if framework is None:
         return None
@@ -170,8 +181,8 @@ def control_is_active(session: Session, control_key: str) -> bool:
 
 
 def scoreable_framework_keys(session: Session) -> list[str]:
-    """Keys snapshot_scores scores: the same rule-10 gate as listing and scoring."""
-    return list(session.execute(select(Framework.key).where(_scoreable())).scalars())
+    """Keys snapshot_scores scores, excluding visible preparation-only packs."""
+    return list(session.execute(select(Framework.key).where(_assessable())).scalars())
 
 
 def active_control_checks(session: Session) -> dict[str, list[tuple[str, str]]]:

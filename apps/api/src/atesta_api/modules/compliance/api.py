@@ -2,6 +2,8 @@
 
 from fastapi import FastAPI
 
+from atesta_api.modules.compliance.catalog import read_catalog
+from atesta_api.modules.compliance.catalog_preview import import_preview
 from atesta_api.modules.compliance.fixtures import load_catalog_fixture
 from atesta_api.modules.compliance.scoring import (
     FrameworkInfo,
@@ -31,8 +33,10 @@ __all__ = [
     "active_frameworks",
     "control_is_active",
     "include_drafts",
+    "import_preview",
     "install_compliance",
     "load_catalog_fixture",
+    "read_catalog",
     "scoreable_framework_keys",
     "snapshot_framework",
 ]
