@@ -217,3 +217,68 @@ def test_userinfo_email_verified_is_strict(raw: str, verified: bool) -> None:
 def test_userinfo_rejected_token() -> None:
     with pytest.raises(InvalidTokenError):
         _provider(401, {"error": "invalid_token"}).userinfo("at-1")
+
+
+def test_expired_token_is_distinguishable_for_refresh() -> None:
+    from atesta_api.modules.identity.cognito import ExpiredTokenError
+
+    with pytest.raises(ExpiredTokenError):
+        verifier().verify(token(exp=int(time.time()) - 120))
+
+
+def _oauth(handler: Any) -> Any:
+    from atesta_api.modules.identity.cognito import CognitoOAuth
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    return CognitoOAuth(SETTINGS, client, verifier(), "https://app.example.com")
+
+
+def test_authorize_url_is_pkce_s256_with_openid_email_only() -> None:
+    url = _oauth(lambda r: httpx.Response(500)).authorize_url(
+        state="s", nonce="n", challenge="c", lang="es"
+    )
+    query = dict(httpx.URL(url).params)
+    assert url.startswith("https://auth.example.com/oauth2/authorize?")
+    assert query == {
+        "response_type": "code",
+        "client_id": "client-1",
+        "redirect_uri": "https://app.example.com/auth/callback",
+        "scope": "openid email",
+        "state": "s",
+        "nonce": "n",
+        "code_challenge": "c",
+        "code_challenge_method": "S256",
+        "lang": "es",
+    }
+
+
+def test_code_exchange_and_refresh_post_forms_without_a_secret() -> None:
+    seen: list[dict[str, str]] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        assert request.url == "https://auth.example.com/oauth2/token"
+        assert "authorization" not in request.headers  # public client: no client secret
+        seen.append(dict(httpx.QueryParams(request.content.decode())))
+        return httpx.Response(
+            200, json={"access_token": "a", "refresh_token": "r", "id_token": "i"}
+        )
+
+    oauth = _oauth(handler)
+    assert oauth.exchange_code("code-1", "v" * 43).refresh_token == "r"
+    assert oauth.refresh("r").access_token == "a"
+    assert seen[0]["code_verifier"] == "v" * 43 and seen[0]["grant_type"] == "authorization_code"
+    assert seen[1] == {"grant_type": "refresh_token", "client_id": "client-1", "refresh_token": "r"}
+
+
+def test_rejected_grant_raises_invalid_token() -> None:
+    with pytest.raises(InvalidTokenError):
+        _oauth(lambda r: httpx.Response(400, json={"error": "invalid_grant"})).refresh("r")
+
+
+def test_id_token_nonce_needs_a_valid_id_token() -> None:
+    id_token = token(token_use="id", aud="client-1", nonce="n-1", client_id=None, scope=None)
+    oauth = _oauth(lambda r: httpx.Response(500))
+    assert oauth.id_token_nonce(id_token) == "n-1"
+    for bad in (token(), token(token_use="id", aud="other", nonce="n-1")):
+        with pytest.raises(InvalidTokenError):
+            oauth.id_token_nonce(bad)

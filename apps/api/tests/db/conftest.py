@@ -16,7 +16,13 @@ import pytest
 from alembic import command
 from alembic.config import Config
 from atesta_api.main import app
-from atesta_api.modules.identity.cognito import AccessToken, InvalidTokenError, UserInfo
+from atesta_api.modules.identity.bff import SessionCrypto, TokenSet
+from atesta_api.modules.identity.cognito import (
+    AccessToken,
+    ExpiredTokenError,
+    InvalidTokenError,
+    UserInfo,
+)
 from atesta_api.platform import db
 from atesta_api.platform.db import make_engine
 from fastapi.testclient import TestClient
@@ -127,11 +133,53 @@ def db_commit(app_engine: Engine, probe: object) -> Iterator[sessionmaker[Sessio
 # HTTP fixtures: fake Cognito, real database with RLS.
 
 
+WEB_ORIGIN = "https://app.example.com"
+SESSION_KEY = bytes(range(32))
+
+
 class FakeVerifier:
+    """tok-<sub> is valid; expired-<sub> is a well-formed but expired token."""
+
     def verify(self, token: str) -> AccessToken:
+        if token.startswith("expired-"):
+            raise ExpiredTokenError
         if not token.startswith("tok-"):
             raise InvalidTokenError
         return AccessToken(sub=token.removeprefix("tok-"), scopes=frozenset({"openid"}))
+
+
+class FakeOAuth:
+    """Cognito hosted endpoints, recorded. Refresh tokens are rt-<sub>."""
+
+    def __init__(self) -> None:
+        self.exchanged: list[tuple[str, str]] = []
+        self.refreshed: list[str] = []
+        self.nonce = ""
+
+    def authorize_url(self, *, state: str, nonce: str, challenge: str, lang: str) -> str:
+        self.nonce = nonce
+        return f"https://auth.example.com/oauth2/authorize?state={state}&code_challenge={challenge}&lang={lang}"
+
+    def exchange_code(self, code: str, verifier: str) -> TokenSet:
+        self.exchanged.append((code, verifier))
+        sub = code.removeprefix("code-")
+        return TokenSet(access_token=f"tok-{sub}", refresh_token=f"rt-{sub}", id_token=f"id-{sub}")
+
+    def id_token_nonce(self, id_token: str) -> str:
+        return "wrong" if id_token.endswith("badnonce") else self.nonce
+
+    def refresh(self, refresh_token: str) -> TokenSet:
+        self.refreshed.append(refresh_token)
+        if not refresh_token.startswith("rt-"):
+            raise InvalidTokenError
+        return TokenSet(
+            access_token=f"tok-{refresh_token.removeprefix('rt-')}",
+            refresh_token=None,
+            id_token=None,
+        )
+
+    def logout_url(self) -> str:
+        return "https://auth.example.com/logout?client_id=client-1&logout_uri=https%3A%2F%2Fapp.example.com%2F"
 
 
 class FakeProvider:
@@ -153,7 +201,14 @@ def provider() -> FakeProvider:
 
 
 @pytest.fixture
-def client(database: URL, probe: object, provider: FakeProvider) -> Iterator[TestClient]:
+def oauth() -> FakeOAuth:
+    return FakeOAuth()
+
+
+@pytest.fixture
+def client(
+    database: URL, probe: object, provider: FakeProvider, oauth: "FakeOAuth"
+) -> Iterator[TestClient]:
     engine = db.make_engine(
         database.set(username="atesta_app", password=APP_PASSWORD), sslmode="disable", pool_size=4
     )
@@ -161,7 +216,10 @@ def client(database: URL, probe: object, provider: FakeProvider) -> Iterator[Tes
     app.state.token_verifier = FakeVerifier()
     app.state.identity_provider = provider
     app.state.web_base_url = "https://app.example.com"
-    yield TestClient(app)  # no lifespan: wiring is done above
+    app.state.web_origin = WEB_ORIGIN
+    app.state.session_crypto = SessionCrypto(SESSION_KEY)
+    app.state.oauth = oauth
+    yield TestClient(app, base_url="https://testserver")  # no lifespan; Secure cookies need https
     db._factory = None
     engine.dispose()
 
