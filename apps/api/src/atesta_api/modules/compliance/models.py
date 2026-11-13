@@ -4,7 +4,9 @@ The YAML in catalog/ is the source of truth; these tables are its projection, wr
 the catalog sync job as atesta_owner. No column, value or code path names a framework (rule 9).
 """
 
+import uuid
 from datetime import datetime
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import (
@@ -13,14 +15,18 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     ForeignKeyConstraint,
+    Index,
+    Numeric,
     PrimaryKeyConstraint,
     Text,
+    UniqueConstraint,
+    func,
     text,
 )
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
-from atesta_api.platform.db import Base
+from atesta_api.platform.db import Base, TenantMixin
 
 _EMPTY_ARRAY = text("'{}'::text[]")
 _EMPTY_JSON = text("'{}'::jsonb")
@@ -125,3 +131,58 @@ class Mapping(_Retirable, Base):
     rationale: Mapped[str] = mapped_column(Text)
     source: Mapped[str] = mapped_column(Text)
     reviewed_by: Mapped[str | None] = mapped_column(Text)
+
+
+class ScoreSnapshot(TenantMixin, Base):
+    """Append-only score of one framework for one scan and scope (FR-08). Corrections supersede."""
+
+    __tablename__ = "score_snapshots"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        ForeignKeyConstraint(
+            ["organization_id", "supersedes_id"],
+            ["score_snapshots.organization_id", "score_snapshots.id"],
+            ondelete="RESTRICT",
+        ),
+        CheckConstraint("score IS NULL OR score BETWEEN 0 AND 100", name="score_range"),
+        CheckConstraint(
+            "passed >= 0 AND failed >= 0 AND manual >= 0 AND not_applicable >= 0", name="counters"
+        ),
+        CheckConstraint("jsonb_typeof(requirement_results) = 'object'", name="results_object"),
+        Index(
+            "uq_score_snapshots_one_original",
+            "organization_id",
+            "framework_key",
+            "scan_id",
+            "scope_id",
+            unique=True,
+            postgresql_nulls_not_distinct=True,
+            postgresql_where=text("supersedes_id IS NULL"),
+        ),
+        Index(
+            "ix_score_snapshots_trend",
+            "organization_id",
+            "framework_key",
+            "scope_id",
+            text("computed_at DESC"),
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    framework_key: Mapped[str] = mapped_column(ForeignKey("frameworks.key", ondelete="RESTRICT"))
+    framework_version: Mapped[str] = mapped_column(Text)
+    catalog_version: Mapped[str] = mapped_column(Text)
+    scan_id: Mapped[uuid.UUID]
+    scope_id: Mapped[uuid.UUID | None]
+    applicability: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default=_EMPTY_JSON)
+    score: Mapped[Decimal | None] = mapped_column(Numeric(4, 1))
+    passed: Mapped[int]
+    failed: Mapped[int]
+    manual: Mapped[int]
+    not_applicable: Mapped[int]
+    requirement_results: Mapped[dict[str, str]] = mapped_column(JSONB)
+    group_scores: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default=_EMPTY_JSON)
+    supersedes_id: Mapped[uuid.UUID | None]
+    computed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
