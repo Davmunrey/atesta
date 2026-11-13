@@ -35,7 +35,7 @@ def _provider(provider: str) -> str:
     return provider
 
 
-def prowler_argv(provider: str, excluded: Iterable[str]) -> list[str]:
+def prowler_argv(provider: str, excluded: Iterable[str], work: str = "/work") -> list[str]:
     checks = sorted(excluded)
     for check in checks:
         if not _CHECK_ID.fullmatch(check):
@@ -44,8 +44,8 @@ def prowler_argv(provider: str, excluded: Iterable[str]) -> list[str]:
         "prowler",
         _PROWLER_PROVIDER[_provider(provider)],
         *_AUTH[provider],
-        *("-M", "json-ocsf", "-o", "/work/out", "-F", "prowler", "--no-banner"),
-        *("--log-level", "ERROR", "--log-file", "/work/prowler.log", "-z"),
+        *("-M", "json-ocsf", "-o", f"{work}/out", "-F", "prowler", "--no-banner"),
+        *("--log-level", "ERROR", "--log-file", f"{work}/prowler.log", "-z"),
     ]
     return [*argv, "--excluded-checks", *checks] if checks else argv
 
