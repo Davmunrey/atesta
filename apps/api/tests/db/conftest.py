@@ -90,7 +90,8 @@ def probe(superuser: Engine) -> dict[uuid.UUID, uuid.UUID]:
             " REFERENCES organizations(id), v text, UNIQUE (organization_id, id))"
         )
         conn.exec_driver_sql(
-            "CREATE TABLE probe_child (organization_id uuid NOT NULL, probe_id uuid NOT NULL,"
+            "CREATE TABLE probe_child (organization_id uuid NOT NULL"
+            " REFERENCES organizations(id), probe_id uuid NOT NULL,"
             " PRIMARY KEY (organization_id, probe_id), FOREIGN KEY (organization_id, probe_id)"
             " REFERENCES probe (organization_id, id))"
         )

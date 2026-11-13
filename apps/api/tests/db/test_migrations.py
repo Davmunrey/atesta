@@ -1,9 +1,12 @@
 """Models and migrations agree; migrations are forward-only."""
 
+import secrets
 from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
+from atesta_api.platform.db import NAMING_CONVENTION, Base, make_engine
+from sqlalchemy import Connection, Engine, text
 from sqlalchemy.engine import URL
 
 API_DIR = Path(__file__).resolve().parents[2]
@@ -22,3 +25,65 @@ def test_migrations_import_no_application_code() -> None:
         API_DIR / "migrations" / "rls_v1.py",
     ]:
         assert "atesta_api" not in path.read_text(), path.name
+
+
+_CONSTRAINTS = text(
+    "SELECT c.relname, con.conname, pg_get_constraintdef(con.oid) FROM pg_constraint con"
+    " JOIN pg_class c ON c.oid = con.conrelid WHERE c.relname = ANY(:t)"
+)
+_INDEXES = text(
+    "SELECT tablename, indexname, indexdef FROM pg_indexes"
+    " WHERE schemaname = 'public' AND tablename = ANY(:t)"
+)
+_COLUMNS = text(
+    "SELECT table_name, column_name, column_default, is_nullable, data_type, is_generated,"
+    " generation_expression FROM information_schema.columns"
+    " WHERE table_schema = 'public' AND table_name = ANY(:t)"
+)
+
+
+def _schema(conn: Connection) -> dict[str, set[tuple[object, ...]]]:
+    tables = {"t": sorted(Base.metadata.tables)}
+    return {
+        name: {tuple(r) for r in conn.execute(query, tables)}
+        for name, query in (
+            ("constraints", _CONSTRAINTS),
+            ("indexes", _INDEXES),
+            ("columns", _COLUMNS),
+        )
+    }
+
+
+def test_migrated_schema_equals_the_models(database: URL, superuser: Engine) -> None:
+    """Ground truth, not autogenerate: CHECKs, constraint names, partial-index predicates and
+    server defaults, which `alembic check` does not compare."""
+    name = f"atesta_models_{secrets.token_hex(4)}"
+    with superuser.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
+        conn.exec_driver_sql(f'CREATE DATABASE "{name}"')
+    models = make_engine(database.set(database=name), sslmode="disable", null_pool=True)
+    try:
+        with models.begin() as conn:
+            Base.metadata.create_all(conn)
+        with models.connect() as built, superuser.connect() as migrated:
+            expected, actual = _schema(built), _schema(migrated)
+        for part in expected:
+            assert sorted(actual[part] - expected[part]) == sorted(expected[part] - actual[part]), (
+                part
+            )
+    finally:
+        models.dispose()
+        with superuser.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
+            conn.exec_driver_sql(f'DROP DATABASE "{name}" WITH (FORCE)')
+
+
+def test_naming_convention_is_frozen_for_migrations() -> None:
+    """Migrations build names through env.py's metadata: changing the convention would make
+    byte-identical migrations produce a different schema. Changing it needs a migration."""
+    frozen = {
+        "ix": "ix_%(table_name)s_%(column_0_N_name)s",
+        "uq": "uq_%(table_name)s_%(column_0_N_name)s",
+        "ck": "ck_%(table_name)s_%(constraint_name)s",
+        "fk": "fk_%(table_name)s_%(column_0_N_name)s_%(referred_table_name)s",
+        "pk": "pk_%(table_name)s",
+    }
+    assert frozen == NAMING_CONVENTION

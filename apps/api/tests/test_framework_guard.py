@@ -10,7 +10,10 @@ import yaml
 REPO = Path(__file__).resolve().parents[3]
 GUARDED = ["apps/api/src", "apps/api/migrations", "apps/worker", "packages/core/src"]
 DENYLIST = {"ens", "nis2", "iso27001", "27001", "rd311", "dora", "soc2"}
-_SPLIT = re.compile(r"[^0-9A-Za-z]+|(?<=[a-z0-9])(?=[A-Z])")
+# Splits on non-alphanumerics, camelCase and acronym CapWords: ENSLevel -> ENS, Level.
+_SPLIT = re.compile(r"[^0-9A-Za-z]+|(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])")
+# NAME, STRING and the literal text of f-strings (tokenized apart since Python 3.12).
+_CHECKED = {tokenize.NAME, tokenize.STRING, tokenize.FSTRING_MIDDLE}
 
 
 def parts(value: str) -> set[str]:
@@ -25,7 +28,7 @@ def pack_ids() -> set[str]:
 def violations(source: str, packs: set[str]) -> list[str]:
     found = []
     for tok in tokenize.generate_tokens(io.StringIO(source).readline):
-        if tok.type not in (tokenize.NAME, tokenize.STRING):
+        if tok.type not in _CHECKED:
             continue
         if parts(tok.string) & DENYLIST or any(p in tok.string for p in packs):
             found.append(tok.string)
@@ -49,7 +52,18 @@ def test_guard_self_check() -> None:
         "class EnsLevel: ...",
         'k = "ens-medium"',
         "iso27001_2022 = 1",
+        "class ENSLevel: ...",
+        "class DORAReport: ...",
+        'k = f"ens_{x}"',
+        'k = f"{prefix}nis2"',
+        'k = rf"ens-medium"',
     ]
-    clean = ["max_tokens = 1", "screens_count = 2", "def ensure_tenant(): ..."]
+    clean = [
+        "max_tokens = 1",
+        "screens_count = 2",
+        "def ensure_tenant(): ...",
+        "class HTTPServerError: ...",
+        'k = f"{x}_tokens"',
+    ]
     assert all(violations(s, set()) for s in flagged)
     assert not any(violations(s, set()) for s in clean)

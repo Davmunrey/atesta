@@ -14,7 +14,8 @@
       "bad_nonce": "Sign-in could not be completed. Sign in again.",
       "bad_origin": "A request that did not come from Atesta was blocked. Reload the page.",
       "bad_state": "Sign-in expired. Sign in again.",
-      "invalid_token": "Your session has ended. Sign in again."
+      "invalid_token": "Your session has ended. Sign in again.",
+      "provider_unavailable": "We cannot verify your session right now. Try again in a few seconds."
     },
     "identity": {
       "already_member": "This person is already a member of the organization.",
@@ -26,6 +27,15 @@
       "not_found": "We could not find that, or you do not have access.",
       "role_not_allowed": "You cannot assign that role.",
       "token_in_query": "This invitation link is not valid. Open it again from the message you received."
+    },
+    "request": {
+      "error": "The request could not be completed. Try again.",
+      "invalid": "Check your input: one of the fields is not valid.",
+      "method_not_allowed": "This action is not available. Reload the page.",
+      "not_found": "We could not find that page or resource."
+    },
+    "server": {
+      "error": "Something went wrong on our side. Try again, and contact support if it keeps happening."
     }
   },
   "app": {

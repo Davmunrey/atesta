@@ -37,7 +37,10 @@ def run_migrations_online() -> None:
             connection.exec_driver_sql(f"SET ROLE {role}")
             connection.commit()
         context.configure(
-            connection=connection, target_metadata=target_metadata, include_name=_include_name
+            connection=connection,
+            target_metadata=target_metadata,
+            include_name=_include_name,
+            compare_server_default=True,  # `alembic check` also compares server defaults
         )
         with context.begin_transaction():
             context.run_migrations()

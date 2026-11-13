@@ -15,12 +15,19 @@ import httpx
 import jwt
 
 ADMIN_SCOPE = "aws.cognito.signin.user.admin"
-JWKS_REFETCH_SECONDS = 300
+JWKS_REFETCH_SECONDS = 300  # after a successful fetch (spec)
+JWKS_RETRY_SECONDS = 30  # after a failed fetch
 LEEWAY_SECONDS = 60
 
 
 class InvalidTokenError(Exception):
     code = "auth.invalid_token"
+
+
+class ProviderUnavailableError(Exception):
+    """JWKS could not be fetched or parsed: a retryable 503, never a 401."""
+
+    code = "auth.provider_unavailable"
 
 
 class ExpiredTokenError(InvalidTokenError):
@@ -70,7 +77,11 @@ class AccessToken:
 
 
 class TokenVerifier:
-    """RS256 against cached JWKS; unknown kid refetches at most once every 5 minutes."""
+    """RS256 against cached JWKS; unknown kid refetches at most once every 5 minutes.
+
+    One fetch at a time, outside the lock, so cached kids never wait on the network. A failed
+    fetch is retried after 30 s; until a fetch succeeds, unknown kids get ProviderUnavailableError.
+    """
 
     def __init__(
         self,
@@ -82,19 +93,34 @@ class TokenVerifier:
         self._fetch = fetch_jwks
         self._clock = clock
         self._keys: dict[str, Any] = {}
-        self._fetched_at: float | None = None
+        self._attempted_at: float | None = None
+        self._last_ok = False
+        self._fetching = False
         self._lock = threading.Lock()
 
     def _key(self, kid: str) -> Any:
         with self._lock:
-            stale = self._fetched_at is None or (
-                self._clock() - self._fetched_at >= JWKS_REFETCH_SECONDS
-            )
-            if kid not in self._keys and stale:
-                jwks = self._fetch()
-                self._keys = {k["kid"]: jwt.PyJWK(k).key for k in jwks.get("keys", [])}
-                self._fetched_at = self._clock()
-            return self._keys.get(kid)
+            if kid in self._keys:
+                return self._keys[kid]
+            now = self._clock()
+            window = JWKS_REFETCH_SECONDS if self._last_ok else JWKS_RETRY_SECONDS
+            if self._fetching or (
+                self._attempted_at is not None and now - self._attempted_at < window
+            ):
+                if self._fetching or not self._last_ok:
+                    raise ProviderUnavailableError  # cannot tell yet whether the kid is valid
+                return None
+            self._fetching, self._attempted_at = True, now
+        try:
+            data = self._fetch()
+            keys = {str(k["kid"]): jwt.PyJWK(k).key for k in data["keys"]}
+        except (httpx.HTTPError, ValueError, KeyError, TypeError, jwt.PyJWTError) as exc:
+            with self._lock:
+                self._fetching, self._last_ok = False, False
+            raise ProviderUnavailableError from exc
+        with self._lock:
+            self._keys, self._fetching, self._last_ok = keys, False, True
+        return keys.get(kid)
 
     def _decode(self, token: str, audience: str | None) -> dict[str, Any]:
         try:
