@@ -31,7 +31,7 @@ def outcomes(superuser: Engine, invitation_id: str) -> tuple[bool, bool]:
 
 
 def revoke(client: TestClient, org: str, by: str, invitation_id: str) -> int:
-    url = f"/v1/orgs/{org}/invitations/{invitation_id}"
+    url = f"/api/v1/orgs/{org}/invitations/{invitation_id}"
     return client.delete(url, headers=auth(by)).status_code
 
 
@@ -42,7 +42,7 @@ def test_invitation_from_a_demoted_inviter_is_rejected(
     guest = new_sub()
     created = invite(client, org, subs["adm"], f"{guest}@example.com", role="admin")
     demote = client.patch(
-        f"/v1/orgs/{org}/members/{uid(client, subs['adm'])}",
+        f"/api/v1/orgs/{org}/members/{uid(client, subs['adm'])}",
         json={"role": "member"},
         headers=auth(subs["owner"]),
     )
@@ -92,7 +92,7 @@ def test_revoke_committing_while_accept_waits_leaves_one_outcome(
 ) -> None:
     org, subs = org_with(client, superuser)
     guest = new_sub()
-    client.get("/v1/me", headers=auth(guest))  # provisioned, so accept reaches the claim fast
+    client.get("/api/v1/me", headers=auth(guest))  # provisioned, so accept reaches the claim fast
     created = invite(client, org, subs["owner"], f"{guest}@example.com")
     token = token_of(created["accept_link"])
     status = _race(
@@ -102,7 +102,7 @@ def test_revoke_committing_while_accept_waits_leaves_one_outcome(
         created["id"],
         lambda: (
             client.post(
-                "/v1/invitations/accept", json={"token": token}, headers=auth(guest)
+                "/api/v1/invitations/accept", json={"token": token}, headers=auth(guest)
             ).status_code
         ),
     )
@@ -135,7 +135,7 @@ def test_accept_decides_on_the_current_email_and_verification(
     tokens = {}
     for guest in (moved, unverified):
         address = f"{guest}@example.com"
-        assert client.get("/v1/me", headers=auth(guest)).json()["email"] == address
+        assert client.get("/api/v1/me", headers=auth(guest)).json()["email"] == address
         tokens[guest] = token_of(invite(client, org, subs["owner"], address)["accept_link"])
     provider.emails[moved] = "elsewhere@example.com"
     provider.unverified.add(unverified)
@@ -179,7 +179,7 @@ def test_every_action_writes_one_event_with_its_actor_and_target(
     assert revoke(client, org, subs["owner"], dropped["id"]) == 204
     assert accept(client, guest, token_of(kept["accept_link"])) == (200, "member")
     guest_id = uid(client, guest)
-    member_url = f"/v1/orgs/{org}/members/{guest_id}"
+    member_url = f"/api/v1/orgs/{org}/members/{guest_id}"
     assert (
         client.patch(member_url, json={"role": "admin"}, headers=auth(subs["owner"])).status_code
         == 200

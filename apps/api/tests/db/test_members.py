@@ -138,7 +138,8 @@ def test_admin_cannot_remove_a_member_promoted_to_owner_meanwhile(
     )
     result: dict[str, object] = {}
     thread = call(
-        result, lambda: client.delete(f"/v1/orgs/{org}/members/{target}", headers=auth(subs["adm"]))
+        result,
+        lambda: client.delete(f"/api/v1/orgs/{org}/members/{target}", headers=auth(subs["adm"])),
     )
     wait_then_commit(thread, engine, tx)
     assert result == {"status": 403}
@@ -156,7 +157,9 @@ def test_role_change_of_a_member_removed_meanwhile_is_404(
     thread = call(
         result,
         lambda: client.patch(
-            f"/v1/orgs/{org}/members/{target}", json={"role": "admin"}, headers=auth(subs["owner"])
+            f"/api/v1/orgs/{org}/members/{target}",
+            json={"role": "admin"},
+            headers=auth(subs["owner"]),
         ),
     )
     wait_then_commit(thread, engine, tx)
@@ -182,7 +185,7 @@ def test_two_owners_demoting_each_other_leave_one_owner(
     monkeypatch.setattr(members, "record", pause_first)
     first: dict[str, object] = {}
     second: dict[str, object] = {}
-    url = f"/v1/orgs/{org}/members"
+    url = f"/api/v1/orgs/{org}/members"
     t1 = call(
         first,
         lambda: client.patch(f"{url}/{b}", json={"role": "member"}, headers=auth(subs["owner"])),

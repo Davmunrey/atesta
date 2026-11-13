@@ -67,4 +67,4 @@ def test_unknown_route_and_method_have_codes() -> None:
 
 
 def test_the_api_installs_the_handlers() -> None:
-    assert TestClient(app).get("/v1/nope").json() == {"detail": {"code": "request.not_found"}}
+    assert TestClient(app).get("/api/v1/nope").json() == {"detail": {"code": "request.not_found"}}

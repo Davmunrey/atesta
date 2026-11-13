@@ -54,9 +54,9 @@ def test_same_email_different_subs_coexist(
     shared = f"{first}@example.com"
     provider.emails[second] = shared.upper()
     for sub in (first, second, third):
-        assert client.get("/v1/me", headers=auth(sub)).status_code == 200
+        assert client.get("/api/v1/me", headers=auth(sub)).status_code == 200
     provider.emails[third] = shared  # an email change onto a taken address
-    assert client.get("/v1/me", headers=auth(third)).json()["email"] == shared
+    assert client.get("/api/v1/me", headers=auth(third)).json()["email"] == shared
     with superuser.connect() as conn:
         query = text("SELECT count(DISTINCT cognito_sub) FROM users WHERE lower(email) = :e")
         assert conn.execute(query, {"e": shared}).scalar_one() == 3
@@ -152,7 +152,7 @@ def test_jwks_outage_is_a_retryable_503(client: TestClient) -> None:
             raise ProviderUnavailableError
 
     client.app.state.token_verifier = Down()  # type: ignore[attr-defined]
-    response = client.get("/v1/me", headers={"Authorization": "Bearer tok-x"})
+    response = client.get("/api/v1/me", headers={"Authorization": "Bearer tok-x"})
     assert (response.status_code, response.json()["detail"]["code"]) == (
         503,
         "auth.provider_unavailable",

@@ -144,7 +144,7 @@ def test_any_query_string_is_400_before_auth_or_body(
     """The token must never travel in a URL: refuse first, before the body, auth or userInfo."""
     sub, kwargs = new_sub(), dict(variant)  # parametrize shares the dict across runs
     headers = {**dict(kwargs.pop("headers", {})), **(auth(sub) if authenticated else {})}  # type: ignore[call-overload]
-    response = client.post("/v1/invitations/accept?token=t", headers=headers, **kwargs)  # type: ignore[arg-type]
+    response = client.post("/api/v1/invitations/accept?token=t", headers=headers, **kwargs)  # type: ignore[arg-type]
     assert (response.status_code, response.json()["detail"]["code"]) == (
         400,
         "identity.token_in_query",
@@ -185,7 +185,7 @@ def test_non_ascii_invitation_email_is_rejected(
 ) -> None:
     org, subs = org_with(client, superuser)
     response = client.post(
-        f"/v1/orgs/{org}/invitations",
+        f"/api/v1/orgs/{org}/invitations",
         json={"email": email, "role": "member"},
         headers=auth(subs["owner"]),
     )
