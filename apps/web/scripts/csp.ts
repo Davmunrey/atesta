@@ -1,0 +1,62 @@
+/**
+ * Build step (web-shell spec, security headers): hashes every inline script in the static
+ * export and writes the Content-Security-Policy that CloudFront sends (infra spec applies it).
+ * A static export has no per-request nonce, so hashes are the only way to avoid unsafe-inline.
+ * Usage: node scripts/csp.ts (after next build). Writes csp-policy.json next to out/.
+ */
+import { createHash } from "node:crypto";
+import { readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+/** CloudFront quota "Maximum length of the Content-Security-Policy header value" (AWS docs,
+ * CloudFront quotas, checked 2026-11-13). Adjustable via Service Quotas if ever needed. */
+export const CLOUDFRONT_CSP_LIMIT = 1783;
+
+const SCRIPT = /<script(?![^>]*\ssrc=)[^>]*>([\s\S]*?)<\/script>/g;
+const STYLE = /<style[\s>]|\sstyle="/g;
+
+export const inlineScripts = (html: string): string[] =>
+  [...html.matchAll(SCRIPT)].map((m) => m[1] ?? "").filter((body) => body.length > 0);
+
+export const inlineStyles = (html: string): number => html.match(STYLE)?.length ?? 0;
+
+export const sha256 = (text: string): string =>
+  `'sha256-${createHash("sha256").update(text, "utf8").digest("base64")}'`;
+
+export function buildPolicy(hashes: string[]): string {
+  const scripts = [...new Set(hashes)].sort().join(" ");
+  const policy = [
+    "default-src 'self'",
+    `script-src 'self' ${scripts}`,
+    "style-src 'self'",
+    "img-src 'self' data:",
+    "font-src 'self'",
+    "connect-src 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "base-uri 'none'",
+    "object-src 'none'",
+  ].join("; ");
+  if (policy.length > CLOUDFRONT_CSP_LIMIT) {
+    throw new Error(`CSP is ${policy.length} characters; CloudFront allows ${CLOUDFRONT_CSP_LIMIT}`);
+  }
+  return policy;
+}
+
+function htmlFiles(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
+    entry.isDirectory() ? htmlFiles(join(dir, entry.name)) : entry.name.endsWith(".html") ? [join(dir, entry.name)] : [],
+  );
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const root = fileURLToPath(new URL("..", import.meta.url));
+  const pages = htmlFiles(join(root, "out")).map((file) => ({ file, html: readFileSync(file, "utf8") }));
+  const styled = pages.filter((page) => inlineStyles(page.html) > 0).map((page) => page.file);
+  if (styled.length > 0) throw new Error(`inline styles would be blocked by style-src 'self': ${styled.join(", ")}`);
+  const hashes = pages.flatMap((page) => inlineScripts(page.html).map(sha256));
+  const policy = buildPolicy(hashes);
+  writeFileSync(join(root, "csp-policy.json"), `${JSON.stringify({ policy, hashes: [...new Set(hashes)].sort() }, null, 2)}\n`);
+  console.log(`CSP: ${new Set(hashes).size} script hashes, ${policy.length}/${CLOUDFRONT_CSP_LIMIT} characters`);
+}

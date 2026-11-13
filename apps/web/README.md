@@ -9,7 +9,7 @@ pnpm install          # pnpm 10, minimumReleaseAge 7 days (pnpm-workspace.yaml)
 pnpm dev              # http://localhost:3000; /api and /auth rewritten to ATESTA_API_URL (default :8000)
 pnpm test             # vitest unit tests
 pnpm typecheck && pnpm lint
-pnpm build            # static export to out/
+pnpm build            # static export to out/, then CSP hashes to csp-policy.json
 pnpm check-licenses   # fails on GPL, AGPL or undeclared licenses
 ```
 
@@ -32,3 +32,16 @@ unknown code shows `errors.unknown`, never the raw code.
 - Design tokens: `src/styles/tokens.css` is the only file with color, font or radius values
   (tested). Neutral until the owner picks a brand identity.
 - Frontend skills: `.claude/skills/frontend-design` and `.claude/skills/react-best-practices`.
+
+## e2e
+
+Playwright against the static export, the real API and Postgres, and the fake Cognito. Needs a
+Postgres superuser URL; it recreates the database `atesta_e2e`.
+
+```bash
+pnpm build
+ATESTA_E2E_ADMIN_URL=postgresql+psycopg://postgres@localhost:5432/postgres pnpm exec playwright test
+```
+
+`tests/e2e/serve.mjs` stands in for CloudFront: it serves `out/`, routes `/api` and `/auth` to the
+API on :8000, and adds the security headers, including the CSP from `csp-policy.json`.
