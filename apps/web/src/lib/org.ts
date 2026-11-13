@@ -9,6 +9,9 @@ export function selectOrg(memberships: Membership[], requested: string | null): 
 
 export const orgHome = (orgId: string): string => `/app/org?org=${encodeURIComponent(orgId)}`;
 
+export const orgFramework = (orgId: string, key: string): string =>
+  `/app/framework?org=${encodeURIComponent(orgId)}&framework=${encodeURIComponent(key)}`;
+
 export const orgMembers = (orgId: string): string => `/app/members?org=${encodeURIComponent(orgId)}`;
 
 export const orgInvitations = (orgId: string): string =>

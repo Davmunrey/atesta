@@ -56,6 +56,13 @@ export function useOverview(orgId: string) {
   });
 }
 
+export function useFrameworkDetail(orgId: string, frameworkKey: string) {
+  return useQuery({
+    queryKey: ["framework", orgId, frameworkKey], retry: false,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/frameworks/{framework_key}", { params: { path: { org_id: orgId, framework_key: frameworkKey } } })),
+  });
+}
+
 /** Role changes and removals can change the caller's own memberships, so /me refreshes too. */
 function useMemberMutation<T>(orgId: string, mutationFn: (input: T) => Promise<unknown>) {
   const client = useQueryClient();

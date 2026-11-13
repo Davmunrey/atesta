@@ -57,7 +57,8 @@ OWN-WORLD: retain paper/ink, yellow selection, blue links, existing type and sem
 STORY: choose framework, scan explicit states, open the relevant requirement, inspect the
 configuration and references, then verify again after applying changes outside Atesta.
 FIRST VIEWPORT: existing organization rail; back link, framework heading and provenance;
-status filters above a broad, flat register. Mobile filters wrap and details stack.
+status filters above a broad, flat register, ordered by failures, manual review, missing
+evaluation, passed and not-applicable results. Mobile filters wrap and details stack.
 FORM: code-led extension of the approved ledger. Native disclosure is the signature
 interaction; clear spacing separates requirement status from control observations.
 FINISH: bounded desktop/mobile review, independent finish reviewer, and documenter comparison

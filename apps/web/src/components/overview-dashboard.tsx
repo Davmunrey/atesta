@@ -19,7 +19,7 @@ export function OverviewDashboard({ orgId }: { orgId: string }) {
       <button className="dashboard-button" disabled={query.isFetching} onClick={() => void query.refetch()}>{query.isFetching ? t("refreshing") : t("refresh")}</button>
     </div>
     <div className="dashboard-grid">
-      <FrameworkLedger key={orgId} frameworks={query.data.frameworks} />
+      <FrameworkLedger key={orgId} frameworks={query.data.frameworks} orgId={orgId} />
       <ScanHistory scans={query.data.scans} evidenceCount={query.data.evidence_count} />
     </div>
     <p className="dashboard-note">{t("assessmentNote")}</p>
