@@ -159,6 +159,7 @@ def client(database: URL, probe: object, provider: FakeProvider) -> Iterator[Tes
     db.configure(engine)
     app.state.token_verifier = FakeVerifier()
     app.state.identity_provider = provider
+    app.state.web_base_url = "https://app.example.com"
     yield TestClient(app)  # no lifespan: wiring is done above
     db._factory = None
     engine.dispose()
