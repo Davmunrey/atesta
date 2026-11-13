@@ -205,7 +205,10 @@ is the WITH CHECK, and INSERT ... RETURNING must pass the SELECT policy.
 | `ATESTA_WEB_BASE_URL` | base of the accept link |
 
 JWKS URL is derived from region and pool. JWKS cached in process; refetched on unknown `kid`, at
-most once every 5 minutes. Token lifetimes: access and ID 30 min, refresh 12 h.
+most once every 5 minutes. One fetch at a time, outside the verifier lock, so cached kids never
+wait on the network. A failed or malformed fetch is retried at most once every 30 s; until a fetch
+succeeds, an unknown `kid` gets 503 `auth.provider_unavailable` (retryable), never 401, and cached
+kids keep verifying. Token lifetimes: access and ID 30 min, refresh 12 h.
 
 ### Libraries
 
@@ -218,7 +221,7 @@ most once every 5 minutes. Token lifetimes: access and ID 30 min, refresh 12 h.
 
 | Area | Cases |
 |---|---|
-| JWT | Local RSA key and fake JWKS. Valid token; expired; wrong `iss`; wrong `client_id`; ID token rejected; `scope` without `openid` rejected; `scope` with the admin scope rejected; unknown `kid`; `alg=none` and HS256 rejected; tampered signature |
+| JWT | Local RSA key and fake JWKS. Valid token; expired; wrong `iss`; wrong `client_id`; ID token rejected; `scope` without `openid` rejected; `scope` with the admin scope rejected; unknown `kid`; `alg=none` and HS256 rejected; tampered signature; a failing JWKS fetch is retried at most every 30 s whatever the number of unknown kids, and maps to 503 `auth.provider_unavailable`; a malformed JWKS is a 503; a slow fetch does not block a cached kid and no second fetch runs in parallel |
 | Provisioning | First `GET /v1/me` with a fake provider inserts one user and returns no memberships; two concurrent first calls yield one row; an email change at the provider shows on the next `GET /v1/me`; two users with the same email and different subs coexist |
 | Org creation | `POST /v1/orgs` as `atesta_app` (RLS on) creates the org and an owner membership, writes one `org.created`; caller then gets 200 on the members route |
 | Tenant isolation | 404 on org B routes; no org context: own memberships only; org A context: only A rows even without a WHERE; users visible to self and co-members only; from org A context, inserting a membership for org B fails, updating a co-member's `users` row affects 0, updating an invitation through the token branch affects 0 |
