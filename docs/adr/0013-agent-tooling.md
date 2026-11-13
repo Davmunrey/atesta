@@ -18,8 +18,8 @@ Sessions run in ephemeral cloud containers. Candidate list reviewed on 2026-11-1
 
 | Tool | Verdict | When | Reason |
 |---|---|---|---|
-| anthropics/claude-code-action | Adopt | After the data-layer PR | Automated review of auth, RLS, connector and IAM diffs. Official. Pinned by SHA; needs a repo secret. |
-| obra/superpowers (subset: test-driven-development, systematic-debugging, verification-before-completion) | Adopt, vendored subset | Start of implementation | Enforces test-first and evidence before "done", matching the definition of done. |
+| anthropics/claude-code-action | Deferred by the owner (2026-11-13) | When the owner adds the API key secret | Automated review of auth, RLS, connector and IAM diffs. Official. Pinned by SHA; needs a repo secret. Adversarial review workflows cover this meanwhile. |
+| obra/superpowers (subset: test-driven-development, systematic-debugging, verification-before-completion) | Adopted 2026-11-13, vendored at 22f0b46 (MIT) | Done | Enforces test-first and evidence before "done", matching the definition of done. See `.claude/skills/VENDORED.md`. |
 | anthropics/skills (frontend-design), vercel-labs/agent-skills (React and Next.js rules) | Adopt | Web spec, week of 18 Jan | Next.js is the UI stack; nothing to apply before. |
 | oraios/serena | Defer, license-blocked | Repo above ~20k lines | Repo has ~50 files; search is enough. v2.0.0 and later are GPL-3.0-or-later (only the SolidLSP library stays MIT), which fails the license rule above. At the trigger, adopt only after amending this ADR. |
 | HKUDS/LightRAG | Reject for the product | Revisit for "Ask Atesta" (AI-10, v2) | ADR-010 needs every claim cited to a source chunk; graph entity summaries are generated text. Its Postgres graph store needs Apache AGE, which RDS for PostgreSQL does not offer (confirmed against the RDS extension list in the 2026-11-13 review; recheck at the v2 revisit). Extra LLM cost at indexing. |
