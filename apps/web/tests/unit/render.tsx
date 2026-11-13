@@ -16,14 +16,23 @@ export function renderWithProviders(ui: ReactNode) {
   );
 }
 
-/** Replaces fetch with one canned JSON response per call, in order; records the requests. */
-export function stubFetch(...responses: [number, unknown][]): Request[] {
+type Reply = [status: number, body: unknown];
+
+/**
+ * Replaces fetch with canned replies keyed by "METHOD /path". A list is consumed in order and its
+ * last reply repeats. Unrouted requests get 404. Returns every request made, in order.
+ */
+export function stubApi(routes: Record<string, Reply | Reply[]>): Request[] {
   const requests: Request[] = [];
+  const queues = new Map(
+    Object.entries(routes).map(([key, value]) => [key, Array.isArray(value[0]) ? [...(value as Reply[])] : [value as Reply]]),
+  );
   vi.stubGlobal(
     "fetch",
     vi.fn(async (request: Request) => {
       requests.push(request);
-      const [status, body] = responses.shift() ?? [500, {}];
+      const queue = queues.get(`${request.method} ${new URL(request.url).pathname}`);
+      const [status, body] = (queue && queue.length > 1 ? queue.shift() : queue?.[0]) ?? [404, {}];
       return new Response(status === 204 ? null : JSON.stringify(body), {
         status,
         headers: { "content-type": "application/json" },

@@ -55,11 +55,25 @@
   },
   "org": {
     "switcher": "Organization",
-    "yourRole": "Your role: {role}"
+    "yourRole": "Your role: {role}",
+    "sections": "Organization sections",
+    "members": "Members"
   },
   "roles": {
     "owner": "Owner",
     "admin": "Admin",
     "member": "Member"
+  },
+  "members": {
+    "title": "Members of {org}",
+    "member": "Person",
+    "role": "Role",
+    "actions": "Actions",
+    "you": "(you)",
+    "roleOf": "Role of {email}",
+    "remove": "Remove",
+    "confirmRemove": "Remove {email} from the organization?",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   }
 }

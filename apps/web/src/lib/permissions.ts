@@ -4,7 +4,7 @@ import type { components } from "@/lib/api/schema";
 export type Role = components["schemas"]["Role"];
 
 const RANK: Record<Role, number> = { member: 0, admin: 1, owner: 2 };
-const ROLES: Role[] = ["owner", "admin", "member"];
+export const ROLES: Role[] = ["owner", "admin", "member"];
 
 export const canChangeRoles = (caller: Role): boolean => caller === "owner";
 
