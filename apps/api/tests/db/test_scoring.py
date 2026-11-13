@@ -4,7 +4,7 @@ import uuid
 from collections.abc import Iterator
 
 import pytest
-from atesta_api.modules.compliance.api import snapshot_framework
+from atesta_api.modules.compliance.api import active_frameworks, snapshot_framework
 from atesta_api.modules.identity.api import ContextReason, enter_org_context
 from atesta_core.scoring import ControlResult, Status
 from sqlalchemy import Engine, text
@@ -19,6 +19,8 @@ INSERT INTO frameworks (key, name, version, jurisdiction, source, license_notes,
  ('fw_x', 'X', '1', 'EU', 'src', 'test', 'released', '{}', 'r1'),
  ('fw_y', 'Y', '2', 'EU', 'src', 'test', 'released', '{"score_groups": ["dim"]}', 'r1'),
  ('fw_d', 'D', '1', 'EU', 'src', 'test', 'draft', '{}', 'r1');
+INSERT INTO frameworks (key, name, version, jurisdiction, source, license_notes, status,
+  retired_at) VALUES ('fw_r', 'R', '1', 'EU', 'src', 'test', 'released', now());
 INSERT INTO controls (key, title_es, title_en, description_es, description_en, retired_at) VALUES
  ('c1', 't', 't', 'd', 'd', NULL), ('c2', 't', 't', 'd', 'd', NULL),
  ('c3', 't', 't', 'd', 'd', NULL), ('c4', 't', 't', 'd', 'd', NULL),
@@ -174,3 +176,18 @@ def test_append_only_and_isolated(tx: Session, statement: str) -> None:
             scan_id=uuid.uuid4(),
             control_results=[],
         )
+
+
+def test_only_released_active_frameworks_are_listed_and_scored(
+    tx: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The listing and scoring share one gate (rule 10 at runtime)."""
+    keys = [f.key for f in active_frameworks(tx)]
+    assert "fw_x" in keys and "fw_y" in keys
+    assert "fw_d" not in keys  # draft
+    assert "fw_r" not in keys  # released but retired
+    assert snap(tx, "fw_r") is None
+    monkeypatch.setenv("ATESTA_CATALOG_INCLUDE_DRAFTS", "true")
+    monkeypatch.setenv("ATESTA_ENV", "test")
+    keys = [f.key for f in active_frameworks(tx)]
+    assert "fw_d" in keys and "fw_r" not in keys
