@@ -46,7 +46,7 @@ offboarding spec defines. The policy predicate costs a little per query; the set
 inline, so indexes leading with `organization_id` keep it cheap. Policy changes need a new
 migration and a snapshot update in the same PR.
 
-## Amendment 2 (proposed 2026-11-13, scanner-connectors spec; not accepted)
+## Amendment 2 (accepted 2026-11-13, scanner-connectors spec)
 New table class "queue tables" for Procrastinate 3.10.0 (`procrastinate_jobs`,
 `procrastinate_events`, `procrastinate_periodic_defers`, `procrastinate_workers`): no
 `organization_id`, no RLS; job arguments are ids only, enforced by a test. `atesta_app` gets

@@ -1,10 +1,10 @@
 # Spec: Scanner and connectors (Microsoft 365, Google Workspace)
 
-- Requirement ids: NFR-02, MF-02. Connector and scan requirements have no FR id in the repo yet
-  (owner to assign before approval).
-- Status: draft
-- ADRs: ADR-002, ADR-003, ADR-004 (amendment proposed), ADR-005, ADR-006, ADR-007, ADR-008,
-  ADR-011, ADR-012 (amendment proposed)
+- Requirement ids: NFR-02, MF-02. Connector and scan requirements have no FR id in the repo yet.
+- Status: approved, with the defaults of D1 to D13 (the owner delegated design and product
+  decisions on 2026-11-13: "Tú decides siempre")
+- ADRs: ADR-002, ADR-003, ADR-004 (amendment 1 accepted), ADR-005, ADR-006, ADR-007, ADR-008,
+  ADR-011, ADR-012 (amendment 2 accepted)
 - Build order: after the control model (built) and the catalog spec's loader and sync job
   (`checks` and `control_checks` rows from YAML). A score for a real framework also needs a pack
   with reviewed mappings (control-model spec). One spec for both connectors, built Microsoft 365
@@ -22,9 +22,12 @@ every framework the customer has from the same results (ADR-011), and keep the r
 evidence. A connector that silently loses checks would show controls as passing that were never
 assessed, which is worse than no connector (ADR-005).
 
-## Owner decisions (defaults apply until answered)
+## Owner decisions (defaults adopted 2026-11-13)
 
-The spec is written with the default. Each row names what changes if the owner picks otherwise.
+The owner delegated these decisions; every default below is adopted. Each row still names what
+would change with the alternative. Three defaults need the owner to act, not to decide: D8 (run
+the provisioning runbook for pilot customers), D11 (legal review of the PowerShell modules) and
+D12 (Microsoft Partner Program account and a verified domain).
 
 | # | Question | Default in this spec | Alternative and its cost |
 |---|---|---|---|
