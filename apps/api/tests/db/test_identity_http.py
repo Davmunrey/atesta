@@ -7,6 +7,7 @@ from typing import Annotated
 import pytest
 from atesta_api.main import app
 from atesta_api.modules.identity.api import Member, Role, require_member, require_role
+from atesta_api.modules.identity.cognito import ProviderUnavailableError
 from fastapi import Depends
 from fastapi.testclient import TestClient
 from sqlalchemy import Engine, text
@@ -43,6 +44,22 @@ def test_first_call_provisions_and_me_refreshes_email(
     with superuser.connect() as conn:
         rows = conn.execute(text("SELECT count(*) FROM users WHERE cognito_sub = :s"), {"s": sub})
         assert rows.scalar_one() == 1
+
+
+def test_same_email_different_subs_coexist(
+    client: TestClient, provider: FakeProvider, superuser: Engine
+) -> None:
+    """Email is not unique on purpose: a conflict on a row RLS hides could never be repaired."""
+    first, second, third = new_sub(), new_sub(), new_sub()
+    shared = f"{first}@example.com"
+    provider.emails[second] = shared.upper()
+    for sub in (first, second, third):
+        assert client.get("/api/v1/me", headers=auth(sub)).status_code == 200
+    provider.emails[third] = shared  # an email change onto a taken address
+    assert client.get("/api/v1/me", headers=auth(third)).json()["email"] == shared
+    with superuser.connect() as conn:
+        query = text("SELECT count(DISTINCT cognito_sub) FROM users WHERE lower(email) = :e")
+        assert conn.execute(query, {"e": shared}).scalar_one() == 3
 
 
 def test_concurrent_first_calls_create_one_user(client: TestClient, superuser: Engine) -> None:
@@ -127,3 +144,16 @@ def test_startup_runs_the_guard(database: URL, monkeypatch: pytest.MonkeyPatch) 
     monkeypatch.setenv("ATESTA_DATABASE_URL", database.render_as_string(hide_password=False))
     with pytest.raises(RuntimeError, match="unsafe database setup"), TestClient(app):
         pass
+
+
+def test_jwks_outage_is_a_retryable_503(client: TestClient) -> None:
+    class Down:
+        def verify(self, token: str) -> None:
+            raise ProviderUnavailableError
+
+    client.app.state.token_verifier = Down()  # type: ignore[attr-defined]
+    response = client.get("/api/v1/me", headers={"Authorization": "Bearer tok-x"})
+    assert (response.status_code, response.json()["detail"]["code"]) == (
+        503,
+        "auth.provider_unavailable",
+    )
