@@ -14,3 +14,7 @@ ENS mappings for M365 and Google Workspace and its own catalog on top.
 Months of check development saved. Atesta's value moves to catalog, organizational measures,
 evidence pack and UX. Prowler Cloud is also a competitor; monitor it. Version bumps require a
 golden-test run.
+
+## Note (proposed 2026-11-13, scanner-connectors spec; not accepted)
+The wrapper may choose Prowler flags and exclude checks (`--excluded-checks`); it never patches
+Prowler. Upstream defects are reported upstream.
