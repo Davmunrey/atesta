@@ -31,3 +31,8 @@ def test_only_tenancy_writes_settings() -> None:
 
 def test_only_db_module_creates_engines() -> None:
     assert _hits(re.compile(r"\bcreate_engine\("), CODE) == ["db.py"]
+
+
+def test_production_code_never_imports_devtools() -> None:
+    """The local fake Cognito must stay unreachable from the API (local-dev-auth spec)."""
+    assert _hits(re.compile(r"\bdevtools\b"), list(SRC.rglob("*.py"))) == []
