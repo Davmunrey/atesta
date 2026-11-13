@@ -1,8 +1,9 @@
 # Spec: Framework-agnostic control model schema
 
 - Requirement ids: MF-01, MF-02, MF-03, MF-06, FR-05, FR-08, NFR-05
-- Status: approved (2026-11-13). Revised 2026-11-13: corrections form one linear chain per
-  framework, scan and scope, migration 0007 (implementation review).
+- Status: approved (2026-11-13). Revised 2026-11-13 (implementation review): the draft flag
+  fails closed on `ATESTA_ENV`; corrections form one linear chain per framework, scan and scope
+  (migration 0007).
 - ADRs: ADR-005, ADR-008, ADR-009, ADR-011, ADR-012
 - Build order: 3 of 3 (after identity). Not part of the 28 Dec gate (login with MFA in dev);
   built right after identity, ahead of the calendar (owner decision, 2026-11-13).
@@ -32,8 +33,10 @@ isolated per tenant.
       `released` while any of its mappings has `reviewed_by` NULL (catalog spec).
 - [ ] `frameworks.status` has runtime meaning: `compliance.api` lists, selects and scores only
       frameworks with `status = 'released'` and `retired_at IS NULL`. Snapshots that reference a
-      retired framework still resolve it. Dev may set `ATESTA_CATALOG_INCLUDE_DRAFTS=true`; the
-      app refuses to start with it in production.
+      retired framework still resolve it. Dev may set `ATESTA_CATALOG_INCLUDE_DRAFTS=true`. The
+      check fails closed: the flag is honoured only with `ATESTA_ENV` set to `local`, `dev` or
+      `test`; with any other value, or none, the API refuses to start (first step of the
+      lifespan) and scoring raises. The worker entrypoint makes the same call when it is added.
 - [ ] Every catalog table, including `control_checks` and `mappings`, has `retired_at`. Catalog
       rows are never deleted: a load sets `retired_at` on keys absent from the YAML and clears it
       when they return. A load is refused if an active row references a retired one.
@@ -166,7 +169,7 @@ group scores. The compliance module maps active rows to core dataclasses; no sco
 | Evidence CHECKs: file without sha256, media type or size rejected (attestation included); sha256 without file rejected; scan output or document without file rejected; scan evidence without `source_id` rejected; upload or attestation without `created_by` rejected; malformed sha256 rejected; attestation without file accepted | Integrity (NFR-05, ADR-005) |
 | Storage key under org B's prefix, with `.` or `..` or an empty segment, rejected in org A; key under A's prefix accepted | Evidence objects bound to their tenant |
 | Blank `source` or `rationale` rejected; bad kind, engine or status rejected; score outside 0-100 rejected | MF-06, integrity |
-| A `draft` framework present in the DB is not listed and yields no snapshot | Rule 10 at runtime |
+| A `draft` framework present in the DB is not listed and yields no snapshot; with the flag and `ATESTA_ENV=test` it is scored; with the flag and `ATESTA_ENV` unset, `prod` or `production`, `include_drafts()` raises and the API does not start | Rule 10 at runtime |
 | Requirement R-1 with an active mapping to a passing control and a retired mapping to a control with no result scores `pass`; retired requirement R-2 is absent from results | Retired rows never change scores |
 | Snapshot job run twice for one scan leaves one row; a correction supersedes it and trend reads only the correction; a retried correction returns the same row; a correction of another framework's, scan's or scope's snapshot (NULL scope included) is rejected | Idempotent, append-only, linear corrections |
 | Snapshot `catalog_version` equals the DB stamp even when the process build constant differs | Auditor traceability |

@@ -24,13 +24,22 @@ from atesta_api.modules.compliance.models import (
     Mapping as MappingRow,
 )
 
+_DRAFT_ENVS = frozenset({"local", "dev", "test"})
+
 
 def include_drafts() -> bool:
-    """Dev may score draft packs; production refuses to start with the flag (rule 10)."""
-    enabled = os.environ.get("ATESTA_CATALOG_INCLUDE_DRAFTS") == "true"
-    if enabled and os.environ.get("ATESTA_ENV") == "prod":
-        raise RuntimeError("ATESTA_CATALOG_INCLUDE_DRAFTS is not allowed in production")
-    return enabled
+    """Dev may score draft packs (rule 10). Fails closed: the flag needs an explicit dev ATESTA_ENV.
+
+    Called first at startup and again before scoring, for processes that skip the API lifespan.
+    """
+    if os.environ.get("ATESTA_CATALOG_INCLUDE_DRAFTS") != "true":
+        return False
+    if os.environ.get("ATESTA_ENV") not in _DRAFT_ENVS:
+        raise RuntimeError(
+            "ATESTA_CATALOG_INCLUDE_DRAFTS=true requires ATESTA_ENV in "
+            + "/".join(sorted(_DRAFT_ENVS))
+        )
+    return True
 
 
 def _applies(requirement_scope: list[str], applicability: Mapping[str, Any]) -> bool:

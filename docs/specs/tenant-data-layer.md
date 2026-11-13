@@ -1,7 +1,9 @@
 # Spec: Multi-tenant data layer
 
 - Requirement ids: NFR-02, NFR-03, FR-13, MF-01
-- Status: approved (2026-11-13)
+- Status: approved (2026-11-13). Revised 2026-11-13: grants snapshot and startup guard cover
+  column-level, PUBLIC and grant-option privileges; linter checks rules, FK actions, exclusion
+  and expression keys and class overlaps (implementation review).
 - ADRs: ADR-006, ADR-008, ADR-012
 - Build order: 1 of 3 (identity and control-model specs depend on it)
 
@@ -51,8 +53,12 @@ for a compliance vendor. Isolation must not depend on every query being written 
 - [ ] App to Postgres traffic is TLS 1.2+ with server authentication (NFR-03, client side).
       `platform/db.py` sets `sslmode` and `sslrootcert` itself, never from the URL.
       `ATESTA_DB_SSLMODE` defaults to `verify-full` with the Amazon RDS CA bundle, pinned in the
-      repo and copied into the image. Only local and CI set `ATESTA_DB_SSLMODE=disable`. The host
-      must be the RDS endpoint name (not an IP or CNAME), because `verify-full` checks it.
+      repo (`platform/certs/`, source URL and SHA-256 in its README) and shipped in the wheel and
+      the image; neither the URL, `PGSSLROOTCERT` nor `~/.postgresql/root.crt` can replace it.
+      `make_engine` accepts only `verify-full` and `disable`; modes that do not authenticate the
+      server are refused at engine creation, so API, migrations and worker are all covered. Only
+      local and CI set `ATESTA_DB_SSLMODE=disable`. The host must be the RDS endpoint name (not an
+      IP or CNAME), because `verify-full` checks it.
 - [ ] API startup fails on any condition in Startup guard below.
 - [ ] `audit_events` plus `platform.audit.record()`, writing in the caller's transaction;
       append-only by grant.
@@ -161,7 +167,9 @@ On a fresh pooled connection, startup fails if the runtime role:
 - has the privileges of the owner of any table, view, sequence, function or schema in `public`
   (`pg_has_role(current_user, owner, 'USAGE')`);
 - holds TRUNCATE on any table, CREATE on `public`, a write privilege on an append-only or catalog
-  table, or any privilege on `alembic_version`;
+  table, or any privilege on `alembic_version`. Table-level checks use `has_table_privilege`
+  (it counts PUBLIC and inherited grants); column grants are checked with
+  `has_any_column_privilege`, which `has_table_privilege` does not see;
 - has an `app.*` default in `pg_db_role_setting` (role, database or all roles), or any of the four
   settings is non-empty on the fresh connection (checked by name: placeholders are not in
   `pg_settings`, and this also catches `-c app.*` in the DSN);
@@ -210,23 +218,31 @@ jsonb, request_id, occurred_at)`.
 test and, after `alembic upgrade`, in the deploy job against the target database. It covers every
 schema except `pg_catalog`, `information_schema` and `pg_toast`, ignoring extension-owned objects:
 
-1. Every table, view, materialized view and foreign table is in exactly one class; anything
-   unclassified fails.
-2. Tenant tables: `organization_id uuid NOT NULL`, index leading with it, RLS enabled.
+1. Every table and foreign table is in exactly one class; anything unclassified, or registered
+   in two classes, fails. Views are governed by items 4 and 6; materialized views are banned.
+2. Tenant tables: `organization_id uuid NOT NULL` with an FK to `organizations(id)`, index leading
+   with it, RLS enabled.
 3. Policies of every table (name, command, permissive, roles, `qual`, `with_check` from
    `pg_policies`) equal a checked-in snapshot. Any added, removed or changed policy fails until
    the snapshot changes in the same reviewed PR.
-4. `atesta_app` privileges on every table equal a checked-in grants snapshot.
-5. FKs between tenant tables include `organization_id` on both sides; unique constraints on tenant
-   tables lead with `organization_id` (except on `id` alone).
-6. Views have `security_invoker = true`; no materialized views; no SECURITY DEFINER functions.
+4. Privileges granted to `atesta_app` or to PUBLIC on every relation in `public`, table and
+   column level and with any grant option, read from the ACLs (`aclexplode` on `relacl` and
+   `attacl`), equal a checked-in grants snapshot. Migrations grant only through
+   `rls_v1.grant()`, never with raw `GRANT` text (static test).
+5. FKs between tenant tables include `organization_id` on both sides; unique constraints and
+   exclusion constraints on tenant tables lead with `organization_id` (compared with `=` in an
+   exclusion constraint), except a unique key on `id` alone. Key columns only: INCLUDE columns do
+   not count, and an expression is never `organization_id`.
+6. Views have `security_invoker = true`; no materialized views; no SECURITY DEFINER functions; no
+   rewrite rules other than a view's `_RETURN`; FK actions only NO ACTION or RESTRICT. Rule actions
+   and referential actions run as the table owner, so they would bypass RLS and grants.
 
 ## Test plan
 
 | Test | Proves |
 |---|---|
 | Schema linter (all six checks) passes on head | Rule 3 holds for every future object |
-| Linter negative fixtures: extra `USING (true)` policy, altered `tenant_isolation` predicate, unclassified table, view without `security_invoker`, materialized view, SECURITY DEFINER function, single-column tenant FK, TRUNCATE grant: each fails | The linter catches each fail-open object |
+| Linter negative fixtures: extra `USING (true)` policy, altered `tenant_isolation` predicate, unclassified table, table in two classes, view without `security_invoker`, materialized view, SECURITY DEFINER function, rewrite rule (table and view), CASCADE or SET DEFAULT FK, single-column tenant FK, tenant table without FK to `organizations`, unique key not led by `organization_id` (plain, expression only, tenant only in INCLUDE), exclusion constraint not led by `organization_id WITH =`, TRUNCATE, column, PUBLIC and grant-option grants: each fails. `(organization_id, expr)` and `(id) INCLUDE (...)` stay clean | The linter catches each fail-open object |
 | Cross-tenant matrix on a probe table, orgs A and B: context A sees only A; insert with B's id fails WITH CHECK; update and delete of B rows affect 0; TRUNCATE denied; child row pointing at B's parent fails with the same FK error as a random id | RLS isolation, no cross-tenant references |
 | No context: every table with RLS (found from `pg_class.relrowsecurity`) returns 0 rows, no error | Fail closed |
 | Pool reuse, `pool_size=1`, real commits: transaction sets context A and commits; next transaction has the same `pg_backend_pid()`, every `app.*` setting is empty and every RLS table returns 0 rows | No leak across the pool |
@@ -234,7 +250,7 @@ schema except `pg_catalog`, `information_schema` and `pg_toast`, ignoring extens
 | `audit_events`: UPDATE and DELETE as `atesta_app` denied; `record()` in a rolled-back transaction leaves no row, in a committed one exactly one | Append-only, atomic with the action |
 | Request transaction: a handler whose INSERT fails at commit returns an error and stores no audit event | No 2xx for lost writes |
 | Engine from `make_engine()`: an INSERT carrying a marker string fails (RLS WITH CHECK, CHECK violation); marker absent from exception text and captured logs. No `create_engine(` outside `platform/db.py` | `hide_parameters` everywhere (rule 2) |
-| Engine connect args: with `ATESTA_DB_SSLMODE` unset, `sslmode` is `verify-full` and `sslrootcert` the bundled RDS CA; a `sslmode` in the URL is ignored. Startup guard against the CI container (no TLS) with `ATESTA_DB_SSLMODE=prefer`: connects in plaintext and the guard raises | Server authentication by default; plaintext fallback caught |
+| Engine connect args (captured before libpq): with `ATESTA_DB_SSLMODE` unset, `sslmode` is `verify-full` and `sslrootcert` the bundled RDS CA, even with `sslmode`/`sslrootcert` in the URL and `PGSSLROOTCERT` set; `disable` sets no root certificate; `allow`, `prefer`, `require`, `verify-ca` raise; the bundle's SHA-256 is pinned and it holds the three eu-south-2 roots; the wheel config ships it. The default engine against the CI container (no TLS) fails with an SSL error; the API refuses to start with `ATESTA_DB_SSLMODE=prefer`; the guard still raises on a plaintext connection when TLS is required | Server authentication by default; no plaintext fallback |
 | Static checks: no session-level `app.*` setting anywhere under `apps/`; no `set_config(` on `app.` outside `platform/tenancy.py`; no bare `Depends(get_db)`; migrations import nothing from `atesta_api` | Pool safety, immutable migrations |
 | `lint-imports` fails on a deliberate import of `platform.tenancy` from a non-identity module | Only identity sets context |
 | Alembic: upgrade head on an empty DB as `atesta_owner`, then `alembic check` finds no diff | Models and migrations agree |
