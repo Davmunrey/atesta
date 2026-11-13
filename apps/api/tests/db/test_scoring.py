@@ -8,7 +8,7 @@ from atesta_api.modules.compliance.api import snapshot_framework
 from atesta_api.modules.identity.api import ContextReason, enter_org_context
 from atesta_core.scoring import ControlResult, Status
 from sqlalchemy import Engine, text
-from sqlalchemy.exc import DBAPIError
+from sqlalchemy.exc import DBAPIError, IntegrityError
 from sqlalchemy.orm import Session
 
 from .conftest import ORG_A, ORG_B
@@ -107,6 +107,37 @@ def test_retried_job_is_idempotent_and_corrections_supersede(tx: Session) -> Non
     assert correction not in (None, first)
     count = text("SELECT count(*) FROM score_snapshots WHERE scan_id = :s")
     assert tx.execute(count, {"s": scan}).scalar_one() == 2
+
+
+LIVE = text(  # what trend and diff read: rows nothing supersedes
+    "SELECT s.id FROM score_snapshots s WHERE s.framework_key = :f AND s.scan_id = :s"
+    " AND NOT EXISTS (SELECT 1 FROM score_snapshots n WHERE n.supersedes_id = s.id)"
+)
+
+
+def test_retried_correction_is_idempotent_and_trend_reads_only_it(tx: Session) -> None:
+    scan = uuid.uuid4()
+    first = snap(tx, "fw_x", scan)
+    correction = snap(tx, "fw_x", scan, supersedes_id=first)
+    assert snap(tx, "fw_x", scan, supersedes_id=first) == correction
+    assert tx.execute(LIVE, {"f": "fw_x", "s": scan}).scalars().all() == [correction]
+    second = snap(tx, "fw_x", scan, supersedes_id=correction)  # the chain stays linear
+    assert tx.execute(LIVE, {"f": "fw_x", "s": scan}).scalars().all() == [second]
+
+
+@pytest.mark.parametrize("other", ["framework", "scan", "scope"])
+def test_correction_supersedes_only_its_own_framework_scan_and_scope(
+    tx: Session, other: str
+) -> None:
+    scan, scope = uuid.uuid4(), uuid.uuid4()
+    original = snap(tx, "fw_x", scan, scope_id=scope)
+    kwargs: dict[str, object] = {"scope_id": scope, "supersedes_id": original}
+    key = "fw_y" if other == "framework" else "fw_x"
+    target_scan = uuid.uuid4() if other == "scan" else scan
+    if other == "scope":
+        kwargs["scope_id"] = None  # NULL scope must not skip the lineage check
+    with pytest.raises(IntegrityError, match="lineage"), tx.begin_nested():
+        snap(tx, key, target_scan, **kwargs)
 
 
 def test_requires_repeatable_read(db_rollback: Session) -> None:
