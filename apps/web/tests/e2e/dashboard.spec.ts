@@ -19,7 +19,7 @@ test("dashboard reads a real empty organization and recovers after an API failur
   await expect(page.getByText("Aún no hay análisis registrados")).toBeVisible();
   await page.route("**/api/v1/orgs/*/overview", (route) => route.fulfill({ status: 503, json: { detail: { code: "auth.provider_unavailable" } } }));
   await page.getByRole("button", { name: "Actualizar resultados" }).click();
-  await expect(page.getByRole("alert")).toBeVisible();
+  await expect(page.getByRole("main").getByRole("alert")).toBeVisible();
   await page.unroute("**/api/v1/orgs/*/overview");
   await page.getByRole("button", { name: "Reintentar" }).click();
   await expect(page.getByText("Todavía no hay marcos publicados")).toBeVisible();
