@@ -1,7 +1,8 @@
 # Spec: Identity, Cognito auth with mandatory MFA
 
 - Requirement ids: FR-01, FR-13, NFR-03, NFR-04, NFR-10
-- Status: approved (2026-11-13)
+- Status: approved (2026-11-13). Revised 2026-11-13: Concurrency locks the target and owner
+  rows together (implementation review).
 - ADRs: ADR-007 (amendment 1), ADR-008, ADR-012
 - Build order: 2 of 3 (depends on tenant-data-layer). Cognito resources: infra-dev spec (next).
 
@@ -184,10 +185,13 @@ is the WITH CHECK, and INSERT ... RETURNING must pass the SELECT policy.
 
 ### Concurrency
 
-- Last owner: a role change or removal that targets an owner first runs
-  `SELECT user_id FROM memberships WHERE organization_id = :org AND role = 'owner' FOR UPDATE`
-  and proceeds only if it returns more than one row. Do not lock the `organizations` row: every
-  tenant FK points at it, so that lock would block inserts across the org.
+- Role change and removal: before any check, lock the target row and every owner row in one
+  statement, `SELECT user_id, role FROM memberships WHERE organization_id = :org AND (user_id =
+  :target OR role = 'owner') ORDER BY user_id FOR UPDATE`. The 404, the 403 (only an owner removes
+  an owner or admin), the last-owner 409 and the audit metadata all read this locked result, so a
+  concurrent promotion, demotion or removal of the target is seen. The fixed order keeps two
+  requests from deadlocking. Do not lock the `organizations` row: every tenant FK points at it,
+  so that lock would block inserts across the org.
 - Accept and revoke race safely through the conditional UPDATEs above.
 
 ### Configuration
@@ -218,7 +222,7 @@ most once every 5 minutes. Token lifetimes: access and ID 30 min, refresh 12 h.
 | Provisioning | First `GET /v1/me` with a fake provider inserts one user and returns no memberships; two concurrent first calls yield one row; an email change at the provider shows on the next `GET /v1/me`; two users with the same email and different subs coexist |
 | Org creation | `POST /v1/orgs` as `atesta_app` (RLS on) creates the org and an owner membership, writes one `org.created`; caller then gets 200 on the members route |
 | Tenant isolation | 404 on org B routes; no org context: own memberships only; org A context: only A rows even without a WHERE; users visible to self and co-members only; from org A context, inserting a membership for org B fails, updating a co-member's `users` row affects 0, updating an invitation through the token branch affects 0 |
-| Roles | member cannot invite (403); admin cannot change roles (403); admin invites as owner (403); owner invites as owner (201); last owner cannot be demoted or removed (409); two owners demoting each other concurrently leave exactly one owner |
+| Roles | member cannot invite (403); admin cannot change roles (403); admin invites as owner (403); owner invites as owner (201); last owner cannot be demoted or removed (409); two owners demoting each other concurrently leave exactly one owner; an admin removing a member promoted meanwhile gets 403; a role change of a member removed meanwhile gets 404, not 500 |
 | Invitations | DB never holds the raw token; expired, revoked and used tokens rejected; email mismatch and unverified email rejected; invitation from a removed or demoted inviter rejected; existing member gets 409 and keeps the role; sole owner accepting a member invitation stays owner; accept with a query string returns 400; revoke racing accept never leaves both timestamps set; a token reveals no other invitation |
 | Audit | Each action writes exactly one event with the expected action and actor; no token in metadata |
 | Logs | Logs captured on auth failures and on the successful provisioning and accept paths never contain a token |
