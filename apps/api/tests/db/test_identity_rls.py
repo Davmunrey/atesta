@@ -40,10 +40,27 @@ def seed(superuser: Engine, probe: object) -> None:
         conn.execute(
             text(
                 "INSERT INTO invitations (id, organization_id, email, role, token_sha256,"
-                " invited_by, expires_at) VALUES (:i, :b, 'new@example.com', 'member', :t, :u2,"
-                " now() + interval '7 days')"
+                " invited_by, expires_at) VALUES"
+                " (:i, :b, 'new@example.com', 'member', :t, :u2, now() + interval '7 days'),"
+                # decoys: same org with another token, and another org, so the token test
+                # cannot pass just because only one invitation exists
+                " (:j, :b, 'other@example.com', 'member', :same_org, :u2,"
+                "  now() + interval '7 days'),"
+                " (:k, :a, 'third@example.com', 'member', :other_org, :u1,"
+                "  now() + interval '7 days')"
             ),
-            {"i": uuid.uuid4(), "b": ORG_B, "t": TOKEN, "u2": U2},
+            {
+                "i": uuid.uuid4(),
+                "j": uuid.uuid4(),
+                "k": uuid.uuid4(),
+                "a": ORG_A,
+                "b": ORG_B,
+                "t": TOKEN,
+                "same_org": "d" * 64,
+                "other_org": "e" * 64,
+                "u1": U1,
+                "u2": U2,
+            },
         )
 
 
@@ -112,7 +129,8 @@ def test_org_creation_inserts_org_and_owner(db_rollback: Session) -> None:
 
 def test_invitation_token_reads_one_row_and_writes_nothing(db_rollback: Session) -> None:
     enter_invitation_context(db_rollback, TOKEN)
-    assert counts(db_rollback, "invitations") == [1]
+    visible = db_rollback.execute(text("SELECT token_sha256 FROM invitations")).scalars().all()
+    assert visible == [TOKEN]
     escalate = text("UPDATE invitations SET role = 'owner', organization_id = :a")
     assert db_rollback.execute(escalate, {"a": ORG_A}).rowcount == 0  # type: ignore[attr-defined]
     enter_org_context(db_rollback, ORG_B, ContextReason.INVITATION)
