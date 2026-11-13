@@ -1,0 +1,32 @@
+{
+ "policies": [
+  [
+   "audit_events",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "organizations",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(id = app_setting_uuid('app.organization_id'::text))",
+   "(id = app_setting_uuid('app.organization_id'::text))"
+  ]
+ ],
+ "grants": [
+  [
+   "audit_events",
+   "INSERT,SELECT"
+  ],
+  [
+   "organizations",
+   "SELECT"
+  ]
+ ]
+}
