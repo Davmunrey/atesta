@@ -1,0 +1,342 @@
+[
+ {
+  "message": "Synthetic PASS for Calendar.",
+  "metadata": {
+   "event_code": "calendar_external_sharing_primary_calendar",
+   "product": {
+    "name": "Prowler",
+    "uid": "prowler",
+    "vendor_name": "Prowler",
+    "version": "5.49.0"
+   },
+   "profiles": [
+    "cloud",
+    "datetime"
+   ],
+   "version": "1.5.0"
+  },
+  "severity_id": 3,
+  "severity": "Medium",
+  "status": "New",
+  "status_code": "PASS",
+  "status_detail": "Synthetic PASS for Calendar.",
+  "status_id": 1,
+  "unmapped": {
+   "provider": "googleworkspace"
+  },
+  "activity_name": "Create",
+  "activity_id": 1,
+  "finding_info": {
+   "created_time": 1794562800,
+   "created_time_dt": "2026-11-13T09:40:00Z",
+   "desc": "The domain-wide default for primary calendars shares **only free/busy information** with external users. When external sharing is set to share full event details, sensitive information such as meeting titles, attendees, locations, and descriptions is exposed to users outside the organization.",
+   "title": "External sharing for primary calendars is restricted to free/busy only",
+   "types": [],
+   "uid": "prowler-googleworkspace-calendar_external_sharing_primary_calendar-calendar"
+  },
+  "resources": [
+   {
+    "region": "global",
+    "group": {
+     "name": "calendar"
+    },
+    "labels": [],
+    "name": "Calendar",
+    "type": "NotDefined",
+    "uid": "calendar"
+   }
+  ],
+  "category_name": "Findings",
+  "category_uid": 2,
+  "class_name": "Detection Finding",
+  "class_uid": 2004,
+  "cloud": {
+   "account": {
+    "name": "C0fixture1",
+    "type": "Other",
+    "type_id": 99,
+    "uid": "C0fixture1",
+    "labels": []
+   },
+   "org": {},
+   "provider": "googleworkspace",
+   "region": "global"
+  },
+  "time": 1794562800,
+  "time_dt": "2026-11-13T09:40:00Z",
+  "type_uid": 200401,
+  "type_name": "Detection Finding: Create"
+ },
+ {
+  "message": "Synthetic FAIL for Chat.",
+  "metadata": {
+   "event_code": "chat_external_file_sharing_disabled",
+   "product": {
+    "name": "Prowler",
+    "uid": "prowler",
+    "vendor_name": "Prowler",
+    "version": "5.49.0"
+   },
+   "profiles": [
+    "cloud",
+    "datetime"
+   ],
+   "version": "1.5.0"
+  },
+  "severity_id": 3,
+  "severity": "Medium",
+  "status": "New",
+  "status_code": "FAIL",
+  "status_detail": "Synthetic FAIL for Chat.",
+  "status_id": 1,
+  "unmapped": {
+   "provider": "googleworkspace"
+  },
+  "activity_name": "Create",
+  "activity_id": 1,
+  "finding_info": {
+   "created_time": 1794562800,
+   "created_time_dt": "2026-11-13T09:40:00Z",
+   "desc": "Google Chat **external file sharing** controls whether users can share files with people outside the organization via Chat conversations. Files often contain **confidential information**, and organizations in regulated industries need to control the flow of this information outside their boundaries.",
+   "title": "External file sharing in Chat is set to no files",
+   "types": [],
+   "uid": "prowler-googleworkspace-chat_external_file_sharing_disabled-chat"
+  },
+  "resources": [
+   {
+    "region": "global",
+    "group": {
+     "name": "chat"
+    },
+    "labels": [],
+    "name": "Chat",
+    "type": "NotDefined",
+    "uid": "chat"
+   }
+  ],
+  "category_name": "Findings",
+  "category_uid": 2,
+  "class_name": "Detection Finding",
+  "class_uid": 2004,
+  "cloud": {
+   "account": {
+    "name": "C0fixture1",
+    "type": "Other",
+    "type_id": 99,
+    "uid": "C0fixture1",
+    "labels": []
+   },
+   "org": {},
+   "provider": "googleworkspace",
+   "region": "global"
+  },
+  "time": 1794562800,
+  "time_dt": "2026-11-13T09:40:00Z",
+  "type_uid": 200401,
+  "type_name": "Detection Finding: Create"
+ },
+ {
+  "message": "Synthetic FAIL for Chat.",
+  "metadata": {
+   "event_code": "chat_apps_installation_disabled",
+   "product": {
+    "name": "Prowler",
+    "uid": "prowler",
+    "vendor_name": "Prowler",
+    "version": "5.49.0"
+   },
+   "profiles": [
+    "cloud",
+    "datetime"
+   ],
+   "version": "1.5.0"
+  },
+  "severity_id": 3,
+  "severity": "Medium",
+  "status": "Suppressed",
+  "status_code": "FAIL",
+  "status_detail": "Synthetic FAIL for Chat.",
+  "status_id": 3,
+  "unmapped": {
+   "provider": "googleworkspace"
+  },
+  "activity_name": "Create",
+  "activity_id": 1,
+  "finding_info": {
+   "created_time": 1794562800,
+   "created_time_dt": "2026-11-13T09:40:00Z",
+   "desc": "Google Chat apps connect to external services to look up information, schedule meetings, or complete tasks. Apps are accounts created by Google, users in the organization, or third parties that can access user data including **email addresses**, **conversation content**, and **organizational information**.",
+   "title": "Chat apps installation is disabled for users",
+   "types": [],
+   "uid": "prowler-googleworkspace-chat_apps_installation_disabled-chat"
+  },
+  "resources": [
+   {
+    "region": "global",
+    "group": {
+     "name": "chat"
+    },
+    "labels": [],
+    "name": "Chat",
+    "type": "NotDefined",
+    "uid": "chat"
+   }
+  ],
+  "category_name": "Findings",
+  "category_uid": 2,
+  "class_name": "Detection Finding",
+  "class_uid": 2004,
+  "cloud": {
+   "account": {
+    "name": "C0fixture1",
+    "type": "Other",
+    "type_id": 99,
+    "uid": "C0fixture1",
+    "labels": []
+   },
+   "org": {},
+   "provider": "googleworkspace",
+   "region": "global"
+  },
+  "time": 1794562800,
+  "time_dt": "2026-11-13T09:40:00Z",
+  "type_uid": 200401,
+  "type_name": "Detection Finding: Create"
+ },
+ {
+  "message": "Synthetic MANUAL for Calendar.",
+  "metadata": {
+   "event_code": "calendar_external_invitations_warning",
+   "product": {
+    "name": "Prowler",
+    "uid": "prowler",
+    "vendor_name": "Prowler",
+    "version": "5.49.0"
+   },
+   "profiles": [
+    "cloud",
+    "datetime"
+   ],
+   "version": "1.5.0"
+  },
+  "severity_id": 3,
+  "severity": "Medium",
+  "status": "New",
+  "status_code": "MANUAL",
+  "status_detail": "Synthetic MANUAL for Calendar.",
+  "status_id": 1,
+  "unmapped": {
+   "provider": "googleworkspace"
+  },
+  "activity_name": "Create",
+  "activity_id": 1,
+  "finding_info": {
+   "created_time": 1794562800,
+   "created_time_dt": "2026-11-13T09:40:00Z",
+   "desc": "The domain-wide Google Calendar configuration **warns users** when they invite guests from outside the organization to an event. This prompt gives users a chance to reconsider before sharing meeting details with external parties, reducing the likelihood of **accidental information disclosure** through calendar invitations.",
+   "title": "External invitation warnings are enabled for Google Calendar",
+   "types": [],
+   "uid": "prowler-googleworkspace-calendar_external_invitations_warning-calendar"
+  },
+  "resources": [
+   {
+    "region": "global",
+    "group": {
+     "name": "calendar"
+    },
+    "labels": [],
+    "name": "Calendar",
+    "type": "NotDefined",
+    "uid": "calendar"
+   }
+  ],
+  "category_name": "Findings",
+  "category_uid": 2,
+  "class_name": "Detection Finding",
+  "class_uid": 2004,
+  "cloud": {
+   "account": {
+    "name": "C0fixture1",
+    "type": "Other",
+    "type_id": 99,
+    "uid": "C0fixture1",
+    "labels": []
+   },
+   "org": {},
+   "provider": "googleworkspace",
+   "region": "global"
+  },
+  "time": 1794562800,
+  "time_dt": "2026-11-13T09:40:00Z",
+  "type_uid": 200401,
+  "type_name": "Detection Finding: Create"
+ },
+ {
+  "message": "Synthetic PASS for Other tenant.",
+  "metadata": {
+   "event_code": "calendar_external_sharing_primary_calendar",
+   "product": {
+    "name": "Prowler",
+    "uid": "prowler",
+    "vendor_name": "Prowler",
+    "version": "5.49.0"
+   },
+   "profiles": [
+    "cloud",
+    "datetime"
+   ],
+   "version": "1.5.0"
+  },
+  "severity_id": 3,
+  "severity": "Medium",
+  "status": "New",
+  "status_code": "PASS",
+  "status_detail": "Synthetic PASS for Other tenant.",
+  "status_id": 1,
+  "unmapped": {
+   "provider": "googleworkspace"
+  },
+  "activity_name": "Create",
+  "activity_id": 1,
+  "finding_info": {
+   "created_time": 1794562800,
+   "created_time_dt": "2026-11-13T09:40:00Z",
+   "desc": "The domain-wide default for primary calendars shares **only free/busy information** with external users. When external sharing is set to share full event details, sensitive information such as meeting titles, attendees, locations, and descriptions is exposed to users outside the organization.",
+   "title": "External sharing for primary calendars is restricted to free/busy only",
+   "types": [],
+   "uid": "prowler-googleworkspace-calendar_external_sharing_primary_calendar-x"
+  },
+  "resources": [
+   {
+    "region": "global",
+    "group": {
+     "name": "calendar"
+    },
+    "labels": [],
+    "name": "Other tenant",
+    "type": "NotDefined",
+    "uid": "x"
+   }
+  ],
+  "category_name": "Findings",
+  "category_uid": 2,
+  "class_name": "Detection Finding",
+  "class_uid": 2004,
+  "cloud": {
+   "account": {
+    "name": "C0fixture1",
+    "type": "Other",
+    "type_id": 99,
+    "uid": "C0fixture2",
+    "labels": []
+   },
+   "org": {},
+   "provider": "googleworkspace",
+   "region": "global"
+  },
+  "time": 1794562800,
+  "time_dt": "2026-11-13T09:40:00Z",
+  "type_uid": 200401,
+  "type_name": "Detection Finding: Create"
+ }
+]

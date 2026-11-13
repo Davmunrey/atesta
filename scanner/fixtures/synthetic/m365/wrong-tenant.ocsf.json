@@ -1,0 +1,428 @@
+[
+ {
+  "message": "Synthetic PASS for Admin One.",
+  "metadata": {
+   "event_code": "entra_admin_users_mfa_enabled",
+   "product": {
+    "name": "Prowler",
+    "uid": "prowler",
+    "vendor_name": "Prowler",
+    "version": "5.49.0"
+   },
+   "profiles": [
+    "cloud",
+    "datetime"
+   ],
+   "tenant_uid": "11111111-1111-4111-8111-111111111111",
+   "version": "1.5.0"
+  },
+  "severity_id": 4,
+  "severity": "High",
+  "status": "New",
+  "status_code": "PASS",
+  "status_detail": "Synthetic PASS for Admin One.",
+  "status_id": 1,
+  "unmapped": {
+   "provider": "m365"
+  },
+  "activity_name": "Create",
+  "activity_id": 1,
+  "finding_info": {
+   "created_time": 1794562800,
+   "created_time_dt": "2026-11-13T09:40:00Z",
+   "desc": "Microsoft Entra Conditional Access policies that enforce **multifactor authentication** for users in **administrative roles** across all resources.\n\nThe assessment identifies at least one active policy that targets admin roles (or all users), includes all applications, and grants access only when `Require multifactor authentication` is satisfied.",
+   "title": "Users in administrative roles require multifactor authentication via a Conditional Access policy for all applications",
+   "types": [],
+   "uid": "prowler-m365-entra_admin_users_mfa_enabled-admin-1"
+  },
+  "resources": [
+   {
+    "region": "global",
+    "group": {
+     "name": "entra"
+    },
+    "labels": [],
+    "name": "Admin One",
+    "type": "NotDefined",
+    "uid": "admin-1"
+   }
+  ],
+  "category_name": "Findings",
+  "category_uid": 2,
+  "class_name": "Detection Finding",
+  "class_uid": 2004,
+  "cloud": {
+   "account": {
+    "name": "fixture.onmicrosoft.com",
+    "type": "Other",
+    "type_id": 99,
+    "uid": "fixture.onmicrosoft.com",
+    "labels": []
+   },
+   "org": {
+    "uid": "11111111-1111-4111-8111-111111111111"
+   },
+   "provider": "m365",
+   "region": "global"
+  },
+  "time": 1794562800,
+  "time_dt": "2026-11-13T09:40:00Z",
+  "type_uid": 200401,
+  "type_name": "Detection Finding: Create"
+ },
+ {
+  "message": "Synthetic FAIL for Admin Two.",
+  "metadata": {
+   "event_code": "entra_admin_users_cloud_only",
+   "product": {
+    "name": "Prowler",
+    "uid": "prowler",
+    "vendor_name": "Prowler",
+    "version": "5.49.0"
+   },
+   "profiles": [
+    "cloud",
+    "datetime"
+   ],
+   "tenant_uid": "11111111-1111-4111-8111-111111111111",
+   "version": "1.5.0"
+  },
+  "severity_id": 4,
+  "severity": "High",
+  "status": "New",
+  "status_code": "FAIL",
+  "status_detail": "Synthetic FAIL for Admin Two.",
+  "status_id": 1,
+  "unmapped": {
+   "provider": "m365"
+  },
+  "activity_name": "Create",
+  "activity_id": 1,
+  "finding_info": {
+   "created_time": 1794562800,
+   "created_time_dt": "2026-11-13T09:40:00Z",
+   "desc": "Microsoft Entra **administrative users** are evaluated to confirm they are **cloud-only accounts**, with no on-premises directory synchronization for any user holding privileged roles.",
+   "title": "All users with administrative roles are cloud-only accounts",
+   "types": [],
+   "uid": "prowler-m365-entra_admin_users_cloud_only-admin-2"
+  },
+  "resources": [
+   {
+    "region": "global",
+    "group": {
+     "name": "entra"
+    },
+    "labels": [],
+    "name": "Admin Two",
+    "type": "NotDefined",
+    "uid": "admin-2"
+   }
+  ],
+  "category_name": "Findings",
+  "category_uid": 2,
+  "class_name": "Detection Finding",
+  "class_uid": 2004,
+  "cloud": {
+   "account": {
+    "name": "fixture.onmicrosoft.com",
+    "type": "Other",
+    "type_id": 99,
+    "uid": "fixture.onmicrosoft.com",
+    "labels": []
+   },
+   "org": {
+    "uid": "11111111-1111-4111-8111-111111111111"
+   },
+   "provider": "m365",
+   "region": "global"
+  },
+  "time": 1794562800,
+  "time_dt": "2026-11-13T09:40:00Z",
+  "type_uid": 200401,
+  "type_name": "Detection Finding: Create"
+ },
+ {
+  "message": "Synthetic FAIL for Consent policy.",
+  "metadata": {
+   "event_code": "entra_admin_consent_workflow_enabled",
+   "product": {
+    "name": "Prowler",
+    "uid": "prowler",
+    "vendor_name": "Prowler",
+    "version": "5.49.0"
+   },
+   "profiles": [
+    "cloud",
+    "datetime"
+   ],
+   "tenant_uid": "11111111-1111-4111-8111-111111111111",
+   "version": "1.5.0"
+  },
+  "severity_id": 4,
+  "severity": "High",
+  "status": "Suppressed",
+  "status_code": "FAIL",
+  "status_detail": "Synthetic FAIL for Consent policy.",
+  "status_id": 3,
+  "unmapped": {
+   "provider": "m365"
+  },
+  "activity_name": "Create",
+  "activity_id": 1,
+  "finding_info": {
+   "created_time": 1794562800,
+   "created_time_dt": "2026-11-13T09:40:00Z",
+   "desc": "Microsoft Entra **admin consent workflow** is evaluated to confirm an approval path exists for app permission requests. The check looks for the workflow being enabled and, when present, whether **reviewer notifications** are configured.",
+   "title": "Admin consent workflow is enabled",
+   "types": [],
+   "uid": "prowler-m365-entra_admin_consent_workflow_enabled-tenant-policy"
+  },
+  "resources": [
+   {
+    "region": "global",
+    "group": {
+     "name": "entra"
+    },
+    "labels": [],
+    "name": "Consent policy",
+    "type": "NotDefined",
+    "uid": "tenant-policy"
+   }
+  ],
+  "category_name": "Findings",
+  "category_uid": 2,
+  "class_name": "Detection Finding",
+  "class_uid": 2004,
+  "cloud": {
+   "account": {
+    "name": "fixture.onmicrosoft.com",
+    "type": "Other",
+    "type_id": 99,
+    "uid": "fixture.onmicrosoft.com",
+    "labels": []
+   },
+   "org": {
+    "uid": "11111111-1111-4111-8111-111111111111"
+   },
+   "provider": "m365",
+   "region": "global"
+  },
+  "time": 1794562800,
+  "time_dt": "2026-11-13T09:40:00Z",
+  "type_uid": 200401,
+  "type_name": "Detection Finding: Create"
+ },
+ {
+  "message": "Synthetic MANUAL for Organization.",
+  "metadata": {
+   "event_code": "exchange_mailbox_audit_bypass_disabled",
+   "product": {
+    "name": "Prowler",
+    "uid": "prowler",
+    "vendor_name": "Prowler",
+    "version": "5.49.0"
+   },
+   "profiles": [
+    "cloud",
+    "datetime"
+   ],
+   "tenant_uid": "11111111-1111-4111-8111-111111111111",
+   "version": "1.5.0"
+  },
+  "severity_id": 4,
+  "severity": "High",
+  "status": "New",
+  "status_code": "MANUAL",
+  "status_detail": "Synthetic MANUAL for Organization.",
+  "status_id": 1,
+  "unmapped": {
+   "provider": "m365"
+  },
+  "activity_name": "Create",
+  "activity_id": 1,
+  "finding_info": {
+   "created_time": 1794562800,
+   "created_time_dt": "2026-11-13T09:40:00Z",
+   "desc": "**Microsoft 365 Exchange Online mailboxes** are evaluated for **audit logging bypass** by reviewing the `AuditBypassEnabled` setting and identifying mailboxes where auditing can be circumvented.",
+   "title": "Mailbox has AuditBypassEnabled disabled",
+   "types": [],
+   "uid": "prowler-m365-exchange_mailbox_audit_bypass_disabled-org-config"
+  },
+  "resources": [
+   {
+    "region": "global",
+    "group": {
+     "name": "exchange"
+    },
+    "labels": [],
+    "name": "Organization",
+    "type": "NotDefined",
+    "uid": "org-config"
+   }
+  ],
+  "category_name": "Findings",
+  "category_uid": 2,
+  "class_name": "Detection Finding",
+  "class_uid": 2004,
+  "cloud": {
+   "account": {
+    "name": "fixture.onmicrosoft.com",
+    "type": "Other",
+    "type_id": 99,
+    "uid": "fixture.onmicrosoft.com",
+    "labels": []
+   },
+   "org": {
+    "uid": "11111111-1111-4111-8111-111111111111"
+   },
+   "provider": "m365",
+   "region": "global"
+  },
+  "time": 1794562800,
+  "time_dt": "2026-11-13T09:40:00Z",
+  "type_uid": 200401,
+  "type_name": "Detection Finding: Create"
+ },
+ {
+  "message": "Synthetic PASS for Organization.",
+  "metadata": {
+   "event_code": "exchange_external_email_tagging_enabled",
+   "product": {
+    "name": "Prowler",
+    "uid": "prowler",
+    "vendor_name": "Prowler",
+    "version": "5.49.0"
+   },
+   "profiles": [
+    "cloud",
+    "datetime"
+   ],
+   "tenant_uid": "11111111-1111-4111-8111-111111111111",
+   "version": "1.5.0"
+  },
+  "severity_id": 3,
+  "severity": "Medium",
+  "status": "New",
+  "status_code": "PASS",
+  "status_detail": "Synthetic PASS for Organization.",
+  "status_id": 1,
+  "unmapped": {
+   "provider": "m365"
+  },
+  "activity_name": "Create",
+  "activity_id": 1,
+  "finding_info": {
+   "created_time": 1794562800,
+   "created_time_dt": "2026-11-13T09:40:00Z",
+   "desc": "**Microsoft 365 Exchange Online** uses native external sender identification so supported Outlook clients display an `External` tag on messages originating outside the organization.",
+   "title": "Identity has external sender tagging enabled",
+   "types": [],
+   "uid": "prowler-m365-exchange_external_email_tagging_enabled-org-config"
+  },
+  "resources": [
+   {
+    "region": "global",
+    "group": {
+     "name": "exchange"
+    },
+    "labels": [],
+    "name": "Organization",
+    "type": "NotDefined",
+    "uid": "org-config"
+   }
+  ],
+  "category_name": "Findings",
+  "category_uid": 2,
+  "class_name": "Detection Finding",
+  "class_uid": 2004,
+  "cloud": {
+   "account": {
+    "name": "fixture.onmicrosoft.com",
+    "type": "Other",
+    "type_id": 99,
+    "uid": "fixture.onmicrosoft.com",
+    "labels": []
+   },
+   "org": {
+    "uid": "11111111-1111-4111-8111-111111111111"
+   },
+   "provider": "m365",
+   "region": "global"
+  },
+  "time": 1794562800,
+  "time_dt": "2026-11-13T09:40:00Z",
+  "type_uid": 200401,
+  "type_name": "Detection Finding: Create"
+ },
+ {
+  "message": "Synthetic PASS for Other tenant.",
+  "metadata": {
+   "event_code": "entra_admin_users_mfa_enabled",
+   "product": {
+    "name": "Prowler",
+    "uid": "prowler",
+    "vendor_name": "Prowler",
+    "version": "5.49.0"
+   },
+   "profiles": [
+    "cloud",
+    "datetime"
+   ],
+   "tenant_uid": "22222222-2222-4222-8222-222222222222",
+   "version": "1.5.0"
+  },
+  "severity_id": 4,
+  "severity": "High",
+  "status": "New",
+  "status_code": "PASS",
+  "status_detail": "Synthetic PASS for Other tenant.",
+  "status_id": 1,
+  "unmapped": {
+   "provider": "m365"
+  },
+  "activity_name": "Create",
+  "activity_id": 1,
+  "finding_info": {
+   "created_time": 1794562800,
+   "created_time_dt": "2026-11-13T09:40:00Z",
+   "desc": "Microsoft Entra Conditional Access policies that enforce **multifactor authentication** for users in **administrative roles** across all resources.\n\nThe assessment identifies at least one active policy that targets admin roles (or all users), includes all applications, and grants access only when `Require multifactor authentication` is satisfied.",
+   "title": "Users in administrative roles require multifactor authentication via a Conditional Access policy for all applications",
+   "types": [],
+   "uid": "prowler-m365-entra_admin_users_mfa_enabled-x"
+  },
+  "resources": [
+   {
+    "region": "global",
+    "group": {
+     "name": "entra"
+    },
+    "labels": [],
+    "name": "Other tenant",
+    "type": "NotDefined",
+    "uid": "x"
+   }
+  ],
+  "category_name": "Findings",
+  "category_uid": 2,
+  "class_name": "Detection Finding",
+  "class_uid": 2004,
+  "cloud": {
+   "account": {
+    "name": "fixture.onmicrosoft.com",
+    "type": "Other",
+    "type_id": 99,
+    "uid": "fixture.onmicrosoft.com",
+    "labels": []
+   },
+   "org": {
+    "uid": "22222222-2222-4222-8222-222222222222"
+   },
+   "provider": "m365",
+   "region": "global"
+  },
+  "time": 1794562800,
+  "time_dt": "2026-11-13T09:40:00Z",
+  "type_uid": 200401,
+  "type_name": "Detection Finding: Create"
+ }
+]
