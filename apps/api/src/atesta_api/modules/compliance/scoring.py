@@ -123,3 +123,9 @@ def snapshot_framework(
             ScoreSnapshot.supersedes_id.is_(None),
         )
     ).scalar_one()
+
+
+def control_is_active(session: Session, control_key: str) -> bool:
+    """For other modules that reference a control key without a cross-module FK (ADR-008)."""
+    query = select(Control.key).where(Control.key == control_key, Control.retired_at.is_(None))
+    return session.execute(query).scalar() is not None
