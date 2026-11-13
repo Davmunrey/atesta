@@ -52,6 +52,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Framework Detail */
+        get: operations["framework_detail_api_v1_orgs__org_id__frameworks__framework_key__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/invitations": {
         parameters: {
             query?: never;
@@ -225,6 +242,38 @@ export interface components {
             organization_id: string;
             role: components["schemas"]["Role"];
         };
+        /** CheckDetail */
+        CheckDetail: {
+            /** Check Id */
+            check_id: string;
+            /** Engine */
+            engine: string;
+            observed_status: components["schemas"]["Observation"] | null;
+        };
+        /** ControlDetail */
+        ControlDetail: {
+            /** Checks */
+            checks: components["schemas"]["CheckDetail"][];
+            /** Description En */
+            description_en: string;
+            /** Description Es */
+            description_es: string;
+            /** Key */
+            key: string;
+            /** Manual */
+            manual: boolean;
+            /** Mapping Reviewed */
+            mapping_reviewed: boolean;
+            /** Mapping Source */
+            mapping_source: string;
+            observed_status: components["schemas"]["Observation"] | null;
+            /** Remediation Refs */
+            remediation_refs: string[];
+            /** Title En */
+            title_en: string;
+            /** Title Es */
+            title_es: string;
+        };
         /** CreatedInvitation */
         CreatedInvitation: {
             /** Accept Link */
@@ -242,6 +291,28 @@ export interface components {
              */
             id: string;
             role: components["schemas"]["Role"];
+        };
+        /** FrameworkDetail */
+        FrameworkDetail: {
+            /** Catalog Matches Snapshot */
+            catalog_matches_snapshot: boolean;
+            /** Catalog Version */
+            catalog_version: string | null;
+            /** Development */
+            development: boolean;
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            /** Requirements */
+            requirements: components["schemas"]["RequirementDetail"][];
+            snapshot: components["schemas"]["SnapshotSummary"] | null;
+            /** Source */
+            source: string;
+            /** Status */
+            status: string;
+            /** Version */
+            version: string;
         };
         /** FrameworkSummary */
         FrameworkSummary: {
@@ -322,6 +393,8 @@ export interface components {
             organization_name: string;
             role: components["schemas"]["Role"];
         };
+        /** @enum {string} */
+        Observation: "pass" | "fail" | "manual" | "not_evaluated";
         /** OrgIn */
         OrgIn: {
             /** Name */
@@ -347,6 +420,27 @@ export interface components {
             frameworks: components["schemas"]["FrameworkSummary"][];
             /** Scans */
             scans: components["schemas"]["ScanSummary"][];
+        };
+        /** @enum {string} */
+        RecordedStatus: "pass" | "fail" | "manual" | "not_applicable";
+        /** RequirementDetail */
+        RequirementDetail: {
+            /** Applies To */
+            applies_to: string[];
+            /** Code */
+            code: string;
+            /** Controls */
+            controls: components["schemas"]["ControlDetail"][];
+            /** In Current Catalog */
+            in_current_catalog: boolean;
+            /** Source */
+            source: string | null;
+            /** Status */
+            status: components["schemas"]["RecordedStatus"] | "not_evaluated";
+            /** Title En */
+            title_en: string | null;
+            /** Title Es */
+            title_es: string | null;
         };
         /**
          * Role
@@ -513,6 +607,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrgOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    framework_detail_api_v1_orgs__org_id__frameworks__framework_key__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FrameworkDetail"];
                 };
             };
             /** @description Validation Error */

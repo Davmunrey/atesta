@@ -51,6 +51,7 @@
     "en": "English"
   },
   "errors": {
+    "compliance": { "not_found": "Este marco no está disponible. Vuelve al resumen y elige un marco publicado." },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
       "bad_nonce": "No se ha podido completar el inicio de sesión. Vuelve a iniciar sesión.",

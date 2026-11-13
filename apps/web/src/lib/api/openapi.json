@@ -34,6 +34,110 @@
         "title": "Accepted",
         "type": "object"
       },
+      "CheckDetail": {
+        "properties": {
+          "check_id": {
+            "title": "Check Id",
+            "type": "string"
+          },
+          "engine": {
+            "title": "Engine",
+            "type": "string"
+          },
+          "observed_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Observation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "engine",
+          "check_id",
+          "observed_status"
+        ],
+        "title": "CheckDetail",
+        "type": "object"
+      },
+      "ControlDetail": {
+        "properties": {
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/CheckDetail"
+            },
+            "title": "Checks",
+            "type": "array"
+          },
+          "description_en": {
+            "title": "Description En",
+            "type": "string"
+          },
+          "description_es": {
+            "title": "Description Es",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "manual": {
+            "title": "Manual",
+            "type": "boolean"
+          },
+          "mapping_reviewed": {
+            "title": "Mapping Reviewed",
+            "type": "boolean"
+          },
+          "mapping_source": {
+            "title": "Mapping Source",
+            "type": "string"
+          },
+          "observed_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Observation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "remediation_refs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Remediation Refs",
+            "type": "array"
+          },
+          "title_en": {
+            "title": "Title En",
+            "type": "string"
+          },
+          "title_es": {
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "title_es",
+          "title_en",
+          "description_es",
+          "description_en",
+          "manual",
+          "remediation_refs",
+          "mapping_reviewed",
+          "mapping_source",
+          "observed_status",
+          "checks"
+        ],
+        "title": "ControlDetail",
+        "type": "object"
+      },
       "CreatedInvitation": {
         "properties": {
           "accept_link": {
@@ -66,6 +170,80 @@
           "accept_link"
         ],
         "title": "CreatedInvitation",
+        "type": "object"
+      },
+      "FrameworkDetail": {
+        "properties": {
+          "catalog_matches_snapshot": {
+            "title": "Catalog Matches Snapshot",
+            "type": "boolean"
+          },
+          "catalog_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Version"
+          },
+          "development": {
+            "title": "Development",
+            "type": "boolean"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "requirements": {
+            "items": {
+              "$ref": "#/components/schemas/RequirementDetail"
+            },
+            "title": "Requirements",
+            "type": "array"
+          },
+          "snapshot": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnapshotSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "version",
+          "status",
+          "source",
+          "catalog_version",
+          "catalog_matches_snapshot",
+          "snapshot",
+          "requirements",
+          "development"
+        ],
+        "title": "FrameworkDetail",
         "type": "object"
       },
       "FrameworkSummary": {
@@ -262,6 +440,15 @@
         "title": "MembershipOut",
         "type": "object"
       },
+      "Observation": {
+        "enum": [
+          "pass",
+          "fail",
+          "manual",
+          "not_evaluated"
+        ],
+        "type": "string"
+      },
       "OrgIn": {
         "properties": {
           "name": {
@@ -328,6 +515,98 @@
           "development"
         ],
         "title": "OverviewOut",
+        "type": "object"
+      },
+      "RecordedStatus": {
+        "enum": [
+          "pass",
+          "fail",
+          "manual",
+          "not_applicable"
+        ],
+        "type": "string"
+      },
+      "RequirementDetail": {
+        "properties": {
+          "applies_to": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Applies To",
+            "type": "array"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "controls": {
+            "items": {
+              "$ref": "#/components/schemas/ControlDetail"
+            },
+            "title": "Controls",
+            "type": "array"
+          },
+          "in_current_catalog": {
+            "title": "In Current Catalog",
+            "type": "boolean"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordedStatus"
+              },
+              {
+                "const": "not_evaluated",
+                "type": "string"
+              }
+            ],
+            "title": "Status"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_es": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Es"
+          }
+        },
+        "required": [
+          "code",
+          "title_es",
+          "title_en",
+          "source",
+          "applies_to",
+          "in_current_catalog",
+          "status",
+          "controls"
+        ],
+        "title": "RequirementDetail",
         "type": "object"
       },
       "Role": {
@@ -654,6 +933,63 @@
         "summary": "Create Org",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}": {
+      "get": {
+        "operationId": "framework_detail_api_v1_orgs__org_id__frameworks__framework_key__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrameworkDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Framework Detail",
+        "tags": [
+          "compliance"
         ]
       }
     },
