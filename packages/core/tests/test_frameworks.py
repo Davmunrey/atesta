@@ -1,3 +1,4 @@
+import pytest
 from atesta_core.frameworks import Mapping, framework_results, framework_score, requirement_status
 from atesta_core.scoring import ControlResult, Status
 
@@ -54,3 +55,30 @@ def test_group_scores_per_attribute_value() -> None:
     }
     assert group_scores(results, attributes, ["dim"]) == {"dim": {"a": 50.0, "b": 100.0, "c": None}}
     assert group_scores(results, attributes, []) == {}
+
+
+def test_a_list_value_counts_once_in_each_of_its_groups() -> None:
+    """A measure that applies to several dimensions scores in each of them."""
+    from atesta_core.frameworks import group_scores
+    from atesta_core.scoring import ControlResult, Status
+
+    results = [ControlResult("P-1", Status.PASS), ControlResult("P-2", Status.FAIL)]
+    attributes = {"P-1": {"dim": ["a", "b", "a"]}, "P-2": {"dim": "b"}}
+    assert group_scores(results, attributes, ["dim"]) == {"dim": {"a": 100.0, "b": 50.0}}
+
+
+@pytest.mark.parametrize("value", [True, 1, 2.5, {"x": "y"}, [], ["a", 1], ""])
+def test_grouping_values_other_than_strings_are_rejected(value: object) -> None:
+    from atesta_core.frameworks import group_scores
+    from atesta_core.scoring import ControlResult, Status
+
+    with pytest.raises(ValueError, match="grouping attribute"):
+        group_scores([ControlResult("P-1", Status.PASS)], {"P-1": {"dim": value}}, ["dim"])
+
+
+@pytest.mark.parametrize("keys", ["dim", ["dim", 1]])
+def test_group_keys_must_be_a_list_of_strings(keys: object) -> None:
+    from atesta_core.frameworks import group_scores
+
+    with pytest.raises(ValueError, match="score group keys"):
+        group_scores([], {}, keys)  # type: ignore[arg-type]

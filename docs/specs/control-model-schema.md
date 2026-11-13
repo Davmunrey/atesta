@@ -103,7 +103,11 @@ checks --< control_checks >-- controls --< mappings >-- requirements >-- framewo
   `frameworks.attributes` (template updated in the catalog spec).
 - `frameworks.attributes` declares pack-level vocabularies: allowed `applies_to` values and the
   requirement attribute keys scores may be grouped by (FR-08). Scoring reads grouping keys only
-  from this declaration, never a hard-coded name.
+  from this declaration, never a hard-coded name. A grouping attribute is a string or a list of
+  strings; a requirement with several values (an ENS measure that applies to several
+  dimensions) counts once in each of them. Any other value, or keys that are not a list of
+  strings, fails the scoring transaction instead of storing a wrong group in an append-only
+  snapshot.
 - Natural keys, not uuids: YAML is the source of truth and the DB a projection, so a load is an
   idempotent upsert by key, and keys read the same in YAML, DB, logs and evidence manifests.
   Released keys are immutable; a rename is retire plus add plus an explicit data migration.
@@ -160,7 +164,7 @@ group scores. The compliance module maps active rows to core dataclasses; no sco
 | Evidence CHECKs: file without sha256, media type or size rejected (attestation included); sha256 without file rejected; scan output or document without file rejected; scan evidence without `source_id` rejected; upload or attestation without `created_by` rejected; malformed sha256 rejected; attestation without file accepted | Integrity (NFR-05, ADR-005) |
 | Storage key under org B's prefix, with `.` or `..` or an empty segment, rejected in org A; key under A's prefix accepted | Evidence objects bound to their tenant |
 | Blank `source` or `rationale` rejected; bad kind, engine or status rejected; score outside 0-100 rejected | MF-06, integrity |
-| A `draft` framework present in the DB is not listed and yields no snapshot | Rule 10 at runtime |
+| A `draft` framework present in the DB is not listed and yields no snapshot; a released but retired one neither; `compliance.api.active_frameworks` and scoring share one gate | Rule 10 at runtime |
 | Requirement R-1 with an active mapping to a passing control and a retired mapping to a control with no result scores `pass`; retired requirement R-2 is absent from results | Retired rows never change scores |
 | Snapshot job run twice for one scan leaves one row; a correction supersedes it and trend reads only the correction | Idempotent, append-only corrections |
 | Snapshot `catalog_version` equals the DB stamp even when the process build constant differs | Auditor traceability |

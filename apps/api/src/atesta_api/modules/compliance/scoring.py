@@ -4,13 +4,14 @@ import os
 import uuid
 from collections import Counter
 from collections.abc import Iterable, Mapping
+from dataclasses import dataclass
 from decimal import Decimal
 from typing import Any
 
 from atesta_core.frameworks import Mapping as CoreMapping
 from atesta_core.frameworks import framework_results, group_scores
 from atesta_core.scoring import ControlResult, Status, score
-from sqlalchemy import select, text
+from sqlalchemy import ColumnElement, and_, select, text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
@@ -31,6 +32,29 @@ def include_drafts() -> bool:
     if enabled and os.environ.get("ATESTA_ENV") == "prod":
         raise RuntimeError("ATESTA_CATALOG_INCLUDE_DRAFTS is not allowed in production")
     return enabled
+
+
+def _scoreable() -> ColumnElement[bool]:
+    """The one rule-10 gate: listing and scoring see only active released frameworks."""
+    active = Framework.retired_at.is_(None)
+    return active if include_drafts() else and_(active, Framework.status == "released")
+
+
+@dataclass(frozen=True, slots=True)
+class FrameworkInfo:
+    key: str
+    name: str
+    version: str
+    status: str
+    catalog_version: str | None
+
+
+def active_frameworks(session: Session) -> list[FrameworkInfo]:
+    """Frameworks a customer may see, select or be scored on."""
+    rows = session.execute(select(Framework).where(_scoreable()).order_by(Framework.key))
+    return [
+        FrameworkInfo(f.key, f.name, f.version, f.status, f.catalog_version) for f in rows.scalars()
+    ]
 
 
 def _applies(requirement_scope: list[str], applicability: Mapping[str, Any]) -> bool:
@@ -55,9 +79,9 @@ def snapshot_framework(
         raise RuntimeError("scoring needs REPEATABLE READ so a catalog load cannot mix versions")
     applicability = dict(applicability or {})
     framework = session.execute(
-        select(Framework).where(Framework.key == framework_key, Framework.retired_at.is_(None))
+        select(Framework).where(Framework.key == framework_key, _scoreable())
     ).scalar()
-    if framework is None or (framework.status != "released" and not include_drafts()):
+    if framework is None:
         return None
     requirements = [
         r

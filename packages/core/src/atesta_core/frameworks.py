@@ -71,6 +71,14 @@ def framework_score(
     return score(framework_results(framework, requirement_ids, mappings, control_results))
 
 
+def _group_values(value: object) -> list[str]:
+    if isinstance(value, str) and value:
+        return [value]
+    if isinstance(value, list) and value and all(isinstance(v, str) and v for v in value):
+        return list(dict.fromkeys(value))  # a repeated value counts once
+    raise ValueError(f"grouping attribute must be a string or a list of strings: {value!r}")
+
+
 def group_scores(
     results: Iterable[ControlResult],
     attributes: Mapping_[str, Mapping_[str, object]],
@@ -79,8 +87,16 @@ def group_scores(
     """Score per value of each grouping attribute (FR-08), e.g. one score per dimension.
 
     `attributes` maps requirement id to its attributes; `keys` are the attribute names a pack
-    declares as score groups. Requirements without the attribute are left out of that group.
+    declares as score groups. Requirements without the attribute are left out of that group. A
+    requirement whose attribute lists several values (a measure that applies to several
+    dimensions) counts once in each of them. Any other value type raises: snapshots are
+    append-only, so a wrong bucket would be permanent.
     """
+    if isinstance(keys, str):
+        raise ValueError("score group keys must be a list of strings")
+    keys = list(keys)
+    if not all(isinstance(k, str) for k in keys):
+        raise ValueError("score group keys must be a list of strings")
     results = list(results)
     out: dict[str, dict[str, float | None]] = {}
     for key in keys:
@@ -88,6 +104,7 @@ def group_scores(
         for result in results:
             value = attributes.get(result.control_id, {}).get(key)
             if value is not None:
-                buckets[str(value)].append(result)
+                for group in _group_values(value):
+                    buckets[group].append(result)
         out[key] = {value: score(rs) for value, rs in sorted(buckets.items())}
     return out
