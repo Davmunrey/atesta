@@ -100,7 +100,11 @@ def test_a_successful_run_writes_stripped_output_scrubbed_log_and_manifest_last(
     assert SECRET["M365_CERTIFICATE_CONTENT"] not in log
     # The child saw exactly the minimal environment, and the exact argv.
     env_line = next(line for line in log.splitlines() if line.startswith("env "))
-    assert env_line.split()[1:] == sorted(
+    observed_keys = env_line.split()[1:]
+    # macOS adds this during Python startup, even when absent from subprocess.run(env=...).
+    if sys.platform == "darwin" and "__CF_USER_TEXT_ENCODING" in observed_keys:
+        observed_keys.remove("__CF_USER_TEXT_ENCODING")
+    assert observed_keys == sorted(
         [
             "AZURE_CLIENT_ID",
             "AZURE_TENANT_ID",

@@ -1,5 +1,42 @@
 {
   "brand": { "name": "Atesta" },
+  "footer": { "label": "Información del sitio" },
+  "cookies": {
+    "title": "Cookies y almacenamiento",
+    "home": "Volver al inicio de {brand}",
+    "updated": "Revisado el 13 de noviembre de 2026",
+    "intro": "El sitio y la aplicación guardan el idioma que eliges y la información necesaria para iniciar sesión o aceptar una invitación. No incorporamos cookies de publicidad ni herramientas de analítica.",
+    "index": "En esta página",
+    "duration": "Duración máxima:",
+    "days": "{count, plural, one {# día} other {# días}}",
+    "hours": "{count, plural, one {# hora} other {# horas}}",
+    "minutes": "{count, plural, one {# minuto} other {# minutos}}",
+    "inventory": {
+      "title": "Cookies de {brand}",
+      "intro": "Estas cookies se crean en el dominio de {brand} cuando eliges un idioma o inicias sesión. Visitar las páginas públicas no las crea.",
+      "retention": "Los plazos cuentan desde la última creación o actualización de cada cookie. Cerrar sesión elimina las cookies de acceso y renovación. Tu acceso puede terminar antes si la sesión deja de ser válida."
+    },
+    "items": {
+      "locale": "Recuerda el idioma que eliges. Solo se crea o actualiza cuando utilizas el selector de idioma.",
+      "auth": "Protege el proceso de inicio de sesión. Se crea al comenzar y se elimina cuando se completa correctamente.",
+      "access": "Identifica tu sesión al acceder a tu organización. Se crea al iniciar sesión y se actualiza cuando se renueva el acceso.",
+      "refresh": "Permite renovar el acceso sin pedirte que vuelvas a identificarte en cada petición. Se crea al iniciar sesión."
+    },
+    "storage": {
+      "title": "Invitaciones",
+      "body": "Al abrir una invitación, su código se conserva en el almacenamiento de la pestaña con el nombre <key>invitación</key> para recuperarlo después del inicio de sesión. No es una cookie. Permanece durante la sesión de la pestaña y se elimina al aceptar la invitación."
+    },
+    "signin": {
+      "title": "Página de acceso",
+      "body": "El inicio de sesión se abre en Amazon Cognito. Esa página utiliza sus propias cookies para gestionar el acceso, con una duración que depende de la configuración del servicio. Son distintas de las cookies de {brand} descritas aquí.",
+      "source": "Documentación de Amazon Cognito"
+    },
+    "choices": {
+      "title": "Tus opciones",
+      "body": "Puedes borrar o bloquear cookies y datos del sitio desde los ajustes de privacidad de tu navegador. Para cambiar el idioma, utiliza el selector. Para terminar tu sesión de {brand}, utiliza Cerrar sesión dentro de la aplicación.",
+      "consequences": "Si borras la preferencia de idioma, volverás a ver el sitio en español. Si bloqueas las cookies de acceso, no podrás iniciar sesión. Si borras los datos de una invitación antes de aceptarla, necesitarás abrir de nuevo el enlace recibido."
+    }
+  },
   "landing": {
     "summary": "Preparación continua para auditorías ENS y NIS2. Inicia sesión para gestionar tu organización.",
     "signIn": "Iniciar sesión"

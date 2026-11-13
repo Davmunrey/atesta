@@ -1,5 +1,42 @@
 {
   "brand": { "name": "Atesta" },
+  "footer": { "label": "Site information" },
+  "cookies": {
+    "title": "Cookies and storage",
+    "home": "Back to {brand} home",
+    "updated": "Reviewed on 13 November 2026",
+    "intro": "The website and app store your chosen language and the information needed to sign in or accept an invitation. We do not include advertising cookies or analytics tools.",
+    "index": "On this page",
+    "duration": "Maximum duration:",
+    "days": "{count, plural, one {# day} other {# days}}",
+    "hours": "{count, plural, one {# hour} other {# hours}}",
+    "minutes": "{count, plural, one {# minute} other {# minutes}}",
+    "inventory": {
+      "title": "{brand} cookies",
+      "intro": "These cookies are created on the {brand} domain when you choose a language or sign in. Visiting public pages does not create them.",
+      "retention": "Durations run from each cookie's last creation or update. Signing out removes the access and renewal cookies. Your access may end sooner if the session becomes invalid."
+    },
+    "items": {
+      "locale": "Remembers the language you choose. It is only created or updated when you use the language selector.",
+      "auth": "Protects the sign-in process. It is created when sign-in starts and removed when it completes successfully.",
+      "access": "Identifies your session when you access your organization. It is created at sign-in and updated when access is renewed.",
+      "refresh": "Allows access to be renewed without asking you to identify yourself again for each request. It is created at sign-in."
+    },
+    "storage": {
+      "title": "Invitations",
+      "body": "Opening an invitation keeps its code in tab storage under the name <key>invitation</key>, so it can be recovered after sign-in. This is not a cookie. It remains for the tab session and is removed when you accept the invitation."
+    },
+    "signin": {
+      "title": "Sign-in page",
+      "body": "Sign-in opens in Amazon Cognito. That page uses its own cookies to manage access, with a duration that depends on the service configuration. They are separate from the {brand} cookies described here.",
+      "source": "Amazon Cognito documentation"
+    },
+    "choices": {
+      "title": "Your options",
+      "body": "You can delete or block cookies and site data in your browser's privacy settings. Use the language selector to change your language. To end your {brand} session, use Sign out inside the app.",
+      "consequences": "Deleting the language preference returns the site to Spanish. Blocking access cookies prevents sign-in. If you delete invitation data before accepting, you will need to open the original invitation link again."
+    }
+  },
   "landing": {
     "summary": "Continuous audit readiness for ENS and NIS2. Sign in to manage your organization.",
     "signIn": "Sign in"
