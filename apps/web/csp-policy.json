@@ -1,0 +1,15 @@
+{
+  "policy": "default-src 'self'; script-src 'self' 'sha256-+YPy5THZ+XvH6rgkErvAJmBeit2RjYpYujT3Hq2Eh2o=' 'sha256-/hvKQlxZPCL8NcI0IdqMEiTMdfE48I9/ozqL5THriNg=' 'sha256-4EsCF70m5QAfuFATeehfZ49deezHOdCD+I4BaT8pBFE=' 'sha256-55Rpa3pRsPqfgi0KCITXXLaGHbT0CO40Kfc9WJOh6y4=' 'sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=' 'sha256-SPywY5p9IcmWcqs3LkWb7NfeNy0xH3dH6lpalp/13Hg=' 'sha256-TMQrwsFE3JKySvFm5YQnzgbdRWosjmjNy0sBszKv3Kg=' 'sha256-V3XT9yVGFa8zkGB1a2Y+jFmTfjAs9Iyj5TJppBv4AD8=' 'sha256-VBXgvTM7HKRlR8GTuau8S8kiacr0gnQ/bxIMClH076A=' 'sha256-VnGZMrPGXvxOlgwx3+PK2ZQqY2QoPp4ZXj1KsIMlwiQ='; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'",
+  "hashes": [
+    "'sha256-+YPy5THZ+XvH6rgkErvAJmBeit2RjYpYujT3Hq2Eh2o='",
+    "'sha256-/hvKQlxZPCL8NcI0IdqMEiTMdfE48I9/ozqL5THriNg='",
+    "'sha256-4EsCF70m5QAfuFATeehfZ49deezHOdCD+I4BaT8pBFE='",
+    "'sha256-55Rpa3pRsPqfgi0KCITXXLaGHbT0CO40Kfc9WJOh6y4='",
+    "'sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo='",
+    "'sha256-SPywY5p9IcmWcqs3LkWb7NfeNy0xH3dH6lpalp/13Hg='",
+    "'sha256-TMQrwsFE3JKySvFm5YQnzgbdRWosjmjNy0sBszKv3Kg='",
+    "'sha256-V3XT9yVGFa8zkGB1a2Y+jFmTfjAs9Iyj5TJppBv4AD8='",
+    "'sha256-VBXgvTM7HKRlR8GTuau8S8kiacr0gnQ/bxIMClH076A='",
+    "'sha256-VnGZMrPGXvxOlgwx3+PK2ZQqY2QoPp4ZXj1KsIMlwiQ='"
+  ]
+}

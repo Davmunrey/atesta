@@ -29,8 +29,10 @@ def seed(superuser: Engine) -> None:
 
 
 def test_catalog_is_readable_without_tenant_context(db_rollback: Session) -> None:
-    query = text(
-        "SELECT count(*) FROM mappings m JOIN requirements r ON r.code = m.requirement_code"
+    query = text(  # this module's seed only: other modules commit catalog rows too
+        "SELECT count(*) FROM mappings m JOIN requirements r"
+        " ON (r.framework_key, r.code) = (m.framework_key, m.requirement_code)"
+        " WHERE m.framework_key = 'fw_test'"
     )
     assert db_rollback.execute(query).scalar_one() == 1
 
