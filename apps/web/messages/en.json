@@ -1,0 +1,11 @@
+{
+  "landing": {
+    "summary": "Continuous audit readiness for ENS and NIS2. Sign in to manage your organization.",
+    "signIn": "Sign in"
+  },
+  "locale": {
+    "label": "Language",
+    "es": "Español",
+    "en": "English"
+  }
+}

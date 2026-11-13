@@ -1,0 +1,11 @@
+{
+  "landing": {
+    "summary": "Preparación continua para auditorías ENS y NIS2. Inicia sesión para gestionar tu organización.",
+    "signIn": "Iniciar sesión"
+  },
+  "locale": {
+    "label": "Idioma",
+    "es": "Español",
+    "en": "English"
+  }
+}
