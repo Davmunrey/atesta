@@ -1,42 +1,18 @@
 """Identity endpoints over HTTP with RLS on (identity-auth spec test plan)."""
 
 import logging
-import uuid
-from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
 from typing import Annotated
 
 import pytest
 from atesta_api.main import app
 from atesta_api.modules.identity.api import Member, Role, require_member, require_role
-from atesta_api.modules.identity.cognito import AccessToken, InvalidTokenError, UserInfo
-from atesta_api.platform import db
 from fastapi import Depends
 from fastapi.testclient import TestClient
 from sqlalchemy import Engine, text
 from sqlalchemy.engine import URL
 
-from .conftest import APP_PASSWORD
-
-
-class FakeVerifier:
-    def verify(self, token: str) -> AccessToken:
-        if not token.startswith("tok-"):
-            raise InvalidTokenError
-        return AccessToken(sub=token.removeprefix("tok-"), scopes=frozenset({"openid"}))
-
-
-class FakeProvider:
-    def __init__(self) -> None:
-        self.emails: dict[str, str] = {}
-        self.calls = 0
-
-    def userinfo(self, access_token: str) -> UserInfo:
-        self.calls += 1
-        sub = access_token.removeprefix("tok-")
-        return UserInfo(
-            sub=sub, email=self.emails.get(sub, f"{sub}@example.com"), email_verified=True
-        )
+from .conftest import APP_PASSWORD, FakeProvider, auth, new_sub
 
 
 @app.get("/test/orgs/{org_id}/member")
@@ -47,32 +23,6 @@ def _member(member: Annotated[Member, Depends(require_member)]) -> dict[str, str
 @app.get("/test/orgs/{org_id}/admin")
 def _admin(member: Annotated[Member, Depends(require_role(Role.ADMIN))]) -> dict[str, str]:
     return {"role": member.role}
-
-
-@pytest.fixture
-def provider() -> FakeProvider:
-    return FakeProvider()
-
-
-@pytest.fixture
-def client(database: URL, probe: object, provider: FakeProvider) -> Iterator[TestClient]:
-    engine = db.make_engine(
-        database.set(username="atesta_app", password=APP_PASSWORD), sslmode="disable", pool_size=4
-    )
-    db.configure(engine)
-    app.state.token_verifier = FakeVerifier()
-    app.state.identity_provider = provider
-    yield TestClient(app)  # no lifespan: wiring is done above
-    db._factory = None
-    engine.dispose()
-
-
-def auth(sub: str) -> dict[str, str]:
-    return {"Authorization": f"Bearer tok-{sub}"}
-
-
-def new_sub() -> str:
-    return f"sub-{uuid.uuid4().hex[:8]}"
 
 
 def test_missing_or_invalid_token_is_401(client: TestClient) -> None:

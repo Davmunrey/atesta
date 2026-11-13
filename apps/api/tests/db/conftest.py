@@ -15,7 +15,11 @@ from types import ModuleType
 import pytest
 from alembic import command
 from alembic.config import Config
+from atesta_api.main import app
+from atesta_api.modules.identity.cognito import AccessToken, InvalidTokenError, UserInfo
+from atesta_api.platform import db
 from atesta_api.platform.db import make_engine
+from fastapi.testclient import TestClient
 from sqlalchemy import Engine, text
 from sqlalchemy.engine import URL, make_url
 from sqlalchemy.orm import Session, sessionmaker
@@ -117,3 +121,52 @@ def db_rollback(app_engine: Engine, probe: object) -> Iterator[Session]:
 def db_commit(app_engine: Engine, probe: object) -> Iterator[sessionmaker[Session]]:
     """Tests using it clean up their committed rows as superuser."""
     yield sessionmaker(bind=app_engine)
+
+
+# HTTP fixtures: fake Cognito, real database with RLS.
+
+
+class FakeVerifier:
+    def verify(self, token: str) -> AccessToken:
+        if not token.startswith("tok-"):
+            raise InvalidTokenError
+        return AccessToken(sub=token.removeprefix("tok-"), scopes=frozenset({"openid"}))
+
+
+class FakeProvider:
+    def __init__(self) -> None:
+        self.emails: dict[str, str] = {}
+        self.unverified: set[str] = set()
+        self.calls = 0
+
+    def userinfo(self, access_token: str) -> UserInfo:
+        self.calls += 1
+        sub = access_token.removeprefix("tok-")
+        email = self.emails.get(sub, f"{sub}@example.com")
+        return UserInfo(sub=sub, email=email, email_verified=sub not in self.unverified)
+
+
+@pytest.fixture
+def provider() -> FakeProvider:
+    return FakeProvider()
+
+
+@pytest.fixture
+def client(database: URL, probe: object, provider: FakeProvider) -> Iterator[TestClient]:
+    engine = db.make_engine(
+        database.set(username="atesta_app", password=APP_PASSWORD), sslmode="disable", pool_size=4
+    )
+    db.configure(engine)
+    app.state.token_verifier = FakeVerifier()
+    app.state.identity_provider = provider
+    yield TestClient(app)  # no lifespan: wiring is done above
+    db._factory = None
+    engine.dispose()
+
+
+def auth(sub: str) -> dict[str, str]:
+    return {"Authorization": f"Bearer tok-{sub}"}
+
+
+def new_sub() -> str:
+    return f"sub-{uuid.uuid4().hex[:8]}"

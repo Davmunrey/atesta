@@ -14,12 +14,14 @@ from atesta_api.modules.identity.deps import (
     get_identity_provider,
     refresh_profile,
 )
+from atesta_api.modules.identity.members import router as members_router
 from atesta_api.modules.identity.models import Membership, Role, User
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 from atesta_api.platform.tenancy import Organization
 
 router = APIRouter(prefix="/v1", tags=["identity"])
+router.include_router(members_router)
 
 
 class MembershipOut(BaseModel):
