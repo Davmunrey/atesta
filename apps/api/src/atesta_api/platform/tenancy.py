@@ -9,15 +9,8 @@ from datetime import datetime
 from sqlalchemy import DateTime, Text, func, text
 from sqlalchemy.orm import Mapped, Session, mapped_column
 
-from atesta_api.platform.context import TenantContext
+from atesta_api.platform.context import SETTING_NAMES, TenantContext
 from atesta_api.platform.db import Base
-
-_SETTINGS = (
-    ("subject", "app.subject"),
-    ("user_id", "app.user_id"),
-    ("organization_id", "app.organization_id"),
-    ("invitation_token_sha256", "app.invitation_token_sha256"),
-)
 
 
 class Organization(Base):
@@ -36,7 +29,7 @@ def set_tenant_context(session: Session, ctx: TenantContext) -> None:
 
     The values die with the transaction, so a pooled connection never carries a tenant.
     """
-    for attr, name in _SETTINGS:
+    for attr, name in SETTING_NAMES:
         value = getattr(ctx, attr)
         if value is not None:
             session.execute(

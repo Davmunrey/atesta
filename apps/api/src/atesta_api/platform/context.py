@@ -3,6 +3,14 @@
 import uuid
 from dataclasses import dataclass
 
+# Field of TenantContext -> transaction-local Postgres setting read by the RLS policies.
+SETTING_NAMES = (
+    ("subject", "app.subject"),
+    ("user_id", "app.user_id"),
+    ("organization_id", "app.organization_id"),
+    ("invitation_token_sha256", "app.invitation_token_sha256"),
+)
+
 
 @dataclass(frozen=True, slots=True)
 class TenantContext:
