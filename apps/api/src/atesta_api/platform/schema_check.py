@@ -9,7 +9,7 @@ from typing import Any
 
 from sqlalchemy import Connection, text
 
-from atesta_api.platform.tables import table_classes
+from atesta_api.platform.tables import duplicated, table_classes
 
 SNAPSHOT = Path(__file__).with_name("schema_snapshot.json")
 _TRUE = ("true", "on", "1", "yes")
@@ -39,11 +39,34 @@ _FKS = (
     " FROM pg_constraint con JOIN pg_class cr ON cr.oid = con.conrelid"
     " JOIN pg_class fr ON fr.oid = con.confrelid WHERE con.contype = 'f'"
 )
-_UNIQUES = (
-    "SELECT c.relname,"
-    " (SELECT array_agg(a.attname ORDER BY k.i) FROM unnest(i.indkey::int2[]) WITH ORDINALITY"
-    "  AS k(n, i) JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.n)"
-    " FROM pg_index i JOIN pg_class c ON c.oid = i.indrelid WHERE i.indisunique"
+_UNIQUES = (  # key columns only (not INCLUDE), expressions as <expr>, exclusion constraints too
+    "SELECT c.relname, k.cols, i.indisexclusion,"
+    " (SELECT o.oprname FROM pg_constraint con JOIN pg_operator o ON o.oid = con.conexclop[1]"
+    "  WHERE con.conindid = i.indexrelid AND con.contype = 'x')"
+    " FROM pg_index i JOIN pg_class c ON c.oid = i.indrelid,"
+    " LATERAL (SELECT array_agg(coalesce(a.attname::text, '<expr>') ORDER BY u.o) AS cols"
+    "  FROM unnest(i.indkey::int2[]) WITH ORDINALITY u(n, o)"
+    "  LEFT JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = u.n AND u.n <> 0"
+    "  WHERE u.o <= i.indnkeyatts) k"
+    " WHERE i.indisunique OR i.indisexclusion"
+)
+_NOT_EXTENSION = (
+    " AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.classid = 'pg_class'::regclass"
+    " AND d.objid = c.oid AND d.deptype = 'e')"
+    " AND n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')"
+    " AND n.nspname NOT LIKE 'pg\\_%temp%'"
+)
+# Rule actions and referential actions run as the table owner, so they bypass RLS and grants.
+_RULES = (
+    "SELECT r.rulename, n.nspname || '.' || c.relname FROM pg_rewrite r"  # noqa: S608
+    " JOIN pg_class c ON c.oid = r.ev_class JOIN pg_namespace n ON n.oid = c.relnamespace"
+    " WHERE r.rulename <> '_RETURN'" + _NOT_EXTENSION
+)
+_FK_ACTIONS = (
+    "SELECT con.conname, n.nspname || '.' || c.relname FROM pg_constraint con"  # noqa: S608
+    " JOIN pg_class c ON c.oid = con.conrelid JOIN pg_namespace n ON n.oid = c.relnamespace"
+    " WHERE con.contype = 'f'"
+    " AND (con.confdeltype NOT IN ('a', 'r') OR con.confupdtype NOT IN ('a', 'r'))" + _NOT_EXTENSION
 )
 _GRANTEE = "CASE x.grantee WHEN 0 THEN 'PUBLIC' ELSE x.grantee::regrole::text END"
 _PRIVILEGES = (
@@ -114,16 +137,33 @@ def problems(conn: Connection, extra_tenant: frozenset[str] = frozenset()) -> li
             found.append(f"tenant table {name} lacks organization_id uuid NOT NULL")
         elif not row[1]:
             found.append(f"tenant table {name} lacks an index leading with organization_id")
+    found += [
+        f"table {name} is in more than one class (ADR-012)" for name in duplicated(extra_tenant)
+    ]
+    rooted: set[str] = set()
     for con, child, parent, cols, ref in conn.execute(text(_FKS)).all():
+        if parent == "organizations" and cols == ["organization_id"] and ref == ["id"]:
+            rooted.add(child)
         both_tenant = classes.get(child) == classes.get(parent) == "tenant"
         paired = (
             "organization_id" in cols and ref[cols.index("organization_id")] == "organization_id"
         )
         if both_tenant and not paired:
             found.append(f"FK {con} on {child} must be composite with organization_id")
-    for table, cols in conn.execute(text(_UNIQUES)).all():
-        if classes.get(table) == "tenant" and cols != ["id"] and cols[0] != "organization_id":
-            found.append(f"unique key {cols} on {table} must start with organization_id")
+    found += [
+        f"tenant table {name} lacks an FK from organization_id to organizations(id)"
+        for name in sorted(n for n, c in classes.items() if c == "tenant" and n in existing)
+        if name not in rooted
+    ]
+    for table, cols, exclusion, operator in conn.execute(text(_UNIQUES)).all():
+        led = cols[0] == "organization_id" and (not exclusion or operator == "=")
+        if classes.get(table) == "tenant" and cols != ["id"] and not led:
+            kind = "exclusion key" if exclusion else "unique key"
+            found.append(f"{kind} {cols} on {table} must start with organization_id (with =)")
+    found += [f"rule {r} on {t} is banned" for r, t in conn.execute(text(_RULES))]
+    found += [
+        f"FK {k} on {t} must be NO ACTION or RESTRICT" for k, t in conn.execute(text(_FK_ACTIONS))
+    ]
     found += [f"SECURITY DEFINER function {f} is banned" for (f,) in conn.execute(text(_DEFINER))]
     expected = json.loads(SNAPSHOT.read_text())
     if snapshot(conn, exclude=extra_tenant) != expected:

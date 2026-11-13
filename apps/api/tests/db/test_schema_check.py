@@ -5,10 +5,11 @@ import os
 from collections.abc import Iterator
 
 import pytest
+from atesta_api.platform import tables
 from atesta_api.platform.schema_check import SNAPSHOT, problems, snapshot
 from sqlalchemy import Connection, Engine
 
-PROBES = frozenset({"probe", "probe_child", "badfk"})
+PROBES = frozenset({"probe", "probe_child", "badfk", "nofk"})
 
 
 @pytest.fixture
@@ -60,6 +61,48 @@ BAD_OBJECTS = {
         "CREATE UNIQUE INDEX bad_uq ON probe (v)",
         "must start with organization_id",
     ),
+    "tenant only in INCLUDE": (
+        "CREATE UNIQUE INDEX uq_ci ON probe (lower(v)) INCLUDE (organization_id)",
+        "must start with organization_id",
+    ),
+    "unique key on an expression only": (
+        "CREATE UNIQUE INDEX uq_expr ON probe (lower(v))",
+        "must start with organization_id",
+    ),
+    "exclusion constraint not led by tenant": (
+        "ALTER TABLE probe ADD CONSTRAINT ex_v EXCLUDE USING btree (v WITH =)",
+        "must start with organization_id",
+    ),
+    "exclusion constraint comparing tenant with <>": (
+        "CREATE EXTENSION btree_gist; ALTER TABLE probe ADD CONSTRAINT ex_ne"
+        " EXCLUDE USING gist (organization_id WITH <>, v WITH =)",
+        "must start with organization_id",
+    ),
+    "rewrite rule on a table": (
+        "CREATE RULE r1 AS ON INSERT TO audit_events DO ALSO NOTHING",
+        "rule r1 on public.audit_events is banned",
+    ),
+    "rewrite rule on a security_invoker view": (
+        "CREATE VIEW vi WITH (security_invoker = true) AS SELECT id FROM probe;"
+        " CREATE RULE vi_ins AS ON INSERT TO vi DO INSTEAD NOTHING",
+        "rule vi_ins on public.vi is banned",
+    ),
+    "cascading fk": (
+        "ALTER TABLE probe_child ADD CONSTRAINT casc FOREIGN KEY (organization_id, probe_id)"
+        " REFERENCES probe (organization_id, id) ON DELETE CASCADE",
+        "FK casc on public.probe_child must be NO ACTION or RESTRICT",
+    ),
+    "set default fk on update": (
+        "ALTER TABLE evidence ADD COLUMN probe_id uuid;"
+        " ALTER TABLE evidence ADD CONSTRAINT setdef FOREIGN KEY (organization_id, probe_id)"
+        " REFERENCES probe (organization_id, id) ON UPDATE SET DEFAULT",
+        "FK setdef on public.evidence must be NO ACTION or RESTRICT",
+    ),
+    "tenant table without FK to organizations": (
+        "CREATE TABLE nofk (id uuid PRIMARY KEY, organization_id uuid NOT NULL);"
+        " CREATE INDEX ON nofk (organization_id); ALTER TABLE nofk ENABLE ROW LEVEL SECURITY",
+        "tenant table nofk lacks an FK from organization_id to organizations(id)",
+    ),
 }
 
 
@@ -68,3 +111,20 @@ def test_linter_catches_fail_open_object(owner_tx: Connection, name: str) -> Non
     ddl, expected = BAD_OBJECTS[name]
     owner_tx.exec_driver_sql(ddl)
     assert any(expected in p for p in problems(owner_tx, PROBES)), problems(owner_tx, PROBES)
+
+
+def test_tenant_led_and_id_keys_are_clean(owner_tx: Connection) -> None:
+    owner_tx.exec_driver_sql("CREATE UNIQUE INDEX uq_ok ON probe (organization_id, lower(v))")
+    owner_tx.exec_driver_sql("CREATE UNIQUE INDEX uq_id_inc ON probe (id) INCLUDE (v)")
+    owner_tx.exec_driver_sql(
+        "ALTER TABLE probe ADD CONSTRAINT ex_ok"
+        " EXCLUDE USING btree (organization_id WITH =, v WITH =)"
+    )
+    assert problems(owner_tx, PROBES) == []
+
+
+def test_table_in_two_classes_is_reported(
+    owner_tx: Connection, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(tables, "GLOBAL_IDENTITY", tables.GLOBAL_IDENTITY | {"evidence"})
+    assert "table evidence is in more than one class (ADR-012)" in problems(owner_tx, PROBES)
