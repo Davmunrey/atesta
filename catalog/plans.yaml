@@ -1,0 +1,11 @@
+# Framework grants per plan and add-on (ADR-009, control-model spec).
+# Keys are pack ids from catalog/frameworks/<pack>/pack.yaml. Values are "all" or a list of that
+# pack's applies_to values. Grants are added as each pack is released (catalog spec), so a new
+# pack or level is a YAML change, never code (MF-03, rule 9).
+# Business plan hypothesis to encode then: starter = first pack at its lowest level;
+# pro = first pack, all levels; business = every released pack.
+plans:
+  starter: {}
+  pro: {}
+  business: {}
+addons: {}
