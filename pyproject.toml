@@ -22,6 +22,7 @@ dev = [
     "types-pyyaml>=6.0.12.20261103",
     "python-multipart>=0.0.20",
     "python-hcl2>=4.3",
+    "py-ocsf-models==0.10.0",
 ]
 
 [tool.ruff]
