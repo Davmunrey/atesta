@@ -40,20 +40,34 @@ class CognitoSettings:
     user_pool_id: str
     app_client_id: str
     domain: str
+    issuer_override: str | None = None  # local fake only (local-dev-auth spec)
+    base_url_override: str | None = None
 
     @classmethod
     def from_env(cls) -> "CognitoSettings":
         env = os.environ
+        issuer = env.get("ATESTA_COGNITO_ISSUER")
+        base_url = env.get("ATESTA_COGNITO_BASE_URL")
+        if (issuer or base_url) and env.get("ATESTA_ENV") == "prod":
+            raise RuntimeError("Cognito issuer and base URL overrides are not allowed in prod")
         return cls(
             env["ATESTA_COGNITO_REGION"],
             env["ATESTA_COGNITO_USER_POOL_ID"],
             env["ATESTA_COGNITO_APP_CLIENT_ID"],
             env["ATESTA_COGNITO_DOMAIN"],
+            issuer,
+            base_url,
         )
 
     @property
     def issuer(self) -> str:
-        return f"https://cognito-idp.{self.region}.amazonaws.com/{self.user_pool_id}"
+        default = f"https://cognito-idp.{self.region}.amazonaws.com/{self.user_pool_id}"
+        return self.issuer_override or default
+
+    @property
+    def base_url(self) -> str:
+        """Managed login domain: authorize, token, userInfo and logout endpoints."""
+        return (self.base_url_override or f"https://{self.domain}").rstrip("/")
 
 
 @dataclass(frozen=True, slots=True)
@@ -177,7 +191,7 @@ class CognitoUserInfo:
     """Profile from /oauth2/userInfo with the caller's own access token (scopes openid email)."""
 
     def __init__(self, settings: CognitoSettings, client: httpx.Client) -> None:
-        self._url = f"https://{settings.domain}/oauth2/userInfo"
+        self._url = f"{settings.base_url}/oauth2/userInfo"
         self._client = client
 
     def userinfo(self, access_token: str) -> UserInfo:
@@ -209,7 +223,7 @@ class CognitoOAuth:
         verifier: TokenVerifier,
         web_origin: str,
     ) -> None:
-        self._base = f"https://{settings.domain}"
+        self._base = settings.base_url
         self._client_id = settings.app_client_id
         self._client = client
         self._verifier = verifier
