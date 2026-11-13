@@ -1,0 +1,8 @@
+# Build context for scanner/Dockerfile: only what the image copies.
+*
+!scanner/build-requirements.txt
+!scanner/requirements.txt
+!scanner/atesta_scanner/**
+!scanner/expected/**
+!packages/core/src/atesta_core/**
+**/__pycache__
