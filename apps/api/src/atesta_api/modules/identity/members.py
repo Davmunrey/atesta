@@ -5,7 +5,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Response
 from pydantic import BaseModel
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, or_, select, update
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.identity.deps import Member, error, require_member, require_role
@@ -27,26 +27,28 @@ class RoleIn(BaseModel):
     role: Role
 
 
-def _target_role(session: Session, org_id: uuid.UUID, user_id: uuid.UUID) -> Role:
-    role = session.execute(
-        select(Membership.role).where(
-            Membership.organization_id == org_id, Membership.user_id == user_id
+def _lock_target(
+    session: Session, org_id: uuid.UUID, user_id: uuid.UUID
+) -> tuple[Role, set[uuid.UUID]]:
+    """Lock the target row and every owner row in one statement, then decide.
+
+    Every decision reads this locked state, so a concurrent promotion, demotion or removal of
+    the target is seen. Rows lock in user_id order, so two requests cannot deadlock. The org
+    row stays unlocked: every tenant FK points at it.
+    """
+    rows = session.execute(
+        select(Membership.user_id, Membership.role)
+        .where(
+            Membership.organization_id == org_id,
+            or_(Membership.user_id == user_id, Membership.role == Role.OWNER),
         )
-    ).scalar()
+        .order_by(Membership.user_id)
+        .with_for_update()
+    ).all()
+    role = next((r for u, r in rows if u == user_id), None)
     if role is None:
         raise error(404, "identity.not_found")
-    return Role(role)
-
-
-def _keep_an_owner(session: Session, org_id: uuid.UUID, user_id: uuid.UUID) -> None:
-    """Lock the owner rows, not the org row (every tenant FK points at it), then count."""
-    owners = session.execute(
-        select(Membership.user_id)
-        .where(Membership.organization_id == org_id, Membership.role == Role.OWNER)
-        .with_for_update()
-    ).scalars()
-    if set(owners) <= {user_id}:
-        raise error(409, "identity.last_owner")
+    return Role(role), {u for u, r in rows if r == Role.OWNER}
 
 
 @router.get("")
@@ -70,9 +72,9 @@ def change_role(
     session: DbSession,
 ) -> MemberOut:
     org_id = member.organization_id
-    current = _target_role(session, org_id, user_id)
-    if current == Role.OWNER and body.role != Role.OWNER:
-        _keep_an_owner(session, org_id, user_id)
+    current, owners = _lock_target(session, org_id, user_id)
+    if current == Role.OWNER and body.role != Role.OWNER and owners <= {user_id}:
+        raise error(409, "identity.last_owner")
     session.execute(
         update(Membership)
         .where(Membership.organization_id == org_id, Membership.user_id == user_id)
@@ -100,11 +102,11 @@ def remove_member(
     session: DbSession,
 ) -> Response:
     org_id = member.organization_id
-    target = _target_role(session, org_id, user_id)
+    target, owners = _lock_target(session, org_id, user_id)
     if target != Role.MEMBER and member.role != Role.OWNER:
         raise error(403, "identity.forbidden")
-    if target == Role.OWNER:
-        _keep_an_owner(session, org_id, user_id)
+    if target == Role.OWNER and owners <= {user_id}:
+        raise error(409, "identity.last_owner")
     session.execute(
         delete(Membership).where(
             Membership.organization_id == org_id, Membership.user_id == user_id

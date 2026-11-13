@@ -21,6 +21,7 @@ out/
 .env.*
 !.env.example
 *.pem
+!apps/api/src/atesta_api/platform/certs/*.pem
 *.key
 
 # IaC
