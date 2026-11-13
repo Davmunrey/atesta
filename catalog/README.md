@@ -42,6 +42,10 @@ The optional `--import` writes immutable drafts only to a loopback `atesta_dev` 
 using `ATESTA_MIGRATION_DATABASE_URL` and an explicit development `ATESTA_ENV`. Exact reimports
 are no-ops; changed existing rows fail transactionally and require an explicit migration.
 This command does not publish reviewed/released packs or update production.
+Configure the optional owner-capable URL separately from the application login; the commented
+example in `apps/api/.env.example` documents its shape. Validation without `--import` needs no
+database credentials. `uv run --env-file apps/api/.env python -m apps.api.devtools.preview_catalog --import`
+loads local settings explicitly; it does not infer the migration URL from the application URL.
 
 Preview packs set `assessment_enabled: false`: they remain visible with the existing local
 draft flag but cannot receive scan scores. Candidate technical mappings retain documentary

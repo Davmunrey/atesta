@@ -6,18 +6,14 @@ import { useId, useState } from "react";
 import { useFrameworkDetail } from "@/lib/api/hooks";
 import type { components } from "@/lib/api/schema";
 import { orgHome } from "@/lib/org";
+import { CatalogPreparation, PreparationGuides, RequirementGuidance } from "./catalog-preparation";
+import { CatalogReference as Reference } from "./catalog-reference";
 import { ErrorMessage } from "./error-message";
 
 type Detail = components["schemas"]["FrameworkDetail"];
 type Requirement = components["schemas"]["RequirementDetail"];
 const statuses = ["fail", "manual", "not_evaluated", "pass", "not_applicable"] as const;
 type Filter = "all" | typeof statuses[number];
-
-function Reference({ value }: { value: string }) {
-  let safe = false;
-  try { const url = new URL(value); safe = ["https:", "http:"].includes(url.protocol) && !url.username && !url.password; } catch { /* A catalog reference may be plain text. */ }
-  return safe ? <a href={value} className="text-link underline" target="_blank" rel="noopener noreferrer">{value}</a> : <span>{value}</span>;
-}
 
 export function FrameworkDetailView({ orgId, frameworkKey }: { orgId: string; frameworkKey: string }) {
   const t = useTranslations("framework");
@@ -38,7 +34,9 @@ export function FrameworkDetailView({ orgId, frameworkKey }: { orgId: string; fr
           <p><time dateTime={query.data.snapshot.computed_at}>{format.dateTime(new Date(query.data.snapshot.computed_at), { dateStyle: "medium", timeStyle: "short" })}</time> · {dashboard("version", { version: query.data.snapshot.framework_version })} · {dashboard("organizationScope")}</p>
         </div> : <p className="framework-notice">{t("unassessed")}</p>}
         {query.data.snapshot && !query.data.catalog_matches_snapshot ? <p className="framework-notice">{t("catalogChanged")}</p> : null}
+        {query.data.catalog_context ? <CatalogPreparation context={query.data.catalog_context} requirements={query.data.requirements.length} controls={query.data.preparation_controls?.length ?? 0} /> : null}
         <RequirementRegister key={`${orgId}:${frameworkKey}`} detail={query.data} />
+        <PreparationGuides controls={query.data.preparation_controls ?? []} />
         <div className="framework-catalog"><h2>{t("catalogTitle")}</h2><p>{t("currentVersion", { version: query.data.version, catalog: query.data.catalog_version ?? t("unknownVersion") })}</p>
           <p>{t("catalogHelp")}</p><Reference value={query.data.source} />
         </div>
@@ -56,7 +54,7 @@ function RequirementRegister({ detail }: { detail: Detail }) {
   const needle = search.trim().toLocaleLowerCase(locale);
   const visible = detail.requirements.filter((r) => (filter === "all" || r.status === filter)
     && [r.code, r.title_es, r.title_en, ...r.controls.flatMap((c) => [c.key, c.title_es, c.title_en, ...c.checks.map((check) => check.check_id)])].join(" ").toLocaleLowerCase(locale).includes(needle))
-    .sort((a, b) => statuses.indexOf(a.status) - statuses.indexOf(b.status) || a.code.localeCompare(b.code, locale));
+    .sort((a, b) => statuses.indexOf(a.status) - statuses.indexOf(b.status) || (a.guidance?.section ?? a.code).localeCompare(b.guidance?.section ?? b.code, locale, { numeric: true }));
   return <section aria-labelledby="requirements-heading" className="requirement-register">
     <h2 id="requirements-heading">{t("requirements")}</h2><p className="text-muted">{t("registerHelp")}</p>
     {detail.requirements.length === 0 ? <div className="dashboard-empty"><h3>{t("empty")}</h3><p>{t("emptyHelp")}</p></div> : <>
@@ -88,6 +86,7 @@ function RequirementRow({ requirement: r, initiallyOpen }: { requirement: Requir
       <h3>{t("nextStep")}</h3><p>{t(`next.${r.status}`)}</p>
       {!r.in_current_catalog ? <p className="framework-notice">{t("historicalHelp")}</p> : null}
       {r.applies_to.length > 0 ? <p className="text-sm text-muted">{t("applicability")}: {r.applies_to.join(", ")}</p> : null}
+      {r.guidance ? <RequirementGuidance guidance={r.guidance} /> : null}
       {r.source ? <p className="requirement-source">{t("source")}: <Reference value={r.source} /></p> : null}
       <div className="control-guides"><h3>{t("configurations")}</h3>
         {r.controls.length === 0 ? <p className="text-muted">{t("noControls")}</p> : r.controls.map((control) => <article className="control-guide" key={control.key}>

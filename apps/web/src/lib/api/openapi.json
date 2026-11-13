@@ -63,6 +63,24 @@
         "title": "CheckDetail",
         "type": "object"
       },
+      "CheckReference": {
+        "properties": {
+          "check_id": {
+            "title": "Check Id",
+            "type": "string"
+          },
+          "engine": {
+            "title": "Engine",
+            "type": "string"
+          }
+        },
+        "required": [
+          "engine",
+          "check_id"
+        ],
+        "title": "CheckReference",
+        "type": "object"
+      },
       "ControlDetail": {
         "properties": {
           "checks": {
@@ -174,6 +192,16 @@
       },
       "FrameworkDetail": {
         "properties": {
+          "catalog_context": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PackContext"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "catalog_matches_snapshot": {
             "title": "Catalog Matches Snapshot",
             "type": "boolean"
@@ -200,6 +228,13 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "preparation_controls": {
+            "items": {
+              "$ref": "#/components/schemas/PreparationControl"
+            },
+            "title": "Preparation Controls",
+            "type": "array"
           },
           "requirements": {
             "items": {
@@ -517,6 +552,158 @@
         "title": "OverviewOut",
         "type": "object"
       },
+      "PackContext": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability_en": {
+            "minLength": 1,
+            "title": "Applicability En",
+            "type": "string"
+          },
+          "applicability_es": {
+            "minLength": 1,
+            "title": "Applicability Es",
+            "type": "string"
+          },
+          "assessment_enabled": {
+            "const": false,
+            "title": "Assessment Enabled",
+            "type": "boolean"
+          },
+          "content_state": {
+            "enum": [
+              "template",
+              "partial",
+              "complete"
+            ],
+            "title": "Content State",
+            "type": "string"
+          },
+          "limitations_en": {
+            "minLength": 1,
+            "title": "Limitations En",
+            "type": "string"
+          },
+          "limitations_es": {
+            "minLength": 1,
+            "title": "Limitations Es",
+            "type": "string"
+          },
+          "preparation_controls": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Preparation Controls",
+            "type": "array"
+          },
+          "scope_en": {
+            "minLength": 1,
+            "title": "Scope En",
+            "type": "string"
+          },
+          "scope_es": {
+            "minLength": 1,
+            "title": "Scope Es",
+            "type": "string"
+          },
+          "source_refs": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Source Refs",
+            "type": "array"
+          },
+          "summary_en": {
+            "minLength": 1,
+            "title": "Summary En",
+            "type": "string"
+          },
+          "summary_es": {
+            "minLength": 1,
+            "title": "Summary Es",
+            "type": "string"
+          },
+          "verified_on": {
+            "format": "date",
+            "title": "Verified On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "content_state",
+          "assessment_enabled",
+          "summary_es",
+          "summary_en",
+          "scope_es",
+          "scope_en",
+          "applicability_es",
+          "applicability_en",
+          "limitations_es",
+          "limitations_en",
+          "preparation_controls",
+          "source_refs",
+          "verified_on"
+        ],
+        "title": "PackContext",
+        "type": "object"
+      },
+      "PreparationControl": {
+        "properties": {
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/CheckReference"
+            },
+            "title": "Checks",
+            "type": "array"
+          },
+          "description_en": {
+            "title": "Description En",
+            "type": "string"
+          },
+          "description_es": {
+            "title": "Description Es",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "manual": {
+            "title": "Manual",
+            "type": "boolean"
+          },
+          "remediation_refs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Remediation Refs",
+            "type": "array"
+          },
+          "title_en": {
+            "title": "Title En",
+            "type": "string"
+          },
+          "title_es": {
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "title_es",
+          "title_en",
+          "description_es",
+          "description_en",
+          "manual",
+          "remediation_refs",
+          "checks"
+        ],
+        "title": "PreparationControl",
+        "type": "object"
+      },
       "RecordedStatus": {
         "enum": [
           "pass",
@@ -525,6 +712,54 @@
           "not_applicable"
         ],
         "type": "string"
+      },
+      "RequirementContext": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability_es": {
+            "minLength": 1,
+            "title": "Applicability Es",
+            "type": "string"
+          },
+          "official_text_es": {
+            "minLength": 1,
+            "title": "Official Text Es",
+            "type": "string"
+          },
+          "section": {
+            "minLength": 1,
+            "title": "Section",
+            "type": "string"
+          },
+          "selection_basis": {
+            "minLength": 1,
+            "title": "Selection Basis",
+            "type": "string"
+          },
+          "selection_rules": {
+            "items": {
+              "$ref": "#/components/schemas/SelectionRule"
+            },
+            "minItems": 1,
+            "title": "Selection Rules",
+            "type": "array"
+          },
+          "source_sha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Source Sha256",
+            "type": "string"
+          }
+        },
+        "required": [
+          "official_text_es",
+          "applicability_es",
+          "selection_basis",
+          "selection_rules",
+          "section",
+          "source_sha256"
+        ],
+        "title": "RequirementContext",
+        "type": "object"
       },
       "RequirementDetail": {
         "properties": {
@@ -545,6 +780,16 @@
             },
             "title": "Controls",
             "type": "array"
+          },
+          "guidance": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RequirementContext"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "in_current_catalog": {
             "title": "In Current Catalog",
@@ -694,6 +939,27 @@
           "finished_at"
         ],
         "title": "ScanSummary",
+        "type": "object"
+      },
+      "SelectionRule": {
+        "additionalProperties": false,
+        "properties": {
+          "level": {
+            "minLength": 1,
+            "title": "Level",
+            "type": "string"
+          },
+          "rule": {
+            "minLength": 1,
+            "title": "Rule",
+            "type": "string"
+          }
+        },
+        "required": [
+          "level",
+          "rule"
+        ],
+        "title": "SelectionRule",
         "type": "object"
       },
       "SnapshotSummary": {

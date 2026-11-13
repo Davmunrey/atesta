@@ -259,5 +259,31 @@
     "refresh": "Refresh results",
     "assessmentNote": "Atesta organizes results and evidence to help prepare for audits. It does not certify compliance.",
     "pendingReviews": "{count, plural, one {# manual review pending} other {# manual reviews pending}}"
+  },
+  "preparation": {
+    "states": {
+      "template": "Preparation template",
+      "partial": "Normative content under review",
+      "complete": "Content prepared, publication pending"
+    },
+    "disabled": "Assessment disabled. Applicability and your organization’s compliance remain undetermined.",
+    "navigate": "Preparation contents",
+    "requirementsCount": "{count} available requirements",
+    "controlsCount": "{count} preparation guides",
+    "scope": "Scope and applicability",
+    "applicability": "How to decide what applies",
+    "missing": "What is missing for assessment",
+    "sources": "Official sources",
+    "verified": "Sources consulted: {date}.",
+    "selection": "Measure and reinforcement selection",
+    "selectionHelp": "Official reference in Spanish. This table alone does not determine applicability to your system. Consult symbols, dimensions and rules in the source.",
+    "level": "Level or category",
+    "rule": "Selection rule",
+    "officialText": "Read full official text (Spanish)",
+    "controls": "Controls to prepare and analyze",
+    "controlsHelp": "Shared guides for reviewing settings and gathering evidence. These are not covered requirements, findings or approved mappings. Review scope and impact before changing settings.",
+    "manual": "Documentary review",
+    "technical": "Technical configuration",
+    "candidateChecks": "Candidate checks, no observation"
   }
 }

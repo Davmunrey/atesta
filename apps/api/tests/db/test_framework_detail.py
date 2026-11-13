@@ -1,5 +1,6 @@
 """Read-only framework register, using real PostgreSQL and synthetic catalog data."""
 
+import json
 import uuid
 from collections.abc import Iterator
 from datetime import UTC, datetime
@@ -55,6 +56,64 @@ def detail_catalog(superuser: Engine, overview_catalog: dict[str, str]) -> Itera
 
 def url(org: str, key: str) -> str:
     return f"/api/v1/orgs/{org}/frameworks/{key}"
+
+
+def test_preparation_context_is_allowlisted_and_never_an_assessment(
+    client: TestClient, superuser: Engine, detail_catalog: dict[str, str]
+) -> None:
+    org, subs = org_with(client, superuser)
+    key = detail_catalog["active"]
+    context = {
+        "content_state": "partial",
+        "assessment_enabled": False,
+        "summary_es": "Ejemplo",
+        "summary_en": "Example",
+        "scope_es": "Alcance de prueba",
+        "scope_en": "Test scope",
+        "applicability_es": "Revisión humana",
+        "applicability_en": "Human review",
+        "limitations_es": "Sin revisar",
+        "limitations_en": "Unreviewed",
+        "preparation_controls": [detail_catalog["control"], "missing"],
+        "source_refs": ["https://example.test/source"],
+        "verified_on": "2026-11-13",
+        "private_note": "not public",
+        "preview_fingerprint": "not public",
+    }
+    guidance = {
+        "official_text_es": "Texto sintético de prueba.",
+        "applicability_es": "Depende del alcance.",
+        "selection_basis": "dimension",
+        "selection_rules": [{"level": "low", "rule": "example"}],
+        "section": "1.2",
+        "source_sha256": "a" * 64,
+        "private_note": "not public",
+    }
+    with superuser.begin() as conn:
+        conn.execute(
+            text("UPDATE frameworks SET attributes = CAST(:data AS jsonb) WHERE key = :key"),
+            {"key": key, "data": json.dumps(context)},
+        )
+        conn.execute(
+            text(
+                "UPDATE requirements SET attributes = CAST(:data AS jsonb)"
+                " WHERE framework_key = :key AND code = 'R1'"
+            ),
+            {"key": key, "data": json.dumps(guidance)},
+        )
+    response = client.get(url(org, key), headers=auth(subs["owner"]))
+    assert response.status_code == 200
+    data = response.json()
+    assert data["catalog_context"]["assessment_enabled"] is False
+    assert data["requirements"][0]["guidance"]["selection_rules"] == guidance["selection_rules"]
+    assert data["requirements"][1]["guidance"] is None
+    assert [c["key"] for c in data["preparation_controls"]] == [detail_catalog["control"]]
+    assert data["preparation_controls"][0]["checks"] == []
+    assert "observed_status" not in data["preparation_controls"][0]
+    assert "mapping_reviewed" not in data["preparation_controls"][0]
+    assert "private_note" not in response.text and "preview_fingerprint" not in response.text
+    assert data["snapshot"] is None
+    assert {r["status"] for r in data["requirements"]} == {"not_evaluated"}
 
 
 @pytest.mark.parametrize("role", ["owner", "admin", "member"])

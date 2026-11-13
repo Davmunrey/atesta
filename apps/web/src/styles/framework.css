@@ -51,6 +51,28 @@
   .control-references li { padding-block: 0.375rem; }
   .framework-catalog { margin-top: 2rem; padding-block: 1.5rem; border-top: 1px solid var(--color-border); overflow-wrap: anywhere; font-size: 0.875rem; }
   .framework-catalog p { margin-block: 0.5rem; }
+  .catalog-preparation { margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--color-border); }
+  .catalog-preparation h2, .preparation-guides h2 { font-size: 1.25rem; font-weight: 500; }
+  .catalog-preparation p, .preparation-guides p, .requirement-guidance p { max-width: 72ch; }
+  .catalog-preparation p, .preparation-guides p { margin-top: 0.5rem; }
+  .catalog-boundary { font-weight: 500; }
+  .preparation-jumps { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; padding-block: 0.875rem; font-variant-numeric: tabular-nums; }
+  .preparation-jumps a { color: var(--color-link); text-decoration: underline; padding-block: 0.375rem; }
+  .catalog-disclosure { border-top: 1px solid var(--color-border); font-size: 0.9375rem; overflow-wrap: anywhere; }
+  .catalog-disclosure > summary { padding-block: 0.875rem; cursor: pointer; font-weight: 500; }
+  .catalog-disclosure > summary:hover { color: var(--color-link); }
+  .catalog-disclosure[open] { padding-bottom: 1.25rem; }
+  .catalog-disclosure h3 { margin-top: 1rem; font-weight: 500; }
+  .catalog-disclosure li { padding-block: 0.375rem; }
+  .preparation-guides { margin-top: 2.5rem; scroll-margin-top: 1.5rem; }
+  .preparation-guides > p { margin-bottom: 1.25rem; }
+  .preparation-control > summary > span + span { margin-left: 1rem; font-size: 0.8125rem; font-weight: 400; }
+  .control-description, .official-text { white-space: pre-line; }
+  .selection-table { width: 100%; max-width: 72ch; margin-block: 0.75rem; font-size: 0.875rem; border-collapse: collapse; }
+  .selection-table caption { text-align: left; padding-bottom: 0.75rem; color: var(--color-muted); }
+  .selection-table th, .selection-table td { text-align: left; vertical-align: top; border-bottom: 1px solid var(--color-border); padding: 0.625rem 0.75rem 0.625rem 0; overflow-wrap: anywhere; }
+  .selection-table th { font-weight: 500; }
+  .requirement-guidance .catalog-disclosure { margin-top: 1rem; }
   @media (max-width: 40rem) {
     .workspace:has(.framework-page) .organization-context { padding-block: 1.25rem; }
     .framework-title .page-title { font-size: 2rem; }
