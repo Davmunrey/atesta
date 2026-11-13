@@ -122,6 +122,23 @@ export interface paths {
         patch: operations["change_role_api_v1_orgs__org_id__members__user_id__patch"];
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Overview */
+        get: operations["overview_api_v1_orgs__org_id__overview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/callback": {
         parameters: {
             query?: never;
@@ -226,6 +243,18 @@ export interface components {
             id: string;
             role: components["schemas"]["Role"];
         };
+        /** FrameworkSummary */
+        FrameworkSummary: {
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            snapshot: components["schemas"]["SnapshotSummary"] | null;
+            /** Status */
+            status: string;
+            /** Version */
+            version: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -308,6 +337,17 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** OverviewOut */
+        OverviewOut: {
+            /** Development */
+            development: boolean;
+            /** Evidence Count */
+            evidence_count: number;
+            /** Frameworks */
+            frameworks: components["schemas"]["FrameworkSummary"][];
+            /** Scans */
+            scans: components["schemas"]["ScanSummary"][];
+        };
         /**
          * Role
          * @enum {string}
@@ -316,6 +356,67 @@ export interface components {
         /** RoleIn */
         RoleIn: {
             role: components["schemas"]["Role"];
+        };
+        /** ScanSummary */
+        ScanSummary: {
+            /** Evaluated Checks */
+            evaluated_checks: number;
+            /** Expected Checks */
+            expected_checks: number;
+            /** Finished At */
+            finished_at: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Provider
+             * @enum {string}
+             */
+            provider: "m365" | "google_workspace";
+            /**
+             * Queued At
+             * Format: date-time
+             */
+            queued_at: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "collected" | "succeeded" | "partial" | "failed" | "blocked";
+        };
+        /** SnapshotSummary */
+        SnapshotSummary: {
+            /** Catalog Version */
+            catalog_version: string;
+            /**
+             * Computed At
+             * Format: date-time
+             */
+            computed_at: string;
+            /** Failed */
+            failed: number;
+            /** Framework Version */
+            framework_version: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Manual */
+            manual: number;
+            /** Not Applicable */
+            not_applicable: number;
+            /** Passed */
+            passed: number;
+            /**
+             * Scan Id
+             * Format: uuid
+             */
+            scan_id: string;
+            /** Score */
+            score: number | null;
         };
         /** ValidationError */
         ValidationError: {
@@ -605,6 +706,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MemberOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    overview_api_v1_orgs__org_id__overview_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OverviewOut"];
                 };
             };
             /** @description Validation Error */

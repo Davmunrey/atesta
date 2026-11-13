@@ -6,13 +6,22 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from datetime import datetime
 
-from sqlalchemy import insert
+from sqlalchemy import func, insert, select
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.compliance.api import active_control_keys, control_is_active
 from atesta_api.modules.evidence.models import Evidence, EvidenceControl
 
 _UNSAFE = re.compile(r"[^A-Za-z0-9_.-]+")
+
+
+def evidence_count(session: Session, organization_id: uuid.UUID) -> int:
+    """Count tenant records without loading document contents or storage metadata."""
+    return session.execute(
+        select(func.count())
+        .select_from(Evidence)
+        .where(Evidence.organization_id == organization_id)
+    ).scalar_one()
 
 
 def storage_key_for(organization_id: uuid.UUID, evidence_id: uuid.UUID, filename: str) -> str:
