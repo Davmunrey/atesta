@@ -1,0 +1,4 @@
+# Build backend for the sdist-only dependencies of requirements.txt, hash-locked so building
+# them (pip --no-build-isolation) never fetches an unpinned tool.
+setuptools
+wheel

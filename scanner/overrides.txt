@@ -1,0 +1,5 @@
+# Overrides for requirements.txt. Each one replaces a transitive pin that ships a known
+# vulnerability, for code the M365 and Google Workspace scan never imports.
+# huaweicloudsdkcore pins pymongo==4.15.1 (PYSEC-2026-4294..4297, CVE-2026-106435); 4.18.3 fixes
+# all five. Prowler imports pymongo nowhere; only the Huawei Cloud provider SDK depends on it.
+pymongo>=4.18.3

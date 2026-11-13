@@ -1,0 +1,23 @@
+# Synthetic catalog for atesta-dev-scan and its tests (scanner-connectors spec). Test content
+# only (rule 10): no real framework, requirement or control text. Outside catalog/frameworks/
+# on purpose. Check ids come from scanner/expected/5.49.0/; a test keeps them there.
+catalog_version: synthetic-1
+frameworks:
+  - key: syn_alpha
+    name: Synthetic Alpha
+    requirements:
+      A-1: [syn.mfa]
+      A-2: [syn.admins]
+      A-3: [syn.mail]
+  - key: syn_beta
+    name: Synthetic Beta
+    requirements:
+      B-1: [syn.mfa, syn.mail]
+      B-2: [syn.calendar]
+      B-3: [syn.paper]
+controls:
+  syn.mfa: [entra_admin_users_mfa_enabled]
+  syn.admins: [entra_admin_users_cloud_only, entra_admin_consent_workflow_enabled]
+  syn.mail: [exchange_mailbox_audit_bypass_disabled, exchange_external_email_tagging_enabled]
+  syn.calendar: [calendar_external_sharing_primary_calendar]
+  syn.paper: []

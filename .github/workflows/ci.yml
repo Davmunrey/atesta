@@ -137,8 +137,24 @@ jobs:
           uv export --locked --all-packages --no-dev --no-emit-workspace --quiet -o "$RUNNER_TEMP/req.txt"
           uvx --exclude-newer "7 days" pip-audit==2.10.1 --strict --require-hashes --disable-pip -r "$RUNNER_TEMP/req.txt" -f json -o "$RUNNER_TEMP/audit.json" || { jq . "$RUNNER_TEMP/audit.json"; exit 1; }
           jq -e '[.dependencies[].name] | index("fastapi") != null' "$RUNNER_TEMP/audit.json"
+      - name: Dependency audit (scanner image)
+        run: |
+          for f in scanner/requirements.txt scanner/build-requirements.txt; do
+            uvx --exclude-newer "7 days" pip-audit==2.10.1 --strict --require-hashes --disable-pip -r "$f"
+          done
       - name: Static analysis (semgrep)
         run: uvx --exclude-newer "7 days" --from semgrep==1.184.0 semgrep scan --config auto --error
+
+  scanner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the scanner image
+        run: docker build -f scanner/Dockerfile -t atesta-scanner:ci .
+      - name: Offline golden
+        run: scanner/golden.sh atesta-scanner:ci
 
   infra:
     runs-on: ubuntu-latest

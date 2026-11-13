@@ -8,7 +8,14 @@ from pathlib import Path
 import yaml
 
 REPO = Path(__file__).resolve().parents[3]
-GUARDED = ["apps/api/src", "apps/api/migrations", "apps/worker", "packages/core/src"]
+GUARDED = [
+    "apps/api/src",
+    "apps/api/migrations",
+    "apps/worker",
+    "packages/core/src",
+    "scanner/atesta_scanner",
+    "scanner/tools",
+]
 DENYLIST = {"ens", "nis2", "iso27001", "27001", "rd311", "dora", "soc2"}
 # Splits on non-alphanumerics, camelCase and acronym CapWords: ENSLevel -> ENS, Level.
 _SPLIT = re.compile(r"[^0-9A-Za-z]+|(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])")
