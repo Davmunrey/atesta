@@ -13,7 +13,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-_HTTP_CODES = {404: "request.not_found", 405: "request.method_not_allowed"}
+# {"code": ...} literals, so the contract export (atesta_api.contract) lists every code.
+_HTTP_DETAILS = {404: {"code": "request.not_found"}, 405: {"code": "request.method_not_allowed"}}
+_OTHER_HTTP_DETAIL = {"code": "request.error"}
 
 
 def _field(error: Mapping[str, Any]) -> str:
@@ -36,9 +38,9 @@ async def _http_error(request: Request, exc: Exception) -> Response:
         return await _server_error(request, exc)
     if isinstance(exc.detail, dict):  # already {"code": ...} from a handler
         return await http_exception_handler(request, exc)
-    code = _HTTP_CODES.get(exc.status_code, "request.error")
+    detail = _HTTP_DETAILS.get(exc.status_code, _OTHER_HTTP_DETAIL)
     return JSONResponse(
-        status_code=exc.status_code, content={"detail": {"code": code}}, headers=exc.headers
+        status_code=exc.status_code, content={"detail": detail}, headers=exc.headers
     )
 
 

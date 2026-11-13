@@ -7,5 +7,35 @@
     "label": "Language",
     "es": "Español",
     "en": "English"
+  },
+  "errors": {
+    "unknown": "Something went wrong. Try again, and contact support if it keeps happening.",
+    "auth": {
+      "bad_nonce": "Sign-in could not be completed. Sign in again.",
+      "bad_origin": "A request that did not come from Atesta was blocked. Reload the page.",
+      "bad_state": "Sign-in expired. Sign in again.",
+      "invalid_token": "Your session has ended. Sign in again.",
+      "provider_unavailable": "We cannot verify your session right now. Try again in a few seconds."
+    },
+    "identity": {
+      "already_member": "This person is already a member of the organization.",
+      "email_mismatch": "This invitation is for a different email. Sign in with the invited email.",
+      "email_unverified": "Verify your email before continuing.",
+      "forbidden": "Your role does not allow this action.",
+      "invitation_invalid": "This invitation is not valid: it expired, was revoked or was already used.",
+      "last_owner": "The organization needs at least one owner. Make someone else an owner first.",
+      "not_found": "We could not find that, or you do not have access.",
+      "role_not_allowed": "You cannot assign that role.",
+      "token_in_query": "This invitation link is not valid. Open it again from the message you received."
+    },
+    "request": {
+      "error": "The request could not be completed. Try again.",
+      "invalid": "Check your input: one of the fields is not valid.",
+      "method_not_allowed": "This action is not available. Reload the page.",
+      "not_found": "We could not find that page or resource."
+    },
+    "server": {
+      "error": "Something went wrong on our side. Try again, and contact support if it keeps happening."
+    }
   }
 }

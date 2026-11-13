@@ -13,6 +13,20 @@ pnpm build            # static export to out/
 pnpm check-licenses   # fails on GPL, AGPL or undeclared licenses
 ```
 
+## API contract
+
+`src/lib/api/openapi.json` and `error-codes.json` are written by the API's contract test;
+`schema.d.ts` is generated from them. Tests on both sides fail when either is stale. After an
+API change:
+
+```bash
+ATESTA_UPDATE_API_CONTRACT=1 uv run pytest apps/api/tests/test_api_contract.py   # repo root
+pnpm gen:api                                                                       # apps/web
+```
+
+Every error code needs a message under `errors.<code>` in both message files (tested); an
+unknown code shows `errors.unknown`, never the raw code.
+
 - Spanish first: `messages/es.json`, then `messages/en.json`, same keys (tested). The choice
   lives in the `atesta_locale` cookie; the export is prerendered in Spanish.
 - Design tokens: `src/styles/tokens.css` is the only file with color, font or radius values

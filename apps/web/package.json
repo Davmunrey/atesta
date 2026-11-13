@@ -12,11 +12,13 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
-    "check-licenses": "pnpm licenses list --json | node scripts/check-licenses.ts"
+    "check-licenses": "pnpm licenses list --json | node scripts/check-licenses.ts",
+    "gen:api": "node scripts/gen-api-types.ts"
   },
   "dependencies": {
     "next": "16.4.5",
     "next-intl": "4.14.9",
+    "openapi-fetch": "0.17.0",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },
@@ -27,6 +29,7 @@
     "@types/react-dom": "19.3.0",
     "eslint": "10.14.0",
     "eslint-config-next": "16.4.5",
+    "openapi-typescript": "7.13.0",
     "tailwindcss": "4.3.4",
     "typescript": "6.0.3",
     "vitest": "5.1.0"
