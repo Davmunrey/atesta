@@ -37,5 +37,29 @@
     "server": {
       "error": "Something went wrong on our side. Try again, and contact support if it keeps happening."
     }
+  },
+  "app": {
+    "loading": "Loading…",
+    "signOut": "Sign out",
+    "signedInAs": "Signed in as {email}"
+  },
+  "home": {
+    "title": "Your organizations",
+    "createAnother": "Create another organization"
+  },
+  "createOrg": {
+    "title": "Create your organization",
+    "help": "It is where your team prepares for audits. You can invite more people afterwards.",
+    "name": "Organization name",
+    "submit": "Create organization"
+  },
+  "org": {
+    "switcher": "Organization",
+    "yourRole": "Your role: {role}"
+  },
+  "roles": {
+    "owner": "Owner",
+    "admin": "Admin",
+    "member": "Member"
   }
 }
