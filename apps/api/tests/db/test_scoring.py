@@ -21,7 +21,8 @@ INSERT INTO frameworks (key, name, version, jurisdiction, source, license_notes,
  ('fw_d', 'D', '1', 'EU', 'src', 'test', 'draft', '{}', 'r1');
 INSERT INTO controls (key, title_es, title_en, description_es, description_en, retired_at) VALUES
  ('c1', 't', 't', 'd', 'd', NULL), ('c2', 't', 't', 'd', 'd', NULL),
- ('c3', 't', 't', 'd', 'd', NULL), ('c_old', 't', 't', 'd', 'd', now());
+ ('c3', 't', 't', 'd', 'd', NULL), ('c4', 't', 't', 'd', 'd', NULL),
+ ('c_old', 't', 't', 'd', 'd', now());
 INSERT INTO requirements (framework_key, code, title_es, source, applies_to, attributes,
   retired_at) VALUES
  ('fw_x', 'X-1', 't', 's', '{}', '{}', NULL), ('fw_x', 'X-2', 't', 's', '{high}', '{}', NULL),
@@ -31,7 +32,8 @@ INSERT INTO requirements (framework_key, code, title_es, source, applies_to, att
  ('fw_d', 'D-1', 't', 's', '{}', '{}', NULL);
 INSERT INTO mappings (framework_key, requirement_code, control_key, rationale, source,
   retired_at) VALUES
- ('fw_x', 'X-1', 'c1', 'r', 's', NULL), ('fw_x', 'X-1', 'c_old', 'r', 's', now()),
+ ('fw_x', 'X-1', 'c1', 'r', 's', NULL), ('fw_x', 'X-1', 'c4', 'r', 's', now()),
+ ('fw_x', 'X-1', 'c_old', 'r', 's', NULL),
  ('fw_x', 'X-2', 'c2', 'r', 's', NULL), ('fw_x', 'X-3', 'c2', 'r', 's', NULL),
  ('fw_y', 'Y-1', 'c1', 'r', 's', NULL), ('fw_y', 'Y-1', 'c3', 'r', 's', NULL),
  ('fw_y', 'Y-2', 'c2', 'r', 's', NULL), ('fw_d', 'D-1', 'c1', 'r', 's', NULL);
@@ -92,11 +94,22 @@ def test_one_scan_scores_every_framework(tx: Session) -> None:
 def test_retired_rows_and_applicability(tx: Session) -> None:
     low = row(tx, snap(tx, "fw_x", applicability={"applies_to": ["low"]}))
     assert low["requirement_results"] == {"X-1": "pass"}  # X-2 out of scope, X-3 retired
-    assert float(low["score"]) == 100.0  # retired mapping to c_old does not make X-1 manual
+    # X-1 has a retired mapping to active c4 (no result) and an active mapping to retired c_old
+    # (no result): each filter alone keeps X-1 from turning manual.
+    assert float(low["score"]) == 100.0
+    assert low["manual"] == 0
 
 
 def test_draft_framework_is_not_scored(tx: Session) -> None:
     assert snap(tx, "fw_d") is None
+
+
+def test_draft_framework_is_scored_with_the_flag_in_dev(
+    tx: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("ATESTA_CATALOG_INCLUDE_DRAFTS", "true")
+    monkeypatch.setenv("ATESTA_ENV", "test")
+    assert row(tx, snap(tx, "fw_d"))["requirement_results"] == {"D-1": "pass"}
 
 
 def test_retried_job_is_idempotent_and_corrections_supersede(tx: Session) -> None:
