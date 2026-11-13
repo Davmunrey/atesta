@@ -18,5 +18,19 @@ prowler m365 --list-checks-json > m365.json
 prowler googleworkspace --list-checks-json > googleworkspace.json
 ```
 
-`m365-powershell.json` (the 54 PowerShell-backed checks, excluded until PR 10) arrives with
-PR 5.
+`5.49.0/m365-powershell.json` (54 checks; sha256
+`b985df5e0982fa768b606fbf4d139b212070236d5a4f0f6a16a8cbb5644c7105`) lists the M365 checks that
+read PowerShell data, excluded as `not_granted` until PR 10 (D1). It is the output of
+`scanner/tools/powershell_checks.py` over the same wheel's `prowler/providers/m365/services`:
+a check counts when it reads, through `<service>_client`, an attribute its service fills only
+inside `if self.powershell:`. Per service: Exchange 17, Defender 17, Teams 16, Admin center 3,
+Purview 1, as the spec states; no Entra check (Entra prefers Graph `accountEnabled`).
+
+```bash
+python -I scanner/tools/powershell_checks.py \
+  <venv>/lib/python3.12/site-packages/prowler/providers/m365/services \
+  scanner/expected/5.49.0/m365.json > m365-powershell.json
+```
+
+Exclusions with their reasons (D1 and D3 `not_granted`, D6 `excluded`) are composed by
+`atesta_core.exclusions`.
