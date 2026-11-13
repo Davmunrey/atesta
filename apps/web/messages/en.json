@@ -98,5 +98,9 @@
     "accept": "Accept invitation",
     "loading": "Loading…",
     "missing": "This invitation link is not valid or was already used. Ask for a new invitation."
+  },
+  "notFound": {
+    "title": "This page does not exist.",
+    "home": "Back to the start"
   }
 }

@@ -98,5 +98,9 @@
     "accept": "Aceptar invitación",
     "loading": "Cargando…",
     "missing": "Este enlace de invitación no es válido o ya se ha usado. Pide una invitación nueva."
+  },
+  "notFound": {
+    "title": "Esta página no existe.",
+    "home": "Volver al inicio"
   }
 }

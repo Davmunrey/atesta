@@ -5,6 +5,9 @@
 - ADRs: ADR-001, ADR-007, ADR-012, ADR-013
 - Build order: after identity-auth (its endpoints are the only backend this needs)
 - Revised 2026-11-13: BFF moved into the API so the web stays a static export (Infrastructure tab)
+- Revised 2026-11-13: CSP is one header with every page's script hashes; `pnpm build` fails if it
+  exceeds CloudFront's 1,783-character limit (AWS CloudFront quotas, checked 2026-11-13). e2e
+  serves the export through a CloudFront stand-in (`tests/e2e/serve.mjs`) that adds the headers.
 
 ## Problem
 
