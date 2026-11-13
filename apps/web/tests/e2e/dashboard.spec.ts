@@ -1,0 +1,67 @@
+import AxeBuilder from "@axe-core/playwright";
+import { type Page, expect, test } from "@playwright/test";
+import { overview } from "../fixtures/overview";
+
+async function createOrganization(page: Page) {
+  await page.goto("/app");
+  await page.waitForURL(/localhost:9000/);
+  await page.locator("input[name=email]").fill(`dashboard-${crypto.randomUUID()}@example.test`);
+  await page.locator("input[name=code]").fill("123456");
+  await page.getByRole("button").click();
+  await page.getByLabel("Nombre de la organización").fill("Equipo de ejemplo para revisar resultados");
+  await page.getByRole("button", { name: "Crear organización" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Equipo de ejemplo para revisar resultados");
+}
+
+test("dashboard reads a real empty organization and recovers after an API failure", async ({ page }) => {
+  await createOrganization(page);
+  await expect(page.getByText("Todavía no hay marcos publicados")).toBeVisible();
+  await expect(page.getByText("Aún no hay análisis registrados")).toBeVisible();
+  await page.route("**/api/v1/orgs/*/overview", (route) => route.fulfill({ status: 503, json: { detail: { code: "auth.provider_unavailable" } } }));
+  await page.getByRole("button", { name: "Actualizar resultados" }).click();
+  await expect(page.getByRole("alert")).toBeVisible();
+  await page.unroute("**/api/v1/orgs/*/overview");
+  await page.getByRole("button", { name: "Reintentar" }).click();
+  await expect(page.getByText("Todavía no hay marcos publicados")).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Secciones de la organización" }).getByRole("link", { name: "Miembros", exact: true })).toBeVisible();
+});
+
+test("recorded-result design supports filters, keyboard disclosure, both locales and responsive themes", async ({ page }) => {
+  const csp: string[] = [];
+  page.on("console", (message) => { if (message.text().includes("Content Security Policy")) csp.push(message.text()); });
+  await page.route("**/api/v1/orgs/*/overview", (route) => route.fulfill({ json: overview }));
+  await createOrganization(page);
+  const row = page.locator("details").filter({ hasText: "Synthetic Alpha" });
+  await expect(row).toHaveJSProperty("open", true);
+  await row.locator("summary").press("Enter");
+  await expect(row).toHaveJSProperty("open", false);
+  await row.locator("summary").press("Enter");
+  await expect(row).toHaveJSProperty("open", true);
+  await expect(page.getByText("synthetic-1", { exact: true }).first()).toBeVisible();
+  await page.getByRole("searchbox").fill("unmatched");
+  await expect(page.getByText("Ningún marco coincide con la búsqueda")).toBeVisible();
+  await page.getByRole("button", { name: "Limpiar búsqueda" }).click();
+  for (const locale of ["es", "en"] as const) {
+    if (locale === "en") await page.getByRole("button", { name: "English" }).click();
+    await expect(page.getByRole("heading", { name: locale === "es" ? "Resultados por marco" : "Results by framework" })).toBeVisible();
+    for (const colorScheme of ["light", "dark"] as const) {
+      await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
+      for (const width of [375, 768, 1280]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.evaluate(() => document.fonts.ready);
+        // A media override may be acknowledged before inherited theme colors settle.
+        const dark = colorScheme === "dark";
+        await expect(page.locator("body")).toHaveCSS("background-color", dark ? "rgb(23, 23, 21)" : "rgb(244, 241, 234)");
+        await expect(row.locator("summary strong")).toHaveCSS("color", dark ? "rgb(244, 241, 234)" : "rgb(20, 20, 20)");
+        await expect(page.getByRole("contentinfo").getByRole("link")).toHaveCSS("color", dark ? "rgb(192, 186, 174)" : "rgb(85, 81, 74)");
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+        expect(violations.filter((v) => v.impact === "serious" || v.impact === "critical")
+          .map((v) => `${v.id}: ${v.nodes.map((n) => n.failureSummary).join("; ")}`), `${locale}/${colorScheme}/${width}`).toEqual([]);
+      }
+    }
+  }
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Results by framework" })).toBeVisible();
+  expect(csp).toEqual([]);
+});

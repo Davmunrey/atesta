@@ -13,6 +13,7 @@ export default async function config(phase: string): Promise<NextConfig> {
     images: { unoptimized: true },
     // `next dev` would write its own agent instructions into AGENTS.md; ADR-013 vendors those.
     agentRules: false,
+    devIndicators: false,
   };
   if (phase !== PHASE_DEVELOPMENT_SERVER) return { ...shared, output: "export" };
   return {

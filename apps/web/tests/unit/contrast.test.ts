@@ -27,6 +27,7 @@ function ratio(a: string, b: string): number {
 const TEXT: [string, string][] = [
   ["fg", "bg"], ["fg", "surface"], ["muted", "bg"], ["muted", "surface"], ["link", "bg"],
   ["accent-fg", "accent"], ["danger", "bg"], ["danger-fg", "danger"],
+  ["success", "bg"], ["success", "surface"], ["warning", "bg"], ["warning", "surface"], ["danger", "surface"],
 ];
 const NON_TEXT: [string, string][] = [["focus", "bg"], ["focus", "surface"], ["border", "bg"]];
 
