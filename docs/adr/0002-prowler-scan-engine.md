@@ -15,6 +15,6 @@ Months of check development saved. Atesta's value moves to catalog, organization
 evidence pack and UX. Prowler Cloud is also a competitor; monitor it. Version bumps require a
 golden-test run.
 
-## Note (proposed 2026-11-13, scanner-connectors spec; not accepted)
+## Note (accepted 2026-11-13, scanner-connectors spec)
 The wrapper may choose Prowler flags and exclude checks (`--excluded-checks`); it never patches
 Prowler. Upstream defects are reported upstream.

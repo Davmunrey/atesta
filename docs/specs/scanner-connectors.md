@@ -3,8 +3,8 @@
 - Requirement ids: NFR-02, MF-02. Connector and scan requirements have no FR id in the repo yet.
 - Status: approved, with the defaults of D1 to D13 (the owner delegated design and product
   decisions on 2026-11-13: "Tú decides siempre")
-- ADRs: ADR-002, ADR-003, ADR-004 (amendment proposed), ADR-005, ADR-006, ADR-007, ADR-008,
-  ADR-011, ADR-012 (amendment proposed)
+- ADRs: ADR-002, ADR-003, ADR-004 (amendment 1 accepted), ADR-005, ADR-006, ADR-007, ADR-008,
+  ADR-011, ADR-012 (amendment 2 accepted)
 - Build order: after the control model (built) and the catalog spec's loader and sync job
   (`checks` and `control_checks` rows from YAML). A score for a real framework also needs a pack
   with reviewed mappings (control-model spec). One spec for both connectors, built Microsoft 365
