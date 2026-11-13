@@ -3,11 +3,14 @@
 import hashlib
 import re
 import secrets
+import string
 import uuid
+from collections.abc import Callable, Coroutine
 from datetime import UTC, datetime, timedelta
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Request, Response
+from fastapi.routing import APIRoute
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
@@ -31,9 +34,33 @@ from atesta_api.modules.identity.models import Invitation, Membership, Role, Use
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 
-router = APIRouter()  # mounted under /v1 by routes.py
 TTL = timedelta(days=7)
 _EMAIL = re.compile(r"[^@\s]+@[^@\s]+\.[^@\s]+")
+_ASCII_LOWER = str.maketrans(string.ascii_uppercase, string.ascii_lowercase)
+
+
+class QueryFreeRoute(APIRoute):
+    """400 identity.token_in_query on any query string, before body parsing, auth or userInfo:
+    the token must never travel in a URL (identity-auth spec)."""
+
+    def get_route_handler(self) -> Callable[[Request], Coroutine[Any, Any, Response]]:
+        handler = super().get_route_handler()
+
+        async def refuse_query(request: Request) -> Response:
+            if request.url.query:
+                raise error(400, "identity.token_in_query")
+            return await handler(request)
+
+        return refuse_query
+
+
+router = APIRouter()  # mounted under /v1 by routes.py
+accept_router = APIRouter(route_class=QueryFreeRoute)
+
+
+def normalize_email(value: str) -> str:
+    """Fold ASCII case only. Unicode casefold merges distinct mailboxes (ß -> ss, Kelvin -> k)."""
+    return value.strip().translate(_ASCII_LOWER)
 
 
 def token_hash(token: str) -> str:
@@ -47,9 +74,9 @@ class InvitationIn(BaseModel):
     @field_validator("email")
     @classmethod
     def normalize(cls, value: str) -> str:
-        if not _EMAIL.fullmatch(value.strip()):
-            raise ValueError("invalid email")
-        return value.strip().lower()
+        if not value.strip().isascii() or not _EMAIL.fullmatch(value.strip()):
+            raise ValueError("invalid email")  # Cognito and SES carry ASCII addresses only
+        return normalize_email(value)
 
 
 class InvitationOut(BaseModel):
@@ -154,16 +181,13 @@ def revoke_invitation(
     return Response(status_code=204)
 
 
-@router.post("/invitations/accept")
+@accept_router.post("/invitations/accept")
 def accept_invitation(
     body: AcceptIn,
-    request: Request,
     caller: CurrentCaller,
     session: DbSession,
     provider: Annotated[IdentityProvider, Depends(get_identity_provider)],
 ) -> dict[str, str]:
-    if request.url.query:
-        raise error(400, "identity.token_in_query")
     if not caller.profile_refreshed:  # decide on Cognito's current email, never a stale cache
         refresh_profile(session, provider, caller.sub, caller.access_token)
     user = session.execute(select(User).where(User.id == caller.user_id)).scalar_one()
@@ -182,7 +206,7 @@ def accept_invitation(
         raise error(410, "identity.invitation_invalid")
     if not user.email_verified:
         raise error(403, "identity.email_unverified")
-    if user.email.casefold() != invitation.email.casefold():
+    if normalize_email(user.email) != normalize_email(invitation.email):
         raise error(403, "identity.email_mismatch")
     org_id, role = invitation.organization_id, Role(invitation.role)
     enter_org_context(session, org_id, ContextReason.INVITATION)

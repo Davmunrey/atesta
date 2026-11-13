@@ -23,13 +23,17 @@ jobs:
           --health-interval 5s --health-timeout 5s --health-retries 12
     env:
       ATESTA_TEST_DATABASE_URL: postgresql+psycopg://postgres@localhost:5432/postgres
+      UV_LOCKED: "1"
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4
         with:
           python-version: "3.12"
+          version: "0.11.32"
       - name: Install
-        run: uv sync --all-packages
+        run: uv sync --all-packages --locked
       - name: Lint and format
         run: |
           uv run ruff check .
@@ -43,22 +47,31 @@ jobs:
 
   security:
     runs-on: ubuntu-latest
+    env:
+      UV_LOCKED: "1"
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4
         with:
           python-version: "3.12"
-      - name: Dependency audit
+          version: "0.11.32"
+      # uvx ignores the workspace cooldown, so each tool is pinned and gets --exclude-newer.
+      - name: Dependency audit (locked runtime dependencies)
         run: |
-          uv sync --all-packages
-          uvx pip-audit
+          uv export --locked --all-packages --no-dev --no-emit-workspace --quiet -o "$RUNNER_TEMP/req.txt"
+          uvx --exclude-newer "7 days" pip-audit==2.10.1 --strict --require-hashes --disable-pip -r "$RUNNER_TEMP/req.txt" -f json -o "$RUNNER_TEMP/audit.json" || { jq . "$RUNNER_TEMP/audit.json"; exit 1; }
+          jq -e '[.dependencies[].name] | index("fastapi") != null' "$RUNNER_TEMP/audit.json"
       - name: Static analysis (semgrep)
-        run: uvx semgrep scan --config auto --error
+        run: uvx --exclude-newer "7 days" --from semgrep==1.184.0 semgrep scan --config auto --error
 
   infra:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
       - uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2.0.2
         with:
           tofu_version: 1.13.9

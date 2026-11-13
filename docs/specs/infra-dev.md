@@ -1,7 +1,7 @@
 # Spec: Dev infrastructure for sign-in with MFA
 
 - Requirement ids: FR-01, NFR-03, NFR-04
-- Status: draft
+- Status: approved (2026-11-13)
 - ADRs: ADR-007 (amendment 1), ADR-012, ADR-013
 - Build order: after identity-auth; unblocks the week-1 gate "login with MFA works in dev"
 
@@ -28,8 +28,9 @@ settings, created from code so prod later gets the same settings by construction
     list without `email` (an unset list grants write on every attribute; `email` is a required
     schema attribute, which every client may write at sign-up, AWS docs "Attribute permissions
     and scopes", checked 2026-11-13),
-    access and ID tokens 30 min, refresh 12 h, callback `http://localhost:8000/auth/callback`
-    (the BFF runs in the API, web spec), sign-out `http://localhost:3000/`;
+    access and ID tokens 30 min, refresh 12 h, callback `http://localhost:3000/auth/callback`
+    (the BFF runs in the API behind the Next.js dev rewrites, web spec), sign-out
+    `http://localhost:3000/`;
   - `aws_cognito_managed_login_branding` for the client with `use_cognito_provided_values =
     true` until the brand is chosen;
   - email: `COGNITO_DEFAULT` in dev only (builder's own addresses; prod uses SES DEVELOPER in

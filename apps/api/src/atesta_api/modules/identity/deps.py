@@ -5,15 +5,25 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, Request
+from fastapi import Depends, HTTPException, Request, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
+from atesta_api.modules.identity.bff import (
+    ACCESS_COOKIE,
+    REFRESH_COOKIE,
+    OAuthClient,
+    SessionCrypto,
+    SessionEndedError,
+    store_tokens,
+)
 from atesta_api.modules.identity.cognito import (
+    ExpiredTokenError,
     IdentityProvider,
     InvalidTokenError,
+    ProviderUnavailableError,
     TokenVerifier,
     UserInfo,
 )
@@ -78,25 +88,65 @@ def upsert_user(session: Session, info: UserInfo) -> uuid.UUID:
     return user_id
 
 
+_WRITES = frozenset({"POST", "PUT", "PATCH", "DELETE"})
+
+
+def _cookie_token(request: Request, response: Response, verifier: TokenVerifier) -> str:
+    """Access token from the session cookie; one refresh when it has expired."""
+    crypto: SessionCrypto = request.app.state.session_crypto
+    try:
+        token = crypto.open(ACCESS_COOKIE, request.cookies.get(ACCESS_COOKIE, ""))
+        verifier.verify(token)
+        return token
+    except ExpiredTokenError:
+        pass
+    except InvalidTokenError:
+        raise SessionEndedError from None
+    try:
+        refresh_token = crypto.open(REFRESH_COOKIE, request.cookies.get(REFRESH_COOKIE, ""))
+        oauth: OAuthClient = request.app.state.oauth
+        tokens = oauth.refresh(refresh_token)
+        verifier.verify(tokens.access_token)
+    except InvalidTokenError:
+        raise SessionEndedError from None
+    store_tokens(response, crypto, tokens)
+    return tokens.access_token
+
+
 def authenticate(
+    request: Request,
+    response: Response,
     session: DbSession,
     verifier: Annotated[TokenVerifier, Depends(get_verifier)],
     provider: Annotated[IdentityProvider, Depends(get_identity_provider)],
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)],
 ) -> Caller:
-    if credentials is None:
+    """Bearer token (tests, future CLI) or the BFF session cookie (browser)."""
+    if credentials is None and ACCESS_COOKIE not in request.cookies:
         raise error(401, "auth.invalid_token")
-    try:
-        token = verifier.verify(credentials.credentials)
+    if (
+        credentials is None
+        and request.method in _WRITES
+        and request.headers.get("origin") != request.app.state.web_origin
+    ):
+        raise error(403, "auth.bad_origin")
+    try:  # a JWKS outage is a retryable 503 on both paths, never a 500
+        if credentials is not None:
+            token = credentials.credentials
+        else:
+            token = _cookie_token(request, response, verifier)
+        sub = verifier.verify(token).sub
     except InvalidTokenError:
         raise error(401, "auth.invalid_token") from None
-    enter_user_context(session, token.sub)
-    user_id = session.execute(select(User.id).where(User.cognito_sub == token.sub)).scalar()
+    except ProviderUnavailableError:
+        raise error(503, "auth.provider_unavailable") from None
+    enter_user_context(session, sub)
+    user_id = session.execute(select(User.id).where(User.cognito_sub == sub)).scalar()
     refreshed = user_id is None
     if user_id is None:
-        user_id = refresh_profile(session, provider, token.sub, credentials.credentials)
-    enter_user_context(session, token.sub, user_id)
-    return Caller(user_id, token.sub, credentials.credentials, profile_refreshed=refreshed)
+        user_id = refresh_profile(session, provider, sub, token)
+    enter_user_context(session, sub, user_id)
+    return Caller(user_id, sub, token, profile_refreshed=refreshed)
 
 
 def refresh_profile(

@@ -1,11 +1,15 @@
 """Public interface of the identity module."""
 
+import base64
 import os
 
 import httpx
 from fastapi import FastAPI
 
+from atesta_api.modules.identity.bff import SessionCrypto, SessionEndedError, session_ended_handler
+from atesta_api.modules.identity.bff import router as auth_router
 from atesta_api.modules.identity.cognito import (
+    CognitoOAuth,
     CognitoSettings,
     CognitoUserInfo,
     TokenVerifier,
@@ -24,9 +28,21 @@ from atesta_api.modules.identity.routes import router
 
 def wire_identity(app: FastAPI, client: httpx.Client) -> None:
     settings = CognitoSettings.from_env()
-    app.state.token_verifier = TokenVerifier(settings, jwks_fetcher(settings, client))
+    web_origin = os.environ["ATESTA_WEB_ORIGIN"].rstrip("/")
+    verifier = TokenVerifier(settings, jwks_fetcher(settings, client))
+    app.state.token_verifier = verifier
     app.state.identity_provider = CognitoUserInfo(settings, client)
     app.state.web_base_url = os.environ["ATESTA_WEB_BASE_URL"].rstrip("/")
+    app.state.web_origin = web_origin
+    app.state.session_crypto = SessionCrypto(base64.b64decode(os.environ["ATESTA_SESSION_KEY"]))
+    app.state.oauth = CognitoOAuth(settings, client, verifier, web_origin)
+
+
+def install_identity(app: FastAPI) -> None:
+    """Routers and the handler that clears cookies when a session ends."""
+    app.include_router(router)
+    app.include_router(auth_router)
+    app.add_exception_handler(SessionEndedError, session_ended_handler)
 
 
 __all__ = [
@@ -39,6 +55,7 @@ __all__ = [
     "enter_user_context",
     "require_member",
     "require_role",
+    "install_identity",
     "router",
     "wire_identity",
 ]

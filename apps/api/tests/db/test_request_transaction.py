@@ -43,7 +43,7 @@ def add_probe(org: uuid.UUID, session: DbSession) -> dict[str, str]:
 
 
 @pytest.fixture
-def client(app_engine: Engine, superuser: Engine) -> Iterator[TestClient]:
+def client(app_engine: Engine, superuser: Engine, probe: object) -> Iterator[TestClient]:
     db.configure(app_engine)
     yield TestClient(app, raise_server_exceptions=False)
     db._factory = None
@@ -68,10 +68,13 @@ def test_failed_commit_never_returns_2xx(client: TestClient, superuser: Engine) 
 
 
 def test_bound_values_stay_out_of_errors_and_logs(
-    app_engine: Engine, caplog: pytest.LogCaptureFixture
+    app_engine: Engine, probe: object, caplog: pytest.LogCaptureFixture
 ) -> None:
     caplog.set_level(logging.DEBUG)
-    with Session(app_engine) as session, pytest.raises(DBAPIError) as exc:
+    with (
+        Session(app_engine) as session,
+        pytest.raises(DBAPIError, match="row-level security") as exc,
+    ):
         set_tenant_context(session, TenantContext(organization_id=ORG_A))
         session.add(Probe(organization_id=ORG_B, v=MARKER))
         session.flush()
@@ -80,10 +83,8 @@ def test_bound_values_stay_out_of_errors_and_logs(
 
 
 def test_engine_ignores_tls_settings_in_the_url(database: URL) -> None:
-    """The URL asks for no TLS; make_engine demands it, so the plaintext test server refuses."""
+    """The URL asks for no TLS; make_engine's default (verify-full) demands it, so the plaintext
+    test server refuses: against a real server, not only in the captured parameters."""
     url = database.update_query_dict({"sslmode": "disable"})
-    with (
-        pytest.raises(OperationalError, match="SSL"),
-        make_engine(url, sslmode="require").connect(),
-    ):
+    with pytest.raises(OperationalError, match="SSL"), make_engine(url).connect():
         pass

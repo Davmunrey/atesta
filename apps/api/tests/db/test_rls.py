@@ -5,7 +5,7 @@ import uuid
 import pytest
 from atesta_api.platform.context import TenantContext
 from atesta_api.platform.tenancy import set_tenant_context
-from sqlalchemy import text
+from sqlalchemy import Engine, text
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -74,6 +74,82 @@ def test_composite_fk_rejects_other_tenant_parent_like_random_id(
     db_rollback.execute(
         text("INSERT INTO probe_child VALUES (:o, :p)"), {"o": ORG_A, "p": probe[ORG_A]}
     )
+
+
+SEED = """
+INSERT INTO frameworks (key, name, version, jurisdiction, source, license_notes, status)
+  VALUES ('fw_rls', 'R', '1', 'EU', 'src', 't', 'released');
+INSERT INTO controls (key, title_es, title_en, description_es, description_en)
+  VALUES ('ctl.rls', 't', 't', 'd', 'd');
+"""
+PER_ORG = """
+INSERT INTO users (id, cognito_sub, email, email_verified) VALUES (:u, :sub, :email, true);
+INSERT INTO memberships VALUES (:o, :u, 'owner');
+INSERT INTO invitations (id, organization_id, email, role, token_sha256, invited_by, expires_at)
+  VALUES (gen_random_uuid(), :o, 'x@example.com', 'member', :tok, :u, now() + interval '1 day');
+INSERT INTO audit_events (id, organization_id, action, target_type, target_id)
+  VALUES (gen_random_uuid(), :o, 'rls.seed', 'probe', 'x');
+INSERT INTO evidence (id, organization_id, kind, title, source_type, created_by, collected_at)
+  VALUES (:e, :o, 'attestation', 't', 'user', :u, now());
+INSERT INTO evidence_controls VALUES (:e, 'ctl.rls', :o);
+INSERT INTO score_snapshots (id, organization_id, framework_key, framework_version,
+  catalog_version, scan_id, passed, failed, manual, not_applicable, requirement_results)
+  VALUES (gen_random_uuid(), :o, 'fw_rls', '1', 'r1', gen_random_uuid(), 0, 0, 0, 0, '{}');
+INSERT INTO probe_child VALUES (:o, :p);
+"""
+
+
+def test_every_rls_table_fails_closed_and_shows_one_tenant(
+    superuser: Engine, probe: dict[uuid.UUID, uuid.UUID]
+) -> None:
+    """Self-seeded, rolled back: a row in every RLS table for both orgs, so an open policy on
+    any table (even one other tests leave empty) fails here, whatever the test order."""
+    with superuser.connect() as conn:
+        tx = conn.begin()
+        try:
+            conn.exec_driver_sql(SEED)
+            for org, tag in ((ORG_A, "a"), (ORG_B, "b")):
+                params = {
+                    "o": org,
+                    "u": uuid.uuid4(),
+                    "sub": f"rls-{tag}-{uuid.uuid4()}",
+                    "email": f"rls-{tag}@example.com",
+                    "tok": uuid.uuid4().hex * 2,
+                    "e": uuid.uuid4(),
+                    "p": probe[org],
+                }
+                for statement in PER_ORG.strip().split(";\n"):
+                    conn.execute(text(statement), params)
+            session = Session(bind=conn)
+            tables = rls_tables(session)
+            assert {
+                "organizations",
+                "audit_events",
+                "memberships",
+                "invitations",
+                "users",
+                "score_snapshots",
+                "evidence",
+                "evidence_controls",
+                "probe",
+                "probe_child",
+            } <= set(tables)
+            empty = [t for t in tables if count(session, t) == 0]
+            assert empty == [], "seed every RLS table, or this test proves nothing for it"
+            conn.exec_driver_sql("SET LOCAL ROLE atesta_app")
+            assert {t: count(session, t) for t in tables} == dict.fromkeys(tables, 0)
+            set_tenant_context(session, TenantContext(organization_id=ORG_A))
+            for table in (t for t in tables if t not in ("organizations", "users")):
+                orgs = (
+                    session.execute(
+                        text(f"SELECT DISTINCT organization_id FROM {table}")  # noqa: S608
+                    )
+                    .scalars()
+                    .all()
+                )
+                assert orgs == [ORG_A], table
+        finally:
+            tx.rollback()
 
 
 def test_no_context_returns_zero_rows_everywhere(db_rollback: Session) -> None:

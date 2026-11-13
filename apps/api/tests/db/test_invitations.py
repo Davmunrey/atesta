@@ -14,7 +14,7 @@ def invite(
     client: TestClient, org: str, by: str, email: str, role: str = "member"
 ) -> dict[str, str]:
     response = client.post(
-        f"/v1/orgs/{org}/invitations", json={"email": email, "role": role}, headers=auth(by)
+        f"/api/v1/orgs/{org}/invitations", json={"email": email, "role": role}, headers=auth(by)
     )
     assert response.status_code == 201, response.text
     body: dict[str, str] = response.json()
@@ -28,7 +28,7 @@ def token_of(link: str) -> str:
 
 
 def accept(client: TestClient, sub: str, token: str) -> tuple[int, str]:
-    response = client.post("/v1/invitations/accept", json={"token": token}, headers=auth(sub))
+    response = client.post("/api/v1/invitations/accept", json={"token": token}, headers=auth(sub))
     body = response.json()
     return response.status_code, body.get("role") or body["detail"]["code"]
 
@@ -53,7 +53,7 @@ def test_happy_path_raw_token_never_stored(client: TestClient, superuser: Engine
 def test_role_cap_and_permissions(client: TestClient, superuser: Engine) -> None:
     org, subs = org_with(client, superuser, adm="admin", mem="member")
     body = {"email": "x@example.com", "role": "owner"}
-    url = f"/v1/orgs/{org}/invitations"
+    url = f"/api/v1/orgs/{org}/invitations"
     assert client.post(url, json=body, headers=auth(subs["adm"])).status_code == 403
     assert client.post(url, json=body, headers=auth(subs["owner"])).status_code == 201
     assert (
@@ -72,7 +72,7 @@ def test_rejections(client: TestClient, superuser: Engine, provider: FakeProvide
     assert accept(client, unverified, token) == (403, "identity.email_unverified")
     assert accept(client, guest, "x" * 43) == (404, "identity.invitation_invalid")
     query = client.post(
-        "/v1/invitations/accept?token=t", json={"token": token}, headers=auth(guest)
+        "/api/v1/invitations/accept?token=t", json={"token": token}, headers=auth(guest)
     )
     assert (query.status_code, query.json()["detail"]["code"]) == (400, "identity.token_in_query")
     with superuser.begin() as conn:
@@ -90,14 +90,16 @@ def test_revoked_and_removed_inviter(client: TestClient, superuser: Engine) -> N
     g1, g2 = new_sub(), new_sub()
     first = invite(client, org, subs["adm"], f"{g1}@example.com")
     second = invite(client, org, subs["adm"], f"{g2}@example.com")
-    revoke = client.delete(f"/v1/orgs/{org}/invitations/{first['id']}", headers=auth(subs["owner"]))
+    revoke = client.delete(
+        f"/api/v1/orgs/{org}/invitations/{first['id']}", headers=auth(subs["owner"])
+    )
     assert revoke.status_code == 204
     assert accept(client, g1, token_of(first["accept_link"])) == (
         410,
         "identity.invitation_invalid",
     )
     remove = client.delete(
-        f"/v1/orgs/{org}/members/{uid(client, subs['adm'])}", headers=auth(subs["owner"])
+        f"/api/v1/orgs/{org}/members/{uid(client, subs['adm'])}", headers=auth(subs["owner"])
     )
     assert remove.status_code == 204
     assert accept(client, g2, token_of(second["accept_link"])) == (
@@ -105,7 +107,7 @@ def test_revoked_and_removed_inviter(client: TestClient, superuser: Engine) -> N
         "identity.invitation_invalid",
     )
     assert (
-        client.get(f"/v1/orgs/{org}/invitations", headers=auth(subs["owner"])).json()[0]["id"]
+        client.get(f"/api/v1/orgs/{org}/invitations", headers=auth(subs["owner"])).json()[0]["id"]
         == second["id"]
     )
 
@@ -115,12 +117,76 @@ def test_existing_member_gets_409_and_keeps_role(
     client: TestClient, superuser: Engine, role: str
 ) -> None:
     org, subs = org_with(client, superuser)
-    me = client.get("/v1/me", headers=auth(subs["owner"])).json()["email"]
+    me = client.get("/api/v1/me", headers=auth(subs["owner"])).json()["email"]
     token = token_of(invite(client, org, subs["owner"], me, role)["accept_link"])
     assert accept(client, subs["owner"], token) == (409, "identity.already_member")
     roles = [
-        m["role"] for m in client.get("/v1/me", headers=auth(subs["owner"])).json()["memberships"]
+        m["role"]
+        for m in client.get("/api/v1/me", headers=auth(subs["owner"])).json()["memberships"]
     ]
     assert roles == ["owner"]
-    pending = client.get(f"/v1/orgs/{org}/invitations", headers=auth(subs["owner"])).json()
+    pending = client.get(f"/api/v1/orgs/{org}/invitations", headers=auth(subs["owner"])).json()
     assert len(pending) == 1
+
+
+@pytest.mark.parametrize(
+    "variant",
+    [
+        {"json": {"token": "t" * 43}},  # JSON body and auth: the in-handler check already did this
+        {},  # no body
+        {"content": b"{not json", "headers": {"Content-Type": "application/json"}},
+    ],
+)
+@pytest.mark.parametrize("authenticated", [True, False])
+def test_any_query_string_is_400_before_auth_or_body(
+    client: TestClient, provider: FakeProvider, variant: dict[str, object], authenticated: bool
+) -> None:
+    """The token must never travel in a URL: refuse first, before the body, auth or userInfo."""
+    sub, kwargs = new_sub(), dict(variant)  # parametrize shares the dict across runs
+    headers = {**dict(kwargs.pop("headers", {})), **(auth(sub) if authenticated else {})}  # type: ignore[call-overload]
+    response = client.post("/api/v1/invitations/accept?token=t", headers=headers, **kwargs)  # type: ignore[arg-type]
+    assert (response.status_code, response.json()["detail"]["code"]) == (
+        400,
+        "identity.token_in_query",
+    )
+    assert provider.calls == 0  # no userInfo call, no user provisioned
+
+
+@pytest.mark.parametrize(
+    ("mailbox", "invited"),
+    [
+        ("x@straße.de", "x@strasse.de"),  # casefold maps ß to ss: a different IDN domain
+        ("\u212aate@example.com", "kate@example.com"),  # Kelvin sign folds to k
+    ],
+)
+def test_only_ascii_case_is_ignored_in_the_email_match(
+    client: TestClient, superuser: Engine, provider: FakeProvider, mailbox: str, invited: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    token = token_of(invite(client, org, subs["owner"], invited)["accept_link"])
+    other = new_sub()
+    provider.emails[other] = mailbox  # verified, a different mailbox
+    assert accept(client, other, token) == (403, "identity.email_mismatch")
+
+
+def test_ascii_case_still_matches(
+    client: TestClient, superuser: Engine, provider: FakeProvider
+) -> None:
+    org, subs = org_with(client, superuser)
+    guest = new_sub()
+    token = token_of(invite(client, org, subs["owner"], f"{guest}@example.com")["accept_link"])
+    provider.emails[guest] = f"{guest.upper()}@EXAMPLE.com"
+    assert accept(client, guest, token) == (200, "member")
+
+
+@pytest.mark.parametrize("email", ["x@straße.de", "\u212aate@example.com", "José@example.com"])
+def test_non_ascii_invitation_email_is_rejected(
+    client: TestClient, superuser: Engine, email: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    response = client.post(
+        f"/api/v1/orgs/{org}/invitations",
+        json={"email": email, "role": "member"},
+        headers=auth(subs["owner"]),
+    )
+    assert response.status_code == 422
