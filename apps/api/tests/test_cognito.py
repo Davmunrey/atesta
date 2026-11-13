@@ -85,13 +85,9 @@ def test_rejected_claims(overrides: dict[str, Any]) -> None:
 def test_rejected_algorithms_and_signatures() -> None:
     v = verifier()
     for bad in (
-        jwt.encode({"sub": "x"}, None, algorithm="none", headers={"kid": "k1"}),
-        jwt.encode(
-            {"sub": "x"},
-            "secret-key-of-32-bytes-minimum!!",
-            algorithm="HS256",
-            headers={"kid": "k1"},
-        ),
+        # full, otherwise valid claims: rejected for the algorithm, not for a missing claim
+        token(key=None, alg="none"),
+        token(key="secret-key-of-32-bytes-minimum!!", alg="HS256"),
         token(key=OTHER_KEY),
         token()[:-4] + "AAAA",
         "not-a-jwt",

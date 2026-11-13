@@ -45,6 +45,22 @@ def test_first_call_provisions_and_me_refreshes_email(
         assert rows.scalar_one() == 1
 
 
+def test_same_email_different_subs_coexist(
+    client: TestClient, provider: FakeProvider, superuser: Engine
+) -> None:
+    """Email is not unique on purpose: a conflict on a row RLS hides could never be repaired."""
+    first, second, third = new_sub(), new_sub(), new_sub()
+    shared = f"{first}@example.com"
+    provider.emails[second] = shared.upper()
+    for sub in (first, second, third):
+        assert client.get("/v1/me", headers=auth(sub)).status_code == 200
+    provider.emails[third] = shared  # an email change onto a taken address
+    assert client.get("/v1/me", headers=auth(third)).json()["email"] == shared
+    with superuser.connect() as conn:
+        query = text("SELECT count(DISTINCT cognito_sub) FROM users WHERE lower(email) = :e")
+        assert conn.execute(query, {"e": shared}).scalar_one() == 3
+
+
 def test_concurrent_first_calls_create_one_user(client: TestClient, superuser: Engine) -> None:
     sub = new_sub()
     with ThreadPoolExecutor(max_workers=4) as pool:
