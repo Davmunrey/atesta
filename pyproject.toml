@@ -80,3 +80,4 @@ source_modules = [
     "atesta_api.modules.billing",
 ]
 forbidden_modules = ["atesta_api.platform.tenancy"]
+allow_indirect_imports = true  # going through identity.api is the point
