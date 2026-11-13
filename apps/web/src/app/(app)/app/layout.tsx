@@ -1,12 +1,16 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { AppHeader } from "@/components/app-header";
 import { AuthGate } from "@/components/auth-gate";
+import { OrganizationNav } from "@/components/organization-nav";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <AuthGate>
       <AppHeader />
-      <main className="mx-auto max-w-4xl px-6 py-8">{children}</main>
+      <div className="workspace">
+        <Suspense><OrganizationNav /></Suspense>
+        <main id="main-content" tabIndex={-1} className="workspace-main">{children}</main>
+      </div>
     </AuthGate>
   );
 }

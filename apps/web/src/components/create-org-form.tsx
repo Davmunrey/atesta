@@ -20,7 +20,7 @@ export function CreateOrgForm() {
 
   return (
     <form onSubmit={onSubmit} className="flex max-w-md flex-col gap-3">
-      <h1 className="text-2xl font-semibold">{t("title")}</h1>
+      <h1 className="page-title">{t("title")}</h1>
       <p className="text-muted">{t("help")}</p>
       <label htmlFor={nameId} className="font-medium">
         {t("name")}

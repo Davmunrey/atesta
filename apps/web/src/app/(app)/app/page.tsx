@@ -13,14 +13,14 @@ export default function AppHome() {
   if (memberships.length === 0) return <CreateOrgForm />;
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold">{t("home.title")}</h1>
-      <ul className="flex flex-col gap-2">
+      <h1 className="page-title">{t("home.title")}</h1>
+      <ul className="organization-list">
         {memberships.map((m) => (
           <li key={m.organization_id}>
-            <Link href={orgHome(m.organization_id)} className="underline">
-              {m.organization_name}
-            </Link>{" "}
-            <span className="text-sm text-muted">{t(`roles.${m.role}`)}</span>
+            <Link href={orgHome(m.organization_id)}>
+              <span className="section-link-title">{m.organization_name}</span>
+              <span className="text-sm text-muted">{t(`roles.${m.role}`)}</span>
+            </Link>
           </li>
         ))}
       </ul>

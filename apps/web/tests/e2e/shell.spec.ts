@@ -17,7 +17,7 @@ async function signIn(page: Page, email: string) {
 async function expectAccessible(page: Page, screen: string) {
   const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
   const serious = violations.filter((v) => v.impact === "serious" || v.impact === "critical");
-  expect(serious.map((v) => `${v.id}: ${v.help} (${v.nodes.length})`), screen).toEqual([]);
+  expect(serious.flatMap((v) => v.nodes.map((node) => `${v.id}: ${node.target.join(" ")}: ${node.failureSummary}`)), screen).toEqual([]);
 }
 
 function cspReports(page: Page): string[] {
@@ -43,7 +43,7 @@ test("sign in, create an org, invite, accept as a second user, change role, remo
   const orgHome = ownerPage.url();
   await expectAccessible(ownerPage, "organization home");
 
-  await ownerPage.getByRole("link", { name: "Invitaciones" }).click();
+  await ownerPage.getByRole("navigation", { name: "Secciones de la organización" }).getByRole("link", { name: "Invitaciones", exact: true }).click();
   await ownerPage.getByLabel("Correo electrónico").fill(guest);
   await ownerPage.getByRole("button", { name: "Invitar" }).click();
   const link = await ownerPage.getByLabel("Enlace de invitación").inputValue();
@@ -74,7 +74,7 @@ test("sign in, create an org, invite, accept as a second user, change role, remo
   expect(await guestPage.evaluate(() => sessionStorage.getItem("atesta_invite:v1"))).toBeNull();
 
   await ownerPage.goto(orgHome);
-  await ownerPage.getByRole("link", { name: "Miembros" }).click();
+  await ownerPage.getByRole("navigation", { name: "Secciones de la organización" }).getByRole("link", { name: "Miembros", exact: true }).click();
   const role = ownerPage.getByLabel(`Rol de ${guest}`);
   await expect(role).toHaveValue("member");
   await expectAccessible(ownerPage, "members");
@@ -129,4 +129,67 @@ test("security headers on every page; no referrer from /invite", async ({ reques
     expect(headers["referrer-policy"], path).toBe(path === "/invite" ? "no-referrer" : "same-origin");
   }
   expect((await request.get("/no-such-page")).status()).toBe(404);
+});
+
+test("organization navigation, local fonts and long content work across sizes and themes", async ({ page }) => {
+  test.setTimeout(120_000);
+  const fonts: string[] = [];
+  page.on("request", (request) => { if (request.resourceType() === "font") fonts.push(request.url()); });
+  const reports = cspReports(page);
+  await page.goto("/");
+  await page.getByRole("link", { name: "Iniciar sesión" }).click();
+  await signIn(page, `layout-${run}@example.test`);
+  const longName = "Synthetic accessibility organization " + "x".repeat(100);
+  await page.getByLabel("Nombre de la organización").fill(longName);
+  await page.getByRole("button", { name: "Crear organización" }).click();
+  await expect(page.getByRole("heading", { name: longName })).toBeVisible();
+  const home = page.url();
+  for (const colorScheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
+    for (const width of [375, 768, 1280]) {
+      await page.setViewportSize({ width, height: 850 });
+      for (const name of ["Resumen", "Miembros", "Invitaciones"]) {
+        const nav = page.getByRole("navigation", { name: "Secciones de la organización" });
+        await nav.getByRole("link", { name, exact: true }).click();
+        await expect(nav.getByRole("link", { name, exact: true })).toHaveAttribute("aria-current", "page");
+        const title = name === "Resumen" ? longName : `${name} de ${longName}`;
+        await expect(page.getByRole("heading", { level: 1 })).toHaveText(title);
+        // The route attribute can update before the browser applies its selected styles.
+        const active = nav.getByRole("link", { name, exact: true });
+        await expect(active).toHaveCSS("color", "rgb(20, 20, 20)");
+        await expect(active).toHaveCSS("background-color", "rgb(255, 229, 138)");
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), `${name} ${width} ${colorScheme}`).toBe(true);
+        await expectAccessible(page, `${name} ${width} ${colorScheme}`);
+        if (name === "Miembros") {
+          const table = page.getByRole("region", { name: `Miembros de ${longName}` });
+          await expect(table).toHaveAttribute("tabindex", "0");
+          await table.focus();
+          await expect(table).toBeFocused();
+        }
+      }
+    }
+  }
+  await page.goto(home);
+  await expect(page.getByRole("heading", { name: longName })).toBeVisible();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("link", { name: "Saltar al contenido" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("main")).toBeFocused();
+  const type = await page.evaluate(async () => {
+    await document.fonts.ready;
+    return [document.body, document.querySelector("h1")!].map((element) => {
+      const family = getComputedStyle(element).fontFamily.split(",")[0]!.replaceAll('"', "").trim();
+      return { family, loaded: [...document.fonts].some((font) => font.family.replaceAll('"', "") === family && font.status === "loaded") };
+    });
+  });
+  expect(new Set(type.map(({ family }) => family)).size).toBe(2);
+  expect(type.every(({ loaded }) => loaded)).toBe(true);
+  expect(fonts.length).toBeGreaterThanOrEqual(2);
+  expect(fonts.every((url) => new URL(url).origin === new URL(home).origin && new URL(url).pathname.endsWith(".woff2"))).toBe(true);
+  expect(await page.getByRole("button", { name: "English" }).evaluate((element) => getComputedStyle(element).transitionDuration)).toBe("1e-05s");
+  for (const path of ["/", "/no-such-page"]) {
+    await page.goto(path);
+    expect(await page.getByRole("main").evaluate((element) => getComputedStyle(element).colorScheme)).toBe("light");
+  }
+  expect(reports).toEqual([]);
 });

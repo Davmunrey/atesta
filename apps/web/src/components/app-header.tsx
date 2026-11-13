@@ -7,19 +7,20 @@ import { useMe } from "./auth-gate";
 import { LocaleSwitcher } from "./locale-switcher";
 
 export function AppHeader() {
-  const t = useTranslations("app");
+  const t = useTranslations();
   const me = useMe();
   return (
-    <header className="border-b border-border bg-surface">
-      <div className="mx-auto flex max-w-4xl flex-wrap items-center gap-4 px-6 py-3">
-        <Link href="/app" className="font-semibold">
-          Atesta
+    <header className="app-header">
+      <a href="#main-content" className="skip-link">{t("app.skipContent")}</a>
+      <div className="app-header-inner">
+        <Link href="/app" className="brand-mark">
+          {t("brand.name")}
         </Link>
-        <span className="ml-auto text-sm text-muted">{t("signedInAs", { email: me.email })}</span>
-        <LocaleSwitcher />
-        <a href={LOGOUT_URL} className="text-sm underline">
-          {t("signOut")}
-        </a>
+        <span className="session-label">{t("app.signedInAs", { email: me.email })}</span>
+        <div className="header-actions">
+          <LocaleSwitcher />
+          <a href={LOGOUT_URL} className="text-sm underline">{t("app.signOut")}</a>
+        </div>
       </div>
     </header>
   );

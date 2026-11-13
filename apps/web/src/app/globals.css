@@ -2,6 +2,19 @@
 @import "../styles/tokens.css";
 
 @layer base {
+  body { line-height: 1.6; }
+  a, button, input, select { -webkit-tap-highlight-color: transparent; }
+  button, select, input { min-height: 2.75rem; }
+  input, select { max-width: 100%; }
+  /* Foreground/background swaps must be atomic to keep contrast during state changes. */
+  button { transition: opacity 180ms ease-out; }
+  .bg-accent:is(a, button):hover { text-decoration: underline; }
+  button:enabled, select:enabled { cursor: pointer; }
+  button:disabled, select:disabled { cursor: not-allowed; opacity: 0.6; }
+  a { text-underline-offset: 0.2em; }
+  a:hover { text-decoration-thickness: 2px; }
+  h1, h2, p, li, .session-label { overflow-wrap: anywhere; }
+
   :focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
@@ -14,5 +27,46 @@
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;
     }
+  }
+}
+
+@layer components {
+  .page-title { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 500; line-height: 1.12; letter-spacing: -0.025em; text-wrap: balance; max-width: 26ch; }
+  .brand-mark { font-family: var(--font-display); font-size: 2rem; font-weight: 600; line-height: 1; letter-spacing: -0.04em; border-bottom: 4px solid var(--color-accent); padding-block: 0.35rem; }
+  .app-header { border-bottom: 1px solid var(--color-border); }
+  .app-header-inner { max-width: 80rem; margin-inline: auto; padding: 1.25rem 2rem; display: flex; align-items: center; flex-wrap: wrap; gap: 1rem 2rem; }
+  .session-label { min-width: 0; flex: 1 1 14rem; color: var(--color-muted); font-size: 0.875rem; }
+  .header-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+  .header-actions > a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  .skip-link { position: absolute; left: 1rem; top: 0.5rem; padding: 0.75rem 1rem; background: var(--color-accent); color: var(--color-accent-fg); z-index: 10; transform: translateY(-200%); }
+  .skip-link:focus { transform: translateY(0); }
+  .workspace { max-width: 80rem; margin-inline: auto; padding-inline: 2rem; display: grid; }
+  .workspace-main { min-width: 0; padding-block: 3rem 5rem; }
+  .organization-context { min-width: 0; padding-block: 2rem; border-bottom: 1px solid var(--color-border); }
+  .organization-switcher { display: block; width: 100%; margin-top: 0.5rem; padding: 0.5rem; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+  .organization-nav { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 1rem; }
+  .organization-nav a { padding: 0.625rem 0.75rem; border-radius: var(--radius-sm); }
+  .organization-nav a:hover { background: var(--color-surface); }
+  .organization-nav a[aria-current="page"] { background: var(--color-accent); color: var(--color-accent-fg); font-weight: 500; }
+  .section-links, .organization-list { margin-block: 1.5rem; border-top: 1px solid var(--color-border); }
+  .section-links > a, .organization-list a { display: flex; flex-direction: column; gap: 0.375rem; padding: 1.5rem 0.75rem; border-bottom: 1px solid var(--color-border); }
+  .section-links > a:hover, .organization-list a:hover { background: var(--color-surface); }
+  .section-link-title { font-size: 1.25rem; font-weight: 500; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+  .table-region { overflow-x: auto; padding: 0.25rem; }
+  .table-region table { min-width: 34rem; }
+  .table-region th, .table-region td { padding-block: 1rem; }
+  .table-region td:first-child { overflow-wrap: anywhere; max-width: 24rem; }
+  .workspace-main form > span { min-width: 0; }
+  @media (min-width: 64rem) {
+    .workspace:has(.organization-context) { grid-template-columns: 14rem minmax(0, 1fr); gap: 3.5rem; }
+    .organization-context { padding-block: 3rem; padding-right: 1.5rem; border-right: 1px solid var(--color-border); border-bottom: 0; }
+    .organization-nav { flex-direction: column; }
+  }
+  @media (max-width: 40rem) {
+    .app-header-inner, .workspace { padding-inline: 1.25rem; }
+    .app-header-inner { gap: 0.75rem 1rem; }
+    .session-label { flex-basis: 12rem; }
+    .header-actions { width: 100%; justify-content: space-between; gap: 0.5rem; }
+    .workspace-main { padding-block: 2rem 3rem; }
   }
 }

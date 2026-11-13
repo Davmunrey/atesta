@@ -1,24 +1,24 @@
 /*
- * Design tokens (web-shell spec). The only file with color, type and radius values.
- * Neutral until the owner picks a brand identity. Tailwind's default palette is removed, so a
- * component can only use these tokens (bg-bg, text-fg, bg-accent, rounded-md, ...).
+ * Approved paper/ink identity (landing-legal L4/L5). All visual values live here.
  */
 @theme {
   --color-*: initial;
-  --color-bg: #ffffff;
-  --color-surface: #f4f5f7;
-  --color-fg: #16191d;
-  --color-muted: #555d68;
-  --color-border: #c9ced5;
-  --color-accent: #1d5bb8;
-  --color-accent-fg: #ffffff;
-  --color-danger: #b3261e;
-  --color-danger-fg: #ffffff;
-  --color-focus: #1d5bb8;
+  --color-bg: #f4f1ea;
+  --color-surface: #eeebe4;
+  --color-fg: #141414;
+  --color-muted: #55514a;
+  --color-border: #888276;
+  --color-accent: #ffe58a;
+  --color-accent-fg: #141414;
+  --color-link: #23389a;
+  --color-danger: #a3241c;
+  --color-danger-fg: #f4f1ea;
+  --color-focus: #23389a;
 
   --font-*: initial;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-sans: var(--font-plex-sans), sans-serif;
+  --font-display: var(--font-newsreader), serif;
+  --font-mono: var(--font-plex-mono), monospace;
 
   --radius-*: initial;
   --radius-sm: 0.25rem;
@@ -30,15 +30,33 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #121418;
-    --color-surface: #1b1e23;
-    --color-fg: #e9ebee;
-    --color-muted: #a6aeb8;
-    --color-border: #3a4048;
-    --color-accent: #8ab4f0;
-    --color-accent-fg: #0b1220;
-    --color-danger: #f28b82;
-    --color-danger-fg: #1f0a08;
-    --color-focus: #8ab4f0;
+    color-scheme: dark;
+    --color-bg: #171715;
+    --color-surface: #22221f;
+    --color-fg: #f4f1ea;
+    --color-muted: #c0baae;
+    --color-border: #817b70;
+    --color-accent: #ffe58a;
+    --color-accent-fg: #141414;
+    --color-link: #b9c5ff;
+    --color-danger: #ffaaa1;
+    --color-danger-fg: #171715;
+    --color-focus: #ffe58a;
   }
+}
+
+/* Public routes remain light even when the authenticated workspace follows the OS. */
+.public-surface {
+  color-scheme: light;
+  --color-bg: #f4f1ea;
+  --color-surface: #eeebe4;
+  --color-fg: #141414;
+  --color-muted: #55514a;
+  --color-border: #888276;
+  --color-accent: #ffe58a;
+  --color-accent-fg: #141414;
+  --color-link: #23389a;
+  --color-danger: #a3241c;
+  --color-danger-fg: #f4f1ea;
+  --color-focus: #23389a;
 }
