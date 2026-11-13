@@ -60,3 +60,23 @@ ignore_imports = [
     "atesta_api.modules.** -> atesta_api.modules.*.api",
 ]
 unmatched_ignore_imports_alerting = "none"
+
+[[tool.importlinter.contracts]]
+name = "Shared kernel imports no module (ADR-008)"
+type = "forbidden"
+source_modules = ["atesta_api.platform"]
+forbidden_modules = ["atesta_api.modules", "atesta_api.main"]
+
+[[tool.importlinter.contracts]]
+name = "Only identity sets tenant context (ADR-012)"
+type = "forbidden"
+source_modules = [
+    "atesta_api.main",
+    "atesta_api.modules.connections",
+    "atesta_api.modules.scanning",
+    "atesta_api.modules.compliance",
+    "atesta_api.modules.evidence",
+    "atesta_api.modules.ai",
+    "atesta_api.modules.billing",
+]
+forbidden_modules = ["atesta_api.platform.tenancy"]
