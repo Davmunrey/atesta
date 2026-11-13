@@ -45,3 +45,12 @@ committed before the response. Catalog loads and offboarding need the owner role
 offboarding spec defines. The policy predicate costs a little per query; the setting helpers
 inline, so indexes leading with `organization_id` keep it cheap. Policy changes need a new
 migration and a snapshot update in the same PR.
+
+## Amendment 2 (proposed 2026-11-13, scanner-connectors spec; not accepted)
+New table class "queue tables" for Procrastinate 3.10.0 (`procrastinate_jobs`,
+`procrastinate_events`, `procrastinate_periodic_defers`, `procrastinate_workers`): no
+`organization_id`, no RLS; job arguments are ids only, enforced by a test. `atesta_app` gets
+SELECT, INSERT, UPDATE, DELETE and EXECUTE on Procrastinate's functions; its ENUM types are
+allowed as third-party objects. Procrastinate defines no SECURITY DEFINER function. Its schema SQL
+is applied by an Alembic migration as `atesta_owner`. Any `atesta_app` session can read every
+job's ids; accepted because arguments hold ids only.
