@@ -10,6 +10,24 @@
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
+   "evidence",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "evidence_controls",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
    "invitations",
    "invitation_token_read",
    "SELECT",
@@ -116,6 +134,14 @@
   [
    "controls",
    "SELECT"
+  ],
+  [
+   "evidence",
+   "INSERT,SELECT"
+  ],
+  [
+   "evidence_controls",
+   "INSERT,SELECT"
   ],
   [
    "frameworks",
