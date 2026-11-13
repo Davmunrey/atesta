@@ -29,10 +29,16 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     engine.dispose()
 
 
-app = FastAPI(title="Atesta API", version="0.0.0", lifespan=lifespan)
-install_identity(app)
-
-
-@app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+def create_app() -> FastAPI:
+    """A fresh app; the contract export uses its own so test-only routes never leak into it."""
+    created = FastAPI(title="Atesta API", version="0.0.0", lifespan=lifespan)
+    install_identity(created)
+    created.add_api_route("/health", health, methods=["GET"])
+    return created
+
+
+app = create_app()

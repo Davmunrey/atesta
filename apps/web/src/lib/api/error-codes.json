@@ -1,0 +1,15 @@
+[
+  "auth.bad_nonce",
+  "auth.bad_origin",
+  "auth.bad_state",
+  "auth.invalid_token",
+  "identity.already_member",
+  "identity.email_mismatch",
+  "identity.email_unverified",
+  "identity.forbidden",
+  "identity.invitation_invalid",
+  "identity.last_owner",
+  "identity.not_found",
+  "identity.role_not_allowed",
+  "identity.token_in_query"
+]
