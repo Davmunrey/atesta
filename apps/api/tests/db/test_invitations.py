@@ -127,3 +127,66 @@ def test_existing_member_gets_409_and_keeps_role(
     assert roles == ["owner"]
     pending = client.get(f"/api/v1/orgs/{org}/invitations", headers=auth(subs["owner"])).json()
     assert len(pending) == 1
+
+
+@pytest.mark.parametrize(
+    "variant",
+    [
+        {"json": {"token": "t" * 43}},  # JSON body and auth: the in-handler check already did this
+        {},  # no body
+        {"content": b"{not json", "headers": {"Content-Type": "application/json"}},
+    ],
+)
+@pytest.mark.parametrize("authenticated", [True, False])
+def test_any_query_string_is_400_before_auth_or_body(
+    client: TestClient, provider: FakeProvider, variant: dict[str, object], authenticated: bool
+) -> None:
+    """The token must never travel in a URL: refuse first, before the body, auth or userInfo."""
+    sub, kwargs = new_sub(), dict(variant)  # parametrize shares the dict across runs
+    headers = {**dict(kwargs.pop("headers", {})), **(auth(sub) if authenticated else {})}  # type: ignore[call-overload]
+    response = client.post("/v1/invitations/accept?token=t", headers=headers, **kwargs)  # type: ignore[arg-type]
+    assert (response.status_code, response.json()["detail"]["code"]) == (
+        400,
+        "identity.token_in_query",
+    )
+    assert provider.calls == 0  # no userInfo call, no user provisioned
+
+
+@pytest.mark.parametrize(
+    ("mailbox", "invited"),
+    [
+        ("x@straße.de", "x@strasse.de"),  # casefold maps ß to ss: a different IDN domain
+        ("\u212aate@example.com", "kate@example.com"),  # Kelvin sign folds to k
+    ],
+)
+def test_only_ascii_case_is_ignored_in_the_email_match(
+    client: TestClient, superuser: Engine, provider: FakeProvider, mailbox: str, invited: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    token = token_of(invite(client, org, subs["owner"], invited)["accept_link"])
+    other = new_sub()
+    provider.emails[other] = mailbox  # verified, a different mailbox
+    assert accept(client, other, token) == (403, "identity.email_mismatch")
+
+
+def test_ascii_case_still_matches(
+    client: TestClient, superuser: Engine, provider: FakeProvider
+) -> None:
+    org, subs = org_with(client, superuser)
+    guest = new_sub()
+    token = token_of(invite(client, org, subs["owner"], f"{guest}@example.com")["accept_link"])
+    provider.emails[guest] = f"{guest.upper()}@EXAMPLE.com"
+    assert accept(client, guest, token) == (200, "member")
+
+
+@pytest.mark.parametrize("email", ["x@straße.de", "\u212aate@example.com", "José@example.com"])
+def test_non_ascii_invitation_email_is_rejected(
+    client: TestClient, superuser: Engine, email: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    response = client.post(
+        f"/v1/orgs/{org}/invitations",
+        json={"email": email, "role": "member"},
+        headers=auth(subs["owner"]),
+    )
+    assert response.status_code == 422

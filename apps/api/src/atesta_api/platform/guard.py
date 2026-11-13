@@ -1,6 +1,8 @@
 """Startup guard: refuse to run with a runtime role that could bypass tenant isolation.
 
-Conditions are listed in the tenant-data-layer spec ("Startup guard").
+Conditions are listed in the tenant-data-layer spec ("Startup guard"). has_table_privilege
+counts grants to PUBLIC and inherited roles but not column grants, so column-level privileges
+are checked with has_any_column_privilege.
 """
 
 from sqlalchemy import Connection, Engine, text
@@ -28,16 +30,20 @@ _CHECKS = {
     "has CREATE on schema public": "SELECT 1 WHERE has_schema_privilege('public', 'CREATE')",
     "holds TRUNCATE, REFERENCES or TRIGGER on a table": (
         f"{_PUBLIC} WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p')"  # noqa: S608
-        " AND has_table_privilege(c.oid, 'TRUNCATE, REFERENCES, TRIGGER')"
+        " AND (has_table_privilege(c.oid, 'TRUNCATE, REFERENCES, TRIGGER')"
+        "   OR has_any_column_privilege(c.oid, 'REFERENCES'))"
     ),
     "can write an append-only or catalog table": (
         f"{_PUBLIC} WHERE n.nspname = 'public' AND ("  # noqa: S608
-        " (c.relname = ANY(:append_only) AND has_table_privilege(c.oid, 'UPDATE, DELETE'))"
-        " OR (c.relname = ANY(:catalog) AND has_table_privilege(c.oid, 'INSERT, UPDATE, DELETE')))"
+        " (c.relname = ANY(:append_only) AND (has_table_privilege(c.oid, 'UPDATE, DELETE')"
+        "   OR has_any_column_privilege(c.oid, 'UPDATE')))"
+        " OR (c.relname = ANY(:catalog) AND (has_table_privilege(c.oid, 'INSERT, UPDATE, DELETE')"
+        "   OR has_any_column_privilege(c.oid, 'INSERT, UPDATE'))))"
     ),
     "has a privilege on alembic_version": (
         f"{_PUBLIC} WHERE n.nspname = 'public' AND c.relname = 'alembic_version'"  # noqa: S608
-        " AND has_table_privilege(c.oid, 'SELECT, INSERT, UPDATE, DELETE')"
+        " AND (has_table_privilege(c.oid, 'DELETE')"
+        "   OR has_any_column_privilege(c.oid, 'SELECT, INSERT, UPDATE'))"
     ),
     "has an app.* default for its role or database": (
         "SELECT 1 FROM pg_db_role_setting s, unnest(s.setconfig) AS cfg"

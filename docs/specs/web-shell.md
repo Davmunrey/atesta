@@ -1,7 +1,7 @@
 # Spec: Web shell, sign-in and organization screens
 
 - Requirement ids: FR-01, NFR-03, NFR-10
-- Status: draft
+- Status: approved (2026-11-13)
 - ADRs: ADR-001, ADR-007, ADR-012, ADR-013
 - Build order: after identity-auth (its endpoints are the only backend this needs)
 - Revised 2026-11-13: BFF moved into the API so the web stays a static export (Infrastructure tab)

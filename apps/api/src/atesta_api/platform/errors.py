@@ -1,0 +1,53 @@
+"""Stable error codes for errors the framework raises (identity-auth spec).
+
+The API holds no user-facing prose: the web maps codes to ES/EN texts. Bodies never echo the
+submitted input (an email, a token) or exception text.
+"""
+
+from collections.abc import Mapping
+from typing import Any
+
+from fastapi import FastAPI, Request
+from fastapi.exception_handlers import http_exception_handler
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse, Response
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+_HTTP_CODES = {404: "request.not_found", 405: "request.method_not_allowed"}
+
+
+def _field(error: Mapping[str, Any]) -> str:
+    if error.get("type") == "json_invalid":
+        return "body"  # the location is a character offset, not a field
+    return ".".join(str(part) for part in error.get("loc", ()))
+
+
+async def _invalid_request(request: Request, exc: Exception) -> JSONResponse:
+    if not isinstance(exc, RequestValidationError):  # registered for that type only
+        return await _server_error(request, exc)
+    fields = sorted({_field(e) for e in exc.errors()})
+    return JSONResponse(
+        status_code=422, content={"detail": {"code": "request.invalid", "fields": fields}}
+    )
+
+
+async def _http_error(request: Request, exc: Exception) -> Response:
+    if not isinstance(exc, StarletteHTTPException):  # registered for that type only
+        return await _server_error(request, exc)
+    if isinstance(exc.detail, dict):  # already {"code": ...} from a handler
+        return await http_exception_handler(request, exc)
+    code = _HTTP_CODES.get(exc.status_code, "request.error")
+    return JSONResponse(
+        status_code=exc.status_code, content={"detail": {"code": code}}, headers=exc.headers
+    )
+
+
+async def _server_error(request: Request, exc: Exception) -> JSONResponse:
+    """Starlette still re-raises the exception after this response, so it is logged."""
+    return JSONResponse(status_code=500, content={"detail": {"code": "server.error"}})
+
+
+def install_error_handlers(app: FastAPI) -> None:
+    app.add_exception_handler(RequestValidationError, _invalid_request)
+    app.add_exception_handler(StarletteHTTPException, _http_error)
+    app.add_exception_handler(Exception, _server_error)
