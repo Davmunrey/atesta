@@ -19,10 +19,12 @@ from .conftest import APP_PASSWORD, auth, new_sub
 def org_with(client: TestClient, superuser: Engine, **roles: str) -> tuple[str, dict[str, str]]:
     """Create an org owned by 'owner' and add the other subs with the given roles."""
     subs = {name: new_sub() for name in ("owner", *roles)}
-    org = client.post("/v1/orgs", json={"name": "Org"}, headers=auth(subs["owner"])).json()["id"]
+    org = client.post("/api/v1/orgs", json={"name": "Org"}, headers=auth(subs["owner"])).json()[
+        "id"
+    ]
     with superuser.begin() as conn:
         for name, role in roles.items():
-            user_id = client.get("/v1/me", headers=auth(subs[name])).json()["id"]
+            user_id = client.get("/api/v1/me", headers=auth(subs[name])).json()["id"]
             conn.execute(
                 text("INSERT INTO memberships VALUES (:o, :u, :r)"),
                 {"o": org, "u": user_id, "r": role},
@@ -31,7 +33,7 @@ def org_with(client: TestClient, superuser: Engine, **roles: str) -> tuple[str, 
 
 
 def uid(client: TestClient, sub: str) -> str:
-    return str(client.get("/v1/me", headers=auth(sub)).json()["id"])
+    return str(client.get("/api/v1/me", headers=auth(sub)).json()["id"])
 
 
 def events(superuser: Engine, org: str, action: str) -> int:
@@ -42,14 +44,14 @@ def events(superuser: Engine, org: str, action: str) -> int:
 
 def test_list_members(client: TestClient, superuser: Engine) -> None:
     org, subs = org_with(client, superuser, ana="member")
-    listed = client.get(f"/v1/orgs/{org}/members", headers=auth(subs["ana"])).json()
+    listed = client.get(f"/api/v1/orgs/{org}/members", headers=auth(subs["ana"])).json()
     assert sorted(m["role"] for m in listed) == ["member", "owner"]
 
 
 def test_only_owner_changes_roles(client: TestClient, superuser: Engine) -> None:
     org, subs = org_with(client, superuser, adm="admin", mem="member")
     target = uid(client, subs["mem"])
-    url = f"/v1/orgs/{org}/members/{target}"
+    url = f"/api/v1/orgs/{org}/members/{target}"
     assert client.patch(url, json={"role": "admin"}, headers=auth(subs["adm"])).status_code == 403
     changed = client.patch(url, json={"role": "admin"}, headers=auth(subs["owner"]))
     assert (changed.status_code, changed.json()["role"]) == (200, "admin")
@@ -58,7 +60,7 @@ def test_only_owner_changes_roles(client: TestClient, superuser: Engine) -> None
 
 def test_admin_removes_members_only(client: TestClient, superuser: Engine) -> None:
     org, subs = org_with(client, superuser, adm="admin", adm2="admin", mem="member")
-    base = f"/v1/orgs/{org}/members"
+    base = f"/api/v1/orgs/{org}/members"
     assert (
         client.delete(f"{base}/{uid(client, subs['adm2'])}", headers=auth(subs["adm"])).status_code
         == 403
@@ -73,7 +75,7 @@ def test_admin_removes_members_only(client: TestClient, superuser: Engine) -> No
 
 def test_last_owner_cannot_be_demoted_or_removed(client: TestClient, superuser: Engine) -> None:
     org, subs = org_with(client, superuser)
-    url = f"/v1/orgs/{org}/members/{uid(client, subs['owner'])}"
+    url = f"/api/v1/orgs/{org}/members/{uid(client, subs['owner'])}"
     demote = client.patch(url, json={"role": "member"}, headers=auth(subs["owner"]))
     assert (demote.status_code, demote.json()["detail"]["code"]) == (409, "identity.last_owner")
     assert client.delete(url, headers=auth(subs["owner"])).status_code == 409

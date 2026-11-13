@@ -25,8 +25,9 @@ settings, created from code so prod later gets the same settings by construction
   - prefix domain with `managed_login_version = 2` (no certificate needed for a prefix domain);
   - public app client: no secret, `allowed_oauth_flows = ["code"]`, scopes `openid email`,
     `explicit_auth_flows = ["ALLOW_REFRESH_TOKEN_AUTH"]`, `email` not in write attributes,
-    access and ID tokens 30 min, refresh 12 h, callback `http://localhost:8000/auth/callback`
-    (the BFF runs in the API, web spec), sign-out `http://localhost:3000/`;
+    access and ID tokens 30 min, refresh 12 h, callback `http://localhost:3000/auth/callback`
+    (the BFF runs in the API behind the Next.js dev rewrites, web spec), sign-out
+    `http://localhost:3000/`;
   - `aws_cognito_managed_login_branding` for the client with `use_cognito_provided_values =
     true` until the brand is chosen;
   - email: `COGNITO_DEFAULT` in dev only (builder's own addresses; prod uses SES DEVELOPER in

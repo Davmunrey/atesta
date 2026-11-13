@@ -7,8 +7,7 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI
 
-from atesta_api.modules.identity.api import router as identity_router
-from atesta_api.modules.identity.api import wire_identity
+from atesta_api.modules.identity.api import install_identity, wire_identity
 from atesta_api.platform import db
 from atesta_api.platform.guard import assert_safe_runtime_role
 
@@ -31,7 +30,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(title="Atesta API", version="0.0.0", lifespan=lifespan)
-app.include_router(identity_router)
+install_identity(app)
 
 
 @app.get("/health")

@@ -9,6 +9,7 @@ import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, Protocol
+from urllib.parse import urlencode
 
 import httpx
 import jwt
@@ -20,6 +21,10 @@ LEEWAY_SECONDS = 60
 
 class InvalidTokenError(Exception):
     code = "auth.invalid_token"
+
+
+class ExpiredTokenError(InvalidTokenError):
+    """Well-formed and correctly signed, but past exp (plus leeway): refreshable."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -77,22 +82,32 @@ class TokenVerifier:
                 self._fetched_at = self._clock()
             return self._keys.get(kid)
 
-    def verify(self, token: str) -> AccessToken:
+    def _decode(self, token: str, audience: str | None) -> dict[str, Any]:
         try:
             header = jwt.get_unverified_header(token)
             key = self._key(str(header.get("kid", "")))
             if key is None or header.get("alg") != "RS256":
                 raise InvalidTokenError
-            claims = jwt.decode(
+            claims: dict[str, Any] = jwt.decode(
                 token,
                 key,
                 algorithms=["RS256"],
                 issuer=self._settings.issuer,
+                audience=audience,
                 leeway=LEEWAY_SECONDS,
-                options={"require": ["exp", "iat", "iss", "sub"], "verify_aud": False},
+                options={
+                    "require": ["exp", "iat", "iss", "sub"],
+                    "verify_aud": audience is not None,
+                },
             )
+        except jwt.ExpiredSignatureError as exc:
+            raise ExpiredTokenError from exc
         except jwt.PyJWTError as exc:
             raise InvalidTokenError from exc
+        return claims
+
+    def verify(self, token: str) -> AccessToken:
+        claims = self._decode(token, audience=None)
         scopes = frozenset(str(claims.get("scope", "")).split())
         if (
             claims.get("token_use") != "access"
@@ -102,6 +117,13 @@ class TokenVerifier:
         ):
             raise InvalidTokenError
         return AccessToken(sub=str(claims["sub"]), scopes=scopes)
+
+    def verify_id_token(self, token: str) -> dict[str, Any]:
+        """ID tokens are used only to check the sign-in nonce, never to authorize requests."""
+        claims = self._decode(token, audience=self._settings.app_client_id)
+        if claims.get("token_use") != "id":
+            raise InvalidTokenError
+        return claims
 
 
 def jwks_fetcher(settings: CognitoSettings, client: httpx.Client) -> Callable[[], dict[str, Any]]:
@@ -142,3 +164,83 @@ class CognitoUserInfo:
         data = response.json()
         verified = data.get("email_verified") in ("true", True)
         return UserInfo(sub=str(data["sub"]), email=str(data["email"]), email_verified=verified)
+
+
+@dataclass(frozen=True, slots=True)
+class TokenSet:
+    access_token: str
+    refresh_token: str | None
+    id_token: str | None
+
+
+class CognitoOAuth:
+    """Managed login endpoints for the BFF: public client, Authorization Code + PKCE."""
+
+    def __init__(
+        self,
+        settings: CognitoSettings,
+        client: httpx.Client,
+        verifier: TokenVerifier,
+        web_origin: str,
+    ) -> None:
+        self._base = f"https://{settings.domain}"
+        self._client_id = settings.app_client_id
+        self._client = client
+        self._verifier = verifier
+        self._redirect_uri = f"{web_origin}/auth/callback"
+        self._logout_uri = f"{web_origin}/"
+
+    def authorize_url(self, *, state: str, nonce: str, challenge: str, lang: str) -> str:
+        query = urlencode(
+            {
+                "response_type": "code",
+                "client_id": self._client_id,
+                "redirect_uri": self._redirect_uri,
+                "scope": "openid email",
+                "state": state,
+                "nonce": nonce,
+                "code_challenge": challenge,
+                "code_challenge_method": "S256",
+                "lang": lang,
+            }
+        )
+        return f"{self._base}/oauth2/authorize?{query}"
+
+    def _token(self, form: dict[str, str]) -> TokenSet:
+        response = self._client.post(f"{self._base}/oauth2/token", data=form, timeout=5)
+        if response.status_code in (400, 401):
+            raise InvalidTokenError
+        response.raise_for_status()
+        body = response.json()
+        return TokenSet(
+            access_token=str(body["access_token"]),
+            refresh_token=body.get("refresh_token"),
+            id_token=body.get("id_token"),
+        )
+
+    def exchange_code(self, code: str, verifier: str) -> TokenSet:
+        return self._token(
+            {
+                "grant_type": "authorization_code",
+                "client_id": self._client_id,
+                "code": code,
+                "redirect_uri": self._redirect_uri,
+                "code_verifier": verifier,
+            }
+        )
+
+    def refresh(self, refresh_token: str) -> TokenSet:
+        return self._token(
+            {
+                "grant_type": "refresh_token",
+                "client_id": self._client_id,
+                "refresh_token": refresh_token,
+            }
+        )
+
+    def id_token_nonce(self, id_token: str) -> str:
+        return str(self._verifier.verify_id_token(id_token).get("nonce", ""))
+
+    def logout_url(self) -> str:
+        query = urlencode({"client_id": self._client_id, "logout_uri": self._logout_uri})
+        return f"{self._base}/logout?{query}"

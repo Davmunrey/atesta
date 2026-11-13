@@ -27,7 +27,7 @@ def _admin(member: Annotated[Member, Depends(require_role(Role.ADMIN))]) -> dict
 
 def test_missing_or_invalid_token_is_401(client: TestClient) -> None:
     for headers in ({}, {"Authorization": "Bearer garbage"}):
-        response = client.get("/v1/me", headers=headers)
+        response = client.get("/api/v1/me", headers=headers)
         assert response.status_code == 401
         assert response.json() == {"detail": {"code": "auth.invalid_token"}}
 
@@ -36,10 +36,10 @@ def test_first_call_provisions_and_me_refreshes_email(
     client: TestClient, provider: FakeProvider, superuser: Engine
 ) -> None:
     sub = new_sub()
-    first = client.get("/v1/me", headers=auth(sub)).json()
+    first = client.get("/api/v1/me", headers=auth(sub)).json()
     assert (first["email"], first["memberships"], provider.calls) == (f"{sub}@example.com", [], 1)
     provider.emails[sub] = "changed@example.com"
-    assert client.get("/v1/me", headers=auth(sub)).json()["email"] == "changed@example.com"
+    assert client.get("/api/v1/me", headers=auth(sub)).json()["email"] == "changed@example.com"
     with superuser.connect() as conn:
         rows = conn.execute(text("SELECT count(*) FROM users WHERE cognito_sub = :s"), {"s": sub})
         assert rows.scalar_one() == 1
@@ -49,7 +49,7 @@ def test_concurrent_first_calls_create_one_user(client: TestClient, superuser: E
     sub = new_sub()
     with ThreadPoolExecutor(max_workers=4) as pool:
         codes = list(
-            pool.map(lambda _: client.get("/v1/me", headers=auth(sub)).status_code, range(4))
+            pool.map(lambda _: client.get("/api/v1/me", headers=auth(sub)).status_code, range(4))
         )
     assert codes == [200] * 4
     with superuser.connect() as conn:
@@ -59,10 +59,10 @@ def test_concurrent_first_calls_create_one_user(client: TestClient, superuser: E
 
 def test_create_org_makes_caller_owner_and_audits(client: TestClient, superuser: Engine) -> None:
     sub = new_sub()
-    created = client.post("/v1/orgs", json={"name": "Acme"}, headers=auth(sub))
+    created = client.post("/api/v1/orgs", json={"name": "Acme"}, headers=auth(sub))
     assert created.status_code == 201
     org_id = created.json()["id"]
-    memberships = client.get("/v1/me", headers=auth(sub)).json()["memberships"]
+    memberships = client.get("/api/v1/me", headers=auth(sub)).json()["memberships"]
     assert memberships == [
         {"organization_id": org_id, "organization_name": "Acme", "role": "owner"}
     ]
@@ -78,8 +78,8 @@ def test_non_member_gets_404_and_member_below_admin_gets_403(
     client: TestClient, superuser: Engine
 ) -> None:
     owner, outsider, member = new_sub(), new_sub(), new_sub()
-    org_id = client.post("/v1/orgs", json={"name": "Beta"}, headers=auth(owner)).json()["id"]
-    user_id = client.get("/v1/me", headers=auth(member)).json()["id"]
+    org_id = client.post("/api/v1/orgs", json={"name": "Beta"}, headers=auth(owner)).json()["id"]
+    user_id = client.get("/api/v1/me", headers=auth(member)).json()["id"]
     with superuser.begin() as conn:
         conn.execute(
             text("INSERT INTO memberships VALUES (:o, :u, 'member')"), {"o": org_id, "u": user_id}
@@ -96,9 +96,9 @@ def test_non_member_gets_404_and_member_below_admin_gets_403(
 def test_tokens_never_reach_logs(client: TestClient, caplog: pytest.LogCaptureFixture) -> None:
     caplog.set_level(logging.DEBUG)
     sub = new_sub()
-    client.get("/v1/me", headers=auth(sub))
-    client.get("/v1/me", headers={"Authorization": "Bearer garbage-token-value"})
-    client.post("/v1/orgs", json={"name": "Gamma"}, headers=auth(sub))
+    client.get("/api/v1/me", headers=auth(sub))
+    client.get("/api/v1/me", headers={"Authorization": "Bearer garbage-token-value"})
+    client.post("/api/v1/orgs", json={"name": "Gamma"}, headers=auth(sub))
     assert f"tok-{sub}" not in caplog.text
     assert "garbage-token-value" not in caplog.text
 
@@ -112,6 +112,8 @@ def cognito_env(monkeypatch: pytest.MonkeyPatch) -> None:
         "ATESTA_COGNITO_DOMAIN": "auth.example.com",
         "ATESTA_DB_SSLMODE": "disable",
         "ATESTA_WEB_BASE_URL": "https://app.example.com",
+        "ATESTA_WEB_ORIGIN": "https://app.example.com",
+        "ATESTA_SESSION_KEY": "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=",
     }.items():
         monkeypatch.setenv(name, value)
 

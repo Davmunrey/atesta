@@ -21,7 +21,7 @@ from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 from atesta_api.platform.tenancy import Organization
 
-router = APIRouter(prefix="/v1", tags=["identity"])
+router = APIRouter(prefix="/api/v1", tags=["identity"])
 router.include_router(members_router)
 router.include_router(invitations_router)
 

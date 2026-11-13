@@ -35,6 +35,9 @@ later screen (connections, scores, evidence) plugs into.
       clears them and calls the Cognito logout endpoint.
 - [ ] API routes move from `/v1` to `/api/v1` (one router prefix), so CloudFront can route by
       path without rewriting.
+- [ ] Local development keeps one origin too: the Next.js dev server rewrites `/api/*` and
+      `/auth/*` to the API (`next.config` rewrites apply only to `next dev`; production routing is
+      CloudFront's).
 - [ ] The web calls the API directly at `/api/v1/*` with the cookie (same origin, no proxy).
       When the access token has expired, the API refreshes it once with the refresh token and
       rotates the cookies. Cookie-authenticated POST, PATCH and DELETE are rejected with 403
