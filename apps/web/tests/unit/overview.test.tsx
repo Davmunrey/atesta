@@ -9,6 +9,13 @@ import { renderWithProviders, stubApi } from "./render";
 const path = "GET /api/v1/orgs/primary/overview";
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
+it("links to the requirement register with organization and framework context", async () => {
+  stubApi({ [path]: [200, overview] });
+  renderWithProviders(<OverviewDashboard orgId="primary" />);
+  const link = (await screen.findAllByRole("link", { name: "Ver requisitos y configuración" }))[0];
+  expect(link!.getAttribute("href")).toBe("/app/framework?org=primary&framework=synthetic_alpha");
+});
+
 it("explains an empty organization without inventing a score or scan action", async () => {
   stubApi({ [path]: [200, emptyOverview] });
   renderWithProviders(<OverviewDashboard orgId="primary" />);

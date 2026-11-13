@@ -3,11 +3,13 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import type { components } from "@/lib/api/schema";
+import Link from "next/link";
+import { orgFramework } from "@/lib/org";
 
 type Framework = components["schemas"]["FrameworkSummary"];
 const states = ["passed", "failed", "manual", "not_applicable"] as const;
 
-export function FrameworkLedger({ frameworks }: { frameworks: Framework[] }) {
+export function FrameworkLedger({ frameworks, orgId }: { frameworks: Framework[]; orgId: string }) {
   const t = useTranslations("dashboard");
   const format = useFormatter();
   const searchId = useId();
@@ -55,6 +57,7 @@ export function FrameworkLedger({ frameworks }: { frameworks: Framework[] }) {
                   </dl>
                   <p className="text-sm text-muted">{t("scoreHelp")}</p>
                 </> : <p className="text-muted">{t("notAssessedHelp")}</p>}
+                <Link href={orgFramework(orgId, framework.key)} className="framework-detail-link">{t("viewRequirements")}</Link>
               </div>
             </details>;
           })}

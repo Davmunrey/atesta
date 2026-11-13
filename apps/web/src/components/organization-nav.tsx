@@ -15,7 +15,7 @@ export function OrganizationNav() {
   const router = useRouter();
   const switcherId = useId();
   const org = selectOrg(memberships, useSearchParams().get("org"));
-  if (!org || !["/app/org", "/app/members", "/app/invitations"].includes(pathname)) return null;
+  if (!org || !["/app/org", "/app/framework", "/app/members", "/app/invitations"].includes(pathname)) return null;
 
   function switchOrganization(id: string) {
     const next = selectOrg(memberships, id);
@@ -41,7 +41,7 @@ export function OrganizationNav() {
       </select>
       <nav aria-label={t("sections")} className="organization-nav">
         {sections.map(({ label, href }) => (
-          <Link key={href} href={href} aria-current={href.split("?")[0] === pathname ? "page" : undefined}>
+          <Link key={href} href={href} aria-current={href.split("?")[0] === (pathname === "/app/framework" ? "/app/org" : pathname) ? "page" : undefined}>
             {label}
           </Link>
         ))}
