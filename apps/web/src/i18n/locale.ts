@@ -2,7 +2,7 @@ export const LOCALES = ["es", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = "es";
 export const LOCALE_COOKIE = "atesta_locale";
-const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
+export const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 
 export function isLocale(value: unknown): value is Locale {
   return LOCALES.includes(value as Locale);
