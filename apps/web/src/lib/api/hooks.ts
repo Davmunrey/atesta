@@ -49,6 +49,13 @@ export function useMembers(orgId: string) {
   });
 }
 
+export function useOverview(orgId: string) {
+  return useQuery({
+    queryKey: ["overview", orgId], retry: false,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/overview", { params: { path: { org_id: orgId } } })),
+  });
+}
+
 /** Role changes and removals can change the caller's own memberships, so /me refreshes too. */
 function useMemberMutation<T>(orgId: string, mutationFn: (input: T) => Promise<unknown>) {
   const client = useQueryClient();

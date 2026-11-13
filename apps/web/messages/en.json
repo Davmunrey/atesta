@@ -1,6 +1,10 @@
 {
-  "brand": { "name": "Atesta" },
-  "footer": { "label": "Site information" },
+  "brand": {
+    "name": "Atesta"
+  },
+  "footer": {
+    "label": "Site information"
+  },
   "cookies": {
     "title": "Cookies and storage",
     "home": "Back to {brand} home",
@@ -144,5 +148,61 @@
   "notFound": {
     "title": "This page does not exist.",
     "home": "Back to the start"
+  },
+  "dashboard": {
+    "frameworks": "Results by framework",
+    "frameworksHelp": "One piece of evidence can support several frameworks. Each result retains its version.",
+    "emptyFrameworks": "No published frameworks yet",
+    "emptyFrameworksHelp": "Reviewed frameworks will appear here when they are published in the catalog.",
+    "search": "Search frameworks",
+    "matches": "{count, plural, one {# visible framework} other {# visible frameworks}}",
+    "version": "Version {version}",
+    "draft": "Draft",
+    "notAssessed": "Not assessed",
+    "unscored": "No score",
+    "passed": "Pass",
+    "failed": "Fail",
+    "manual": "Manual review",
+    "not_applicable": "Not applicable",
+    "scope": "Scope",
+    "organizationScope": "Whole organization",
+    "assessedAt": "Assessed on",
+    "catalog": "Recorded catalog",
+    "scoreHelp": "The percentage compares passing and failing requirements. Manual reviews and not-applicable requirements are excluded.",
+    "notAssessedHelp": "This framework has no recorded assessment for the whole organization yet.",
+    "noMatches": "No framework matches your search",
+    "clearSearch": "Clear search",
+    "collectionSummary": "Scans and evidence",
+    "scans": "Recent scans",
+    "emptyScans": "No recorded scans yet",
+    "emptyScansHelp": "Each scan and its coverage will appear here once recorded.",
+    "coverage": "{evaluated} of {expected} checks evaluated",
+    "unknownCoverage": "Coverage not available yet",
+    "coverageLabel": "Coverage for {provider}",
+    "providers": {
+      "m365": "Microsoft 365",
+      "google_workspace": "Google Workspace"
+    },
+    "statuses": {
+      "queued": "Queued",
+      "running": "Running",
+      "collected": "Collected",
+      "succeeded": "Completed",
+      "partial": "Partial",
+      "failed": "Failed",
+      "blocked": "Blocked"
+    },
+    "evidence": "Recorded evidence",
+    "evidenceUnit": "{count, plural, one {record} other {records}}",
+    "evidenceHelp": "Retained to support your assessments. The count does not represent covered controls.",
+    "emptyEvidenceHelp": "Evidence will appear when results or documents are recorded.",
+    "loading": "Loading results",
+    "retry": "Retry",
+    "development": "Development environment",
+    "recordedResults": "Recorded results",
+    "refreshing": "Refreshing…",
+    "refresh": "Refresh results",
+    "assessmentNote": "Atesta organizes results and evidence to help prepare for audits. It does not certify compliance.",
+    "pendingReviews": "{count, plural, one {# manual review pending} other {# manual reviews pending}}"
   }
 }

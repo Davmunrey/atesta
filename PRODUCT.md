@@ -4,8 +4,9 @@ Atesta helps security leads and owners of Spanish SMEs prepare continuously for 
 It begins with ENS and NIS2. Read-only connectors feed common controls so the same evidence
 can support multiple framework assessments. Atesta prepares evidence; it does not certify.
 
-The current usable product covers sign-in, organizations, members and invitations. Scanner
-integration is a separate workstream. Show only implemented actions and recorded data: no
+The current usable product covers sign-in, organizations, members, invitations and a dashboard
+of recorded framework results, collection coverage and evidence counts. Connector onboarding
+and scanner execution remain a separate workstream. Show only implemented actions and recorded data: no
 invented scores, scans or product states. Product views for the public landing must come from
 a recorded test-tenant run before release.
 

@@ -1,6 +1,10 @@
 {
-  "brand": { "name": "Atesta" },
-  "footer": { "label": "Información del sitio" },
+  "brand": {
+    "name": "Atesta"
+  },
+  "footer": {
+    "label": "Información del sitio"
+  },
   "cookies": {
     "title": "Cookies y almacenamiento",
     "home": "Volver al inicio de {brand}",
@@ -144,5 +148,61 @@
   "notFound": {
     "title": "Esta página no existe.",
     "home": "Volver al inicio"
+  },
+  "dashboard": {
+    "frameworks": "Resultados por marco",
+    "frameworksHelp": "Una misma evidencia puede servir a varios marcos. Cada resultado conserva su versión.",
+    "emptyFrameworks": "Todavía no hay marcos publicados",
+    "emptyFrameworksHelp": "Los marcos revisados aparecerán aquí cuando se publiquen en el catálogo.",
+    "search": "Buscar marco",
+    "matches": "{count, plural, one {# marco visible} other {# marcos visibles}}",
+    "version": "Versión {version}",
+    "draft": "Borrador",
+    "notAssessed": "Sin evaluar",
+    "unscored": "Sin puntuación",
+    "passed": "Cumple",
+    "failed": "No cumple",
+    "manual": "Revisión manual",
+    "not_applicable": "No aplica",
+    "scope": "Alcance",
+    "organizationScope": "Organización completa",
+    "assessedAt": "Evaluado el",
+    "catalog": "Catálogo registrado",
+    "scoreHelp": "El porcentaje compara requisitos que cumplen o no cumplen. La revisión manual y «No aplica» quedan fuera.",
+    "notAssessedHelp": "Este marco aún no tiene una evaluación registrada para toda la organización.",
+    "noMatches": "Ningún marco coincide con la búsqueda",
+    "clearSearch": "Limpiar búsqueda",
+    "collectionSummary": "Análisis y evidencias",
+    "scans": "Últimos análisis",
+    "emptyScans": "Aún no hay análisis registrados",
+    "emptyScansHelp": "Aquí verás cada análisis y su cobertura cuando se registre.",
+    "coverage": "{evaluated} de {expected} comprobaciones evaluadas",
+    "unknownCoverage": "Cobertura aún no disponible",
+    "coverageLabel": "Cobertura de {provider}",
+    "providers": {
+      "m365": "Microsoft 365",
+      "google_workspace": "Google Workspace"
+    },
+    "statuses": {
+      "queued": "En cola",
+      "running": "En curso",
+      "collected": "Recogido",
+      "succeeded": "Completado",
+      "partial": "Parcial",
+      "failed": "Fallido",
+      "blocked": "Bloqueado"
+    },
+    "evidence": "Evidencias registradas",
+    "evidenceUnit": "{count, plural, one {registro} other {registros}}",
+    "evidenceHelp": "Conservadas para respaldar tus evaluaciones. El recuento no equivale a controles cubiertos.",
+    "emptyEvidenceHelp": "Las evidencias aparecerán al registrar resultados o documentos.",
+    "loading": "Cargando resultados",
+    "retry": "Reintentar",
+    "development": "Entorno de desarrollo",
+    "recordedResults": "Resultados registrados",
+    "refreshing": "Actualizando…",
+    "refresh": "Actualizar resultados",
+    "assessmentNote": "Atesta organiza resultados y evidencias para preparar auditorías. No certifica cumplimiento.",
+    "pendingReviews": "{count, plural, one {# revisión manual pendiente} other {# revisiones manuales pendientes}}"
   }
 }
