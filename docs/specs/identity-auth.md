@@ -80,7 +80,10 @@ so it is bought (Cognito, Architecture tab "Build vs buy").
 - [ ] Audit events: `org.created`, `invitation.created`, `invitation.revoked`,
       `invitation.accepted`, `membership.role_changed`, `membership.removed`.
 - [ ] Errors return stable codes. ES and EN texts live in the web i18n files; the API holds no
-      user-facing prose.
+      user-facing prose. Framework errors too (`platform/errors.py`): 422 `request.invalid` with
+      `fields` (dotted locations only, never the message or the submitted input), 404
+      `request.not_found`, 405 `request.method_not_allowed`, any other bare HTTP error
+      `request.error`, and 500 `server.error` with no exception text.
 - [ ] Access tokens, invitation tokens and `Authorization` headers are never logged, including
       on the successful provisioning path.
 
