@@ -27,25 +27,55 @@ Visual system
       leaf, no name, and not Euclid Circular A (a commercial typeface).
 - [ ] Colours come from the palette the owner picks (Design notes, Palettes), as tokens in
       `src/styles/tokens.css`. No other colour literals in components.
-- [ ] The typefaces are SIL OFL families (proposed: Plus Jakarta Sans for text, JetBrains Mono
-      for codes and hashes), self-hosted with `next/font` at build time. The browser makes no
-      request to Google Fonts or any other third party.
+- [ ] The typefaces are SIL OFL families, self-hosted with `next/font` at build time: Bricolage
+      Grotesque (variable: optical size, width, weight) for display type, Plus Jakarta Sans for
+      text, JetBrains Mono for codes and hashes. The browser makes no request to Google Fonts or
+      any other third party.
 - [ ] Every text and background pair used meets WCAG 2.2 AA (4.5:1 body, 3:1 large text and
-      UI); the pairs are listed in a test with their computed ratio.
+      UI); the pairs are listed in a test with their computed ratio. Text never fades below that
+      ratio as part of an animation; a decorative fade uses shapes, not text.
+
+Motion
+
+- [ ] CSS only: keyframes, transitions and scroll-driven animations (`animation-timeline:
+      view()` and `scroll()`). No animation library and no animation script, so the CSP hash list
+      does not grow.
+- [ ] Progressive enhancement: every element's resting style is its final, readable state.
+      Browsers without scroll-driven animations show the page complete and static.
+- [ ] Only `transform`, `opacity`, `filter` and `background-size` are animated. Layout never
+      moves after load (CLS under 0.1); the hero headline is the LCP element and paints without
+      waiting for any animation (LCP under 2.5 s on the CI e2e profile).
+- [ ] `prefers-reduced-motion: reduce` stops every animation and transition, and the hero
+      product view is shown flat.
+- [ ] A pause button in the header stops every animation, for anything that moves for more than
+      five seconds (WCAG 2.2.2). It is a real `<button>` with `aria-pressed`.
+- [ ] Motion tokens in `tokens.css`: ease-out `cubic-bezier(.215, .61, .355, 1)`, standard
+      `cubic-bezier(.4, 0, .6, 1)`; 200 to 320 ms for hover and UI, 600 to 900 ms for entrances;
+      entrance distance 24 px.
 
 Content
 
 - [ ] No price anywhere on the site (owner decision, 13/11/2026).
-- [ ] The hero is a claim the visitor can check, not a product screenshot. No floating chat, no
-      superlatives, no customer logos or figures that are not real and dated (market analysis
-      rules, 13/11/2026).
+- [ ] The hero is a claim the visitor can check. The product view under it is labelled
+      "ejemplo ilustrativo" until real screens exist, and it shows a "no evaluado" row, never only
+      passes. No floating chat, no superlatives, no customer logos or figures that are not real
+      and dated (market analysis rules, 13/11/2026).
+- [ ] Every figure shows its official source in the same block. Figures checked on 13/11/2026:
+      73 security measures in the ENS (RD 311/2022, anexo II, BOE-A-2022-7191, counted by measure
+      code); 10 minimum risk-management elements in NIS2 (Directive (EU) 2022/2555, art. 21.2,
+      letters a to j); 24 hours for the early warning of a significant incident (art. 23.4 a).
+      The ENS measure names in the example (op.acc.6, op.exp.8, op.mon.3, mp.s.1, mp.info.6) are
+      copied from anexo II.
 - [ ] Every product statement is true on the day it is published. What is not built yet is
       labelled as such (for example, connectors "en desarrollo"). A reviewer checks each claim
       against the code or an ADR before release.
-- [ ] Sections: hero; the problem (ENS and NIS2 for SMEs that sell to the public sector); how it
-      works (read-only connectors, scan, evidence for the auditor); frameworks (ENS by category,
-      NIS2); trust (data processed in the EU, read-only permissions, AI cites sources and never
-      decides pass or fail); questions; footer with the legal links.
+- [ ] Sections: hero with the illustrative scan; a marquee band of frameworks and sources (no
+      customer logos); the problem (ENS and NIS2 for SMEs that sell to the public sector); the
+      rule in three figures, with frameworks (ENS by category, NIS2); how it works, as three
+      stacked cards (read-only connectors, scan once for every framework, evidence for the
+      auditor); trust bento (read-only, data in the EU, AI cites and never decides pass or fail,
+      tenant isolation, "no evaluado" is never a pass); questions; closing CTA; footer with the
+      legal links.
 - [ ] Main CTA: "Hablar con nosotros" (`mailto:` to the contact address). Secondary: "Entrar"
       (sign-in) for existing users. No form until a form spec exists.
 - [ ] The product name is one message key (`brand.name`), so a rename is a one-line change.
@@ -97,6 +127,20 @@ Palettes (WCAG contrast computed 13/11/2026; market territories from the market 
 MongoDB's own pair (`#00ED64` on `#001E2B`) is ruled out: neon green is a category cliché (five
 competitor sites) and ServiceNow already uses dark teal with bright green.
 
+Motion references (owner request, 13/11/2026: "efecto wow" like Clay, Vanta, Revolut, Nike and
+Apple). Measured on 13/11/2026 with headless Chromium at 1440 x 900, by sampling computed styles
+while scrolling. These are techniques to borrow, not designs to copy:
+
+| Site | Stack | Measured | Taken for Atestas |
+|---|---|---|---|
+| clay.com | Webflow, GSAP + ScrollTrigger, 10 videos, 5 sticky elements | `cubic-bezier(.215, .61, .355, 1)` at 0.3 s; continuous logo marquee; scroll-scrubbed scale; stacked sticky cards | Ease-out token, marquee band (frameworks, not logos), stacked "how it works" cards |
+| vanta.com | Webflow, GSAP + ScrollTrigger | Cards rise 24 px with opacity 0 to 1; hover 0.2 s ease; dot-grid hero; product UI fragments | 24 px entrance, dot grid, real product UI in the hero |
+| apple.com/es | No animation library | `cubic-bezier(.4, 0, .6, 1)` at 0.32 s; subhead cross-fades; bento tiles; blurred sticky nav | Standard ease token, bento trust grid, blurred sticky header |
+| nike.com/es | No animation library | Full-bleed media, giant condensed uppercase headlines, image fade-ins | Giant condensed statement ("Evidencias, no capturas") |
+| revolut.com | Not measured | The site served a bot check to the headless browser; it was not bypassed | Nothing |
+
+Design canvas with the three boards (landing, palettes, legal): owner's Claude design artifact.
+
 Files: `src/app/(public)/page.tsx`, `src/app/(public)/aviso-legal/`, `privacidad/`, `cookies/`,
 `src/content/legal-entity.ts`, messages in `messages/{es,en}.json`, tokens in
 `src/styles/tokens.css`. The CSP hash list grows with any new inline script (budget: 1,783
@@ -110,6 +154,8 @@ Sources (official texts saved 13/11/2026):
 - RGPD, Reglamento (UE) 2016/679, art. 13: DOUE-L-2016-80807 (BOE copy of the DOUE).
 - AEPD, "Guía sobre el uso de las cookies", updated May 2024:
   https://www.aepd.es/guias/guia-cookies.pdf
+- ENS, Real Decreto 311/2022, anexo II: BOE-A-2022-7191, block `ai-2`, via the BOE open-data API.
+- NIS2, Directiva (UE) 2022/2555, arts. 21.2 and 23.4: DOUE-L-2022-81963 (BOE copy of the DOUE).
 
 ## Test plan
 
@@ -122,3 +168,8 @@ Sources (official texts saved 13/11/2026):
 | e2e (Playwright + axe): landing, aviso legal, privacidad, cookies in ES and EN, no violations | Accessibility |
 | e2e: the page loads with no request to a third-party host and sets no cookie before the user acts | No banner needed |
 | e2e: CSP blocks an injected inline script on the landing | Security headers |
+| e2e: with `prefers-reduced-motion: reduce`, `document.getAnimations()` has no running animation | Reduced motion |
+| e2e: the header pause button sets `aria-pressed="true"` and leaves no running animation | WCAG 2.2.2 |
+| e2e: with scroll-driven animations disabled, every section is visible and readable | Progressive enhancement |
+| e2e: CLS under 0.1 and LCP under 2.5 s on the landing (Performance API) | No layout shift |
+| Unit: every figure on the landing has a source string next to it | Sourced figures |
