@@ -5,7 +5,9 @@ MIGRATIONS = "alembic_version"
 TENANT = frozenset({"audit_events", "memberships", "invitations"})
 APPEND_ONLY = frozenset({"audit_events"})
 GLOBAL_IDENTITY = frozenset({"users"})
-CATALOG: frozenset[str] = frozenset()
+CATALOG = frozenset(
+    {"frameworks", "requirements", "controls", "checks", "control_checks", "mappings"}
+)
 
 
 def table_classes(extra_tenant: frozenset[str] = frozenset()) -> dict[str, str]:
