@@ -34,3 +34,23 @@ def test_unmapped_requirement_is_manual() -> None:
         "A-1": Status.MANUAL,
         "A-3": Status.MANUAL,
     }
+
+
+def test_group_scores_per_attribute_value() -> None:
+    from atesta_core.frameworks import group_scores
+    from atesta_core.scoring import ControlResult, Status
+
+    results = [
+        ControlResult("R-1", Status.PASS),
+        ControlResult("R-2", Status.FAIL),
+        ControlResult("R-3", Status.PASS),
+        ControlResult("R-4", Status.MANUAL),
+    ]
+    attributes = {
+        "R-1": {"dim": "a"},
+        "R-2": {"dim": "a"},
+        "R-3": {"dim": "b"},
+        "R-4": {"dim": "c"},
+    }
+    assert group_scores(results, attributes, ["dim"]) == {"dim": {"a": 50.0, "b": 100.0, "c": None}}
+    assert group_scores(results, attributes, []) == {}

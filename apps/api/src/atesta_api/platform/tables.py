@@ -2,8 +2,8 @@
 
 TENANT_ROOT = "organizations"
 MIGRATIONS = "alembic_version"
-TENANT = frozenset({"audit_events", "memberships", "invitations"})
-APPEND_ONLY = frozenset({"audit_events"})
+TENANT = frozenset({"audit_events", "memberships", "invitations", "score_snapshots"})
+APPEND_ONLY = frozenset({"audit_events", "score_snapshots"})
 GLOBAL_IDENTITY = frozenset({"users"})
 CATALOG = frozenset(
     {"frameworks", "requirements", "controls", "checks", "control_checks", "mappings"}

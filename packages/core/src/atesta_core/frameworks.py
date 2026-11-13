@@ -6,6 +6,7 @@ controls (many-to-many). One set of control results scores every selected framew
 
 from collections import defaultdict
 from collections.abc import Iterable
+from collections.abc import Mapping as Mapping_
 from dataclasses import dataclass
 
 from atesta_core.scoring import ControlResult, Status, score
@@ -68,3 +69,25 @@ def framework_score(
 ) -> float | None:
     """Score (0-100) of one framework from shared control results."""
     return score(framework_results(framework, requirement_ids, mappings, control_results))
+
+
+def group_scores(
+    results: Iterable[ControlResult],
+    attributes: Mapping_[str, Mapping_[str, object]],
+    keys: Iterable[str],
+) -> dict[str, dict[str, float | None]]:
+    """Score per value of each grouping attribute (FR-08), e.g. one score per dimension.
+
+    `attributes` maps requirement id to its attributes; `keys` are the attribute names a pack
+    declares as score groups. Requirements without the attribute are left out of that group.
+    """
+    results = list(results)
+    out: dict[str, dict[str, float | None]] = {}
+    for key in keys:
+        buckets: dict[str, list[ControlResult]] = defaultdict(list)
+        for result in results:
+            value = attributes.get(result.control_id, {}).get(key)
+            if value is not None:
+                buckets[str(value)].append(result)
+        out[key] = {value: score(rs) for value, rs in sorted(buckets.items())}
+    return out

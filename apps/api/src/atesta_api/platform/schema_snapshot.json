@@ -64,6 +64,15 @@
    "(id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
+   "score_snapshots",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
    "users",
    "self_insert",
    "INSERT",
@@ -131,6 +140,10 @@
   [
    "requirements",
    "SELECT"
+  ],
+  [
+   "score_snapshots",
+   "INSERT,SELECT"
   ],
   [
    "users",
