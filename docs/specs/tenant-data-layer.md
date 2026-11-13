@@ -51,8 +51,12 @@ for a compliance vendor. Isolation must not depend on every query being written 
 - [ ] App to Postgres traffic is TLS 1.2+ with server authentication (NFR-03, client side).
       `platform/db.py` sets `sslmode` and `sslrootcert` itself, never from the URL.
       `ATESTA_DB_SSLMODE` defaults to `verify-full` with the Amazon RDS CA bundle, pinned in the
-      repo and copied into the image. Only local and CI set `ATESTA_DB_SSLMODE=disable`. The host
-      must be the RDS endpoint name (not an IP or CNAME), because `verify-full` checks it.
+      repo (`platform/certs/`, source URL and SHA-256 in its README) and shipped in the wheel and
+      the image; neither the URL, `PGSSLROOTCERT` nor `~/.postgresql/root.crt` can replace it.
+      `make_engine` accepts only `verify-full` and `disable`; modes that do not authenticate the
+      server are refused at engine creation, so API, migrations and worker are all covered. Only
+      local and CI set `ATESTA_DB_SSLMODE=disable`. The host must be the RDS endpoint name (not an
+      IP or CNAME), because `verify-full` checks it.
 - [ ] API startup fails on any condition in Startup guard below.
 - [ ] `audit_events` plus `platform.audit.record()`, writing in the caller's transaction;
       append-only by grant.
@@ -234,7 +238,7 @@ schema except `pg_catalog`, `information_schema` and `pg_toast`, ignoring extens
 | `audit_events`: UPDATE and DELETE as `atesta_app` denied; `record()` in a rolled-back transaction leaves no row, in a committed one exactly one | Append-only, atomic with the action |
 | Request transaction: a handler whose INSERT fails at commit returns an error and stores no audit event | No 2xx for lost writes |
 | Engine from `make_engine()`: an INSERT carrying a marker string fails (RLS WITH CHECK, CHECK violation); marker absent from exception text and captured logs. No `create_engine(` outside `platform/db.py` | `hide_parameters` everywhere (rule 2) |
-| Engine connect args: with `ATESTA_DB_SSLMODE` unset, `sslmode` is `verify-full` and `sslrootcert` the bundled RDS CA; a `sslmode` in the URL is ignored. Startup guard against the CI container (no TLS) with `ATESTA_DB_SSLMODE=prefer`: connects in plaintext and the guard raises | Server authentication by default; plaintext fallback caught |
+| Engine connect args (captured before libpq): with `ATESTA_DB_SSLMODE` unset, `sslmode` is `verify-full` and `sslrootcert` the bundled RDS CA, even with `sslmode`/`sslrootcert` in the URL and `PGSSLROOTCERT` set; `disable` sets no root certificate; `allow`, `prefer`, `require`, `verify-ca` raise; the bundle's SHA-256 is pinned and it holds the three eu-south-2 roots; the wheel config ships it. The default engine against the CI container (no TLS) fails with an SSL error; the API refuses to start with `ATESTA_DB_SSLMODE=prefer`; the guard still raises on a plaintext connection when TLS is required | Server authentication by default; no plaintext fallback |
 | Static checks: no session-level `app.*` setting anywhere under `apps/`; no `set_config(` on `app.` outside `platform/tenancy.py`; no bare `Depends(get_db)`; migrations import nothing from `atesta_api` | Pool safety, immutable migrations |
 | `lint-imports` fails on a deliberate import of `platform.tenancy` from a non-identity module | Only identity sets context |
 | Alembic: upgrade head on an empty DB as `atesta_owner`, then `alembic check` finds no diff | Models and migrations agree |
