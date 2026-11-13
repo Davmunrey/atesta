@@ -1,7 +1,8 @@
 # Spec: Multi-tenant data layer
 
 - Requirement ids: NFR-02, NFR-03, FR-13, MF-01
-- Status: approved (2026-11-13)
+- Status: approved (2026-11-13). Revised 2026-11-13: grants snapshot and startup guard cover
+  column-level, PUBLIC and grant-option privileges (implementation review).
 - ADRs: ADR-006, ADR-008, ADR-012
 - Build order: 1 of 3 (identity and control-model specs depend on it)
 
@@ -161,7 +162,9 @@ On a fresh pooled connection, startup fails if the runtime role:
 - has the privileges of the owner of any table, view, sequence, function or schema in `public`
   (`pg_has_role(current_user, owner, 'USAGE')`);
 - holds TRUNCATE on any table, CREATE on `public`, a write privilege on an append-only or catalog
-  table, or any privilege on `alembic_version`;
+  table, or any privilege on `alembic_version`. Table-level checks use `has_table_privilege`
+  (it counts PUBLIC and inherited grants); column grants are checked with
+  `has_any_column_privilege`, which `has_table_privilege` does not see;
 - has an `app.*` default in `pg_db_role_setting` (role, database or all roles), or any of the four
   settings is non-empty on the fresh connection (checked by name: placeholders are not in
   `pg_settings`, and this also catches `-c app.*` in the DSN);
@@ -216,7 +219,10 @@ schema except `pg_catalog`, `information_schema` and `pg_toast`, ignoring extens
 3. Policies of every table (name, command, permissive, roles, `qual`, `with_check` from
    `pg_policies`) equal a checked-in snapshot. Any added, removed or changed policy fails until
    the snapshot changes in the same reviewed PR.
-4. `atesta_app` privileges on every table equal a checked-in grants snapshot.
+4. Privileges granted to `atesta_app` or to PUBLIC on every relation in `public`, table and
+   column level and with any grant option, read from the ACLs (`aclexplode` on `relacl` and
+   `attacl`), equal a checked-in grants snapshot. Migrations grant only through
+   `rls_v1.grant()`, never with raw `GRANT` text (static test).
 5. FKs between tenant tables include `organization_id` on both sides; unique constraints on tenant
    tables lead with `organization_id` (except on `id` alone).
 6. Views have `security_invoker = true`; no materialized views; no SECURITY DEFINER functions.

@@ -121,58 +121,86 @@
  "grants": [
   [
    "audit_events",
+   "",
+   "atesta_app",
    "INSERT,SELECT"
   ],
   [
    "checks",
+   "",
+   "atesta_app",
    "SELECT"
   ],
   [
    "control_checks",
+   "",
+   "atesta_app",
    "SELECT"
   ],
   [
    "controls",
+   "",
+   "atesta_app",
    "SELECT"
   ],
   [
    "evidence",
+   "",
+   "atesta_app",
    "INSERT,SELECT"
   ],
   [
    "evidence_controls",
+   "",
+   "atesta_app",
    "INSERT,SELECT"
   ],
   [
    "frameworks",
+   "",
+   "atesta_app",
    "SELECT"
   ],
   [
    "invitations",
+   "",
+   "atesta_app",
    "DELETE,INSERT,SELECT,UPDATE"
   ],
   [
    "mappings",
+   "",
+   "atesta_app",
    "SELECT"
   ],
   [
    "memberships",
+   "",
+   "atesta_app",
    "DELETE,INSERT,SELECT,UPDATE"
   ],
   [
    "organizations",
+   "",
+   "atesta_app",
    "INSERT,SELECT,UPDATE"
   ],
   [
    "requirements",
+   "",
+   "atesta_app",
    "SELECT"
   ],
   [
    "score_snapshots",
+   "",
+   "atesta_app",
    "INSERT,SELECT"
   ],
   [
    "users",
+   "",
+   "atesta_app",
    "INSERT,SELECT,UPDATE"
   ]
  ]
