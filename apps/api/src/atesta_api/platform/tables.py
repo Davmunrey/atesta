@@ -19,6 +19,15 @@ GLOBAL_IDENTITY = frozenset({"users"})
 CATALOG = frozenset(
     {"frameworks", "requirements", "controls", "checks", "control_checks", "mappings"}
 )
+# Procrastinate 3.10.0 (ADR-012 amendment 2): no organization_id, no RLS, job arguments are ids.
+QUEUE = frozenset(
+    {
+        "procrastinate_jobs",
+        "procrastinate_events",
+        "procrastinate_periodic_defers",
+        "procrastinate_workers",
+    }
+)
 
 
 def class_sets(extra_tenant: frozenset[str] = frozenset()) -> dict[str, frozenset[str]]:
@@ -28,6 +37,7 @@ def class_sets(extra_tenant: frozenset[str] = frozenset()) -> dict[str, frozense
         "tenant": TENANT | extra_tenant,
         "identity": GLOBAL_IDENTITY,
         "catalog": CATALOG,
+        "queue": QUEUE,
     }
 
 

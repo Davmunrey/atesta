@@ -186,6 +186,54 @@
    "INSERT,SELECT,UPDATE"
   ],
   [
+   "procrastinate_events",
+   "",
+   "atesta_app",
+   "DELETE,INSERT,SELECT,UPDATE"
+  ],
+  [
+   "procrastinate_events_id_seq",
+   "",
+   "atesta_app",
+   "USAGE"
+  ],
+  [
+   "procrastinate_jobs",
+   "",
+   "atesta_app",
+   "DELETE,INSERT,SELECT,UPDATE"
+  ],
+  [
+   "procrastinate_jobs_id_seq",
+   "",
+   "atesta_app",
+   "USAGE"
+  ],
+  [
+   "procrastinate_periodic_defers",
+   "",
+   "atesta_app",
+   "DELETE,INSERT,SELECT,UPDATE"
+  ],
+  [
+   "procrastinate_periodic_defers_id_seq",
+   "",
+   "atesta_app",
+   "USAGE"
+  ],
+  [
+   "procrastinate_workers",
+   "",
+   "atesta_app",
+   "DELETE,INSERT,SELECT,UPDATE"
+  ],
+  [
+   "procrastinate_workers_id_seq",
+   "",
+   "atesta_app",
+   "USAGE"
+  ],
+  [
    "requirements",
    "",
    "atesta_app",

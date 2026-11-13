@@ -10,7 +10,7 @@ package = false
 exclude-newer = "7 days"
 
 [tool.uv.workspace]
-members = ["apps/api", "packages/core"]
+members = ["apps/api", "apps/worker", "packages/core"]
 
 [dependency-groups]
 dev = [
@@ -37,15 +37,15 @@ select = ["E", "F", "I", "B", "UP", "S", "SIM", "N"]
 [tool.mypy]
 strict = true
 python_version = "3.12"
-files = ["apps/api/src", "apps/api/devtools", "packages/core/src"]
-mypy_path = ["apps/api/src", "packages/core/src"]
+files = ["apps/api/src", "apps/api/devtools", "apps/worker/src", "packages/core/src"]
+mypy_path = ["apps/api/src", "apps/worker/src", "packages/core/src"]
 explicit_package_bases = true
 
 [tool.pytest.ini_options]
-testpaths = ["apps/api/tests", "packages/core/tests", "infra/tests"]
+testpaths = ["apps/api/tests", "apps/worker/tests", "packages/core/tests", "infra/tests"]
 
 [tool.importlinter]
-root_packages = ["atesta_api"]
+root_packages = ["atesta_api", "atesta_worker"]
 
 [[tool.importlinter.contracts]]
 name = "Modules talk only through their public api.py"
@@ -54,6 +54,15 @@ modules = ["atesta_api.modules.*"]  # every module, including ones added later
 ignore_imports = [
     "atesta_api.modules.** -> atesta_api.modules.*.api",
 ]
+unmatched_ignore_imports_alerting = "none"
+
+[[tool.importlinter.contracts]]
+name = "Jobs call modules only through their api.py (rule 8)"
+type = "forbidden"
+source_modules = ["atesta_worker"]
+forbidden_modules = ["atesta_api.modules", "atesta_api.main"]
+allow_indirect_imports = "True"
+ignore_imports = ["atesta_worker.** -> atesta_api.modules.*.api"]
 unmatched_ignore_imports_alerting = "none"
 
 [[tool.importlinter.contracts]]
