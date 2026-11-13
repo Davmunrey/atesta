@@ -67,8 +67,8 @@ later screen (connections, scores, evidence) plugs into.
 - [ ] Accessibility: WCAG 2.1 AA for these screens (keyboard path, labels, focus, contrast),
       checked with axe in the e2e tests.
 - [ ] Visual identity: design tokens (color, type, radius, spacing) as CSS variables in one
-      file, from the brand identity the owner picks; neutral tokens until then. No brand value
-      is hard-coded in components.
+      file. The approved direction is landing-legal L4/L5; organization-shell-design specifies
+      its application to these screens. No brand value is hard-coded in components.
 - [ ] Dependency licenses: CI fails on GPL or AGPL packages (ADR-006).
 
 ## Out of scope

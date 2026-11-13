@@ -8,6 +8,7 @@
 | obra/superpowers skills (3) | MIT | Agent skills vendored in `.claude/skills/`, not shipped in any service (ADR-013). |
 | anthropics/skills frontend-design | Apache-2.0 | Agent skill vendored in `.claude/skills/`, LICENSE.txt kept beside it, not shipped (ADR-013). |
 | vercel-labs/agent-skills react-best-practices (subset) | MIT | Agent skill vendored in `.claude/skills/`, not shipped (ADR-013). |
+| Newsreader, IBM Plex Sans, IBM Plex Mono | OFL-1.1 | Unmodified Latin WOFF2 fonts, self-hosted. Fontsource packages pinned to 5.3.0; copyright, licenses and checksums in `apps/web/src/styles/fonts/`. |
 
 Policy: no AGPL or GPL dependencies in network-facing services; unmodified LGPL libraries are
 allowed (ADR-006).

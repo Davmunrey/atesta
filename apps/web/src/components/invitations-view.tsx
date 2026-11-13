@@ -28,7 +28,7 @@ export function InvitationsView({ org }: { org: Membership }) {
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">{t("invitations.title", { org: org.organization_name })}</h1>
+      <h1 className="page-title">{t("invitations.title", { org: org.organization_name })}</h1>
       <form onSubmit={onSubmit} className="flex flex-wrap items-end gap-3">
         <span className="flex flex-col gap-1">
           <label htmlFor={`${id}-email`}>{t("invitations.email")}</label>

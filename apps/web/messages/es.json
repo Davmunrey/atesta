@@ -1,4 +1,5 @@
 {
+  "brand": { "name": "Atesta" },
   "landing": {
     "summary": "Preparación continua para auditorías ENS y NIS2. Inicia sesión para gestionar tu organización.",
     "signIn": "Iniciar sesión"
@@ -39,6 +40,7 @@
     }
   },
   "app": {
+    "skipContent": "Saltar al contenido",
     "loading": "Cargando…",
     "signOut": "Cerrar sesión",
     "signedInAs": "Sesión iniciada como {email}"
@@ -54,6 +56,9 @@
     "submit": "Crear organización"
   },
   "org": {
+    "overview": "Resumen",
+    "membersHelp": "Consulta quién forma parte del equipo y qué acceso tiene.",
+    "invitationsHelp": "Invita a tu equipo y revisa los accesos pendientes.",
     "switcher": "Organización",
     "yourRole": "Tu rol: {role}",
     "sections": "Secciones de la organización",

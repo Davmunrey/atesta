@@ -22,8 +22,9 @@ export function MembersView({ org }: { org: Membership }) {
 
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold">{t("members.title", { org: org.organization_name })}</h1>
+      <h1 className="page-title">{t("members.title", { org: org.organization_name })}</h1>
       {failure ? <ErrorMessage error={failure} /> : null}
+      <div className="table-region" role="region" aria-label={t("members.title", { org: org.organization_name })} tabIndex={0}>
       <table className="w-full text-left">
         <thead className="text-sm text-muted">
           <tr>
@@ -84,6 +85,7 @@ export function MembersView({ org }: { org: Membership }) {
           ))}
         </tbody>
       </table>
+      </div>
     </section>
   );
 }

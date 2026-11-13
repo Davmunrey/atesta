@@ -46,7 +46,7 @@ export function AcceptInvite() {
   if (me.isError) return <ErrorMessage error={me.error} />;
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold">{t("title")}</h1>
+      <h1 className="page-title">{t("title")}</h1>
       <p className="text-muted">{t("signedInAs", { email: me.data.email })}</p>
       {accept.isError ? <ErrorMessage error={accept.error} /> : null}
       <button
