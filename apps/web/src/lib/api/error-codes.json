@@ -3,6 +3,7 @@
   "auth.bad_origin",
   "auth.bad_state",
   "auth.invalid_token",
+  "auth.provider_unavailable",
   "identity.already_member",
   "identity.email_mismatch",
   "identity.email_unverified",
@@ -11,5 +12,10 @@
   "identity.last_owner",
   "identity.not_found",
   "identity.role_not_allowed",
-  "identity.token_in_query"
+  "identity.token_in_query",
+  "request.error",
+  "request.invalid",
+  "request.method_not_allowed",
+  "request.not_found",
+  "server.error"
 ]

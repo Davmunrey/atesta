@@ -23,6 +23,7 @@ from atesta_api.modules.identity.cognito import (
     ExpiredTokenError,
     IdentityProvider,
     InvalidTokenError,
+    ProviderUnavailableError,
     TokenVerifier,
     UserInfo,
 )
@@ -121,21 +122,24 @@ def authenticate(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)],
 ) -> Caller:
     """Bearer token (tests, future CLI) or the BFF session cookie (browser)."""
-    if credentials is not None:
-        token = credentials.credentials
-    elif ACCESS_COOKIE in request.cookies:
-        if (
-            request.method in _WRITES
-            and request.headers.get("origin") != request.app.state.web_origin
-        ):
-            raise error(403, "auth.bad_origin")
-        token = _cookie_token(request, response, verifier)
-    else:
+    if credentials is None and ACCESS_COOKIE not in request.cookies:
         raise error(401, "auth.invalid_token")
-    try:
+    if (
+        credentials is None
+        and request.method in _WRITES
+        and request.headers.get("origin") != request.app.state.web_origin
+    ):
+        raise error(403, "auth.bad_origin")
+    try:  # a JWKS outage is a retryable 503 on both paths, never a 500
+        if credentials is not None:
+            token = credentials.credentials
+        else:
+            token = _cookie_token(request, response, verifier)
         sub = verifier.verify(token).sub
     except InvalidTokenError:
         raise error(401, "auth.invalid_token") from None
+    except ProviderUnavailableError:
+        raise error(503, "auth.provider_unavailable") from None
     enter_user_context(session, sub)
     user_id = session.execute(select(User.id).where(User.cognito_sub == sub)).scalar()
     refreshed = user_id is None
