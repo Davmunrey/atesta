@@ -24,7 +24,10 @@ settings, created from code so prod later gets the same settings by construction
     ["email"]`, account recovery by verified email only, password minimum 12, self sign-up on;
   - prefix domain with `managed_login_version = 2` (no certificate needed for a prefix domain);
   - public app client: no secret, `allowed_oauth_flows = ["code"]`, scopes `openid email`,
-    `explicit_auth_flows = ["ALLOW_REFRESH_TOKEN_AUTH"]`, `email` not in write attributes,
+    `explicit_auth_flows = ["ALLOW_REFRESH_TOKEN_AUTH"]`, `write_attributes` a non-empty
+    list without `email` (an unset list grants write on every attribute; `email` is a required
+    schema attribute, which every client may write at sign-up, AWS docs "Attribute permissions
+    and scopes", checked 2026-11-13),
     access and ID tokens 30 min, refresh 12 h, callback `http://localhost:8000/auth/callback`
     (the BFF runs in the API, web spec), sign-out `http://localhost:3000/`;
   - `aws_cognito_managed_login_branding` for the client with `use_cognito_provided_values =

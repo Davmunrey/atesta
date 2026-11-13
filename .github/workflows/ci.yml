@@ -54,3 +54,19 @@ jobs:
           uvx pip-audit
       - name: Static analysis (semgrep)
         run: uvx semgrep scan --config auto --error
+
+  infra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2.0.2
+        with:
+          tofu_version: 1.13.9
+      - name: Format
+        run: tofu fmt -check -recursive infra
+      - name: Validate dev
+        working-directory: infra/envs/dev
+        run: |
+          tofu init -backend=false -input=false
+          tofu validate
+      # Plan with the OIDC plan role is added once the dev AWS account exists (AWS postponed).
