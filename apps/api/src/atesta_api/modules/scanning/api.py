@@ -8,6 +8,7 @@ from atesta_api.modules.scanning.expected import (
     powershell_checks,
 )
 from atesta_api.modules.scanning.ingest import SNAPSHOT_TASK, ScanNotFoundError, ingest_scan
+from atesta_api.modules.scanning.queries import ScanSummary, recent_scans
 from atesta_api.modules.scanning.runners import (
     MANIFEST_FILE,
     OCSF_FILE,
@@ -32,6 +33,7 @@ __all__ = [
     "ScanJob",
     "ScanRunner",
     "ScanNotFoundError",
+    "ScanSummary",
     "ScanStore",
     "exclusions",
     "expected_checks",
@@ -39,6 +41,7 @@ __all__ = [
     "latest_check_results",
     "output_prefix",
     "powershell_checks",
+    "recent_scans",
     "run_fixture_scan",
     "snapshot_scores",
 ]
