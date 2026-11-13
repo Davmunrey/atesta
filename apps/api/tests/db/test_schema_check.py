@@ -98,6 +98,16 @@ BAD_OBJECTS = {
         " REFERENCES probe (organization_id, id) ON UPDATE SET DEFAULT",
         "FK setdef on public.evidence must be NO ACTION or RESTRICT",
     ),
+    "cascade from a tenant table into a queue table": (
+        "ALTER TABLE evidence ADD COLUMN job_id bigint;"
+        " ALTER TABLE evidence ADD CONSTRAINT jobfk FOREIGN KEY (job_id)"
+        " REFERENCES procrastinate_jobs (id) ON DELETE CASCADE",
+        "FK jobfk on public.evidence must be NO ACTION or RESTRICT",
+    ),
+    "unclassified queue-like table": (
+        "CREATE TABLE procrastinate_extra (id bigint)",
+        "procrastinate_extra is not classified",
+    ),
     "tenant table without FK to organizations": (
         "CREATE TABLE nofk (id uuid PRIMARY KEY, organization_id uuid NOT NULL);"
         " CREATE INDEX ON nofk (organization_id); ALTER TABLE nofk ENABLE ROW LEVEL SECURITY",

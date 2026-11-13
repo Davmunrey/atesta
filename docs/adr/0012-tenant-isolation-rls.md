@@ -54,3 +54,10 @@ SELECT, INSERT, UPDATE, DELETE and EXECUTE on Procrastinate's functions; its ENU
 allowed as third-party objects. Procrastinate defines no SECURITY DEFINER function. Its schema SQL
 is applied by an Alembic migration as `atesta_owner`. Any `atesta_app` session can read every
 job's ids; accepted because arguments hold ids only.
+
+Implementation notes (scanner PR 1): the migration checks the sha256 of the wheel's `schema.sql`
+before applying it, and revokes EXECUTE on Procrastinate's functions from PUBLIC. Procrastinate's
+own foreign keys between queue tables use ON DELETE CASCADE and SET NULL; the schema linter allows
+referential actions only when both tables are queue tables, which carry no RLS and from which
+`atesta_app` may already delete. The worker refuses to start if any Atesta task has a parameter
+other than `<name>_id: str`.

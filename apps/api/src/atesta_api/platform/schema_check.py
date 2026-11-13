@@ -62,8 +62,9 @@ _RULES = (
     " AND n.nspname NOT LIKE 'pg\\_%temp%'"
 )
 _FK_ACTIONS = (
-    "SELECT con.conname, n.nspname || '.' || c.relname FROM pg_constraint con"
-    " JOIN pg_class c ON c.oid = con.conrelid JOIN pg_namespace n ON n.oid = c.relnamespace"
+    "SELECT con.conname, n.nspname || '.' || c.relname, c.relname, fr.relname"
+    " FROM pg_constraint con JOIN pg_class c ON c.oid = con.conrelid"
+    " JOIN pg_class fr ON fr.oid = con.confrelid JOIN pg_namespace n ON n.oid = c.relnamespace"
     " WHERE con.contype = 'f'"
     " AND (con.confdeltype NOT IN ('a', 'r') OR con.confupdtype NOT IN ('a', 'r'))"
     " AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.classid = 'pg_class'::regclass"
@@ -165,8 +166,12 @@ def problems(conn: Connection, extra_tenant: frozenset[str] = frozenset()) -> li
             kind = "exclusion key" if exclusion else "unique key"
             found.append(f"{kind} {cols} on {table} must start with organization_id (with =)")
     found += [f"rule {r} on {t} is banned" for r, t in conn.execute(text(_RULES))]
+    # Queue tables have no RLS and atesta_app may already delete from them, so Procrastinate's
+    # own cascades between queue tables bypass nothing (ADR-012 amendment 2).
     found += [
-        f"FK {k} on {t} must be NO ACTION or RESTRICT" for k, t in conn.execute(text(_FK_ACTIONS))
+        f"FK {k} on {t} must be NO ACTION or RESTRICT"
+        for k, t, child, parent in conn.execute(text(_FK_ACTIONS))
+        if not classes.get(child) == classes.get(parent) == "queue"
     ]
     found += [f"SECURITY DEFINER function {f} is banned" for (f,) in conn.execute(text(_DEFINER))]
     expected = json.loads(SNAPSHOT.read_text())
