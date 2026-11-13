@@ -3,7 +3,7 @@ import { cleanup, fireEvent, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { CreateOrgForm } from "@/components/create-org-form";
 import { goTo } from "@/lib/navigation";
-import { renderWithProviders, stubFetch } from "./render";
+import { renderWithProviders, stubApi } from "./render";
 
 vi.mock("@/lib/navigation", () => ({ goTo: vi.fn() }));
 
@@ -19,7 +19,7 @@ function submit(name: string) {
 }
 
 it("creates the organization and opens it", async () => {
-  const requests = stubFetch([201, { id: "org-1", name: "Acme" }]);
+  const requests = stubApi({ "POST /api/v1/orgs": [201, { id: "org-1", name: "Acme" }] });
   renderWithProviders(<CreateOrgForm />);
   submit("Acme");
   await vi.waitFor(() => expect(goTo).toHaveBeenCalledWith("/app/org?org=org-1"));
@@ -28,7 +28,7 @@ it("creates the organization and opens it", async () => {
 });
 
 it("shows the API's error in Spanish", async () => {
-  stubFetch([403, { detail: { code: "identity.forbidden" } }]);
+  stubApi({ "POST /api/v1/orgs": [403, { detail: { code: "identity.forbidden" } }] });
   renderWithProviders(<CreateOrgForm />);
   submit("Acme");
   expect((await screen.findByRole("alert")).textContent).toBe("Tu rol no permite esta acción.");

@@ -6,7 +6,8 @@ import { Suspense, useId } from "react";
 import { useMe } from "@/components/auth-gate";
 import { ErrorMessage } from "@/components/error-message";
 import { ApiError } from "@/lib/api/hooks";
-import { orgHome, selectOrg } from "@/lib/org";
+import Link from "next/link";
+import { orgHome, orgMembers, selectOrg } from "@/lib/org";
 
 // Static export: the org id travels in the query string, read on the client.
 export default function OrgPage() {
@@ -45,6 +46,11 @@ function OrgHome() {
       </div>
       <h1 className="text-2xl font-semibold">{org.organization_name}</h1>
       <p className="text-muted">{t("org.yourRole", { role: t(`roles.${org.role}`) })}</p>
+      <nav aria-label={t("org.sections")}>
+        <Link href={orgMembers(org.organization_id)} className="underline">
+          {t("org.members")}
+        </Link>
+      </nav>
     </section>
   );
 }

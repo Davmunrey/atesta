@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Role } from "@/lib/permissions";
 import { api } from "./client";
 import { errorCode } from "./errors";
 
@@ -19,7 +20,14 @@ async function unwrap<T>(call: Promise<Result<T>>): Promise<T> {
   return data;
 }
 
+/** For 204 responses, which carry no body. */
+async function expectOk(call: Promise<{ error?: unknown; response: Response }>): Promise<void> {
+  const { error, response } = await call;
+  if (!response.ok) throw new ApiError(response.status, errorCode(error));
+}
+
 export const ME = ["me"] as const;
+const members = (orgId: string) => ["members", orgId] as const;
 
 export function useMeQuery() {
   return useQuery({ queryKey: ME, queryFn: () => unwrap(api.GET("/api/v1/me")), retry: false });
@@ -31,4 +39,45 @@ export function useCreateOrg() {
     mutationFn: (name: string) => unwrap(api.POST("/api/v1/orgs", { body: { name } })),
     onSuccess: () => client.invalidateQueries({ queryKey: ME }),
   });
+}
+
+export function useMembers(orgId: string) {
+  return useQuery({
+    queryKey: members(orgId),
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/members", { params: { path: { org_id: orgId } } })),
+  });
+}
+
+/** Role changes and removals can change the caller's own memberships, so /me refreshes too. */
+function useMemberMutation<T>(orgId: string, mutationFn: (input: T) => Promise<unknown>) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn,
+    onSettled: () =>
+      Promise.all([
+        client.invalidateQueries({ queryKey: members(orgId) }),
+        client.invalidateQueries({ queryKey: ME }),
+      ]),
+  });
+}
+
+export function useChangeRole(orgId: string) {
+  return useMemberMutation(orgId, ({ userId, role }: { userId: string; role: Role }) =>
+    unwrap(
+      api.PATCH("/api/v1/orgs/{org_id}/members/{user_id}", {
+        params: { path: { org_id: orgId, user_id: userId } },
+        body: { role },
+      }),
+    ),
+  );
+}
+
+export function useRemoveMember(orgId: string) {
+  return useMemberMutation(orgId, (userId: string) =>
+    expectOk(
+      api.DELETE("/api/v1/orgs/{org_id}/members/{user_id}", {
+        params: { path: { org_id: orgId, user_id: userId } },
+      }),
+    ),
+  );
 }
