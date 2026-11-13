@@ -1,11 +1,10 @@
 # Spec: Framework-agnostic control model schema
 
 - Requirement ids: MF-01, MF-02, MF-03, MF-06, FR-05, FR-08, NFR-05
-- Status: draft (revised 2026-11-13 after adversarial review)
+- Status: approved (2026-11-13)
 - ADRs: ADR-005, ADR-008, ADR-009, ADR-011, ADR-012
-- Build order: 3 of 3 (after identity). Not part of the 28 Dec gate (login with MFA in dev).
-  Catalog tables and `score_snapshots` are built in the week of 11 Jan with the catalog spec;
-  `evidence` and `evidence_controls` in the week of 18 Jan with the evidence spec.
+- Build order: 3 of 3 (after identity). Not part of the 28 Dec gate (login with MFA in dev);
+  built right after identity, ahead of the calendar (owner decision, 2026-11-13).
 
 ## Problem
 
@@ -57,15 +56,15 @@ isolated per tenant.
 
 ## Out of scope
 
-- YAML loader, validation, catalog sync job, Prowler check-id validation (catalog spec, week of
-  11 Jan). The constraints above are the backstop.
+- YAML loader, validation, catalog sync job, Prowler check-id validation (catalog spec). The constraints above are the backstop.
 - Source and license of English requirement titles where no official English text allows
   commercial use (catalog spec; `title_en` stays nullable).
 - Per-org framework selection and categorization (MF-04, FR-06, categorization spec). Until it
   lands, compliance scores every released framework with `applicability = {}` and
   `scope_id = NULL`.
-- Scan and Finding storage (scanning spec, week of 4 Jan).
-- S3 layout, Object Lock, evidence pack export (evidence spec, week of 18 Jan).
+- Scan and Finding storage (scanning spec).
+- S3 layout, Object Lock, evidence pack export (evidence spec). It may add columns such as
+  the S3 version id.
 - Human approval of status for `manual` controls (FR-07 spec, ADR-005). Until then they have no
   result, count as `manual` in `framework_results` and stay out of the score. Evidence rows never
   set a control status.

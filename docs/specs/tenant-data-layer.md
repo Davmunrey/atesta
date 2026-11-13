@@ -1,7 +1,7 @@
 # Spec: Multi-tenant data layer
 
 - Requirement ids: NFR-02, NFR-03, FR-13, MF-01
-- Status: draft (revised 2026-11-13 after adversarial review)
+- Status: approved (2026-11-13)
 - ADRs: ADR-006, ADR-008, ADR-012
 - Build order: 1 of 3 (identity and control-model specs depend on it)
 

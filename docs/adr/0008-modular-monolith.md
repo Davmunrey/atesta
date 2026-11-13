@@ -7,7 +7,7 @@ One deployable backend with modules: identity, connections, scanning, compliance
 billing. Modules interact only through `api.py`. `lint-imports` enforces it in CI. No
 cross-module database joins.
 
-## Shared kernel (added 2026-11-13, pending approval)
+## Shared kernel (accepted 2026-11-13)
 `atesta_api.platform` (db, context, tenancy, audit, schema_check) is not a module. Modules may
 import it; it imports no module. Only the identity module may import `platform.tenancy`, the code
 that sets tenant context (ADR-012). Both rules are import-linter contracts.

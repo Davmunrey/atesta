@@ -1,8 +1,8 @@
 # Spec: Identity, Cognito auth with mandatory MFA
 
 - Requirement ids: FR-01, FR-13, NFR-03, NFR-04, NFR-10
-- Status: draft (revised 2026-11-13 after adversarial review)
-- ADRs: ADR-007, ADR-008, ADR-012
+- Status: approved (2026-11-13)
+- ADRs: ADR-007 (amendment 1), ADR-008, ADR-012
 - Build order: 2 of 3 (depends on tenant-data-layer). Cognito resources: infra-dev spec (next).
 
 ## Problem
@@ -32,11 +32,11 @@ so it is bought (Cognito, Architecture tab "Build vs buy").
 - [ ] Spanish first (NFR-10): the web adds `lang=es` to every authorize request, `lang=en` when
       the user chose English. The verification and reset email template has a Spanish subject and
       Spanish text first, English below. Template text lives in an infra i18n file, not in `.tf`.
-- [ ] Email residency (NFR-04, ADR-007): a pool in eu-south-2 cannot send through SES in its own
-      Region; both the default sender and the DEVELOPER option send from Paris or Stockholm, and
-      the default sender is capped at 50 emails a day. Dev may use the default sender (builder's
-      own addresses only). Prod is blocked until the infra spec picks a custom email sender
-      Lambda with SES in eu-south-2, or ADR-007 records an exception.
+- [ ] Email (NFR-04, ADR-007 amendment 1): a pool in eu-south-2 cannot use SES in its own
+      Region, so Cognito email goes through SES in eu-west-3 (Paris), an EU exception listed in
+      ADR-007. Dev uses the default sender (capped at 50 emails a day; builder's own addresses).
+      Prod uses `email_sending_account = DEVELOPER` with a verified domain identity in eu-west-3
+      with DKIM, and SES production access before the first external user signs up.
 - [ ] This spec ships a minimal apps/web sign-in redirect and callback page that completes
       Authorization Code + PKCE and calls `GET /v1/me`. Other screens belong to the web spec.
 - [ ] API accepts Cognito access tokens only: RS256 against cached JWKS, exact `iss`,

@@ -18,7 +18,7 @@ framework. Atesta builds evidence packs for auditors.
   evidence, ai, billing. Modules talk ONLY through their `api.py`. Enforced by `lint-imports`.
 - Pure domain logic lives in `packages/core` (no I/O, fully unit-tested).
 - AI = RAG with citations and guardrails (ADR-010). AI never decides pass/fail (ADR-005).
-- Everything runs in AWS eu-south-2 (ADR-007).
+- Everything runs in AWS eu-south-2; EU-only exceptions are listed in ADR-007 (amendment 1).
 
 ## Commands
 

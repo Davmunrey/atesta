@@ -1,7 +1,7 @@
 # ADR-012: Tenant isolation with Postgres row-level security
 
-- Status: accepted (2026-11-12). Revision of 2026-11-13 (adversarial spec review, before any
-  code) pending approval.
+- Status: accepted (2026-11-12); revised and accepted 2026-11-13 (adversarial spec review, before
+  any code).
 
 ## Context
 CLAUDE.md rule 3 requires `organization_id` on every table. Two kinds of data have no single
