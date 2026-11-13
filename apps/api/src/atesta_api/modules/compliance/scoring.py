@@ -95,43 +95,46 @@ def snapshot_framework(
     counts = Counter(r.status for r in results)
     keys = framework.attributes.get("score_groups", [])
     value = score(results)
-    statement = (
-        insert(ScoreSnapshot)
-        .values(
-            id=uuid.uuid4(),
-            organization_id=organization_id,
-            framework_key=framework_key,
-            framework_version=framework.version,
-            catalog_version=framework.catalog_version or "unloaded",
-            scan_id=scan_id,
-            scope_id=scope_id,
-            applicability=applicability,
-            score=None if value is None else Decimal(str(value)),
-            passed=counts[Status.PASS],
-            failed=counts[Status.FAIL],
-            manual=counts[Status.MANUAL],
-            not_applicable=counts[Status.NOT_APPLICABLE],
-            requirement_results={r.control_id: r.status.value for r in results},
-            group_scores=group_scores(results, {r.code: r.attributes for r in requirements}, keys),
-            supersedes_id=supersedes_id,
-        )
-        .on_conflict_do_nothing(
+    row = insert(ScoreSnapshot).values(
+        id=uuid.uuid4(),
+        organization_id=organization_id,
+        framework_key=framework_key,
+        framework_version=framework.version,
+        catalog_version=framework.catalog_version or "unloaded",
+        scan_id=scan_id,
+        scope_id=scope_id,
+        applicability=applicability,
+        score=None if value is None else Decimal(str(value)),
+        passed=counts[Status.PASS],
+        failed=counts[Status.FAIL],
+        manual=counts[Status.MANUAL],
+        not_applicable=counts[Status.NOT_APPLICABLE],
+        requirement_results={r.control_id: r.status.value for r in results},
+        group_scores=group_scores(results, {r.code: r.attributes for r in requirements}, keys),
+        supersedes_id=supersedes_id,
+    )
+    if supersedes_id is None:  # one original per (framework, scan, scope)
+        statement = row.on_conflict_do_nothing(
             index_elements=["organization_id", "framework_key", "scan_id", "scope_id"],
             index_where=text("supersedes_id IS NULL"),
         )
-        .returning(ScoreSnapshot.id)
-    )
-    created = session.execute(statement).scalar()
-    if created is not None or supersedes_id is not None:
-        return created
-    return session.execute(  # retried job: return the original
-        select(ScoreSnapshot.id).where(
+        existing = select(ScoreSnapshot.id).where(
             ScoreSnapshot.framework_key == framework_key,
             ScoreSnapshot.scan_id == scan_id,
             ScoreSnapshot.scope_id.is_not_distinct_from(scope_id),
             ScoreSnapshot.supersedes_id.is_(None),
         )
-    ).scalar_one()
+    else:  # one correction per snapshot; the lineage FK keeps it in the same framework and scan
+        statement = row.on_conflict_do_nothing(
+            index_elements=["organization_id", "supersedes_id"],
+            index_where=text("supersedes_id IS NOT NULL"),
+        )
+        existing = select(ScoreSnapshot.id).where(ScoreSnapshot.supersedes_id == supersedes_id)
+    created = session.execute(statement.returning(ScoreSnapshot.id)).scalar()
+    if created is not None:
+        return created
+    earlier: uuid.UUID = session.execute(existing).scalar_one()  # retried job
+    return earlier
 
 
 def control_is_active(session: Session, control_key: str) -> bool:
