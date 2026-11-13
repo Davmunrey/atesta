@@ -4,7 +4,11 @@ import uuid
 from collections.abc import Iterator
 
 import pytest
-from atesta_api.modules.compliance.api import active_frameworks, snapshot_framework
+from atesta_api.modules.compliance.api import (
+    active_frameworks,
+    scoreable_framework_keys,
+    snapshot_framework,
+)
 from atesta_api.modules.identity.api import ContextReason, enter_org_context
 from atesta_core.scoring import ControlResult, Status
 from sqlalchemy import Engine, text
@@ -104,6 +108,9 @@ def test_retired_rows_and_applicability(tx: Session) -> None:
 
 def test_draft_framework_is_not_scored(tx: Session) -> None:
     assert snap(tx, "fw_d") is None
+    keys = set(scoreable_framework_keys(tx))
+    assert {"fw_x", "fw_y"} <= keys
+    assert not {"fw_d", "fw_r"} & keys
 
 
 def test_draft_framework_is_scored_with_the_flag_in_dev(

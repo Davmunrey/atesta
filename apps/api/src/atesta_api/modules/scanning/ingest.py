@@ -2,7 +2,8 @@
 
 One transaction: lock the scan, check the manifest and every file it lists, parse the OCSF output
 strictly, pin every finding to the connected tenant, compute coverage, then insert findings and
-one result per listed check and close the scan. Everything is checked before anything is
+one result per listed check, register the manifest and the OCSF file as evidence of every control
+the scan gives a result for, and close the scan. Everything is checked before anything is
 written, so a rejected scan has no rows. The output is untrusted data (rule 5); errors carry
 codes, never values from it (rule 2).
 """
@@ -11,12 +12,15 @@ import hashlib
 import uuid
 from collections.abc import Iterable, Mapping, Sequence
 
-from atesta_core.coverage import UnexpectedCheckError, coverage, silent_services
+from atesta_core.controls import control_results
+from atesta_core.coverage import CheckResult, UnexpectedCheckError, coverage, silent_services
 from atesta_core.manifest import ManifestError, verify_manifest
 from atesta_core.ocsf import OcsfError, OcsfFinding, TenantMismatchError, parse_findings, pin_tenant
 from sqlalchemy import func, insert, select
 from sqlalchemy.orm import Session
 
+from atesta_api.modules.compliance.api import active_control_checks
+from atesta_api.modules.evidence.api import ScanOutputFile, register_scan_output
 from atesta_api.modules.scanning.models import Finding, Scan, ScanCheckResult
 from atesta_api.modules.scanning.runners import MANIFEST_FILE, OCSF_FILE, ScanStore
 from atesta_api.platform.audit import record
@@ -29,7 +33,10 @@ class ScanNotFoundError(LookupError):
     """No such scan in the current org context."""
 
 
-def _read_output(scan: Scan, store: ScanStore, max_bytes: int) -> tuple[str, list[OcsfFinding]]:
+def _read_output(
+    scan: Scan, store: ScanStore, max_bytes: int
+) -> tuple[list[ScanOutputFile], list[OcsfFinding]]:
+    """The verified manifest and OCSF file, and the findings parsed from that file."""
     prefix = scan.output_prefix
     if prefix is None:
         raise ManifestError("collected scan has no output prefix")
@@ -39,7 +46,29 @@ def _read_output(scan: Scan, store: ScanStore, max_bytes: int) -> tuple[str, lis
     files = verify_manifest(manifest, lambda name: store.read(prefix + name), max_bytes)
     if OCSF_FILE not in files:
         raise ManifestError("manifest does not list the OCSF output")
-    return hashlib.sha256(manifest).hexdigest(), parse_findings(files[OCSF_FILE])
+    kept = [(MANIFEST_FILE, manifest), (OCSF_FILE, files[OCSF_FILE])]
+    outputs = [
+        ScanOutputFile(
+            prefix + name, hashlib.sha256(data).hexdigest(), len(data), "application/json"
+        )
+        for name, data in kept
+    ]
+    return outputs, parse_findings(files[OCSF_FILE])
+
+
+def _register_evidence(
+    session: Session, scan: Scan, outputs: list[ScanOutputFile], results: list[CheckResult]
+) -> None:
+    checks = [(ENGINE, r.check_id, r.status) for r in results]
+    controls = control_results(active_control_checks(session), checks)
+    register_scan_output(
+        session,
+        organization_id=scan.organization_id,
+        scan_id=scan.id,
+        files=outputs,
+        control_keys=[c.control_id for c in controls],
+        collected_at=scan.started_at or session.execute(select(func.now())).scalar_one(),
+    )
 
 
 def _insert(
@@ -86,7 +115,7 @@ def ingest_scan(
     if scan.status != "collected":  # ingested_at is set with the terminal status, never alone
         return scan.status
     try:
-        manifest_sha256, findings = _read_output(scan, store, max_bytes)
+        outputs, findings = _read_output(scan, store, max_bytes)
         pin_tenant(findings, scan.provider, tenant)
         results = coverage(findings, listed, excluded)
     except TenantMismatchError:
@@ -135,7 +164,8 @@ def ingest_scan(
             for r in results
         ],
     )
-    scan.manifest_sha256 = manifest_sha256
+    _register_evidence(session, scan, outputs, results)
+    scan.manifest_sha256 = outputs[0].sha256
     scan.expected_checks = sum(r.expected for r in results)
     scan.evaluated_checks = sum(r.evaluated for r in results)
     scan.ingested_at = func.now()

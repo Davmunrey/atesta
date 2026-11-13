@@ -12,6 +12,7 @@ from atesta_api.modules.scanning.runners import (
     ScanStore,
     output_prefix,
 )
+from atesta_api.modules.scanning.scoring import latest_check_results, snapshot_scores
 
 __all__ = [
     "MANIFEST_FILE",
@@ -24,5 +25,7 @@ __all__ = [
     "ScanNotFoundError",
     "ScanStore",
     "ingest_scan",
+    "latest_check_results",
     "output_prefix",
+    "snapshot_scores",
 ]
