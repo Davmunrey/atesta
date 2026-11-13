@@ -214,12 +214,14 @@ source = { editable = "apps/worker" }
 dependencies = [
     { name = "atesta-api" },
     { name = "procrastinate" },
+    { name = "pyyaml" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "atesta-api", editable = "apps/api" },
     { name = "procrastinate", specifier = "==3.10.0" },
+    { name = "pyyaml", specifier = ">=6.0" },
 ]
 
 [[package]]

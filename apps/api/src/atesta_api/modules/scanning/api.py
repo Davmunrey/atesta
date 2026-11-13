@@ -1,6 +1,8 @@
 """Public interface of the scanning module. Planned: queue_scan."""
 
-from atesta_api.modules.scanning.ingest import ScanNotFoundError, ingest_scan
+from atesta_api.modules.scanning.devscan import run_fixture_scan
+from atesta_api.modules.scanning.expected import ENGINE_VERSION, expected_checks
+from atesta_api.modules.scanning.ingest import SNAPSHOT_TASK, ScanNotFoundError, ingest_scan
 from atesta_api.modules.scanning.runners import (
     MANIFEST_FILE,
     OCSF_FILE,
@@ -15,8 +17,10 @@ from atesta_api.modules.scanning.runners import (
 from atesta_api.modules.scanning.scoring import latest_check_results, snapshot_scores
 
 __all__ = [
+    "ENGINE_VERSION",
     "MANIFEST_FILE",
     "OCSF_FILE",
+    "SNAPSHOT_TASK",
     "FixtureRunner",
     "LocalScanStore",
     "OutputExistsError",
@@ -24,8 +28,10 @@ __all__ = [
     "ScanRunner",
     "ScanNotFoundError",
     "ScanStore",
+    "expected_checks",
     "ingest_scan",
     "latest_check_results",
     "output_prefix",
+    "run_fixture_scan",
     "snapshot_scores",
 ]

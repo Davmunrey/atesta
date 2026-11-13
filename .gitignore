@@ -16,6 +16,9 @@ node_modules/
 .next/
 out/
 
+# Local scan outputs (atesta-dev-scan)
+.atesta-dev/
+
 # Env and secrets
 .env
 .env.*

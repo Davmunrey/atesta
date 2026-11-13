@@ -4,10 +4,12 @@ import uuid
 from enum import StrEnum
 
 from sqlalchemy import text
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from atesta_api.platform.context import TenantContext
-from atesta_api.platform.tenancy import set_tenant_context
+from atesta_api.platform.devenv import require_dev
+from atesta_api.platform.tenancy import Organization, set_tenant_context
 
 
 class ContextReason(StrEnum):
@@ -23,6 +25,14 @@ def enter_user_context(session: Session, subject: str, user_id: uuid.UUID | None
 
 def enter_invitation_context(session: Session, token_sha256: str) -> None:
     set_tenant_context(session, TenantContext(invitation_token_sha256=token_sha256))
+
+
+def ensure_dev_organization(session: Session, org_id: uuid.UUID, name: str) -> None:
+    """Dev tooling only: the bare org row of a fixed dev org, created once, in its own context."""
+    require_dev("ensure_dev_organization")
+    enter_org_context(session, org_id, ContextReason.JOB)
+    statement = insert(Organization).values(id=org_id, name=name)
+    session.execute(statement.on_conflict_do_nothing(index_elements=["id"]))
 
 
 def enter_org_context(session: Session, org_id: uuid.UUID, reason: ContextReason) -> None:

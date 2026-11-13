@@ -24,8 +24,10 @@ from atesta_api.modules.evidence.api import ScanOutputFile, register_scan_output
 from atesta_api.modules.scanning.models import Finding, Scan, ScanCheckResult
 from atesta_api.modules.scanning.runners import MANIFEST_FILE, OCSF_FILE, ScanStore
 from atesta_api.platform.audit import record
+from atesta_api.platform.queue import defer
 
 ENGINE = "prowler"
+SNAPSHOT_TASK = "atesta:snapshot_scores"  # the worker's namespaced name; a worker test pins it
 OCSF_MAX_BYTES = 100_000_000  # ATESTA_OCSF_MAX_BYTES default; revisit after the live golden
 
 
@@ -171,7 +173,10 @@ def ingest_scan(
     scan.ingested_at = func.now()
     status = "partial" if silent_services(results) else "succeeded"
     counts = {"expected_checks": scan.expected_checks, "evaluated_checks": scan.evaluated_checks}
-    return _finish(session, scan, status, counts)
+    _finish(session, scan, status, counts)
+    ids = {"organization_id": str(scan.organization_id), "scan_id": str(scan.id)}
+    defer(session, SNAPSHOT_TASK, queue="scans", **ids)  # commits with the ingest
+    return status
 
 
 def _reject(session: Session, scan: Scan, code: str) -> str:

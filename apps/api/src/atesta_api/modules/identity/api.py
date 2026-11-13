@@ -17,6 +17,7 @@ from atesta_api.modules.identity.cognito import (
 )
 from atesta_api.modules.identity.context import (
     ContextReason,
+    ensure_dev_organization,
     enter_invitation_context,
     enter_org_context,
     enter_user_context,
@@ -50,6 +51,7 @@ __all__ = [
     "CurrentCaller",
     "Member",
     "Role",
+    "ensure_dev_organization",
     "enter_invitation_context",
     "enter_org_context",
     "enter_user_context",

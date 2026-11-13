@@ -54,16 +54,16 @@ def latest_check_results(session: Session, scan_id: uuid.UUID) -> list[tuple[str
     return [] if scan is None else _as_of(session, scan)
 
 
-def snapshot_scores(session: Session, scan_id: uuid.UUID) -> list[uuid.UUID]:
-    """One snapshot per scoreable framework; none for a scan that was not ingested.
+def snapshot_scores(session: Session, scan_id: uuid.UUID) -> dict[str, uuid.UUID]:
+    """{framework key: snapshot id}, one per scoreable framework; empty if not ingested.
 
     The caller's transaction must be REPEATABLE READ (snapshot_framework refuses otherwise).
     """
     scan = _ingested(session, scan_id)
     if scan is None:
-        return []
+        return {}
     results = control_results(active_control_checks(session), _as_of(session, scan))
-    created = []
+    created = {}
     for key in scoreable_framework_keys(session):
         snapshot_id = snapshot_framework(
             session,
@@ -73,5 +73,5 @@ def snapshot_scores(session: Session, scan_id: uuid.UUID) -> list[uuid.UUID]:
             control_results=results,
         )
         if snapshot_id is not None:
-            created.append(snapshot_id)
+            created[key] = snapshot_id
     return created

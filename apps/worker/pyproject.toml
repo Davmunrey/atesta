@@ -6,10 +6,12 @@ requires-python = ">=3.12"
 dependencies = [
     "atesta-api",
     "procrastinate==3.10.0",
+    "pyyaml>=6.0",
 ]
 
 [project.scripts]
 atesta-worker = "atesta_worker.__main__:main"
+atesta-dev-scan = "atesta_worker.dev_scan:main"
 
 [tool.uv.sources]
 atesta-api = { workspace = true }

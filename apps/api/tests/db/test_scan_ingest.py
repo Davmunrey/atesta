@@ -10,6 +10,7 @@ from typing import Any
 import pytest
 from atesta_api.modules.identity.api import ContextReason, enter_org_context
 from atesta_api.modules.scanning.api import (
+    SNAPSHOT_TASK,
     FixtureRunner,
     LocalScanStore,
     ScanJob,
@@ -134,6 +135,17 @@ def audit(session: Session, scan_id: uuid.UUID) -> list[tuple[Any, ...]]:
     return [tuple(r) for r in session.execute(query, {"id": str(scan_id)})]
 
 
+JOBS = text(
+    "SELECT task_name, queue_name, args FROM procrastinate_jobs"
+    " WHERE args->>'scan_id' = :id ORDER BY id"
+)
+
+
+def jobs(session: Session, scan_id: uuid.UUID) -> list[tuple[Any, ...]]:
+    """Jobs deferred in this transaction: they commit or roll back with the ingest."""
+    return [tuple(r) for r in session.execute(JOBS, {"id": str(scan_id)})]
+
+
 def test_a_collected_m365_scan_is_ingested(tx: Session, store: LocalScanStore) -> None:
     scan_id = collected(tx, store)
     assert ingest(tx, store, scan_id) == "succeeded"
@@ -185,6 +197,8 @@ def test_a_collected_m365_scan_is_ingested(tx: Session, store: LocalScanStore) -
     assert audit(tx, scan_id) == [
         ("scan.succeeded", {"provider": "m365", "expected_checks": 6, "evaluated_checks": 5})
     ]
+    ids = {"organization_id": str(ORG_A), "scan_id": str(scan_id)}
+    assert jobs(tx, scan_id) == [(SNAPSHOT_TASK, "scans", ids)]
 
 
 def test_a_service_with_no_finding_at_all_makes_the_scan_partial(
@@ -201,6 +215,7 @@ def test_a_service_with_no_finding_at_all_makes_the_scan_partial(
         tx, "scan_check_results", scan_id
     )
     assert [a[0] for a in audit(tx, scan_id)] == ["scan.partial"]
+    assert len(jobs(tx, scan_id)) == 1  # a partial scan is ingested and scored
 
 
 def test_ingest_is_idempotent(tx: Session, store: LocalScanStore) -> None:
@@ -210,6 +225,7 @@ def test_ingest_is_idempotent(tx: Session, store: LocalScanStore) -> None:
     assert len(rows(tx, "scan_check_results", scan_id)) == 7
     assert len(rows(tx, "findings", scan_id)) == 5
     assert len(audit(tx, scan_id)) == 1
+    assert len(jobs(tx, scan_id)) == 1
 
 
 @pytest.mark.parametrize("provider", ["m365", "google_workspace"])
@@ -332,6 +348,7 @@ def assert_rejected(
     assert rows(session, "findings", scan_id) == []
     events = [("scan.failed", {"provider": provider, "error_code": code})]
     assert audit(session, scan_id) == events
+    assert jobs(session, scan_id) == []  # nothing to score
     # A retried ingest of a rejected scan changes nothing.
     assert ingest(session, store, scan_id, provider=provider) == "failed"
     assert audit(session, scan_id) == events
