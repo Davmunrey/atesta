@@ -12,6 +12,7 @@ TENANT = frozenset(
         "score_snapshots",
         "evidence",
         "evidence_controls",
+        "connections",
         "scans",
         "scan_check_results",
         "findings",
