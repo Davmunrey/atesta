@@ -244,7 +244,7 @@ def test_an_unfinished_or_rejected_scan_is_not_scored(tx: Session) -> None:
         SCAN,
         {"id": scan_id, "org": ORG_A, "conn": M365_CONNECTION, "provider": "m365", "prefix": None},
     )
-    assert snapshot_scores(tx, scan_id) == []
+    assert snapshot_scores(tx, scan_id) == {}
 
 
 EVIDENCE = text(
@@ -283,7 +283,7 @@ def test_a_rejected_scan_registers_no_evidence(tx: Session, store: LocalScanStor
     )
     assert status == "failed"
     assert tx.execute(EVIDENCE, {"s": scan_id}).all() == []
-    assert snapshot_scores(tx, scan_id) == []
+    assert snapshot_scores(tx, scan_id) == {}
 
 
 @pytest.mark.parametrize("control", ["scan.retired", "scan.unknown"])

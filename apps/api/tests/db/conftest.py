@@ -9,6 +9,7 @@ import os
 import secrets
 import uuid
 from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from types import ModuleType
 
@@ -44,8 +45,9 @@ def load_rls() -> ModuleType:
     return module
 
 
-@pytest.fixture(scope="session")
-def database() -> Iterator[URL]:
+@contextmanager
+def fresh_database() -> Iterator[URL]:
+    """A new database with roles and every migration; dropped on exit."""
     admin_url = os.environ.get("ATESTA_TEST_DATABASE_URL")
     if not admin_url:
         pytest.skip("ATESTA_TEST_DATABASE_URL not set")
@@ -66,6 +68,12 @@ def database() -> Iterator[URL]:
     yield url
     with server.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
         conn.exec_driver_sql(f'DROP DATABASE "{name}" WITH (FORCE)')
+
+
+@pytest.fixture(scope="session")
+def database() -> Iterator[URL]:
+    with fresh_database() as url:
+        yield url
 
 
 @pytest.fixture(scope="session")
