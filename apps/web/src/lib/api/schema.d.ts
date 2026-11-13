@@ -199,6 +199,15 @@ export interface components {
             /** Token */
             token: string;
         };
+        /** Accepted */
+        Accepted: {
+            /**
+             * Organization Id
+             * Format: uuid
+             */
+            organization_id: string;
+            role: components["schemas"]["Role"];
+        };
         /** CreatedInvitation */
         CreatedInvitation: {
             /** Accept Link */
@@ -349,9 +358,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: string;
-                    };
+                    "application/json": components["schemas"]["Accepted"];
                 };
             };
             /** @description Validation Error */

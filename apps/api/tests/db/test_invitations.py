@@ -50,6 +50,15 @@ def test_happy_path_raw_token_never_stored(client: TestClient, superuser: Engine
     )
 
 
+def test_accept_names_the_organization(client: TestClient, superuser: Engine) -> None:
+    """The web opens the joined org from this response (web-shell spec, /invite)."""
+    org, subs = org_with(client, superuser)
+    guest = new_sub()
+    token = token_of(invite(client, org, subs["owner"], f"{guest}@example.com")["accept_link"])
+    response = client.post("/api/v1/invitations/accept", json={"token": token}, headers=auth(guest))
+    assert response.json() == {"organization_id": str(org), "role": "member"}
+
+
 def test_role_cap_and_permissions(client: TestClient, superuser: Engine) -> None:
     org, subs = org_with(client, superuser, adm="admin", mem="member")
     body = {"email": "x@example.com", "role": "owner"}

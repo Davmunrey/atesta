@@ -47,7 +47,8 @@
     "switcher": "Organization",
     "yourRole": "Your role: {role}",
     "sections": "Organization sections",
-    "members": "Members"
+    "members": "Members",
+    "invitations": "Invitations"
   },
   "roles": {
     "owner": "Owner",
@@ -65,5 +66,27 @@
     "confirmRemove": "Remove {email} from the organization?",
     "confirm": "Confirm",
     "cancel": "Cancel"
+  },
+  "invitations": {
+    "title": "Invitations for {org}",
+    "email": "Email",
+    "role": "Role",
+    "invite": "Invite",
+    "created": "Invitation created for {email}. Send them this link through a channel you trust.",
+    "shownOnce": "The link is shown only once: copy it now. It expires in 7 days.",
+    "link": "Invitation link",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "pending": "Pending invitations",
+    "none": "No pending invitations.",
+    "expires": "Expires on {date}",
+    "revoke": "Revoke"
+  },
+  "invite": {
+    "title": "Join the organization",
+    "signedInAs": "You are accepting the invitation as {email}.",
+    "accept": "Accept invitation",
+    "loading": "Loading…",
+    "missing": "This invitation link is not valid or was already used. Ask for a new invitation."
   }
 }

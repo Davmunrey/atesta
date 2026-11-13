@@ -16,6 +16,24 @@
         "title": "AcceptIn",
         "type": "object"
       },
+      "Accepted": {
+        "properties": {
+          "organization_id": {
+            "format": "uuid",
+            "title": "Organization Id",
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          }
+        },
+        "required": [
+          "organization_id",
+          "role"
+        ],
+        "title": "Accepted",
+        "type": "object"
+      },
       "CreatedInvitation": {
         "properties": {
           "accept_link": {
@@ -332,11 +350,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": {
-                    "type": "string"
-                  },
-                  "title": "Response Accept Invitation Api V1 Invitations Accept Post",
-                  "type": "object"
+                  "$ref": "#/components/schemas/Accepted"
                 }
               }
             },

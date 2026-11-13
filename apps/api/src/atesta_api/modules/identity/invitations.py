@@ -63,6 +63,11 @@ class CreatedInvitation(InvitationOut):
     accept_link: str  # shown once; the API keeps only the SHA-256 of the token
 
 
+class Accepted(BaseModel):
+    organization_id: uuid.UUID
+    role: Role
+
+
 class AcceptIn(BaseModel):
     token: str = Field(min_length=20, max_length=200)
 
@@ -161,7 +166,7 @@ def accept_invitation(
     caller: CurrentCaller,
     session: DbSession,
     provider: Annotated[IdentityProvider, Depends(get_identity_provider)],
-) -> dict[str, str]:
+) -> Accepted:
     if request.url.query:
         raise error(400, "identity.token_in_query")
     if not caller.profile_refreshed:  # decide on Cognito's current email, never a stale cache
@@ -226,4 +231,4 @@ def accept_invitation(
         actor_user_id=caller.user_id,
         metadata={"role": role},
     )
-    return {"organization_id": str(org_id), "role": role}
+    return Accepted(organization_id=org_id, role=Role(role))
