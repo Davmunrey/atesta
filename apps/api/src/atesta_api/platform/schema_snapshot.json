@@ -97,8 +97,28 @@
    "INSERT,SELECT"
   ],
   [
+   "checks",
+   "SELECT"
+  ],
+  [
+   "control_checks",
+   "SELECT"
+  ],
+  [
+   "controls",
+   "SELECT"
+  ],
+  [
+   "frameworks",
+   "SELECT"
+  ],
+  [
    "invitations",
    "DELETE,INSERT,SELECT,UPDATE"
+  ],
+  [
+   "mappings",
+   "SELECT"
   ],
   [
    "memberships",
@@ -107,6 +127,10 @@
   [
    "organizations",
    "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "requirements",
+   "SELECT"
   ],
   [
    "users",
