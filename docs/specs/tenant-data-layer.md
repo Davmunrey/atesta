@@ -47,8 +47,12 @@ for a compliance vendor. Isolation must not depend on every query being written 
 - [ ] One DB session per request, committed before the response is sent (Request transaction
       below). A failed commit returns an error code, never 2xx.
 - [ ] Engine: `hide_parameters=True` and `echo=False` in every environment, so bound values
-      (document text, emails) never reach exception text or logs (rule 2). Outside local and CI
-      the URL uses `sslmode=verify-full` with the RDS CA bundle (NFR-03).
+      (document text, emails) never reach exception text or logs (rule 2).
+- [ ] App to Postgres traffic is TLS 1.2+ with server authentication (NFR-03, client side).
+      `platform/db.py` sets `sslmode` and `sslrootcert` itself, never from the URL.
+      `ATESTA_DB_SSLMODE` defaults to `verify-full` with the Amazon RDS CA bundle, pinned in the
+      repo and copied into the image. Only local and CI set `ATESTA_DB_SSLMODE=disable`. The host
+      must be the RDS endpoint name (not an IP or CNAME), because `verify-full` checks it.
 - [ ] API startup fails on any condition in Startup guard below.
 - [ ] `audit_events` plus `platform.audit.record()`, writing in the caller's transaction;
       append-only by grant.
@@ -62,7 +66,8 @@ for a compliance vendor. Isolation must not depend on every query being written 
 
 ## Out of scope
 
-- RDS provisioning, DB credentials in Secrets Manager, CloudTrail trail (infra spec).
+- RDS provisioning, DB credentials in Secrets Manager, CloudTrail trail, and the server side of
+  NFR-03: `rds.force_ssl = 1`, `ssl_min_protocol_version = TLSv1.2`, KMS at rest (infra spec).
 - pgvector (AI spec). Procrastinate tables (scanning spec): the linter fails on any unclassified
   table, so that spec must place them and update ADR-012.
 - Read replicas, partitioning, PgBouncer.
@@ -160,8 +165,8 @@ On a fresh pooled connection, startup fails if the runtime role:
 - has an `app.*` default in `pg_db_role_setting` (role, database or all roles), or any of the four
   settings is non-empty on the fresh connection (checked by name: placeholders are not in
   `pg_settings`, and this also catches `-c app.*` in the DSN);
-- connected without TLS (`pg_stat_ssl.ssl` false), unless `ATESTA_DB_ALLOW_PLAINTEXT=true`, which
-  only local and CI set.
+- connected without TLS 1.2 or 1.3 (`pg_stat_ssl` for `pg_backend_pid()`), unless
+  `ATESTA_DB_SSLMODE=disable`.
 
 ### Conventions
 
@@ -229,6 +234,7 @@ schema except `pg_catalog`, `information_schema` and `pg_toast`, ignoring extens
 | `audit_events`: UPDATE and DELETE as `atesta_app` denied; `record()` in a rolled-back transaction leaves no row, in a committed one exactly one | Append-only, atomic with the action |
 | Request transaction: a handler whose INSERT fails at commit returns an error and stores no audit event | No 2xx for lost writes |
 | Engine from `make_engine()`: an INSERT carrying a marker string fails (RLS WITH CHECK, CHECK violation); marker absent from exception text and captured logs. No `create_engine(` outside `platform/db.py` | `hide_parameters` everywhere (rule 2) |
+| Engine connect args: with `ATESTA_DB_SSLMODE` unset, `sslmode` is `verify-full` and `sslrootcert` the bundled RDS CA; a `sslmode` in the URL is ignored. Startup guard against the CI container (no TLS) with `ATESTA_DB_SSLMODE=prefer`: connects in plaintext and the guard raises | Server authentication by default; plaintext fallback caught |
 | Static checks: no session-level `app.*` setting anywhere under `apps/`; no `set_config(` on `app.` outside `platform/tenancy.py`; no bare `Depends(get_db)`; migrations import nothing from `atesta_api` | Pool safety, immutable migrations |
 | `lint-imports` fails on a deliberate import of `platform.tenancy` from a non-identity module | Only identity sets context |
 | Alembic: upgrade head on an empty DB as `atesta_owner`, then `alembic check` finds no diff | Models and migrations agree |
