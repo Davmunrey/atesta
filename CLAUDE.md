@@ -54,3 +54,16 @@ uv run pytest
 
 Spec criteria met, tests added, CI green, strings in ES and EN, audit event emitted for
 user-visible actions, ADR updated if architecture changed.
+
+## Verification rules
+
+Adapted from the evidence principles of REA (github.com/morluto/rea, MIT); the tool itself is
+not installed (ADR-013).
+
+1. Every conclusion carries its evidence: the command and its output, the test name, or the
+   primary source URL. "Done" without evidence is not done.
+2. State the limits of each check: what it did not cover, and where it ran.
+3. Anything not yet checked is a candidate and is labelled as one, never stated as fact.
+4. Check against ground truth: a real Postgres for database behavior, official docs for vendor
+   behavior, CI for "green". Not memory, not a reviewer's say-so.
+5. Re-run the check from a clean state (fresh database, fresh checkout) before claiming it holds.
