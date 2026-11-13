@@ -12,6 +12,7 @@ from typing import Any
 from sqlalchemy import (
     Boolean,
     CheckConstraint,
+    Computed,
     DateTime,
     ForeignKey,
     ForeignKeyConstraint,
@@ -133,15 +134,21 @@ class Mapping(_Retirable, Base):
     reviewed_by: Mapped[str | None] = mapped_column(Text)
 
 
+_LINEAGE = ("organization_id", "framework_key", "scan_id", "scope_key")
+_SCOPE_KEY = "COALESCE(scope_id, '00000000-0000-0000-0000-000000000000'::uuid)"
+
+
 class ScoreSnapshot(TenantMixin, Base):
     """Append-only score of one framework for one scan and scope (FR-08). Corrections supersede."""
 
     __tablename__ = "score_snapshots"
     __table_args__ = (
         UniqueConstraint("organization_id", "id"),
-        ForeignKeyConstraint(
-            ["organization_id", "supersedes_id"],
-            ["score_snapshots.organization_id", "score_snapshots.id"],
+        UniqueConstraint(*_LINEAGE, "id", name="uq_score_snapshots_lineage"),
+        ForeignKeyConstraint(  # a correction stays in its framework, scan and scope
+            [*_LINEAGE, "supersedes_id"],
+            [f"score_snapshots.{c}" for c in (*_LINEAGE, "id")],
+            name="fk_score_snapshots_lineage",
             ondelete="RESTRICT",
         ),
         CheckConstraint("score IS NULL OR score BETWEEN 0 AND 100", name="score_range"),
@@ -159,6 +166,13 @@ class ScoreSnapshot(TenantMixin, Base):
             postgresql_nulls_not_distinct=True,
             postgresql_where=text("supersedes_id IS NULL"),
         ),
+        Index(  # one correction per snapshot: a linear chain, retried corrections are no-ops
+            "uq_score_snapshots_one_correction",
+            "organization_id",
+            "supersedes_id",
+            unique=True,
+            postgresql_where=text("supersedes_id IS NOT NULL"),
+        ),
         Index(
             "ix_score_snapshots_trend",
             "organization_id",
@@ -174,6 +188,7 @@ class ScoreSnapshot(TenantMixin, Base):
     catalog_version: Mapped[str] = mapped_column(Text)
     scan_id: Mapped[uuid.UUID]
     scope_id: Mapped[uuid.UUID | None]
+    scope_key: Mapped[uuid.UUID] = mapped_column(Computed(_SCOPE_KEY, persisted=True))
     applicability: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default=_EMPTY_JSON)
     score: Mapped[Decimal | None] = mapped_column(Numeric(4, 1))
     passed: Mapped[int]

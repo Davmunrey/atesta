@@ -1,7 +1,8 @@
 # Spec: Identity, Cognito auth with mandatory MFA
 
 - Requirement ids: FR-01, FR-13, NFR-03, NFR-04, NFR-10
-- Status: approved (2026-11-13)
+- Status: approved (2026-11-13). Revised 2026-11-13: Concurrency locks the target and owner
+  rows together (implementation review).
 - ADRs: ADR-007 (amendment 1), ADR-008, ADR-012
 - Build order: 2 of 3 (depends on tenant-data-layer). Cognito resources: infra-dev spec (next).
 
@@ -80,7 +81,10 @@ so it is bought (Cognito, Architecture tab "Build vs buy").
 - [ ] Audit events: `org.created`, `invitation.created`, `invitation.revoked`,
       `invitation.accepted`, `membership.role_changed`, `membership.removed`.
 - [ ] Errors return stable codes. ES and EN texts live in the web i18n files; the API holds no
-      user-facing prose.
+      user-facing prose. Framework errors too (`platform/errors.py`): 422 `request.invalid` with
+      `fields` (dotted locations only, never the message or the submitted input), 404
+      `request.not_found`, 405 `request.method_not_allowed`, any other bare HTTP error
+      `request.error`, and 500 `server.error` with no exception text.
 - [ ] Access tokens, invitation tokens and `Authorization` headers are never logged, including
       on the successful provisioning path.
 
@@ -168,9 +172,11 @@ is the WITH CHECK, and INSERT ... RETURNING must pass the SELECT policy.
   load balancer or access log records it. The invite page reads it, removes it with
   `history.replaceState`, keeps it in `sessionStorage` across the login redirect and sends it in
   the JSON body. The accept endpoint returns 400 `identity.token_in_query` if the request has any
-  query string.
+  query string, checked by the route class before body parsing, authentication or userInfo.
 - Accept: refresh the user from userInfo; set `app.invitation_token_sha256`, which makes only that
-  row visible; check `email_verified` and a case-insensitive email match; then
+  row visible; check `email_verified` and an email match that ignores ASCII case only (Unicode
+  case folding merges distinct mailboxes, e.g. `ß`/`ss`); invitation emails must be ASCII
+  (422 otherwise), as Cognito and SES carry; then
   `enter_org_context(..., invitation)` and claim atomically:
   `UPDATE invitations SET accepted_at = now() WHERE token_sha256 = :h AND accepted_at IS NULL AND
   revoked_at IS NULL AND expires_at > now() RETURNING organization_id, role`. Zero rows: re-read
@@ -184,10 +190,13 @@ is the WITH CHECK, and INSERT ... RETURNING must pass the SELECT policy.
 
 ### Concurrency
 
-- Last owner: a role change or removal that targets an owner first runs
-  `SELECT user_id FROM memberships WHERE organization_id = :org AND role = 'owner' FOR UPDATE`
-  and proceeds only if it returns more than one row. Do not lock the `organizations` row: every
-  tenant FK points at it, so that lock would block inserts across the org.
+- Role change and removal: before any check, lock the target row and every owner row in one
+  statement, `SELECT user_id, role FROM memberships WHERE organization_id = :org AND (user_id =
+  :target OR role = 'owner') ORDER BY user_id FOR UPDATE`. The 404, the 403 (only an owner removes
+  an owner or admin), the last-owner 409 and the audit metadata all read this locked result, so a
+  concurrent promotion, demotion or removal of the target is seen. The fixed order keeps two
+  requests from deadlocking. Do not lock the `organizations` row: every tenant FK points at it,
+  so that lock would block inserts across the org.
 - Accept and revoke race safely through the conditional UPDATEs above.
 
 ### Configuration
@@ -201,7 +210,10 @@ is the WITH CHECK, and INSERT ... RETURNING must pass the SELECT policy.
 | `ATESTA_WEB_BASE_URL` | base of the accept link |
 
 JWKS URL is derived from region and pool. JWKS cached in process; refetched on unknown `kid`, at
-most once every 5 minutes. Token lifetimes: access and ID 30 min, refresh 12 h.
+most once every 5 minutes. One fetch at a time, outside the verifier lock, so cached kids never
+wait on the network. A failed or malformed fetch is retried at most once every 30 s; until a fetch
+succeeds, an unknown `kid` gets 503 `auth.provider_unavailable` (retryable), never 401, and cached
+kids keep verifying. Token lifetimes: access and ID 30 min, refresh 12 h.
 
 ### Libraries
 
@@ -214,12 +226,12 @@ most once every 5 minutes. Token lifetimes: access and ID 30 min, refresh 12 h.
 
 | Area | Cases |
 |---|---|
-| JWT | Local RSA key and fake JWKS. Valid token; expired; wrong `iss`; wrong `client_id`; ID token rejected; `scope` without `openid` rejected; `scope` with the admin scope rejected; unknown `kid`; `alg=none` and HS256 rejected; tampered signature |
+| JWT | Local RSA key and fake JWKS. Valid token; expired; wrong `iss`; wrong `client_id`; ID token rejected; `scope` without `openid` rejected; `scope` with the admin scope rejected; unknown `kid`; `alg=none` and HS256 rejected; tampered signature; a failing JWKS fetch is retried at most every 30 s whatever the number of unknown kids, and maps to 503 `auth.provider_unavailable`; a malformed JWKS is a 503; a slow fetch does not block a cached kid and no second fetch runs in parallel |
 | Provisioning | First `GET /v1/me` with a fake provider inserts one user and returns no memberships; two concurrent first calls yield one row; an email change at the provider shows on the next `GET /v1/me`; two users with the same email and different subs coexist |
 | Org creation | `POST /v1/orgs` as `atesta_app` (RLS on) creates the org and an owner membership, writes one `org.created`; caller then gets 200 on the members route |
 | Tenant isolation | 404 on org B routes; no org context: own memberships only; org A context: only A rows even without a WHERE; users visible to self and co-members only; from org A context, inserting a membership for org B fails, updating a co-member's `users` row affects 0, updating an invitation through the token branch affects 0 |
-| Roles | member cannot invite (403); admin cannot change roles (403); admin invites as owner (403); owner invites as owner (201); last owner cannot be demoted or removed (409); two owners demoting each other concurrently leave exactly one owner |
-| Invitations | DB never holds the raw token; expired, revoked and used tokens rejected; email mismatch and unverified email rejected; invitation from a removed or demoted inviter rejected; existing member gets 409 and keeps the role; sole owner accepting a member invitation stays owner; accept with a query string returns 400; revoke racing accept never leaves both timestamps set; a token reveals no other invitation |
+| Roles | member cannot invite (403); admin cannot change roles (403); admin invites as owner (403); owner invites as owner (201); last owner cannot be demoted or removed (409); two owners demoting each other concurrently leave exactly one owner; an admin removing a member promoted meanwhile gets 403; a role change of a member removed meanwhile gets 404, not 500 |
+| Invitations | DB never holds the raw token; expired, revoked and used tokens rejected; email mismatch and unverified email rejected; invitation from a removed or demoted inviter rejected; existing member gets 409 and keeps the role; sole owner accepting a member invitation stays owner; accept with a query string returns 400 with or without a body or token, and calls no userInfo; a verified `x@straße.de` or a Kelvin-sign address cannot accept an invitation for `x@strasse.de` or `kate@...`; ASCII case still matches; a non-ASCII invitation email is 422; revoke racing accept never leaves both timestamps set; a token reveals no other invitation |
 | Audit | Each action writes exactly one event with the expected action and actor; no token in metadata |
 | Logs | Logs captured on auth failures and on the successful provisioning and accept paths never contain a token |
 | Cognito config | OpenTofu assertions for every pool, domain and client setting in the criteria (infra-dev spec) |

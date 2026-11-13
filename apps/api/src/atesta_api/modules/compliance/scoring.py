@@ -4,13 +4,14 @@ import os
 import uuid
 from collections import Counter
 from collections.abc import Iterable, Mapping
+from dataclasses import dataclass
 from decimal import Decimal
 from typing import Any
 
 from atesta_core.frameworks import Mapping as CoreMapping
 from atesta_core.frameworks import framework_results, group_scores
 from atesta_core.scoring import ControlResult, Status, score
-from sqlalchemy import select, text
+from sqlalchemy import ColumnElement, and_, select, text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
@@ -24,13 +25,45 @@ from atesta_api.modules.compliance.models import (
     Mapping as MappingRow,
 )
 
+_DRAFT_ENVS = frozenset({"local", "dev", "test"})
+
 
 def include_drafts() -> bool:
-    """Dev may score draft packs; production refuses to start with the flag (rule 10)."""
-    enabled = os.environ.get("ATESTA_CATALOG_INCLUDE_DRAFTS") == "true"
-    if enabled and os.environ.get("ATESTA_ENV") == "prod":
-        raise RuntimeError("ATESTA_CATALOG_INCLUDE_DRAFTS is not allowed in production")
-    return enabled
+    """Dev may score draft packs (rule 10). Fails closed: the flag needs an explicit dev ATESTA_ENV.
+
+    Called first at startup and again before scoring, for processes that skip the API lifespan.
+    """
+    if os.environ.get("ATESTA_CATALOG_INCLUDE_DRAFTS") != "true":
+        return False
+    if os.environ.get("ATESTA_ENV") not in _DRAFT_ENVS:
+        raise RuntimeError(
+            "ATESTA_CATALOG_INCLUDE_DRAFTS=true requires ATESTA_ENV in "
+            + "/".join(sorted(_DRAFT_ENVS))
+        )
+    return True
+
+
+def _scoreable() -> ColumnElement[bool]:
+    """The one rule-10 gate: listing and scoring see only active released frameworks."""
+    active = Framework.retired_at.is_(None)
+    return active if include_drafts() else and_(active, Framework.status == "released")
+
+
+@dataclass(frozen=True, slots=True)
+class FrameworkInfo:
+    key: str
+    name: str
+    version: str
+    status: str
+    catalog_version: str | None
+
+
+def active_frameworks(session: Session) -> list[FrameworkInfo]:
+    """Frameworks a customer may see, select or be scored on."""
+    rows = session.execute(select(Framework).where(_scoreable()).order_by(Framework.key))
+    return [
+        FrameworkInfo(f.key, f.name, f.version, f.status, f.catalog_version) for f in rows.scalars()
+    ]
 
 
 def _applies(requirement_scope: list[str], applicability: Mapping[str, Any]) -> bool:
@@ -55,9 +88,9 @@ def snapshot_framework(
         raise RuntimeError("scoring needs REPEATABLE READ so a catalog load cannot mix versions")
     applicability = dict(applicability or {})
     framework = session.execute(
-        select(Framework).where(Framework.key == framework_key, Framework.retired_at.is_(None))
+        select(Framework).where(Framework.key == framework_key, _scoreable())
     ).scalar()
-    if framework is None or (framework.status != "released" and not include_drafts()):
+    if framework is None:
         return None
     requirements = [
         r
@@ -86,43 +119,46 @@ def snapshot_framework(
     counts = Counter(r.status for r in results)
     keys = framework.attributes.get("score_groups", [])
     value = score(results)
-    statement = (
-        insert(ScoreSnapshot)
-        .values(
-            id=uuid.uuid4(),
-            organization_id=organization_id,
-            framework_key=framework_key,
-            framework_version=framework.version,
-            catalog_version=framework.catalog_version or "unloaded",
-            scan_id=scan_id,
-            scope_id=scope_id,
-            applicability=applicability,
-            score=None if value is None else Decimal(str(value)),
-            passed=counts[Status.PASS],
-            failed=counts[Status.FAIL],
-            manual=counts[Status.MANUAL],
-            not_applicable=counts[Status.NOT_APPLICABLE],
-            requirement_results={r.control_id: r.status.value for r in results},
-            group_scores=group_scores(results, {r.code: r.attributes for r in requirements}, keys),
-            supersedes_id=supersedes_id,
-        )
-        .on_conflict_do_nothing(
+    row = insert(ScoreSnapshot).values(
+        id=uuid.uuid4(),
+        organization_id=organization_id,
+        framework_key=framework_key,
+        framework_version=framework.version,
+        catalog_version=framework.catalog_version or "unloaded",
+        scan_id=scan_id,
+        scope_id=scope_id,
+        applicability=applicability,
+        score=None if value is None else Decimal(str(value)),
+        passed=counts[Status.PASS],
+        failed=counts[Status.FAIL],
+        manual=counts[Status.MANUAL],
+        not_applicable=counts[Status.NOT_APPLICABLE],
+        requirement_results={r.control_id: r.status.value for r in results},
+        group_scores=group_scores(results, {r.code: r.attributes for r in requirements}, keys),
+        supersedes_id=supersedes_id,
+    )
+    if supersedes_id is None:  # one original per (framework, scan, scope)
+        statement = row.on_conflict_do_nothing(
             index_elements=["organization_id", "framework_key", "scan_id", "scope_id"],
             index_where=text("supersedes_id IS NULL"),
         )
-        .returning(ScoreSnapshot.id)
-    )
-    created = session.execute(statement).scalar()
-    if created is not None or supersedes_id is not None:
-        return created
-    return session.execute(  # retried job: return the original
-        select(ScoreSnapshot.id).where(
+        existing = select(ScoreSnapshot.id).where(
             ScoreSnapshot.framework_key == framework_key,
             ScoreSnapshot.scan_id == scan_id,
             ScoreSnapshot.scope_id.is_not_distinct_from(scope_id),
             ScoreSnapshot.supersedes_id.is_(None),
         )
-    ).scalar_one()
+    else:  # one correction per snapshot; the lineage FK keeps it in the same framework and scan
+        statement = row.on_conflict_do_nothing(
+            index_elements=["organization_id", "supersedes_id"],
+            index_where=text("supersedes_id IS NOT NULL"),
+        )
+        existing = select(ScoreSnapshot.id).where(ScoreSnapshot.supersedes_id == supersedes_id)
+    created = session.execute(statement.returning(ScoreSnapshot.id)).scalar()
+    if created is not None:
+        return created
+    earlier: uuid.UUID = session.execute(existing).scalar_one()  # retried job
+    return earlier
 
 
 def control_is_active(session: Session, control_key: str) -> bool:
