@@ -30,6 +30,10 @@ updates:
     groups:
       web-minor-and-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      # Types must match the Node runtime major (.nvmrc, engines ">=22 <23"); bump both together.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     open-pull-requests-limit: 10
 
   - package-ecosystem: "github-actions"

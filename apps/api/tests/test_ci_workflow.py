@@ -1,6 +1,7 @@
 """CI supply-chain policy: the lock is enforced, CI tools are pinned and cooled down, and the
 dependency audit reads the locked project dependencies (not the tool's own environment)."""
 
+import json
 import re
 from pathlib import Path
 from typing import Any
@@ -62,3 +63,16 @@ def test_dependabot_keeps_the_seven_day_cooldown() -> None:
     updates = config["updates"]
     assert {u["package-ecosystem"] for u in updates} == {"uv", "npm", "github-actions", "opentofu"}
     assert all(u.get("cooldown", {}).get("default-days", 0) >= 7 for u in updates)
+
+
+def test_node_types_follow_the_runtime_major() -> None:
+    """@types/node stays on the Node runtime major; Dependabot may not bump it alone."""
+    web = WORKFLOWS.parents[1] / "apps" / "web"
+    runtime = (web / ".nvmrc").read_text().strip().split(".")[0]
+    types = json.loads((web / "package.json").read_text())["devDependencies"]["@types/node"]
+    assert types.lstrip("^~").split(".")[0] == runtime
+    config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
+    npm = next(u for u in config["updates"] if u["package-ecosystem"] == "npm")
+    assert {"dependency-name": "@types/node", "update-types": ["version-update:semver-major"]} in (
+        npm.get("ignore", [])
+    )
