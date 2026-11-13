@@ -80,10 +80,8 @@ def test_bound_values_stay_out_of_errors_and_logs(
 
 
 def test_engine_ignores_tls_settings_in_the_url(database: URL) -> None:
-    """The URL asks for no TLS; make_engine demands it, so the plaintext test server refuses."""
+    """The URL asks for no TLS; make_engine's default (verify-full) demands it, so the plaintext
+    test server refuses: against a real server, not only in the captured parameters."""
     url = database.update_query_dict({"sslmode": "disable"})
-    with (
-        pytest.raises(OperationalError, match="SSL"),
-        make_engine(url, sslmode="require").connect(),
-    ):
+    with pytest.raises(OperationalError, match="SSL"), make_engine(url).connect():
         pass

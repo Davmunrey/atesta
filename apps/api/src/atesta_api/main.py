@@ -17,11 +17,7 @@ from atesta_api.platform.guard import assert_safe_runtime_role
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Configure the database and Cognito; refuse to start on an unsafe DB role."""
     sslmode = os.environ.get("ATESTA_DB_SSLMODE", "verify-full")
-    engine = db.make_engine(
-        os.environ["ATESTA_DATABASE_URL"],
-        sslmode=sslmode,
-        sslrootcert=os.environ.get("ATESTA_DB_SSLROOTCERT"),
-    )
+    engine = db.make_engine(os.environ["ATESTA_DATABASE_URL"], sslmode=sslmode)
     assert_safe_runtime_role(engine, require_tls=sslmode != "disable")
     db.configure(engine)
     with httpx.Client() as client:

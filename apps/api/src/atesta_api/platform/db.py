@@ -2,6 +2,7 @@
 
 import uuid
 from collections.abc import Iterator
+from pathlib import Path
 from typing import Annotated, Any
 
 from fastapi import Depends
@@ -30,23 +31,31 @@ class TenantMixin:
     )
 
 
+# Pinned Amazon RDS CA bundle (certs/README.md): the only trust root for verify-full.
+RDS_CA = str(Path(__file__).resolve().with_name("certs") / "rds-eu-south-2-bundle.pem")
+SSLMODES = frozenset({"verify-full", "disable"})  # disable: local and CI only
+
+
 def make_engine(
     url: str | URL,
     *,
     sslmode: str = "verify-full",
-    sslrootcert: str | None = None,
     pool_size: int = 5,
     max_overflow: int = 5,
     null_pool: bool = False,
 ) -> Engine:
-    """The only Engine factory. TLS settings never come from the URL.
+    """The only Engine factory. TLS settings never come from the URL or the environment.
 
-    hide_parameters keeps bound values (document text, emails) out of errors and logs (rule 2).
+    verify-full always uses the pinned RDS CA; modes that do not authenticate the server
+    (allow, prefer, require, verify-ca) are refused. hide_parameters keeps bound values
+    (document text, emails) out of errors and logs (rule 2).
     """
+    if sslmode not in SSLMODES:
+        raise ValueError(f"sslmode must be one of {sorted(SSLMODES)}, got {sslmode!r}")
     clean = make_url(url).difference_update_query(["sslmode", "sslrootcert"])
     connect_args: dict[str, Any] = {"sslmode": sslmode}
-    if sslrootcert:
-        connect_args["sslrootcert"] = sslrootcert
+    if sslmode == "verify-full":
+        connect_args["sslrootcert"] = RDS_CA
     if null_pool:
         return create_engine(
             clean, hide_parameters=True, poolclass=pool.NullPool, connect_args=connect_args
