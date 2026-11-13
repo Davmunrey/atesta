@@ -26,7 +26,7 @@ from atesta_api.modules.identity.models import Membership, Role, User
 from atesta_api.platform.db import DbSession
 
 _bearer = HTTPBearer(auto_error=False)
-_RANK = {Role.MEMBER: 0, Role.ADMIN: 1, Role.OWNER: 2}
+RANK = {Role.MEMBER: 0, Role.ADMIN: 1, Role.OWNER: 2}
 
 
 def error(status: int, code: str) -> HTTPException:
@@ -129,7 +129,7 @@ def require_member(org_id: uuid.UUID, caller: CurrentCaller, session: DbSession)
 
 def require_role(minimum: Role) -> Callable[[Member], Member]:
     def check(member: Annotated[Member, Depends(require_member)]) -> Member:
-        if _RANK[member.role] < _RANK[minimum]:
+        if RANK[member.role] < RANK[minimum]:
             raise error(403, "identity.forbidden")
         return member
 

@@ -1,5 +1,7 @@
 """Public interface of the identity module."""
 
+import os
+
 import httpx
 from fastapi import FastAPI
 
@@ -24,6 +26,7 @@ def wire_identity(app: FastAPI, client: httpx.Client) -> None:
     settings = CognitoSettings.from_env()
     app.state.token_verifier = TokenVerifier(settings, jwks_fetcher(settings, client))
     app.state.identity_provider = CognitoUserInfo(settings, client)
+    app.state.web_base_url = os.environ["ATESTA_WEB_BASE_URL"].rstrip("/")
 
 
 __all__ = [

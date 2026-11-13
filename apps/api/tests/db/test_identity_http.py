@@ -111,6 +111,7 @@ def cognito_env(monkeypatch: pytest.MonkeyPatch) -> None:
         "ATESTA_COGNITO_APP_CLIENT_ID": "client-1",
         "ATESTA_COGNITO_DOMAIN": "auth.example.com",
         "ATESTA_DB_SSLMODE": "disable",
+        "ATESTA_WEB_BASE_URL": "https://app.example.com",
     }.items():
         monkeypatch.setenv(name, value)
 
