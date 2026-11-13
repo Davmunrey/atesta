@@ -1,0 +1,54 @@
+"""Validate packs, or import immutable drafts into a loopback development database."""
+
+import argparse
+import json
+import os
+from pathlib import Path
+
+from atesta_api.modules.compliance.api import import_preview, read_catalog
+from atesta_api.modules.scanning.api import ENGINE_VERSION
+from atesta_api.platform.db import make_engine
+from atesta_api.platform.devenv import require_dev
+from sqlalchemy.engine import make_url
+
+ROOT = Path(__file__).resolve().parents[3]
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--import", dest="apply", action="store_true")
+    args = parser.parse_args()
+    expected = set()
+    for provider in ("m365", "googleworkspace"):
+        path = ROOT / "scanner" / "expected" / ENGINE_VERSION / f"{provider}.json"
+        expected.update(json.loads(path.read_text())[provider])
+    catalog = read_catalog(
+        ROOT / "catalog", expected_checks=expected, engine_version=ENGINE_VERSION
+    )
+    if args.apply:
+        require_dev("catalog preview")
+        url = make_url(os.environ["ATESTA_MIGRATION_DATABASE_URL"])
+        if url.host not in {"127.0.0.1", "localhost", "::1"} or url.database != "atesta_dev":
+            raise RuntimeError("preview import requires the loopback atesta_dev database")
+        engine = make_engine(url, sslmode="disable", null_pool=True)
+        with engine.begin() as conn:
+            conn.exec_driver_sql("SET LOCAL ROLE atesta_owner")
+            import_preview(conn, catalog)
+    for pack in catalog.packs:
+        print(
+            json.dumps(
+                {
+                    "framework": pack.metadata.id,
+                    "state": pack.metadata.attributes.content_state,
+                    "requirements": len(pack.requirements),
+                    "candidate_mappings": len(pack.mappings),
+                    "controls": len(catalog.used_controls(pack)),
+                    "fingerprint": catalog.fingerprint(pack),
+                    "imported": args.apply,
+                }
+            )
+        )
+
+
+if __name__ == "__main__":
+    main()

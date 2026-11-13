@@ -40,6 +40,8 @@ jobs:
           uv run ruff format --check .
       - name: Types
         run: uv run mypy
+      - name: Validate framework catalog
+        run: uv run python -m apps.api.devtools.preview_catalog
       - name: Module boundaries
         run: uv run lint-imports
       - name: Tests

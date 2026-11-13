@@ -121,6 +121,29 @@ def test_draft_framework_is_scored_with_the_flag_in_dev(
     assert row(tx, snap(tx, "fw_d"))["requirement_results"] == {"D-1": "pass"}
 
 
+def test_preview_framework_is_visible_but_never_scored(
+    app_engine: Engine, superuser: Engine, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("ATESTA_CATALOG_INCLUDE_DRAFTS", "true")
+    monkeypatch.setenv("ATESTA_ENV", "test")
+    with superuser.begin() as conn:
+        conn.exec_driver_sql(
+            "UPDATE frameworks SET attributes = '{\"assessment_enabled\":false}' WHERE key='fw_d'"
+        )
+    try:
+        with (
+            Session(app_engine.execution_options(isolation_level="REPEATABLE READ")) as session,
+            session.begin(),
+        ):
+            enter_org_context(session, ORG_A, ContextReason.JOB)
+            assert "fw_d" in {f.key for f in active_frameworks(session)}
+            assert "fw_d" not in scoreable_framework_keys(session)
+            assert snap(session, "fw_d") is None
+    finally:
+        with superuser.begin() as conn:
+            conn.execute(text("UPDATE frameworks SET attributes = '{}' WHERE key='fw_d'"))
+
+
 def test_retried_job_is_idempotent_and_corrections_supersede(tx: Session) -> None:
     scan = uuid.uuid4()
     first = snap(tx, "fw_x", scan)
