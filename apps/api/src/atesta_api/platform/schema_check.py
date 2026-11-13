@@ -68,16 +68,17 @@ _FK_ACTIONS = (
     " WHERE con.contype = 'f'"
     " AND (con.confdeltype NOT IN ('a', 'r') OR con.confupdtype NOT IN ('a', 'r'))" + _NOT_EXTENSION
 )
-_GRANTEE = "CASE x.grantee WHEN 0 THEN 'PUBLIC' ELSE x.grantee::regrole::text END"
-_PRIVILEGES = (
-    "string_agg(x.privilege_type || CASE WHEN x.is_grantable THEN '+grant' ELSE '' END,"
-    " ',' ORDER BY x.privilege_type)"
-)
+# Literal SQL only (no f-strings or variables), so static analysis sees constant queries.
 _GRANTS = (
-    f"SELECT c.relname, '', {_GRANTEE}, {_PRIVILEGES}"  # noqa: S608  constant SQL
+    "SELECT c.relname, '', CASE x.grantee WHEN 0 THEN 'PUBLIC' ELSE x.grantee::regrole::text END,"
+    " string_agg(x.privilege_type || CASE WHEN x.is_grantable THEN '+grant' ELSE '' END,"
+    " ',' ORDER BY x.privilege_type)"
     " FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace, aclexplode(c.relacl) x"
     " WHERE n.nspname = 'public' AND x.grantee IN (0, 'atesta_app'::regrole) GROUP BY 1, 2, 3"
-    f" UNION ALL SELECT c.relname, a.attname, {_GRANTEE}, {_PRIVILEGES}"
+    " UNION ALL SELECT c.relname, a.attname,"
+    " CASE x.grantee WHEN 0 THEN 'PUBLIC' ELSE x.grantee::regrole::text END,"
+    " string_agg(x.privilege_type || CASE WHEN x.is_grantable THEN '+grant' ELSE '' END,"
+    " ',' ORDER BY x.privilege_type)"
     " FROM pg_attribute a JOIN pg_class c ON c.oid = a.attrelid"
     " JOIN pg_namespace n ON n.oid = c.relnamespace, aclexplode(a.attacl) x"
     " WHERE n.nspname = 'public' AND a.attnum > 0 AND NOT a.attisdropped"
