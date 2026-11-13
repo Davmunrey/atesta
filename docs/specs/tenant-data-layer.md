@@ -148,8 +148,9 @@ CREATE POLICY tenant_isolation ON t
 exception. It is used only through `DbSession = Annotated[Session, Depends(get_db,
 scope="function")]` (FastAPI 0.121+). Function scope commits before the response is sent; the
 default request scope commits after the client already has a 2xx. Every dependency and handler
-takes `DbSession`; a bare `Depends(get_db)` is forbidden, because mixed scopes create two sessions
-and the tenant context would sit on a different transaction from the writes. READ COMMITTED.
+takes `DbSession`; any other use of `get_db` (bare, another scope, qualified, keyword or aliased,
+on a route or an `include_router`) is forbidden, because mixed scopes create two sessions and the
+tenant context would sit on a different transaction from the writes. READ COMMITTED.
 
 ### What RLS does and does not do
 
@@ -251,8 +252,8 @@ schema except `pg_catalog`, `information_schema` and `pg_toast`, ignoring extens
 | Request transaction: a handler whose INSERT fails at commit returns an error and stores no audit event | No 2xx for lost writes |
 | Engine from `make_engine()`: an INSERT carrying a marker string fails (RLS WITH CHECK, CHECK violation); marker absent from exception text and captured logs. No `create_engine(` outside `platform/db.py` | `hide_parameters` everywhere (rule 2) |
 | Engine connect args (captured before libpq): with `ATESTA_DB_SSLMODE` unset, `sslmode` is `verify-full` and `sslrootcert` the bundled RDS CA, even with `sslmode`/`sslrootcert` in the URL and `PGSSLROOTCERT` set; `disable` sets no root certificate; `allow`, `prefer`, `require`, `verify-ca` raise; the bundle's SHA-256 is pinned and it holds the three eu-south-2 roots; the wheel config ships it. The default engine against the CI container (no TLS) fails with an SSL error; the API refuses to start with `ATESTA_DB_SSLMODE=prefer`; the guard still raises on a plaintext connection when TLS is required | Server authentication by default; no plaintext fallback |
-| Static checks: no session-level `app.*` setting anywhere under `apps/`; no `set_config(` on `app.` outside `platform/tenancy.py`; no bare `Depends(get_db)`; migrations import nothing from `atesta_api` | Pool safety, immutable migrations |
-| `lint-imports` fails on a deliberate import of `platform.tenancy` from a non-identity module | Only identity sets context |
+| Static checks: no session-level `app.*` setting in any `.py`, `.sql`, `.sh`, `.ts(x)` or `.(m)js` file under `apps/` (tests, `node_modules`, `.venv` and build output excluded; a self-test plants a worker `.py` and a `.sql` file); no `set_config(` on `app.` outside `platform/tenancy.py`; no bare `Depends(get_db)`; a walk of the app's effective dependency graph finds `get_db` only at function scope, and flags bare, request-scope, qualified, keyword, aliased and router-level forms in a throwaway app; migrations import nothing from `atesta_api` | Pool safety, immutable migrations |
+| On a copy of the source tree, `lint-imports` fails on a deliberate import of `platform.tenancy` from an existing module, a new module, a `platform` module and a new top-level file (a `protected` contract), and on a new module importing identity internals (independence over `atesta_api.modules.*`); the unmodified copy passes | Only identity sets context; rule 8 for new modules |
 | Alembic: upgrade head on an empty DB as `atesta_owner`, then `alembic check` (with `compare_server_default`) finds no diff; a second DB built with `Base.metadata.create_all` has the same constraints (name and `pg_get_constraintdef`), indexes (`indexdef`) and columns (default, nullability, type, generation) on every model table, because `alembic check` does not compare CHECKs or partial-index predicates; `NAMING_CONVENTION` equals a frozen copy, since migrations build names through it. New migrations name constraints with `op.f()` | Models and migrations agree |
 | `CI=true` without `ATESTA_TEST_DATABASE_URL`: pytest exits non-zero; set but unreachable URL errors, never skips | DB tests cannot be skipped silently |
 
