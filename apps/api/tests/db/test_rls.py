@@ -78,7 +78,7 @@ def test_composite_fk_rejects_other_tenant_parent_like_random_id(
 
 def test_no_context_returns_zero_rows_everywhere(db_rollback: Session) -> None:
     tables = rls_tables(db_rollback)
-    assert {"organizations", "probe", "probe_child"} <= set(tables)
+    assert {"organizations", "audit_events", "probe", "probe_child"} <= set(tables)
     assert {t: count(db_rollback, t) for t in tables} == dict.fromkeys(tables, 0)
 
 
