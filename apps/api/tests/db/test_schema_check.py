@@ -35,6 +35,9 @@ BAD_OBJECTS = {
         "differ from",
     ),
     "truncate grant": ("GRANT TRUNCATE ON audit_events TO atesta_app", "differ from"),
+    "column grant": ("GRANT UPDATE (action) ON audit_events TO atesta_app", "differ from"),
+    "grant to PUBLIC": ("GRANT DELETE ON organizations TO PUBLIC", "differ from"),
+    "grant option": ("GRANT SELECT ON controls TO atesta_app WITH GRANT OPTION", "differ from"),
     "unclassified table": ("CREATE TABLE stray (id int)", "stray is not classified"),
     "table outside public": (
         "CREATE SCHEMA side; CREATE TABLE side.t (id int)",

@@ -45,6 +45,22 @@ _UNIQUES = (
     "  AS k(n, i) JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.n)"
     " FROM pg_index i JOIN pg_class c ON c.oid = i.indrelid WHERE i.indisunique"
 )
+# Literal SQL only (no f-strings or variables), so static analysis sees constant queries.
+_GRANTS = (
+    "SELECT c.relname, '', CASE x.grantee WHEN 0 THEN 'PUBLIC' ELSE x.grantee::regrole::text END,"
+    " string_agg(x.privilege_type || CASE WHEN x.is_grantable THEN '+grant' ELSE '' END,"
+    " ',' ORDER BY x.privilege_type)"
+    " FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace, aclexplode(c.relacl) x"
+    " WHERE n.nspname = 'public' AND x.grantee IN (0, 'atesta_app'::regrole) GROUP BY 1, 2, 3"
+    " UNION ALL SELECT c.relname, a.attname,"
+    " CASE x.grantee WHEN 0 THEN 'PUBLIC' ELSE x.grantee::regrole::text END,"
+    " string_agg(x.privilege_type || CASE WHEN x.is_grantable THEN '+grant' ELSE '' END,"
+    " ',' ORDER BY x.privilege_type)"
+    " FROM pg_attribute a JOIN pg_class c ON c.oid = a.attrelid"
+    " JOIN pg_namespace n ON n.oid = c.relnamespace, aclexplode(a.attacl) x"
+    " WHERE n.nspname = 'public' AND a.attnum > 0 AND NOT a.attisdropped"
+    " AND x.grantee IN (0, 'atesta_app'::regrole) GROUP BY 1, 2, 3 ORDER BY 1, 2, 3"
+)
 _ORG_COLUMN = (
     "SELECT a.attnotnull AND a.atttypid = 'uuid'::regtype,"
     " EXISTS (SELECT 1 FROM pg_index i WHERE i.indrelid = a.attrelid AND i.indkey[0] = a.attnum)"
@@ -54,7 +70,11 @@ _ORG_COLUMN = (
 
 
 def snapshot(conn: Connection, exclude: frozenset[str] = frozenset()) -> dict[str, Any]:
-    """Policies and atesta_app grants in public: what a reviewed PR may change."""
+    """Policies and grants to atesta_app or PUBLIC in public: what a reviewed PR may change.
+
+    Grants come from the ACLs, table and column level, so a column grant, a grant to PUBLIC
+    (which every role inherits) or a grant option shows up as a diff.
+    """
     policies = conn.execute(
         text(
             "SELECT tablename, policyname, cmd, permissive, array_to_string(roles, ','),"
@@ -62,13 +82,7 @@ def snapshot(conn: Connection, exclude: frozenset[str] = frozenset()) -> dict[st
             " WHERE schemaname = 'public' ORDER BY 1, 2"
         )
     ).all()
-    grants = conn.execute(
-        text(
-            "SELECT table_name, string_agg(privilege_type, ',' ORDER BY privilege_type)"
-            " FROM information_schema.role_table_grants WHERE grantee = 'atesta_app'"
-            " AND table_schema = 'public' GROUP BY 1 ORDER BY 1"
-        )
-    ).all()
+    grants = conn.execute(text(_GRANTS)).all()
     return {
         "policies": [list(r) for r in policies if r[0] not in exclude],
         "grants": [list(r) for r in grants if r[0] not in exclude],
