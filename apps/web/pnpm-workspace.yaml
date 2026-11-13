@@ -1,0 +1,6 @@
+# Same 7-day cooldown as uv's exclude-newer (pnpm docs, dependency resolution settings).
+minimumReleaseAge: 10080
+# next-intl pulls these for its optional message extraction; prebuilt binaries, no install scripts.
+ignoredBuiltDependencies:
+  - "@parcel/watcher"
+  - "@swc/core"
