@@ -27,5 +27,29 @@
       "role_not_allowed": "You cannot assign that role.",
       "token_in_query": "This invitation link is not valid. Open it again from the message you received."
     }
+  },
+  "app": {
+    "loading": "Loading…",
+    "signOut": "Sign out",
+    "signedInAs": "Signed in as {email}"
+  },
+  "home": {
+    "title": "Your organizations",
+    "createAnother": "Create another organization"
+  },
+  "createOrg": {
+    "title": "Create your organization",
+    "help": "It is where your team prepares for audits. You can invite more people afterwards.",
+    "name": "Organization name",
+    "submit": "Create organization"
+  },
+  "org": {
+    "switcher": "Organization",
+    "yourRole": "Your role: {role}"
+  },
+  "roles": {
+    "owner": "Owner",
+    "admin": "Admin",
+    "member": "Member"
   }
 }

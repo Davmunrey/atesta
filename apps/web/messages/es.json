@@ -27,5 +27,29 @@
       "role_not_allowed": "No puedes asignar ese rol.",
       "token_in_query": "El enlace de invitación no es válido. Ábrelo de nuevo desde el mensaje recibido."
     }
+  },
+  "app": {
+    "loading": "Cargando…",
+    "signOut": "Cerrar sesión",
+    "signedInAs": "Sesión iniciada como {email}"
+  },
+  "home": {
+    "title": "Tus organizaciones",
+    "createAnother": "Crear otra organización"
+  },
+  "createOrg": {
+    "title": "Crea tu organización",
+    "help": "Es el espacio donde tu equipo prepara las auditorías. Después podrás invitar a más personas.",
+    "name": "Nombre de la organización",
+    "submit": "Crear organización"
+  },
+  "org": {
+    "switcher": "Organización",
+    "yourRole": "Tu rol: {role}"
+  },
+  "roles": {
+    "owner": "Propietario",
+    "admin": "Administrador",
+    "member": "Miembro"
   }
 }
