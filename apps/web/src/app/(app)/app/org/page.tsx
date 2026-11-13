@@ -7,7 +7,8 @@ import { useMe } from "@/components/auth-gate";
 import { ErrorMessage } from "@/components/error-message";
 import { ApiError } from "@/lib/api/hooks";
 import Link from "next/link";
-import { orgHome, orgMembers, selectOrg } from "@/lib/org";
+import { orgHome, orgInvitations, orgMembers, selectOrg } from "@/lib/org";
+import { canInvite } from "@/lib/permissions";
 
 // Static export: the org id travels in the query string, read on the client.
 export default function OrgPage() {
@@ -46,10 +47,15 @@ function OrgHome() {
       </div>
       <h1 className="text-2xl font-semibold">{org.organization_name}</h1>
       <p className="text-muted">{t("org.yourRole", { role: t(`roles.${org.role}`) })}</p>
-      <nav aria-label={t("org.sections")}>
+      <nav aria-label={t("org.sections")} className="flex gap-4">
         <Link href={orgMembers(org.organization_id)} className="underline">
           {t("org.members")}
         </Link>
+        {canInvite(org.role) ? (
+          <Link href={orgInvitations(org.organization_id)} className="underline">
+            {t("org.invitations")}
+          </Link>
+        ) : null}
       </nav>
     </section>
   );

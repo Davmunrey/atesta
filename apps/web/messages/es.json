@@ -57,7 +57,8 @@
     "switcher": "Organización",
     "yourRole": "Tu rol: {role}",
     "sections": "Secciones de la organización",
-    "members": "Miembros"
+    "members": "Miembros",
+    "invitations": "Invitaciones"
   },
   "roles": {
     "owner": "Propietario",
@@ -75,5 +76,27 @@
     "confirmRemove": "¿Quitar a {email} de la organización?",
     "confirm": "Confirmar",
     "cancel": "Cancelar"
+  },
+  "invitations": {
+    "title": "Invitaciones de {org}",
+    "email": "Correo electrónico",
+    "role": "Rol",
+    "invite": "Invitar",
+    "created": "Invitación creada para {email}. Envíale este enlace por un canal de confianza.",
+    "shownOnce": "El enlace solo se muestra una vez: cópialo ahora. Caduca en 7 días.",
+    "link": "Enlace de invitación",
+    "copy": "Copiar enlace",
+    "copied": "Enlace copiado",
+    "pending": "Invitaciones pendientes",
+    "none": "No hay invitaciones pendientes.",
+    "expires": "Caduca el {date}",
+    "revoke": "Revocar"
+  },
+  "invite": {
+    "title": "Únete a la organización",
+    "signedInAs": "Vas a aceptar la invitación como {email}.",
+    "accept": "Aceptar invitación",
+    "loading": "Cargando…",
+    "missing": "Este enlace de invitación no es válido o ya se ha usado. Pide una invitación nueva."
   }
 }
