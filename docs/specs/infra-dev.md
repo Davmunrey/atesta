@@ -1,7 +1,7 @@
 # Spec: Dev infrastructure for sign-in with MFA
 
 - Requirement ids: FR-01, NFR-03, NFR-04
-- Status: draft
+- Status: approved (2026-11-13)
 - ADRs: ADR-007 (amendment 1), ADR-012, ADR-013
 - Build order: after identity-auth; unblocks the week-1 gate "login with MFA works in dev"
 

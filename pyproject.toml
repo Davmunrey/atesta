@@ -17,7 +17,7 @@ dev = [
     "ruff>=0.7",
     "mypy>=1.13",
     "pytest>=8.3",
-    "import-linter>=2.1",
+    "import-linter>=2.15",  # protected contracts and module wildcards
     "httpx>=0.27",
     "types-pyyaml>=6.0.12.20261103",
     "python-multipart>=0.0.20",
@@ -49,15 +49,7 @@ root_packages = ["atesta_api"]
 [[tool.importlinter.contracts]]
 name = "Modules talk only through their public api.py"
 type = "independence"
-modules = [
-    "atesta_api.modules.identity",
-    "atesta_api.modules.connections",
-    "atesta_api.modules.scanning",
-    "atesta_api.modules.compliance",
-    "atesta_api.modules.evidence",
-    "atesta_api.modules.ai",
-    "atesta_api.modules.billing",
-]
+modules = ["atesta_api.modules.*"]  # every module, including ones added later
 ignore_imports = [
     "atesta_api.modules.** -> atesta_api.modules.*.api",
 ]
@@ -69,17 +61,10 @@ type = "forbidden"
 source_modules = ["atesta_api.platform"]
 forbidden_modules = ["atesta_api.modules", "atesta_api.main"]
 
+# Protected: only identity may import tenancy directly, wherever the importer lives (main,
+# platform, any module, a new top-level file). Going through identity.api stays legal.
 [[tool.importlinter.contracts]]
 name = "Only identity sets tenant context (ADR-012)"
-type = "forbidden"
-source_modules = [
-    "atesta_api.main",
-    "atesta_api.modules.connections",
-    "atesta_api.modules.scanning",
-    "atesta_api.modules.compliance",
-    "atesta_api.modules.evidence",
-    "atesta_api.modules.ai",
-    "atesta_api.modules.billing",
-]
-forbidden_modules = ["atesta_api.platform.tenancy"]
-allow_indirect_imports = true  # going through identity.api is the point
+type = "protected"
+protected_modules = ["atesta_api.platform.tenancy"]
+allowed_importers = ["atesta_api.modules.identity"]
