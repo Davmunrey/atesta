@@ -9,6 +9,7 @@ from alembic import context
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # lets versions import rls_v1
 
+from atesta_api.modules.identity import models as identity_models  # noqa: E402, F401
 from atesta_api.platform import audit, tenancy  # noqa: E402, F401  (register models)
 from atesta_api.platform.db import Base, make_engine  # noqa: E402
 

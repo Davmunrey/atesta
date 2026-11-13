@@ -10,6 +10,51 @@
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
+   "invitations",
+   "invitation_token_read",
+   "SELECT",
+   "PERMISSIVE",
+   "public",
+   "(token_sha256 = app_setting_text('app.invitation_token_sha256'::text))",
+   ""
+  ],
+  [
+   "invitations",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "memberships",
+   "own_memberships_read",
+   "SELECT",
+   "PERMISSIVE",
+   "public",
+   "((app_setting_uuid('app.organization_id'::text) IS NULL) AND (user_id = app_setting_uuid('app.user_id'::text)))",
+   ""
+  ],
+  [
+   "memberships",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "organizations",
+   "own_orgs_read",
+   "SELECT",
+   "PERMISSIVE",
+   "public",
+   "(id IN ( SELECT memberships.organization_id\n   FROM memberships\n  WHERE (memberships.user_id = app_setting_uuid('app.user_id'::text))))",
+   ""
+  ],
+  [
    "organizations",
    "tenant_isolation",
    "ALL",
@@ -17,6 +62,33 @@
    "public",
    "(id = app_setting_uuid('app.organization_id'::text))",
    "(id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "users",
+   "self_insert",
+   "INSERT",
+   "PERMISSIVE",
+   "public",
+   "",
+   "(cognito_sub = app_setting_text('app.subject'::text))"
+  ],
+  [
+   "users",
+   "self_or_comember_read",
+   "SELECT",
+   "PERMISSIVE",
+   "public",
+   "((cognito_sub = app_setting_text('app.subject'::text)) OR (id IN ( SELECT memberships.user_id\n   FROM memberships\n  WHERE (memberships.organization_id = app_setting_uuid('app.organization_id'::text)))))",
+   ""
+  ],
+  [
+   "users",
+   "self_update",
+   "UPDATE",
+   "PERMISSIVE",
+   "public",
+   "(cognito_sub = app_setting_text('app.subject'::text))",
+   "(cognito_sub = app_setting_text('app.subject'::text))"
   ]
  ],
  "grants": [
@@ -25,8 +97,20 @@
    "INSERT,SELECT"
   ],
   [
+   "invitations",
+   "DELETE,INSERT,SELECT,UPDATE"
+  ],
+  [
+   "memberships",
+   "DELETE,INSERT,SELECT,UPDATE"
+  ],
+  [
    "organizations",
-   "SELECT"
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "users",
+   "INSERT,SELECT,UPDATE"
   ]
  ]
 }

@@ -111,7 +111,7 @@ so it is bought (Cognito, Architecture tab "Build vs buy").
 | `organizations` | from the data-layer spec | Tenant root |
 | `users` | id, cognito_sub (unique), email (non-unique index on `lower(email)`), email_verified, display_name, locale (`es`/`en`, default `es`), created_at, updated_at | Global identity |
 | `memberships` | organization_id, user_id, role, created_at; PK (organization_id, user_id); index on `user_id` | Tenant, one extra read policy |
-| `invitations` | id, organization_id, email, role, token_sha256 (unique), invited_by, expires_at (7 days), accepted_at, revoked_at, created_at; UNIQUE (organization_id, id) | Tenant, one extra read policy |
+| `invitations` | id, organization_id, email, role, token_sha256 (indexed, not unique: tenant unique keys lead with `organization_id`, and 256-bit tokens do not collide), invited_by, expires_at (7 days), accepted_at, revoked_at, created_at; UNIQUE (organization_id, id) | Tenant, one extra read policy |
 
 - `users` is global because one person can belong to several orgs (consultants now, MSP
   technicians in v2). It holds identity only, no customer data.
