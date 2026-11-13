@@ -5,7 +5,10 @@ It begins with ENS and NIS2. Read-only connectors feed common controls so the sa
 can support multiple framework assessments. Atesta prepares evidence; it does not certify.
 
 The current usable product covers sign-in, organizations, members, invitations and a dashboard
-of recorded framework results, collection coverage and evidence counts. Connector onboarding
+of recorded framework results, collection coverage and evidence counts. Framework detail adds
+requirement states, configuration observations and available catalog guidance. Real ENS/NIS2
+packs are not authored or released yet; the local catalog is explicitly synthetic. Current
+capabilities and remaining work are recorded in `docs/status/dashboard-readiness.md`. Connector onboarding
 and scanner execution remain a separate workstream. Show only implemented actions and recorded data: no
 invented scores, scans or product states. Product views for the public landing must come from
 a recorded test-tenant run before release.
