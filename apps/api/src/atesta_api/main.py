@@ -11,6 +11,7 @@ from atesta_api.modules.compliance.api import include_drafts
 from atesta_api.modules.identity.api import router as identity_router
 from atesta_api.modules.identity.api import wire_identity
 from atesta_api.platform import db
+from atesta_api.platform.errors import install_error_handlers
 from atesta_api.platform.guard import assert_safe_runtime_role
 
 
@@ -29,6 +30,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(title="Atesta API", version="0.0.0", lifespan=lifespan)
+install_error_handlers(app)
 app.include_router(identity_router)
 
 
