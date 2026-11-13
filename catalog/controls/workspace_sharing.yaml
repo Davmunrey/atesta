@@ -1,0 +1,23 @@
+id: ctl.workspace_sharing
+title_es: Revisión de compartición externa en Google Drive
+title_en: External sharing review in Google Drive
+description_es: |
+  Preparar: identifica colaboraciones permitidas, información afectada y responsables.
+  1. Revisa dominios de confianza y configuración de compartición de Drive; limita acceso según la necesidad aprobada.
+  2. Comprueba grupos, unidades, visitantes y reglas adicionales: una lista de dominios no cubre todos los casos.
+  3. Prueba acceso autorizado y rechazado con documentos sintéticos.
+  Evidencia: reglas, destinatarios autorizados y pruebas sin documentos reales.
+  Límite: el check espera exactamente dominios permitidos; desactivar toda compartición externa puede dar FAIL. No habilites acceso para corregir ese resultado. Candidato de preparación sin mapeo normativo.
+description_en: |
+  Prepare: identify permitted collaborations, affected information and owners.
+  1. Review trusted domains and Drive sharing settings; restrict access to approved needs.
+  2. Check groups, units, visitors and additional rules: an allowlist does not cover every case.
+  3. Test authorized and denied access using synthetic documents.
+  Evidence: rules, authorized recipients and tests without real documents.
+  Limit: the check expects allowlisted domains; disabling all external sharing can produce FAIL. Never enable access to fix that result. Preparation candidate without a normative mapping.
+manual: false
+prowler_checks: [drive_sharing_allowlisted_domains]
+atesta_checks: []
+remediation_refs:
+  - https://knowledge.workspace.google.com/admin/domains/allow-external-sharing-with-only-trusted-domains
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_sharing_allowlisted_domains/drive_sharing_allowlisted_domains.py

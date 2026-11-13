@@ -1,0 +1,22 @@
+id: ctl.supplier_cloud_review
+title_es: Proveedores, cadena de suministro y nube
+title_en: Suppliers, supply chain and cloud
+description_es: |-
+  1. Identifica servicios contratados, subcontratistas, datos tratados y responsabilidad compartida.
+  2. Acuerda requisitos, niveles de servicio, incidentes, supervisión, continuidad y salida.
+  3. Verifica alcance y vigencia de garantías; configura el servicio con su guía específica y revisa cambios.
+  Evidencia: contratos, evaluación del proveedor, reparto de responsabilidades y configuración.
+  Verificación: una certificación del proveedor no sustituye las obligaciones ni la configuración de tu organización.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Identify outsourced services, subcontractors, processed data and shared responsibilities.
+  2. Agree requirements, service levels, incidents, monitoring, continuity and exit arrangements.
+  3. Verify assurance scope/validity; configure the service using its specific guidance and review changes.
+  Evidence: contracts, supplier assessment, responsibility allocation and configuration.
+  Verification: supplier certification does not replace your organization’s obligations or configuration.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

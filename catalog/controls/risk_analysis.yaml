@@ -1,0 +1,22 @@
+id: ctl.risk_analysis
+title_es: Análisis y tratamiento de riesgos
+title_en: Risk assessment and treatment
+description_es: |-
+  1. Identifica información, servicios, activos, dependencias y propietarios.
+  2. Documenta amenazas, impacto, probabilidad, salvaguardas y riesgo residual con una metodología consistente.
+  3. Asigna responsable, plazo y aceptación formal a cada tratamiento.
+  Evidencia: análisis fechado, inventario vinculado, plan de tratamiento y aceptación de riesgos.
+  Verificación: revisa cambios relevantes y comprueba que las medidas responden a los riesgos identificados.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Identify information, services, assets, dependencies and owners.
+  2. Document threats, impact, likelihood, safeguards and residual risk using a consistent method.
+  3. Assign an owner, deadline and formal acceptance to each treatment.
+  Evidence: dated assessment, linked inventory, treatment plan and accepted risks.
+  Verification: review material changes and confirm that safeguards address the identified risks.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

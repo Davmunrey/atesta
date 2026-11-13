@@ -1,0 +1,32 @@
+id: ens_rd311_2022
+name: ENS · RD 311/2022
+version: 2024-11-06.draft1
+jurisdiction: ES
+source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191
+license_notes: Legislative text excluded from copyright under Article 13 of RDL 1/1996. Official Spanish paragraphs and tables are reproduced from BOE; no CCN guide or third-party diagram is reproduced. English guidance is authored, not an official translation.
+status: draft
+attributes:
+  content_state: partial
+  assessment_enabled: false
+  summary_es: 73 medidas del anexo II importadas del BOE. Mapeos y guías candidatos, pendientes de revisión cualificada. Ninguna evaluación de tu organización.
+  summary_en: 73 Annex II measures imported from BOE. Candidate mappings and guidance await qualified review. No assessment of your organization.
+  scope_es: Delimita sistemas, información y servicios dentro del ámbito del artículo 2, incluida la relación contractual pertinente con el sector público. No presupone que toda empresa deba certificarse.
+  scope_en: Define systems, information and services within Article 2 scope, including the relevant contractual relationship with the public sector. This does not assume every business needs certification.
+  applicability_es: Valora disponibilidad, integridad, confidencialidad, autenticidad y trazabilidad conforme al anexo I. La categoría depende del nivel máximo, pero no eleva las demás dimensiones. Selecciona medidas y refuerzos por categoría o dimensión, activos, riesgos y perfiles aplicables; documenta la declaración de aplicabilidad. Las tablas son referencia normativa, no una decisión automática sobre tu sistema.
+  applicability_en: Assess availability, integrity, confidentiality, authenticity and traceability under Annex I. The highest level determines category without raising the other dimensions. Select measures and reinforcements by category or dimension, assets, risks and applicable profiles; document applicability. Tables are normative references, not automatic decisions about your system.
+  limitations_es: Texto español de medidas y refuerzos, con tablas y cláusulas de aplicación. Faltan revisión cualificada, selección de alcance, evaluación real y cobertura de artículos, instrucciones técnicas, perfiles y auditoría como requisitos independientes. Los diagramas del BOE se consultan en la fuente. Las guías orientan; los escaneos parciales no certifican cumplimiento.
+  limitations_en: Spanish measure/reinforcement text, tables and application clauses. Qualified review, scope selection, real assessment and independent coverage of articles, technical instructions, profiles and audits remain pending. Consult BOE for diagrams. Guidance supports preparation; partial scans do not certify compliance.
+  preparation_controls:
+    - ctl.admin_mfa
+    - ctl.legacy_authentication
+    - ctl.application_consent
+    - ctl.mailbox_audit_bypass
+    - ctl.workspace_mfa
+    - ctl.workspace_sharing
+  source_refs:
+    - https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-7191
+    - https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai
+    - https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+    - https://www.boe.es/buscar/act.php?id=BOE-A-1996-8930#a13
+    - https://www.ccn-cert.cni.es/es/seguridad-al-dia/novedades-ccn-cert/13155-el-ccn-actualiza-cuatro-guias-ccn-stic-de-su-serie-800-sobre-el-esquema-nacional-de-seguridad.html
+  verified_on: '2026-11-13'

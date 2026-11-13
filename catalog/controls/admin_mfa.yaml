@@ -1,0 +1,23 @@
+id: ctl.admin_mfa
+title_es: MFA de administradores en Microsoft Entra
+title_en: Administrator MFA in Microsoft Entra
+description_es: |
+  Preparar: confirma licencia, permisos administrativos, métodos registrados y recuperación de emergencia.
+  1. En Entra, Acceso condicional, crea una política para los roles administrativos y los recursos previstos.
+  2. Exige MFA o una intensidad de autenticación adecuada. Evalúa impacto en modo informe antes de activarla.
+  3. Prueba inicio de sesión y revisa estado, ámbito y exclusiones.
+  Evidencia: política efectiva, prueba y excepciones aprobadas.
+  Límite: este check no acredita todos los usuarios ni todos los refuerzos. Una política con métodos más fuertes puede necesitar revisión manual; no reduzcas protección para conseguir PASS.
+description_en: |
+  Prepare: confirm licensing, administrative permissions, enrolled methods and emergency recovery.
+  1. In Entra Conditional Access, create a policy for administrative roles and intended resources.
+  2. Require MFA or an appropriate authentication strength. Assess impact in report-only mode before enforcement.
+  3. Test sign-in and review policy state, scope and exclusions.
+  Evidence: effective policy, test and approved exceptions.
+  Limit: this check does not establish coverage of all users or reinforcements. Stronger authentication policies may need manual review; never weaken protection to obtain PASS.
+manual: false
+prowler_checks: [entra_admin_users_mfa_enabled]
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-admin-phish-resistant-mfa
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_admin_users_mfa_enabled/entra_admin_users_mfa_enabled.py

@@ -1,0 +1,22 @@
+id: ctl.physical_security
+title_es: Instalaciones y protección ambiental
+title_en: Facilities and environmental protection
+description_es: |-
+  1. Delimita zonas y autoriza acceso de personal, visitas y proveedores.
+  2. Revisa identificación, condiciones ambientales, energía, incendios e inundaciones según los activos.
+  3. Programa mantenimiento y pruebas con responsables del edificio y del servicio.
+  Evidencia: permisos, registros de acceso, contratos y actas de mantenimiento/pruebas.
+  Verificación: comprueba instalaciones propias y responsabilidades delegadas; una plataforma cloud no elimina el alcance físico restante.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Define zones and authorize staff, visitor and supplier access.
+  2. Review identification, environmental conditions, power, fire and flood safeguards for the assets.
+  3. Schedule maintenance and tests with facility and service owners.
+  Evidence: permissions, access records, contracts and maintenance/test reports.
+  Verification: check owned facilities and delegated responsibilities; cloud services do not remove the remaining physical scope.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

@@ -1,0 +1,23 @@
+id: ctl.mailbox_audit_bypass
+title_es: Exclusiones de auditoría de buzones
+title_en: Mailbox auditing bypass exclusions
+description_es: |
+  Preparar: confirma permisos de Exchange/Purview y la política de registros y conservación.
+  1. Revisa la auditoría de la organización y las asociaciones de bypass de propietarios y delegados.
+  2. Retira exclusiones injustificadas mediante cambio aprobado; conserva la justificación de las restantes.
+  3. Genera una operación de prueba y localiza su evento en auditoría.
+  Evidencia: configuración, exclusiones y muestra minimizada del evento.
+  Límite: el check solo observa bypass. No prueba retención, revisión ni cobertura completa. Depende de PowerShell, excluido de la recogida actual; ausencia de datos no significa correcto.
+description_en: |
+  Prepare: confirm Exchange/Purview permissions and logging/retention policy.
+  1. Review organization auditing and bypass associations for owners and delegates.
+  2. Remove unjustified exclusions through an approved change; retain reasons for remaining exceptions.
+  3. Generate a test operation and retrieve its audit event.
+  Evidence: configuration, exclusions and a minimized event sample.
+  Limit: the check observes bypass only. It does not prove retention, review or full coverage. It needs PowerShell, excluded from current collection; missing data never means correct.
+manual: false
+prowler_checks: [exchange_mailbox_audit_bypass_disabled]
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/purview/audit-mailboxes
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_mailbox_audit_bypass_disabled/exchange_mailbox_audit_bypass_disabled.py

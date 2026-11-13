@@ -1,0 +1,22 @@
+id: ctl.security_architecture
+title_es: Arquitectura, perímetro y separación de redes
+title_en: Architecture, boundaries and network separation
+description_es: |-
+  1. Dibuja componentes, zonas de confianza, interconexiones y flujos autorizados.
+  2. Define reglas de entrada y salida, separación administrativa y responsabilidades de cada enlace.
+  3. Prueba con tráfico autorizado y bloqueado; elimina rutas y reglas innecesarias mediante cambio aprobado.
+  Evidencia: diagramas, reglas exportadas, acuerdos de interconexión y pruebas.
+  Verificación: compara configuración efectiva con el diseño y revisa excepciones.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Map components, trust zones, interconnections and authorized flows.
+  2. Define ingress/egress rules, administrative separation and ownership of each connection.
+  3. Test allowed and blocked traffic; remove unnecessary routes and rules through approved changes.
+  Evidence: diagrams, exported rules, interconnection agreements and tests.
+  Verification: compare effective configuration with the design and review exceptions.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

@@ -1,0 +1,22 @@
+id: ctl.incident_response
+title_es: Gestión y registro de incidentes
+title_en: Incident response and records
+description_es: |-
+  1. Define criterios de clasificación, responsables, contactos y vías de escalado.
+  2. Documenta detección, contención, preservación de evidencias, recuperación y comunicaciones aplicables.
+  3. Realiza un ejercicio y registra decisiones, tiempos, cierre y mejoras.
+  Evidencia: plan, registro de incidentes, ejercicio y seguimiento de acciones.
+  Verificación: confirma disponibilidad de contactos y revisa con el responsable las obligaciones de notificación aplicables.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Define classification, owners, contacts and escalation paths.
+  2. Document detection, containment, evidence preservation, recovery and applicable communications.
+  3. Exercise the process and record decisions, timings, closure and improvements.
+  Evidence: response plan, incident register, exercise and tracked actions.
+  Verification: confirm contact availability and have the owner review applicable notification duties.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

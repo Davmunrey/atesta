@@ -1,0 +1,22 @@
+id: ctl.secure_configuration
+title_es: Configuración segura y protección de puestos
+title_en: Secure configuration and endpoint protection
+description_es: |-
+  1. Define una configuración base por tipo de activo; elimina servicios innecesarios y valores predeterminados inseguros.
+  2. Configura bloqueo de sesión, protección de portátiles y dispositivos conectados; establece reglas de puesto despejado.
+  3. Controla desviaciones y conserva excepciones aprobadas con fecha de revisión.
+  Evidencia: configuraciones base, exportaciones, inventario de dispositivos y revisiones.
+  Verificación: contrasta una muestra real con la configuración aprobada y el riesgo del activo.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Define a baseline per asset type; remove unnecessary services and insecure defaults.
+  2. Configure session locking, portable-device protection and connected-device controls; establish clear-desk rules.
+  3. Track deviations and retain approved exceptions with review dates.
+  Evidence: baselines, exports, device inventory and reviews.
+  Verification: compare a real sample with its approved configuration and asset risk.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

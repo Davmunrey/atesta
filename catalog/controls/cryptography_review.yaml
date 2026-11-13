@@ -1,0 +1,22 @@
+id: ctl.cryptography_review
+title_es: Criptografía, claves y servicios de confianza
+title_en: Cryptography, keys and trust services
+description_es: |-
+  1. Identifica información y canales que requieren protección, firma o sellado de tiempo.
+  2. Selecciona mecanismos adecuados y documenta generación, custodia, acceso, renovación, revocación y destrucción de claves.
+  3. Verifica certificados, algoritmos y servicios de confianza según los requisitos aplicables.
+  Evidencia: inventario criptográfico, permisos, procedimientos y pruebas de validación.
+  Verificación: revisa extremos de comunicación y recuperación; cifrado activado no acredita todo el ciclo de claves.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Identify information and channels requiring protection, signatures or timestamps.
+  2. Select appropriate mechanisms and document key generation, custody, access, renewal, revocation and destruction.
+  3. Verify certificates, algorithms and trust services against applicable requirements.
+  Evidence: cryptographic inventory, permissions, procedures and validation tests.
+  Verification: review communication endpoints and recovery; encryption alone does not prove key lifecycle control.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
