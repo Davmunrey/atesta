@@ -1,0 +1,58 @@
+# Dependency updates (supply-chain policy: 7-day cooldown, as pyproject `exclude-newer` and pnpm
+# `minimumReleaseAge`). Version updates wait 7 days after a release; security updates do not
+# wait (GitHub: cooldown applies to version updates only). Minor and patch are grouped per
+# ecosystem to keep the PR count low; majors come one per PR.
+version: 2
+updates:
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Madrid"
+    cooldown:
+      default-days: 7
+    groups:
+      python-minor-and-patch:
+        update-types: ["minor", "patch"]
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "npm"  # pnpm is configured through the npm ecosystem
+    directory: "/apps/web"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Madrid"
+    cooldown:
+      default-days: 7
+    groups:
+      web-minor-and-patch:
+        update-types: ["minor", "patch"]
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Madrid"
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "opentofu"
+    directories:
+      - "/infra/envs/dev"
+      - "/infra/modules/*"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Madrid"
+    cooldown:
+      default-days: 7
