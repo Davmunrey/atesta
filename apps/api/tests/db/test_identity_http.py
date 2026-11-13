@@ -7,6 +7,7 @@ from typing import Annotated
 import pytest
 from atesta_api.main import app
 from atesta_api.modules.identity.api import Member, Role, require_member, require_role
+from atesta_api.modules.identity.cognito import ProviderUnavailableError
 from fastapi import Depends
 from fastapi.testclient import TestClient
 from sqlalchemy import Engine, text
@@ -125,3 +126,16 @@ def test_startup_runs_the_guard(database: URL, monkeypatch: pytest.MonkeyPatch) 
     monkeypatch.setenv("ATESTA_DATABASE_URL", database.render_as_string(hide_password=False))
     with pytest.raises(RuntimeError, match="unsafe database setup"), TestClient(app):
         pass
+
+
+def test_jwks_outage_is_a_retryable_503(client: TestClient) -> None:
+    class Down:
+        def verify(self, token: str) -> None:
+            raise ProviderUnavailableError
+
+    client.app.state.token_verifier = Down()  # type: ignore[attr-defined]
+    response = client.get("/v1/me", headers={"Authorization": "Bearer tok-x"})
+    assert (response.status_code, response.json()["detail"]["code"]) == (
+        503,
+        "auth.provider_unavailable",
+    )
