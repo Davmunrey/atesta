@@ -31,6 +31,6 @@ test "$(run --entrypoint pwsh "$image" -NoProfile -NonInteractive \
   -Command '$PSVersionTable.PSVersion.ToString()')" = 7.6.10
 run --entrypoint pwsh "$image" -NoProfile -NonInteractive \
   -Command 'if (Get-Module -ListAvailable -Name MSAL.PS) { exit 1 }'
-run --entrypoint python "$image" -c 'import atesta_core.exclusions, atesta_scanner.invocation'
+run --entrypoint python "$image" -c 'import atesta_core.exclusions, atesta_scanner.run'
 
 echo "offline golden: ok ($image)"
