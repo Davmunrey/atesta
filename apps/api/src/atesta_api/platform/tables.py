@@ -12,9 +12,21 @@ TENANT = frozenset(
         "score_snapshots",
         "evidence",
         "evidence_controls",
+        "scans",
+        "scan_check_results",
+        "findings",
     }
 )
-APPEND_ONLY = frozenset({"audit_events", "score_snapshots", "evidence", "evidence_controls"})
+APPEND_ONLY = frozenset(
+    {
+        "audit_events",
+        "score_snapshots",
+        "evidence",
+        "evidence_controls",
+        "scan_check_results",
+        "findings",
+    }
+)
 GLOBAL_IDENTITY = frozenset({"users"})
 CATALOG = frozenset(
     {"frameworks", "requirements", "controls", "checks", "control_checks", "mappings"}

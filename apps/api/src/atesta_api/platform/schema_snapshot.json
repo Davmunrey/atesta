@@ -28,6 +28,15 @@
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
+   "findings",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
    "invitations",
    "invitation_token_read",
    "SELECT",
@@ -80,6 +89,24 @@
    "public",
    "(id = app_setting_uuid('app.organization_id'::text))",
    "(id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "scan_check_results",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "scans",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
    "score_snapshots",
@@ -151,6 +178,12 @@
   ],
   [
    "evidence_controls",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
+   "findings",
    "",
    "atesta_app",
    "INSERT,SELECT"
@@ -238,6 +271,18 @@
    "",
    "atesta_app",
    "SELECT"
+  ],
+  [
+   "scan_check_results",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
+   "scans",
+   "",
+   "atesta_app",
+   "INSERT,SELECT,UPDATE"
   ],
   [
    "score_snapshots",
