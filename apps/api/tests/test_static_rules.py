@@ -43,6 +43,12 @@ def test_only_db_module_creates_engines() -> None:
     assert _hits(re.compile(r"\bcreate_engine\("), CODE) == ["db.py"]
 
 
+def test_migrations_grant_only_through_rls_v1() -> None:
+    """rls_v1.grant() emits table-level grants to atesta_app only: no column or PUBLIC grants."""
+    versions = sorted((API / "migrations" / "versions").glob("*.py"))
+    assert _hits(re.compile(r"\bGRANT\s", re.I), versions) == []
+
+
 def test_scan_covers_sql_and_worker_code(tmp_path: Path) -> None:
     (tmp_path / "worker").mkdir()
     (tmp_path / "worker" / "jobs.py").write_text('session.execute(text("SET app.x = 1"))\n')

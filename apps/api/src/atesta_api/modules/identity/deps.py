@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 from atesta_api.modules.identity.cognito import (
     IdentityProvider,
     InvalidTokenError,
+    ProviderUnavailableError,
     TokenVerifier,
     UserInfo,
 )
@@ -90,6 +91,8 @@ def authenticate(
         token = verifier.verify(credentials.credentials)
     except InvalidTokenError:
         raise error(401, "auth.invalid_token") from None
+    except ProviderUnavailableError:
+        raise error(503, "auth.provider_unavailable") from None
     enter_user_context(session, token.sub)
     user_id = session.execute(select(User.id).where(User.cognito_sub == token.sub)).scalar()
     refreshed = user_id is None

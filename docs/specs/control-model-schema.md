@@ -1,7 +1,9 @@
 # Spec: Framework-agnostic control model schema
 
 - Requirement ids: MF-01, MF-02, MF-03, MF-06, FR-05, FR-08, NFR-05
-- Status: approved (2026-11-13)
+- Status: approved (2026-11-13). Revised 2026-11-13 (implementation review): the draft flag
+  fails closed on `ATESTA_ENV`; corrections form one linear chain per framework, scan and scope
+  (migration 0007).
 - ADRs: ADR-005, ADR-008, ADR-009, ADR-011, ADR-012
 - Build order: 3 of 3 (after identity). Not part of the 28 Dec gate (login with MFA in dev);
   built right after identity, ahead of the calendar (owner decision, 2026-11-13).
@@ -31,8 +33,10 @@ isolated per tenant.
       `released` while any of its mappings has `reviewed_by` NULL (catalog spec).
 - [ ] `frameworks.status` has runtime meaning: `compliance.api` lists, selects and scores only
       frameworks with `status = 'released'` and `retired_at IS NULL`. Snapshots that reference a
-      retired framework still resolve it. Dev may set `ATESTA_CATALOG_INCLUDE_DRAFTS=true`; the
-      app refuses to start with it in production.
+      retired framework still resolve it. Dev may set `ATESTA_CATALOG_INCLUDE_DRAFTS=true`. The
+      check fails closed: the flag is honoured only with `ATESTA_ENV` set to `local`, `dev` or
+      `test`; with any other value, or none, the API refuses to start (first step of the
+      lifespan) and scoring raises. The worker entrypoint makes the same call when it is added.
 - [ ] Every catalog table, including `control_checks` and `mappings`, has `retired_at`. Catalog
       rows are never deleted: a load sets `retired_at` on keys absent from the YAML and clears it
       when they return. A load is refused if an active row references a retired one.
@@ -115,7 +119,7 @@ checks --< control_checks >-- controls --< mappings >-- requirements >-- framewo
 
 | Table | Module | Columns |
 |---|---|---|
-| `score_snapshots` | compliance | id, organization_id, framework_key (FK), framework_version, catalog_version, scan_id `uuid NOT NULL` (no FK: scanning module), scope_id `uuid NULL` (categorization spec adds its FK; NULL = whole org), applicability `jsonb NOT NULL DEFAULT '{}'`, score `numeric(4,1) NULL`, passed, failed, manual, not_applicable, requirement_results `jsonb` (`{code: status}`), group_scores `jsonb NOT NULL DEFAULT '{}'` (`{attribute_key: {value: score or null}}`), supersedes_id `uuid NULL`, computed_at; UNIQUE (organization_id, id) |
+| `score_snapshots` | compliance | id, organization_id, framework_key (FK), framework_version, catalog_version, scan_id `uuid NOT NULL` (no FK: scanning module), scope_id `uuid NULL` (categorization spec adds its FK; NULL = whole org), applicability `jsonb NOT NULL DEFAULT '{}'`, score `numeric(4,1) NULL`, passed, failed, manual, not_applicable, requirement_results `jsonb` (`{code: status}`), group_scores `jsonb NOT NULL DEFAULT '{}'` (`{attribute_key: {value: score or null}}`), supersedes_id `uuid NULL`, scope_key (generated), computed_at; UNIQUE (organization_id, id) |
 | `evidence` | evidence | id, organization_id, kind (`scan_output`/`document`/`attestation`), title, storage_key, sha256 `char(64)`, media_type, size_bytes, source_type (`scan`/`upload`/`user`), source_id `uuid NULL`, created_by `uuid NULL`, collected_at, created_at; UNIQUE (organization_id, id) |
 | `evidence_controls` | evidence | organization_id, evidence_id, control_key (`text`, no FK: compliance module); PK (organization_id, evidence_id, control_key); FK (organization_id, evidence_id) to `evidence(organization_id, id)` |
 
@@ -127,7 +131,12 @@ checks --< control_checks >-- controls --< mappings >-- requirements >-- framewo
 - One original snapshot per scan: partial UNIQUE (organization_id, framework_key, scan_id,
   scope_id) `NULLS NOT DISTINCT WHERE supersedes_id IS NULL`. The snapshot job inserts with
   `ON CONFLICT ... DO NOTHING`, so a retried job is idempotent. A correction is a new row with
-  `supersedes_id` (composite FK to the same org); trend and diff read rows nothing supersedes.
+  `supersedes_id`; trend and diff read rows nothing supersedes. Corrections form one linear chain
+  within one framework, scan and scope: partial UNIQUE (organization_id, supersedes_id) `WHERE
+  supersedes_id IS NOT NULL` (a retried correction returns the existing one; a later correction
+  supersedes the latest), and the composite FK (organization_id, framework_key, scan_id,
+  scope_key, supersedes_id) references the same columns plus `id`. `scope_key` is a stored
+  generated `COALESCE(scope_id, nil uuid)`, because an FK with a NULL column is not checked.
 - Scoring runs at REPEATABLE READ and copies `framework_version` and `catalog_version` from the
   `frameworks` row it read, so a concurrent catalog load cannot mix versions.
 - CHECKs on `evidence` (NFR-05, ADR-005), keyed on whether a file is stored, not on `kind`:
@@ -160,9 +169,9 @@ group scores. The compliance module maps active rows to core dataclasses; no sco
 | Evidence CHECKs: file without sha256, media type or size rejected (attestation included); sha256 without file rejected; scan output or document without file rejected; scan evidence without `source_id` rejected; upload or attestation without `created_by` rejected; malformed sha256 rejected; attestation without file accepted | Integrity (NFR-05, ADR-005) |
 | Storage key under org B's prefix, with `.` or `..` or an empty segment, rejected in org A; key under A's prefix accepted | Evidence objects bound to their tenant |
 | Blank `source` or `rationale` rejected; bad kind, engine or status rejected; score outside 0-100 rejected | MF-06, integrity |
-| A `draft` framework present in the DB is not listed and yields no snapshot | Rule 10 at runtime |
+| A `draft` framework present in the DB is not listed and yields no snapshot; with the flag and `ATESTA_ENV=test` it is scored; with the flag and `ATESTA_ENV` unset, `prod` or `production`, `include_drafts()` raises and the API does not start | Rule 10 at runtime |
 | Requirement R-1 with an active mapping to a passing control and a retired mapping to a control with no result scores `pass`; retired requirement R-2 is absent from results | Retired rows never change scores |
-| Snapshot job run twice for one scan leaves one row; a correction supersedes it and trend reads only the correction | Idempotent, append-only corrections |
+| Snapshot job run twice for one scan leaves one row; a correction supersedes it and trend reads only the correction; a retried correction returns the same row; a correction of another framework's, scan's or scope's snapshot (NULL scope included) is rejected | Idempotent, append-only, linear corrections |
 | Snapshot `catalog_version` equals the DB stamp even when the process build constant differs | Auditor traceability |
 | Two synthetic frameworks mapped to shared controls; one control result set; `framework_score` from DB rows equals the expected score for both | "Test once, comply with many" end to end |
 | Guard test: Python `tokenize` reads every `*.py` under `apps/api/src`, `apps/api/migrations`, `apps/worker`, `packages/core/src`; NAME, STRING and FSTRING_MIDDLE tokens are split on non-alphanumerics and camelCase (acronym-aware: `ENSLevel` gives `ENS`, `Level`) and lowercased; fails on any part in the denylist (`ens`, `nis2`, `iso27001`, `27001`, `rd311`, `dora`, `soc2`) or any pack id from `catalog/frameworks/*/pack.yaml`. No allowlist. Self-test: flags `ENS_MEDIUM`, `"ens"`, `EnsLevel`, `ENSLevel`, `DORAReport`, `iso27001_2022`, `f"ens_{x}"`, `f"{prefix}nis2"`; does not flag `max_tokens`, `screens_count`, `ensure_tenant`, `HTTPServerError`, `f"{x}_tokens"` | Rule 9 and MF-03 stay enforced |

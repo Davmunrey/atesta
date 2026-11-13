@@ -1,7 +1,8 @@
 # ADR-012: Tenant isolation with Postgres row-level security
 
 - Status: accepted (2026-11-12); revised and accepted 2026-11-13 (adversarial spec review, before
-  any code).
+  any code). Banned-object list extended 2026-11-13 (implementation review, PR 30): rewrite rules
+  and referential actions, which also run as the owner.
 
 ## Context
 CLAUDE.md rule 3 requires `organization_id` on every table. Two kinds of data have no single
@@ -26,13 +27,14 @@ ignores RLS.
 - Runtime role `atesta_app`: NOBYPASSRLS, owns nothing, member of no role, grants only from
   SELECT, INSERT, UPDATE, DELETE (never TRUNCATE, REFERENCES, TRIGGER). Migrations run as
   `atesta_owner`. Tables are not FORCEd, so owner-owned views must use `security_invoker`, and
-  materialized views and SECURITY DEFINER functions are banned.
+  materialized views, SECURITY DEFINER functions, rewrite rules (other than a view's `_RETURN`)
+  and FK actions other than NO ACTION or RESTRICT are banned: each runs as the owner.
 - Tenant context is set only by `identity.api.enter_org_context()`, for four reasons: a
   membership check, a valid invitation acceptance, creation of an org with a server-generated
   id, and `job` for worker jobs (scanning spec). Only the identity module may import
   `platform.tenancy` (import-linter). Job payloads carry ids only.
-- FKs between tenant tables are composite with `organization_id`; unique constraints lead with
-  it. Cross-module FKs only to `organizations.id`.
+- FKs between tenant tables are composite with `organization_id`; unique and exclusion
+  constraints lead with it. Cross-module FKs only to `organizations.id`.
 - A schema linter, in CI and in the deploy job, fails on any unclassified table, any policy or
   grant that differs from the reviewed snapshot, single-column tenant FKs, and banned objects.
   Third-party tables (for example Procrastinate) must be classified here before merge.
