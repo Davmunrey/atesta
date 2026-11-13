@@ -60,3 +60,8 @@ def test_scan_covers_sql_and_worker_code(tmp_path: Path) -> None:
     pattern = FORBIDDEN["session-level app.* setting"]
     assert _hits(pattern, files) == ["setup.sql", "jobs.py"]
     assert any(f.name == "bootstrap.sql" for f in CODE)
+
+
+def test_production_code_never_imports_devtools() -> None:
+    """The local fake Cognito must stay unreachable from the API (local-dev-auth spec)."""
+    assert _hits(re.compile(r"\bdevtools\b"), list((API / "src").rglob("*.py"))) == []
