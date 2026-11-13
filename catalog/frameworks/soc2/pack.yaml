@@ -1,0 +1,51 @@
+id: soc2
+name: SOC 2
+version: 2017-tsc-2022.template1
+jurisdiction: international; engagement-specific
+source: https://www.aicpa-cima.com/resources/download/2017-trust-services-criteria-with-revised-points-of-focus-2022
+license_notes: AICPA criteria are copyrighted. Only preparation metadata is included; no Trust Services
+  Criteria text or points of focus are reproduced.
+status: draft
+attributes:
+  content_state: template
+  assessment_enabled: false
+  summary_es: Plantilla para preparar un encargo SOC 2 basado en Trust Services Criteria. Es un informe
+    de aseguramiento, no una certificación emitida por Atesta.
+  summary_en: Template for preparing a SOC 2 engagement using Trust Services Criteria. It is an assurance
+    report, not a certification issued by Atesta.
+  scope_es: Define sistema, servicios, compromisos, límites, proveedores y categorías del encargo con
+    el profesional responsable.
+  scope_en: Define the system, services, commitments, boundaries, providers and engagement categories
+    with the responsible practitioner.
+  applicability_es: Selecciona categorías y criterios con la fuente autorizada y el profesional. Relaciona
+    controles, responsables, frecuencia y evidencias con el alcance y periodo acordados; un escaneo puntual
+    no demuestra operación continuada.
+  applicability_en: Select categories and criteria with the authorized source and practitioner. Relate
+    controls, owners, frequency and evidence to agreed scope and period; a point-in-time scan does not
+    prove ongoing operation.
+  limitations_es: Faltan criterios autorizados, mapeos revisados, definición del encargo y pruebas de
+    funcionamiento. Las guías compartidas son preparación y no sustituyen evaluación profesional ni informe
+    independiente.
+  limitations_en: Authorized criteria, reviewed mappings, engagement definition and operating-effectiveness
+    evidence are missing. Shared guides support preparation and do not replace professional evaluation
+    or an independent report.
+  preparation_controls:
+  - ctl.security_governance
+  - ctl.risk_analysis
+  - ctl.access_review
+  - ctl.authentication_review
+  - ctl.change_vulnerability_review
+  - ctl.supplier_cloud_review
+  - ctl.incident_response
+  - ctl.continuity_restore
+  - ctl.activity_logging_review
+  - ctl.threat_monitoring
+  - ctl.people_awareness
+  - ctl.information_handling
+  - ctl.admin_mfa
+  - ctl.legacy_authentication
+  - ctl.workspace_mfa
+  - ctl.application_consent
+  source_refs:
+  - https://www.aicpa-cima.com/resources/download/2017-trust-services-criteria-with-revised-points-of-focus-2022
+  verified_on: '2026-11-13'
