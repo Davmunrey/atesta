@@ -13,6 +13,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "check-licenses": "pnpm licenses list --json | node scripts/check-licenses.ts",
+    "check-legal": "node scripts/check-legal.ts",
+    "check-landing": "node scripts/check-landing.ts",
     "gen:api": "node scripts/gen-api-types.ts"
   },
   "dependencies": {

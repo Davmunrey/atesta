@@ -103,6 +103,22 @@ Release gates (run by the deploy job, not by CI, so drafts can merge)
 - [ ] The legal texts are reviewed by a lawyer before the site is public. This spec does not
       replace legal advice.
 
+### Release gate input contract
+
+`pnpm check-legal` reads the named `legalEntity` export from
+`src/content/legal-entity.ts`. It must be an object with non-blank string fields `name`,
+`nif`, `address`, `registry` and `email`. `pnpm check-landing` reads
+`src/content/landing-fixture.json`: `origin` must equal `recorded`, `scan_id` must be a
+UUID and `scan_date` a real calendar date in `YYYY-MM-DD` form. These metadata checks
+do not authenticate the recorded run or replace the lawyer's review.
+
+Both commands accept one optional input file path for isolated verification. Defaults resolve
+relative to the web package, regardless of the caller's working directory. Missing, unreadable,
+malformed or incomplete input exits with code 1 and field names only, never the input values.
+Unexpected arguments also fail closed. Run both commands before uploading a public release;
+keep them separate from `build` and CI so drafts can still merge. No deploy job exists yet.
+Until the landing implementation supplies these files, both gates intentionally block release.
+
 ## Out of scope
 
 - Terms of service and the processor agreement (DPA, RGPD art. 28) for customers: separate
