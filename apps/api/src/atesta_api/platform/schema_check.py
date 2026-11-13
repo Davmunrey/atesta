@@ -50,23 +50,26 @@ _UNIQUES = (  # key columns only (not INCLUDE), expressions as <expr>, exclusion
     "  WHERE u.o <= i.indnkeyatts) k"
     " WHERE i.indisunique OR i.indisexclusion"
 )
-_NOT_EXTENSION = (
+# Rule actions and referential actions run as the table owner, so they bypass RLS and grants.
+# Literal SQL only; extension-owned tables and system schemas are skipped.
+_RULES = (
+    "SELECT r.rulename, n.nspname || '.' || c.relname FROM pg_rewrite r"
+    " JOIN pg_class c ON c.oid = r.ev_class JOIN pg_namespace n ON n.oid = c.relnamespace"
+    " WHERE r.rulename <> '_RETURN'"
     " AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.classid = 'pg_class'::regclass"
     " AND d.objid = c.oid AND d.deptype = 'e')"
     " AND n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')"
     " AND n.nspname NOT LIKE 'pg\\_%temp%'"
 )
-# Rule actions and referential actions run as the table owner, so they bypass RLS and grants.
-_RULES = (
-    "SELECT r.rulename, n.nspname || '.' || c.relname FROM pg_rewrite r"  # noqa: S608
-    " JOIN pg_class c ON c.oid = r.ev_class JOIN pg_namespace n ON n.oid = c.relnamespace"
-    " WHERE r.rulename <> '_RETURN'" + _NOT_EXTENSION
-)
 _FK_ACTIONS = (
-    "SELECT con.conname, n.nspname || '.' || c.relname FROM pg_constraint con"  # noqa: S608
+    "SELECT con.conname, n.nspname || '.' || c.relname FROM pg_constraint con"
     " JOIN pg_class c ON c.oid = con.conrelid JOIN pg_namespace n ON n.oid = c.relnamespace"
     " WHERE con.contype = 'f'"
-    " AND (con.confdeltype NOT IN ('a', 'r') OR con.confupdtype NOT IN ('a', 'r'))" + _NOT_EXTENSION
+    " AND (con.confdeltype NOT IN ('a', 'r') OR con.confupdtype NOT IN ('a', 'r'))"
+    " AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.classid = 'pg_class'::regclass"
+    " AND d.objid = c.oid AND d.deptype = 'e')"
+    " AND n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')"
+    " AND n.nspname NOT LIKE 'pg\\_%temp%'"
 )
 # Literal SQL only (no f-strings or variables), so static analysis sees constant queries.
 _GRANTS = (
