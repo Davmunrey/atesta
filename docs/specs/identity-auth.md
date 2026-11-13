@@ -168,9 +168,11 @@ is the WITH CHECK, and INSERT ... RETURNING must pass the SELECT policy.
   load balancer or access log records it. The invite page reads it, removes it with
   `history.replaceState`, keeps it in `sessionStorage` across the login redirect and sends it in
   the JSON body. The accept endpoint returns 400 `identity.token_in_query` if the request has any
-  query string.
+  query string, checked by the route class before body parsing, authentication or userInfo.
 - Accept: refresh the user from userInfo; set `app.invitation_token_sha256`, which makes only that
-  row visible; check `email_verified` and a case-insensitive email match; then
+  row visible; check `email_verified` and an email match that ignores ASCII case only (Unicode
+  case folding merges distinct mailboxes, e.g. `ß`/`ss`); invitation emails must be ASCII
+  (422 otherwise), as Cognito and SES carry; then
   `enter_org_context(..., invitation)` and claim atomically:
   `UPDATE invitations SET accepted_at = now() WHERE token_sha256 = :h AND accepted_at IS NULL AND
   revoked_at IS NULL AND expires_at > now() RETURNING organization_id, role`. Zero rows: re-read
@@ -219,7 +221,7 @@ most once every 5 minutes. Token lifetimes: access and ID 30 min, refresh 12 h.
 | Org creation | `POST /v1/orgs` as `atesta_app` (RLS on) creates the org and an owner membership, writes one `org.created`; caller then gets 200 on the members route |
 | Tenant isolation | 404 on org B routes; no org context: own memberships only; org A context: only A rows even without a WHERE; users visible to self and co-members only; from org A context, inserting a membership for org B fails, updating a co-member's `users` row affects 0, updating an invitation through the token branch affects 0 |
 | Roles | member cannot invite (403); admin cannot change roles (403); admin invites as owner (403); owner invites as owner (201); last owner cannot be demoted or removed (409); two owners demoting each other concurrently leave exactly one owner |
-| Invitations | DB never holds the raw token; expired, revoked and used tokens rejected; email mismatch and unverified email rejected; invitation from a removed or demoted inviter rejected; existing member gets 409 and keeps the role; sole owner accepting a member invitation stays owner; accept with a query string returns 400; revoke racing accept never leaves both timestamps set; a token reveals no other invitation |
+| Invitations | DB never holds the raw token; expired, revoked and used tokens rejected; email mismatch and unverified email rejected; invitation from a removed or demoted inviter rejected; existing member gets 409 and keeps the role; sole owner accepting a member invitation stays owner; accept with a query string returns 400 with or without a body or token, and calls no userInfo; a verified `x@straße.de` or a Kelvin-sign address cannot accept an invitation for `x@strasse.de` or `kate@...`; ASCII case still matches; a non-ASCII invitation email is 422; revoke racing accept never leaves both timestamps set; a token reveals no other invitation |
 | Audit | Each action writes exactly one event with the expected action and actor; no token in metadata |
 | Logs | Logs captured on auth failures and on the successful provisioning and accept paths never contain a token |
 | Cognito config | OpenTofu assertions for every pool, domain and client setting in the criteria (infra-dev spec) |
