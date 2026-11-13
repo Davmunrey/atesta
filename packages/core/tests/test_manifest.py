@@ -68,3 +68,31 @@ INVALID = {
 def test_an_invalid_manifest_is_rejected_before_any_file_is_read(name: str) -> None:
     with pytest.raises(ManifestError):
         verify_manifest(INVALID[name], never_read, max_bytes=10)
+
+
+def test_a_manifest_can_record_the_raw_hash_of_a_rewritten_file() -> None:
+    # D10: the OCSF file is stripped before upload; the manifest keeps the raw file's sha256.
+    raw_sha = "a" * 64
+    data = json.loads(build_manifest(FILES, raw_sha256={"prowler.ocsf.json": raw_sha}))
+    entry = next(e for e in data["files"] if e["name"] == "prowler.ocsf.json")
+    assert entry == {
+        "name": "prowler.ocsf.json",
+        "sha256": OCSF_SHA,
+        "size": 10,
+        "raw_sha256": raw_sha,
+    }
+    assert "raw_sha256" not in data["files"][0]
+    manifest = build_manifest(FILES, raw_sha256={"prowler.ocsf.json": raw_sha})
+    assert verify_manifest(manifest, FILES.__getitem__, max_bytes=10) == FILES
+
+
+@pytest.mark.parametrize(
+    "raw",
+    [{"prowler.ocsf.json": "nope"}, {"missing.json": "a" * 64}],
+)
+def test_a_raw_hash_must_be_well_formed_and_name_a_listed_file(raw: dict[str, str]) -> None:
+    with pytest.raises(ManifestError):
+        build_manifest(FILES, raw_sha256=raw)
+    bad = manifest({"name": "notes.txt", "sha256": X_SHA, "size": 1, "raw_sha256": "nope"})
+    with pytest.raises(ManifestError, match="raw sha256"):
+        verify_manifest(bad, never_read, max_bytes=10)

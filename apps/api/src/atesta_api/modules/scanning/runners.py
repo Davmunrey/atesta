@@ -5,7 +5,6 @@ local store and the fixture runner are dev-only: they refuse to start unless ATE
 development environment, so a production process can never use them.
 """
 
-import os
 import re
 import uuid
 from dataclasses import dataclass
@@ -14,9 +13,10 @@ from typing import Protocol
 
 from atesta_core.manifest import build_manifest
 
+from atesta_api.platform.devenv import require_dev
+
 OCSF_FILE = "prowler.ocsf.json"
 MANIFEST_FILE = "manifest.json"
-_DEV_ENVS = frozenset({"local", "dev", "test"})
 _SEGMENT = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_.-]*")
 # Atesta provider -> Prowler provider folder name.
 _PROWLER_PROVIDER = {"m365": "m365", "google_workspace": "googleworkspace"}
@@ -50,11 +50,6 @@ def output_prefix(organization_id: uuid.UUID, scan_id: uuid.UUID, attempt: int) 
     return f"{organization_id}/scans/{scan_id}/attempt-{attempt}/out/"
 
 
-def _require_dev(component: str) -> None:
-    if os.environ.get("ATESTA_ENV") not in _DEV_ENVS:
-        raise RuntimeError(f"{component} is dev-only: ATESTA_ENV must be local, dev or test")
-
-
 def _segments(key: str) -> list[str]:
     parts = key.split("/")
     if not key or not all(_SEGMENT.fullmatch(part) for part in parts):
@@ -66,7 +61,7 @@ class LocalScanStore:
     """A directory laid out like the S3 bucket, for local development."""
 
     def __init__(self, root: Path) -> None:
-        _require_dev("LocalScanStore")
+        require_dev("LocalScanStore")
         root.mkdir(parents=True, exist_ok=True)
         self._root = root.resolve()
 
@@ -105,7 +100,7 @@ class FixtureRunner:
         fixture: str = "scan.ocsf.json",
         exit_code: int = 0,
     ) -> None:
-        _require_dev("FixtureRunner")
+        require_dev("FixtureRunner")
         self._store, self._fixtures, self._fixture = store, fixtures, fixture
         self._exit_code = exit_code
 

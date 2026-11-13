@@ -16,7 +16,9 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.compliance.models import (
+    Check,
     Control,
+    ControlCheck,
     Framework,
     Requirement,
     ScoreSnapshot,
@@ -165,3 +167,40 @@ def control_is_active(session: Session, control_key: str) -> bool:
     """For other modules that reference a control key without a cross-module FK (ADR-008)."""
     query = select(Control.key).where(Control.key == control_key, Control.retired_at.is_(None))
     return session.execute(query).scalar() is not None
+
+
+def scoreable_framework_keys(session: Session) -> list[str]:
+    """Keys snapshot_scores scores: the same rule-10 gate as listing and scoring."""
+    return list(session.execute(select(Framework.key).where(_scoreable())).scalars())
+
+
+def active_control_checks(session: Session) -> dict[str, list[tuple[str, str]]]:
+    """Automated controls and their checks (engine, check_id), active catalog rows only."""
+    rows = session.execute(
+        select(ControlCheck.control_key, ControlCheck.engine, ControlCheck.check_id)
+        .join(Control, Control.key == ControlCheck.control_key)
+        .join(
+            Check,
+            and_(Check.engine == ControlCheck.engine, Check.check_id == ControlCheck.check_id),
+        )
+        .where(
+            ControlCheck.retired_at.is_(None),
+            Control.retired_at.is_(None),
+            Control.manual.is_(False),
+            Check.retired_at.is_(None),
+        )
+        .order_by(ControlCheck.control_key, ControlCheck.engine, ControlCheck.check_id)
+    )
+    checks: dict[str, list[tuple[str, str]]] = {}
+    for control_key, engine, check_id in rows:
+        checks.setdefault(control_key, []).append((engine, check_id))
+    return checks
+
+
+def active_control_keys(session: Session, keys: Iterable[str]) -> set[str]:
+    """The subset of keys that name active controls, in one query."""
+    wanted = set(keys)
+    if not wanted:
+        return set()
+    query = select(Control.key).where(Control.key.in_(wanted), Control.retired_at.is_(None))
+    return set(session.execute(query).scalars())

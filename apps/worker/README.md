@@ -15,3 +15,26 @@ Run locally against the migrated database, as `atesta_app`:
 ATESTA_DATABASE_URL=postgresql+psycopg://atesta_app:...@localhost:5432/atesta \
 ATESTA_DB_SSLMODE=disable uv run atesta-worker
 ```
+
+## Jobs
+
+| Job | Queue | Retry | Effect |
+|---|---|---|---|
+| `retry_stalled_jobs` | maintenance | n/a (every 5 min) | Retries jobs whose worker stopped sending heartbeats |
+| `snapshot_scores` | scans | 3, transient database errors only | One score snapshot per scoreable framework, at REPEATABLE READ; deferred by ingest in its own transaction |
+
+## One synthetic scan, end to end (dev only)
+
+`atesta-dev-scan` loads the synthetic catalog (`apps/api/tests/fixtures/catalog/`) as
+`atesta_owner`, replays the synthetic M365 OCSF fixture in a fixed dev org, ingests it against
+`scanner/expected/` and scores it with drafts included. No Docker, network or credentials. It
+fails unless every synthetic framework gets a snapshot; a rerun changes nothing.
+
+```bash
+ATESTA_ENV=dev ATESTA_DB_SSLMODE=disable \
+ATESTA_MIGRATION_DATABASE_URL=postgresql+psycopg://postgres@localhost:5432/postgres \
+ATESTA_DATABASE_URL=postgresql+psycopg://atesta_app:local-only@localhost:5432/postgres \
+uv run atesta-dev-scan
+```
+
+Outputs go to `.atesta-dev/scans/` (git-ignored) unless `ATESTA_DEV_SCAN_DIR` is set.
