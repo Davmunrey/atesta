@@ -83,5 +83,5 @@ def get_db() -> Iterator[Session]:
         session.close()
 
 
-# Function scope commits before the response is sent. Never use a bare Depends(get_db).
+# Function scope commits before the response is sent. Handlers depend on DbSession only.
 DbSession = Annotated[Session, Depends(get_db, scope="function")]
