@@ -4,6 +4,8 @@ The runner writes the manifest last, listing every output file with its sha256 a
 validates the whole manifest before reading any file, then reads only the files it lists and
 checks each one. File names are flat and plain, so a manifest can never point outside its
 folder.
+An entry may also carry `raw_sha256`: the hash of the file as the engine wrote it, before the
+wrapper rewrote it (D10: personal-data fields stripped).
 """
 
 import hashlib
@@ -26,11 +28,28 @@ def _check_name(name: object) -> str:
     return name
 
 
-def build_manifest(files: Mapping[str, bytes]) -> bytes:
-    entries = [
-        {"name": _check_name(name), "sha256": hashlib.sha256(data).hexdigest(), "size": len(data)}
-        for name, data in sorted(files.items())
-    ]
+def _check_raw(name: str, raw: object) -> str:
+    if not isinstance(raw, str) or not _SHA256.fullmatch(raw):
+        raise ManifestError(f"{name} has a malformed raw sha256")
+    return raw
+
+
+def build_manifest(
+    files: Mapping[str, bytes], raw_sha256: Mapping[str, str] | None = None
+) -> bytes:
+    raw = dict(raw_sha256 or {})
+    if not raw.keys() <= files.keys():
+        raise ManifestError("a raw sha256 names a file the manifest does not list")
+    entries = []
+    for name, data in sorted(files.items()):
+        entry: dict[str, object] = {
+            "name": _check_name(name),
+            "sha256": hashlib.sha256(data).hexdigest(),
+            "size": len(data),
+        }
+        if name in raw:
+            entry["raw_sha256"] = _check_raw(name, raw[name])
+        entries.append(entry)
     return json.dumps({"version": _VERSION, "files": entries}, indent=1).encode()
 
 
@@ -58,6 +77,8 @@ def _entries(manifest: bytes, max_bytes: int) -> list[tuple[str, str, int]]:
             raise ManifestError(f"{name} has a malformed size")
         if size > max_bytes:
             raise ManifestError(f"{name} is over the size limit")
+        if "raw_sha256" in entry:
+            _check_raw(name, entry["raw_sha256"])
         entries.append((name, sha256, size))
     return entries
 
