@@ -15,6 +15,7 @@ members = [
     "atesta",
     "atesta-api",
     "atesta-core",
+    "atesta-scanner",
     "atesta-worker",
 ]
 
@@ -206,6 +207,17 @@ requires-dist = [
 name = "atesta-core"
 version = "0.0.0"
 source = { editable = "packages/core" }
+
+[[package]]
+name = "atesta-scanner"
+version = "0.0.0"
+source = { editable = "scanner" }
+dependencies = [
+    { name = "atesta-core" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "atesta-core", editable = "packages/core" }]
 
 [[package]]
 name = "atesta-worker"

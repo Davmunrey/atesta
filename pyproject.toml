@@ -10,7 +10,7 @@ package = false
 exclude-newer = "7 days"
 
 [tool.uv.workspace]
-members = ["apps/api", "apps/worker", "packages/core"]
+members = ["apps/api", "apps/worker", "packages/core", "scanner"]
 
 [dependency-groups]
 dev = [
@@ -38,12 +38,25 @@ select = ["E", "F", "I", "B", "UP", "S", "SIM", "N"]
 [tool.mypy]
 strict = true
 python_version = "3.12"
-files = ["apps/api/src", "apps/api/devtools", "apps/worker/src", "packages/core/src"]
-mypy_path = ["apps/api/src", "apps/worker/src", "packages/core/src"]
+files = [
+    "apps/api/src",
+    "apps/api/devtools",
+    "apps/worker/src",
+    "packages/core/src",
+    "scanner/atesta_scanner",
+    "scanner/tools",
+]
+mypy_path = ["apps/api/src", "apps/worker/src", "packages/core/src", "scanner"]
 explicit_package_bases = true
 
 [tool.pytest.ini_options]
-testpaths = ["apps/api/tests", "apps/worker/tests", "packages/core/tests", "infra/tests"]
+testpaths = [
+    "apps/api/tests",
+    "apps/worker/tests",
+    "packages/core/tests",
+    "scanner/tests",
+    "infra/tests",
+]
 
 [tool.importlinter]
 root_packages = ["atesta_api", "atesta_worker"]

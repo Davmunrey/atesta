@@ -1,7 +1,12 @@
 """Public interface of the scanning module. Planned: queue_scan."""
 
 from atesta_api.modules.scanning.devscan import run_fixture_scan
-from atesta_api.modules.scanning.expected import ENGINE_VERSION, expected_checks
+from atesta_api.modules.scanning.expected import (
+    ENGINE_VERSION,
+    exclusions,
+    expected_checks,
+    powershell_checks,
+)
 from atesta_api.modules.scanning.ingest import SNAPSHOT_TASK, ScanNotFoundError, ingest_scan
 from atesta_api.modules.scanning.runners import (
     MANIFEST_FILE,
@@ -28,10 +33,12 @@ __all__ = [
     "ScanRunner",
     "ScanNotFoundError",
     "ScanStore",
+    "exclusions",
     "expected_checks",
     "ingest_scan",
     "latest_check_results",
     "output_prefix",
+    "powershell_checks",
     "run_fixture_scan",
     "snapshot_scores",
 ]
