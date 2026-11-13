@@ -53,3 +53,12 @@ def test_setup_uv_pins_the_uv_version() -> None:
     setups = [s for s in _steps() if s.get("uses", "").startswith("astral-sh/setup-uv@")]
     assert setups
     assert all(re.fullmatch(r"\d+\.\d+\.\d+", s.get("with", {}).get("version", "")) for s in setups)
+
+
+def test_dependabot_keeps_the_seven_day_cooldown() -> None:
+    """Version updates wait 7 days, like uv exclude-newer and pnpm minimumReleaseAge; every
+    ecosystem the repo uses is covered."""
+    config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
+    updates = config["updates"]
+    assert {u["package-ecosystem"] for u in updates} == {"uv", "npm", "github-actions", "opentofu"}
+    assert all(u.get("cooldown", {}).get("default-days", 0) >= 7 for u in updates)
