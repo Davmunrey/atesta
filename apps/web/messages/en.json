@@ -51,6 +51,7 @@
     "en": "English"
   },
   "errors": {
+    "compliance": { "not_found": "This framework is unavailable. Return to the overview and choose a published framework." },
     "unknown": "Something went wrong. Try again, and contact support if it keeps happening.",
     "auth": {
       "bad_nonce": "Sign-in could not be completed. Sign in again.",

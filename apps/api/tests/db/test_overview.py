@@ -61,6 +61,9 @@ def add_snapshot(engine: Engine, org: str, key: str, **overrides: Any) -> str:
         "at": datetime(2026, 1, 1, tzinfo=UTC),
         "scope": None,
         "supersedes": None,
+        "results": "{}",
+        "framework_version": "recorded",
+        "catalog_version": "v1",
         **overrides,
     }
     with engine.begin() as conn:
@@ -69,8 +72,9 @@ def add_snapshot(engine: Engine, org: str, key: str, **overrides: Any) -> str:
                 "INSERT INTO score_snapshots (id, organization_id, framework_key,"
                 " framework_version, catalog_version, scan_id, scope_id, score, passed, failed,"
                 " manual, not_applicable, requirement_results, computed_at, supersedes_id)"
-                " VALUES (:id, :org, :key, 'recorded', 'v1', :scan, :scope, :score,"
-                " :passed, :failed, :manual, :na, '{}', :at, :supersedes)"
+                " VALUES (:id, :org, :key, :framework_version, :catalog_version,"
+                " :scan, :scope, :score,"
+                " :passed, :failed, :manual, :na, CAST(:results AS jsonb), :at, :supersedes)"
             ),
             params,
         )

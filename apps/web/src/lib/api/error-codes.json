@@ -4,6 +4,7 @@
   "auth.bad_state",
   "auth.invalid_token",
   "auth.provider_unavailable",
+  "compliance.not_found",
   "identity.already_member",
   "identity.email_mismatch",
   "identity.email_unverified",
