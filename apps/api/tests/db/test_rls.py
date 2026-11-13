@@ -95,6 +95,13 @@ INSERT INTO evidence_controls VALUES (:e, 'ctl.rls', :o);
 INSERT INTO score_snapshots (id, organization_id, framework_key, framework_version,
   catalog_version, scan_id, passed, failed, manual, not_applicable, requirement_results)
   VALUES (gen_random_uuid(), :o, 'fw_rls', '1', 'r1', gen_random_uuid(), 0, 0, 0, 0, '{}');
+INSERT INTO scans (id, organization_id, connection_id, provider, trigger, status, engine,
+  engine_version) VALUES (:s, :o, gen_random_uuid(), 'm365', 'user', 'queued', 'prowler', '5.49.0');
+INSERT INTO scan_check_results (organization_id, scan_id, engine, check_id, status, reason)
+  VALUES (:o, :s, 'prowler', 'entra_rls', 'not_evaluated', 'no_findings');
+INSERT INTO findings (id, organization_id, scan_id, engine, check_id, status, severity, service,
+  resource_type, resource_uid, resource_name, region, message) VALUES (gen_random_uuid(), :o, :s,
+  'prowler', 'entra_rls', 'fail', 'high', 'entra', 'User', 'u-1', 'n', 'global', 'm');
 INSERT INTO probe_child VALUES (:o, :p);
 """
 
@@ -116,6 +123,7 @@ def test_every_rls_table_fails_closed_and_shows_one_tenant(
                     "email": f"rls-{tag}@example.com",
                     "tok": uuid.uuid4().hex * 2,
                     "e": uuid.uuid4(),
+                    "s": uuid.uuid4(),
                     "p": probe[org],
                 }
                 for statement in PER_ORG.strip().split(";\n"):
@@ -131,6 +139,9 @@ def test_every_rls_table_fails_closed_and_shows_one_tenant(
                 "score_snapshots",
                 "evidence",
                 "evidence_controls",
+                "scans",
+                "scan_check_results",
+                "findings",
                 "probe",
                 "probe_child",
             } <= set(tables)
