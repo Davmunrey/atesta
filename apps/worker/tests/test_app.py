@@ -1,9 +1,17 @@
 """Worker app wiring: ids-only job arguments, TLS settings, org context entry."""
 
+import datetime
 import uuid
 
 import pytest
-from atesta_api.modules.scanning.api import SNAPSHOT_TASK, ScanNotFoundError
+from atesta_api.modules.scanning.api import (
+    INGEST_TASK,
+    RUN_TASK,
+    SCHEDULE_TASK,
+    SNAPSHOT_TASK,
+    ScanNotFoundError,
+    ScanTransientError,
+)
 from atesta_api.platform.db import RDS_CA
 from atesta_worker import context
 from atesta_worker.app import build_app, connection_kwargs, conninfo, non_id_parameters
@@ -19,7 +27,8 @@ URL = "postgresql+psycopg://atesta_app:pw@db.example.com:5432/atesta?sslmode=dis
 def test_real_jobs_take_ids_only() -> None:
     app = build_app(URL, "disable")
     assert "atesta:retry_stalled_jobs" in app.tasks
-    assert SNAPSHOT_TASK in app.tasks  # the name ingest defers by
+    # The names the scanning module defers by.
+    assert {SNAPSHOT_TASK, RUN_TASK, INGEST_TASK, SCHEDULE_TASK} <= set(app.tasks)
     assert non_id_parameters(make_blueprint().tasks.values()) == []
 
 
@@ -78,3 +87,33 @@ def _job(attempts: int) -> Job:
         task_name=SNAPSHOT_TASK,
         attempts=attempts,
     )
+
+
+def test_a_scan_retries_three_times_after_300_600_and_900_seconds() -> None:
+    task = build_app(URL, "disable").tasks[RUN_TASK]
+    assert task.queue == "scans"
+    strategy = task.retry_strategy
+    assert strategy is not None
+    transient = ScanTransientError("exit 20")
+    lost = OperationalError("SELECT 1", {}, Exception("connection lost"))
+    for error in (transient, lost):
+        waits = []
+        for attempts in range(3):
+            before = datetime.datetime.now(datetime.UTC)
+            decision = strategy.get_retry_decision(exception=error, job=_job(attempts))
+            assert decision is not None and decision.retry_at is not None
+            waits.append(round((decision.retry_at - before).total_seconds() / 100) * 100)
+        assert waits == [300, 600, 900]
+        assert strategy.get_retry_decision(exception=error, job=_job(3)) is None
+    # Permanent: ids that do not match, or anything that is not a transient failure.
+    for permanent in (ScanNotFoundError("x"), RuntimeError("not configured")):
+        assert strategy.get_retry_decision(exception=permanent, job=_job(0)) is None
+
+
+@pytest.mark.parametrize("name", [INGEST_TASK, SCHEDULE_TASK])
+def test_ingest_and_schedule_retry_transient_database_errors_only(name: str) -> None:
+    strategy = build_app(URL, "disable").tasks[name].retry_strategy
+    assert strategy is not None and strategy.max_attempts == 3
+    lost = OperationalError("SELECT 1", {}, Exception("connection lost"))
+    assert strategy.get_retry_decision(exception=lost, job=_job(0)) is not None
+    assert strategy.get_retry_decision(exception=ScanNotFoundError("x"), job=_job(0)) is None

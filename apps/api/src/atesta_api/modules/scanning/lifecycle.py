@@ -9,6 +9,7 @@ can skip it and go on. The caller has already entered the org context.
 import uuid
 from typing import Literal
 
+from procrastinate.exceptions import AlreadyEnqueued
 from psycopg.errors import UniqueViolation
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -20,8 +21,12 @@ from atesta_api.modules.scanning.models import Scan
 from atesta_api.platform.audit import record
 from atesta_api.platform.queue import defer
 
-RUN_TASK = "atesta:run_scan"  # the worker's namespaced name; a worker test pins it (PR 8b)
+RUN_TASK = "atesta:run_scan"  # the worker's namespaced name; a worker test pins it
 ACTIVE_SCAN_INDEX = "uq_scans_one_active_per_connection"
+GOOGLE_POLICY_API_LOCK = "gws-policy-api"  # 1 QPS per GCP project, shared by every Google scan
+SCHEDULE_TASK = "atesta:schedule_scan"
+SCHEDULE_EVERY_SECONDS = 24 * 3600
+_UNSCHEDULED = frozenset({"disconnected", "revoked"})  # the daily chain ends with the connection
 
 type Trigger = Literal["schedule", "user", "activation"]
 
@@ -41,6 +46,11 @@ class AlreadyQueuedError(RuntimeError):
 def _is_active_scan_conflict(exc: IntegrityError) -> bool:
     orig = exc.orig
     return isinstance(orig, UniqueViolation) and orig.diag.constraint_name == ACTIVE_SCAN_INDEX
+
+
+def scan_lock(provider: str, connection_id: uuid.UUID) -> str:
+    """No two attempts of one connection at once; Google scans also share the Policy API."""
+    return GOOGLE_POLICY_API_LOCK if provider == "google_workspace" else f"conn:{connection_id}"
 
 
 def queue_scan(
@@ -84,6 +94,57 @@ def queue_scan(
         metadata={"provider": scan.provider, "trigger": trigger},
     )
     session.flush()
-    ids = {"organization_id": str(organization_id), "scan_id": str(scan.id)}
-    defer(session, RUN_TASK, queue="scans", **ids)  # commits with the scan row
+    defer(  # commits with the scan row
+        session,
+        RUN_TASK,
+        queue="scans",
+        lock=scan_lock(scan.provider, connection_id),
+        organization_id=str(organization_id),
+        scan_id=str(scan.id),
+    )
+    return scan
+
+
+def defer_schedule(
+    session: Session, organization_id: uuid.UUID, connection_id: uuid.UUID, *, in_seconds: int
+) -> bool:
+    """Defer the connection's next schedule_scan; False when one is already waiting.
+
+    queueing_lock sched:<connection_id> keeps one waiting job per connection, so activating a
+    connection twice never starts a second daily chain.
+    """
+    try:
+        with session.begin_nested():  # a refused insert must not abort the caller's transaction
+            defer(
+                session,
+                SCHEDULE_TASK,
+                queue="scans",
+                queueing_lock=f"sched:{connection_id}",
+                schedule_in_seconds=in_seconds,
+                organization_id=str(organization_id),
+                connection_id=str(connection_id),
+            )
+    except AlreadyEnqueued:
+        return False
+    return True
+
+
+def scheduled_scan(
+    session: Session, organization_id: uuid.UUID, connection_id: uuid.UUID
+) -> Scan | None:
+    """schedule_scan job: scan an active connection, then defer itself 24 h ahead.
+
+    Skipped when a scan is already queued or running; the chain goes on while the connection is
+    neither disconnected nor revoked, so a connection that recovers is scanned again.
+    """
+    target = scan_target(session, organization_id, connection_id)
+    if target is None or target.status in _UNSCHEDULED:
+        return None
+    scan = None
+    if target.active:
+        try:
+            scan = queue_scan(session, organization_id, connection_id, trigger="schedule")
+        except AlreadyQueuedError:
+            scan = None
+    defer_schedule(session, organization_id, connection_id, in_seconds=SCHEDULE_EVERY_SECONDS)
     return scan
