@@ -1,12 +1,37 @@
 """Job definitions. Arguments are ids only: queue tables have no RLS (ADR-012 amendment 2)."""
 
+import json
+import logging
 import uuid
+from collections.abc import Mapping
 
+from atesta_api.modules.scanning.api import (
+    ScanNotFoundError,
+    ScanTransientError,
+    abandon_scan,
+    ended_event,
+    finish_attempt,
+    ingest_collected,
+    scheduled_scan,
+    start_attempt,
+)
+from atesta_api.modules.scanning.api import rescore_reviews as rescore_org
 from atesta_api.modules.scanning.api import snapshot_scores as score_scan
 from procrastinate import Blueprint, JobContext, RetryStrategy
 from sqlalchemy.exc import OperationalError
 
 from atesta_worker.context import org_session
+from atesta_worker.scans import scan_config
+
+SCAN_RETRIES = 3  # after 300, 600 and 900 s (scanner-connectors spec, Retries)
+RUNNER_ERROR_EXIT = 20  # a runner that raises counts as a failed engine run: transient
+scan_events = logging.getLogger("atesta.scan")
+
+
+def _report(event: Mapping[str, str | int | None] | None) -> None:
+    """Log scan.finished after its transaction committed. Ids and codes only (rule 2)."""
+    if event is not None:
+        scan_events.info(json.dumps(dict(event), sort_keys=True))
 
 
 async def retry_stalled_jobs(context: JobContext, timestamp: int) -> None:
@@ -22,6 +47,75 @@ def snapshot_scores(organization_id: str, scan_id: str) -> None:
         score_scan(session, uuid.UUID(scan_id))
 
 
+def _attempt(organization_id: str, scan_id: str, *, attempt: int, final: bool) -> None:
+    """run_scan steps 1 to 3: two short transactions around a runner call with none open."""
+    config = scan_config()
+    org, scan = uuid.UUID(organization_id), uuid.UUID(scan_id)
+    with org_session(organization_id) as session:
+        started = start_attempt(
+            session,
+            org,
+            scan,
+            attempt=attempt,
+            store=config.store,
+            expected_root=config.expected_root,
+        )
+    _report(started.finished)
+    if started.job is None:
+        return  # past running, or blocked for good: never retried
+    try:
+        exit_code = config.runner.run(started.job)
+    except Exception as error:  # noqa: BLE001 - any runner fault is one failed engine run
+        scan_events.warning("scan runner raised %s", type(error).__name__)
+        exit_code = RUNNER_ERROR_EXIT
+    with org_session(organization_id) as session:
+        outcome = finish_attempt(session, started.job, exit_code, final=final)
+    _report(outcome.finished)
+    if outcome.retry:
+        raise ScanTransientError(f"scan {scan_id} attempt {attempt} exited {exit_code}")
+
+
+def run_scan(context: JobContext, organization_id: str, scan_id: str) -> None:
+    """One attempt of a scan. A job that ends without a result fails its scan, so no scan stays
+    queued or running for good; ids that do not match find no scan and are never retried."""
+    previous = context.job.attempts
+    final = previous >= SCAN_RETRIES
+    try:
+        _attempt(organization_id, scan_id, attempt=previous + 1, final=final)
+    except (ScanTransientError, ScanNotFoundError):
+        raise
+    except Exception as error:
+        if isinstance(error, OperationalError) and not final:
+            raise  # retried like a transient engine failure
+        with org_session(organization_id) as session:
+            event = abandon_scan(session, uuid.UUID(scan_id))
+        _report(event)
+        raise
+
+
+def ingest_scan(organization_id: str, scan_id: str) -> None:
+    """Ingest a collected scan; scan.finished is logged once, by the call that closed it."""
+    config = scan_config()
+    org, scan = uuid.UUID(organization_id), uuid.UUID(scan_id)
+    with org_session(organization_id) as session:
+        already = ended_event(session, scan)
+        ingest_collected(session, org, scan, store=config.store, root=config.expected_root)
+        event = None if already is not None else ended_event(session, scan)
+    _report(event)
+
+
+def schedule_scan(organization_id: str, connection_id: str) -> None:
+    """Daily scan of an active connection; defers itself 24 h ahead (queueing_lock sched:<id>)."""
+    with org_session(organization_id) as session:
+        scheduled_scan(session, uuid.UUID(organization_id), uuid.UUID(connection_id))
+
+
+def rescore_reviews(organization_id: str) -> None:
+    """A correction of the latest scan's snapshots after a review. A retry adds one more link."""
+    with org_session(organization_id, isolation_level="REPEATABLE READ") as session:
+        rescore_org(session, uuid.UUID(organization_id))
+
+
 def make_blueprint() -> Blueprint:
     """A fresh blueprint per app: Procrastinate renames task objects when an app adds them.
 
@@ -35,4 +129,16 @@ def make_blueprint() -> Blueprint:
     # ids do not find is never retried.
     transient = RetryStrategy(max_attempts=3, retry_exceptions={OperationalError})
     blueprint.task(name="snapshot_scores", queue="scans", retry=transient)(snapshot_scores)
+    blueprint.task(name="rescore_reviews", queue="scans", retry=transient)(rescore_reviews)
+    blueprint.task(name="ingest_scan", queue="scans", retry=transient)(ingest_scan)
+    # A lost schedule job would end the daily chain for good: transient database errors retry.
+    blueprint.task(name="schedule_scan", queue="scans", retry=transient)(schedule_scan)
+    scan_retry = RetryStrategy(
+        max_attempts=SCAN_RETRIES,
+        wait=300,
+        linear_wait=300,
+        retry_exceptions={ScanTransientError, OperationalError},
+    )
+    run = blueprint.task(name="run_scan", queue="scans", retry=scan_retry, pass_context=True)
+    run(run_scan)
     return blueprint

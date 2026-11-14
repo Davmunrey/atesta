@@ -104,6 +104,8 @@ INSERT INTO scan_check_results (organization_id, scan_id, engine, check_id, stat
 INSERT INTO findings (id, organization_id, scan_id, engine, check_id, status, severity, service,
   resource_type, resource_uid, resource_name, region, message) VALUES (gen_random_uuid(), :o, :s,
   'prowler', 'entra_rls', 'fail', 'high', 'entra', 'User', 'u-1', 'n', 'global', 'm');
+INSERT INTO control_reviews (id, organization_id, control_key, status, rationale, valid_until,
+  reviewed_by) VALUES (gen_random_uuid(), :o, 'ctl.rls', 'pass', 'r', current_date + 1, :u);
 INSERT INTO probe_child VALUES (:o, :p);
 """
 

@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from atesta_api.modules.connections.api import create_connection
 from atesta_api.modules.scanning.api import (
     INGEST_TASK,
     FixtureRunner,
@@ -251,3 +252,26 @@ def test_one_scan_runs_from_queue_to_ingest_and_reports_its_end_once(
     assert event is not None and set(event) == EVENT_KEYS
     assert (event["status"], event["attempts"], event["error_code"]) == (status, 1, None)
     assert status in ("succeeded", "partial")
+
+
+def test_a_google_attempt_carries_its_connections_credential_reference(
+    db_rollback: Session, store: LocalScanStore
+) -> None:
+    as_org(db_rollback, ORG_A)
+    made = create_connection(
+        db_rollback,
+        organization_id=ORG_A,
+        provider="google_workspace",
+        display_name="Workspace",
+        created_by=USER,
+    )
+    made.status, made.external_tenant_id = "active", "C0fixture1"
+    made.credential_ref = f"local:google-{ORG_A}"
+    made.verifier_credential_ref = f"local:google-verifier-{ORG_A}"
+    made.google_client_id, made.google_verifier_client_id = "1", "2"
+    made.google_subject_email = "admin@example.com"
+    db_rollback.flush()
+    scan_id = queue_scan(db_rollback, ORG_A, made.id, trigger="user").id
+    job = start(db_rollback, scan_id, store).job
+    # M365 jobs carry none: the M365 credential is the platform's one (D5).
+    assert job == ScanJob(ORG_A, scan_id, 1, "google_workspace", f"local:google-{ORG_A}")

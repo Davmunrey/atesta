@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 from atesta_api.modules.compliance.catalog_schema import PackContext, RequirementContext
 from atesta_api.modules.compliance.overview import SnapshotSummary
+from atesta_api.modules.compliance.reviews import ReviewOut
 
 type RecordedStatus = Literal["pass", "fail", "manual", "not_applicable"]
 type Observation = Literal["pass", "fail", "manual", "not_evaluated"]
@@ -39,6 +40,7 @@ class ControlDetail(ControlGuide):
     mapping_source: str
     observed_status: Observation | None
     checks: list[CheckDetail]
+    review: ReviewOut | None = None  # current human review; manual controls only
 
 
 class RequirementDetail(BaseModel):

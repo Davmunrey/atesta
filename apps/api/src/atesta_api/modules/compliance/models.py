@@ -5,7 +5,7 @@ the catalog sync job as atesta_owner. No column, value or code path names a fram
 """
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -13,6 +13,7 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     Computed,
+    Date,
     DateTime,
     ForeignKey,
     ForeignKeyConstraint,
@@ -199,5 +200,36 @@ class ScoreSnapshot(TenantMixin, Base):
     group_scores: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default=_EMPTY_JSON)
     supersedes_id: Mapped[uuid.UUID | None]
     computed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class ControlReview(TenantMixin, Base):
+    """A human decision on a manual control (manual-control-review spec, ADR-005).
+
+    Append-only: the latest row for a control is its current review. control_key has no FK to
+    the global catalog and reviewed_by none to users (ADR-008); both are checked at write time.
+    """
+
+    __tablename__ = "control_reviews"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        CheckConstraint("status IN ('pass', 'fail')", name="status"),
+        CheckConstraint("char_length(rationale) BETWEEN 1 AND 2000", name="rationale_length"),
+        Index(
+            "ix_control_reviews_latest",
+            "organization_id",
+            "control_key",
+            text("reviewed_at DESC"),
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    control_key: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(Text)
+    rationale: Mapped[str] = mapped_column(Text)
+    valid_until: Mapped[date] = mapped_column(Date)
+    reviewed_by: Mapped[uuid.UUID]
+    reviewed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

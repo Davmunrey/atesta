@@ -68,6 +68,18 @@
   .preparation-guides > p { margin-bottom: 1.25rem; }
   .preparation-control > summary > span + span { margin-left: 1rem; font-size: 0.8125rem; font-weight: 400; }
   .control-description, .official-text { white-space: pre-line; }
+  .control-review { margin-top: 1rem; padding: 0.875rem 1rem; border-left: 2px solid var(--color-border); background: var(--color-surface); font-size: 0.875rem; }
+  .control-review h5 { font-weight: 500; margin-bottom: 0.25rem; }
+  .control-review > p + p, .control-review > p + button { margin-top: 0.5rem; }
+  .control-review-rationale { white-space: pre-line; max-width: 72ch; overflow-wrap: anywhere; }
+  .control-review-form { display: grid; gap: 0.5rem; margin-top: 0.75rem; max-width: 40rem; }
+  .control-review-form fieldset { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+  .control-review-form legend { font-weight: 500; margin-bottom: 0.25rem; }
+  .control-review-choice { display: inline-flex; align-items: center; gap: 0.375rem; padding-block: 0.375rem; }
+  .control-review-form label { font-weight: 500; }
+  .control-review-form textarea, .control-review-form input[type="date"] { width: 100%; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 0.5rem; background: var(--color-bg); font: inherit; }
+  .control-review-form input[type="date"] { max-width: 14rem; }
+  .control-review-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.25rem; }
   .selection-table { width: 100%; max-width: 72ch; margin-block: 0.75rem; font-size: 0.875rem; border-collapse: collapse; }
   .selection-table caption { text-align: left; padding-bottom: 0.75rem; color: var(--color-muted); }
   .selection-table th, .selection-table td { text-align: left; vertical-align: top; border-bottom: 1px solid var(--color-border); padding: 0.625rem 0.75rem 0.625rem 0; overflow-wrap: anywhere; }

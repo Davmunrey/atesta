@@ -4,22 +4,31 @@ Scores come only from catalog rows read through compliance.api; no framework nam
 (rule 9). A snapshot for a scan is computed as of that scan: the scan's own results plus, for
 every other connection, its latest scan ingested no later. A retried job therefore writes the
 same snapshot, and one connection's scan never erases another's results.
+
+Manual controls take the human review current at the same moment (manual-control-review spec).
+A review recorded later reaches the score through rescore_reviews: a correction snapshot of the
+latest scan, so recorded history is never rewritten.
 """
 
 import uuid
+from datetime import datetime
 
 from atesta_core.controls import control_results
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.compliance.api import (
     active_control_checks,
+    reviewed_control_results,
     scoreable_framework_keys,
+    snapshot_chain_tip,
     snapshot_framework,
 )
 from atesta_api.modules.connections.api import ended_connection_ids
 from atesta_api.modules.scanning.ingest import ScanNotFoundError
 from atesta_api.modules.scanning.models import Scan, ScanCheckResult
+
+RESCORE_TASK = "atesta:rescore_reviews"  # the worker's namespaced name; a worker test pins it
 
 
 def _ingested(session: Session, scan_id: uuid.UUID) -> Scan | None:
@@ -68,9 +77,10 @@ def snapshot_scores(session: Session, scan_id: uuid.UUID) -> dict[str, uuid.UUID
     The caller's transaction must be REPEATABLE READ (snapshot_framework refuses otherwise).
     """
     scan = _ingested(session, scan_id)
-    if scan is None:
+    if scan is None or scan.ingested_at is None:
         return {}
     results = control_results(active_control_checks(session), _as_of(session, scan))
+    results += reviewed_control_results(session, scan.organization_id, scan.ingested_at)
     created = {}
     for key in scoreable_framework_keys(session):
         snapshot_id = snapshot_framework(
@@ -79,6 +89,41 @@ def snapshot_scores(session: Session, scan_id: uuid.UUID) -> dict[str, uuid.UUID
             framework_key=key,
             scan_id=scan.id,
             control_results=results,
+        )
+        if snapshot_id is not None:
+            created[key] = snapshot_id
+    return created
+
+
+def rescore_reviews(
+    session: Session, organization_id: uuid.UUID, as_of: datetime | None = None
+) -> dict[str, uuid.UUID]:
+    """{framework key: correction id} for the org's latest ingested scan; empty without one.
+
+    Check results stay as of that scan; manual controls take the reviews current at as_of
+    (default: now). Each correction supersedes the tip of its chain, so the chain stays linear.
+    The caller's transaction must be REPEATABLE READ.
+    """
+    scan = session.scalars(
+        select(Scan)
+        .where(Scan.organization_id == organization_id, Scan.ingested_at.is_not(None))
+        .order_by(Scan.ingested_at.desc(), Scan.id.desc())
+        .limit(1)
+    ).one_or_none()
+    if scan is None:
+        return {}
+    moment = as_of or session.execute(select(func.now())).scalar_one()
+    results = control_results(active_control_checks(session), _as_of(session, scan))
+    results += reviewed_control_results(session, organization_id, moment)
+    created = {}
+    for key in scoreable_framework_keys(session):
+        snapshot_id = snapshot_framework(
+            session,
+            organization_id=organization_id,
+            framework_key=key,
+            scan_id=scan.id,
+            control_results=results,
+            supersedes_id=snapshot_chain_tip(session, organization_id, key, scan.id),
         )
         if snapshot_id is not None:
             created[key] = snapshot_id
