@@ -13,7 +13,7 @@ from pathlib import Path
 
 from atesta_scanner.exits import ExitCode
 from atesta_scanner.job import JobError, load_job
-from atesta_scanner.run import DirectorySink, read_credential, run_scan
+from atesta_scanner.run import DirectorySink, read_credential, run_scan, run_verification
 
 
 def _log(event: dict[str, object]) -> None:
@@ -22,7 +22,7 @@ def _log(event: dict[str, object]) -> None:
 
 def main(argv: Sequence[str] | None = None, executable: str = "prowler") -> None:
     args = list(sys.argv[1:] if argv is None else argv)
-    if args != ["scan"]:  # verify mode arrives with the verifiers (PRs 9 and 11)
+    if args not in (["scan"], ["verify"]):  # verify: onboarding, no Prowler
         _log({"event": "scan.wrapper_usage"})
         sys.exit(2)
     try:
@@ -37,7 +37,10 @@ def main(argv: Sequence[str] | None = None, executable: str = "prowler") -> None
     else:
         sink = DirectorySink(Path(os.environ.get("ATESTA_SCAN_OUTPUT", "/output")))
         work = Path(os.environ.get("ATESTA_SCAN_WORK", "/work"))
-        code = run_scan(job, credential, sink, work, executable)
+        if args == ["verify"]:
+            code = run_verification(job, credential, sink)
+        else:
+            code = run_scan(job, credential, sink, work, executable)
     _log(
         {
             "event": "scan.wrapper_finished",

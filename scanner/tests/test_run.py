@@ -4,14 +4,23 @@ import hashlib
 import io
 import json
 import sys
+from collections.abc import Mapping
 from pathlib import Path
 
 import pytest
 from atesta_core.manifest import verify_manifest
 from atesta_scanner import __main__ as cli
+from atesta_scanner import run as run_module
 from atesta_scanner.exits import ExitCode
 from atesta_scanner.job import Job, JobError, load_job
-from atesta_scanner.run import DirectorySink, OutputExistsError, read_credential, run_scan
+from atesta_scanner.run import (
+    VERIFICATION_FILE,
+    DirectorySink,
+    OutputExistsError,
+    Verifier,
+    read_credential,
+    run_scan,
+)
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "synthetic" / "m365"
 TENANT = "11111111-1111-4111-8111-111111111111"
@@ -26,6 +35,7 @@ JOB = {
     "provider": "m365",
     "tenant": TENANT,
     "excluded": ["teams_meeting_recording_disabled"],
+    "allowlist_version": "m365-v1",
 }
 
 FAKE = """#!{python}
@@ -47,6 +57,24 @@ with open(os.path.join(out, "prowler.ocsf.json"), "wb") as f:
     f.write(open({fixture!r}, "rb").read())
 sys.exit(0)
 """
+
+
+REAL_VERIFY_JOB = run_module.verify_job  # before the autouse stand-in replaces it
+
+
+def verdict(name: str, **fields: object) -> Verifier:
+    """A verifier standing in for Entra and Graph (test_verify_m365 covers the real one)."""
+
+    def verifier(job: Job, credential: Mapping[str, str]) -> dict[str, object]:
+        return {"verdict": name, "tenant_id": job.tenant, **fields}
+
+    return verifier
+
+
+@pytest.fixture(autouse=True)
+def verified(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Every run here verifies `ok` unless a test passes its own verifier."""
+    monkeypatch.setattr(run_module, "verify_job", verdict("ok"))
 
 
 def fake_prowler(tmp_path: Path, body: str) -> str:
@@ -85,7 +113,12 @@ def test_a_successful_run_writes_stripped_output_scrubbed_log_and_manifest_last(
     raw = with_metadata(tmp_path)
     assert scan(tmp_path, WRITE_OUTPUT.format(fixture=str(raw))) is ExitCode.DONE
     output = tmp_path / "output"
-    assert files(tmp_path) == ["manifest.json", "prowler.log", "prowler.ocsf.json"]
+    assert files(tmp_path) == [
+        "manifest.json",
+        "prowler.log",
+        "prowler.ocsf.json",
+        VERIFICATION_FILE,
+    ]
     assert (output / "manifest.json").stat().st_mtime_ns >= (
         output / "prowler.ocsf.json"
     ).stat().st_mtime_ns
@@ -120,7 +153,7 @@ def test_a_successful_run_writes_stripped_output_scrubbed_log_and_manifest_last(
 
 def test_a_failed_prowler_keeps_only_the_scrubbed_log(tmp_path: Path) -> None:
     assert scan(tmp_path, "sys.exit(1)") is ExitCode.PROWLER_FAILED
-    assert files(tmp_path) == ["prowler.log"]
+    assert files(tmp_path) == ["prowler.log", VERIFICATION_FILE]
     assert (
         SECRET["M365_CERTIFICATE_CONTENT"] not in (tmp_path / "output" / "prowler.log").read_text()
     )
@@ -137,13 +170,13 @@ def test_a_failed_prowler_keeps_only_the_scrubbed_log(tmp_path: Path) -> None:
 )
 def test_missing_or_broken_output_is_invalid(tmp_path: Path, body: str) -> None:
     assert scan(tmp_path, body) is ExitCode.OUTPUT_INVALID
-    assert files(tmp_path) == ["prowler.log"]
+    assert files(tmp_path) == ["prowler.log", VERIFICATION_FILE]
 
 
 def test_a_finding_from_another_tenant_is_invalid_output(tmp_path: Path) -> None:
     raw = with_metadata(tmp_path, "wrong-tenant.ocsf.json")
     assert scan(tmp_path, WRITE_OUTPUT.format(fixture=str(raw))) is ExitCode.OUTPUT_INVALID
-    assert files(tmp_path) == ["prowler.log"]
+    assert files(tmp_path) == ["prowler.log", VERIFICATION_FILE]
 
 
 def test_an_incomplete_credential_never_starts_prowler(tmp_path: Path) -> None:
@@ -171,6 +204,8 @@ BAD_JOBS = {
     "attempt zero": json.dumps({**JOB, "attempt": 0}).encode(),
     "unknown provider": json.dumps({**JOB, "provider": "aws"}).encode(),
     "excluded flag": json.dumps({**JOB, "excluded": ["--fixer"]}).encode(),
+    "no allowlist": json.dumps({k: v for k, v in JOB.items() if k != "allowlist_version"}).encode(),
+    "other provider's allowlist": json.dumps({**JOB, "allowlist_version": "google-v1"}).encode(),
 }
 
 
@@ -188,6 +223,7 @@ def test_a_job_reads_back() -> None:
         provider="m365",
         tenant=TENANT,
         excluded=("teams_meeting_recording_disabled",),
+        allowlist_version="m365-v1",
     )
 
 
@@ -236,3 +272,48 @@ def test_the_command_line_exits_with_the_run_code(
     assert exit_.value.code == ExitCode.CREDENTIAL_UNAVAILABLE
     event = json.loads(capfd.readouterr().out.splitlines()[-1])
     assert event["exit_code"] == ExitCode.CREDENTIAL_UNAVAILABLE
+
+
+@pytest.mark.parametrize(
+    ("name", "code"),
+    [
+        ("incomplete", ExitCode.VERIFICATION_REFUSED),
+        ("over_privileged", ExitCode.VERIFICATION_REFUSED),
+        ("revoked", ExitCode.VERIFICATION_REFUSED),
+        ("transient", ExitCode.VERIFICATION_TRANSIENT),
+    ],
+)
+def test_prowler_never_runs_unless_verification_is_ok(
+    tmp_path: Path, name: str, code: ExitCode
+) -> None:
+    work, output = tmp_path / "work", tmp_path / "output"
+    executable = fake_prowler(tmp_path, "sys.exit(0)")
+    job = load_job(json.dumps(JOB).encode())
+    got = run_scan(job, SECRET, DirectorySink(output), work, executable, verdict(name))
+    assert got == code
+    assert files(tmp_path) == [VERIFICATION_FILE]  # the report, and no Prowler output or log
+    assert json.loads((output / VERIFICATION_FILE).read_text())["verdict"] == name
+
+
+def test_an_ok_verification_is_kept_beside_the_scan_output(tmp_path: Path) -> None:
+    raw = with_metadata(tmp_path)
+    assert scan(tmp_path, WRITE_OUTPUT.format(fixture=str(raw))) == ExitCode.DONE
+    assert VERIFICATION_FILE in files(tmp_path)
+
+
+def test_an_unusable_credential_during_verification_is_exit_11(tmp_path: Path) -> None:
+    def unusable(job: Job, credential: Mapping[str, str]) -> dict[str, object]:
+        raise run_module.TokenUnavailableError("refused")
+
+    work, output = tmp_path / "work", tmp_path / "output"
+    executable = fake_prowler(tmp_path, "sys.exit(0)")
+    job = load_job(json.dumps(JOB).encode())
+    got = run_scan(job, SECRET, DirectorySink(output), work, executable, unusable)
+    assert got == ExitCode.CREDENTIAL_UNAVAILABLE
+    assert files(tmp_path) == []
+
+
+def test_a_google_job_fails_closed_until_its_verifier_exists() -> None:
+    google = {**JOB, "provider": "google_workspace", "tenant": "C0abc", "excluded": []}
+    job = load_job(json.dumps({**google, "allowlist_version": "google-v1"}).encode())
+    assert REAL_VERIFY_JOB(job, {})["verdict"] == "incomplete"  # never a token, never Prowler

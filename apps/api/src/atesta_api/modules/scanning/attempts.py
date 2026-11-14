@@ -8,6 +8,7 @@ The scan.finished event (ids, codes and counts only; rule 2) is returned, not lo
 logs it after its transaction commits, so a rolled-back end never reports a finished scan.
 """
 
+import contextlib
 import json
 import uuid
 from collections.abc import Mapping
@@ -17,7 +18,12 @@ from pathlib import Path
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from atesta_api.modules.connections.api import scan_target
+from atesta_api.modules.connections.api import (
+    ConnectionStateError,
+    VerificationReport,
+    record_verification,
+    scan_target,
+)
 from atesta_api.modules.scanning.expected import exclusions
 from atesta_api.modules.scanning.ingest import ScanNotFoundError
 from atesta_api.modules.scanning.models import Scan
@@ -36,6 +42,12 @@ DONE = 0
 VERIFICATION_REFUSED = 10  # the only permanent wrapper exit (scanner/atesta_scanner/exits.py)
 TRANSIENT_ERRORS = {21: "scanning.timeout", 30: "scanning.output_invalid"}
 ENGINE_FAILED = "scanning.engine_failed"  # 11, 12, 20 and any code the wrapper never returns
+VERIFICATION_FILE = "verification.json"  # the wrapper's report, beside the attempt's output
+BLOCKED_CODES = {
+    "incomplete": "connections.incomplete_permissions",
+    "over_privileged": "connections.over_privileged",
+    "revoked": "connections.revoked",
+}
 
 type Event = Mapping[str, str | int | None]
 
@@ -145,6 +157,7 @@ def start_attempt(
         "provider": scan.provider,
         "tenant": target.external_tenant_id,
         "excluded": excluded,
+        "allowlist_version": target.allowlist_version,
     }
     prefix = output_prefix(organization_id, scan.id, attempt).removesuffix("out/")
     _write_job_file(store, prefix + JOB_FILE, json.dumps(data, sort_keys=True).encode())
@@ -152,12 +165,56 @@ def start_attempt(
     return Started(job, None)
 
 
-def finish_attempt(session: Session, job: ScanJob, exit_code: int, *, final: bool) -> Outcome:
-    """Step 3: record the runner's exit. final: no retry is left for a transient failure."""
+def _verification(store: ScanStore | None, job: ScanJob) -> VerificationReport | None:
+    """The wrapper's report for this attempt; None when absent or not what the wrapper writes.
+
+    Untrusted output (rule 5): only these fields are read, each as text.
+    """
+    if store is None:
+        return None
+    key = output_prefix(job.organization_id, job.scan_id, job.attempt) + VERIFICATION_FILE
+    try:
+        data = json.loads(store.read(key))
+        tenant = data["tenant_id"]
+        report = VerificationReport(
+            verdict=str(data["verdict"]),
+            tenant_id=None if tenant is None else str(tenant),
+            granted={str(k): [str(i) for i in ids] for k, ids in data["granted"].items()},
+            missing=[str(item) for item in data["missing"]],
+            extra=[str(item) for item in data["extra"]],
+            limits=[str(item) for item in data["limits"]],
+        )
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return None
+    return report if report.verdict in (*BLOCKED_CODES, "ok") else None
+
+
+def _record(session: Session, scan: Scan, report: VerificationReport) -> None:
+    # Disconnected meanwhile: there is no connection state left to change.
+    with contextlib.suppress(ConnectionStateError):
+        record_verification(session, scan.organization_id, scan.connection_id, report)
+
+
+def finish_attempt(
+    session: Session,
+    job: ScanJob,
+    exit_code: int,
+    *,
+    final: bool,
+    store: ScanStore | None = None,
+) -> Outcome:
+    """Step 3: record the runner's exit. final: no retry is left for a transient failure.
+
+    With the store, the wrapper's verification report is recorded on the connection: an `ok`
+    refreshes it before ingest, a refusal blocks the connection as well as the scan.
+    """
     scan = _locked(session, job.scan_id)
     if scan.status != "running" or scan.attempts != job.attempt:
         return Outcome(scan.status, False, None)  # a stale attempt
+    report = _verification(store, job) if exit_code in (DONE, VERIFICATION_REFUSED) else None
     if exit_code == DONE:
+        if report is not None and report.verdict == "ok":
+            _record(session, scan, report)
         scan.status = "collected"
         scan.output_prefix = output_prefix(job.organization_id, scan.id, job.attempt)
         session.flush()
@@ -169,8 +226,12 @@ def finish_attempt(session: Session, job: ScanJob, exit_code: int, *, final: boo
             scan_id=str(scan.id),
         )
         return Outcome("collected", False, None)
-    if exit_code == VERIFICATION_REFUSED:  # PR 9 records the verification report on the connection
-        return Outcome("blocked", False, _end(session, scan, "blocked", None))
+    if exit_code == VERIFICATION_REFUSED:
+        code = None
+        if report is not None and report.verdict in BLOCKED_CODES:
+            _record(session, scan, report)
+            code = BLOCKED_CODES[report.verdict]
+        return Outcome("blocked", False, _end(session, scan, "blocked", code))
     error_code = TRANSIENT_ERRORS.get(exit_code, ENGINE_FAILED)
     if final:
         return Outcome("failed", False, _end(session, scan, "failed", error_code))

@@ -10,19 +10,31 @@ import hashlib
 import json
 import re
 import subprocess
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
+from typing import Any
 
+import httpx
 from atesta_core.manifest import build_manifest
 from atesta_core.ocsf import OcsfError, TenantMismatchError, parse_findings, pin_tenant
 
+from atesta_scanner.entra_token import (
+    TokenRevokedError,
+    TokenTransientError,
+    TokenUnavailableError,
+    m365_graph_token,
+)
 from atesta_scanner.exits import ExitCode, after_prowler
+from atesta_scanner.graph import Graph
 from atesta_scanner.invocation import child_env, prowler_argv
 from atesta_scanner.job import Job
 from atesta_scanner.scrub import scrub
 from atesta_scanner.strip import OutputInvalidError, strip_metadata
+from atesta_scanner.verify_m365 import report, verify_m365
 
 OCSF_FILE, LOG_FILE, MANIFEST_FILE = "prowler.ocsf.json", "prowler.log", "manifest.json"
+VERIFICATION_FILE = "verification.json"  # read by the worker on exit 10 (record_verification)
+type Verifier = Callable[[Job, Mapping[str, str]], dict[str, Any]]
 _NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}")
 
 
@@ -68,17 +80,59 @@ def _prowler(argv: Sequence[str], env: Mapping[str, str]) -> int:
     return process.returncode
 
 
+def verify_job(job: Job, credential: Mapping[str, str]) -> dict[str, Any]:
+    """Read-only verification of an M365 job (spec steps 1 to 5). Google arrives in PR 11."""
+    if job.provider != "m365":  # fail closed: no Google scan runs unverified
+        return report("incomplete", missing=["google verifier (PR 11)"])
+    client_id = credential["AZURE_CLIENT_ID"]
+    try:
+        token = m365_graph_token(client_id, job.tenant, credential["M365_CERTIFICATE_CONTENT"])
+    except TokenRevokedError:
+        return report("revoked")
+    except TokenTransientError:
+        return report("transient")
+    with httpx.Client(timeout=30.0) as client:
+        graph = Graph(token, client)
+        return verify_m365(
+            graph, app_id=client_id, tenant=job.tenant, version=job.allowlist_version
+        )
+
+
+def run_verification(
+    job: Job,
+    credential: Mapping[str, str],
+    sink: DirectorySink,
+    verifier: Verifier | None = None,
+) -> ExitCode:
+    """Write the verification report; DONE only for `ok`. Fails closed (rule 1)."""
+    try:
+        result = (verifier or verify_job)(job, credential)
+    except TokenUnavailableError:
+        return ExitCode.CREDENTIAL_UNAVAILABLE
+    sink.write(VERIFICATION_FILE, json.dumps(result, sort_keys=True).encode())
+    if result["verdict"] == "ok":
+        return ExitCode.DONE
+    if result["verdict"] == "transient":
+        return ExitCode.VERIFICATION_TRANSIENT
+    return ExitCode.VERIFICATION_REFUSED
+
+
 def run_scan(
     job: Job,
     credential: Mapping[str, str],
     sink: DirectorySink,
     work: Path,
     executable: str = "prowler",
+    verifier: Verifier | None = None,
 ) -> ExitCode:
+    """Step 0 verifies; Prowler runs only after an `ok`."""
     try:
         env = child_env(job.provider, credential, job.tenant)
     except ValueError:
         return ExitCode.CREDENTIAL_UNAVAILABLE
+    verified = run_verification(job, credential, sink, verifier)
+    if verified is not ExitCode.DONE:
+        return verified
     (work / "out").mkdir(parents=True, exist_ok=True)
     (work / "tmp").mkdir(exist_ok=True)
     argv = prowler_argv(job.provider, job.excluded, work=str(work))

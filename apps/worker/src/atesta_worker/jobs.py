@@ -69,7 +69,7 @@ def _attempt(organization_id: str, scan_id: str, *, attempt: int, final: bool) -
         scan_events.warning("scan runner raised %s", type(error).__name__)
         exit_code = RUNNER_ERROR_EXIT
     with org_session(organization_id) as session:
-        outcome = finish_attempt(session, started.job, exit_code, final=final)
+        outcome = finish_attempt(session, started.job, exit_code, final=final, store=config.store)
     _report(outcome.finished)
     if outcome.retry:
         raise ScanTransientError(f"scan {scan_id} attempt {attempt} exited {exit_code}")
