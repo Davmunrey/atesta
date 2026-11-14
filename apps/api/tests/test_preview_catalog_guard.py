@@ -35,3 +35,13 @@ def test_a_loopback_dev_database_is_accepted(preview: Any, host: str) -> None:
 def test_anything_else_is_refused(preview: Any, url: str) -> None:
     with pytest.raises(RuntimeError, match="loopback"):
         preview.loopback_dev_url(url)
+
+
+@pytest.mark.parametrize("variable", ["PGHOST", "PGHOSTADDR", "PGSERVICE", "PGSERVICEFILE"])
+def test_libpq_connection_variables_are_refused(
+    preview: Any, monkeypatch: pytest.MonkeyPatch, variable: str
+) -> None:
+    """libpq reads these after the guard; PGHOSTADDR=<remote> overrides a loopback host."""
+    monkeypatch.setenv(variable, "10.0.0.5")
+    with pytest.raises(RuntimeError, match="loopback"):
+        preview.loopback_dev_url("postgresql+psycopg://postgres@127.0.0.1:5432/atesta_dev")
