@@ -31,6 +31,7 @@ test("recorded-result design supports filters, keyboard disclosure, both locales
   page.on("console", (message) => { if (message.text().includes("Content Security Policy")) csp.push(message.text()); });
   await page.route("**/api/v1/orgs/*/overview", (route) => route.fulfill({ json: overview }));
   await createOrganization(page);
+  await expect(page.locator(".evidence-count")).toHaveCSS("font-size", "32px");
   const row = page.locator("details").filter({ hasText: "Synthetic Alpha" });
   await expect(row).toHaveJSProperty("open", true);
   await row.locator("summary").press("Enter");

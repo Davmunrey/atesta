@@ -17,6 +17,7 @@ from atesta_api.modules.scanning.api import (
     ingest_scan,
     latest_check_results,
     output_prefix,
+    rescore_reviews,
     snapshot_scores,
 )
 from atesta_core.manifest import build_manifest
@@ -299,3 +300,108 @@ def test_scan_evidence_links_only_active_controls(tx: Session, control: str) -> 
             control_keys=["scan.mfa", control],
             collected_at=T0,
         )
+
+
+# --- human reviews of manual controls (manual-control-review spec, PR 2) -------------------
+
+REVIEW = text(
+    "INSERT INTO control_reviews (organization_id, id, control_key, status, rationale,"
+    " valid_until, reviewed_by, reviewed_at) VALUES (:org, gen_random_uuid(), :control, :status,"
+    " 'acta', :until, gen_random_uuid(), :at)"
+)
+
+
+def review(
+    session: Session,
+    status: str,
+    at: datetime,
+    until: datetime | None = None,
+    control: str = "scan.paper",
+) -> None:
+    valid_until = (until or at + timedelta(days=365)).date()
+    session.execute(
+        REVIEW,
+        {"org": ORG_A, "control": control, "status": status, "until": valid_until, "at": at},
+    )
+
+
+@pytest.mark.parametrize(("status", "score"), [("pass", 66.7), ("fail", 33.3)])
+def test_a_current_review_decides_its_manual_control(
+    tx: Session, store: LocalScanStore, status: str, score: float
+) -> None:
+    review(tx, status, T0 - timedelta(days=1))
+    scan_id = ingested(tx, store, "m365", M365_CONNECTION, T0)
+    snapshot_scores(tx, scan_id)
+    assert snapshot(tx, scan_id) == {"score": score, "requirements": {**M365_ONLY, "S-6": status}}
+
+
+def test_the_latest_review_as_of_the_scan_wins(tx: Session, store: LocalScanStore) -> None:
+    review(tx, "fail", T0 - timedelta(days=2))
+    review(tx, "pass", T0 - timedelta(days=1))
+    review(tx, "fail", T0 + timedelta(days=1))  # after the scan: not part of its snapshot
+    scan_id = ingested(tx, store, "m365", M365_CONNECTION, T0)
+    snapshot_scores(tx, scan_id)
+    assert snapshot(tx, scan_id)["requirements"]["S-6"] == "pass"
+
+
+def test_an_expired_review_leaves_the_control_manual(tx: Session, store: LocalScanStore) -> None:
+    review(tx, "fail", T0 - timedelta(days=400), until=T0 - timedelta(days=300))
+    review(tx, "pass", T0 - timedelta(days=30), until=T0 - timedelta(days=1))  # latest, expired
+    scan_id = ingested(tx, store, "m365", M365_CONNECTION, T0)
+    snapshot_scores(tx, scan_id)
+    assert snapshot(tx, scan_id)["requirements"]["S-6"] == "manual"
+
+
+def test_a_review_never_decides_an_automated_control(tx: Session, store: LocalScanStore) -> None:
+    review(tx, "pass", T0 - timedelta(days=1), control="scan.cloud")
+    scan_id = ingested(tx, store, "m365", M365_CONNECTION, T0)
+    snapshot_scores(tx, scan_id)
+    assert snapshot(tx, scan_id)["requirements"]["S-2"] == "fail"
+
+
+def chain(session: Session, scan_id: uuid.UUID) -> list[tuple[uuid.UUID, uuid.UUID | None, str]]:
+    """Every fw_scan snapshot of the scan, oldest first: (id, supersedes_id, S-6 result)."""
+    rows = session.execute(
+        text(
+            "SELECT id, supersedes_id, requirement_results ->> 'S-6' FROM score_snapshots"
+            " WHERE framework_key = 'fw_scan' AND scan_id = :s ORDER BY computed_at, supersedes_id"
+            " NULLS FIRST"
+        ),
+        {"s": scan_id},
+    )
+    return [(i, s, r) for i, s, r in rows]
+
+
+def test_rescoring_after_a_review_corrects_the_latest_scans_snapshot(
+    tx: Session, store: LocalScanStore
+) -> None:
+    older = ingested(tx, store, "m365", M365_CONNECTION, T0 - timedelta(days=7))
+    latest = ingested(tx, store, "m365", M365_CONNECTION, T0)
+    snapshot_scores(tx, older)
+    snapshot_scores(tx, latest)
+    review(tx, "pass", T0 + timedelta(hours=1))
+    created = rescore_reviews(tx, ORG_A, as_of=T0 + timedelta(hours=2))
+    assert set(created) == {"fw_scan"}
+    (original, _, before), (correction, supersedes, after) = chain(tx, latest)
+    assert (before, after, supersedes, correction) == (
+        "manual",
+        "pass",
+        original,
+        created["fw_scan"],
+    )
+    assert len(chain(tx, older)) == 1  # history stays as it was recorded
+
+    review(tx, "fail", T0 + timedelta(hours=3))
+    again = rescore_reviews(tx, ORG_A, as_of=T0 + timedelta(hours=4))
+    tip = tx.execute(
+        text(
+            "SELECT supersedes_id, requirement_results ->> 'S-6' FROM score_snapshots WHERE id = :i"
+        ),
+        {"i": again["fw_scan"]},
+    ).one()
+    assert tuple(tip) == (correction, "fail")  # one linear chain: the new tip supersedes the last
+
+
+def test_rescoring_without_an_ingested_scan_does_nothing(tx: Session) -> None:
+    review(tx, "pass", T0)
+    assert rescore_reviews(tx, ORG_A, as_of=T0 + timedelta(hours=1)) == {}

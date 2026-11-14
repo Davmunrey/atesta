@@ -15,3 +15,5 @@ export const canInvite = (caller: Role): boolean => RANK[caller] >= RANK.admin;
 
 export const invitableRoles = (caller: Role): Role[] =>
   canInvite(caller) ? ROLES.filter((role) => RANK[role] <= RANK[caller]) : [];
+
+export const canReviewControls = (caller: Role): boolean => RANK[caller] >= RANK.admin;

@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { components } from "@/lib/api/schema";
 import type { Role } from "@/lib/permissions";
 import { api } from "./client";
 import { errorCode } from "./errors";
@@ -14,7 +15,7 @@ export class ApiError extends Error {
 
 type Result<T> = { data?: T; error?: unknown; response: Response };
 
-async function unwrap<T>(call: Promise<Result<T>>): Promise<T> {
+export async function unwrap<T>(call: Promise<Result<T>>): Promise<T> {
   const { data, error, response } = await call;
   if (data === undefined) throw new ApiError(response.status, errorCode(error));
   return data;
@@ -60,6 +61,22 @@ export function useFrameworkDetail(orgId: string, frameworkKey: string) {
   return useQuery({
     queryKey: ["framework", orgId, frameworkKey], retry: false,
     queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/frameworks/{framework_key}", { params: { path: { org_id: orgId, framework_key: frameworkKey } } })),
+  });
+}
+
+type ReviewInput = { controlKey: string } & components["schemas"]["ReviewIn"];
+
+/** A review changes the register now and the score once the rescore job runs. */
+export function useRecordReview(orgId: string, frameworkKey: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ controlKey, ...body }: ReviewInput) =>
+      unwrap(api.POST("/api/v1/orgs/{org_id}/controls/{control_key}/reviews", { params: { path: { org_id: orgId, control_key: controlKey } }, body })),
+    onSuccess: () =>
+      Promise.all([
+        client.invalidateQueries({ queryKey: ["framework", orgId, frameworkKey] }),
+        client.invalidateQueries({ queryKey: ["overview", orgId] }),
+      ]),
   });
 }
 
