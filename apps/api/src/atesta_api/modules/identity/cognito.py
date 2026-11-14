@@ -14,6 +14,8 @@ from urllib.parse import urlencode
 import httpx
 import jwt
 
+from atesta_api.platform.devenv import DEV_ENVS
+
 ADMIN_SCOPE = "aws.cognito.signin.user.admin"
 JWKS_REFETCH_SECONDS = 300  # after a successful fetch (spec)
 JWKS_RETRY_SECONDS = 30  # after a failed fetch
@@ -48,8 +50,10 @@ class CognitoSettings:
         env = os.environ
         issuer = env.get("ATESTA_COGNITO_ISSUER")
         base_url = env.get("ATESTA_COGNITO_BASE_URL")
-        if (issuer or base_url) and env.get("ATESTA_ENV") == "prod":
-            raise RuntimeError("Cognito issuer and base URL overrides are not allowed in prod")
+        if (issuer or base_url) and env.get("ATESTA_ENV") not in DEV_ENVS:
+            raise RuntimeError(
+                "Cognito issuer and base URL overrides require ATESTA_ENV local, dev or test"
+            )
         return cls(
             env["ATESTA_COGNITO_REGION"],
             env["ATESTA_COGNITO_USER_POOL_ID"],

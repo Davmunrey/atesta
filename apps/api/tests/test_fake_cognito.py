@@ -34,6 +34,7 @@ ENV = {
 def fake(monkeypatch: pytest.MonkeyPatch) -> TestClient:
     for name, value in ENV.items():
         monkeypatch.setenv(name, value)
+    monkeypatch.setenv("ATESTA_ENV", "test")  # the overrides are honoured in development only
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
     module: Any = importlib.import_module("devtools.fake_cognito")
     return TestClient(module.create_app(issuer=BASE, client_id="local-web"), base_url=BASE)
@@ -83,12 +84,30 @@ def test_pkce_mismatch_is_refused(fake: TestClient) -> None:
         oauth.exchange_code(code, "w" * 50)
 
 
-def test_overrides_are_refused_in_production(monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.mark.parametrize("env", [None, "", "prod", "production", "staging"])
+def test_overrides_are_refused_outside_development(
+    monkeypatch: pytest.MonkeyPatch, env: str | None
+) -> None:
+    """Fails closed: an unset or unknown ATESTA_ENV must not trust a substitute issuer."""
     for name, value in ENV.items():
         monkeypatch.setenv(name, value)
-    monkeypatch.setenv("ATESTA_ENV", "prod")
+    if env is None:
+        monkeypatch.delenv("ATESTA_ENV", raising=False)
+    else:
+        monkeypatch.setenv("ATESTA_ENV", env)
     with pytest.raises(RuntimeError, match="override"):
         CognitoSettings.from_env()
-    monkeypatch.delenv("ATESTA_COGNITO_ISSUER")
     monkeypatch.delenv("ATESTA_COGNITO_BASE_URL")
+    with pytest.raises(RuntimeError, match="override"):  # either override alone is refused
+        CognitoSettings.from_env()
+    monkeypatch.delenv("ATESTA_COGNITO_ISSUER")
     assert CognitoSettings.from_env().issuer.startswith("https://cognito-idp.eu-south-2.")
+
+
+@pytest.mark.parametrize("env", ["local", "dev", "test"])
+def test_overrides_are_honoured_in_development(monkeypatch: pytest.MonkeyPatch, env: str) -> None:
+    for name, value in ENV.items():
+        monkeypatch.setenv(name, value)
+    monkeypatch.setenv("ATESTA_ENV", env)
+    settings = CognitoSettings.from_env()
+    assert (settings.issuer, settings.base_url) == (BASE, BASE)
