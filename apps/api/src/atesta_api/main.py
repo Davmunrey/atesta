@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from atesta_api.modules.compliance.api import include_drafts, install_compliance
 from atesta_api.modules.connections.api import router as connections_router
 from atesta_api.modules.identity.api import install_identity, wire_identity
+from atesta_api.modules.scanning.api import router as scanning_router
 from atesta_api.platform import db
 from atesta_api.platform.errors import install_error_handlers
 from atesta_api.platform.guard import assert_safe_runtime_role
@@ -42,6 +43,7 @@ def create_app() -> FastAPI:
     install_identity(created)
     install_compliance(created)
     created.include_router(connections_router)
+    created.include_router(scanning_router)
     created.add_api_route("/health", health, methods=["GET"])
     return created
 

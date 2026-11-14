@@ -22,5 +22,8 @@
   "request.invalid",
   "request.method_not_allowed",
   "request.not_found",
+  "scanning.already_queued",
+  "scanning.connection_not_active",
+  "scanning.not_found",
   "server.error"
 ]

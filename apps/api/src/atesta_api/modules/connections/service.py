@@ -6,6 +6,7 @@ service accounts. A removed connection becomes `disconnected`, never deleted.
 """
 
 import uuid
+from dataclasses import dataclass
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -18,6 +19,30 @@ FIRST_STATUS = {"m365": "pending_setup", "google_workspace": "pending_provisioni
 
 class ConnectionStateError(ValueError):
     """The connection cannot make this transition."""
+
+
+@dataclass(frozen=True, slots=True)
+class ScanTarget:
+    """What a scan or a verification of a connection needs: ids and references, never a secret.
+
+    The scanner container resolves the references itself (ADR-004); no API or worker process
+    ever holds the secret they name.
+    """
+
+    connection_id: uuid.UUID
+    provider: str
+    status: str
+    external_tenant_id: str | None
+    allowlist_version: str | None
+    credential_ref: str | None
+    verifier_credential_ref: str | None
+    google_client_id: str | None
+    google_verifier_client_id: str | None
+    google_subject_email: str | None
+
+    @property
+    def active(self) -> bool:
+        return self.status == "active"
 
 
 def create_connection(
@@ -68,3 +93,28 @@ def disconnect_connection(session: Session, connection_id: uuid.UUID) -> Connect
 def active_connection_ids(session: Session) -> list[uuid.UUID]:
     query = select(Connection.id).where(Connection.status == "active").order_by(Connection.id)
     return list(session.scalars(query))
+
+
+def scan_target(
+    session: Session, organization_id: uuid.UUID, connection_id: uuid.UUID
+) -> ScanTarget | None:
+    """None for an unknown connection, another org's (RLS) or ids that do not match."""
+    connection = session.scalars(
+        select(Connection).where(
+            Connection.id == connection_id, Connection.organization_id == organization_id
+        )
+    ).one_or_none()
+    if connection is None:
+        return None
+    return ScanTarget(
+        connection_id=connection.id,
+        provider=connection.provider,
+        status=connection.status,
+        external_tenant_id=connection.external_tenant_id,
+        allowlist_version=connection.allowlist_version,
+        credential_ref=connection.credential_ref,
+        verifier_credential_ref=connection.verifier_credential_ref,
+        google_client_id=connection.google_client_id,
+        google_verifier_client_id=connection.google_verifier_client_id,
+        google_subject_email=connection.google_subject_email,
+    )

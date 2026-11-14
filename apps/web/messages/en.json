@@ -85,6 +85,11 @@
       "method_not_allowed": "This action is not available. Reload the page.",
       "not_found": "We could not find that page or resource."
     },
+    "scanning": {
+      "already_queued": "A scan of this connection is already queued or running. Wait for it to finish.",
+      "connection_not_active": "This connection is not active yet. Finish its setup and verify it before scanning.",
+      "not_found": "We couldn't find that scan, or you don't have access."
+    },
     "server": {
       "error": "Something went wrong on our side. Try again, and contact support if it keeps happening."
     }
