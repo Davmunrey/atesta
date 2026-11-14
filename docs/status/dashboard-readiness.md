@@ -1,7 +1,7 @@
 # Dashboard and framework readiness
 
-Observed on 2026-11-14 across merged dashboard/catalog work and the local evidence integration.
-Draft and local capabilities below are not claimed as merged or deployed.
+Observed on 2026-11-14 at merged evidence workspace `87754da6bcd7f603604fe8f353bfb4bc18e00cdc`.
+Merged implementation does not establish deployment or customer compliance.
 This is an implementation inventory, not an assessment of a customer's legal compliance.
 
 ## What can be used now
@@ -13,8 +13,8 @@ This is an implementation inventory, not an assessment of a customer's legal com
 | Requirement register | Stored requirement states, filters, search, historical provenance and configuration detail | Reads recorded data; it cannot infer uncollected customer configuration |
 | Implementation guidance | Catalog descriptions, safe reference links, manual/technical distinction and a next step for every state | Missing descriptions, references and mapping review are shown explicitly |
 | Technical observation | Existing scan-as-of aggregation, gated on matching framework/catalog versions | No raw resources or individual connection drill-down; catalog drift yields no observation |
-| Declared evidence, local integration | Named statements, optional HTTPS references and paginated history beside mapped and preparation controls; shared by common control | API #83 depends on draft #79; UI depends on #83. No binary upload, document retrieval/verification, automatic approval or assessment change |
-| Manual review, local integration | Independent manual control review from #79 is present in the local baseline | #79 remains draft; evidence submission neither changes a decision nor pins evidence to it |
+| Declared evidence | Named statements, optional HTTPS references and paginated history beside mapped and preparation controls; shared by common control | API #83 and UI #86 are merged. No binary upload, document retrieval/verification, automatic approval or assessment change |
+| Manual review | Independent manual control review from #79 is merged | #79 is merged; evidence submission neither changes a decision nor pins evidence to it |
 
 ## What is missing by framework
 
@@ -42,12 +42,12 @@ PASS cannot make any of the 73 ENS measures pass: every measure retains a manual
 2. Expand the five preparation templates into reviewed normative packs in demand order.
    The existing 26 bilingual guides include steps, evidence, verification and limits. Six
    technical candidates use pinned Prowler 5.49.0 checks; a candidate is not reviewed coverage.
-3. Finish live onboarding/collection with the connection workstream. Connection and scan
-   endpoint work has merged through #77, #78, #81 and #82. Worker execution #84 has also
-   merged; the local Docker runner remains with the other session in draft #85. Fixture scans and ingestion work; this does not verify real
-   tenant consent, credentials or end-to-end cloud execution.
-4. Integrate the independently reviewed manual workflow in draft #79, dependent evidence
-   API #83 and the dependent evidence UI. Local statements and HTTPS references persist
+3. Finish live onboarding/collection with the connection workstream. Connection/scan endpoints,
+   worker execution and the local Docker runner have merged through #77, #78, #81, #82, #84
+   and #85. Fixture scans and ingestion work; this does not verify real tenant consent,
+   credentials or end-to-end cloud execution.
+4. Extend the merged manual workflow #79 and evidence workflow #83/#86. Statements and
+   HTTPS references persist
    without changing assessments. Binary uploads, decision-to-evidence pinning, marking a
    review stale when new evidence arrives, owner assignment and applicability editing remain
    outstanding. A declaration is not a verified document or compliance approval.
@@ -67,20 +67,19 @@ outcome, never inferred from missing data. Technical check observations are show
 Catalog and score versions are distinct. When they differ, preserve original outcomes and
 label current guidance; do not reconstruct historical control outcomes using newer mappings.
 
-## Current coordination
+## Integration checkpoint
 
 Merged dashboard/catalog stack: #55, #63, #66 and #68 through #76, including detail API,
 detail screen, readiness inventory, preview/scoring guard, ENS draft, preparation templates
-and their UI. The other session has merged #54, #77, #78, #81, #82 and #84.
+and their UI. The other session has merged #54, #77, #78, #79, #81, #82, #84 and #85.
 
-Manual review #79 remains draft. Its earlier checks were green; integration of current main
-and renewed verification are in progress. Evidence API #83 is dependent on #79, with head
-`857caf145a495e0591e23a060a0b4dc831ba3032` including #79 base
-`63ee11539b52f992b6a5b539423438acb3970ec9` and merged #81/#82. The evidence UI depends on #83.
-Hardening #80 and the local Docker runner #85 remain owned by the other session.
-The verification totals below apply to the pinned #79/#83 baseline, not to later worker changes.
+Manual review #79, evidence API #83 and evidence UI #86 are merged in dependency order.
+Evidence merge commits are `76db67a77a66e17ac5ed15dd2c96a2cb759c48d3` and
+`87754da6bcd7f603604fe8f353bfb4bc18e00cdc`. All eight checks passed on both feature heads,
+including Socket. The owning sessions retain hardening and connector verification work;
+consult the live PR list for their current status rather than inferring it from this checkpoint.
 
-Local evidence verification records 780 Python tests, 272 web tests, passing lint/types/module
+Local evidence verification records 817 Python tests, 272 web tests, passing lint/types/module
 boundaries/build and 15 browser checks. A real local API write persisted a synthetic statement
 without changing the assessment; 375/768/1280px light and 1280px dark captures show no horizontal
 overflow or serious/critical axe findings. These checks do not establish production readiness,
