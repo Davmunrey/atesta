@@ -9,9 +9,25 @@ from atesta_api.modules.compliance.api import import_preview, read_catalog
 from atesta_api.modules.scanning.api import ENGINE_VERSION
 from atesta_api.platform.db import make_engine
 from atesta_api.platform.devenv import require_dev
-from sqlalchemy.engine import make_url
+from sqlalchemy.engine import URL, make_url
 
 ROOT = Path(__file__).resolve().parents[3]
+
+
+def loopback_dev_url(raw: str) -> URL:
+    """The URL of the loopback atesta_dev database, or an error.
+
+    No query string is accepted: libpq takes host, hostaddr, dbname and service from it, after
+    this check has read the host and database from the URL itself.
+    """
+    url = make_url(raw)
+    if (
+        url.host not in {"127.0.0.1", "localhost", "::1"}
+        or url.database != "atesta_dev"
+        or url.query
+    ):
+        raise RuntimeError("preview import requires the loopback atesta_dev database")
+    return url
 
 
 def main() -> None:
@@ -27,9 +43,7 @@ def main() -> None:
     )
     if args.apply:
         require_dev("catalog preview")
-        url = make_url(os.environ["ATESTA_MIGRATION_DATABASE_URL"])
-        if url.host not in {"127.0.0.1", "localhost", "::1"} or url.database != "atesta_dev":
-            raise RuntimeError("preview import requires the loopback atesta_dev database")
+        url = loopback_dev_url(os.environ["ATESTA_MIGRATION_DATABASE_URL"])
         engine = make_engine(url, sslmode="disable", null_pool=True)
         with engine.begin() as conn:
             conn.exec_driver_sql("SET LOCAL ROLE atesta_owner")
