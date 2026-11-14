@@ -186,7 +186,7 @@ def _verification(store: ScanStore | None, job: ScanJob) -> VerificationReport |
         )
     except (OSError, ValueError, KeyError, TypeError, AttributeError):
         return None
-    return report if report.verdict in (*BLOCKED_CODES, "ok") else None
+    return report  # callers act only on `ok` or a verdict in BLOCKED_CODES
 
 
 def _record(session: Session, scan: Scan, report: VerificationReport) -> None:

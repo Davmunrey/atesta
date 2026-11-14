@@ -192,3 +192,11 @@ def test_a_network_failure_is_transient() -> None:
 
     with pytest.raises(GraphTransientError):
         client(handler).get("/organization")
+
+
+def test_an_allowlisted_role_the_resource_does_not_name_fails_closed() -> None:
+    unnamed = [role for role in GRAPH_ROLES if role["id"] != M365_V1.app_roles[0].id]
+    graph = FakeGraph(**{f"/servicePrincipals/{GRAPH_SP}": {"appId": GRAPH, "appRoles": unnamed}})
+    report = verify(graph)
+    assert report["verdict"] == "over_privileged"  # its name cannot pass the read-only gate
+    assert report["extra"] == [f"write-named role {M365_V1.app_roles[0].id}"]
