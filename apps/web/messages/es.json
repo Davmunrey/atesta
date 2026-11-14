@@ -60,6 +60,10 @@
       "invalid_token": "Tu sesión ha terminado. Vuelve a iniciar sesión.",
       "provider_unavailable": "No podemos verificar tu sesión ahora mismo. Vuelve a intentarlo en unos segundos."
     },
+    "connections": {
+      "not_found": "No encontramos esa conexión, o no tienes acceso.",
+      "state_invalid": "Esta conexión ya no admite ese cambio. Recarga la página."
+    },
     "identity": {
       "already_member": "Esta persona ya es miembro de la organización.",
       "email_mismatch": "Esta invitación es para otro correo. Inicia sesión con el correo invitado.",
