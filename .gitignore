@@ -31,6 +31,9 @@ out/
 .terraform/
 *.tfstate
 *.tfstate.*
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
 
 # Scanner output
 scanner/output/
