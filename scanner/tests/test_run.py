@@ -15,9 +15,8 @@ from atesta_scanner.run import DirectorySink, OutputExistsError, read_credential
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "synthetic" / "m365"
 TENANT = "11111111-1111-4111-8111-111111111111"
-SECRET = {
+SECRET = {  # Atesta's one M365 certificate: the tenant comes from the job (D5)
     "AZURE_CLIENT_ID": "22222222-aaaa-4bbb-8ccc-333333333333",
-    "AZURE_TENANT_ID": TENANT,
     "M365_CERTIFICATE_CONTENT": "TUlJS0h5LXRlc3QtY2VydGlmaWNhdGUtY29udGVudA==",
 }
 JOB = {

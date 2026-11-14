@@ -76,7 +76,7 @@ def run_scan(
     executable: str = "prowler",
 ) -> ExitCode:
     try:
-        env = child_env(job.provider, credential)
+        env = child_env(job.provider, credential, job.tenant)
     except ValueError:
         return ExitCode.CREDENTIAL_UNAVAILABLE
     (work / "out").mkdir(parents=True, exist_ok=True)

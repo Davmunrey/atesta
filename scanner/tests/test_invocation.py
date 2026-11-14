@@ -67,11 +67,8 @@ BASE = {
     "LANG": "C.UTF-8",
     "POWERSHELL_TELEMETRY_OPTOUT": "1",
 }
-M365_SECRET = {
-    "AZURE_CLIENT_ID": "client",
-    "AZURE_TENANT_ID": "tenant",
-    "M365_CERTIFICATE_CONTENT": "cGZ4LXNlY3JldA==",
-}
+M365_SECRET = {"AZURE_CLIENT_ID": "client", "M365_CERTIFICATE_CONTENT": "cGZ4LXNlY3JldA=="}
+TENANT = "abcdef01-1111-4111-8111-111111111111"
 GOOGLE_SECRET = {
     "GOOGLEWORKSPACE_CREDENTIALS_CONTENT": '{"private_key": "k"}',
     "GOOGLEWORKSPACE_DELEGATED_USER": "admin@example.com",
@@ -80,8 +77,15 @@ GOOGLE_SECRET = {
 
 def test_the_child_gets_only_the_listed_variables(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "never-inherited")
-    assert child_env("m365", M365_SECRET) == {**BASE, **M365_SECRET}
-    assert child_env("google_workspace", GOOGLE_SECRET) == {**BASE, **GOOGLE_SECRET}
+    pinned = {**BASE, **M365_SECRET, "AZURE_TENANT_ID": TENANT}  # from the job, never the secret
+    assert child_env("m365", M365_SECRET, TENANT) == pinned
+    assert child_env("google_workspace", GOOGLE_SECRET, "C0abc") == {**BASE, **GOOGLE_SECRET}
+
+
+@pytest.mark.parametrize("tenant", ["", "tenant", TENANT.upper(), f"{TENANT}\n"])
+def test_the_m365_tenant_pin_must_be_a_tenant_id(tenant: str) -> None:
+    with pytest.raises(ValueError, match="tenant pin"):
+        child_env("m365", M365_SECRET, tenant)
 
 
 @pytest.mark.parametrize(
@@ -89,7 +93,8 @@ def test_the_child_gets_only_the_listed_variables(monkeypatch: pytest.MonkeyPatc
     [
         ("m365", {k: v for k, v in M365_SECRET.items() if k != "M365_CERTIFICATE_CONTENT"}),
         ("m365", {**M365_SECRET, "AZURE_CLIENT_SECRET": "s3cret-value"}),
-        ("m365", {**M365_SECRET, "AZURE_TENANT_ID": ""}),
+        ("m365", {**M365_SECRET, "AZURE_TENANT_ID": TENANT}),  # a secret never names a tenant
+        ("m365", {**M365_SECRET, "AZURE_CLIENT_ID": ""}),
         ("google_workspace", M365_SECRET),
     ],
 )
@@ -97,5 +102,5 @@ def test_a_credential_must_have_exactly_its_variables(
     provider: str, credential: dict[str, str]
 ) -> None:
     with pytest.raises(ValueError, match="credential") as error:
-        child_env(provider, credential)
+        child_env(provider, credential, TENANT)
     assert not any(v and v in str(error.value) for v in credential.values())  # rule 2
