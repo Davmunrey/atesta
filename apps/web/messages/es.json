@@ -81,6 +81,11 @@
       "method_not_allowed": "Esta acción no está disponible. Recarga la página.",
       "not_found": "No encontramos esa página o recurso."
     },
+    "scanning": {
+      "already_queued": "Ya hay un escaneo en cola o en curso para esta conexión. Espera a que termine.",
+      "connection_not_active": "Esta conexión aún no está activa. Termina de configurarla y verifícala antes de escanear.",
+      "not_found": "No encontramos ese escaneo, o no tienes acceso."
+    },
     "server": {
       "error": "Algo ha fallado por nuestra parte. Vuelve a intentarlo y, si se repite, contacta con soporte."
     }
