@@ -10,11 +10,9 @@ requirement states, configuration observations and available catalog guidance. A
 ENS draft contains the 73 Annex II measures, candidate mappings and bilingual preparation
 guides. NIS2, ISO/IEC 27001, GDPR Article 32, DORA and SOC 2 have scoped preparation templates,
 not reviewed normative coverage. All six disable assessment; local recorded results remain
-explicitly synthetic. Scope, missing work and official sources are available in each detail view. Current
-local work adds named evidence statements, optional HTTPS references and history beside mapped
+explicitly synthetic. Scope, missing work and official sources are available in each detail view. The control workspace adds named evidence statements, optional HTTPS references and history beside mapped
 and preparation controls. These are declarations, not uploaded or verified documents; recording
-evidence does not change an assessment or a manual review decision. Manual review is integrated
-locally from draft #79; evidence API #83 depends on it and the evidence UI shares that dependency.
+evidence does not change an assessment or a manual review decision. Manual review operates separately from evidence collection.
 Decision-to-evidence links, review invalidation on new evidence, owner assignment and applicability
 editing remain unimplemented. Capabilities and integration status are recorded in
 `docs/status/dashboard-readiness.md`. Connector onboarding and scanner execution remain a separate
