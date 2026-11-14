@@ -51,7 +51,11 @@
     "en": "English"
   },
   "errors": {
-    "compliance": { "not_found": "Este marco no está disponible. Vuelve al resumen y elige un marco publicado." },
+    "compliance": {
+      "control_not_found": "Este control no existe o ya no está activo en el catálogo.",
+      "control_not_manual": "Este control se evalúa con comprobaciones automáticas; no admite revisión manual.",
+      "not_found": "Este marco no está disponible. Vuelve al resumen y elige un marco publicado."
+    },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
       "bad_nonce": "No se ha podido completar el inicio de sesión. Vuelve a iniciar sesión.",

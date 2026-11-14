@@ -1,0 +1,77 @@
+# Spec: Manual control review
+
+- Requirement ids: FR-07, ADR-005, NFR-05
+- Status: draft
+
+## Problem
+
+Every one of the 73 ENS measures keeps at least one manual control (documentary or organizational:
+risk analysis, incident response, supplier review). Automated checks never decide those, and
+nothing else can: they stay `manual` forever, so no requirement that maps to one can ever pass.
+Today a security lead tracks those decisions in spreadsheets outside Atesta, and the auditor sees
+a register where most of the work looks pending.
+
+ADR-005 allows exactly two sources of control status: deterministic checks or human approval.
+This spec adds the human approval, for manual controls only.
+
+## Acceptance criteria
+
+PR 1 (record and read reviews):
+
+- [ ] Tenant table `control_reviews` (ADR-012): append-only for `atesta_app` (SELECT, INSERT),
+      RLS `tenant_isolation`, registered as tenant and append-only in `platform/tables.py`. A new
+      decision is a new row; the latest row for a control is its current review.
+- [ ] A review records `status` (`pass` or `fail`), a `rationale` (1–2000 characters after
+      trimming, no control characters other than line breaks and tabs), `valid_until` (a date
+      after today in UTC and at most three years ahead), the reviewer's user id and the time.
+- [ ] `POST /api/v1/orgs/{org_id}/controls/{control_key}/reviews` records a review. Admin or
+      owner only (members get 403 `identity.forbidden`, non-members 404). Cookie writes need the
+      web Origin, like every other write.
+- [ ] Only active manual controls can be reviewed: unknown or retired → 404
+      `compliance.control_not_found`; a control with `manual = false` → 409
+      `compliance.control_not_manual`. A human never overrides an automated check here; that is
+      exceptions and risk acceptance (FR-11).
+- [ ] `GET` on the same path lists the control's reviews, newest first, for any member.
+- [ ] Each recorded review writes the audit event `control.reviewed` (target the control key;
+      metadata `status`, `valid_until`) in the same transaction. The rationale is not copied
+      into audit metadata.
+- [ ] Framework detail adds `review` to each control: the current review with `expired`
+      (`valid_until` before today in UTC), or `null`. Tenant data only from the caller's org.
+- [ ] Error codes have ES and EN texts.
+
+PR 2 (scoring): the latest unexpired review of a manual control is its control result in score
+snapshots; recording a review writes a correction snapshot for the latest scan.
+
+PR 3 (screen): admins record a review from the framework detail; everyone sees the current
+review, who made it, until when it holds, and whether it expired.
+
+## Out of scope
+
+- Uploading documents as evidence (needs the S3 evidence store). The rationale is the record.
+- A second approver (four-eyes) and review reminders before `valid_until`.
+- `not_applicable`: applicability is decided per requirement and scope (FR-06), not per control.
+- Withdrawing a review. A new `fail` review replaces it; expiry ends it.
+- AI-drafted rationales (AI-xx specs). ADR-005: an AI draft is never a review.
+
+## Design notes
+
+- Module: compliance (control status is compliance data). New `reviews.py` router, mounted by
+  `install_compliance`; models in `compliance/models.py`. No other module's internals.
+- Table `control_reviews`: id, organization_id, control_key `text` (no FK to the global
+  catalog, like `evidence_controls`; checked through the catalog at write time), status,
+  rationale, valid_until `date`, reviewed_by `uuid` (users.id, no cross-module FK, ADR-008),
+  reviewed_at `timestamptz default now()`. CHECKs on status and rationale length. UNIQUE
+  (organization_id, id); index (organization_id, control_key, reviewed_at DESC).
+- The rationale is customer content: never logged, never in audit metadata (rule 2), rendered as
+  text only (rule 5).
+- Expiry is computed on read against today's UTC date; nothing rewrites rows.
+
+## Test plan
+
+- DB: `atesta_app` cannot UPDATE or DELETE `control_reviews`; RLS hides another org's rows; the
+  CHECKs reject an unknown status and an empty or 2001-character rationale.
+- HTTP: owner and admin record; member 403; non-member 404 on write and read; unknown and retired controls 404; automated control 409;
+  `valid_until` today, in the past and over three years 422; blank or control-character
+  rationale 422; history newest first; one audit event per review without the rationale.
+- Detail: a manual control shows its latest review, `expired` once `valid_until` has passed, and
+  never another org's review.

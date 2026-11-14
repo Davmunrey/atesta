@@ -4,6 +4,8 @@
   "auth.bad_state",
   "auth.invalid_token",
   "auth.provider_unavailable",
+  "compliance.control_not_found",
+  "compliance.control_not_manual",
   "compliance.not_found",
   "connections.not_found",
   "connections.state_invalid",
