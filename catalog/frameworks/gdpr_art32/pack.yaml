@@ -1,0 +1,49 @@
+id: gdpr_art32
+name: RGPD · Artículo 32
+version: 2016-679.art32.template1
+jurisdiction: EU
+source: https://eur-lex.europa.eu/legal-content/ES-EN/ALL/?uri=CELEX%3A32016R0679
+license_notes: Preparation metadata only. No official requirement text has been imported; this is not
+  a complete GDPR pack.
+status: draft
+attributes:
+  content_state: template
+  assessment_enabled: false
+  summary_es: Plantilla para seguridad del tratamiento de datos personales. Obligación legal, no certificación
+    del RGPD ni evaluación completa de protección de datos.
+  summary_en: Template for security of personal-data processing. A legal obligation, not GDPR certification
+    or a complete data-protection assessment.
+  scope_es: Identifica tratamientos, datos, responsables, encargados, sistemas y proveedores dentro del
+    ámbito aplicable del RGPD.
+  scope_en: Identify processing activities, data, controllers, processors, systems and providers within
+    the applicable GDPR scope.
+  applicability_es: Valora riesgos para las personas y el contexto del tratamiento para seleccionar medidas
+    técnicas y organizativas. Revisa confidencialidad, integridad, disponibilidad, recuperación y comprobación
+    periódica; no existe una configuración universal suficiente.
+  applicability_en: Assess risks to individuals and processing context to select technical and organizational
+    measures. Review confidentiality, integrity, availability, recovery and regular testing; no universal
+    configuration is sufficient.
+  limitations_es: Faltan texto oficial, mapeos revisados y evaluación contextual. No cubre bases jurídicas,
+    derechos, transferencias, contratos ni otras obligaciones del RGPD. Revisar con el responsable de
+    protección de datos cuando corresponda.
+  limitations_en: Official text, reviewed mappings and contextual assessment are missing. Legal bases,
+    rights, transfers, contracts and other GDPR duties are not covered. Involve the data-protection owner
+    where appropriate.
+  preparation_controls:
+  - ctl.information_handling
+  - ctl.risk_analysis
+  - ctl.access_review
+  - ctl.authentication_review
+  - ctl.cryptography_review
+  - ctl.continuity_restore
+  - ctl.supplier_cloud_review
+  - ctl.incident_response
+  - ctl.media_handling
+  - ctl.activity_logging_review
+  - ctl.admin_mfa
+  - ctl.workspace_mfa
+  - ctl.workspace_sharing
+  - ctl.mailbox_audit_bypass
+  source_refs:
+  - https://eur-lex.europa.eu/legal-content/ES-EN/ALL/?uri=CELEX%3A32016R0679
+  verified_on: '2026-11-13'

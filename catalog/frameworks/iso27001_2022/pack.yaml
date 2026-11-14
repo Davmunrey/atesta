@@ -1,0 +1,60 @@
+id: iso27001_2022
+name: ISO/IEC 27001:2022
+version: 2022-amd1-2024.template1
+jurisdiction: international
+source: https://www.iso.org/standard/27001
+license_notes: ISO material is copyrighted. No clauses, Annex A control text or licensed tables are reproduced.
+  A licensed source and appropriate reuse authorization are required before content import.
+status: draft
+attributes:
+  content_state: template
+  assessment_enabled: false
+  summary_es: Plantilla de preparación de un sistema de gestión de seguridad de la información. ISO/IEC
+    27001 es una norma certificable; estos controles no acreditan conformidad.
+  summary_en: Preparation template for an information security management system. ISO/IEC 27001 is a certifiable
+    standard; these controls do not establish conformity.
+  scope_es: Delimita organización, procesos, servicios, interfaces y alcance del sistema de gestión. Identifica
+    la edición 2022 y su modificación de 2024 antes de revisar requisitos.
+  scope_en: Define the organization, processes, services, interfaces and management-system scope. Identify
+    the 2022 edition and its 2024 amendment before reviewing requirements.
+  applicability_es: Parte del contexto y de la evaluación y tratamiento de riesgos. Prepara una declaración
+    de aplicabilidad con justificación y responsables; selecciona controles con la fuente licenciada y
+    el revisor.
+  applicability_en: Start with context, risk assessment and treatment. Prepare a statement of applicability
+    with rationale and owners; select controls using the licensed source and reviewer.
+  limitations_es: No contiene cláusulas ni controles normativos de ISO. Faltan acceso y autorización de
+    uso del contenido, mapeos, revisión, auditoría y evidencias del sistema de gestión. Las guías compartidas
+    solo ayudan a preparar el trabajo.
+  limitations_en: No ISO clauses or normative controls are included. Content access/reuse authorization,
+    mappings, review, audit and management-system evidence remain pending. Shared guides only help prepare
+    the work.
+  preparation_controls:
+  - ctl.security_governance
+  - ctl.risk_analysis
+  - ctl.asset_inventory
+  - ctl.access_review
+  - ctl.authentication_review
+  - ctl.secure_configuration
+  - ctl.change_vulnerability_review
+  - ctl.incident_response
+  - ctl.activity_logging_review
+  - ctl.supplier_cloud_review
+  - ctl.continuity_restore
+  - ctl.people_awareness
+  - ctl.physical_security
+  - ctl.media_handling
+  - ctl.information_handling
+  - ctl.cryptography_review
+  - ctl.security_architecture
+  - ctl.secure_procurement
+  - ctl.capacity_resilience
+  - ctl.threat_monitoring
+  - ctl.admin_mfa
+  - ctl.legacy_authentication
+  - ctl.application_consent
+  - ctl.mailbox_audit_bypass
+  - ctl.workspace_mfa
+  - ctl.workspace_sharing
+  source_refs:
+  - https://www.iso.org/standard/27001
+  verified_on: '2026-11-13'

@@ -1,0 +1,52 @@
+id: nis2
+name: NIS2
+version: 2022-2555.template1
+jurisdiction: EU; national implementation must be reviewed
+source: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32022L2555
+license_notes: Preparation metadata only. No directive requirements or national transposition text have
+  been imported.
+status: draft
+attributes:
+  content_state: template
+  assessment_enabled: false
+  summary_es: Plantilla para preparar el análisis de NIS2. Directiva europea, no certificación genérica.
+    Controles sugeridos sin equivalencia normativa.
+  summary_en: Template for preparing a NIS2 analysis. An EU directive, not a generic certification. Suggested
+    controls have no established normative equivalence.
+  scope_es: Identifica entidad, actividad, tamaño, servicios y Estados miembros relevantes. Confirma ámbito
+    y categoría con la normativa nacional aplicable.
+  scope_en: Identify the entity, activity, size, services and relevant Member States. Confirm scope and
+    entity category against applicable national law.
+  applicability_es: Revisa ámbito, excepciones, sector y obligaciones de gestión de riesgos y notificación.
+    Esta plantilla no determina si la entidad es esencial o importante ni el estado de transposición en
+    España.
+  applicability_en: Review scope, exemptions, sector and risk-management/reporting duties. This template
+    does not determine essential/important status or the state of Spanish transposition.
+  limitations_es: Faltan requisitos oficiales importados, análisis nacional, mapeos revisados y evaluación
+    real. Empieza por gobierno, riesgos, incidentes, continuidad y proveedores; confirma después configuración
+    y evidencia.
+  limitations_en: Official requirements, national analysis, reviewed mappings and real assessment are
+    missing. Start with governance, risks, incidents, continuity and suppliers; then confirm configuration
+    and evidence.
+  preparation_controls:
+  - ctl.security_governance
+  - ctl.risk_analysis
+  - ctl.incident_response
+  - ctl.continuity_restore
+  - ctl.supplier_cloud_review
+  - ctl.asset_inventory
+  - ctl.change_vulnerability_review
+  - ctl.access_review
+  - ctl.authentication_review
+  - ctl.cryptography_review
+  - ctl.people_awareness
+  - ctl.threat_monitoring
+  - ctl.activity_logging_review
+  - ctl.admin_mfa
+  - ctl.legacy_authentication
+  - ctl.workspace_mfa
+  - ctl.application_consent
+  - ctl.mailbox_audit_bypass
+  source_refs:
+  - https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32022L2555
+  verified_on: '2026-11-13'

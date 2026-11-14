@@ -28,6 +28,10 @@ Pack order: ENS (wedge) -> NIS2 -> ISO 27001 -> RGPD art. 32 -> DORA -> SOC 2 an
 
 ## Preparation content
 
+See [the preparation inventory](PREPARATION.md) for the six planned frameworks. NIS2,
+ISO/IEC 27001, GDPR Article 32, DORA and SOC 2 currently contain scope/source templates and
+candidate preparation controls, with no imported normative requirements or mappings.
+
 `ens_rd311_2022` contains the 73 Annex II measures from the official BOE publication, with
 category/dimension tables and application clauses. Its 78 mappings and 26 common-control
 guides are candidates awaiting qualified review. Read the pack's `SOURCES.md` for provenance,

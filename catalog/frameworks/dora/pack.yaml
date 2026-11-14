@@ -1,0 +1,55 @@
+id: dora
+name: DORA
+version: 2022-2554.template1
+jurisdiction: EU
+source: https://eur-lex.europa.eu/eli/reg/2022/2554/oj?uri=CELEX%3A32022R2554
+license_notes: Preparation metadata only. No official requirement text or delegated/implementing technical
+  standards have been imported.
+status: draft
+attributes:
+  content_state: template
+  assessment_enabled: false
+  summary_es: Plantilla para resiliencia operativa digital del sector financiero. Reglamento europeo,
+    no sello general de certificación.
+  summary_en: Template for digital operational resilience in the financial sector. An EU regulation, not
+    a general certification label.
+  scope_es: Comprueba tipo de entidad, servicios financieros, exclusiones y papel de proveedores TIC conforme
+    al ámbito del reglamento; no presupongas aplicación por usar servicios cloud.
+  scope_en: Check entity type, financial services, exclusions and ICT-provider role under the regulation
+    scope; cloud usage alone does not establish applicability.
+  applicability_es: Determina régimen y proporcionalidad con el responsable. Prepara gobierno del riesgo
+    TIC, incidentes, continuidad, pruebas de resiliencia y gestión de terceros. Confirma las normas técnicas
+    y obligaciones específicas aplicables.
+  applicability_en: Determine regime and proportionality with the accountable owner. Prepare ICT-risk
+    governance, incidents, continuity, resilience testing and third-party management. Confirm applicable
+    technical standards and specific duties.
+  limitations_es: Faltan requisitos oficiales, normas técnicas, mapeos revisados, registros y evaluación
+    real. Las guías compartidas no demuestran resiliencia operativa ni cumplimiento de obligaciones de
+    notificación o contratación.
+  limitations_en: Official requirements, technical standards, reviewed mappings, registers and real assessment
+    are missing. Shared guides do not prove operational resilience or compliance with reporting/contracting
+    duties.
+  preparation_controls:
+  - ctl.security_governance
+  - ctl.risk_analysis
+  - ctl.supplier_cloud_review
+  - ctl.continuity_restore
+  - ctl.incident_response
+  - ctl.asset_inventory
+  - ctl.security_architecture
+  - ctl.change_vulnerability_review
+  - ctl.capacity_resilience
+  - ctl.threat_monitoring
+  - ctl.activity_logging_review
+  - ctl.access_review
+  - ctl.authentication_review
+  - ctl.secure_configuration
+  - ctl.cryptography_review
+  - ctl.people_awareness
+  - ctl.admin_mfa
+  - ctl.legacy_authentication
+  - ctl.workspace_mfa
+  - ctl.mailbox_audit_bypass
+  source_refs:
+  - https://eur-lex.europa.eu/eli/reg/2022/2554/oj?uri=CELEX%3A32022R2554
+  verified_on: '2026-11-13'
