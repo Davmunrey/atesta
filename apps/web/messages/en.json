@@ -60,6 +60,10 @@
       "invalid_token": "Your session has ended. Sign in again.",
       "provider_unavailable": "We cannot verify your session right now. Try again in a few seconds."
     },
+    "connections": {
+      "not_found": "We couldn't find that connection, or you don't have access.",
+      "state_invalid": "This connection no longer allows that change. Reload the page."
+    },
     "identity": {
       "already_member": "This person is already a member of the organization.",
       "email_mismatch": "This invitation is for a different email. Sign in with the invited email.",

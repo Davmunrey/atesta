@@ -5,6 +5,8 @@
   "auth.invalid_token",
   "auth.provider_unavailable",
   "compliance.not_found",
+  "connections.not_found",
+  "connections.state_invalid",
   "identity.already_member",
   "identity.email_mismatch",
   "identity.email_unverified",
