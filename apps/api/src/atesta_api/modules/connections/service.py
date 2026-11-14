@@ -118,3 +118,14 @@ def scan_target(
         google_verifier_client_id=connection.google_verifier_client_id,
         google_subject_email=connection.google_subject_email,
     )
+
+
+ENDED_STATUSES = ("disconnected", "revoked")
+
+
+def ended_connection_ids(session: Session, organization_id: uuid.UUID) -> set[uuid.UUID]:
+    """Connections whose results no longer count: disconnected, or access revoked."""
+    query = select(Connection.id).where(
+        Connection.organization_id == organization_id, Connection.status.in_(ENDED_STATUSES)
+    )
+    return set(session.scalars(query))

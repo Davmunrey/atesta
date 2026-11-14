@@ -14,7 +14,8 @@ export function legalIssues(value: unknown): string[] {
   });
 }
 
-if (process.argv[1] && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) {
+// Real paths on both sides: a symlinked start must still run the check, never exit 0 silently.
+if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
   let issues: string[];
   if (process.argv.length > 3) {
     issues = ["expected at most one input file"];

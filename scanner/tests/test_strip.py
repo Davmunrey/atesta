@@ -33,7 +33,14 @@ def test_findings_without_data_pass_unchanged() -> None:
 
 @pytest.mark.parametrize(
     "raw",
-    [b"{", b"{}", b'[{"resources": "x"}]', b"[1]", b'[{"resources": [{"data": []}]}]'],
+    [
+        b"{",
+        b"{}",
+        b'[{"resources": "x"}]',
+        b"[1]",
+        b'[{"resources": [{"data": []}]}]',
+        b"[" * 200_000,
+    ],
 )
 def test_output_that_is_not_an_ocsf_array_is_invalid(raw: bytes) -> None:
     with pytest.raises(OutputInvalidError):

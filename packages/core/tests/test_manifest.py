@@ -49,6 +49,7 @@ def test_a_wrong_size_is_rejected() -> None:
 
 INVALID = {
     "not json": b"{",
+    "nested too deeply to parse": b"[" * 200_000,
     "not an object": b"[]",
     "unknown version": manifest(version=2),
     "path traversal": manifest({"name": "../job.json", "sha256": X_SHA, "size": 1}),

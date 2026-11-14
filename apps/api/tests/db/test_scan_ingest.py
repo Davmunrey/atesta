@@ -382,3 +382,24 @@ def test_another_orgs_scan_is_not_found(db_rollback: Session, store: LocalScanSt
         ingest(db_rollback, store, scan_id)
     with pytest.raises(ScanNotFoundError):
         ingest(db_rollback, store, uuid.uuid4())
+
+
+def _nul_in_a_resource_name() -> bytes:
+    findings = json.loads((FIXTURES / "m365" / "scan.ocsf.json").read_bytes())
+    findings[0]["resources"][0]["name"] = "admin\u0000"
+    return json.dumps(findings).encode()
+
+
+@pytest.mark.parametrize(
+    "ocsf",
+    [b"[" * 200_000, _nul_in_a_resource_name()],
+    ids=["nested too deeply to parse", "NUL in a stored field"],
+)
+def test_output_the_database_cannot_hold_rejects_the_scan_instead_of_raising(
+    tx: Session, store: LocalScanStore, ocsf: bytes
+) -> None:
+    """Before: RecursionError or a DataError on insert escaped ingest and left the scan stuck."""
+    scan_id = written(tx, store, {"prowler.ocsf.json": ocsf})
+    assert ingest(tx, store, scan_id) == "failed"
+    assert scan_row(tx, scan_id)["error_code"] == "scanning.output_invalid"
+    assert rows(tx, "findings", scan_id) == []

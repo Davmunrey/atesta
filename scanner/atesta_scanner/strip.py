@@ -14,7 +14,7 @@ class OutputInvalidError(ValueError):
 def strip_metadata(raw: bytes) -> bytes:
     try:
         findings = json.loads(raw)
-    except ValueError:
+    except (ValueError, RecursionError):  # nesting too deep to parse is not OCSF
         raise OutputInvalidError("output is not JSON") from None
     if not isinstance(findings, list):
         raise OutputInvalidError("output is not an array of findings")

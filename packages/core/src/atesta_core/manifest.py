@@ -56,7 +56,7 @@ def build_manifest(
 def _entries(manifest: bytes, max_bytes: int) -> list[tuple[str, str, int]]:
     try:
         data = json.loads(manifest)
-    except ValueError:
+    except (ValueError, RecursionError):  # nesting too deep to parse is not a manifest
         raise ManifestError("manifest is not JSON") from None
     if not isinstance(data, dict) or data.get("version") != _VERSION:
         raise ManifestError("unknown manifest format")

@@ -68,15 +68,22 @@ def _text(item: object, index: int, *path: str | int) -> str:
         raise OcsfError(f"finding {index}: missing {field}") from None
     if not isinstance(value, str):
         raise OcsfError(f"finding {index}: {field} is not text")
+    return _storable(value, index, field)
+
+
+def _storable(value: str, index: int, field: str) -> str:
+    """PostgreSQL text cannot hold NUL: such a value would fail ingest outside its error path."""
+    if "\x00" in value:
+        raise OcsfError(f"finding {index}: {field} contains a NUL character")
     return value
 
 
-def _optional_text(item: object, *path: str | int) -> str | None:
+def _optional_text(item: object, index: int, *path: str | int) -> str | None:
     try:
         value = _walk(item, path)
     except KeyError:
         return None
-    return value if isinstance(value, str) else None
+    return _storable(value, index, ".".join(map(str, path))) if isinstance(value, str) else None
 
 
 def _finding(item: object, index: int) -> OcsfFinding:
@@ -102,8 +109,8 @@ def _finding(item: object, index: int) -> OcsfFinding:
         resource_name=_text(item, index, "resources", 0, "name"),
         region=_text(item, index, "resources", 0, "region"),
         message=_text(item, index, "status_detail"),
-        account_uid=_optional_text(item, "cloud", "account", "uid"),
-        org_uid=_optional_text(item, "cloud", "org", "uid"),
+        account_uid=_optional_text(item, index, "cloud", "account", "uid"),
+        org_uid=_optional_text(item, index, "cloud", "org", "uid"),
     )
 
 
@@ -111,7 +118,7 @@ def parse_findings(raw: bytes) -> list[OcsfFinding]:
     """Parse Prowler's json-ocsf output: one JSON array of Detection Findings."""
     try:
         data = json.loads(raw)
-    except ValueError:  # includes UnicodeDecodeError
+    except (ValueError, RecursionError):  # UnicodeDecodeError; nesting too deep
         raise OcsfError("output is not JSON") from None
     if not isinstance(data, list):
         raise OcsfError("output is not an array of findings")

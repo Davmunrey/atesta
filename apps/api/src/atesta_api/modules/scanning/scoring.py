@@ -24,6 +24,7 @@ from atesta_api.modules.compliance.api import (
     snapshot_chain_tip,
     snapshot_framework,
 )
+from atesta_api.modules.connections.api import ended_connection_ids
 from atesta_api.modules.scanning.ingest import ScanNotFoundError
 from atesta_api.modules.scanning.models import Scan, ScanCheckResult
 
@@ -38,10 +39,17 @@ def _ingested(session: Session, scan_id: uuid.UUID) -> Scan | None:
 
 
 def _as_of(session: Session, scan: Scan) -> list[tuple[str, str, str]]:
+    """This scan's results and the latest of every other connection that has not ended.
+
+    A disconnected or revoked connection's last scan describes a tenant Atesta no longer reads:
+    its passes would linger and its failures could never clear (spec: active connections).
+    """
+    ended = ended_connection_ids(session, scan.organization_id)
     others = (
         select(Scan.id)
         .where(
             Scan.connection_id != scan.connection_id,
+            Scan.connection_id.not_in(ended),
             Scan.ingested_at.is_not(None),
             Scan.ingested_at <= scan.ingested_at,
         )
