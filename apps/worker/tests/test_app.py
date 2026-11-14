@@ -6,6 +6,7 @@ import uuid
 import pytest
 from atesta_api.modules.scanning.api import (
     INGEST_TASK,
+    RESCORE_TASK,
     RUN_TASK,
     SCHEDULE_TASK,
     SNAPSHOT_TASK,
@@ -28,7 +29,7 @@ def test_real_jobs_take_ids_only() -> None:
     app = build_app(URL, "disable")
     assert "atesta:retry_stalled_jobs" in app.tasks
     # The names the scanning module defers by.
-    assert {SNAPSHOT_TASK, RUN_TASK, INGEST_TASK, SCHEDULE_TASK} <= set(app.tasks)
+    assert {SNAPSHOT_TASK, RESCORE_TASK, RUN_TASK, INGEST_TASK, SCHEDULE_TASK} <= set(app.tasks)
     assert non_id_parameters(make_blueprint().tasks.values()) == []
 
 

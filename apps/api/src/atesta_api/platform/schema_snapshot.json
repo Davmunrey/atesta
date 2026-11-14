@@ -19,6 +19,15 @@
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
+   "control_reviews",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
    "evidence",
    "tenant_isolation",
    "ALL",
@@ -29,6 +38,15 @@
   ],
   [
    "evidence_controls",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "evidence_statements",
    "tenant_isolation",
    "ALL",
    "PERMISSIVE",
@@ -180,6 +198,12 @@
    "SELECT"
   ],
   [
+   "control_reviews",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
    "controls",
    "",
    "atesta_app",
@@ -193,6 +217,12 @@
   ],
   [
    "evidence_controls",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
+   "evidence_statements",
    "",
    "atesta_app",
    "INSERT,SELECT"

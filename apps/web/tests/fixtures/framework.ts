@@ -41,3 +41,22 @@ export const requirementGuidance: components["schemas"]["RequirementContext"] = 
   selection_basis: "nivel · C I T A", selection_rules: [{ level: "BAJO", rule: "+ [R1 o R2]" }, { level: "ALTO", rule: "+ R3" }],
   section: "4.2.1", source_sha256: "a".repeat(64),
 };
+
+type Review = components["schemas"]["ReviewOut"];
+
+/** A synthetic manual control, reviewed or not, on R2 (first in the register). */
+export function withManualControl(review: Review | null): components["schemas"]["FrameworkDetail"] {
+  const paper = {
+    key: "ctl.paper", title_es: "Plan de respuesta sintético", title_en: "Synthetic response plan",
+    description_es: "Aprueba y conserva el plan.", description_en: "Approve and keep the plan.", manual: true,
+    remediation_refs: [], mapping_reviewed: true, mapping_source: "Synthetic mapping", observed_status: null,
+    checks: [], review,
+  };
+  return { ...framework, requirements: [{ ...framework.requirements[1]!, controls: [paper] }, framework.requirements[0]!] };
+}
+
+export const passingReview: Review = {
+  id: "22222222-2222-4222-8222-222222222222", control_key: "ctl.paper", status: "pass",
+  rationale: "Acta del comité de 2026-10-01.\nPunto 3 aprobado.", valid_until: "2027-10-01",
+  reviewed_by: "11111111-1111-4111-8111-111111111111", reviewed_at: "2026-10-02T09:30:00Z", expired: false,
+};

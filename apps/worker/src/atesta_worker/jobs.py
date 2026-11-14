@@ -15,6 +15,7 @@ from atesta_api.modules.scanning.api import (
     scheduled_scan,
     start_attempt,
 )
+from atesta_api.modules.scanning.api import rescore_reviews as rescore_org
 from atesta_api.modules.scanning.api import snapshot_scores as score_scan
 from procrastinate import Blueprint, JobContext, RetryStrategy
 from sqlalchemy.exc import OperationalError
@@ -109,6 +110,12 @@ def schedule_scan(organization_id: str, connection_id: str) -> None:
         scheduled_scan(session, uuid.UUID(organization_id), uuid.UUID(connection_id))
 
 
+def rescore_reviews(organization_id: str) -> None:
+    """A correction of the latest scan's snapshots after a review. A retry adds one more link."""
+    with org_session(organization_id, isolation_level="REPEATABLE READ") as session:
+        rescore_org(session, uuid.UUID(organization_id))
+
+
 def make_blueprint() -> Blueprint:
     """A fresh blueprint per app: Procrastinate renames task objects when an app adds them.
 
@@ -122,6 +129,7 @@ def make_blueprint() -> Blueprint:
     # ids do not find is never retried.
     transient = RetryStrategy(max_attempts=3, retry_exceptions={OperationalError})
     blueprint.task(name="snapshot_scores", queue="scans", retry=transient)(snapshot_scores)
+    blueprint.task(name="rescore_reviews", queue="scans", retry=transient)(rescore_reviews)
     blueprint.task(name="ingest_scan", queue="scans", retry=transient)(ingest_scan)
     # A lost schedule job would end the daily chain for good: transient database errors retry.
     blueprint.task(name="schedule_scan", queue="scans", retry=transient)(schedule_scan)

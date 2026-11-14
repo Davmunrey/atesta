@@ -314,6 +314,16 @@
             "title": "Remediation Refs",
             "type": "array"
           },
+          "review": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReviewOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "title_en": {
             "title": "Title En",
             "type": "string"
@@ -371,6 +381,100 @@
           "accept_link"
         ],
         "title": "CreatedInvitation",
+        "type": "object"
+      },
+      "EvidenceOut": {
+        "properties": {
+          "collected_at": {
+            "format": "date-time",
+            "title": "Collected At",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "reference_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Url"
+          },
+          "statement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statement"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "statement",
+          "reference_url",
+          "created_by",
+          "created_at",
+          "collected_at"
+        ],
+        "title": "EvidenceOut",
+        "type": "object"
+      },
+      "EvidencePage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "items"
+        ],
+        "title": "EvidencePage",
         "type": "object"
       },
       "ExpectedAccess": {
@@ -1209,6 +1313,87 @@
         "title": "RequirementDetail",
         "type": "object"
       },
+      "ReviewIn": {
+        "properties": {
+          "rationale": {
+            "title": "Rationale",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ReviewStatus"
+          },
+          "valid_until": {
+            "format": "date",
+            "title": "Valid Until",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "rationale",
+          "valid_until"
+        ],
+        "title": "ReviewIn",
+        "type": "object"
+      },
+      "ReviewOut": {
+        "properties": {
+          "control_key": {
+            "title": "Control Key",
+            "type": "string"
+          },
+          "expired": {
+            "title": "Expired",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "rationale": {
+            "title": "Rationale",
+            "type": "string"
+          },
+          "reviewed_at": {
+            "format": "date-time",
+            "title": "Reviewed At",
+            "type": "string"
+          },
+          "reviewed_by": {
+            "format": "uuid",
+            "title": "Reviewed By",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ReviewStatus"
+          },
+          "valid_until": {
+            "format": "date",
+            "title": "Valid Until",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "control_key",
+          "status",
+          "rationale",
+          "valid_until",
+          "reviewed_by",
+          "reviewed_at",
+          "expired"
+        ],
+        "title": "ReviewOut",
+        "type": "object"
+      },
+      "ReviewStatus": {
+        "enum": [
+          "pass",
+          "fail"
+        ],
+        "type": "string"
+      },
       "Role": {
         "enum": [
           "owner",
@@ -1526,6 +1711,47 @@
           "computed_at"
         ],
         "title": "SnapshotSummary",
+        "type": "object"
+      },
+      "StatementIn": {
+        "additionalProperties": false,
+        "properties": {
+          "reference_url": {
+            "anyOf": [
+              {
+                "maxLength": 2048,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Url"
+          },
+          "statement": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "title": "Statement",
+            "type": "string"
+          },
+          "submission_id": {
+            "format": "uuid",
+            "title": "Submission Id",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "submission_id",
+          "title",
+          "statement"
+        ],
+        "title": "StatementIn",
         "type": "object"
       },
       "ValidationError": {
@@ -1977,6 +2203,278 @@
         "summary": "Scan Now",
         "tags": [
           "scanning"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/controls/{control_key}/evidence": {
+      "get": {
+        "operationId": "list_evidence_api_v1_orgs__org_id__controls__control_key__evidence_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "control_key",
+            "required": true,
+            "schema": {
+              "title": "Control Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 100000,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidencePage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Evidence",
+        "tags": [
+          "evidence"
+        ]
+      },
+      "post": {
+        "operationId": "record_statement_api_v1_orgs__org_id__controls__control_key__evidence_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "control_key",
+            "required": true,
+            "schema": {
+              "title": "Control Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatementIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Record Statement",
+        "tags": [
+          "evidence"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/controls/{control_key}/reviews": {
+      "get": {
+        "operationId": "list_reviews_api_v1_orgs__org_id__controls__control_key__reviews_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "control_key",
+            "required": true,
+            "schema": {
+              "title": "Control Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewOut"
+                  },
+                  "title": "Response List Reviews Api V1 Orgs  Org Id  Controls  Control Key  Reviews Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Reviews",
+        "tags": [
+          "compliance"
+        ]
+      },
+      "post": {
+        "operationId": "record_review_api_v1_orgs__org_id__controls__control_key__reviews_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "control_key",
+            "required": true,
+            "schema": {
+              "title": "Control Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Record Review",
+        "tags": [
+          "compliance"
         ]
       }
     },

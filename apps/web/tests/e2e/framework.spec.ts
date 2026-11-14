@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
-import { framework, preparationFramework, requirementGuidance } from "../fixtures/framework";
+import { framework, passingReview, preparationFramework, requirementGuidance, withManualControl } from "../fixtures/framework";
 import { overview } from "../fixtures/overview";
 
 async function createOrganization(page: Page) {
@@ -14,6 +14,50 @@ async function createOrganization(page: Page) {
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Equipo de ejemplo para revisar requisitos");
   return new URL(page.url()).searchParams.get("org")!;
 }
+
+test("evidence form supports keyboard submission and responsive themes", async ({ page }) => {
+  const org = await createOrganization(page);
+  const proof = { id: "synthetic-proof", kind: "attestation", title: "Synthetic policy", statement: "Synthetic evidence for browser verification.", reference_url: null, created_by: null, created_at: "2026-11-14T12:00:00Z", collected_at: "2026-11-14T12:00:00Z" };
+  let saved = false;
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha", (route) => route.fulfill({ json: withManualControl(null) }));
+  await page.route("**/api/v1/orgs/*/controls/ctl.paper/evidence*", async (route) => {
+    if (route.request().method() === "POST") {
+      expect(route.request().postDataJSON()).toMatchObject({ title: proof.title, statement: proof.statement, reference_url: null });
+      saved = true;
+      return route.fulfill({ status: 201, json: proof });
+    }
+    return route.fulfill({ json: { total: saved ? 1 : 0, items: saved ? [proof] : [] } });
+  });
+  await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
+  const control = page.locator("article").filter({ hasText: "ctl.paper" });
+  const requirement = page.locator("details.requirement-row").filter({ hasText: "ctl.paper" });
+  await requirement.locator("summary").click();
+  await control.getByRole("button", { name: "Ver evidencias" }).press("Enter");
+  await control.getByRole("button", { name: "Registrar evidencia" }).click();
+  await control.getByLabel("Nombre de la evidencia").fill(proof.title);
+  await control.getByLabel("Qué demuestra").fill(proof.statement);
+  for (const colorScheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
+    for (const width of [375, 768, 1280]) {
+      await page.setViewportSize({ width, height: 900 });
+      await expect(page.locator("body")).toHaveCSS("background-color", colorScheme === "dark" ? "rgb(23, 23, 21)" : "rgb(244, 241, 234)");
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+      expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id)).toEqual([]);
+    }
+  }
+  await control.getByRole("button", { name: "Guardar evidencia" }).click();
+  await expect(control.getByText("Evidencia registrada. La revisión se decide por separado.")).toBeVisible();
+  await page.reload();
+  await requirement.locator("summary").click();
+  await control.getByRole("button", { name: "Ver evidencias" }).click();
+  await expect(control.getByText(proof.statement)).toBeVisible();
+  await page.getByRole("button", { name: "English" }).click();
+  if (await requirement.getAttribute("open") === null) await requirement.locator("summary").click();
+  const toggle = control.getByRole("button", { name: /^(View|Hide) evidence$/ });
+  if (await toggle.getAttribute("aria-expanded") === "false") await toggle.click();
+  await expect(control.getByRole("button", { name: "Record evidence" })).toBeVisible();
+});
 
 test("framework route handles a real absent catalog and recovers from read failures", async ({ page }) => {
   const org = await createOrganization(page);
@@ -98,4 +142,32 @@ test("preparation exposes scope, missing work, official rules and configuration 
   await expect(page.getByRole("table")).toContainText("BAJO");
   await page.locator("summary").getByText("Read full official text (Spanish)").click();
   await expect(page.getByText(requirementGuidance.official_text_es)).toHaveAttribute("lang", "es");
+});
+
+test("an owner records a human review of a manual control, accessibly and within the CSP", async ({ page }) => {
+  const csp: string[] = [];
+  page.on("console", (message) => { if (message.text().includes("Content Security Policy")) csp.push(message.text()); });
+  const org = await createOrganization(page);
+  let reviewed = false;
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha", (route) => route.fulfill({ json: withManualControl(reviewed ? passingReview : null) }));
+  await page.route("**/api/v1/orgs/*/controls/ctl.paper/reviews", (route) => { reviewed = true; return route.fulfill({ status: 201, json: passingReview }); });
+  await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
+  await page.locator("details.requirement-row").filter({ hasText: "R2" }).locator("summary").click();  // failures open first
+  const card = page.locator("article.control-guide").filter({ hasText: "Plan de respuesta sintético" });
+  await expect(card.getByText(/Sin revisión registrada/)).toBeVisible();
+  await card.getByRole("button", { name: "Registrar revisión" }).click();
+  for (const width of [375, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+    expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id), `${width}`).toEqual([]);
+  }
+  await card.getByRole("radio", { name: "Cumple", exact: true }).check();
+  await card.getByLabel("Justificación").fill("Acta 12 aprobada por la dirección.");
+  const post = page.waitForRequest((request) => request.method() === "POST" && request.url().includes("/reviews"));
+  await card.getByRole("button", { name: "Guardar revisión" }).click();
+  expect((await post).postDataJSON()).toMatchObject({ status: "pass", rationale: "Acta 12 aprobada por la dirección." });
+  await expect(card.getByRole("status")).toContainText("Revisión registrada");
+  await expect(card.getByText("Punto 3 aprobado.", { exact: false })).toBeVisible();
+  expect(csp).toEqual([]);
 });

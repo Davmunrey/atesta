@@ -51,7 +51,11 @@
     "en": "English"
   },
   "errors": {
-    "compliance": { "not_found": "This framework is unavailable. Return to the overview and choose a published framework." },
+    "compliance": {
+      "control_not_found": "This control does not exist or is no longer active in the catalog.",
+      "control_not_manual": "Automated checks evaluate this control, so it cannot be reviewed manually.",
+      "not_found": "This framework is unavailable. Return to the overview and choose a published framework."
+    },
     "unknown": "Something went wrong. Try again, and contact support if it keeps happening.",
     "auth": {
       "bad_nonce": "Sign-in could not be completed. Sign in again.",
@@ -81,13 +85,17 @@
       "method_not_allowed": "This action is not available. Reload the page.",
       "not_found": "We could not find that page or resource."
     },
+    "server": {
+      "error": "Something went wrong on our side. Try again, and contact support if it keeps happening."
+    },
+    "evidence": {
+      "control_not_found": "This control is no longer available. Reload the catalog.",
+      "submission_conflict": "This submission was already recorded with different data. Reload the evidence before continuing."
+    },
     "scanning": {
       "already_queued": "A scan of this connection is already queued or running. Wait for it to finish.",
       "connection_not_active": "This connection is not active yet. Finish its setup and verify it before scanning.",
       "not_found": "We couldn't find that scan, or you don't have access."
-    },
-    "server": {
-      "error": "Something went wrong on our side. Try again, and contact support if it keeps happening."
     }
   },
   "app": {
@@ -185,6 +193,28 @@
     "noControls": "No active controls are mapped. Review the requirement source and request a reviewed mapping; missing controls do not establish compliance.",
     "manualControl": "Documentary control",
     "manualHelp": "Requires documentation or human review. An automated check does not replace that review.",
+    "review": {
+      "title": "Human review",
+      "none": "No review recorded. Until someone records one, this control counts as pending.",
+      "status": {
+        "pass": "Meets",
+        "fail": "Does not meet"
+      },
+      "expired": "Review expired",
+      "summary": "Recorded by {author} on {date}. Valid until {until}.",
+      "someone": "a member",
+      "record": "Record review",
+      "update": "Record a new review",
+      "decision": "Decision",
+      "rationale": "Rationale",
+      "rationaleHelp": "Explain what you reviewed and where the evidence is (document, minutes, date). Up to 2000 characters.",
+      "validUntil": "Valid until",
+      "scoreNote": "The score is recalculated against the latest technical assessment within seconds.",
+      "save": "Save review",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "saved": "Review recorded. The score will update within seconds."
+    },
     "observationHelp": "Technical observation as of the scan, aggregated across connections. It is distinct from the recorded requirement result.",
     "mappingUnreviewed": "The relationship between this requirement and control has no recorded review yet.",
     "checks": "Configured technical checks",
@@ -195,8 +225,21 @@
     "currentVersion": "Current version: {version}. Catalog: {catalog}.",
     "unknownVersion": "no published version",
     "catalogHelp": "Explanations and references come from the catalog. Atesta reads configuration; changes are applied outside Atesta and must be verified afterward.",
-    "states": { "all": "All", "fail": "Fail", "manual": "Manual review", "not_evaluated": "Not assessed", "pass": "Pass", "not_applicable": "Not applicable" },
-    "observations": { "missing": "No observation", "fail": "Observed failure", "pass": "Check passed", "manual": "Manual review", "not_evaluated": "Not evaluated" },
+    "states": {
+      "all": "All",
+      "fail": "Fail",
+      "manual": "Manual review",
+      "not_evaluated": "Not assessed",
+      "pass": "Pass",
+      "not_applicable": "Not applicable"
+    },
+    "observations": {
+      "missing": "No observation",
+      "fail": "Observed failure",
+      "pass": "Check passed",
+      "manual": "Manual review",
+      "not_evaluated": "Not evaluated"
+    },
     "meaning": {
       "fail": "The recorded assessment contains at least one failed control. Inspect the configuration that produced the result.",
       "manual": "A verifiable conclusion is missing. It may require documentary evidence, human review or checks that have not been evaluated.",
@@ -294,5 +337,32 @@
     "manual": "Documentary review",
     "technical": "Technical configuration",
     "candidateChecks": "Candidate checks, no observation"
+  },
+  "evidence": {
+    "show": "View evidence",
+    "hide": "Hide evidence",
+    "boundary": "Statements and references provided by the team. They do not verify documents or approve the control.",
+    "saved": "Evidence recorded. The review is decided separately.",
+    "loading": "Loading evidence…",
+    "retry": "Retry",
+    "count": "{count, plural, one {# evidence record} other {# evidence records}}",
+    "empty": "There is no evidence for this control yet.",
+    "recorded": "{author} · {date}",
+    "scanner": "Automatic collection",
+    "member": "Organization member",
+    "collected": "Collected evidence. The file is not available from this screen.",
+    "pages": "Evidence pages",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "{page} of {pages}",
+    "record": "Record evidence",
+    "title": "Evidence name",
+    "statement": "What it demonstrates",
+    "reference": "Document link (optional)",
+    "referenceHelp": "HTTPS link without credentials. Atesta stores the reference without downloading the document.",
+    "immutable": "This record stays in the history. To correct it, add new evidence explaining the change.",
+    "saving": "Saving…",
+    "save": "Save evidence",
+    "cancel": "Cancel"
   }
 }

@@ -51,7 +51,11 @@
     "en": "English"
   },
   "errors": {
-    "compliance": { "not_found": "Este marco no está disponible. Vuelve al resumen y elige un marco publicado." },
+    "compliance": {
+      "control_not_found": "Este control no existe o ya no está activo en el catálogo.",
+      "control_not_manual": "Este control se evalúa con comprobaciones automáticas; no admite revisión manual.",
+      "not_found": "Este marco no está disponible. Vuelve al resumen y elige un marco publicado."
+    },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
       "bad_nonce": "No se ha podido completar el inicio de sesión. Vuelve a iniciar sesión.",
@@ -81,13 +85,17 @@
       "method_not_allowed": "Esta acción no está disponible. Recarga la página.",
       "not_found": "No encontramos esa página o recurso."
     },
+    "server": {
+      "error": "Algo ha fallado por nuestra parte. Vuelve a intentarlo y, si se repite, contacta con soporte."
+    },
+    "evidence": {
+      "control_not_found": "Este control ya no está disponible. Recarga el catálogo.",
+      "submission_conflict": "Este envío ya se registró con otros datos. Recarga las evidencias antes de continuar."
+    },
     "scanning": {
       "already_queued": "Ya hay un escaneo en cola o en curso para esta conexión. Espera a que termine.",
       "connection_not_active": "Esta conexión aún no está activa. Termina de configurarla y verifícala antes de escanear.",
       "not_found": "No encontramos ese escaneo, o no tienes acceso."
-    },
-    "server": {
-      "error": "Algo ha fallado por nuestra parte. Vuelve a intentarlo y, si se repite, contacta con soporte."
     }
   },
   "app": {
@@ -185,6 +193,28 @@
     "noControls": "No hay controles activos asociados. Revisa la fuente del requisito y solicita el mapeo revisado; la ausencia de controles no demuestra cumplimiento.",
     "manualControl": "Control documental",
     "manualHelp": "Requiere documentación o revisión humana. Una comprobación automática no sustituye esa revisión.",
+    "review": {
+      "title": "Revisión humana",
+      "none": "Sin revisión registrada. Hasta que alguien la registre, este control cuenta como pendiente.",
+      "status": {
+        "pass": "Cumple",
+        "fail": "No cumple"
+      },
+      "expired": "Revisión caducada",
+      "summary": "Registrada por {author} el {date}. Válida hasta el {until}.",
+      "someone": "un miembro",
+      "record": "Registrar revisión",
+      "update": "Registrar nueva revisión",
+      "decision": "Decisión",
+      "rationale": "Justificación",
+      "rationaleHelp": "Explica qué has revisado y dónde está la evidencia (documento, acta, fecha). Hasta 2000 caracteres.",
+      "validUntil": "Válida hasta",
+      "scoreNote": "La puntuación se recalcula con la última evaluación técnica en unos segundos.",
+      "save": "Guardar revisión",
+      "saving": "Guardando…",
+      "cancel": "Cancelar",
+      "saved": "Revisión registrada. La puntuación se actualizará en unos segundos."
+    },
     "observationHelp": "Observación técnica a la fecha del análisis, agregada entre conexiones. Es distinta del resultado registrado del requisito.",
     "mappingUnreviewed": "La relación entre este requisito y el control aún no tiene revisión registrada.",
     "checks": "Comprobaciones técnicas configuradas",
@@ -195,8 +225,21 @@
     "currentVersion": "Versión actual: {version}. Catálogo: {catalog}.",
     "unknownVersion": "sin versión publicada",
     "catalogHelp": "Las explicaciones y referencias proceden del catálogo. Atesta consulta la configuración; los cambios se aplican fuera de Atesta y deben verificarse después.",
-    "states": { "all": "Todos", "fail": "No cumple", "manual": "Revisión manual", "not_evaluated": "Sin evaluar", "pass": "Cumple", "not_applicable": "No aplica" },
-    "observations": { "missing": "Sin observación", "fail": "Fallo observado", "pass": "Comprobación superada", "manual": "Revisión manual", "not_evaluated": "No evaluada" },
+    "states": {
+      "all": "Todos",
+      "fail": "No cumple",
+      "manual": "Revisión manual",
+      "not_evaluated": "Sin evaluar",
+      "pass": "Cumple",
+      "not_applicable": "No aplica"
+    },
+    "observations": {
+      "missing": "Sin observación",
+      "fail": "Fallo observado",
+      "pass": "Comprobación superada",
+      "manual": "Revisión manual",
+      "not_evaluated": "No evaluada"
+    },
     "meaning": {
       "fail": "La evaluación registrada contiene al menos un control fallido. Revisa qué configuración originó el resultado.",
       "manual": "Falta una conclusión verificable. Puede requerir evidencia documental, una revisión humana o comprobaciones todavía no evaluadas.",
@@ -294,5 +337,32 @@
     "manual": "Revisión documental",
     "technical": "Configuración técnica",
     "candidateChecks": "Comprobaciones candidatas, sin observación"
+  },
+  "evidence": {
+    "show": "Ver evidencias",
+    "hide": "Ocultar evidencias",
+    "boundary": "Declaraciones y referencias aportadas por el equipo. No validan documentos ni aprueban el control.",
+    "saved": "Evidencia registrada. La revisión se decide por separado.",
+    "loading": "Cargando evidencias…",
+    "retry": "Reintentar",
+    "count": "{count, plural, one {# evidencia registrada} other {# evidencias registradas}}",
+    "empty": "Todavía no hay evidencias para este control.",
+    "recorded": "{author} · {date}",
+    "scanner": "Recopilación automática",
+    "member": "Miembro de la organización",
+    "collected": "Evidencia recopilada. El archivo no está disponible desde esta pantalla.",
+    "pages": "Páginas de evidencias",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "page": "{page} de {pages}",
+    "record": "Registrar evidencia",
+    "title": "Nombre de la evidencia",
+    "statement": "Qué demuestra",
+    "reference": "Enlace al documento (opcional)",
+    "referenceHelp": "Enlace HTTPS sin credenciales. Atesta conserva la referencia, sin descargar el documento.",
+    "immutable": "El registro se conserva en el historial. Para corregirlo, añade una nueva evidencia que explique el cambio.",
+    "saving": "Guardando…",
+    "save": "Guardar evidencia",
+    "cancel": "Cancelar"
   }
 }
