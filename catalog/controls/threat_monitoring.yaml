@@ -1,0 +1,22 @@
+id: ctl.threat_monitoring
+title_es: Protección de servicios y vigilancia
+title_en: Service protection and threat monitoring
+description_es: |-
+  1. Identifica amenazas para equipos, correo, navegación y aplicaciones web.
+  2. Configura protección, actualizaciones, detección y alertas con responsables y procedimientos de respuesta.
+  3. Define métricas de cobertura y comprueba alertas con pruebas benignas autorizadas.
+  Evidencia: políticas, cobertura de agentes, reglas, alertas y revisión de métricas.
+  Verificación: revisa componentes sin protección y prueba recepción, investigación y cierre de una alerta.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Identify threats to endpoints, email, browsing and web applications.
+  2. Configure protection, updates, detection and alerts with owners and response procedures.
+  3. Define coverage metrics and verify alerts using authorized benign tests.
+  Evidence: policies, agent coverage, rules, alerts and metric reviews.
+  Verification: investigate unprotected components and test alert receipt, investigation and closure.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

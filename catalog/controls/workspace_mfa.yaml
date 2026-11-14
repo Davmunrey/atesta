@@ -1,0 +1,23 @@
+id: ctl.workspace_mfa
+title_es: Verificación en dos pasos en Google Workspace
+title_en: Two-step verification in Google Workspace
+description_es: |
+  Preparar: comunica el despliegue, registra métodos y prueba recuperación antes de exigirlos.
+  1. En la consola, Seguridad, Autenticación, Verificación en dos pasos, selecciona unidad o grupo.
+  2. Permite inscripción, define fecha de exigencia, métodos, plazo de alta y confianza del dispositivo según la política aprobada.
+  3. Prueba acceso y revisa excepciones y herencia; los grupos pueden prevalecer sobre unidades.
+  Evidencia: políticas efectivas y pruebas por colectivo.
+  Límite: Prowler aplica su criterio técnico de métodos, plazo y confianza. Revisa su alcance y las sobrescrituras; no equivale automáticamente a cada refuerzo ENS.
+description_en: |
+  Prepare: communicate rollout, enroll methods and test recovery before enforcement.
+  1. In Admin console, Security, Authentication, 2-step verification, select the unit or group.
+  2. Allow enrollment and define enforcement date, methods, enrollment period and device trust under the approved policy.
+  3. Test access and review exceptions/inheritance; groups can override units.
+  Evidence: effective policies and tests for each population.
+  Limit: Prowler applies its technical criteria for methods, enrollment and trust. Review coverage and overrides; these do not automatically establish every ENS reinforcement.
+manual: false
+prowler_checks: [security_2sv_enforced]
+atesta_checks: []
+remediation_refs:
+  - https://knowledge.workspace.google.com/admin/security/deploy-2-step-verification
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_2sv_enforced/security_2sv_enforced.py

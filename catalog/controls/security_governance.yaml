@@ -1,0 +1,22 @@
+id: ctl.security_governance
+title_es: Gobierno y documentación de seguridad
+title_en: Security governance and documentation
+description_es: |-
+  1. Delimita servicios, responsables y autoridad para aprobar cambios.
+  2. Separa política, normas de uso, procedimientos operativos y autorizaciones; registra versión, aprobación y difusión.
+  3. Comprueba una muestra de altas, cambios y excepciones contra esos documentos.
+  Evidencia: documentos vigentes, nombramientos, aprobaciones y registros de comunicación.
+  Verificación: el responsable de seguridad confirma coherencia, vigencia y aplicación real.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Define services, accountable roles and change approval authority.
+  2. Separate policy, acceptable-use rules, operating procedures and authorizations; record versions, approval and distribution.
+  3. Sample onboarding, changes and exceptions against those documents.
+  Evidence: current documents, appointments, approvals and communication records.
+  Verification: the security owner confirms consistency, currency and actual operation.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

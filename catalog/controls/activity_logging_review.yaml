@@ -1,0 +1,22 @@
+id: ctl.activity_logging_review
+title_es: Registro, protección y revisión de actividad
+title_en: Activity logging, protection and review
+description_es: |-
+  1. Define eventos necesarios, usuarios afectados, retención y responsables de consulta.
+  2. Configura registros, sincronización temporal, acceso restringido y protección frente a alteración.
+  3. Genera un evento de prueba, localízalo y revisa alertas y conservación.
+  Evidencia: configuración, muestra minimizada, permisos, retención y registro de revisión.
+  Verificación: comprueba todas las fuentes relevantes; auditar un buzón no verifica correlación ni protección de todos los registros.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Define required events, user populations, retention and authorized reviewers.
+  2. Configure logging, time synchronization, restricted access and protection against alteration.
+  3. Generate a test event, retrieve it and review alerting and retention.
+  Evidence: configuration, minimized sample, permissions, retention and review record.
+  Verification: cover every relevant source; mailbox auditing does not prove correlation or protection of all logs.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

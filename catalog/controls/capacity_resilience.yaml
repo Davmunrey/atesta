@@ -1,0 +1,22 @@
+id: ctl.capacity_resilience
+title_es: Capacidad y resistencia a saturación
+title_en: Capacity and overload resilience
+description_es: |-
+  1. Estima carga normal, picos y dependencias críticas.
+  2. Configura límites, alertas, capacidad de reserva y protección frente a saturación según el servicio.
+  3. Acuerda respuesta con el proveedor y prueba recuperación sin afectar producción.
+  Evidencia: dimensionamiento, métricas, umbrales, contrato y pruebas de carga autorizadas.
+  Verificación: documenta capacidad observada y acciones cuando se superan los límites.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Estimate normal load, peaks and critical dependencies.
+  2. Configure limits, alerts, reserve capacity and overload protection for the service.
+  3. Agree response procedures with the provider and test recovery without impacting production.
+  Evidence: sizing, metrics, thresholds, contracts and authorized load tests.
+  Verification: record observed capacity and actions when limits are exceeded.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

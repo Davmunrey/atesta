@@ -1,0 +1,22 @@
+id: ctl.asset_inventory
+title_es: Inventario y movimiento de activos
+title_en: Asset inventory and movement
+description_es: |-
+  1. Registra activos físicos, virtuales, software y servicios con propietario, ubicación y criticidad.
+  2. Define autorización y registro para entrada, salida, traslado y retirada.
+  3. Reconcilia inventario con descubrimiento técnico y una muestra física.
+  Evidencia: inventario versionado, responsables y registros de movimientos.
+  Verificación: investiga activos sin dueño, cambios no registrados y equipos fuera de soporte.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Record physical/virtual assets, software and services with owner, location and criticality.
+  2. Define authorization and recording for arrival, departure, movement and retirement.
+  3. Reconcile the inventory with technical discovery and a physical sample.
+  Evidence: versioned inventory, ownership and movement records.
+  Verification: investigate unowned assets, unrecorded changes and unsupported equipment.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

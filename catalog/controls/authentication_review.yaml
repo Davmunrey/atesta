@@ -1,0 +1,22 @@
+id: ctl.authentication_review
+title_es: Autenticación y ciclo de vida de credenciales
+title_en: Authentication and credential lifecycle
+description_es: |-
+  1. Distingue usuarios externos e internos y valora las dimensiones de seguridad aplicables.
+  2. Selecciona mecanismos y refuerzos según el texto oficial; documenta registro, entrega, custodia, revocación, intentos y acceso remoto.
+  3. Prueba autenticación, bloqueo, recuperación y baja en cada vía de acceso.
+  Evidencia: políticas efectivas, pruebas, exclusiones aprobadas y procedimiento de credenciales.
+  Verificación: MFA de administradores solo cubre una parte; revisa todos los colectivos y alternativas.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Distinguish external/internal users and assess the relevant security dimensions.
+  2. Select mechanisms and reinforcements from the official text; document enrollment, delivery, custody, revocation, attempts and remote access.
+  3. Test authentication, lockout, recovery and termination through each access path.
+  Evidence: effective policies, tests, approved exclusions and credential procedures.
+  Verification: administrator MFA covers only part of the requirement; review every population and alternative.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

@@ -1,0 +1,22 @@
+id: ctl.continuity_restore
+title_es: Continuidad y recuperación de copias
+title_en: Continuity and backup recovery
+description_es: |-
+  1. Analiza impacto y acuerda tiempos de recuperación y pérdida de datos tolerable por servicio.
+  2. Configura copias, protección, separación y medios alternativos; documenta responsables y recuperación.
+  3. Restaura una muestra en entorno controlado y ejercita el plan de continuidad.
+  Evidencia: análisis de impacto, plan, trabajos de copia, prueba de restauración y mejoras.
+  Verificación: mide tiempos e integridad; una tarea de copia correcta no prueba recuperación. Revisa si retención y reciclaje del proveedor son suficientes.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Assess impact and agree recovery times and acceptable data loss per service.
+  2. Configure backups, protection, separation and alternate resources; document ownership and recovery.
+  3. Restore a sample in a controlled environment and exercise the continuity plan.
+  Evidence: impact assessment, plan, backup jobs, restore test and improvements.
+  Verification: measure time and integrity; a successful backup job does not prove recovery. Check whether provider retention and recycle bins are sufficient.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

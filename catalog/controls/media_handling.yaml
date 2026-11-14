@@ -1,0 +1,22 @@
+id: ctl.media_handling
+title_es: Marcado, custodia, transporte y borrado
+title_en: Media labeling, custody, transport and erasure
+description_es: |-
+  1. Identifica soportes y aplica marcado según la información y las reglas aprobadas.
+  2. Define custodia, autorización de transporte, registro de entrega y protección durante el traslado.
+  3. Aplica borrado o destrucción adecuados antes de reutilizar o retirar soportes.
+  Evidencia: inventario, cadena de custodia, autorizaciones y certificados de eliminación.
+  Verificación: prueba recuperación tras borrado cuando corresponda y revisa servicios externos de destrucción.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Identify media and label it according to information and approved rules.
+  2. Define custody, transport authorization, handover records and protection in transit.
+  3. Apply suitable erasure or destruction before reuse or retirement.
+  Evidence: inventory, custody chain, authorizations and disposal certificates.
+  Verification: test recoverability after erasure where appropriate and review external destruction services.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

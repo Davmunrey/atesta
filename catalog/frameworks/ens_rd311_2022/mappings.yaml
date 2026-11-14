@@ -1,0 +1,542 @@
+mappings:
+- requirement_id: org.1
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for org.1; security governance and documentation evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: org.2
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for org.2; security governance and documentation evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: org.3
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for org.3; security governance and documentation evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: org.4
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for org.4; security governance and documentation evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.pl.1
+  control_id: ctl.risk_analysis
+  rationale: Candidate documentary review for op.pl.1; risk assessment and treatment evidence must be
+    checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.pl.2
+  control_id: ctl.security_architecture
+  rationale: Candidate documentary review for op.pl.2; architecture, boundaries and network separation
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.ext.4
+  control_id: ctl.security_architecture
+  rationale: Candidate documentary review for op.ext.4; architecture, boundaries and network separation
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.com.1
+  control_id: ctl.security_architecture
+  rationale: Candidate documentary review for mp.com.1; architecture, boundaries and network separation
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.com.4
+  control_id: ctl.security_architecture
+  rationale: Candidate documentary review for mp.com.4; architecture, boundaries and network separation
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.pl.3
+  control_id: ctl.secure_procurement
+  rationale: Candidate documentary review for op.pl.3; component procurement and assurance evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.pl.5
+  control_id: ctl.secure_procurement
+  rationale: Candidate documentary review for op.pl.5; component procurement and assurance evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.pl.4
+  control_id: ctl.capacity_resilience
+  rationale: Candidate documentary review for op.pl.4; capacity and overload resilience evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.s.4
+  control_id: ctl.capacity_resilience
+  rationale: Candidate documentary review for mp.s.4; capacity and overload resilience evidence must be
+    checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.1
+  control_id: ctl.access_review
+  rationale: Candidate documentary review for op.acc.1; identities, permissions and separation of duties
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.2
+  control_id: ctl.access_review
+  rationale: Candidate documentary review for op.acc.2; identities, permissions and separation of duties
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.3
+  control_id: ctl.access_review
+  rationale: Candidate documentary review for op.acc.3; identities, permissions and separation of duties
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.4
+  control_id: ctl.access_review
+  rationale: Candidate documentary review for op.acc.4; identities, permissions and separation of duties
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.5
+  control_id: ctl.authentication_review
+  rationale: Candidate documentary review for op.acc.5; authentication and credential lifecycle evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.6
+  control_id: ctl.authentication_review
+  rationale: Candidate documentary review for op.acc.6; authentication and credential lifecycle evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.1
+  control_id: ctl.asset_inventory
+  rationale: Candidate documentary review for op.exp.1; asset inventory and movement evidence must be
+    checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.if.7
+  control_id: ctl.asset_inventory
+  rationale: Candidate documentary review for mp.if.7; asset inventory and movement evidence must be checked
+    against the complete measure, applicable reinforcements and system scope. This shared control is not
+    an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.2
+  control_id: ctl.secure_configuration
+  rationale: Candidate documentary review for op.exp.2; secure configuration and endpoint protection evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.3
+  control_id: ctl.secure_configuration
+  rationale: Candidate documentary review for op.exp.3; secure configuration and endpoint protection evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.eq.1
+  control_id: ctl.secure_configuration
+  rationale: Candidate documentary review for mp.eq.1; secure configuration and endpoint protection evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.eq.2
+  control_id: ctl.secure_configuration
+  rationale: Candidate documentary review for mp.eq.2; secure configuration and endpoint protection evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.eq.3
+  control_id: ctl.secure_configuration
+  rationale: Candidate documentary review for mp.eq.3; secure configuration and endpoint protection evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.eq.4
+  control_id: ctl.secure_configuration
+  rationale: Candidate documentary review for mp.eq.4; secure configuration and endpoint protection evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.4
+  control_id: ctl.change_vulnerability_review
+  rationale: Candidate documentary review for op.exp.4; updates, changes and secure development evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.5
+  control_id: ctl.change_vulnerability_review
+  rationale: Candidate documentary review for op.exp.5; updates, changes and secure development evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.sw.1
+  control_id: ctl.change_vulnerability_review
+  rationale: Candidate documentary review for mp.sw.1; updates, changes and secure development evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.sw.2
+  control_id: ctl.change_vulnerability_review
+  rationale: Candidate documentary review for mp.sw.2; updates, changes and secure development evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.6
+  control_id: ctl.threat_monitoring
+  rationale: Candidate documentary review for op.exp.6; service protection and threat monitoring evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.mon.1
+  control_id: ctl.threat_monitoring
+  rationale: Candidate documentary review for op.mon.1; service protection and threat monitoring evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.mon.2
+  control_id: ctl.threat_monitoring
+  rationale: Candidate documentary review for op.mon.2; service protection and threat monitoring evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.mon.3
+  control_id: ctl.threat_monitoring
+  rationale: Candidate documentary review for op.mon.3; service protection and threat monitoring evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.s.1
+  control_id: ctl.threat_monitoring
+  rationale: Candidate documentary review for mp.s.1; service protection and threat monitoring evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.s.2
+  control_id: ctl.threat_monitoring
+  rationale: Candidate documentary review for mp.s.2; service protection and threat monitoring evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.s.3
+  control_id: ctl.threat_monitoring
+  rationale: Candidate documentary review for mp.s.3; service protection and threat monitoring evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.7
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for op.exp.7; incident response and records evidence must be
+    checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.9
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for op.exp.9; incident response and records evidence must be
+    checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.8
+  control_id: ctl.activity_logging_review
+  rationale: Candidate documentary review for op.exp.8; activity logging, protection and review evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.10
+  control_id: ctl.cryptography_review
+  rationale: Candidate documentary review for op.exp.10; cryptography, keys and trust services evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.com.2
+  control_id: ctl.cryptography_review
+  rationale: Candidate documentary review for mp.com.2; cryptography, keys and trust services evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.com.3
+  control_id: ctl.cryptography_review
+  rationale: Candidate documentary review for mp.com.3; cryptography, keys and trust services evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.si.2
+  control_id: ctl.cryptography_review
+  rationale: Candidate documentary review for mp.si.2; cryptography, keys and trust services evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.info.3
+  control_id: ctl.cryptography_review
+  rationale: Candidate documentary review for mp.info.3; cryptography, keys and trust services evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.info.4
+  control_id: ctl.cryptography_review
+  rationale: Candidate documentary review for mp.info.4; cryptography, keys and trust services evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.ext.1
+  control_id: ctl.supplier_cloud_review
+  rationale: Candidate documentary review for op.ext.1; suppliers, supply chain and cloud evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.ext.2
+  control_id: ctl.supplier_cloud_review
+  rationale: Candidate documentary review for op.ext.2; suppliers, supply chain and cloud evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.ext.3
+  control_id: ctl.supplier_cloud_review
+  rationale: Candidate documentary review for op.ext.3; suppliers, supply chain and cloud evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.nub.1
+  control_id: ctl.supplier_cloud_review
+  rationale: Candidate documentary review for op.nub.1; suppliers, supply chain and cloud evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.cont.1
+  control_id: ctl.continuity_restore
+  rationale: Candidate documentary review for op.cont.1; continuity and backup recovery evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.cont.2
+  control_id: ctl.continuity_restore
+  rationale: Candidate documentary review for op.cont.2; continuity and backup recovery evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.cont.3
+  control_id: ctl.continuity_restore
+  rationale: Candidate documentary review for op.cont.3; continuity and backup recovery evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.cont.4
+  control_id: ctl.continuity_restore
+  rationale: Candidate documentary review for op.cont.4; continuity and backup recovery evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.info.6
+  control_id: ctl.continuity_restore
+  rationale: Candidate documentary review for mp.info.6; continuity and backup recovery evidence must
+    be checked against the complete measure, applicable reinforcements and system scope. This shared control
+    is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.if.1
+  control_id: ctl.physical_security
+  rationale: Candidate documentary review for mp.if.1; facilities and environmental protection evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.if.2
+  control_id: ctl.physical_security
+  rationale: Candidate documentary review for mp.if.2; facilities and environmental protection evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.if.3
+  control_id: ctl.physical_security
+  rationale: Candidate documentary review for mp.if.3; facilities and environmental protection evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.if.4
+  control_id: ctl.physical_security
+  rationale: Candidate documentary review for mp.if.4; facilities and environmental protection evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.if.5
+  control_id: ctl.physical_security
+  rationale: Candidate documentary review for mp.if.5; facilities and environmental protection evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.if.6
+  control_id: ctl.physical_security
+  rationale: Candidate documentary review for mp.if.6; facilities and environmental protection evidence
+    must be checked against the complete measure, applicable reinforcements and system scope. This shared
+    control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.per.1
+  control_id: ctl.people_awareness
+  rationale: Candidate documentary review for mp.per.1; roles, duties and training evidence must be checked
+    against the complete measure, applicable reinforcements and system scope. This shared control is not
+    an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.per.2
+  control_id: ctl.people_awareness
+  rationale: Candidate documentary review for mp.per.2; roles, duties and training evidence must be checked
+    against the complete measure, applicable reinforcements and system scope. This shared control is not
+    an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.per.3
+  control_id: ctl.people_awareness
+  rationale: Candidate documentary review for mp.per.3; roles, duties and training evidence must be checked
+    against the complete measure, applicable reinforcements and system scope. This shared control is not
+    an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.per.4
+  control_id: ctl.people_awareness
+  rationale: Candidate documentary review for mp.per.4; roles, duties and training evidence must be checked
+    against the complete measure, applicable reinforcements and system scope. This shared control is not
+    an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.si.1
+  control_id: ctl.media_handling
+  rationale: Candidate documentary review for mp.si.1; media labeling, custody, transport and erasure
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.si.3
+  control_id: ctl.media_handling
+  rationale: Candidate documentary review for mp.si.3; media labeling, custody, transport and erasure
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.si.4
+  control_id: ctl.media_handling
+  rationale: Candidate documentary review for mp.si.4; media labeling, custody, transport and erasure
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.si.5
+  control_id: ctl.media_handling
+  rationale: Candidate documentary review for mp.si.5; media labeling, custody, transport and erasure
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.info.1
+  control_id: ctl.information_handling
+  rationale: Candidate documentary review for mp.info.1; classification, personal data and publication
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.info.2
+  control_id: ctl.information_handling
+  rationale: Candidate documentary review for mp.info.2; classification, personal data and publication
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.info.5
+  control_id: ctl.information_handling
+  rationale: Candidate documentary review for mp.info.5; classification, personal data and publication
+    evidence must be checked against the complete measure, applicable reinforcements and system scope.
+    This shared control is not an equivalence or approval.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.6
+  control_id: ctl.admin_mfa
+  rationale: Partial administrator MFA policy evidence; excludes full user coverage and credential lifecycle.
+    Stronger authentication methods and exclusions require review.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.6
+  control_id: ctl.legacy_authentication
+  rationale: Partial evidence for blocking a legacy access path; does not establish all authentication
+    alternatives or reinforcement conditions.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.6
+  control_id: ctl.workspace_mfa
+  rationale: Partial domain-policy evidence under the scanner benchmark; applicability, overrides and
+    complete credential lifecycle require review.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.4
+  control_id: ctl.application_consent
+  rationale: Partial application-permission request workflow evidence; does not validate existing grants,
+    all consent policies or all access rights.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.8
+  control_id: ctl.mailbox_audit_bypass
+  rationale: Partial mailbox bypass observation only, currently excluded from collection without PowerShell.
+    Retention, protection, correlation and review require separate evidence.
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null

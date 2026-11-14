@@ -1,0 +1,22 @@
+id: ctl.secure_procurement
+title_es: Adquisición y evaluación de componentes
+title_en: Component procurement and assurance
+description_es: |-
+  1. Define requisitos de seguridad antes de contratar o adquirir componentes.
+  2. Revisa soporte, actualizaciones, configuración segura y certificaciones exigibles para el uso previsto.
+  3. Valida versión, alcance y vigencia de cada certificado; conserva la aceptación técnica.
+  Evidencia: requisitos de compra, evaluación del proveedor, certificados y acta de aceptación.
+  Verificación: no confundas un certificado del proveedor con cobertura de tu sistema.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Define security requirements before acquiring components or services.
+  2. Review support, updates, secure configuration and assurance required for the intended use.
+  3. Check each certificate version, scope and validity; retain technical acceptance.
+  Evidence: procurement requirements, supplier assessment, certificates and acceptance record.
+  Verification: a supplier certificate does not establish coverage of your system.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

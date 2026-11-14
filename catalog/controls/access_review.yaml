@@ -1,0 +1,22 @@
+id: ctl.access_review
+title_es: Identidades, permisos y segregación de funciones
+title_en: Identities, permissions and separation of duties
+description_es: |-
+  1. Inventaría cuentas humanas y de servicio; asigna identificador, propietario y finalidad.
+  2. Documenta quién autoriza altas, cambios, bajas y acceso remoto; aplica mínimo privilegio y separa funciones incompatibles.
+  3. Revisa periódicamente permisos, cuentas inactivas y accesos de terceros; prueba una baja completa.
+  Evidencia: matriz de acceso, aprobaciones, revisiones y retirada de permisos.
+  Verificación: contrasta permisos efectivos con la autorización vigente.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Inventory human and service accounts; assign identifiers, owners and purpose.
+  2. Document authorization for onboarding, changes, termination and remote access; apply least privilege and separate incompatible duties.
+  3. Periodically review permissions, inactive accounts and third-party access; test complete offboarding.
+  Evidence: access matrix, approvals, reviews and revoked access.
+  Verification: compare effective permissions with current authorization.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

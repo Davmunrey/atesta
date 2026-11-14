@@ -1,0 +1,22 @@
+id: ctl.people_awareness
+title_es: Funciones, obligaciones y formación
+title_en: Roles, duties and training
+description_es: |-
+  1. Define requisitos de seguridad por puesto y comunica obligaciones antes de conceder acceso.
+  2. Planifica concienciación y formación adaptadas a funciones, riesgos y cambios.
+  3. Registra asistencia y evalúa comprensión; revisa bajas y cambios de función.
+  Evidencia: perfiles, compromisos, materiales, participación y evaluación.
+  Verificación: muestrea personas y funciones críticas; enviar una campaña no demuestra comprensión ni cumplimiento.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Define security requirements per role and communicate duties before granting access.
+  2. Plan awareness and training around responsibilities, risks and changes.
+  3. Record attendance and assess understanding; review departures and role changes.
+  Evidence: role profiles, acknowledgments, materials, participation and assessment.
+  Verification: sample people and critical roles; sending a campaign does not prove understanding or compliance.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

@@ -1,0 +1,22 @@
+id: ctl.information_handling
+title_es: Clasificación, datos personales y publicación
+title_en: Classification, personal data and publication
+description_es: |-
+  1. Identifica información, propietarios, datos personales y reglas de clasificación.
+  2. Define acceso, conservación y divulgación con los responsables; aplica las obligaciones de protección de datos pertinentes.
+  3. Antes de publicar documentos, revisa contenido oculto, metadatos y permisos.
+  Evidencia: inventario, clasificación, reglas de tratamiento y revisión de una publicación.
+  Verificación: confirma que solo se comparte información autorizada; esta revisión no equivale a un análisis completo del RGPD.
+  Límite: revisión documental candidata; contrasta cada medida y refuerzo con su fuente oficial.
+description_en: |-
+  1. Identify information, owners, personal data and classification rules.
+  2. Define access, retention and disclosure with accountable owners; apply relevant data-protection duties.
+  3. Before publishing documents, inspect hidden content, metadata and permissions.
+  Evidence: inventory, classification, handling rules and a publication review.
+  Verification: confirm only authorized information is shared; this review is not a complete GDPR assessment.
+  Limit: candidate documentary review; check every measure and reinforcement against its official source.
+manual: true
+prowler_checks: []
+atesta_checks: []
+remediation_refs:
+- https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2

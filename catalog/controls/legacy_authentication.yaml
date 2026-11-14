@@ -1,0 +1,23 @@
+id: ctl.legacy_authentication
+title_es: Bloqueo de autenticación heredada en Microsoft Entra
+title_en: Legacy authentication blocking in Microsoft Entra
+description_es: |
+  Preparar: inventaría clientes antiguos y confirma licencia, permisos y acceso de emergencia.
+  1. En Acceso condicional, selecciona usuarios y recursos; incluye Exchange ActiveSync y otros clientes heredados.
+  2. Configura bloqueo, evalúa impacto en modo informe y migra dependencias antes de activar.
+  3. Comprueba un intento bloqueado y un acceso moderno permitido; revisa exclusiones.
+  Evidencia: política aplicada y eventos de prueba minimizados.
+  Límite: solo cubre esa vía de autenticación. No sustituye revisión del ciclo de credenciales ni todas las condiciones del ENS.
+description_en: |
+  Prepare: inventory legacy clients and confirm licensing, permissions and emergency access.
+  1. In Conditional Access, select users/resources and include Exchange ActiveSync and other legacy clients.
+  2. Configure blocking, assess impact in report-only mode and migrate dependencies before enforcement.
+  3. Verify a blocked attempt and an allowed modern sign-in; review exclusions.
+  Evidence: enforced policy and minimized test events.
+  Limit: this covers only that authentication path. It does not replace credential-lifecycle review or all ENS conditions.
+manual: false
+prowler_checks: [entra_legacy_authentication_blocked]
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-block-legacy-authentication
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_legacy_authentication_blocked/entra_legacy_authentication_blocked.py

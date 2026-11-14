@@ -1,0 +1,23 @@
+id: ctl.application_consent
+title_es: Solicitud y revisión de consentimiento de aplicaciones
+title_en: Application consent requests and review
+description_es: |
+  Preparar: un administrador autorizado define quién solicita, revisa y aprueba permisos.
+  1. En Entra, Aplicaciones empresariales, Consentimiento y permisos, abre Configuración de consentimiento del administrador.
+  2. Activa solicitudes y define revisores, avisos, recordatorios y caducidad.
+  3. Prueba solicitud, denegación y aprobación con una aplicación de prueba y revisa el registro.
+  Evidencia: configuración y decisiones justificadas.
+  Límite: habilitar el flujo no restringe por sí solo todo consentimiento ni valida permisos ya concedidos. Ser revisor no concede automáticamente autoridad para aprobar.
+description_en: |
+  Prepare: an authorized administrator defines who requests, reviews and approves permissions.
+  1. In Entra Enterprise apps, Consent and permissions, open Admin consent settings.
+  2. Enable requests and define reviewers, notifications, reminders and expiration.
+  3. Test requesting, denying and approving a test application; review the audit record.
+  Evidence: configuration and justified decisions.
+  Limit: enabling the workflow does not itself restrict all consent or validate existing grants. Reviewer assignment does not automatically grant approval authority.
+manual: false
+prowler_checks: [entra_admin_consent_workflow_enabled]
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-admin-consent-workflow
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_admin_consent_workflow_enabled/entra_admin_consent_workflow_enabled.py
