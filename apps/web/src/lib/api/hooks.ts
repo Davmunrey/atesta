@@ -15,7 +15,7 @@ export class ApiError extends Error {
 
 type Result<T> = { data?: T; error?: unknown; response: Response };
 
-async function unwrap<T>(call: Promise<Result<T>>): Promise<T> {
+export async function unwrap<T>(call: Promise<Result<T>>): Promise<T> {
   const { data, error, response } = await call;
   if (data === undefined) throw new ApiError(response.status, errorCode(error));
   return data;
