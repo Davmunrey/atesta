@@ -18,7 +18,11 @@ it does not duplicate its review model or scoring, change a decision, or certify
    not-found response as missing organizations. Hidden controls cannot receive submissions.
 3. Titles (1–200), statements (1–10000) and HTTPS references (at most 2048 characters) are
    trimmed and validated. References cannot include credentials or control characters and are
-   never fetched by the server. Text renders as text. Cookie writes retain same-origin CSRF.
+   never fetched by the server. A reference whose query or fragment carries a signature or token
+   parameter (Azure SAS `sig`, S3 `X-Amz-Signature`/`X-Amz-Credential`, GCS `X-Goog-Signature`,
+   `token`, `access_token`, `code`, `key` and similar) is refused: statements are append-only, so
+   a link that is itself a credential could never be purged (rule 2). Links whose path is the
+   capability ("anyone with the link") cannot be told apart and remain a documented limit. Text renders as text. Cookie writes retain same-origin CSRF.
 4. Identical retries return the original evidence. Reusing a submission identifier for a
    different payload, author or control returns a conflict, including concurrent requests.
    Evidence, its control association and its audit event commit atomically. Audit metadata

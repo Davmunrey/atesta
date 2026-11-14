@@ -110,6 +110,14 @@ def test_statement_retry_pagination_and_audit(
         {"reference_url": "https://u:p@example.test"},
         {"reference_url": "javascript:alert(1)"},
         {"reference_url": "https://example.test/\npath"},
+        # A link that is itself a credential would be kept forever in an append-only table.
+        {"reference_url": "https://acct.blob.core.windows.net/c/doc.pdf?sv=2024-01-01&sig=abc"},
+        {"reference_url": "https://b.s3.eu-south-2.amazonaws.com/d.pdf?X-Amz-Signature=y"},
+        {"reference_url": "https://b.s3.amazonaws.com/d.pdf?X-Amz-Credential=x"},
+        {"reference_url": "https://storage.googleapis.com/b/d.pdf?X-Goog-Signature=y"},
+        {"reference_url": "https://example.test/doc?token=abc"},
+        {"reference_url": "https://example.test/doc?SIG=abc"},
+        {"reference_url": "https://example.test/doc#access_token=abc"},
         {"unknown": "field"},
     ],
 )
@@ -298,3 +306,17 @@ def test_scan_evidence_is_readable_without_storage_keys(
     assert "storage_key" not in json.dumps(page)
     for query in ("?limit=51", "?offset=-1", "?limit=0"):
         assert client.get(path + query, headers=headers).status_code == 422
+
+
+def test_a_reference_with_a_harmless_query_is_kept(
+    client: TestClient, superuser: Engine, workspace: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    url = "https://contoso.sharepoint.com/sites/sec/Policy.docx?web=1"
+    result = client.post(
+        f"/api/v1/orgs/{org}/controls/{workspace}/evidence",
+        headers=auth(subs["owner"]),
+        json=statement(reference_url=url),
+    )
+    assert result.status_code in (200, 201), result.text
+    assert result.json()["reference_url"] == url
