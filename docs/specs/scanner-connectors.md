@@ -129,8 +129,11 @@ D12 (Microsoft Partner Program account and a verified domain).
       `docker run` locally. No shared disk between attempts.
 - [ ] Retries (Infrastructure tab): 3 retries of transient failures, after 300, 600 and 900 s
       (`RetryStrategy(max_attempts=3, wait=300, linear_wait=300,
-      retry_exceptions=(ScanTransientError,))`). Permanent failures (verification refused,
-      connection not active) are never retried.
+      retry_exceptions=(ScanTransientError, OperationalError))`; a lost database connection is
+      as transient as a failed engine run). Permanent failures (verification refused,
+      connection not active) are never retried. A `run_scan` job that ends without a result
+      (an unexpected error, or a database error on its last attempt) fails its scan with
+      `scanning.engine_failed`, so no scan stays `queued` or `running` for good.
 - [ ] Each scan end emits one structured `scan.finished` event (ids, provider, status, attempts,
       duration, error_code); a unit test asserts its fields. The failure-rate alert (more than 5%
       failed over 24 h, at least 20 scans, computed from these events, never by a cross-tenant
@@ -169,7 +172,9 @@ D12 (Microsoft Partner Program account and a verified domain).
       `LocalDockerRunner`, `LocalScanStore` (a directory laid out like the S3 prefix) and
       `LocalCredentialStore` (files outside the repo, mode 0600 enforced). `FixtureRunner`
       replays committed OCSF fixtures (synthetic first, recorded later) without Docker or
-      credentials.
+      credentials; like the wrapper, it drops findings of the checks its `job.json` excludes.
+      The dev worker runs it with `ATESTA_SCAN_RUNNER=fixture`, `ATESTA_SCAN_STORE_DIR`,
+      `ATESTA_SCAN_FIXTURES` and `ATESTA_SCANNER_EXPECTED`.
 - [ ] `docker compose` profile `scanner` builds the image. `uv run atesta-dev-scan` loads the
       synthetic catalog fixture `apps/api/tests/fixtures/catalog/` as `atesta_owner` (two synthetic
       frameworks, controls mapped to ids from the committed expected check lists; outside
@@ -504,7 +509,7 @@ tenant). The runner adds 21 timeout. All but 10 are transient.
 
 | Job | Args | Lock | Retry | Effect |
 |---|---|---|---|---|
-| `schedule_scan` | organization_id, connection_id | queueing_lock `sched:<connection_id>` | none | If the connection is active: `queue_scan(trigger=schedule)` (skipped on `already_queued`); always re-defers itself +24 h while the connection is not `disconnected` or `revoked` |
+| `schedule_scan` | organization_id, connection_id | queueing_lock `sched:<connection_id>` | 3, transient database errors only (a lost job would end the chain) | If the connection is active: `queue_scan(trigger=schedule)` (skipped on `already_queued`); always re-defers itself +24 h while the connection is not `disconnected` or `revoked` |
 | `register_google_client` | organization_id, connection_id, both client ids, both credential refs | none | none | Owner runbook result; sets `pending_setup` |
 | `verify_connection` | organization_id, connection_id | `conn:<connection_id>` | none (re-defers hourly up to 24 h while `verifying`) | Runs `verify` mode, `connections.api.record_verification` |
 | `run_scan` | organization_id, scan_id | `conn:<connection_id>` (M365), `gws-policy-api` (Google); no queueing_lock | 3, transient only | Below |

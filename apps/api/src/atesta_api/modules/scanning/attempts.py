@@ -22,6 +22,7 @@ from atesta_api.modules.scanning.expected import exclusions
 from atesta_api.modules.scanning.ingest import ScanNotFoundError
 from atesta_api.modules.scanning.models import Scan
 from atesta_api.modules.scanning.runners import (
+    JOB_FILE,
     OutputExistsError,
     ScanJob,
     ScanStore,
@@ -31,7 +32,6 @@ from atesta_api.platform.audit import record
 from atesta_api.platform.queue import defer
 
 INGEST_TASK = "atesta:ingest_scan"  # the worker's namespaced name; a worker test pins it
-JOB_FILE = "job.json"
 DONE = 0
 VERIFICATION_REFUSED = 10  # the only permanent wrapper exit (scanner/atesta_scanner/exits.py)
 TRANSIENT_ERRORS = {21: "scanning.timeout", 30: "scanning.output_invalid"}
@@ -161,8 +161,13 @@ def finish_attempt(session: Session, job: ScanJob, exit_code: int, *, final: boo
         scan.status = "collected"
         scan.output_prefix = output_prefix(job.organization_id, scan.id, job.attempt)
         session.flush()
-        ids = {"organization_id": str(job.organization_id), "scan_id": str(scan.id)}
-        defer(session, INGEST_TASK, queue="scans", **ids)  # commits with the collected status
+        defer(  # commits with the collected status
+            session,
+            INGEST_TASK,
+            queue="scans",
+            organization_id=str(job.organization_id),
+            scan_id=str(scan.id),
+        )
         return Outcome("collected", False, None)
     if exit_code == VERIFICATION_REFUSED:  # PR 9 records the verification report on the connection
         return Outcome("blocked", False, _end(session, scan, "blocked", None))
@@ -172,3 +177,11 @@ def finish_attempt(session: Session, job: ScanJob, exit_code: int, *, final: boo
     scan.error_code = error_code
     session.flush()
     return Outcome("running", True, None)
+
+
+def abandon_scan(session: Session, scan_id: uuid.UUID) -> Event | None:
+    """Fail a scan whose job ended without a result, so no scan stays active for good."""
+    scan = _locked(session, scan_id)
+    if scan.status not in ("queued", "running"):
+        return None
+    return _end(session, scan, "failed", ENGINE_FAILED)

@@ -11,6 +11,7 @@ codes, never values from it (rule 2).
 import hashlib
 import uuid
 from collections.abc import Iterable, Mapping, Sequence
+from pathlib import Path
 
 from atesta_core.controls import control_results
 from atesta_core.coverage import CheckResult, UnexpectedCheckError, coverage, silent_services
@@ -20,7 +21,9 @@ from sqlalchemy import func, insert, select
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.compliance.api import active_control_checks
+from atesta_api.modules.connections.api import scan_target
 from atesta_api.modules.evidence.api import ScanOutputFile, register_scan_output
+from atesta_api.modules.scanning.expected import exclusions, expected_checks
 from atesta_api.modules.scanning.models import Finding, Scan, ScanCheckResult
 from atesta_api.modules.scanning.runners import MANIFEST_FILE, OCSF_FILE, ScanStore
 from atesta_api.platform.audit import record
@@ -174,8 +177,13 @@ def ingest_scan(
     status = "partial" if silent_services(results) else "succeeded"
     counts = {"expected_checks": scan.expected_checks, "evaluated_checks": scan.evaluated_checks}
     _finish(session, scan, status, counts)
-    ids = {"organization_id": str(scan.organization_id), "scan_id": str(scan.id)}
-    defer(session, SNAPSHOT_TASK, queue="scans", **ids)  # commits with the ingest
+    defer(  # commits with the ingest
+        session,
+        SNAPSHOT_TASK,
+        queue="scans",
+        organization_id=str(scan.organization_id),
+        scan_id=str(scan.id),
+    )
     return status
 
 
@@ -183,3 +191,28 @@ def _reject(session: Session, scan: Scan, code: str) -> str:
     """The whole scan is rejected: no rows, the code on the scan, nothing from the output."""
     scan.error_code = code
     return _finish(session, scan, "failed", {"error_code": code})
+
+
+def ingest_collected(
+    session: Session,
+    organization_id: uuid.UUID,
+    scan_id: uuid.UUID,
+    *,
+    store: ScanStore,
+    root: Path,
+) -> str:
+    """ingest_scan job: pin to the connection's tenant, the committed lists for the engine."""
+    scan = session.scalars(select(Scan).where(Scan.id == scan_id)).one_or_none()
+    if scan is None:
+        raise ScanNotFoundError(str(scan_id))
+    target = scan_target(session, organization_id, scan.connection_id)
+    if target is None or target.external_tenant_id is None:  # never: connections are kept
+        raise ScanNotFoundError(str(scan_id))
+    return ingest_scan(
+        session,
+        scan_id,
+        store=store,
+        tenant=target.external_tenant_id,
+        listed=expected_checks(root, scan.provider),
+        excluded=exclusions(root, scan.provider),
+    )
