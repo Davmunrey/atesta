@@ -1,6 +1,7 @@
 """Recorded requirement results with current catalog guidance, without rescoring history."""
 
 import os
+import uuid
 from collections import defaultdict
 from typing import Annotated, cast
 
@@ -27,6 +28,7 @@ from atesta_api.modules.compliance.models import (
     ScoreSnapshot,
 )
 from atesta_api.modules.compliance.overview import latest_snapshots
+from atesta_api.modules.compliance.reviews import current_reviews
 from atesta_api.modules.compliance.scoring import active_control_checks, active_frameworks
 from atesta_api.modules.identity.api import Member, require_member
 from atesta_api.modules.scanning.api import ScanNotFoundError, latest_check_results
@@ -45,7 +47,11 @@ def _observation(values: list[str]) -> Observation | None:
 
 
 def _controls(
-    session: Session, key: str, snapshot: ScoreSnapshot | None, matches: bool
+    session: Session,
+    organization_id: uuid.UUID,
+    key: str,
+    snapshot: ScoreSnapshot | None,
+    matches: bool,
 ) -> dict[str, list[ControlDetail]]:
     observations: dict[tuple[str, str], list[str]] = defaultdict(list)
     if snapshot is not None and matches:
@@ -75,6 +81,9 @@ def _controls(
             )
             for engine, check in configured.get(control_key, [])
         ]
+    reviews = current_reviews(
+        session, organization_id, {control.key for _, control in rows if control.manual}
+    )
     out: dict[str, list[ControlDetail]] = defaultdict(list)
     for mapping, control in rows:
         control_checks = checks[control.key]
@@ -96,6 +105,7 @@ def _controls(
                 mapping_source=mapping.source,
                 observed_status=_observation(statuses),
                 checks=control_checks,
+                review=reviews.get(control.key),
             )
         )
     return out
@@ -136,7 +146,7 @@ def framework_detail(
         )
     }
     recorded = snapshot.requirement_results if snapshot else {}
-    controls = _controls(session, framework_key, snapshot, matches)
+    controls = _controls(session, member.organization_id, framework_key, snapshot, matches)
     details = []
     for code in sorted(requirements.keys() | recorded.keys()):
         requirement = requirements.get(code)

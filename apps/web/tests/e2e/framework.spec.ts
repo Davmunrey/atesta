@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
-import { framework, preparationFramework, requirementGuidance } from "../fixtures/framework";
+import { framework, passingReview, preparationFramework, requirementGuidance, withManualControl } from "../fixtures/framework";
 import { overview } from "../fixtures/overview";
 
 async function createOrganization(page: Page) {
@@ -98,4 +98,32 @@ test("preparation exposes scope, missing work, official rules and configuration 
   await expect(page.getByRole("table")).toContainText("BAJO");
   await page.locator("summary").getByText("Read full official text (Spanish)").click();
   await expect(page.getByText(requirementGuidance.official_text_es)).toHaveAttribute("lang", "es");
+});
+
+test("an owner records a human review of a manual control, accessibly and within the CSP", async ({ page }) => {
+  const csp: string[] = [];
+  page.on("console", (message) => { if (message.text().includes("Content Security Policy")) csp.push(message.text()); });
+  const org = await createOrganization(page);
+  let reviewed = false;
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha", (route) => route.fulfill({ json: withManualControl(reviewed ? passingReview : null) }));
+  await page.route("**/api/v1/orgs/*/controls/ctl.paper/reviews", (route) => { reviewed = true; return route.fulfill({ status: 201, json: passingReview }); });
+  await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
+  await page.locator("details.requirement-row").filter({ hasText: "R2" }).locator("summary").click();  // failures open first
+  const card = page.locator("article.control-guide").filter({ hasText: "Plan de respuesta sintético" });
+  await expect(card.getByText(/Sin revisión registrada/)).toBeVisible();
+  await card.getByRole("button", { name: "Registrar revisión" }).click();
+  for (const width of [375, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+    expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id), `${width}`).toEqual([]);
+  }
+  await card.getByRole("radio", { name: "Cumple", exact: true }).check();
+  await card.getByLabel("Justificación").fill("Acta 12 aprobada por la dirección.");
+  const post = page.waitForRequest((request) => request.method() === "POST" && request.url().includes("/reviews"));
+  await card.getByRole("button", { name: "Guardar revisión" }).click();
+  expect((await post).postDataJSON()).toMatchObject({ status: "pass", rationale: "Acta 12 aprobada por la dirección." });
+  await expect(card.getByRole("status")).toContainText("Revisión registrada");
+  await expect(card.getByText("Punto 3 aprobado.", { exact: false })).toBeVisible();
+  expect(csp).toEqual([]);
 });

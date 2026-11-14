@@ -6,8 +6,10 @@ import { useId, useState } from "react";
 import { useFrameworkDetail } from "@/lib/api/hooks";
 import type { components } from "@/lib/api/schema";
 import { orgHome } from "@/lib/org";
+import { type Role, canReviewControls } from "@/lib/permissions";
 import { CatalogPreparation, PreparationGuides, RequirementGuidance } from "./catalog-preparation";
 import { CatalogReference as Reference } from "./catalog-reference";
+import { ControlReview } from "./control-review";
 import { ErrorMessage } from "./error-message";
 
 type Detail = components["schemas"]["FrameworkDetail"];
@@ -15,7 +17,8 @@ type Requirement = components["schemas"]["RequirementDetail"];
 const statuses = ["fail", "manual", "not_evaluated", "pass", "not_applicable"] as const;
 type Filter = "all" | typeof statuses[number];
 
-export function FrameworkDetailView({ orgId, frameworkKey }: { orgId: string; frameworkKey: string }) {
+/** role is a UI hint only: it hides the review form from members. The API decides. */
+export function FrameworkDetailView({ orgId, frameworkKey, role = "member" }: { orgId: string; frameworkKey: string; role?: Role }) {
   const t = useTranslations("framework");
   const dashboard = useTranslations("dashboard");
   const format = useFormatter();
@@ -35,7 +38,7 @@ export function FrameworkDetailView({ orgId, frameworkKey }: { orgId: string; fr
         </div> : <p className="framework-notice">{t("unassessed")}</p>}
         {query.data.snapshot && !query.data.catalog_matches_snapshot ? <p className="framework-notice">{t("catalogChanged")}</p> : null}
         {query.data.catalog_context ? <CatalogPreparation context={query.data.catalog_context} requirements={query.data.requirements.length} controls={query.data.preparation_controls?.length ?? 0} /> : null}
-        <RequirementRegister key={`${orgId}:${frameworkKey}`} detail={query.data} />
+        <RequirementRegister key={`${orgId}:${frameworkKey}`} detail={query.data} review={{ orgId, frameworkKey, canReview: canReviewControls(role) }} />
         <PreparationGuides controls={query.data.preparation_controls ?? []} />
         <div className="framework-catalog"><h2>{t("catalogTitle")}</h2><p>{t("currentVersion", { version: query.data.version, catalog: query.data.catalog_version ?? t("unknownVersion") })}</p>
           <p>{t("catalogHelp")}</p><Reference value={query.data.source} />
@@ -45,7 +48,9 @@ export function FrameworkDetailView({ orgId, frameworkKey }: { orgId: string; fr
   </section>;
 }
 
-function RequirementRegister({ detail }: { detail: Detail }) {
+type ReviewContext = { orgId: string; frameworkKey: string; canReview: boolean };
+
+function RequirementRegister({ detail, review }: { detail: Detail; review: ReviewContext }) {
   const t = useTranslations("framework");
   const locale = useLocale();
   const searchId = useId();
@@ -66,13 +71,13 @@ function RequirementRegister({ detail }: { detail: Detail }) {
       <label htmlFor={searchId} className="dashboard-search-label">{t("search")}</label>
       <input id={searchId} type="search" className="dashboard-search" value={search} onChange={(e) => setSearch(e.target.value)} />
       <p className="requirement-match" role="status">{t("matches", { shown: visible.length, total: detail.requirements.length })}</p>
-      <div className="requirement-list">{visible.map((requirement, index) => <RequirementRow key={requirement.code} requirement={requirement} initiallyOpen={index === 0} />)}</div>
+      <div className="requirement-list">{visible.map((requirement, index) => <RequirementRow key={requirement.code} requirement={requirement} initiallyOpen={index === 0} review={review} />)}</div>
       {visible.length === 0 ? <div className="dashboard-empty"><p>{t("noMatches")}</p><button className="dashboard-button" onClick={() => { setFilter("all"); setSearch(""); }}>{t("clear")}</button></div> : null}
     </>}
   </section>;
 }
 
-function RequirementRow({ requirement: r, initiallyOpen }: { requirement: Requirement; initiallyOpen: boolean }) {
+function RequirementRow({ requirement: r, initiallyOpen, review }: { requirement: Requirement; initiallyOpen: boolean; review: ReviewContext }) {
   const t = useTranslations("framework");
   const english = useLocale() === "en";
   const title = (english ? r.title_en ?? r.title_es : r.title_es) ?? t("historicalTitle");
@@ -98,6 +103,7 @@ function RequirementRow({ requirement: r, initiallyOpen }: { requirement: Requir
           {control.checks.length > 0 ? <ul className="configuration-checks" aria-label={t("checks")}>{control.checks.map((check) => <li key={`${check.engine}:${check.check_id}`}>
             <span><span className="requirement-code">{check.check_id}</span><span className="check-engine">{check.engine}</span></span><span>{t(`observations.${check.observed_status ?? "missing"}`)}</span>
           </li>)}</ul> : null}
+          {control.manual ? <ControlReview {...review} controlKey={control.key} review={control.review ?? null} /> : null}
           <div className="control-references"><h5>{t("applyGuide")}</h5>{control.remediation_refs.length ? <ul>{control.remediation_refs.map((value, i) => <li key={i}><Reference value={value} /></li>)}</ul> : <p>{t("missingReferences")}</p>}</div>
         </article>)}
       </div>

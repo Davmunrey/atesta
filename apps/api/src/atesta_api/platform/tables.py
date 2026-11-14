@@ -16,6 +16,7 @@ TENANT = frozenset(
         "scans",
         "scan_check_results",
         "findings",
+        "control_reviews",
     }
 )
 APPEND_ONLY = frozenset(
@@ -26,6 +27,7 @@ APPEND_ONLY = frozenset(
         "evidence_controls",
         "scan_check_results",
         "findings",
+        "control_reviews",
     }
 )
 GLOBAL_IDENTITY = frozenset({"users"})
