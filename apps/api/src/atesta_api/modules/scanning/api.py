@@ -1,5 +1,15 @@
 """Public interface of the scanning module."""
 
+from atesta_api.modules.scanning.attempts import (
+    INGEST_TASK,
+    Outcome,
+    ScanTransientError,
+    Started,
+    ended_event,
+    finish_attempt,
+    finished_event,
+    start_attempt,
+)
 from atesta_api.modules.scanning.devscan import run_fixture_scan
 from atesta_api.modules.scanning.expected import (
     ENGINE_VERSION,
@@ -32,6 +42,7 @@ from atesta_api.modules.scanning.scoring import latest_check_results, snapshot_s
 
 __all__ = [
     "ENGINE_VERSION",
+    "INGEST_TASK",
     "MANIFEST_FILE",
     "OCSF_FILE",
     "RUN_TASK",
@@ -41,14 +52,20 @@ __all__ = [
     "ConnectionNotFoundError",
     "FixtureRunner",
     "LocalScanStore",
+    "Outcome",
     "OutputExistsError",
     "ScanJob",
     "ScanRunner",
     "ScanNotFoundError",
     "ScanSummary",
     "ScanStore",
+    "ScanTransientError",
+    "Started",
+    "ended_event",
     "exclusions",
     "expected_checks",
+    "finish_attempt",
+    "finished_event",
     "ingest_scan",
     "latest_check_results",
     "output_prefix",
@@ -58,4 +75,5 @@ __all__ = [
     "router",
     "run_fixture_scan",
     "snapshot_scores",
+    "start_attempt",
 ]
