@@ -43,8 +43,8 @@ PASS cannot make any of the 73 ENS measures pass: every measure retains a manual
    The existing 26 bilingual guides include steps, evidence, verification and limits. Six
    technical candidates use pinned Prowler 5.49.0 checks; a candidate is not reviewed coverage.
 3. Finish live onboarding/collection with the connection workstream. Connection and scan
-   endpoint work has merged through #77, #78, #81 and #82; worker execution remains with
-   the other session in #84. Fixture scans and ingestion work; this does not verify real
+   endpoint work has merged through #77, #78, #81 and #82. Worker execution #84 has also
+   merged; the local Docker runner remains with the other session in draft #85. Fixture scans and ingestion work; this does not verify real
    tenant consent, credentials or end-to-end cloud execution.
 4. Integrate the independently reviewed manual workflow in draft #79, dependent evidence
    API #83 and the dependent evidence UI. Local statements and HTTPS references persist
@@ -71,13 +71,14 @@ label current guidance; do not reconstruct historical control outcomes using new
 
 Merged dashboard/catalog stack: #55, #63, #66 and #68 through #76, including detail API,
 detail screen, readiness inventory, preview/scoring guard, ENS draft, preparation templates
-and their UI. The other session has merged #54, #77, #78, #81 and #82.
+and their UI. The other session has merged #54, #77, #78, #81, #82 and #84.
 
 Manual review #79 remains draft. Its earlier checks were green; integration of current main
 and renewed verification are in progress. Evidence API #83 is dependent on #79, with head
 `857caf145a495e0591e23a060a0b4dc831ba3032` including #79 base
 `63ee11539b52f992b6a5b539423438acb3970ec9` and merged #81/#82. The evidence UI depends on #83.
-Hardening #80 and worker execution #84 remain owned by the other session.
+Hardening #80 and the local Docker runner #85 remain owned by the other session.
+The verification totals below apply to the pinned #79/#83 baseline, not to later worker changes.
 
 Local evidence verification records 780 Python tests, 272 web tests, passing lint/types/module
 boundaries/build and 15 browser checks. A real local API write persisted a synthetic statement
