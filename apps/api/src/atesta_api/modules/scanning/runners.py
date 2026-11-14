@@ -5,6 +5,7 @@ local store and the fixture runner are dev-only: they refuse to start unless ATE
 development environment, so a production process can never use them.
 """
 
+import json
 import re
 import uuid
 from dataclasses import dataclass
@@ -17,6 +18,7 @@ from atesta_api.platform.devenv import require_dev
 
 OCSF_FILE = "prowler.ocsf.json"
 MANIFEST_FILE = "manifest.json"
+JOB_FILE = "job.json"  # next to out/, written by the worker before the run
 _SEGMENT = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_.-]*")
 # Atesta provider -> Prowler provider folder name.
 _PROWLER_PROVIDER = {"m365": "m365", "google_workspace": "googleworkspace"}
@@ -32,6 +34,7 @@ class ScanJob:
     scan_id: uuid.UUID
     attempt: int
     provider: str
+    credential_ref: str | None = None  # Google: the connection's; M365 uses the platform's (D5)
 
 
 class ScanStore(Protocol):
@@ -64,6 +67,10 @@ class LocalScanStore:
         require_dev("LocalScanStore")
         root.mkdir(parents=True, exist_ok=True)
         self._root = root.resolve()
+
+    @property
+    def root(self) -> Path:
+        return self._root
 
     def _path(self, key: str) -> Path:
         path = self._root.joinpath(*_segments(key))
@@ -112,6 +119,16 @@ class FixtureRunner:
             raise ValueError("unknown provider")
         data = (self._fixtures / folder / self._fixture).read_bytes()
         prefix = output_prefix(job.organization_id, job.scan_id, job.attempt)
+        try:  # like the wrapper, honor the job file's exclusions (Prowler --excluded-check)
+            excluded = set(
+                json.loads(self._store.read(prefix.removesuffix("out/") + JOB_FILE))["excluded"]
+            )
+        except FileNotFoundError:
+            excluded = set()
+        if excluded:
+            findings = json.loads(data)
+            kept = [f for f in findings if f["metadata"]["event_code"] not in excluded]
+            data = json.dumps(kept).encode()
         self._store.write(prefix + OCSF_FILE, data)
         self._store.write(prefix + MANIFEST_FILE, build_manifest({OCSF_FILE: data}))  # last
         return 0

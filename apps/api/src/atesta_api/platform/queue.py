@@ -20,11 +20,33 @@ def _app() -> App:
     return App(connector=SyncPsycopgConnector())
 
 
-def defer(session: Session, task_name: str, *, queue: str, **ids: str) -> None:
+def defer(
+    session: Session,
+    task_name: str,
+    *,
+    queue: str,
+    lock: str | None = None,
+    queueing_lock: str | None = None,
+    schedule_in_seconds: int | None = None,
+    **ids: str,
+) -> None:
+    """Locks are Procrastinate's (scanner-connectors spec, Scan lifecycle); ids only, no data.
+
+    A queueing_lock already held by a todo job raises procrastinate's AlreadyEnqueued, and the
+    failed insert aborts the transaction: callers that expect it defer inside a savepoint.
+    """
     bad = sorted(
         k for k, v in ids.items() if not _ID_ARGUMENT.fullmatch(k) or not isinstance(v, str)
     )
     if bad:
         raise ValueError(f"job arguments must be <name>_id strings: {', '.join(bad)}")
     connection = session.connection().connection.driver_connection
-    _app().configure_task(task_name, queue=queue, connection=connection).defer(**ids)
+    schedule = None if schedule_in_seconds is None else {"seconds": schedule_in_seconds}
+    _app().configure_task(
+        task_name,
+        queue=queue,
+        lock=lock,
+        queueing_lock=queueing_lock,
+        schedule_in=schedule,
+        connection=connection,
+    ).defer(**ids)

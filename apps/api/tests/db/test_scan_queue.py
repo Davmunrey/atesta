@@ -13,6 +13,7 @@ from atesta_api.modules.scanning.api import (
     ConnectionNotActiveError,
     ConnectionNotFoundError,
     queue_scan,
+    scan_lock,
 )
 from atesta_api.platform.context import TenantContext
 from atesta_api.platform.tenancy import set_tenant_context
@@ -46,7 +47,7 @@ def as_org(session: Session, org: uuid.UUID) -> None:
 
 def jobs(session: Session) -> list[tuple[Any, ...]]:
     query = text(
-        "SELECT task_name, queue_name, args FROM procrastinate_jobs"
+        "SELECT task_name, queue_name, lock, args FROM procrastinate_jobs"
         " WHERE task_name = :task ORDER BY id"
     )
     return [tuple(r) for r in session.execute(query, {"task": RUN_TASK})]
@@ -103,7 +104,7 @@ def test_queueing_inserts_the_scan_and_defers_its_run_in_the_same_transaction(
     assert (scan.attempts, scan.requested_by) == (0, USER)
     assert (scan.engine, scan.engine_version) == ("prowler", ENGINE_VERSION)
     args = {"organization_id": str(ORG_A), "scan_id": str(scan.id)}
-    assert jobs(db_rollback) == [(RUN_TASK, "scans", args)]
+    assert jobs(db_rollback) == [(RUN_TASK, "scans", f"conn:{connection_id}", args)]
     assert requested(db_rollback) == [(str(scan.id), USER, {"provider": "m365", "trigger": "user"})]
 
 
@@ -141,3 +142,9 @@ def test_an_unknown_connection_is_not_found(db_rollback: Session) -> None:
     for connection_id in (theirs, uuid.uuid4()):
         with pytest.raises(ConnectionNotFoundError):
             queue_scan(db_rollback, ORG_A, connection_id, trigger="user")
+
+
+def test_google_scans_share_one_lock_and_m365_scans_lock_their_connection() -> None:
+    connection_id = uuid.uuid4()
+    assert scan_lock("m365", connection_id) == f"conn:{connection_id}"
+    assert scan_lock("google_workspace", connection_id) == "gws-policy-api"

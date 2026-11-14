@@ -5,6 +5,7 @@ from atesta_api.modules.scanning.attempts import (
     Outcome,
     ScanTransientError,
     Started,
+    abandon_scan,
     ended_event,
     finish_attempt,
     finished_event,
@@ -17,14 +18,24 @@ from atesta_api.modules.scanning.expected import (
     expected_checks,
     powershell_checks,
 )
-from atesta_api.modules.scanning.ingest import SNAPSHOT_TASK, ScanNotFoundError, ingest_scan
+from atesta_api.modules.scanning.ingest import (
+    SNAPSHOT_TASK,
+    ScanNotFoundError,
+    ingest_collected,
+    ingest_scan,
+)
 from atesta_api.modules.scanning.lifecycle import (
     RUN_TASK,
+    SCHEDULE_TASK,
     AlreadyQueuedError,
     ConnectionNotActiveError,
     ConnectionNotFoundError,
+    defer_schedule,
     queue_scan,
+    scan_lock,
+    scheduled_scan,
 )
+from atesta_api.modules.scanning.local import LocalCredentialStore, LocalDockerRunner
 from atesta_api.modules.scanning.queries import ScanSummary, recent_scans
 from atesta_api.modules.scanning.routes import router
 from atesta_api.modules.scanning.runners import (
@@ -52,11 +63,14 @@ __all__ = [
     "OCSF_FILE",
     "RESCORE_TASK",
     "RUN_TASK",
+    "SCHEDULE_TASK",
     "SNAPSHOT_TASK",
     "AlreadyQueuedError",
     "ConnectionNotActiveError",
     "ConnectionNotFoundError",
     "FixtureRunner",
+    "LocalCredentialStore",
+    "LocalDockerRunner",
     "LocalScanStore",
     "Outcome",
     "OutputExistsError",
@@ -66,12 +80,15 @@ __all__ = [
     "ScanSummary",
     "ScanStore",
     "ScanTransientError",
+    "abandon_scan",
+    "defer_schedule",
     "Started",
     "ended_event",
     "exclusions",
     "expected_checks",
     "finish_attempt",
     "finished_event",
+    "ingest_collected",
     "ingest_scan",
     "latest_check_results",
     "output_prefix",
@@ -81,6 +98,8 @@ __all__ = [
     "rescore_reviews",
     "router",
     "run_fixture_scan",
+    "scan_lock",
+    "scheduled_scan",
     "snapshot_scores",
     "start_attempt",
 ]
