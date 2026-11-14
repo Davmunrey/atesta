@@ -184,6 +184,28 @@
     "noControls": "No hay controles activos asociados. Revisa la fuente del requisito y solicita el mapeo revisado; la ausencia de controles no demuestra cumplimiento.",
     "manualControl": "Control documental",
     "manualHelp": "Requiere documentación o revisión humana. Una comprobación automática no sustituye esa revisión.",
+    "review": {
+      "title": "Revisión humana",
+      "none": "Sin revisión registrada. Hasta que alguien la registre, este control cuenta como pendiente.",
+      "status": {
+        "pass": "Cumple",
+        "fail": "No cumple"
+      },
+      "expired": "Revisión caducada",
+      "summary": "Registrada por {author} el {date}. Válida hasta el {until}.",
+      "someone": "un miembro",
+      "record": "Registrar revisión",
+      "update": "Registrar nueva revisión",
+      "decision": "Decisión",
+      "rationale": "Justificación",
+      "rationaleHelp": "Explica qué has revisado y dónde está la evidencia (documento, acta, fecha). Hasta 2000 caracteres.",
+      "validUntil": "Válida hasta",
+      "scoreNote": "La puntuación se recalcula con la última evaluación técnica en unos segundos.",
+      "save": "Guardar revisión",
+      "saving": "Guardando…",
+      "cancel": "Cancelar",
+      "saved": "Revisión registrada. La puntuación se actualizará en unos segundos."
+    },
     "observationHelp": "Observación técnica a la fecha del análisis, agregada entre conexiones. Es distinta del resultado registrado del requisito.",
     "mappingUnreviewed": "La relación entre este requisito y el control aún no tiene revisión registrada.",
     "checks": "Comprobaciones técnicas configuradas",

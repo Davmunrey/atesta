@@ -52,8 +52,17 @@ PR 2 (scoring):
       correction supersedes the tip of that scan's chain, so the chain stays linear and earlier
       scans' snapshots are never rewritten. Without an ingested scan it does nothing.
 
-PR 3 (screen): admins record a review from the framework detail; everyone sees the current
-review, who made it, until when it holds, and whether it expired.
+PR 3 (screen):
+
+- [ ] Each manual control in the framework detail shows its current review: decision, author
+      (email from the member list, else "a member"), date, validity and an expired flag; or says
+      that none is recorded and the control counts as pending. Automated controls show none.
+- [ ] Owners and admins see "Record review": decision (radio), rationale (required, 2000
+      characters), valid until (date between tomorrow and three years, default one year).
+      Members never see the form; the API still decides. Errors show the API's ES/EN text.
+- [ ] After saving, the register refetches and says the score updates within seconds.
+- [ ] Accessible (axe WCAG 2.1 AA, keyboard, labels) and inside the strict CSP; no horizontal
+      scroll at 375 px.
 
 ## Out of scope
 
@@ -89,5 +98,8 @@ review, who made it, until when it holds, and whether it expired.
 - Scoring: pass and fail reviews move the score; the latest review as of the scan wins; a
   review after the scan, an expired latest review and a review of an automated control do not
   count; rescoring writes a linear chain on the latest scan only, and nothing without a scan.
+- Web: member sees the review without a form; expired and empty states; admin records and the
+  register refetches; an API refusal shows its text; automated controls offer no form. e2e:
+  owner records a review with axe clean at 375 and 1280 px and no CSP violation.
 - Detail: a manual control shows its latest review, `expired` once `valid_until` has passed, and
   never another org's review.

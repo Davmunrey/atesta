@@ -184,6 +184,28 @@
     "noControls": "No active controls are mapped. Review the requirement source and request a reviewed mapping; missing controls do not establish compliance.",
     "manualControl": "Documentary control",
     "manualHelp": "Requires documentation or human review. An automated check does not replace that review.",
+    "review": {
+      "title": "Human review",
+      "none": "No review recorded. Until someone records one, this control counts as pending.",
+      "status": {
+        "pass": "Meets",
+        "fail": "Does not meet"
+      },
+      "expired": "Review expired",
+      "summary": "Recorded by {author} on {date}. Valid until {until}.",
+      "someone": "a member",
+      "record": "Record review",
+      "update": "Record a new review",
+      "decision": "Decision",
+      "rationale": "Rationale",
+      "rationaleHelp": "Explain what you reviewed and where the evidence is (document, minutes, date). Up to 2000 characters.",
+      "validUntil": "Valid until",
+      "scoreNote": "The score is recalculated against the latest technical assessment within seconds.",
+      "save": "Save review",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "saved": "Review recorded. The score will update within seconds."
+    },
     "observationHelp": "Technical observation as of the scan, aggregated across connections. It is distinct from the recorded requirement result.",
     "mappingUnreviewed": "The relationship between this requirement and control has no recorded review yet.",
     "checks": "Configured technical checks",
