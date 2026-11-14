@@ -64,6 +64,9 @@ later screen (connections, scores, evidence) plugs into.
       `unsafe-inline` scripts, `frame-ancestors 'none'`, HSTS, `X-Content-Type-Options:
       nosniff`, `Referrer-Policy: same-origin` (no-referrer on `/invite`). A build step writes
       the hashes; the infra spec applies them.
+- [ ] The API sets `Cache-Control: no-store` and `X-Content-Type-Options: nosniff` on every
+      response of its own, errors and redirects included, so `/api/*` and `/auth/*` are never
+      cached or MIME-sniffed whatever the CDN behaviour in front of them.
 - [ ] Accessibility: WCAG 2.1 AA for these screens (keyboard path, labels, focus, contrast),
       checked with axe in the e2e tests.
 - [ ] Visual identity: design tokens (color, type, radius, spacing) as CSS variables in one

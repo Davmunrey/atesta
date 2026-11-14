@@ -20,7 +20,8 @@ need a working sign-in locally, through the same code paths production will use.
       `scope="openid email"`), ID (`aud`, `nonce`, `email`, `email_verified`). `sub` is stable
       per email.
 - [ ] The API reaches it only through two overrides, `ATESTA_COGNITO_ISSUER` and
-      `ATESTA_COGNITO_BASE_URL`. Startup refuses either override when `ATESTA_ENV=prod`.
+      `ATESTA_COGNITO_BASE_URL`. Startup fails closed: either override is refused unless
+      `ATESTA_ENV` is `local`, `dev` or `test` (unset, `prod` or any other value refuses).
 - [ ] It lives outside the `atesta_api` package, so no production import can reach it.
 - [ ] One test drives the real `CognitoOAuth`, `TokenVerifier` and `CognitoUserInfo` through a
       full sign-in, refresh and userInfo against the fake.

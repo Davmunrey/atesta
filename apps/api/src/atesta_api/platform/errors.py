@@ -13,6 +13,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from atesta_api.platform.headers import RESPONSE_HEADERS
+
 # {"code": ...} literals, so the contract export (atesta_api.contract) lists every code.
 _HTTP_DETAILS = {404: {"code": "request.not_found"}, 405: {"code": "request.method_not_allowed"}}
 _OTHER_HTTP_DETAIL = {"code": "request.error"}
@@ -45,8 +47,13 @@ async def _http_error(request: Request, exc: Exception) -> Response:
 
 
 async def _server_error(request: Request, exc: Exception) -> JSONResponse:
-    """Starlette still re-raises the exception after this response, so it is logged."""
-    return JSONResponse(status_code=500, content={"detail": {"code": "server.error"}})
+    """Starlette still re-raises the exception after this response, so it is logged.
+
+    This response is sent outside the middleware stack, so it sets the headers itself.
+    """
+    return JSONResponse(
+        status_code=500, content={"detail": {"code": "server.error"}}, headers=RESPONSE_HEADERS
+    )
 
 
 def install_error_handlers(app: FastAPI) -> None:

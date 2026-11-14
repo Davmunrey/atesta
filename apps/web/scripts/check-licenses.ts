@@ -9,7 +9,9 @@ import { fileURLToPath } from "node:url";
 type Entry = { name: string; versions: string[] };
 export type Report = Record<string, Entry[]>;
 
-const COPYLEFT = /^A?GPL\b/i;
+// License fields are free text, not always SPDX: "GPLv3", "GNU GPL v3" and the spelled-out name
+// must be caught too. LGPL, in either spelling, is not a match.
+const COPYLEFT = /(^|[^L])A?GPL|(?<!Lesser |Library )General Public License/i;
 const UNDECLARED = /^(|UNKNOWN|UNLICENSED|SEE LICENSE.*)$/i;
 
 /**
