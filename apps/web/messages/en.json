@@ -337,5 +337,32 @@
     "manual": "Documentary review",
     "technical": "Technical configuration",
     "candidateChecks": "Candidate checks, no observation"
+  },
+  "evidence": {
+    "show": "View evidence",
+    "hide": "Hide evidence",
+    "boundary": "Statements and references provided by the team. They do not verify documents or approve the control.",
+    "saved": "Evidence recorded. The review is decided separately.",
+    "loading": "Loading evidence…",
+    "retry": "Retry",
+    "count": "{count, plural, one {# evidence record} other {# evidence records}}",
+    "empty": "There is no evidence for this control yet.",
+    "recorded": "{author} · {date}",
+    "scanner": "Automatic collection",
+    "member": "Organization member",
+    "collected": "Collected evidence. The file is not available from this screen.",
+    "pages": "Evidence pages",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "{page} of {pages}",
+    "record": "Record evidence",
+    "title": "Evidence name",
+    "statement": "What it demonstrates",
+    "reference": "Document link (optional)",
+    "referenceHelp": "HTTPS link without credentials. Atesta stores the reference without downloading the document.",
+    "immutable": "This record stays in the history. To correct it, add new evidence explaining the change.",
+    "saving": "Saving…",
+    "save": "Save evidence",
+    "cancel": "Cancel"
   }
 }

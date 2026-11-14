@@ -15,6 +15,50 @@ async function createOrganization(page: Page) {
   return new URL(page.url()).searchParams.get("org")!;
 }
 
+test("evidence form supports keyboard submission and responsive themes", async ({ page }) => {
+  const org = await createOrganization(page);
+  const proof = { id: "synthetic-proof", kind: "attestation", title: "Synthetic policy", statement: "Synthetic evidence for browser verification.", reference_url: null, created_by: null, created_at: "2026-11-14T12:00:00Z", collected_at: "2026-11-14T12:00:00Z" };
+  let saved = false;
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha", (route) => route.fulfill({ json: withManualControl(null) }));
+  await page.route("**/api/v1/orgs/*/controls/ctl.paper/evidence*", async (route) => {
+    if (route.request().method() === "POST") {
+      expect(route.request().postDataJSON()).toMatchObject({ title: proof.title, statement: proof.statement, reference_url: null });
+      saved = true;
+      return route.fulfill({ status: 201, json: proof });
+    }
+    return route.fulfill({ json: { total: saved ? 1 : 0, items: saved ? [proof] : [] } });
+  });
+  await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
+  const control = page.locator("article").filter({ hasText: "ctl.paper" });
+  const requirement = page.locator("details.requirement-row").filter({ hasText: "ctl.paper" });
+  await requirement.locator("summary").click();
+  await control.getByRole("button", { name: "Ver evidencias" }).press("Enter");
+  await control.getByRole("button", { name: "Registrar evidencia" }).click();
+  await control.getByLabel("Nombre de la evidencia").fill(proof.title);
+  await control.getByLabel("Qué demuestra").fill(proof.statement);
+  for (const colorScheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
+    for (const width of [375, 768, 1280]) {
+      await page.setViewportSize({ width, height: 900 });
+      await expect(page.locator("body")).toHaveCSS("background-color", colorScheme === "dark" ? "rgb(23, 23, 21)" : "rgb(244, 241, 234)");
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+      expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id)).toEqual([]);
+    }
+  }
+  await control.getByRole("button", { name: "Guardar evidencia" }).click();
+  await expect(control.getByText("Evidencia registrada. La revisión se decide por separado.")).toBeVisible();
+  await page.reload();
+  await requirement.locator("summary").click();
+  await control.getByRole("button", { name: "Ver evidencias" }).click();
+  await expect(control.getByText(proof.statement)).toBeVisible();
+  await page.getByRole("button", { name: "English" }).click();
+  if (await requirement.getAttribute("open") === null) await requirement.locator("summary").click();
+  const toggle = control.getByRole("button", { name: /^(View|Hide) evidence$/ });
+  if (await toggle.getAttribute("aria-expanded") === "false") await toggle.click();
+  await expect(control.getByRole("button", { name: "Record evidence" })).toBeVisible();
+});
+
 test("framework route handles a real absent catalog and recovers from read failures", async ({ page }) => {
   const org = await createOrganization(page);
   await page.goto(`/app/framework?org=${org}&framework=absent`);

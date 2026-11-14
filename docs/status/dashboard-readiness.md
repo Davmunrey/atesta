@@ -1,6 +1,7 @@
 # Dashboard and framework readiness
 
-Observed on 2026-11-13 against main `6ded2e6` and the open dashboard PR stack.
+Observed on 2026-11-14 across merged dashboard/catalog work and the local evidence integration.
+Draft and local capabilities below are not claimed as merged or deployed.
 This is an implementation inventory, not an assessment of a customer's legal compliance.
 
 ## What can be used now
@@ -12,6 +13,8 @@ This is an implementation inventory, not an assessment of a customer's legal com
 | Requirement register | Stored requirement states, filters, search, historical provenance and configuration detail | Reads recorded data; it cannot infer uncollected customer configuration |
 | Implementation guidance | Catalog descriptions, safe reference links, manual/technical distinction and a next step for every state | Missing descriptions, references and mapping review are shown explicitly |
 | Technical observation | Existing scan-as-of aggregation, gated on matching framework/catalog versions | No raw resources or individual connection drill-down; catalog drift yields no observation |
+| Declared evidence, local integration | Named statements, optional HTTPS references and paginated history beside mapped and preparation controls; shared by common control | API #83 depends on draft #79; UI depends on #83. No binary upload, document retrieval/verification, automatic approval or assessment change |
+| Manual review, local integration | Independent manual control review from #79 is present in the local baseline | #79 remains draft; evidence submission neither changes a decision nor pins evidence to it |
 
 ## What is missing by framework
 
@@ -39,15 +42,19 @@ PASS cannot make any of the 73 ENS measures pass: every measure retains a manual
 2. Expand the five preparation templates into reviewed normative packs in demand order.
    The existing 26 bilingual guides include steps, evidence, verification and limits. Six
    technical candidates use pinned Prowler 5.49.0 checks; a candidate is not reviewed coverage.
-3. Finish live onboarding/collection with the connection workstream. At this observation,
-   #67 owns create/list/get/disconnect endpoints. Fixture scans and ingestion already work;
-   this does not verify real tenant consent, credentials or end-to-end cloud execution.
-4. Add the user workflow for documentary evidence, assignment and review. The current
-   screen explains pending work but does not upload documents, assign owners, change
-   applicability, approve manual requirements or record exceptions.
+3. Finish live onboarding/collection with the connection workstream. Connection and scan
+   endpoint work has merged through #77, #78, #81 and #82; worker execution remains with
+   the other session in #84. Fixture scans and ingestion work; this does not verify real
+   tenant consent, credentials or end-to-end cloud execution.
+4. Integrate the independently reviewed manual workflow in draft #79, dependent evidence
+   API #83 and the dependent evidence UI. Local statements and HTTPS references persist
+   without changing assessments. Binary uploads, decision-to-evidence pinning, marking a
+   review stale when new evidence arrives, owner assignment and applicability editing remain
+   outstanding. A declaration is not a verified document or compliance approval.
 5. Verify release conditions: genuine test-tenant captures, hosted authentication, public
-   legal identity/content and required review. #54 remains a draft release gate, not a
-   deployment. Merge the reviewed stack in dependency order before production rollout.
+   legal identity/content and required review. Release-gate work #54 has merged; that does
+   not establish deployment or satisfaction of those gates. Merge the remaining reviewed
+   stack in dependency order before production rollout.
 
 ## Reading the requirement states
 
@@ -62,8 +69,18 @@ label current guidance; do not reconstruct historical control outcomes using new
 
 ## Current coordination
 
-Dashboard stack: #55, #63, #66, #68, #69, #70 (detail API), #71 (detail screen), #72
-(readiness), #73 (preview loader/scoring guard), #74 (official ENS draft) and #75
-(five preparation templates). The preparation UI extends that stack.
-Connection runtime remains owned by the other session. No merge or deployment is included.
-The local demo additionally includes independent release-gate work from #54.
+Merged dashboard/catalog stack: #55, #63, #66 and #68 through #76, including detail API,
+detail screen, readiness inventory, preview/scoring guard, ENS draft, preparation templates
+and their UI. The other session has merged #54, #77, #78, #81 and #82.
+
+Manual review #79 remains draft. Its earlier checks were green; integration of current main
+and renewed verification are in progress. Evidence API #83 is dependent on #79, with head
+`857caf145a495e0591e23a060a0b4dc831ba3032` including #79 base
+`63ee11539b52f992b6a5b539423438acb3970ec9` and merged #81/#82. The evidence UI depends on #83.
+Hardening #80 and worker execution #84 remain owned by the other session.
+
+Local evidence verification records 780 Python tests, 272 web tests, passing lint/types/module
+boundaries/build and 15 browser checks. A real local API write persisted a synthetic statement
+without changing the assessment; 375/768/1280px light and 1280px dark captures show no horizontal
+overflow or serious/critical axe findings. These checks do not establish production readiness,
+genuine cloud collection, legal content completeness or qualified catalog review.

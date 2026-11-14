@@ -10,6 +10,7 @@ import { type Role, canReviewControls } from "@/lib/permissions";
 import { CatalogPreparation, PreparationGuides, RequirementGuidance } from "./catalog-preparation";
 import { CatalogReference as Reference } from "./catalog-reference";
 import { ControlReview } from "./control-review";
+import { ControlEvidence } from "./control-evidence";
 import { ErrorMessage } from "./error-message";
 
 type Detail = components["schemas"]["FrameworkDetail"];
@@ -39,7 +40,7 @@ export function FrameworkDetailView({ orgId, frameworkKey, role = "member" }: { 
         {query.data.snapshot && !query.data.catalog_matches_snapshot ? <p className="framework-notice">{t("catalogChanged")}</p> : null}
         {query.data.catalog_context ? <CatalogPreparation context={query.data.catalog_context} requirements={query.data.requirements.length} controls={query.data.preparation_controls?.length ?? 0} /> : null}
         <RequirementRegister key={`${orgId}:${frameworkKey}`} detail={query.data} review={{ orgId, frameworkKey, canReview: canReviewControls(role) }} />
-        <PreparationGuides controls={query.data.preparation_controls ?? []} />
+        <PreparationGuides orgId={orgId} controls={query.data.preparation_controls ?? []} />
         <div className="framework-catalog"><h2>{t("catalogTitle")}</h2><p>{t("currentVersion", { version: query.data.version, catalog: query.data.catalog_version ?? t("unknownVersion") })}</p>
           <p>{t("catalogHelp")}</p><Reference value={query.data.source} />
         </div>
@@ -103,6 +104,7 @@ function RequirementRow({ requirement: r, initiallyOpen, review }: { requirement
           {control.checks.length > 0 ? <ul className="configuration-checks" aria-label={t("checks")}>{control.checks.map((check) => <li key={`${check.engine}:${check.check_id}`}>
             <span><span className="requirement-code">{check.check_id}</span><span className="check-engine">{check.engine}</span></span><span>{t(`observations.${check.observed_status ?? "missing"}`)}</span>
           </li>)}</ul> : null}
+          <ControlEvidence orgId={review.orgId} controlKey={control.key} />
           {control.manual ? <ControlReview {...review} controlKey={control.key} review={control.review ?? null} /> : null}
           <div className="control-references"><h5>{t("applyGuide")}</h5>{control.remediation_refs.length ? <ul>{control.remediation_refs.map((value, i) => <li key={i}><Reference value={value} /></li>)}</ul> : <p>{t("missingReferences")}</p>}</div>
         </article>)}

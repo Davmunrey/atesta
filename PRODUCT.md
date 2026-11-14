@@ -11,10 +11,16 @@ ENS draft contains the 73 Annex II measures, candidate mappings and bilingual pr
 guides. NIS2, ISO/IEC 27001, GDPR Article 32, DORA and SOC 2 have scoped preparation templates,
 not reviewed normative coverage. All six disable assessment; local recorded results remain
 explicitly synthetic. Scope, missing work and official sources are available in each detail view. Current
-capabilities and remaining work are recorded in `docs/status/dashboard-readiness.md`. Connector onboarding
-and scanner execution remain a separate workstream. Show only implemented actions and recorded data: no
-invented scores, scans or product states. Product views for the public landing must come from
-a recorded test-tenant run before release.
+local work adds named evidence statements, optional HTTPS references and history beside mapped
+and preparation controls. These are declarations, not uploaded or verified documents; recording
+evidence does not change an assessment or a manual review decision. Manual review is integrated
+locally from draft #79; evidence API #83 depends on it and the evidence UI shares that dependency.
+Decision-to-evidence links, review invalidation on new evidence, owner assignment and applicability
+editing remain unimplemented. Capabilities and integration status are recorded in
+`docs/status/dashboard-readiness.md`. Connector onboarding and scanner execution remain a separate
+workstream; merged endpoints do not establish genuine end-to-end cloud execution. Show only implemented
+actions and recorded data: no invented scores, scans or product states. Product views for the public
+landing must come from a recorded test-tenant run before release.
 
 Spanish is the default language, with complete English translations. Copy should describe
 the user's task in direct, specific language. Respect role-based visibility and tenant

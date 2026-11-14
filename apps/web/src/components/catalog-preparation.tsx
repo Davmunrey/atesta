@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import type { components } from "@/lib/api/schema";
 import { CatalogReference } from "./catalog-reference";
+import { ControlEvidence } from "./control-evidence";
 
 type Context = components["schemas"]["PackContext"];
 type Guidance = components["schemas"]["RequirementContext"];
@@ -46,7 +47,7 @@ export function RequirementGuidance({ guidance }: { guidance: Guidance }) {
   </div>;
 }
 
-export function PreparationGuides({ controls }: { controls: Control[] }) {
+export function PreparationGuides({ orgId, controls }: { orgId: string; controls: Control[] }) {
   const t = useTranslations("preparation");
   const framework = useTranslations("framework");
   const english = useLocale() === "en";
@@ -59,6 +60,7 @@ export function PreparationGuides({ controls }: { controls: Control[] }) {
       <p className="control-description">{english ? control.description_en : control.description_es}</p>
       {control.checks.length > 0 ? <div className="configuration-checks"><h3>{t("candidateChecks")}</h3><ul>{control.checks.map((check) => <li key={`${check.engine}:${check.check_id}`}><span className="requirement-code">{check.check_id}</span><span>{check.engine}</span></li>)}</ul></div> : null}
       <div className="control-references"><h3>{framework("applyGuide")}</h3><ul>{control.remediation_refs.map((value) => <li key={value}><CatalogReference value={value} /></li>)}</ul></div>
+      <ControlEvidence orgId={orgId} controlKey={control.key} />
     </details>)}
   </section>;
 }

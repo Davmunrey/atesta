@@ -337,5 +337,32 @@
     "manual": "Revisión documental",
     "technical": "Configuración técnica",
     "candidateChecks": "Comprobaciones candidatas, sin observación"
+  },
+  "evidence": {
+    "show": "Ver evidencias",
+    "hide": "Ocultar evidencias",
+    "boundary": "Declaraciones y referencias aportadas por el equipo. No validan documentos ni aprueban el control.",
+    "saved": "Evidencia registrada. La revisión se decide por separado.",
+    "loading": "Cargando evidencias…",
+    "retry": "Reintentar",
+    "count": "{count, plural, one {# evidencia registrada} other {# evidencias registradas}}",
+    "empty": "Todavía no hay evidencias para este control.",
+    "recorded": "{author} · {date}",
+    "scanner": "Recopilación automática",
+    "member": "Miembro de la organización",
+    "collected": "Evidencia recopilada. El archivo no está disponible desde esta pantalla.",
+    "pages": "Páginas de evidencias",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "page": "{page} de {pages}",
+    "record": "Registrar evidencia",
+    "title": "Nombre de la evidencia",
+    "statement": "Qué demuestra",
+    "reference": "Enlace al documento (opcional)",
+    "referenceHelp": "Enlace HTTPS sin credenciales. Atesta conserva la referencia, sin descargar el documento.",
+    "immutable": "El registro se conserva en el historial. Para corregirlo, añade una nueva evidencia que explique el cambio.",
+    "saving": "Guardando…",
+    "save": "Guardar evidencia",
+    "cancel": "Cancelar"
   }
 }

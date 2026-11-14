@@ -1,4 +1,23 @@
 @layer components {
+  .control-evidence { margin-top: 1.25rem; }
+  .evidence-toggle { min-height: 2.75rem; color: var(--color-link); text-decoration: underline; text-underline-offset: 0.2em; cursor: pointer; }
+  .evidence-toggle:hover { text-decoration-thickness: 2px; }
+  .evidence-workspace { padding-block: 0.5rem 1rem; }
+  .evidence-workspace > p, .evidence-workspace > button { margin-block: 0.75rem; }
+  .control-evidence .evidence-count, .evidence-metadata { font-size: 0.8125rem; font-variant-numeric: tabular-nums; color: var(--color-muted); }
+  .evidence-list { list-style: none; margin-block: 1rem; }
+  .evidence-list li { padding-block: 1rem; border-block-start: 1px solid var(--color-border); overflow-wrap: anywhere; }
+  .evidence-list strong { font-weight: 500; }
+  .evidence-statement { white-space: pre-wrap; max-width: 72ch; }
+  .evidence-reference { font-size: 0.875rem; }
+  .evidence-form { margin-top: 1.5rem; max-width: 44rem; }
+  .evidence-form fieldset { display: grid; gap: 0.5rem; min-width: 0; }
+  .evidence-form legend { margin-bottom: 1rem; font-weight: 500; }
+  .evidence-form label { margin-top: 0.75rem; font-weight: 500; font-size: 0.875rem; }
+  .evidence-form input, .evidence-form textarea { width: 100%; min-width: 0; border: 1px solid var(--color-border); border-radius: 0.375rem; background: var(--color-bg); padding: 0.625rem; color: var(--color-fg); caret-color: var(--color-link); }
+  .evidence-form textarea { resize: vertical; }
+  .evidence-form fieldset:disabled { opacity: 0.65; }
+  .evidence-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-top: 1rem; }
   .framework-page { min-width: 0; }
   .framework-page ::selection { background: var(--color-accent); color: var(--color-accent-fg); }
   .framework-page input { caret-color: var(--color-link); }
