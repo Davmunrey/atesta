@@ -34,6 +34,7 @@ class ScanJob:
     scan_id: uuid.UUID
     attempt: int
     provider: str
+    credential_ref: str | None = None  # Google: the connection's; M365 uses the platform's (D5)
 
 
 class ScanStore(Protocol):
@@ -66,6 +67,10 @@ class LocalScanStore:
         require_dev("LocalScanStore")
         root.mkdir(parents=True, exist_ok=True)
         self._root = root.resolve()
+
+    @property
+    def root(self) -> Path:
+        return self._root
 
     def _path(self, key: str) -> Path:
         path = self._root.joinpath(*_segments(key))

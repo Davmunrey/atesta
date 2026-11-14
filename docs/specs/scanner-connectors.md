@@ -174,7 +174,10 @@ D12 (Microsoft Partner Program account and a verified domain).
       replays committed OCSF fixtures (synthetic first, recorded later) without Docker or
       credentials; like the wrapper, it drops findings of the checks its `job.json` excludes.
       The dev worker runs it with `ATESTA_SCAN_RUNNER=fixture`, `ATESTA_SCAN_STORE_DIR`,
-      `ATESTA_SCAN_FIXTURES` and `ATESTA_SCANNER_EXPECTED`.
+      `ATESTA_SCAN_FIXTURES` and `ATESTA_SCANNER_EXPECTED`; `ATESTA_SCAN_RUNNER=docker` adds
+      `ATESTA_SCAN_IMAGE`, `ATESTA_SCAN_CREDENTIALS_DIR`, `ATESTA_M365_CREDENTIAL_REF` (default
+      `local:m365-scanner`) and `ATESTA_SCAN_NETWORK` (default `atesta-scan`). A credential file
+      is `<name>.json` for `local:<name>`, holding the variables the wrapper expects.
 - [ ] `docker compose` profile `scanner` builds the image. `uv run atesta-dev-scan` loads the
       synthetic catalog fixture `apps/api/tests/fixtures/catalog/` as `atesta_owner` (two synthetic
       frameworks, controls mapped to ids from the committed expected check lists; outside

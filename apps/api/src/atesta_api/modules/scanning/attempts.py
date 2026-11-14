@@ -136,7 +136,7 @@ def start_attempt(
         return Started(None, _end(session, scan, "blocked", "scanning.connection_not_active"))
     scan.status, scan.attempts, scan.error_code = "running", attempt, None
     scan.started_at = func.now()
-    job = ScanJob(organization_id, scan.id, attempt, scan.provider)
+    job = ScanJob(organization_id, scan.id, attempt, scan.provider, target.credential_ref)
     excluded = sorted(exclusions(expected_root, scan.provider))
     data = {
         "organization_id": str(organization_id),
