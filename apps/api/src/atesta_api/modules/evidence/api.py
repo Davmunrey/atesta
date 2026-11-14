@@ -6,6 +6,7 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from datetime import datetime
 
+from fastapi import FastAPI
 from sqlalchemy import func, insert, select
 from sqlalchemy.orm import Session
 
@@ -13,6 +14,12 @@ from atesta_api.modules.compliance.api import active_control_keys, control_is_ac
 from atesta_api.modules.evidence.models import Evidence, EvidenceControl
 
 _UNSAFE = re.compile(r"[^A-Za-z0-9_.-]+")
+
+
+def install_evidence(app: FastAPI) -> None:
+    from atesta_api.modules.evidence.routes import router
+
+    app.include_router(router)
 
 
 def evidence_count(session: Session, organization_id: uuid.UUID) -> int:

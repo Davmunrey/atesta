@@ -73,3 +73,27 @@ class EvidenceControl(TenantMixin, Base):
 
     evidence_id: Mapped[uuid.UUID]
     control_key: Mapped[str] = mapped_column(Text)  # validated through compliance.api
+
+
+class EvidenceStatement(TenantMixin, Base):
+    __tablename__ = "evidence_statements"
+    __table_args__ = (
+        PrimaryKeyConstraint("organization_id", "evidence_id"),
+        UniqueConstraint("organization_id", "submission_id"),
+        ForeignKeyConstraint(
+            ["organization_id", "evidence_id"],
+            ["evidence.organization_id", "evidence.id"],
+            ondelete="RESTRICT",
+        ),
+        CheckConstraint("length(btrim(statement)) BETWEEN 1 AND 10000", name="statement_length"),
+        CheckConstraint(
+            "reference_url IS NULL OR length(reference_url) <= 2048", name="url_length"
+        ),
+        CheckConstraint("payload_hash ~ '^[0-9a-f]{64}$'", name="payload_hash"),
+    )
+
+    evidence_id: Mapped[uuid.UUID]
+    submission_id: Mapped[uuid.UUID]
+    payload_hash: Mapped[str] = mapped_column(CHAR(64))
+    statement: Mapped[str] = mapped_column(Text)
+    reference_url: Mapped[str | None] = mapped_column(Text)

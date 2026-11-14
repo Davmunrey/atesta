@@ -88,6 +88,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/controls/{control_key}/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Evidence */
+        get: operations["list_evidence_api_v1_orgs__org_id__controls__control_key__evidence_get"];
+        put?: never;
+        /** Record Statement */
+        post: operations["record_statement_api_v1_orgs__org_id__controls__control_key__evidence_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/controls/{control_key}/reviews": {
         parameters: {
             query?: never;
@@ -414,6 +432,41 @@ export interface components {
              */
             id: string;
             role: components["schemas"]["Role"];
+        };
+        /** EvidenceOut */
+        EvidenceOut: {
+            /**
+             * Collected At
+             * Format: date-time
+             */
+            collected_at: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By */
+            created_by: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Kind */
+            kind: string;
+            /** Reference Url */
+            reference_url: string | null;
+            /** Statement */
+            statement: string | null;
+            /** Title */
+            title: string;
+        };
+        /** EvidencePage */
+        EvidencePage: {
+            /** Items */
+            items: components["schemas"]["EvidenceOut"][];
+            /** Total */
+            total: number;
         };
         /**
          * ExpectedAccess
@@ -773,6 +826,20 @@ export interface components {
             /** Score */
             score: number | null;
         };
+        /** StatementIn */
+        StatementIn: {
+            /** Reference Url */
+            reference_url?: string | null;
+            /** Statement */
+            statement: string;
+            /**
+             * Submission Id
+             * Format: uuid
+             */
+            submission_id: string;
+            /** Title */
+            title: string;
+        };
         /** ValidationError */
         ValidationError: {
             /** Context */
@@ -998,6 +1065,77 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ConnectionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_evidence_api_v1_orgs__org_id__controls__control_key__evidence_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                control_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidencePage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_statement_api_v1_orgs__org_id__controls__control_key__evidence_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                control_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StatementIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceOut"];
                 };
             };
             /** @description Validation Error */

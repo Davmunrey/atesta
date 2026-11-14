@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from atesta_api.modules.compliance.catalog import read_catalog
 from atesta_api.modules.compliance.catalog_preview import import_preview
+from atesta_api.modules.compliance.control_access import control_is_visible
 from atesta_api.modules.compliance.fixtures import load_catalog_fixture
 from atesta_api.modules.compliance.scoring import (
     FrameworkInfo,
@@ -36,6 +37,7 @@ __all__ = [
     "active_control_keys",
     "active_frameworks",
     "control_is_active",
+    "control_is_visible",
     "include_drafts",
     "import_preview",
     "install_compliance",
