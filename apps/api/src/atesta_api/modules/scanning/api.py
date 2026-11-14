@@ -35,6 +35,7 @@ from atesta_api.modules.scanning.lifecycle import (
     scan_lock,
     scheduled_scan,
 )
+from atesta_api.modules.scanning.local import LocalCredentialStore, LocalDockerRunner
 from atesta_api.modules.scanning.queries import ScanSummary, recent_scans
 from atesta_api.modules.scanning.routes import router
 from atesta_api.modules.scanning.runners import (
@@ -62,6 +63,8 @@ __all__ = [
     "ConnectionNotActiveError",
     "ConnectionNotFoundError",
     "FixtureRunner",
+    "LocalCredentialStore",
+    "LocalDockerRunner",
     "LocalScanStore",
     "Outcome",
     "OutputExistsError",
