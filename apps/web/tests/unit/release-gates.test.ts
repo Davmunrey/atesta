@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { copyFileSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -153,5 +153,20 @@ describe.each(["legal", "landing"] as const)("%s CLI boundary", (gate) => {
   it("rejects extra arguments even when input is complete", () => {
     const source = gate === "legal" ? `export const legalEntity = ${JSON.stringify(legal)};` : JSON.stringify(recorded);
     blocked(run(gate, source, ["--skip"]), gate);
+  });
+});
+
+describe("both release gates", () => {
+  // A gate that silently exits 0 reads as "passed" to a deploy job. Before the fix, starting the
+  // script through a symlinked directory with --preserve-symlinks-main skipped the whole check.
+  it.each(["legal", "landing"] as const)("%s still checks when started through a symlink", (gate) => {
+    run(gate);  // copies the script into package/scripts
+    symlinkSync(join(directory, "package"), join(directory, "linked"), "dir");
+    const result = spawnSync(
+      process.execPath,
+      ["--preserve-symlinks-main", join(directory, `linked/scripts/check-${gate}.ts`), join(directory, "absent.json")],
+      { cwd: directory, encoding: "utf8", timeout: 10_000 },
+    );
+    blocked(result, gate);
   });
 });
