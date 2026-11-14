@@ -13,6 +13,23 @@ pnpm build            # static export to out/, then CSP hashes to csp-policy.jso
 pnpm check-licenses   # fails on GPL, AGPL or undeclared licenses
 ```
 
+## Public release gates
+
+Before uploading a public release, run `pnpm check-legal && pnpm check-landing`.
+These commands are separate from the build and CI: drafts may build and merge while public
+release stays blocked. They currently fail because the landing content is not implemented.
+
+- `check-legal` requires `src/content/legal-entity.ts` to export `legalEntity` with non-blank
+  string fields `name`, `nif`, `address`, `registry` and `email`.
+- `check-landing` requires `src/content/landing-fixture.json` with `origin: "recorded"`, a UUID
+  `scan_id` and a real `scan_date` in `YYYY-MM-DD` form.
+
+Each command accepts one optional file path for isolated checks. Missing or malformed files
+block release; diagnostics name fields without printing their values. These checks establish
+metadata completeness, not the authenticity of a scan or legal approval. The lawyer review and
+recorded-product requirement in `docs/specs/landing-legal.md` remain release requirements.
+The future deploy job must run both gates before publishing; there is no deploy job yet.
+
 ## API contract
 
 `src/lib/api/openapi.json` and `error-codes.json` are written by the API's contract test;
