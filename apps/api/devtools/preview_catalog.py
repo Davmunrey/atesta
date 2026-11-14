@@ -12,19 +12,22 @@ from atesta_api.platform.devenv import require_dev
 from sqlalchemy.engine import URL, make_url
 
 ROOT = Path(__file__).resolve().parents[3]
+_LIBPQ_TARGET = ("PGHOST", "PGHOSTADDR", "PGSERVICE", "PGSERVICEFILE")
 
 
 def loopback_dev_url(raw: str) -> URL:
     """The URL of the loopback atesta_dev database, or an error.
 
     No query string is accepted: libpq takes host, hostaddr, dbname and service from it, after
-    this check has read the host and database from the URL itself.
+    this check has read the host and database from the URL itself. The same holds for libpq's
+    environment variables (PGHOSTADDR overrides a loopback host), so those are refused too.
     """
     url = make_url(raw)
     if (
         url.host not in {"127.0.0.1", "localhost", "::1"}
         or url.database != "atesta_dev"
         or url.query
+        or any(os.environ.get(name) for name in _LIBPQ_TARGET)
     ):
         raise RuntimeError("preview import requires the loopback atesta_dev database")
     return url

@@ -86,6 +86,10 @@ MALFORMED = {
     "no resource": ("resources", []),
     "resource without uid": ("resources.0.uid", _DELETE),
     "no message": ("status_detail", _DELETE),
+    # PostgreSQL text cannot hold NUL: accepted here, the ingest would fail outside its error path.
+    "NUL in a resource name": ("resources.0.name", "secret\u0000name"),
+    "NUL in the message": ("status_detail", "secret\u0000detail"),
+    "NUL in an optional tenant field": ("cloud.account.uid", "secret\u0000tenant"),
 }
 
 
@@ -99,7 +103,9 @@ def test_malformed_findings_are_rejected_without_echoing_values(name: str) -> No
     assert "secret" not in str(exc.value)  # rule 2: no output values in errors or logs
 
 
-@pytest.mark.parametrize("payload", [b"not json", b'{"a": 1}', b"[1, 2]", b"\xff\xfe"])
+@pytest.mark.parametrize(
+    "payload", [b"not json", b'{"a": 1}', b"[1, 2]", b"\xff\xfe", b"[" * 200_000]
+)
 def test_output_that_is_not_a_finding_array_is_rejected(payload: bytes) -> None:
     with pytest.raises(OcsfError):
         parse_findings(payload)

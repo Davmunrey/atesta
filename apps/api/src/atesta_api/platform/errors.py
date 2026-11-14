@@ -11,6 +11,7 @@ from fastapi import FastAPI, Request
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
+from sqlalchemy.exc import DataError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from atesta_api.platform.headers import RESPONSE_HEADERS
@@ -46,6 +47,18 @@ async def _http_error(request: Request, exc: Exception) -> Response:
     )
 
 
+async def _unstorable_text(request: Request, exc: Exception) -> JSONResponse:
+    """PostgreSQL text cannot hold NUL: input that carries one is invalid, not a server fault.
+
+    Any other DataError is re-raised, so it still reaches _server_error and is logged.
+    """
+    if isinstance(exc, DataError) and "NUL (0x00)" in str(exc.orig):
+        return JSONResponse(
+            status_code=422, content={"detail": {"code": "request.invalid", "fields": []}}
+        )
+    raise exc
+
+
 async def _server_error(request: Request, exc: Exception) -> JSONResponse:
     """Starlette still re-raises the exception after this response, so it is logged.
 
@@ -59,4 +72,5 @@ async def _server_error(request: Request, exc: Exception) -> JSONResponse:
 def install_error_handlers(app: FastAPI) -> None:
     app.add_exception_handler(RequestValidationError, _invalid_request)
     app.add_exception_handler(StarletteHTTPException, _http_error)
+    app.add_exception_handler(DataError, _unstorable_text)
     app.add_exception_handler(Exception, _server_error)
