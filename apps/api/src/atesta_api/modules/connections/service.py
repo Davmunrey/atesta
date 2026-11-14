@@ -68,3 +68,14 @@ def disconnect_connection(session: Session, connection_id: uuid.UUID) -> Connect
 def active_connection_ids(session: Session) -> list[uuid.UUID]:
     query = select(Connection.id).where(Connection.status == "active").order_by(Connection.id)
     return list(session.scalars(query))
+
+
+ENDED_STATUSES = ("disconnected", "revoked")
+
+
+def ended_connection_ids(session: Session, organization_id: uuid.UUID) -> set[uuid.UUID]:
+    """Connections whose results no longer count: disconnected, or access revoked."""
+    query = select(Connection.id).where(
+        Connection.organization_id == organization_id, Connection.status.in_(ENDED_STATUSES)
+    )
+    return set(session.scalars(query))

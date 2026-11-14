@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from atesta_api.modules.connections.api import create_connection, disconnect_connection
 from atesta_api.modules.evidence.api import ScanOutputFile, register_scan_output
 from atesta_api.modules.identity.api import ContextReason, enter_org_context
 from atesta_api.modules.scanning.api import (
@@ -299,3 +300,50 @@ def test_scan_evidence_links_only_active_controls(tx: Session, control: str) -> 
             control_keys=["scan.mfa", control],
             collected_at=T0,
         )
+
+
+# --- ended connections (scanner-connectors spec: results of active connections only) -------
+
+
+def _connection(session: Session, provider: str) -> uuid.UUID:
+    created = create_connection(
+        session,
+        organization_id=ORG_A,
+        provider=provider,
+        display_name=provider,
+        created_by=uuid.uuid4(),
+    )
+    return created.id
+
+
+def test_a_disconnected_connections_results_leave_the_score(
+    tx: Session, store: LocalScanStore
+) -> None:
+    m365, google = _connection(tx, "m365"), _connection(tx, "google_workspace")
+    ingested(tx, store, "m365", m365, T0)
+    disconnect_connection(tx, m365)
+    later = ingested(tx, store, "google_workspace", google, T0 + timedelta(days=30))
+    assert not any(
+        c.startswith(("entra", "exchange")) for _, c, _ in latest_check_results(tx, later)
+    )
+    snapshot_scores(tx, later)
+    assert snapshot(tx, later)["requirements"]["S-1"] == "manual"  # was 'pass' from the old tenant
+
+
+def test_a_stale_fail_from_a_disconnected_connection_clears_after_reconnecting(
+    tx: Session, store: LocalScanStore
+) -> None:
+    old = _connection(tx, "m365")
+    ingested(tx, store, "m365", old, T0, mfa_failing())
+    disconnect_connection(tx, old)
+    fixed = ingested(tx, store, "m365", _connection(tx, "m365"), T0 + timedelta(days=1))
+    snapshot_scores(tx, fixed)
+    assert snapshot(tx, fixed)["requirements"]["S-1"] == "pass"  # was 'fail' forever
+
+
+def test_a_connection_not_yet_active_still_counts(tx: Session, store: LocalScanStore) -> None:
+    m365, google = _connection(tx, "m365"), _connection(tx, "google_workspace")  # pending setup
+    ingested(tx, store, "m365", m365, T0)
+    later = ingested(tx, store, "google_workspace", google, T0 + timedelta(hours=1))
+    snapshot_scores(tx, later)
+    assert snapshot(tx, later)["requirements"]["S-1"] == "pass"

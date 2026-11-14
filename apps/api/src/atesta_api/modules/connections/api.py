@@ -10,6 +10,7 @@ from atesta_api.modules.connections.service import (
     active_connection_ids,
     create_connection,
     disconnect_connection,
+    ended_connection_ids,
     get_connection,
     list_connections,
 )
@@ -17,6 +18,7 @@ from atesta_api.modules.connections.service import (
 __all__ = [
     "ConnectionStateError",
     "active_connection_ids",
+    "ended_connection_ids",
     "create_connection",
     "disconnect_connection",
     "get_connection",
