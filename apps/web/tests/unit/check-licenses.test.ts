@@ -10,6 +10,23 @@ describe("isAllowed", () => {
   it.each(["GPL-3.0-only", "GPL-2.0", "AGPL-3.0", "MIT AND GPL-3.0", "UNKNOWN", ""])("rejects %s", (license) =>
     expect(isAllowed(license)).toBe(false),
   );
+
+  // Free-text license fields are not SPDX: the id may carry a version suffix or a GNU prefix.
+  it.each([
+    "GPLv3",
+    "GPL3",
+    "AGPLv3",
+    "GNU GPL v3",
+    "GNU AGPL",
+    "MIT, GPL-3.0",
+    "GNU General Public License v3.0",
+    "GNU Affero General Public License v3.0",
+  ])("rejects the non-SPDX spelling %s", (license) => expect(isAllowed(license)).toBe(false));
+
+  it.each(["LGPLv3", "GNU LGPL", "GNU Lesser General Public License v3.0", "GNU Library General Public License v2"])(
+    "allows the non-SPDX LGPL spelling %s",
+    (license) => expect(isAllowed(license)).toBe(true),
+  );
 });
 
 it("lists each rejected package with its versions", () => {
