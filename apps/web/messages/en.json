@@ -91,6 +91,11 @@
     "evidence": {
       "control_not_found": "This control is no longer available. Reload the catalog.",
       "submission_conflict": "This submission was already recorded with different data. Reload the evidence before continuing."
+    },
+    "scanning": {
+      "already_queued": "A scan of this connection is already queued or running. Wait for it to finish.",
+      "connection_not_active": "This connection is not active yet. Finish its setup and verify it before scanning.",
+      "not_found": "We couldn't find that scan, or you don't have access."
     }
   },
   "app": {

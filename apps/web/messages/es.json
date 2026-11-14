@@ -91,6 +91,11 @@
     "evidence": {
       "control_not_found": "Este control ya no está disponible. Recarga el catálogo.",
       "submission_conflict": "Este envío ya se registró con otros datos. Recarga las evidencias antes de continuar."
+    },
+    "scanning": {
+      "already_queued": "Ya hay un escaneo en cola o en curso para esta conexión. Espera a que termine.",
+      "connection_not_active": "Esta conexión aún no está activa. Termina de configurarla y verifícala antes de escanear.",
+      "not_found": "No encontramos ese escaneo, o no tienes acceso."
     }
   },
   "app": {
