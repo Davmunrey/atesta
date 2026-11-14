@@ -19,8 +19,10 @@ from sqlalchemy.orm import Session
 
 from atesta_api.modules.compliance.models import Control, ControlReview
 from atesta_api.modules.identity.api import Member, Role, require_member, require_role
+from atesta_api.modules.scanning.api import RESCORE_TASK
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
+from atesta_api.platform.queue import defer
 
 MAX_VALIDITY = timedelta(days=3 * 365 + 1)  # three years, one leap day included
 _CONTROL_CHARACTERS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")  # tab and line feed allowed
@@ -140,6 +142,8 @@ def record_review(
         actor_user_id=member.user_id,
         metadata={"status": body.status, "valid_until": body.valid_until.isoformat()},
     )
+    # The score moves through a correction of the latest snapshot, committed with the review.
+    defer(session, RESCORE_TASK, queue="scans", organization_id=str(member.organization_id))
     return review_out(review)
 
 

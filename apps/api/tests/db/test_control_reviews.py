@@ -6,6 +6,7 @@ from datetime import UTC, date, datetime, timedelta
 
 import pytest
 from atesta_api.modules.identity.api import ContextReason, enter_org_context
+from atesta_api.modules.scanning.api import RESCORE_TASK
 from fastapi.testclient import TestClient
 from sqlalchemy import Engine, text
 from sqlalchemy.exc import DBAPIError
@@ -298,3 +299,19 @@ def test_rls_keeps_reviews_in_their_org(tx: Session) -> None:
 def test_checks_reject_bad_rows(tx: Session, overrides: dict[str, object]) -> None:
     with pytest.raises(DBAPIError, match="check constraint"), tx.begin_nested():
         insert(tx, **overrides)
+
+
+def test_a_recorded_review_queues_a_rescore_of_its_org(
+    client: TestClient, superuser: Engine, manual: dict[str, str]
+) -> None:
+    org, subs = org_with(client, superuser)
+    client.post(reviews_url(org, manual["manual"]), json=body(), headers=auth(subs["owner"]))
+    with superuser.connect() as conn:
+        queued = conn.execute(
+            text(
+                "SELECT task_name, queue_name, args FROM procrastinate_jobs"
+                " WHERE args ->> 'organization_id' = :o"
+            ),
+            {"o": org},
+        ).all()
+    assert [tuple(j) for j in queued] == [(RESCORE_TASK, "scans", {"organization_id": org})]

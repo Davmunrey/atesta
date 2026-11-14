@@ -20,12 +20,18 @@ from atesta_api.modules.scanning.runners import (
     ScanStore,
     output_prefix,
 )
-from atesta_api.modules.scanning.scoring import latest_check_results, snapshot_scores
+from atesta_api.modules.scanning.scoring import (
+    RESCORE_TASK,
+    latest_check_results,
+    rescore_reviews,
+    snapshot_scores,
+)
 
 __all__ = [
     "ENGINE_VERSION",
     "MANIFEST_FILE",
     "OCSF_FILE",
+    "RESCORE_TASK",
     "SNAPSHOT_TASK",
     "FixtureRunner",
     "LocalScanStore",
@@ -42,6 +48,7 @@ __all__ = [
     "output_prefix",
     "powershell_checks",
     "recent_scans",
+    "rescore_reviews",
     "run_fixture_scan",
     "snapshot_scores",
 ]

@@ -5,6 +5,7 @@ import uuid
 from collections import Counter
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -12,13 +13,14 @@ from atesta_core.frameworks import Mapping as CoreMapping
 from atesta_core.frameworks import framework_results, group_scores
 from atesta_core.scoring import ControlResult, Status, score
 from sqlalchemy import ColumnElement, and_, or_, select, text
-from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.orm import Session
+from sqlalchemy.dialects.postgresql import distinct_on, insert
+from sqlalchemy.orm import Session, aliased
 
 from atesta_api.modules.compliance.models import (
     Check,
     Control,
     ControlCheck,
+    ControlReview,
     Framework,
     Requirement,
     ScoreSnapshot,
@@ -215,3 +217,50 @@ def active_control_keys(session: Session, keys: Iterable[str]) -> set[str]:
         return set()
     query = select(Control.key).where(Control.key.in_(wanted), Control.retired_at.is_(None))
     return set(session.execute(query).scalars())
+
+
+def reviewed_control_results(
+    session: Session, organization_id: uuid.UUID, as_of: datetime
+) -> list[ControlResult]:
+    """Human results of active manual controls as of a moment (manual-control-review spec).
+
+    The latest review recorded no later than as_of decides; if it has expired by then
+    (valid_until before as_of's UTC date) the control stays without a result, even when an
+    older review would still hold. Automated controls are never taken from a review (ADR-005).
+    """
+    latest = (
+        select(ControlReview.control_key, ControlReview.status, ControlReview.valid_until)
+        .join(Control, Control.key == ControlReview.control_key)
+        .where(
+            ControlReview.organization_id == organization_id,
+            ControlReview.reviewed_at <= as_of,
+            Control.manual.is_(True),
+            Control.retired_at.is_(None),
+        )
+        .ext(distinct_on(ControlReview.control_key))
+        .order_by(
+            ControlReview.control_key, ControlReview.reviewed_at.desc(), ControlReview.id.desc()
+        )
+    )
+    day = as_of.astimezone(UTC).date()
+    return [
+        ControlResult(key, Status(status))
+        for key, status, valid_until in session.execute(latest)
+        if valid_until >= day
+    ]
+
+
+def snapshot_chain_tip(
+    session: Session, organization_id: uuid.UUID, framework_key: str, scan_id: uuid.UUID
+) -> uuid.UUID | None:
+    """The org-wide snapshot of a scan that nothing supersedes yet: the next correction's parent."""
+    newer = aliased(ScoreSnapshot)
+    return session.execute(
+        select(ScoreSnapshot.id).where(
+            ScoreSnapshot.organization_id == organization_id,
+            ScoreSnapshot.framework_key == framework_key,
+            ScoreSnapshot.scan_id == scan_id,
+            ScoreSnapshot.scope_id.is_(None),
+            ~select(newer.id).where(newer.supersedes_id == ScoreSnapshot.id).exists(),
+        )
+    ).scalar()

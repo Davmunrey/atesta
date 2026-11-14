@@ -39,8 +39,18 @@ PR 1 (record and read reviews):
       (`valid_until` before today in UTC), or `null`. Tenant data only from the caller's org.
 - [ ] Error codes have ES and EN texts.
 
-PR 2 (scoring): the latest unexpired review of a manual control is its control result in score
-snapshots; recording a review writes a correction snapshot for the latest scan.
+PR 2 (scoring):
+
+- [ ] A scan snapshot takes, for each active manual control, the latest review recorded no later
+      than the scan's `ingested_at`. That review decides the control if it has not expired by
+      then (`valid_until` on or after that UTC date); otherwise the control has no result, even
+      when an older review would still hold. A retried snapshot job gives the same snapshot.
+- [ ] A review never decides an automated control, whatever its row says.
+- [ ] Recording a review defers `atesta:rescore_reviews` (organization id only) in the same
+      transaction. The job writes, for every scoreable framework, a correction of the latest
+      ingested scan's org-wide snapshot: check results as of that scan, reviews as of now. The
+      correction supersedes the tip of that scan's chain, so the chain stays linear and earlier
+      scans' snapshots are never rewritten. Without an ingested scan it does nothing.
 
 PR 3 (screen): admins record a review from the framework detail; everyone sees the current
 review, who made it, until when it holds, and whether it expired.
@@ -51,6 +61,9 @@ review, who made it, until when it holds, and whether it expired.
 - A second approver (four-eyes) and review reminders before `valid_until`.
 - `not_applicable`: applicability is decided per requirement and scope (FR-06), not per control.
 - Withdrawing a review. A new `fail` review replaces it; expiry ends it.
+- Rescoring when a review expires between scans: the next scan or review picks it up. A daily
+  rescore job can follow.
+- A score for an org that has never completed a scan (snapshots belong to a scan).
 - AI-drafted rationales (AI-xx specs). ADR-005: an AI draft is never a review.
 
 ## Design notes
@@ -73,5 +86,8 @@ review, who made it, until when it holds, and whether it expired.
 - HTTP: owner and admin record; member 403; non-member 404 on write and read; unknown and retired controls 404; automated control 409;
   `valid_until` today, in the past and over three years 422; blank or control-character
   rationale 422; history newest first; one audit event per review without the rationale.
+- Scoring: pass and fail reviews move the score; the latest review as of the scan wins; a
+  review after the scan, an expired latest review and a review of an automated control do not
+  count; rescoring writes a linear chain on the latest scan only, and nothing without a scan.
 - Detail: a manual control shows its latest review, `expired` once `valid_until` has passed, and
   never another org's review.

@@ -3,7 +3,7 @@
 import uuid
 
 import pytest
-from atesta_api.modules.scanning.api import SNAPSHOT_TASK, ScanNotFoundError
+from atesta_api.modules.scanning.api import RESCORE_TASK, SNAPSHOT_TASK, ScanNotFoundError
 from atesta_api.platform.db import RDS_CA
 from atesta_worker import context
 from atesta_worker.app import build_app, connection_kwargs, conninfo, non_id_parameters
@@ -20,6 +20,7 @@ def test_real_jobs_take_ids_only() -> None:
     app = build_app(URL, "disable")
     assert "atesta:retry_stalled_jobs" in app.tasks
     assert SNAPSHOT_TASK in app.tasks  # the name ingest defers by
+    assert RESCORE_TASK in app.tasks  # the name a recorded review defers by
     assert non_id_parameters(make_blueprint().tasks.values()) == []
 
 

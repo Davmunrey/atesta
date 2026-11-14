@@ -12,7 +12,9 @@ from atesta_api.modules.compliance.scoring import (
     active_frameworks,
     control_is_active,
     include_drafts,
+    reviewed_control_results,
     scoreable_framework_keys,
+    snapshot_chain_tip,
     snapshot_framework,
 )
 
@@ -39,6 +41,8 @@ __all__ = [
     "install_compliance",
     "load_catalog_fixture",
     "read_catalog",
+    "reviewed_control_results",
     "scoreable_framework_keys",
+    "snapshot_chain_tip",
     "snapshot_framework",
 ]
