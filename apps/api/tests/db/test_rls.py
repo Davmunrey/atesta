@@ -92,6 +92,9 @@ INSERT INTO audit_events (id, organization_id, action, target_type, target_id)
 INSERT INTO evidence (id, organization_id, kind, title, source_type, created_by, collected_at)
   VALUES (:e, :o, 'attestation', 't', 'user', :u, now());
 INSERT INTO evidence_controls VALUES (:e, 'ctl.rls', :o);
+INSERT INTO evidence_statements (organization_id, evidence_id, submission_id,
+  payload_hash, statement)
+  VALUES (:o, :e, gen_random_uuid(), repeat('a', 64), 'Synthetic statement');
 INSERT INTO score_snapshots (id, organization_id, framework_key, framework_version,
   catalog_version, scan_id, passed, failed, manual, not_applicable, requirement_results)
   VALUES (gen_random_uuid(), :o, 'fw_rls', '1', 'r1', gen_random_uuid(), 0, 0, 0, 0, '{}');
@@ -143,6 +146,7 @@ def test_every_rls_table_fails_closed_and_shows_one_tenant(
                 "score_snapshots",
                 "evidence",
                 "evidence_controls",
+                "evidence_statements",
                 "connections",
                 "scans",
                 "scan_check_results",

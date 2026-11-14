@@ -9,6 +9,8 @@
   "compliance.not_found",
   "connections.not_found",
   "connections.state_invalid",
+  "evidence.control_not_found",
+  "evidence.submission_conflict",
   "identity.already_member",
   "identity.email_mismatch",
   "identity.email_unverified",

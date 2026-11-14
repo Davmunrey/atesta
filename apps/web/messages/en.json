@@ -85,13 +85,17 @@
       "method_not_allowed": "This action is not available. Reload the page.",
       "not_found": "We could not find that page or resource."
     },
+    "server": {
+      "error": "Something went wrong on our side. Try again, and contact support if it keeps happening."
+    },
+    "evidence": {
+      "control_not_found": "This control is no longer available. Reload the catalog.",
+      "submission_conflict": "This submission was already recorded with different data. Reload the evidence before continuing."
+    },
     "scanning": {
       "already_queued": "A scan of this connection is already queued or running. Wait for it to finish.",
       "connection_not_active": "This connection is not active yet. Finish its setup and verify it before scanning.",
       "not_found": "We couldn't find that scan, or you don't have access."
-    },
-    "server": {
-      "error": "Something went wrong on our side. Try again, and contact support if it keeps happening."
     }
   },
   "app": {
@@ -221,8 +225,21 @@
     "currentVersion": "Current version: {version}. Catalog: {catalog}.",
     "unknownVersion": "no published version",
     "catalogHelp": "Explanations and references come from the catalog. Atesta reads configuration; changes are applied outside Atesta and must be verified afterward.",
-    "states": { "all": "All", "fail": "Fail", "manual": "Manual review", "not_evaluated": "Not assessed", "pass": "Pass", "not_applicable": "Not applicable" },
-    "observations": { "missing": "No observation", "fail": "Observed failure", "pass": "Check passed", "manual": "Manual review", "not_evaluated": "Not evaluated" },
+    "states": {
+      "all": "All",
+      "fail": "Fail",
+      "manual": "Manual review",
+      "not_evaluated": "Not assessed",
+      "pass": "Pass",
+      "not_applicable": "Not applicable"
+    },
+    "observations": {
+      "missing": "No observation",
+      "fail": "Observed failure",
+      "pass": "Check passed",
+      "manual": "Manual review",
+      "not_evaluated": "Not evaluated"
+    },
     "meaning": {
       "fail": "The recorded assessment contains at least one failed control. Inspect the configuration that produced the result.",
       "manual": "A verifiable conclusion is missing. It may require documentary evidence, human review or checks that have not been evaluated.",

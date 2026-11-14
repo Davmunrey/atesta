@@ -85,13 +85,17 @@
       "method_not_allowed": "Esta acción no está disponible. Recarga la página.",
       "not_found": "No encontramos esa página o recurso."
     },
+    "server": {
+      "error": "Algo ha fallado por nuestra parte. Vuelve a intentarlo y, si se repite, contacta con soporte."
+    },
+    "evidence": {
+      "control_not_found": "Este control ya no está disponible. Recarga el catálogo.",
+      "submission_conflict": "Este envío ya se registró con otros datos. Recarga las evidencias antes de continuar."
+    },
     "scanning": {
       "already_queued": "Ya hay un escaneo en cola o en curso para esta conexión. Espera a que termine.",
       "connection_not_active": "Esta conexión aún no está activa. Termina de configurarla y verifícala antes de escanear.",
       "not_found": "No encontramos ese escaneo, o no tienes acceso."
-    },
-    "server": {
-      "error": "Algo ha fallado por nuestra parte. Vuelve a intentarlo y, si se repite, contacta con soporte."
     }
   },
   "app": {
@@ -221,8 +225,21 @@
     "currentVersion": "Versión actual: {version}. Catálogo: {catalog}.",
     "unknownVersion": "sin versión publicada",
     "catalogHelp": "Las explicaciones y referencias proceden del catálogo. Atesta consulta la configuración; los cambios se aplican fuera de Atesta y deben verificarse después.",
-    "states": { "all": "Todos", "fail": "No cumple", "manual": "Revisión manual", "not_evaluated": "Sin evaluar", "pass": "Cumple", "not_applicable": "No aplica" },
-    "observations": { "missing": "Sin observación", "fail": "Fallo observado", "pass": "Comprobación superada", "manual": "Revisión manual", "not_evaluated": "No evaluada" },
+    "states": {
+      "all": "Todos",
+      "fail": "No cumple",
+      "manual": "Revisión manual",
+      "not_evaluated": "Sin evaluar",
+      "pass": "Cumple",
+      "not_applicable": "No aplica"
+    },
+    "observations": {
+      "missing": "Sin observación",
+      "fail": "Fallo observado",
+      "pass": "Comprobación superada",
+      "manual": "Revisión manual",
+      "not_evaluated": "No evaluada"
+    },
     "meaning": {
       "fail": "La evaluación registrada contiene al menos un control fallido. Revisa qué configuración originó el resultado.",
       "manual": "Falta una conclusión verificable. Puede requerir evidencia documental, una revisión humana o comprobaciones todavía no evaluadas.",
