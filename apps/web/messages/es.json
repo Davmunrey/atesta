@@ -259,5 +259,31 @@
     "refresh": "Actualizar resultados",
     "assessmentNote": "Atesta organiza resultados y evidencias para preparar auditorías. No certifica cumplimiento.",
     "pendingReviews": "{count, plural, one {# revisión manual pendiente} other {# revisiones manuales pendientes}}"
+  },
+  "preparation": {
+    "states": {
+      "template": "Plantilla de preparación",
+      "partial": "Contenido normativo en revisión",
+      "complete": "Contenido preparado, pendiente de publicación"
+    },
+    "disabled": "Evaluación desactivada. La aplicabilidad y el cumplimiento de tu organización siguen sin determinar.",
+    "navigate": "Contenido de preparación",
+    "requirementsCount": "{count} requisitos disponibles",
+    "controlsCount": "{count} guías de preparación",
+    "scope": "Alcance y aplicabilidad",
+    "applicability": "Cómo decidir qué aplica",
+    "missing": "Qué falta para evaluar",
+    "sources": "Fuentes oficiales",
+    "verified": "Fuentes consultadas: {date}.",
+    "selection": "Selección de medidas y refuerzos",
+    "selectionHelp": "Referencia oficial en español. La tabla no determina por sí sola qué aplica a tu sistema. Consulta símbolos, dimensiones y reglas en la fuente.",
+    "level": "Nivel o categoría",
+    "rule": "Regla de selección",
+    "officialText": "Leer texto oficial completo (español)",
+    "controls": "Controles para preparar y analizar",
+    "controlsHelp": "Guías compartidas para revisar configuración y reunir evidencias. No representan requisitos cubiertos, hallazgos ni mapeos aprobados. Revisa alcance e impacto antes de cambiar configuraciones.",
+    "manual": "Revisión documental",
+    "technical": "Configuración técnica",
+    "candidateChecks": "Comprobaciones candidatas, sin observación"
   }
 }

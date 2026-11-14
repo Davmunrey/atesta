@@ -20,3 +20,24 @@ export const framework: components["schemas"]["FrameworkDetail"] = {
     { code: "OLD", title_es: null, title_en: null, source: null, applies_to: [], in_current_catalog: false, status: "not_applicable", controls: [] },
   ],
 };
+
+export const preparationFramework: components["schemas"]["FrameworkDetail"] = {
+  ...framework, snapshot: null, requirements: [],
+  catalog_context: {
+    content_state: "template", assessment_enabled: false,
+    summary_es: "Plantilla sintética para preparar una revisión.", summary_en: "Synthetic preparation template.",
+    scope_es: "Delimita los servicios de prueba.", scope_en: "Define test services.",
+    applicability_es: "Justifica la selección con el revisor.", applicability_en: "Justify selection with the reviewer.",
+    limitations_es: "Faltan requisitos y mapeos revisados.", limitations_en: "Reviewed requirements and mappings are missing.",
+    preparation_controls: ["ctl.example"], source_refs: ["https://example.test/source"], verified_on: "2026-11-13",
+  },
+  preparation_controls: [{ key: "ctl.example", title_es: "Verificar acceso de prueba", title_en: "Verify test access",
+    description_es: "1. Revisa el alcance.\n2. Conserva evidencia sintética.", description_en: "1. Review scope.\n2. Retain synthetic evidence.",
+    manual: false, remediation_refs: ["https://example.test/guide"], checks: [{ engine: "prowler", check_id: "synthetic_access_check" }] }],
+};
+
+export const requirementGuidance: components["schemas"]["RequirementContext"] = {
+  official_text_es: "Texto oficial sintético para probar presentación.", applicability_es: "Aplicación según dimensión.",
+  selection_basis: "nivel · C I T A", selection_rules: [{ level: "BAJO", rule: "+ [R1 o R2]" }, { level: "ALTO", rule: "+ R3" }],
+  section: "4.2.1", source_sha256: "a".repeat(64),
+};

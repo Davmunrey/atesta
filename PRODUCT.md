@@ -6,8 +6,11 @@ can support multiple framework assessments. Atesta prepares evidence; it does no
 
 The current usable product covers sign-in, organizations, members, invitations and a dashboard
 of recorded framework results, collection coverage and evidence counts. Framework detail adds
-requirement states, configuration observations and available catalog guidance. Real ENS/NIS2
-packs are not authored or released yet; the local catalog is explicitly synthetic. Current
+requirement states, configuration observations and available catalog guidance. An unreleased
+ENS draft contains the 73 Annex II measures, candidate mappings and bilingual preparation
+guides. NIS2, ISO/IEC 27001, GDPR Article 32, DORA and SOC 2 have scoped preparation templates,
+not reviewed normative coverage. All six disable assessment; local recorded results remain
+explicitly synthetic. Scope, missing work and official sources are available in each detail view. Current
 capabilities and remaining work are recorded in `docs/status/dashboard-readiness.md`. Connector onboarding
 and scanner execution remain a separate workstream. Show only implemented actions and recorded data: no
 invented scores, scans or product states. Product views for the public landing must come from

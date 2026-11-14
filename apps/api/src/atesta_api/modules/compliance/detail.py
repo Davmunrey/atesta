@@ -9,6 +9,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from atesta_api.modules.compliance.catalog_schema import PackContext, RequirementContext
+from atesta_api.modules.compliance.detail_context import preparation_controls, public_context
 from atesta_api.modules.compliance.detail_schema import (
     CheckDetail,
     ControlDetail,
@@ -149,8 +151,12 @@ def framework_detail(
                 in_current_catalog=requirement is not None,
                 status=cast(RecordedStatus, status) if status in _RECORDED else "not_evaluated",
                 controls=controls[code] if requirement else [],
+                guidance=public_context(RequirementContext, requirement.attributes)
+                if requirement
+                else None,
             )
         )
+    context = public_context(PackContext, framework.attributes)
     return FrameworkDetail(
         key=framework.key,
         name=framework.name,
@@ -162,4 +168,6 @@ def framework_detail(
         snapshot=summary,
         requirements=details,
         development=os.environ.get("ATESTA_ENV") in DEV_ENVS,
+        catalog_context=context,
+        preparation_controls=preparation_controls(session, context),
     )

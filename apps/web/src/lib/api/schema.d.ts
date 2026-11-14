@@ -250,6 +250,13 @@ export interface components {
             engine: string;
             observed_status: components["schemas"]["Observation"] | null;
         };
+        /** CheckReference */
+        CheckReference: {
+            /** Check Id */
+            check_id: string;
+            /** Engine */
+            engine: string;
+        };
         /** ControlDetail */
         ControlDetail: {
             /** Checks */
@@ -294,6 +301,7 @@ export interface components {
         };
         /** FrameworkDetail */
         FrameworkDetail: {
+            catalog_context?: components["schemas"]["PackContext"] | null;
             /** Catalog Matches Snapshot */
             catalog_matches_snapshot: boolean;
             /** Catalog Version */
@@ -304,6 +312,8 @@ export interface components {
             key: string;
             /** Name */
             name: string;
+            /** Preparation Controls */
+            preparation_controls?: components["schemas"]["PreparationControl"][];
             /** Requirements */
             requirements: components["schemas"]["RequirementDetail"][];
             snapshot: components["schemas"]["SnapshotSummary"] | null;
@@ -421,8 +431,80 @@ export interface components {
             /** Scans */
             scans: components["schemas"]["ScanSummary"][];
         };
+        /** PackContext */
+        PackContext: {
+            /** Applicability En */
+            applicability_en: string;
+            /** Applicability Es */
+            applicability_es: string;
+            /**
+             * Assessment Enabled
+             * @constant
+             */
+            assessment_enabled: false;
+            /**
+             * Content State
+             * @enum {string}
+             */
+            content_state: "template" | "partial" | "complete";
+            /** Limitations En */
+            limitations_en: string;
+            /** Limitations Es */
+            limitations_es: string;
+            /** Preparation Controls */
+            preparation_controls: string[];
+            /** Scope En */
+            scope_en: string;
+            /** Scope Es */
+            scope_es: string;
+            /** Source Refs */
+            source_refs: string[];
+            /** Summary En */
+            summary_en: string;
+            /** Summary Es */
+            summary_es: string;
+            /**
+             * Verified On
+             * Format: date
+             */
+            verified_on: string;
+        };
+        /** PreparationControl */
+        PreparationControl: {
+            /** Checks */
+            checks: components["schemas"]["CheckReference"][];
+            /** Description En */
+            description_en: string;
+            /** Description Es */
+            description_es: string;
+            /** Key */
+            key: string;
+            /** Manual */
+            manual: boolean;
+            /** Remediation Refs */
+            remediation_refs: string[];
+            /** Title En */
+            title_en: string;
+            /** Title Es */
+            title_es: string;
+        };
         /** @enum {string} */
         RecordedStatus: "pass" | "fail" | "manual" | "not_applicable";
+        /** RequirementContext */
+        RequirementContext: {
+            /** Applicability Es */
+            applicability_es: string;
+            /** Official Text Es */
+            official_text_es: string;
+            /** Section */
+            section: string;
+            /** Selection Basis */
+            selection_basis: string;
+            /** Selection Rules */
+            selection_rules: components["schemas"]["SelectionRule"][];
+            /** Source Sha256 */
+            source_sha256: string;
+        };
         /** RequirementDetail */
         RequirementDetail: {
             /** Applies To */
@@ -431,6 +513,7 @@ export interface components {
             code: string;
             /** Controls */
             controls: components["schemas"]["ControlDetail"][];
+            guidance?: components["schemas"]["RequirementContext"] | null;
             /** In Current Catalog */
             in_current_catalog: boolean;
             /** Source */
@@ -479,6 +562,13 @@ export interface components {
              * @enum {string}
              */
             status: "queued" | "running" | "collected" | "succeeded" | "partial" | "failed" | "blocked";
+        };
+        /** SelectionRule */
+        SelectionRule: {
+            /** Level */
+            level: string;
+            /** Rule */
+            rule: string;
         };
         /** SnapshotSummary */
         SnapshotSummary: {

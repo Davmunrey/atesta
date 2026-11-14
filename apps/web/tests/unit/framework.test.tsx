@@ -2,12 +2,32 @@
 import { cleanup, fireEvent, screen, within } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { FrameworkDetailView } from "@/components/framework-detail";
-import { framework } from "../fixtures/framework";
+import { framework, preparationFramework, requirementGuidance } from "../fixtures/framework";
 import { renderWithProviders, stubApi } from "./render";
 
 const path = "GET /api/v1/orgs/primary/frameworks/synthetic_alpha";
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 const render = () => renderWithProviders(<FrameworkDetailView orgId="primary" frameworkKey="synthetic_alpha" />);
+
+it("explains template boundaries and offers preparation without fabricating coverage", async () => {
+  stubApi({ [path]: [200, preparationFramework] }); render();
+  expect(await screen.findByRole("heading", { name: "Plantilla de preparación" })).toBeTruthy();
+  expect(screen.getByText(/Evaluación desactivada/)).toBeTruthy();
+  expect(screen.getByRole("link", { name: "0 requisitos disponibles" })).toBeTruthy();
+  expect(screen.getByRole("link", { name: "1 guías de preparación" }).getAttribute("href")).toBe("#preparation-controls-heading");
+  expect(screen.getByText("Faltan requisitos y mapeos revisados.")).toBeTruthy();
+  expect(screen.getByText("synthetic_access_check")).toBeTruthy();
+  expect(screen.queryByText(/%/)).toBeNull();
+});
+
+it("shows official selection rules separately from recorded status", async () => {
+  stubApi({ [path]: [200, { ...framework, requirements: [{ ...framework.requirements[0], guidance: requirementGuidance }] }] }); render();
+  expect(await screen.findByRole("table")).toBeTruthy();
+  expect(screen.getByRole("rowheader", { name: "BAJO" })).toBeTruthy();
+  expect(screen.getByText("+ [R1 o R2]")).toBeTruthy();
+  expect(screen.getByText(requirementGuidance.official_text_es).getAttribute("lang")).toBe("es");
+  expect(within(document.querySelector("details.requirement-row")!).getByText("No cumple")).toBeTruthy();
+});
 
 it("prioritizes failures and open work before passed requirements", async () => {
   stubApi({ [path]: [200, { ...framework, requirements: [...framework.requirements].reverse() }] }); render();

@@ -2,21 +2,25 @@
 
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
+from atesta_api.modules.compliance.catalog_schema import PackContext, RequirementContext
 from atesta_api.modules.compliance.overview import SnapshotSummary
 
 type RecordedStatus = Literal["pass", "fail", "manual", "not_applicable"]
 type Observation = Literal["pass", "fail", "manual", "not_evaluated"]
 
 
-class CheckDetail(BaseModel):
+class CheckReference(BaseModel):
     engine: str
     check_id: str
+
+
+class CheckDetail(CheckReference):
     observed_status: Observation | None
 
 
-class ControlDetail(BaseModel):
+class ControlGuide(BaseModel):
     key: str
     title_es: str
     title_en: str
@@ -24,6 +28,13 @@ class ControlDetail(BaseModel):
     description_en: str
     manual: bool
     remediation_refs: list[str]
+
+
+class PreparationControl(ControlGuide):
+    checks: list[CheckReference]
+
+
+class ControlDetail(ControlGuide):
     mapping_reviewed: bool
     mapping_source: str
     observed_status: Observation | None
@@ -39,6 +50,7 @@ class RequirementDetail(BaseModel):
     in_current_catalog: bool
     status: RecordedStatus | Literal["not_evaluated"]
     controls: list[ControlDetail]
+    guidance: RequirementContext | None = None
 
 
 class FrameworkDetail(BaseModel):
@@ -52,3 +64,5 @@ class FrameworkDetail(BaseModel):
     snapshot: SnapshotSummary | None
     requirements: list[RequirementDetail]
     development: bool
+    catalog_context: PackContext | None = None
+    preparation_controls: list[PreparationControl] = Field(default_factory=list)

@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
-import { framework } from "../fixtures/framework";
+import { framework, preparationFramework, requirementGuidance } from "../fixtures/framework";
 import { overview } from "../fixtures/overview";
 
 async function createOrganization(page: Page) {
@@ -71,4 +71,31 @@ test("framework register supports navigation, guidance, filters, locales and res
   await page.reload();
   await expect(page.getByRole("heading", { name: "Requirements and configuration", exact: true })).toBeVisible();
   expect(csp).toEqual([]);
+});
+
+test("preparation exposes scope, missing work, official rules and configuration guides", async ({ page }) => {
+  const org = await createOrganization(page);
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha", (route) => route.fulfill({ json: {
+    ...preparationFramework, requirements: [{ ...framework.requirements[0], status: "not_evaluated", guidance: requirementGuidance }],
+  } }));
+  await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
+  await expect(page.getByText(/Evaluación desactivada/)).toBeVisible();
+  for (const label of ["Alcance y aplicabilidad", "Qué falta para evaluar", "Fuentes oficiales"]) await page.locator("summary").getByText(label, { exact: true }).click();
+  await expect(page.getByText("Faltan requisitos y mapeos revisados.")).toBeVisible();
+  await page.getByRole("link", { name: "1 guías de preparación" }).click();
+  const control = page.locator(".preparation-control");
+  await control.locator("summary").press("Enter");
+  await expect(control.getByText("synthetic_access_check")).toBeVisible();
+  for (const width of [375, 768, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+    expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id)).toEqual([]);
+  }
+  await page.getByRole("button", { name: "English" }).click();
+  await expect(page.getByRole("heading", { name: "Preparation template" })).toBeVisible();
+  await expect(page.getByText("Reviewed requirements and mappings are missing.")).toBeVisible();
+  await expect(page.getByRole("table")).toContainText("BAJO");
+  await page.locator("summary").getByText("Read full official text (Spanish)").click();
+  await expect(page.getByText(requirementGuidance.official_text_es)).toHaveAttribute("lang", "es");
 });
