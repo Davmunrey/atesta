@@ -45,10 +45,28 @@ class ExpectedAccess(BaseModel):
     verifier_scopes: list[str]
 
 
+class LastVerification(BaseModel):
+    """What the last verification found missing or extra, and what it cannot read."""
+
+    missing: list[str]
+    extra: list[str]
+    limits: list[str]
+
+
 class ConnectionDetail(ConnectionOut):
     google_client_id: str | None
     google_verifier_client_id: str | None
     expected_access: ExpectedAccess
+    last_verification: LastVerification | None
+
+
+def _last_verification(connection: Connection) -> LastVerification | None:
+    report = connection.granted
+    if not report:
+        return None
+    return LastVerification(
+        missing=report["missing"], extra=report["extra"], limits=report["limits"]
+    )
 
 
 def _out(connection: Connection) -> ConnectionOut:
@@ -112,6 +130,7 @@ def get_connection(
         google_client_id=connection.google_client_id,
         google_verifier_client_id=connection.google_verifier_client_id,
         expected_access=_expected(connection.provider),
+        last_verification=_last_verification(connection),
     )
 
 

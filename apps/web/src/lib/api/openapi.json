@@ -133,6 +133,16 @@
             "title": "Id",
             "type": "string"
           },
+          "last_verification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LastVerification"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "provider": {
             "title": "Provider",
             "type": "string"
@@ -164,7 +174,8 @@
           "verified_at",
           "google_client_id",
           "google_verifier_client_id",
-          "expected_access"
+          "expected_access",
+          "last_verification"
         ],
         "title": "ConnectionDetail",
         "type": "object"
@@ -689,6 +700,39 @@
           "expires_at"
         ],
         "title": "InvitationOut",
+        "type": "object"
+      },
+      "LastVerification": {
+        "description": "What the last verification found missing or extra, and what it cannot read.",
+        "properties": {
+          "extra": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Extra",
+            "type": "array"
+          },
+          "limits": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limits",
+            "type": "array"
+          },
+          "missing": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing",
+            "type": "array"
+          }
+        },
+        "required": [
+          "missing",
+          "extra",
+          "limits"
+        ],
+        "title": "LastVerification",
         "type": "object"
       },
       "MeOut": {

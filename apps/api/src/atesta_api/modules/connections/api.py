@@ -1,7 +1,6 @@
 """Public interface of the connections module.
 
-Planned: record_verification (verifiers, PR 9). No API or worker process ever
-reads a connector secret; connections hold references only.
+No API or worker process ever reads a connector secret; connections hold references only.
 """
 
 from atesta_api.modules.connections.routes import router
@@ -15,15 +14,23 @@ from atesta_api.modules.connections.service import (
     list_connections,
     scan_target,
 )
+from atesta_api.modules.connections.verification import (
+    TenantMismatchError,
+    VerificationReport,
+    record_verification,
+)
 
 __all__ = [
     "ConnectionStateError",
     "ScanTarget",
+    "TenantMismatchError",
+    "VerificationReport",
     "active_connection_ids",
     "create_connection",
     "disconnect_connection",
     "get_connection",
     "list_connections",
+    "record_verification",
     "router",
     "scan_target",
 ]

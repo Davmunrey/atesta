@@ -382,6 +382,7 @@ export interface components {
              * Format: uuid
              */
             id: string;
+            last_verification: components["schemas"]["LastVerification"] | null;
             /** Provider */
             provider: string;
             /** Status */
@@ -586,6 +587,18 @@ export interface components {
              */
             id: string;
             role: components["schemas"]["Role"];
+        };
+        /**
+         * LastVerification
+         * @description What the last verification found missing or extra, and what it cannot read.
+         */
+        LastVerification: {
+            /** Extra */
+            extra: string[];
+            /** Limits */
+            limits: string[];
+            /** Missing */
+            missing: string[];
         };
         /** MeOut */
         MeOut: {

@@ -1,5 +1,6 @@
 """Connection endpoints: create, list, get, disconnect (scanner-connectors spec, Endpoints)."""
 
+import json
 import uuid
 
 import pytest
@@ -7,7 +8,7 @@ from atesta_api.modules.connections.api import active_connection_ids, create_con
 from atesta_api.modules.identity.api import ContextReason, enter_org_context
 from atesta_core.connectors.readonly import GOOGLE_V1, M365_V1
 from fastapi.testclient import TestClient
-from sqlalchemy import Engine
+from sqlalchemy import Engine, text
 from sqlalchemy.orm import Session
 
 from .conftest import ORG_A, auth
@@ -137,3 +138,20 @@ def test_active_connection_ids_lists_only_this_orgs_active_connections(
         made[status] = connection.id
     db_rollback.flush()
     assert active_connection_ids(db_rollback) == [made["active"]]
+
+
+def test_the_detail_shows_the_last_verification_report(
+    client: TestClient, superuser: Engine
+) -> None:
+    org, subs = org_with(client, superuser)
+    made = create(client, org, subs["owner"])
+    url = f"/api/v1/orgs/{org}/connections/{made['id']}"
+    assert client.get(url, headers=auth(subs["owner"])).json()["last_verification"] is None
+    report = {"granted": {}, "missing": ["Policy.Read.All"], "extra": [], "limits": ["x"]}
+    with superuser.begin() as conn:
+        conn.execute(
+            text("UPDATE connections SET granted = CAST(:g AS jsonb) WHERE id = :id"),
+            {"g": json.dumps(report), "id": made["id"]},
+        )
+    shown = client.get(url, headers=auth(subs["owner"])).json()["last_verification"]
+    assert shown == {"missing": ["Policy.Read.All"], "extra": [], "limits": ["x"]}
