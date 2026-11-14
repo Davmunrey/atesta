@@ -59,8 +59,14 @@ user-visible actions, ADR updated if architecture changed.
 
 ## Verification rules
 
-Adapted from the evidence principles of REA (github.com/morluto/rea, MIT); the tool itself is
-not installed (ADR-013).
+Adapted from the evidence principles of REA (github.com/morluto/rea, MIT). REA's process
+capture records the runs behind each claim (ADR-013): install `rea-agents@6.8.0` per session
+outside the repo (`npm install --ignore-scripts --before=<7 days ago> rea-agents@6.8.0`), capture
+each check with `rea capture-process scenario.json --json` (scenario: `executable`, `arguments`,
+`working_directory`, `environment`, `timeout_ms`; terminal columns × (rows + scrollback) at most
+1,000,000 cells), compare red and green runs from the same working directory with
+`rea compare-process-captures red.json green.json`, and cite the Evidence ids. A capture whose
+cleanup REA could not verify gives no Evidence: rerun it.
 
 1. Every conclusion carries its evidence: the command and its output, the test name, or the
    primary source URL. "Done" without evidence is not done.
