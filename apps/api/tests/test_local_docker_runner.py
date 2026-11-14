@@ -22,11 +22,7 @@ from atesta_api.modules.scanning.api import (
 ORG = uuid.UUID("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa")
 SCAN = uuid.UUID("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb")
 SECRET = "s3cr3t-value-never-in-argv"
-M365_CREDENTIAL = {
-    "AZURE_CLIENT_ID": "id",
-    "AZURE_TENANT_ID": "tenant",
-    "AZURE_CLIENT_SECRET": SECRET,
-}
+M365_CREDENTIAL = {"AZURE_CLIENT_ID": "id", "M365_CERTIFICATE_CONTENT": SECRET}
 FAKE_DOCKER = """#!{python}
 import json, os, sys, time
 calls = os.environ["FAKE_DOCKER_CALLS"]

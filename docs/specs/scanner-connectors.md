@@ -287,8 +287,10 @@ allowlist.
 | Google verifier (D7) | One more service account key per org, client ID authorized only for `admin.reports.audit.readonly` | `atesta/<env>/google-verifier/<org_id>` | That org's Google verify task only |
 
 - The wrapper fetches the credential at start (task role in AWS, stdin locally) and places it
-  only in the Prowler child process environment (`M365_CERTIFICATE_CONTENT`, `AZURE_CLIENT_ID`,
-  `AZURE_TENANT_ID`; `GOOGLEWORKSPACE_CREDENTIALS_CONTENT`, `GOOGLEWORKSPACE_DELEGATED_USER`). It
+  only in the Prowler child process environment (`M365_CERTIFICATE_CONTENT`, `AZURE_CLIENT_ID`;
+  `GOOGLEWORKSPACE_CREDENTIALS_CONTENT`, `GOOGLEWORKSPACE_DELEGATED_USER`). The M365 secret never
+  names a tenant (D5): the wrapper sets `AZURE_TENANT_ID` from the job's pinned tenant and refuses
+  a secret that carries one, so a scan reaches only the pinned tenant. It
   never writes it to disk, logs it, or puts it in the manifest. Prowler then mints its own
   short-lived tokens.
 - Prowler 5.49.0 accepts neither a pre-issued token nor a remote signer for M365 or Google, so the

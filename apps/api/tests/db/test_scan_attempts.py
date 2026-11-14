@@ -1,5 +1,6 @@
 """One scan attempt (scanner-connectors spec, Scan lifecycle, run_scan steps 1 and 3)."""
 
+import json
 import uuid
 from pathlib import Path
 from typing import Any
@@ -275,3 +276,74 @@ def test_a_google_attempt_carries_its_connections_credential_reference(
     job = start(db_rollback, scan_id, store).job
     # M365 jobs carry none: the M365 credential is the platform's one (D5).
     assert job == ScanJob(ORG_A, scan_id, 1, "google_workspace", f"local:google-{ORG_A}")
+
+
+def verification(store: LocalScanStore, scan_id: uuid.UUID, verdict: str, **fields: Any) -> None:
+    """What the wrapper writes beside the attempt's output (verification.json)."""
+    report = {
+        "verdict": verdict,
+        "tenant_id": TENANT,
+        "granted": {"app_roles": []},
+        "missing": [],
+        "extra": [],
+        "limits": ["exchange_rbac_not_read"],
+        **fields,
+    }
+    store.write(
+        f"{ORG_A}/scans/{scan_id}/attempt-1/out/verification.json", json.dumps(report).encode()
+    )
+
+
+def connection_state(session: Session, scan_id: uuid.UUID) -> tuple[Any, ...]:
+    query = text(
+        "SELECT c.status, c.granted->'extra', c.verified_at IS NOT NULL FROM connections c"
+        " JOIN scans s ON s.connection_id = c.id WHERE s.id = :id"
+    )
+    return tuple(session.execute(query, {"id": scan_id}).one())
+
+
+@pytest.mark.parametrize(
+    ("verdict", "status", "code"),
+    [
+        ("over_privileged", "over_privileged", "connections.over_privileged"),
+        ("incomplete", "incomplete", "connections.incomplete_permissions"),
+        ("revoked", "revoked", "connections.revoked"),
+    ],
+)
+def test_a_refused_verification_is_recorded_on_the_connection(
+    db_rollback: Session,
+    scan_id: uuid.UUID,
+    store: LocalScanStore,
+    verdict: str,
+    status: str,
+    code: str,
+) -> None:
+    job = start(db_rollback, scan_id, store).job
+    verification(store, scan_id, verdict, extra=["app role x"])
+    outcome = finish_attempt(db_rollback, job, 10, final=False, store=store)
+    assert (outcome.status, outcome.retry) == ("blocked", False)
+    assert row(db_rollback, scan_id)["error_code"] == code
+    assert connection_state(db_rollback, scan_id) == (status, ["app role x"], False)
+    assert outcome.finished is not None and outcome.finished["error_code"] == code
+
+
+def test_an_ok_verification_before_a_scan_refreshes_the_connection(
+    db_rollback: Session, scan_id: uuid.UUID, store: LocalScanStore
+) -> None:
+    job = start(db_rollback, scan_id, store).job
+    verification(store, scan_id, "ok")
+    assert FixtureRunner(store, FIXTURES).run(job) == 0
+    assert finish_attempt(db_rollback, job, 0, final=False, store=store).status == "collected"
+    assert connection_state(db_rollback, scan_id) == ("active", [], True)
+
+
+@pytest.mark.parametrize("raw", [b"{", b"[]", b'{"verdict": "ok"}', b'{"verdict": "maybe"}'])
+def test_an_unreadable_report_still_blocks_and_changes_no_connection(
+    db_rollback: Session, scan_id: uuid.UUID, store: LocalScanStore, raw: bytes
+) -> None:
+    job = start(db_rollback, scan_id, store).job
+    store.write(f"{ORG_A}/scans/{scan_id}/attempt-1/out/verification.json", raw)
+    outcome = finish_attempt(db_rollback, job, 10, final=False, store=store)
+    assert outcome.status == "blocked"
+    assert row(db_rollback, scan_id)["error_code"] is None
+    assert connection_state(db_rollback, scan_id)[0] == "active"

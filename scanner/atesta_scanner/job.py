@@ -7,7 +7,10 @@ from dataclasses import dataclass
 from atesta_scanner.invocation import prowler_argv
 
 _UUID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
-_KEYS = frozenset({"organization_id", "scan_id", "attempt", "provider", "tenant", "excluded"})
+_KEYS = frozenset(
+    {"organization_id", "scan_id", "attempt", "provider", "tenant", "excluded", "allowlist_version"}
+)
+_VERSIONS = {"m365": frozenset({"m365-v1"}), "google_workspace": frozenset({"google-v1"})}
 
 
 class JobError(ValueError):
@@ -22,6 +25,7 @@ class Job:
     provider: str
     tenant: str
     excluded: tuple[str, ...]
+    allowlist_version: str  # the verifier compares grants with this version's expected set
 
 
 def load_job(raw: bytes) -> Job:
@@ -45,4 +49,7 @@ def load_job(raw: bytes) -> Job:
         prowler_argv(data["provider"], excluded)  # validates the provider and every check id
     except ValueError as error:
         raise JobError(str(error)) from None
-    return Job(*ids, attempt, data["provider"], tenant, tuple(sorted(excluded)))
+    version = data["allowlist_version"]
+    if version not in _VERSIONS[data["provider"]]:
+        raise JobError("job allowlist version is not one of the provider's")
+    return Job(*ids, attempt, data["provider"], tenant, tuple(sorted(excluded)), version)
