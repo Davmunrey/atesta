@@ -51,11 +51,15 @@ uv run pytest
 11. English only for all code, identifiers, comments, docstrings, tests, commits, PRs, ADRs and
     specs. Spanish appears only in user-facing strings via i18n files (ES first, EN second) and in
     official framework texts quoted in catalog packs.
+12. Issue first. Every pull request resolves a GitHub issue and names it in its body (`Fixes #n`).
+    The issue states the problem and its acceptance criteria. When a request arrives with no issue,
+    open one from the request, quoting it, before the first commit. One independent change per
+    issue; a pull request that fixes two problems links two issues.
 
 ## Definition of done
 
-Spec criteria met, tests added, CI green, strings in ES and EN, audit event emitted for
-user-visible actions, ADR updated if architecture changed.
+Linked issue's criteria and spec criteria met, tests added, CI green, strings in ES and EN,
+audit event emitted for user-visible actions, ADR updated if architecture changed.
 
 ## Verification rules
 
