@@ -141,11 +141,17 @@ class AssessmentReviewOut(AssessmentReviewIn):
     recorded_at: datetime
 
 
+class GroupTitle(BaseModel):
+    prefix: str
+    title: str
+
+
 class Register(BaseModel):
     framework_key: str
     framework_version: str
     catalog_version: str | None
     axes: dict[str, dict[str, list[str]]]
+    groups_es: list[GroupTitle]  # official group headings in the source's order; empty if none
     scope: ScopeOut | None
     items: list[RegisterItem]
     review: AssessmentReviewOut | None
@@ -259,6 +265,17 @@ def _review(
     return AssessmentReviewOut.model_validate(row, from_attributes=True) if row else None
 
 
+def _groups(framework: Framework) -> list[GroupTitle]:
+    groups = framework.attributes.get("groups_es", [])
+    if not isinstance(groups, list):
+        return []
+    return [
+        GroupTitle(prefix=str(g["prefix"]), title=str(g["title"]))
+        for g in groups
+        if isinstance(g, dict)
+    ]
+
+
 def _proposal(requirement: Requirement, scope: ScopeOut | None) -> Proposal:
     attributes = requirement.attributes
     return propose(
@@ -334,6 +351,7 @@ def read_register(
         framework_version=framework.version,
         catalog_version=framework.catalog_version,
         axes=_axes(requirements),
+        groups_es=_groups(framework),
         scope=scope,
         items=items,
         review=_review(session, member.organization_id, framework_key),

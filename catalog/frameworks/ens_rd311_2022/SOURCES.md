@@ -71,3 +71,13 @@ application grants. None of these checks demonstrates the full legal measure.
 5. Production catalog release/version migration and the repository's demand/reuse gates.
 
 No customer configuration, production data, assessment or certification is changed by this pack.
+
+## Group headings
+
+`pack.yaml` `groups_es` copies, in the source's order, the Annex II section headings from the consolidated BOE text
+(https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191), read on 2026-11-22: "3. Marco
+organizativo [ORG]", "4. Marco operacional [op]", "4.1 Planificación [op.pl]" through
+"4.7 Monitorización del sistema [op.mon]", "5. Medidas de protección [mp]", and
+"5.1 Protección de las instalaciones e infraestructuras [mp.if]" through
+"5.8 Protección de los servicios [mp.s]". Only the heading words are kept; numbering and brackets
+are dropped.

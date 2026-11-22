@@ -26,7 +26,7 @@ def rls_tables(session: Session) -> list[str]:
 
 def count(session: Session, table: str) -> int:
     assert table.isidentifier()
-    return int(session.execute(text(f"SELECT count(*) FROM {table}")).scalar_one())  # noqa: S608
+    return int(session.execute(text(f"SELECT count(*) FROM {table}")).scalar_one())  # noqa: S608  # nosemgrep: python.sqlalchemy.security.audit.avoid-sqlalchemy-text.avoid-sqlalchemy-text - fixed table names, no user input
 
 
 def test_context_sees_only_its_tenant(db_rollback: Session) -> None:
@@ -170,7 +170,7 @@ def test_every_rls_table_fails_closed_and_shows_one_tenant(
             for table in (t for t in tables if t not in ("organizations", "users")):
                 orgs = (
                     session.execute(
-                        text(f"SELECT DISTINCT organization_id FROM {table}")  # noqa: S608
+                        text(f"SELECT DISTINCT organization_id FROM {table}")  # noqa: S608  # nosemgrep: python.sqlalchemy.security.audit.avoid-sqlalchemy-text.avoid-sqlalchemy-text - fixed table names, no user input
                     )
                     .scalars()
                     .all()

@@ -1,0 +1,4 @@
+# Vendored third-party agent skills: reviewed text, pinned file by file in
+# .claude/skills/VENDORED.sha256 (ADR-013). Their guides show insecure patterns on purpose, as
+# examples of what not to do; they are not Atesta code and never run.
+.claude/skills/

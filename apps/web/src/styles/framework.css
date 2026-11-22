@@ -159,4 +159,8 @@
   .row-section > summary { min-height: 2.75rem; display: flex; align-items: center; cursor: pointer; font-weight: 500; font-size: 0.875rem; }
   .technical-details { margin-top: 1rem; font-size: 0.8125rem; color: var(--color-muted); overflow-wrap: anywhere; }
   .technical-details > summary { min-height: 2.75rem; display: flex; align-items: center; cursor: pointer; }
+  .catalog-about { margin-top: 1.5rem; border-block: 1px solid var(--color-border); }
+  .catalog-about > summary { min-height: 2.75rem; display: flex; align-items: center; cursor: pointer; font-size: 0.875rem; font-weight: 500; color: var(--color-muted); }
+  .catalog-about[open] > summary { color: var(--color-fg); }
+  .requirement-group-heading .requirement-code { margin-inline-start: 0.5rem; font-weight: 400; color: var(--color-muted); }
 }

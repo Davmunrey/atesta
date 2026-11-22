@@ -7,7 +7,7 @@ export function SiteFooter() {
   const t = useTranslations();
   return (
     <footer className="site-footer">
-      <span>{t("brand.name")}</span>
+      <span>{t("brand.name")} · {t("footer.readiness")}</span>
       <nav aria-label={t("footer.label")}>
         <Link href="/cookies" className="underline">{t("cookies.title")}</Link>
       </nav>

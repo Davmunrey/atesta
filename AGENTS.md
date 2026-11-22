@@ -59,6 +59,16 @@ uv run pytest
     open one from the request, quoting it, before the first commit. One independent change per
     issue; a pull request that fixes two problems links two issues.
 
+## Interface work
+
+Any change to `apps/web` that touches HTML, CSS or client-side JavaScript follows two vendored
+skills (ADR-013). It reads `.claude/skills/impeccable/reference/craft-floor.md` and
+`reference/operate.md` before the edit: the app is Operate mode, and DESIGN.md is the identity, so
+changes are refinement, not a new visual world. It checks the matching guide in
+`.claude/skills/modern-web-guidance/guides/` instead of writing ad-hoc patterns. Features that are
+not Baseline Widely available ship only with the guide's fallback. A user-facing change is checked
+in the rendered app, at 1280 and 375 pixels and in dark mode, before it is called done.
+
 ## Owner decisions
 
 The owner (GitHub `Davmunrey`) decides these. An agent does them only when the owner has said so

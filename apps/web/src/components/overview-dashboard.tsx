@@ -21,10 +21,10 @@ export function OverviewDashboard({ orgId }: { orgId: string }) {
         ? <button className="dashboard-button" disabled={query.isFetching} onClick={() => void query.refetch()}>{query.isFetching ? t("refreshing") : t("refresh")}</button> : null}
     </div>
     <FirstSteps orgId={orgId} frameworks={query.data.frameworks} />
-    <div className="dashboard-grid">
+    {/* Collection and evidence totals teach nothing until something exists (workspace-ux spec). */}
+    {query.data.scans.length > 0 || query.data.evidence_count > 0 ? <div className="dashboard-grid">
       <FrameworkLedger key={orgId} frameworks={query.data.frameworks} orgId={orgId} />
       <ScanHistory scans={query.data.scans} evidenceCount={query.data.evidence_count} />
-    </div>
-    <p className="dashboard-note">{t("assessmentNote")}</p>
+    </div> : <FrameworkLedger key={orgId} frameworks={query.data.frameworks} orgId={orgId} />}
   </div>;
 }

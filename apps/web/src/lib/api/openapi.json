@@ -1119,6 +1119,45 @@
         "title": "FrameworkSummary",
         "type": "object"
       },
+      "GroupHeading": {
+        "additionalProperties": false,
+        "properties": {
+          "prefix": {
+            "minLength": 1,
+            "title": "Prefix",
+            "type": "string"
+          },
+          "title": {
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prefix",
+          "title"
+        ],
+        "title": "GroupHeading",
+        "type": "object"
+      },
+      "GroupTitle": {
+        "properties": {
+          "prefix": {
+            "title": "Prefix",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prefix",
+          "title"
+        ],
+        "title": "GroupTitle",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1419,6 +1458,13 @@
             "title": "Content State",
             "type": "string"
           },
+          "groups_es": {
+            "items": {
+              "$ref": "#/components/schemas/GroupHeading"
+            },
+            "title": "Groups Es",
+            "type": "array"
+          },
           "limitations_en": {
             "minLength": 1,
             "title": "Limitations En",
@@ -1629,6 +1675,13 @@
             "title": "Framework Version",
             "type": "string"
           },
+          "groups_es": {
+            "items": {
+              "$ref": "#/components/schemas/GroupTitle"
+            },
+            "title": "Groups Es",
+            "type": "array"
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/RegisterItem"
@@ -1662,6 +1715,7 @@
           "framework_version",
           "catalog_version",
           "axes",
+          "groups_es",
           "scope",
           "items",
           "review"

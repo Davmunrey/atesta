@@ -122,7 +122,7 @@ def test_links_are_tenant_bound_and_validated(tx: Session, superuser: Engine) ->
 @pytest.mark.parametrize("table", ["evidence", "evidence_controls"])
 def test_append_only(tx: Session, table: str) -> None:
     with pytest.raises(DBAPIError, match="permission denied"):
-        tx.execute(text(f"DELETE FROM {table}"))  # noqa: S608
+        tx.execute(text(f"DELETE FROM {table}"))  # noqa: S608  # nosemgrep: python.sqlalchemy.security.audit.avoid-sqlalchemy-text.avoid-sqlalchemy-text - fixed table names, no user input
 
 
 def test_storage_key_is_safe() -> None:

@@ -17,7 +17,7 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 const register: Register = {
   framework_key: "synthetic_alpha", framework_version: "2", catalog_version: "synthetic-2",
   axes: { tier: { keys: [], levels: ["LOW", "MID", "HIGH"] }, level: { keys: ["C", "I"], levels: ["L", "M", "H"] } },
-  scope: null, review: null,
+  scope: null, review: null, groups_es: [{ prefix: "R", title: "Requisitos sintéticos" }],
   items: [
     { code: "R1", title_es: "Protección de cuentas de prueba", title_en: null, selection_basis: "tier · Todas", proposal: { decision: "applies", rule: "+ R1", level: "MID" }, assessment: null },
     { code: "R2", title_es: "Registro de revisión", title_en: null, selection_basis: "tier · Todas", proposal: { decision: "not_applicable", rule: "n.a.", level: "MID" }, assessment: null },
@@ -81,6 +81,25 @@ it("links the statement of applicability export and says it is not a certificati
   const csv = await screen.findByRole("link", { name: "Descargar CSV" });
   expect(csv.getAttribute("href")).toBe(`${base}/applicability.csv`);
   expect(screen.getByText(/No es una certificación/)).toBeTruthy();
+});
+
+it("titles each group with the pack's official heading, keeping the code", async () => {
+  const dotted = { ...unassessed, requirements: unassessed.requirements.map((r) => ({ ...r, code: `R.${r.code}` })) };
+  stubApi({ [`GET ${base}`]: [200, dotted], [`GET ${base}/register`]: [200, { ...register, items: register.items.map((i) => ({ ...i, code: `R.${i.code}` })) }] });
+  renderWithProviders(<FrameworkDetailView orgId="primary" frameworkKey="synthetic_alpha" role="admin" />);
+  const group = await screen.findByRole("region", { name: "Requisitos sintéticos" });
+  expect(within(group).getByText("R")).toBeTruthy();
+});
+
+it("orders groups as the pack declares its headings, not alphabetically", async () => {
+  const codes = ["b.1", "a.1"];
+  const detailRows = { ...unassessed, requirements: codes.map((code, i) => ({ ...unassessed.requirements[i]!, code })) };
+  const items = codes.map((code, i) => ({ ...register.items[i]!, code }));
+  stubApi({ [`GET ${base}`]: [200, detailRows], [`GET ${base}/register`]: [200, { ...register, items, groups_es: [{ prefix: "b", title: "Primero" }, { prefix: "a", title: "Segundo" }] }] });
+  renderWithProviders(<FrameworkDetailView orgId="primary" frameworkKey="synthetic_alpha" role="admin" />);
+  await screen.findByRole("region", { name: "Primero" });
+  const names = Array.from(document.querySelectorAll(".requirement-group")).map((g) => g.getAttribute("aria-label"));
+  expect(names).toEqual(["Primero", "Segundo"]);
 });
 
 it("groups by code prefix and counts only recorded decisions", () => {
