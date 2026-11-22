@@ -3,7 +3,8 @@
 [![ci](https://github.com/Davmunrey/atesta/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Davmunrey/atesta/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Davmunrey/atesta/badge)](https://scorecard.dev/viewer/?uri=github.com/Davmunrey/atesta)
 
-Continuous audit readiness for every compliance framework. Test once, comply with many.
+Continuous audit readiness across compliance frameworks: one set of evidence, mapped to every
+framework you prepare for.
 Starting with ENS (RD 311/2022) and NIS2 for Spanish SMEs; ISO 27001, RGPD, DORA and SOC 2 follow
 as framework packs.
 

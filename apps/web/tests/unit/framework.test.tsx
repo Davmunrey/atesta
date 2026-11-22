@@ -26,7 +26,7 @@ it("shows official selection rules separately from recorded status", async () =>
   expect(screen.getByRole("rowheader", { name: "BAJO" })).toBeTruthy();
   expect(screen.getByText("+ [R1 o R2]")).toBeTruthy();
   expect(screen.getByText(requirementGuidance.official_text_es).getAttribute("lang")).toBe("es");
-  expect(within(document.querySelector("details.requirement-row")!).getByText("No cumple")).toBeTruthy();
+  expect(within(document.querySelector("details.requirement-row")!).getByText("No superado")).toBeTruthy();
 });
 
 it("prioritizes failures and open work before passed requirements", async () => {
@@ -42,7 +42,7 @@ it("separates recorded states, current guidance and missing observations", async
   expect(await screen.findByRole("heading", { level: 1, name: "Synthetic Alpha" })).toBeTruthy();
   expect(screen.getByText(/El catálogo ha cambiado/)).toBeTruthy();
   const row = screen.getByText("Protección de cuentas de prueba").closest("details")!;
-  expect(within(row).getByText("No cumple")).toBeTruthy();
+  expect(within(row).getByText("No superado")).toBeTruthy();
   expect(within(row).getAllByText("Sin observación").length).toBeGreaterThan(0);
   expect(within(row).getByText(framework.requirements[0]!.controls[0]!.description_es)).toBeTruthy();
   expect(within(row).getByRole("link", { name: "https://example.test/guide" }).getAttribute("href")).toBe("https://example.test/guide");
@@ -52,7 +52,7 @@ it("separates recorded states, current guidance and missing observations", async
 
 it("filters gaps by state and searches requirement and configuration text", async () => {
   stubApi({ [path]: [200, framework] }); render();
-  const filter = await screen.findByRole("button", { name: "No cumple 1" });
+  const filter = await screen.findByRole("button", { name: "No superado 1" });
   fireEvent.click(filter);
   expect(filter.getAttribute("aria-pressed")).toBe("true");
   expect(screen.queryByText("Registro comprobado")).toBeNull();
