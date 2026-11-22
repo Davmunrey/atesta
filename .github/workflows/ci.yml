@@ -54,6 +54,8 @@ jobs:
         run: uv run python -m apps.api.devtools.preview_catalog
       - name: Module boundaries
         run: uv run lint-imports
+      - name: Licences (no GPL or AGPL)
+        run: uv run python -m apps.api.devtools.python_licenses
       - name: Tests
         run: uv run pytest -q
 
