@@ -109,6 +109,14 @@ INSERT INTO findings (id, organization_id, scan_id, engine, check_id, status, se
   'prowler', 'entra_rls', 'fail', 'high', 'entra', 'User', 'u-1', 'n', 'global', 'm');
 INSERT INTO control_reviews (id, organization_id, control_key, status, rationale, valid_until,
   reviewed_by) VALUES (gen_random_uuid(), :o, 'ctl.rls', 'pass', 'r', current_date + 1, :u);
+INSERT INTO framework_scopes (id, organization_id, framework_key, axis_values, decided_by)
+  VALUES (gen_random_uuid(), :o, 'fw_rls', '{}', :u);
+INSERT INTO requirement_assessments (id, organization_id, framework_key, requirement_code,
+  applicability, implementation, regularly_reviewed, recorded_by) VALUES (gen_random_uuid(), :o,
+  'fw_rls', 'r1', 'applies', 'implemented', true, :u);
+INSERT INTO assessment_reviews (id, organization_id, framework_key, reviewer_name, reviewer_role,
+  reviewed_on, conclusions, recorded_by) VALUES (gen_random_uuid(), :o, 'fw_rls', 'n', 'r',
+  current_date, 'c', :u);
 INSERT INTO probe_child VALUES (:o, :p);
 """
 

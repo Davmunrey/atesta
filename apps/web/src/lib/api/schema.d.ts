@@ -158,6 +158,110 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/applicability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Applicability */
+        get: operations["applicability_api_v1_orgs__org_id__frameworks__framework_key__applicability_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/applicability.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Applicability Csv */
+        get: operations["applicability_csv_api_v1_orgs__org_id__frameworks__framework_key__applicability_csv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/assessment-reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Reviews */
+        get: operations["list_reviews_api_v1_orgs__org_id__frameworks__framework_key__assessment_reviews_get"];
+        put?: never;
+        /** Record Review */
+        post: operations["record_review_api_v1_orgs__org_id__frameworks__framework_key__assessment_reviews_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Register */
+        get: operations["read_register_api_v1_orgs__org_id__frameworks__framework_key__register_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/register/{requirement_code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record Assessment */
+        post: operations["record_assessment_api_v1_orgs__org_id__frameworks__framework_key__register__requirement_code__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/scope": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Scope */
+        get: operations["read_scope_api_v1_orgs__org_id__frameworks__framework_key__scope_get"];
+        put?: never;
+        /** Record Scope */
+        post: operations["record_scope_api_v1_orgs__org_id__frameworks__framework_key__scope_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/invitations": {
         parameters: {
             query?: never;
@@ -381,6 +485,161 @@ export interface components {
              */
             organization_id: string;
             role: components["schemas"]["Role"];
+        };
+        /** @enum {string} */
+        Applicability: "applies" | "not_applicable";
+        /** ApplicabilityRow */
+        ApplicabilityRow: {
+            /** Code */
+            code: string;
+            /** Decided By Person */
+            decided_by_person: boolean;
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "applies" | "not_applicable" | "undecided";
+            implementation: components["schemas"]["Implementation"] | null;
+            /** Justification */
+            justification: string;
+            /** Level */
+            level: string | null;
+            /** Rule */
+            rule: string | null;
+            /** Title Es */
+            title_es: string;
+        };
+        /** ApplicabilityStatement */
+        ApplicabilityStatement: {
+            /** Catalog Version */
+            catalog_version: string | null;
+            /** Framework Key */
+            framework_key: string;
+            /** Framework Name */
+            framework_name: string;
+            /** Framework Version */
+            framework_version: string;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Rows */
+            rows: components["schemas"]["ApplicabilityRow"][];
+            /** Scope */
+            scope: {
+                [key: string]: unknown;
+            } | null;
+            /** Signer */
+            signer?: {
+                [key: string]: string | null;
+            };
+            /**
+             * Statement
+             * @default Generated by Atesta from the organization's own records. Not a certification. / Generado por Atesta a partir de los registros de la propia organización. No es una certificación.
+             */
+            statement: string;
+        };
+        /** AssessmentIn */
+        AssessmentIn: {
+            applicability: components["schemas"]["Applicability"];
+            /** Evidence Statement Ids */
+            evidence_statement_ids?: string[];
+            implementation: components["schemas"]["Implementation"];
+            /**
+             * Justification
+             * @default
+             */
+            justification: string;
+            /**
+             * Notes
+             * @default
+             */
+            notes: string;
+            /**
+             * Performed By
+             * @default
+             */
+            performed_by: string;
+            /** Performed On */
+            performed_on?: string | null;
+            /** Regularly Reviewed */
+            regularly_reviewed: boolean;
+        };
+        /** AssessmentOut */
+        AssessmentOut: {
+            applicability: components["schemas"]["Applicability"];
+            /** Evidence Statement Ids */
+            evidence_statement_ids: string[];
+            implementation: components["schemas"]["Implementation"];
+            /** Justification */
+            justification: string;
+            /** Notes */
+            notes: string;
+            /** Performed By */
+            performed_by: string;
+            /** Performed On */
+            performed_on: string | null;
+            /**
+             * Recorded At
+             * Format: date-time
+             */
+            recorded_at: string;
+            /**
+             * Recorded By
+             * Format: uuid
+             */
+            recorded_by: string;
+            /** Regularly Reviewed */
+            regularly_reviewed: boolean;
+        };
+        /** AssessmentReviewIn */
+        AssessmentReviewIn: {
+            /** Conclusions */
+            conclusions: string;
+            /**
+             * Corrective Actions
+             * @default
+             */
+            corrective_actions: string;
+            /**
+             * Reviewed On
+             * Format: date
+             */
+            reviewed_on: string;
+            /** Reviewer Name */
+            reviewer_name: string;
+            /** Reviewer Role */
+            reviewer_role: string;
+        };
+        /** AssessmentReviewOut */
+        AssessmentReviewOut: {
+            /** Conclusions */
+            conclusions: string;
+            /**
+             * Corrective Actions
+             * @default
+             */
+            corrective_actions: string;
+            /**
+             * Recorded At
+             * Format: date-time
+             */
+            recorded_at: string;
+            /**
+             * Recorded By
+             * Format: uuid
+             */
+            recorded_by: string;
+            /**
+             * Reviewed On
+             * Format: date
+             */
+            reviewed_on: string;
+            /** Reviewer Name */
+            reviewer_name: string;
+            /** Reviewer Role */
+            reviewer_role: string;
         };
         /** CheckDetail */
         CheckDetail: {
@@ -638,6 +897,8 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** @enum {string} */
+        Implementation: "not_implemented" | "partially_implemented" | "implemented";
         /** InvitationIn */
         InvitationIn: {
             /** Email */
@@ -797,8 +1058,52 @@ export interface components {
             /** Title Es */
             title_es: string;
         };
+        /** ProposalOut */
+        ProposalOut: {
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "applies" | "not_applicable" | "undecided";
+            /** Level */
+            level: string | null;
+            /** Rule */
+            rule: string | null;
+        };
         /** @enum {string} */
         RecordedStatus: "pass" | "fail" | "manual" | "not_applicable";
+        /** Register */
+        Register: {
+            /** Axes */
+            axes: {
+                [key: string]: {
+                    [key: string]: string[];
+                };
+            };
+            /** Catalog Version */
+            catalog_version: string | null;
+            /** Framework Key */
+            framework_key: string;
+            /** Framework Version */
+            framework_version: string;
+            /** Items */
+            items: components["schemas"]["RegisterItem"][];
+            review: components["schemas"]["AssessmentReviewOut"] | null;
+            scope: components["schemas"]["ScopeOut"] | null;
+        };
+        /** RegisterItem */
+        RegisterItem: {
+            assessment: components["schemas"]["AssessmentOut"] | null;
+            /** Code */
+            code: string;
+            proposal: components["schemas"]["ProposalOut"];
+            /** Selection Basis */
+            selection_basis: string | null;
+            /** Title En */
+            title_en: string | null;
+            /** Title Es */
+            title_es: string;
+        };
         /** RequirementContext */
         RequirementContext: {
             /** Applicability Es */
@@ -970,6 +1275,32 @@ export interface components {
              * @enum {string}
              */
             status: "queued" | "running" | "collected" | "succeeded" | "partial" | "failed" | "blocked";
+        };
+        /** ScopeIn */
+        ScopeIn: {
+            /** Axis Values */
+            axis_values: {
+                [key: string]: string | {
+                    [key: string]: string;
+                };
+            };
+        };
+        /** ScopeOut */
+        ScopeOut: {
+            /** Axis Values */
+            axis_values: {
+                [key: string]: unknown;
+            };
+            /**
+             * Decided At
+             * Format: date-time
+             */
+            decided_at: string;
+            /**
+             * Decided By
+             * Format: uuid
+             */
+            decided_by: string;
         };
         /** SelectionRule */
         SelectionRule: {
@@ -1452,6 +1783,275 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FrameworkDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    applicability_api_v1_orgs__org_id__frameworks__framework_key__applicability_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicabilityStatement"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    applicability_csv_api_v1_orgs__org_id__frameworks__framework_key__applicability_csv_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_reviews_api_v1_orgs__org_id__frameworks__framework_key__assessment_reviews_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentReviewOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_review_api_v1_orgs__org_id__frameworks__framework_key__assessment_reviews_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssessmentReviewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentReviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_register_api_v1_orgs__org_id__frameworks__framework_key__register_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Register"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_assessment_api_v1_orgs__org_id__frameworks__framework_key__register__requirement_code__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                requirement_code: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssessmentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_scope_api_v1_orgs__org_id__frameworks__framework_key__scope_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_scope_api_v1_orgs__org_id__frameworks__framework_key__scope_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScopeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScopeOut"];
                 };
             };
             /** @description Validation Error */
