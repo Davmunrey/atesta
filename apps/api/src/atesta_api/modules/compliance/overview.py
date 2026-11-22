@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from atesta_api.modules.compliance.models import ScoreSnapshot
+from atesta_api.modules.compliance.models import Requirement, ScoreSnapshot
 from atesta_api.modules.compliance.scoring import active_frameworks
 from atesta_api.modules.evidence.api import evidence_count
 from atesta_api.modules.identity.api import Member, require_member
@@ -41,6 +41,7 @@ class FrameworkSummary(BaseModel):
     name: str
     version: str
     status: str
+    requirements: int  # active requirements in the catalog, so empty templates sort last
     snapshot: SnapshotSummary | None
 
 
@@ -85,6 +86,14 @@ def latest_snapshots(
 def overview(member: Annotated[Member, Depends(require_member)], session: DbSession) -> OverviewOut:
     frameworks = active_frameworks(session)
     snapshots = latest_snapshots(session, member.organization_id, [f.key for f in frameworks])
+    counts: dict[str, int] = {
+        key: count
+        for key, count in session.execute(
+            select(Requirement.framework_key, func.count())
+            .where(Requirement.retired_at.is_(None))
+            .group_by(Requirement.framework_key)
+        ).all()
+    }
     return OverviewOut(
         frameworks=[
             FrameworkSummary(
@@ -92,6 +101,7 @@ def overview(member: Annotated[Member, Depends(require_member)], session: DbSess
                 name=f.name,
                 version=f.version,
                 status=f.status,
+                requirements=counts.get(f.key, 0),
                 snapshot=snapshots.get(f.key),
             )
             for f in frameworks

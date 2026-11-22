@@ -257,7 +257,8 @@
       "not_evaluated": "Confirm the requirement scope and the availability of the necessary checks or documents. Obtain an assessment before treating it as resolved.",
       "pass": "Retain the evidence and review the result after changes to configuration, scope or catalog.",
       "not_applicable": "Retain the scope justification and revisit it when the organization or framework changes."
-    }
+    },
+    "technicalDetails": "Catalog technical details"
   },
   "dashboard": {
     "viewRequirements": "View requirements and configuration",
@@ -314,7 +315,17 @@
     "refreshing": "Refreshing…",
     "refresh": "Refresh results",
     "assessmentNote": "Atesta organizes results and evidence to help prepare for audits. It does not certify compliance.",
-    "pendingReviews": "{count, plural, one {# manual review pending} other {# manual reviews pending}}"
+    "pendingReviews": "{count, plural, one {# manual review pending} other {# manual reviews pending}}",
+    "requirementCount": "{count, plural, one {# requirement} other {# requirements}}",
+    "preparationOnly": "In preparation: no requirements yet",
+    "firstSteps": "First steps",
+    "firstStepsIntro": "Prepare the {framework} self-assessment in four steps.",
+    "stepScope": "Define the scope",
+    "stepAssess": "Assess the measures ({assessed} of {total})",
+    "stepReview": "Security officer review",
+    "stepExport": "Export the statement of applicability",
+    "continue": "Continue with {framework}",
+    "start": "Start with {framework}"
   },
   "preparation": {
     "states": {
@@ -322,7 +333,7 @@
       "partial": "Normative content under review",
       "complete": "Content prepared, publication pending"
     },
-    "disabled": "Assessment disabled. Applicability and your organization’s compliance remain undetermined.",
+    "disabled": "Automatic scoring is disabled while the content is under review. Your self-assessment is still recorded and can be exported.",
     "navigate": "Preparation contents",
     "requirementsCount": "{count} available requirements",
     "controlsCount": "{count} preparation guides",
@@ -368,5 +379,78 @@
     "saving": "Saving…",
     "save": "Save evidence",
     "cancel": "Cancel"
+  },
+  "register": {
+    "title": "Your organization's self-assessment",
+    "intro": "Record which measures apply to your system and how you have implemented them. Atesta proposes applicability from the official tables; the decision is always your organization's.",
+    "stepScope": "Define the scope",
+    "scopeHelp": "Choose the system category and the level of each security dimension. Atesta then proposes which measures apply.",
+    "noAxes": "This framework defines no selection levels.",
+    "saveScope": "Save scope",
+    "changeScope": "Change scope",
+    "scopeRecorded": "Scope recorded on {date}.",
+    "scopeMissingMember": "An administrator must define the scope.",
+    "stepAssess": "Assess each measure",
+    "progress": "{assessed} of {total} measures assessed",
+    "progressLabel": "Measures assessed",
+    "breakdown": "{applies} apply: {implemented} implemented and {partial} partially. {notApplicable} do not apply.",
+    "stepReview": "Security officer review",
+    "reviewHelp": "Your organization's security officer analyses the self-assessment and records conclusions and corrective actions.",
+    "reviewRecorded": "Reviewed by {name} ({role}) on {date}.",
+    "recordReview": "Record review",
+    "newReview": "Record a new review",
+    "reviewerName": "Reviewer's name",
+    "reviewerRole": "Role",
+    "reviewedOn": "Review date",
+    "conclusions": "Conclusions",
+    "correctiveActions": "Corrective actions",
+    "reviewNotAtesta": "A person in your organization performs the review. Atesta only records it.",
+    "saveReview": "Save review",
+    "stepExport": "Export the statement of applicability",
+    "exportHelp": "Download the selected measures with their justification, ready to sign outside Atesta. It is not a certification.",
+    "exportCsv": "Download CSV",
+    "exportJson": "View as JSON",
+    "cancel": "Cancel",
+    "filter": "Filter by self-assessment",
+    "filters": {
+      "all": "All",
+      "pending": "Pending",
+      "applies": "Apply",
+      "implemented": "Implemented",
+      "not_applicable": "Do not apply"
+    },
+    "groupProgress": "{assessed} of {total} assessed",
+    "guideAndText": "Guide and official text",
+    "configurationAndEvidence": "Configuration, evidence and review ({count, plural, one {# control} other {# controls}})",
+    "states": {
+      "pending": "Pending",
+      "implemented": "Implemented",
+      "partially_implemented": "Partially implemented",
+      "not_implemented": "Not implemented",
+      "not_applicable": "Does not apply"
+    },
+    "proposal": {
+      "applies": "Applies",
+      "not_applicable": "Does not apply"
+    },
+    "proposalText": "Proposed from the official tables: {decision} ({level}: {rule}). Confirm it or justify another decision.",
+    "proposalUndecided": "No proposal: define the scope or decide from the official text.",
+    "yourAssessment": "Your self-assessment",
+    "assess": "Assess this measure",
+    "update": "Update",
+    "save": "Save",
+    "applicability": "Applicability",
+    "implementation": "Implementation",
+    "regularlyReviewed": "under regular review",
+    "regularlyReviewedQuestion": "It is under regular review",
+    "justification": "Justification",
+    "required": "required",
+    "justificationHelp": "Required when the measure does not apply or your decision differs from the proposal.",
+    "performedBy": "Who performed it",
+    "performedByPlaceholder": "Name or role",
+    "performedOn": "Date",
+    "notes": "Notes",
+    "recordedAt": "Recorded on {date}.",
+    "pendingMember": "Pending. An administrator can record the self-assessment."
   }
 }

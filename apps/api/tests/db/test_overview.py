@@ -230,3 +230,30 @@ def test_draft_gate_and_development_label_follow_runtime_configuration(
     data = client.get(url, headers=auth(subs["owner"])).json()
     assert data["development"] is False
     assert overview_catalog["draft"] not in {f["key"] for f in data["frameworks"]}
+
+
+def test_each_framework_reports_its_active_requirement_count(
+    client: TestClient, superuser: Engine, overview_catalog: dict[str, str]
+) -> None:
+    """The dashboard orders frameworks by content, so it needs the count (workspace-ux spec)."""
+    key = overview_catalog["active"]
+    with superuser.begin() as conn:
+        for code, retired in (("c1", None), ("c2", None), ("c3", datetime.now(UTC))):
+            conn.execute(
+                text(
+                    "INSERT INTO requirements (framework_key, code, title_es, source, retired_at)"
+                    " VALUES (:k, :c, 'Requisito', 'synthetic', :r)"
+                ),
+                {"k": key, "c": code, "r": retired},
+            )
+    try:
+        org, subs = org_with(client, superuser)
+        frameworks = client.get(f"/api/v1/orgs/{org}/overview", headers=auth(subs["owner"])).json()[
+            "frameworks"
+        ]
+        counts = {f["key"]: f["requirements"] for f in frameworks}
+        assert counts[key] == 2  # the retired requirement is not counted
+        assert counts[overview_catalog["unassessed"]] == 0
+    finally:
+        with superuser.begin() as conn:
+            conn.execute(text("DELETE FROM requirements WHERE framework_key = :k"), {"k": key})

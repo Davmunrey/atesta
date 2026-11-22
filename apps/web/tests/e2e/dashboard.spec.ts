@@ -17,8 +17,11 @@ test("dashboard reads a real empty organization and recovers after an API failur
   await createOrganization(page);
   await expect(page.getByText("Todavía no hay marcos publicados")).toBeVisible();
   await expect(page.getByText("Aún no hay análisis registrados")).toBeVisible();
+  // An empty organization has nothing to refresh, so no refresh button (workspace-ux spec):
+  // the failure comes from a reload instead.
+  await expect(page.getByRole("button", { name: "Actualizar resultados" })).toHaveCount(0);
   await page.route("**/api/v1/orgs/*/overview", (route) => route.fulfill({ status: 503, json: { detail: { code: "auth.provider_unavailable" } } }));
-  await page.getByRole("button", { name: "Actualizar resultados" }).click();
+  await page.reload();
   await expect(page.getByRole("main").getByRole("alert")).toBeVisible();
   await page.unroute("**/api/v1/orgs/*/overview");
   await page.getByRole("button", { name: "Reintentar" }).click();

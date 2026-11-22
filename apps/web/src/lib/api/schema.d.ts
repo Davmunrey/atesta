@@ -886,6 +886,8 @@ export interface components {
             key: string;
             /** Name */
             name: string;
+            /** Requirements */
+            requirements: number;
             snapshot: components["schemas"]["SnapshotSummary"] | null;
             /** Status */
             status: string;

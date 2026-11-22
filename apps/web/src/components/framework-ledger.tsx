@@ -15,7 +15,11 @@ export function FrameworkLedger({ frameworks, orgId }: { frameworks: Framework[]
   const searchId = useId();
   const [search, setSearch] = useState("");
   const query = search.trim().toLocaleLowerCase();
-  const visible = frameworks.filter((f) => `${f.name} ${f.key}`.toLocaleLowerCase().includes(query));
+  // Assessed frameworks first, then those with requirements, then empty preparation templates;
+  // the backend's order (by name) breaks ties.
+  const rank = (f: Framework) => (f.snapshot ? 0 : f.requirements > 0 ? 1 : 2);
+  const visible = frameworks.filter((f) => `${f.name} ${f.key}`.toLocaleLowerCase().includes(query))
+    .map((f, i) => [f, i] as const).sort(([a, i], [b, j]) => rank(a) - rank(b) || i - j).map(([f]) => f);
   return (
     <section aria-labelledby="framework-heading" className="framework-section">
       <div className="dashboard-section-heading">
@@ -33,10 +37,10 @@ export function FrameworkLedger({ frameworks, orgId }: { frameworks: Framework[]
           {visible.map((framework, index) => {
             const snapshot = framework.snapshot;
             const total = snapshot ? states.reduce((sum, state) => sum + snapshot[state], 0) : 0;
-            return <details key={framework.key} className="framework-row" open={index === 0}>
+            return <details key={framework.key} className="framework-row" open={index === 0 && snapshot !== null}>
               <summary>
                 <span className="framework-name"><strong>{framework.name}</strong>
-                  <span>{t("version", { version: snapshot?.framework_version ?? framework.version })}{framework.status === "draft" ? ` · ${t("draft")}` : ""}</span>
+                  <span>{framework.requirements > 0 ? t("requirementCount", { count: framework.requirements }) : t("preparationOnly")}{framework.status === "draft" ? ` · ${t("draft")}` : ""}</span>
                   {snapshot && snapshot.manual > 0 ? <span>{t("pendingReviews", { count: snapshot.manual })}</span> : null}
                 </span>
                 <span className="framework-score">{snapshot === null ? t("notAssessed") : snapshot.score === null ? t("unscored") : `${format.number(snapshot.score, { maximumFractionDigits: 1 })} %`}</span>
@@ -57,6 +61,7 @@ export function FrameworkLedger({ frameworks, orgId }: { frameworks: Framework[]
                   </dl>
                   <p className="text-sm text-muted">{t("scoreHelp")}</p>
                 </> : <p className="text-muted">{t("notAssessedHelp")}</p>}
+                <p className="text-sm text-muted">{t("version", { version: snapshot?.framework_version ?? framework.version })}</p>
                 <Link href={orgFramework(orgId, framework.key)} className="framework-detail-link">{t("viewRequirements")}</Link>
               </div>
             </details>;

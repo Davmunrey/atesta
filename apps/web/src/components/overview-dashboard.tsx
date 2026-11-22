@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useOverview } from "@/lib/api/hooks";
 import { ErrorMessage } from "./error-message";
+import { FirstSteps } from "./first-steps";
 import { FrameworkLedger } from "./framework-ledger";
 import { ScanHistory } from "./scan-history";
 
@@ -16,8 +17,10 @@ export function OverviewDashboard({ orgId }: { orgId: string }) {
   return <div className="dashboard">
     <div className="dashboard-toolbar">
       <p>{query.data.development ? t("development") : t("recordedResults")}</p>
-      <button className="dashboard-button" disabled={query.isFetching} onClick={() => void query.refetch()}>{query.isFetching ? t("refreshing") : t("refresh")}</button>
+      {query.data.frameworks.some((f) => f.snapshot) || query.data.scans.length > 0
+        ? <button className="dashboard-button" disabled={query.isFetching} onClick={() => void query.refetch()}>{query.isFetching ? t("refreshing") : t("refresh")}</button> : null}
     </div>
+    <FirstSteps orgId={orgId} frameworks={query.data.frameworks} />
     <div className="dashboard-grid">
       <FrameworkLedger key={orgId} frameworks={query.data.frameworks} orgId={orgId} />
       <ScanHistory scans={query.data.scans} evidenceCount={query.data.evidence_count} />

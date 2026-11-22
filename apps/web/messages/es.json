@@ -257,7 +257,8 @@
       "not_evaluated": "Confirma el alcance del requisito y la disponibilidad de las comprobaciones o documentos necesarios. Obtén una evaluación antes de darlo por resuelto.",
       "pass": "Conserva la evidencia y revisa el resultado después de cambios de configuración, alcance o catálogo.",
       "not_applicable": "Conserva la justificación de alcance y revísala cuando cambie la organización o el marco."
-    }
+    },
+    "technicalDetails": "Detalles técnicos del catálogo"
   },
   "dashboard": {
     "viewRequirements": "Ver requisitos y configuración",
@@ -314,7 +315,17 @@
     "refreshing": "Actualizando…",
     "refresh": "Actualizar resultados",
     "assessmentNote": "Atesta organiza resultados y evidencias para preparar auditorías. No certifica cumplimiento.",
-    "pendingReviews": "{count, plural, one {# revisión manual pendiente} other {# revisiones manuales pendientes}}"
+    "pendingReviews": "{count, plural, one {# revisión manual pendiente} other {# revisiones manuales pendientes}}",
+    "requirementCount": "{count, plural, one {# requisito} other {# requisitos}}",
+    "preparationOnly": "En preparación: aún sin requisitos",
+    "firstSteps": "Primeros pasos",
+    "firstStepsIntro": "Prepara la autoevaluación de {framework} en cuatro pasos.",
+    "stepScope": "Define el alcance",
+    "stepAssess": "Evalúa las medidas ({assessed} de {total})",
+    "stepReview": "Revisión del responsable de seguridad",
+    "stepExport": "Exporta la declaración de aplicabilidad",
+    "continue": "Continuar con {framework}",
+    "start": "Empezar con {framework}"
   },
   "preparation": {
     "states": {
@@ -322,7 +333,7 @@
       "partial": "Contenido normativo en revisión",
       "complete": "Contenido preparado, pendiente de publicación"
     },
-    "disabled": "Evaluación desactivada. La aplicabilidad y el cumplimiento de tu organización siguen sin determinar.",
+    "disabled": "Puntuación automática desactivada mientras el contenido está en revisión. Tu autoevaluación sí se registra y puedes exportarla.",
     "navigate": "Contenido de preparación",
     "requirementsCount": "{count} requisitos disponibles",
     "controlsCount": "{count} guías de preparación",
@@ -368,5 +379,78 @@
     "saving": "Guardando…",
     "save": "Guardar evidencia",
     "cancel": "Cancelar"
+  },
+  "register": {
+    "title": "Autoevaluación de tu organización",
+    "intro": "Registra qué medidas aplican a tu sistema y cómo las tienes implantadas. Atesta propone la aplicabilidad a partir de las tablas oficiales; la decisión es siempre de tu organización.",
+    "stepScope": "Define el alcance",
+    "scopeHelp": "Elige la categoría del sistema y el nivel de cada dimensión de seguridad. Con eso Atesta propone qué medidas aplican.",
+    "noAxes": "Este marco no define niveles de selección.",
+    "saveScope": "Guardar alcance",
+    "changeScope": "Cambiar alcance",
+    "scopeRecorded": "Alcance registrado el {date}.",
+    "scopeMissingMember": "Una persona administradora debe definir el alcance.",
+    "stepAssess": "Evalúa cada medida",
+    "progress": "{assessed} de {total} medidas evaluadas",
+    "progressLabel": "Medidas evaluadas",
+    "breakdown": "Aplican {applies}: {implemented} implantadas y {partial} parcialmente. No aplican {notApplicable}.",
+    "stepReview": "Revisión del responsable de seguridad",
+    "reviewHelp": "Quien sea responsable de la seguridad en tu organización analiza la autoevaluación y anota conclusiones y acciones correctoras.",
+    "reviewRecorded": "Revisada por {name} ({role}) el {date}.",
+    "recordReview": "Registrar revisión",
+    "newReview": "Registrar nueva revisión",
+    "reviewerName": "Nombre de quien revisa",
+    "reviewerRole": "Cargo",
+    "reviewedOn": "Fecha de la revisión",
+    "conclusions": "Conclusiones",
+    "correctiveActions": "Acciones correctoras",
+    "reviewNotAtesta": "La revisión la hace una persona de tu organización. Atesta solo la registra.",
+    "saveReview": "Guardar revisión",
+    "stepExport": "Exporta la declaración de aplicabilidad",
+    "exportHelp": "Descarga las medidas seleccionadas con su justificación, listas para firmar fuera de Atesta. No es una certificación.",
+    "exportCsv": "Descargar CSV",
+    "exportJson": "Ver en JSON",
+    "cancel": "Cancelar",
+    "filter": "Filtrar por autoevaluación",
+    "filters": {
+      "all": "Todas",
+      "pending": "Pendientes",
+      "applies": "Aplican",
+      "implemented": "Implantadas",
+      "not_applicable": "No aplican"
+    },
+    "groupProgress": "{assessed} de {total} evaluadas",
+    "guideAndText": "Guía y texto oficial",
+    "configurationAndEvidence": "Configuración, evidencias y revisión ({count, plural, one {# control} other {# controles}})",
+    "states": {
+      "pending": "Pendiente",
+      "implemented": "Implantada",
+      "partially_implemented": "Implantada en parte",
+      "not_implemented": "No implantada",
+      "not_applicable": "No aplica"
+    },
+    "proposal": {
+      "applies": "Aplica",
+      "not_applicable": "No aplica"
+    },
+    "proposalText": "Propuesta según las tablas oficiales: {decision} ({level}: {rule}). Confírmala o justifica otra decisión.",
+    "proposalUndecided": "Sin propuesta: define el alcance o decide según el texto oficial.",
+    "yourAssessment": "Tu autoevaluación",
+    "assess": "Evaluar esta medida",
+    "update": "Actualizar",
+    "save": "Guardar",
+    "applicability": "Aplicabilidad",
+    "implementation": "Implantación",
+    "regularlyReviewed": "en revisión periódica",
+    "regularlyReviewedQuestion": "Está sujeta a revisión periódica",
+    "justification": "Justificación",
+    "required": "obligatoria",
+    "justificationHelp": "Obligatoria si la medida no aplica o si tu decisión difiere de la propuesta.",
+    "performedBy": "Quién la ha realizado",
+    "performedByPlaceholder": "Nombre o cargo",
+    "performedOn": "Fecha",
+    "notes": "Notas",
+    "recordedAt": "Registrado el {date}.",
+    "pendingMember": "Pendiente. Una persona administradora puede registrar la autoevaluación."
   }
 }

@@ -67,7 +67,8 @@ it("refreshes the current organization through the API", async () => {
   await screen.findByText("Synthetic Alpha");
   fireEvent.click(screen.getByRole("button", { name: "Actualizar resultados" }));
   expect(await screen.findByText("Todavía no hay marcos publicados")).toBeTruthy();
-  expect(requests).toHaveLength(2);
+  // First steps reads the register separately; count only the overview requests.
+  expect(requests.filter((r) => new URL(r.url).pathname.endsWith("/overview"))).toHaveLength(2);
 });
 
 it("shows a loading state instead of another organization's results", async () => {

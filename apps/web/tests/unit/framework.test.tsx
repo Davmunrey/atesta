@@ -12,7 +12,7 @@ const render = () => renderWithProviders(<FrameworkDetailView orgId="primary" fr
 it("explains template boundaries and offers preparation without fabricating coverage", async () => {
   stubApi({ [path]: [200, preparationFramework] }); render();
   expect(await screen.findByRole("heading", { name: "Plantilla de preparación" })).toBeTruthy();
-  expect(screen.getByText(/Evaluación desactivada/)).toBeTruthy();
+  expect(screen.getByText(/Puntuación automática desactivada/)).toBeTruthy();
   expect(screen.getByRole("link", { name: "0 requisitos disponibles" })).toBeTruthy();
   expect(screen.getByRole("link", { name: "1 guías de preparación" }).getAttribute("href")).toBe("#preparation-controls-heading");
   expect(screen.getByText("Faltan requisitos y mapeos revisados.")).toBeTruthy();
@@ -45,7 +45,7 @@ it("separates recorded states, current guidance and missing observations", async
   expect(within(row).getByText("No superado")).toBeTruthy();
   expect(within(row).getAllByText("Sin observación").length).toBeGreaterThan(0);
   expect(within(row).getByText(framework.requirements[0]!.controls[0]!.description_es)).toBeTruthy();
-  expect(within(row).getByRole("link", { name: "https://example.test/guide" }).getAttribute("href")).toBe("https://example.test/guide");
+  expect(within(row).getByRole("link", { name: "example.test · guide" }).getAttribute("href")).toBe("https://example.test/guide");
   expect(within(row).queryByRole("link", { name: "javascript:alert(1)" })).toBeNull();
   expect(screen.getByText("Requisito histórico sin ficha actual")).toBeTruthy();
 });
@@ -77,7 +77,8 @@ it("recovers after a failed read and refreshes the same framework", async () => 
   fireEvent.click(screen.getByRole("button", { name: "Reintentar" }));
   expect(await screen.findByRole("heading", { level: 1 })).toBeTruthy();
   fireEvent.click(screen.getByRole("button", { name: "Actualizar resultados" }));
-  expect(requests).toHaveLength(3);
+  // The register is a separate read; count only the framework detail requests.
+  expect(requests.filter((r) => new URL(r.url).pathname.endsWith("/frameworks/synthetic_alpha"))).toHaveLength(3);
 });
 
 it("shows loading while a framework read is pending", () => {
