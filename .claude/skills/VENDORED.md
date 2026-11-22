@@ -34,3 +34,6 @@ and uv. Project rules in AGENTS.md (imported by CLAUDE.md) win over any skill te
 | `client-localstorage-schema` | Never store tokens, customer data or PII in browser storage (CLAUDE.md rule 2). |
 | `bundle-defer-third-party` analytics example | No third-party analytics or scripts without an ADR. |
 | `frontend-design` "confirm with the client" | The client is the owner. Brand direction waits for the owner's choice of identity; until then the web shell uses neutral tokens. |
+
+Every vendored file is pinned by SHA-256 in `VENDORED.sha256` and checked by
+`apps/api/tests/test_vendored_skills.py`; regenerate the manifest only together with a review.
