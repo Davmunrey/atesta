@@ -59,8 +59,14 @@ test("an admin scopes, assesses and exports the self-assessment, accessibly at e
     return route.fulfill({ status: 201, json: saved });
   });
 
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha/register/history", (route) => route.fulfill({ json: [
+    { day: "2026-11-20", assessed: 1, implemented: 0, not_applicable: 0 },
+    { day: "2026-11-21", assessed: 2, implemented: 1, not_applicable: 0 },
+  ] }));
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha/trend", (route) => route.fulfill({ json: [] }));
   await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
   await expect(page.getByRole("heading", { name: "Autoevaluación de tu organización" })).toBeVisible();
+  await expect(page.getByRole("img", { name: /Medidas implantadas a lo largo del tiempo/ })).toBeVisible();
   await expect(page.getByRole("region", { name: "Requisitos sintéticos" })).toBeVisible();
   await expectAccessible(page, "workspace before scope");
 
@@ -89,4 +95,19 @@ test("an admin scopes, assesses and exports the self-assessment, accessibly at e
     }
   }
   expect(csp).toEqual([]);
+});
+
+test("an admin reads the organization's real activity, accessibly", async ({ page }) => {
+  const org = await createOrganization(page);
+  await page.getByRole("navigation", { name: "Secciones de la organización" }).getByRole("link", { name: "Actividad", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Actividad", level: 1 })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "Creó la organización" })).toBeVisible();
+  await page.getByRole("button", { name: "Últimos 90 días" }).click();
+  await expect(page.getByRole("button", { name: "Últimos 90 días" })).toHaveAttribute("aria-pressed", "true");
+  expect(new URL(page.url()).searchParams.get("org")).toBe(org);
+  for (const width of [375, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}`).toBe(true);
+    await expectAccessible(page, `activity ${width}`);
+  }
 });
