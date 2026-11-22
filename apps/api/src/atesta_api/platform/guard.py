@@ -20,7 +20,7 @@ _CHECKS = {
         " WHERE r.rolname = current_user"
     ),
     "has owner privileges on objects in public": (
-        f"SELECT 1 FROM ({_PUBLIC} WHERE n.nspname = 'public'"  # noqa: S608
+        f"SELECT 1 FROM ({_PUBLIC} WHERE n.nspname = 'public'"  # noqa: S608 - constant SQL, no input
         "   AND pg_has_role(current_user, c.relowner, 'USAGE')) t"
         " UNION ALL SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace"
         " WHERE n.nspname = 'public' AND pg_has_role(current_user, p.proowner, 'USAGE')"
@@ -29,19 +29,19 @@ _CHECKS = {
     ),
     "has CREATE on schema public": "SELECT 1 WHERE has_schema_privilege('public', 'CREATE')",
     "holds TRUNCATE, REFERENCES or TRIGGER on a table": (
-        f"{_PUBLIC} WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p')"  # noqa: S608
+        f"{_PUBLIC} WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p')"  # noqa: S608 - constant SQL, no input
         " AND (has_table_privilege(c.oid, 'TRUNCATE, REFERENCES, TRIGGER')"
         "   OR has_any_column_privilege(c.oid, 'REFERENCES'))"
     ),
     "can write an append-only or catalog table": (
-        f"{_PUBLIC} WHERE n.nspname = 'public' AND ("  # noqa: S608
+        f"{_PUBLIC} WHERE n.nspname = 'public' AND ("  # noqa: S608 - constant SQL, no input
         " (c.relname = ANY(:append_only) AND (has_table_privilege(c.oid, 'UPDATE, DELETE')"
         "   OR has_any_column_privilege(c.oid, 'UPDATE')))"
         " OR (c.relname = ANY(:catalog) AND (has_table_privilege(c.oid, 'INSERT, UPDATE, DELETE')"
         "   OR has_any_column_privilege(c.oid, 'INSERT, UPDATE'))))"
     ),
     "has a privilege on alembic_version": (
-        f"{_PUBLIC} WHERE n.nspname = 'public' AND c.relname = 'alembic_version'"  # noqa: S608
+        f"{_PUBLIC} WHERE n.nspname = 'public' AND c.relname = 'alembic_version'"  # noqa: S608 - constant SQL, no input
         " AND (has_table_privilege(c.oid, 'DELETE')"
         "   OR has_any_column_privilege(c.oid, 'SELECT, INSERT, UPDATE'))"
     ),
