@@ -43,9 +43,12 @@ export function useCreateOrg() {
   });
 }
 
-export function useMembers(orgId: string) {
+/** Auditors never see the people list (rbac spec), so their browser does not ask for it. */
+export function useMembers(orgId: string, enabled = true) {
+  const me = useQueryClient().getQueryData<components["schemas"]["MeOut"]>(ME);
+  const auditor = me?.memberships.find((m) => m.organization_id === orgId)?.role === "auditor";
   return useQuery({
-    queryKey: members(orgId),
+    queryKey: members(orgId), enabled: enabled && !auditor,
     queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/members", { params: { path: { org_id: orgId } } })),
   });
 }
@@ -94,11 +97,11 @@ function useMemberMutation<T>(orgId: string, mutationFn: (input: T) => Promise<u
 }
 
 export function useChangeRole(orgId: string) {
-  return useMemberMutation(orgId, ({ userId, role }: { userId: string; role: Role }) =>
+  return useMemberMutation(orgId, ({ userId, role, accessExpiresOn = null }: { userId: string; role: Role; accessExpiresOn?: string | null }) =>
     unwrap(
       api.PATCH("/api/v1/orgs/{org_id}/members/{user_id}", {
         params: { path: { org_id: orgId, user_id: userId } },
-        body: { role },
+        body: { role, access_expires_on: accessExpiresOn },
       }),
     ),
   );
@@ -124,7 +127,7 @@ export function useInvitations(orgId: string) {
 export function useCreateInvitation(orgId: string) {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: (body: { email: string; role: Role }) =>
+    mutationFn: (body: { email: string; role: Role; access_expires_on?: string | null }) =>
       unwrap(api.POST("/api/v1/orgs/{org_id}/invitations", { params: { path: { org_id: orgId } }, body })),
     onSettled: () => client.invalidateQueries({ queryKey: invitations(orgId) }),
   });

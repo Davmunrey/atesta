@@ -417,15 +417,20 @@ def record_assessment(
     framework_key: str,
     requirement_code: str,
     body: AssessmentIn,
-    member: Annotated[Member, Depends(require_role(Role.ADMIN))],
+    member: Annotated[Member, Depends(require_role(Role.MEMBER))],
     session: DbSession,
 ) -> AssessmentOut:
+    """Admins assess any measure; a contributor only the measures they own (rbac spec)."""
     _framework(session, framework_key)
     requirement = next(
         (r for r in _requirements(session, framework_key) if r.code == requirement_code), None
     )
     if requirement is None:
         raise HTTPException(404, detail={"code": "compliance.requirement_not_found"})
+    if member.role == Role.MEMBER:
+        owned = _assignments(session, member.organization_id, framework_key).get(requirement_code)
+        if owned is None or owned.owner_user_id != member.user_id:
+            raise HTTPException(403, detail={"code": "compliance.not_owner"})
     proposal = _proposal(requirement, _scope(session, member.organization_id, framework_key))
     differs = proposal.decision != "undecided" and proposal.decision != body.applicability
     if (body.applicability == "not_applicable" or differs) and not body.justification:

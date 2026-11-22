@@ -23,6 +23,7 @@ from atesta_api.modules.compliance.scoring import (
 def install_compliance(app: FastAPI) -> None:
     # Read routes compose module APIs; import after those interfaces are initialized.
     from atesta_api.modules.compliance.detail import router as detail_router
+    from atesta_api.modules.compliance.my_work import router as my_work_router
     from atesta_api.modules.compliance.overview import router
     from atesta_api.modules.compliance.register import router as register_router
     from atesta_api.modules.compliance.reviews import router as reviews_router
@@ -31,6 +32,7 @@ def install_compliance(app: FastAPI) -> None:
     app.include_router(detail_router)
     app.include_router(reviews_router)
     app.include_router(register_router)
+    app.include_router(my_work_router)
 
 
 __all__ = [

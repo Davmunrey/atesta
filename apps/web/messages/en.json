@@ -60,7 +60,8 @@
       "justification_required": "Add a justification: it is required when the measure does not apply or your decision differs from the proposal.",
       "requirement_not_found": "This requirement is not in the current catalog.",
       "scope_invalid": "The scope contains values this framework does not define.",
-      "owner_not_member": "Only a member of this organization can be the owner."
+      "owner_not_member": "Only a member of this organization can be the owner.",
+      "not_owner": "You can only assess the measures assigned to you."
     },
     "unknown": "Something went wrong. Try again, and contact support if it keeps happening.",
     "auth": {
@@ -84,7 +85,8 @@
       "not_found": "We could not find that, or you do not have access.",
       "role_not_allowed": "You cannot assign that role.",
       "token_in_query": "This invitation link is not valid. Open it again from the message you received.",
-      "period_invalid": "The period must be 30 or 90 days."
+      "period_invalid": "The period must be 30 or 90 days.",
+      "access_expired": "Your auditor access to this organization has ended. Ask an administrator to extend it."
     },
     "request": {
       "error": "The request could not be completed. Try again.",
@@ -132,12 +134,15 @@
     "sections": "Organization sections",
     "members": "Members",
     "invitations": "Invitations",
-    "activity": "Activity"
+    "activity": "Activity",
+    "myWork": "My work",
+    "auditorUntil": "Auditor access, read only, until {date}"
   },
   "roles": {
     "owner": "Owner",
     "admin": "Admin",
-    "member": "Member"
+    "member": "Contributor",
+    "auditor": "External auditor"
   },
   "members": {
     "title": "Members of {org}",
@@ -149,7 +154,10 @@
     "remove": "Remove",
     "confirmRemove": "Remove {email} from the organization?",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "accessUntil": "Access of {email} until",
+    "accessOn": "Until {date}",
+    "apply": "Apply"
   },
   "invitations": {
     "title": "Invitations for {org}",
@@ -164,7 +172,10 @@
     "pending": "Pending invitations",
     "none": "No pending invitations.",
     "expires": "Expires on {date}",
-    "revoke": "Revoke"
+    "revoke": "Revoke",
+    "accessUntil": "Access until",
+    "accessHelp": "The external auditor can only read, and loses access at the end of that day. One year at most.",
+    "accessOn": "Access until {date}"
   },
   "invite": {
     "title": "Join the organization",
@@ -465,7 +476,8 @@
     "changeOwner": "Change",
     "saveOwner": "Save owner",
     "overdue": "Overdue",
-    "formerMember": "Former member"
+    "formerMember": "Former member",
+    "assignedOwner": "Assigned"
   },
   "insights": {
     "title": "Progress",
@@ -519,5 +531,19 @@
       "connection_disconnected": "Disconnected a connection",
       "scan_requested": "Requested a scan"
     }
+  },
+  "myWork": {
+    "title": "My work",
+    "intro": "The measures assigned to you, by due date.",
+    "empty": "No measures are assigned to you. An administrator can assign them from each framework's register.",
+    "framework": "Framework",
+    "measure": "Measure",
+    "due": "Due date",
+    "state": "State",
+    "noDue": "No date",
+    "overdue": "Overdue",
+    "pending": "Not assessed",
+    "loading": "Loading…",
+    "open": "Open {code}"
   }
 }

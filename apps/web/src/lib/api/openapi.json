@@ -866,6 +866,18 @@
             "title": "Accept Link",
             "type": "string"
           },
+          "access_expires_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Expires On"
+          },
           "email": {
             "title": "Email",
             "type": "string"
@@ -1372,6 +1384,18 @@
       },
       "InvitationIn": {
         "properties": {
+          "access_expires_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Expires On"
+          },
           "email": {
             "maxLength": 320,
             "title": "Email",
@@ -1390,6 +1414,18 @@
       },
       "InvitationOut": {
         "properties": {
+          "access_expires_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Expires On"
+          },
           "email": {
             "title": "Email",
             "type": "string"
@@ -1489,6 +1525,18 @@
       },
       "MemberOut": {
         "properties": {
+          "access_expires_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Expires On"
+          },
           "display_name": {
             "anyOf": [
               {
@@ -1524,6 +1572,18 @@
       },
       "MembershipOut": {
         "properties": {
+          "access_expires_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Expires On"
+          },
           "organization_id": {
             "format": "uuid",
             "title": "Organization Id",
@@ -1543,6 +1603,81 @@
           "role"
         ],
         "title": "MembershipOut",
+        "type": "object"
+      },
+      "MyWorkItem": {
+        "properties": {
+          "applicability": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Applicability"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "framework_key": {
+            "title": "Framework Key",
+            "type": "string"
+          },
+          "framework_name": {
+            "title": "Framework Name",
+            "type": "string"
+          },
+          "implementation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Implementation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_es": {
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "framework_key",
+          "framework_name",
+          "code",
+          "title_es",
+          "title_en",
+          "due_on",
+          "applicability",
+          "implementation"
+        ],
+        "title": "MyWorkItem",
         "type": "object"
       },
       "Observation": {
@@ -2208,13 +2343,26 @@
         "enum": [
           "owner",
           "admin",
-          "member"
+          "member",
+          "auditor"
         ],
         "title": "Role",
         "type": "string"
       },
       "RoleIn": {
         "properties": {
+          "access_expires_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Expires On"
+          },
           "role": {
             "$ref": "#/components/schemas/Role"
           }
@@ -3839,6 +3987,7 @@
     },
     "/api/v1/orgs/{org_id}/frameworks/{framework_key}/register/{requirement_code}": {
       "post": {
+        "description": "Admins assess any measure; a contributor only the measures they own (rbac spec).",
         "operationId": "record_assessment_api_v1_orgs__org_id__frameworks__framework_key__register__requirement_code__post",
         "parameters": [
           {
@@ -4335,6 +4484,7 @@
     },
     "/api/v1/orgs/{org_id}/members": {
       "get": {
+        "description": "Auditors do not see the people list (rbac spec).",
         "operationId": "list_members_api_v1_orgs__org_id__members_get",
         "parameters": [
           {
@@ -4499,6 +4649,58 @@
         "summary": "Change Role",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/my-work": {
+      "get": {
+        "operationId": "my_work_api_v1_orgs__org_id__my_work_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MyWorkItem"
+                  },
+                  "title": "Response My Work Api V1 Orgs  Org Id  My Work Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "My Work",
+        "tags": [
+          "compliance"
         ]
       }
     },

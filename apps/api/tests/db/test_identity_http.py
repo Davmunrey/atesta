@@ -81,7 +81,12 @@ def test_create_org_makes_caller_owner_and_audits(client: TestClient, superuser:
     org_id = created.json()["id"]
     memberships = client.get("/api/v1/me", headers=auth(sub)).json()["memberships"]
     assert memberships == [
-        {"organization_id": org_id, "organization_name": "Acme", "role": "owner"}
+        {
+            "organization_id": org_id,
+            "organization_name": "Acme",
+            "role": "owner",
+            "access_expires_on": None,
+        }
     ]
     assert client.get(f"/test/orgs/{org_id}/admin", headers=auth(sub)).json() == {"role": "owner"}
     with superuser.connect() as conn:

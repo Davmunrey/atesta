@@ -270,7 +270,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Record Assessment */
+        /**
+         * Record Assessment
+         * @description Admins assess any measure; a contributor only the measures they own (rbac spec).
+         */
         post: operations["record_assessment_api_v1_orgs__org_id__frameworks__framework_key__register__requirement_code__post"];
         delete?: never;
         options?: never;
@@ -372,7 +375,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List Members */
+        /**
+         * List Members
+         * @description Auditors do not see the people list (rbac spec).
+         */
         get: operations["list_members_api_v1_orgs__org_id__members_get"];
         put?: never;
         post?: never;
@@ -398,6 +404,23 @@ export interface paths {
         head?: never;
         /** Change Role */
         patch: operations["change_role_api_v1_orgs__org_id__members__user_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/my-work": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Work */
+        get: operations["my_work_api_v1_orgs__org_id__my_work_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/orgs/{org_id}/overview": {
@@ -859,6 +882,8 @@ export interface components {
         CreatedInvitation: {
             /** Accept Link */
             accept_link: string;
+            /** Access Expires On */
+            access_expires_on?: string | null;
             /** Email */
             email: string;
             /**
@@ -1053,12 +1078,16 @@ export interface components {
         Implementation: "not_implemented" | "partially_implemented" | "implemented";
         /** InvitationIn */
         InvitationIn: {
+            /** Access Expires On */
+            access_expires_on?: string | null;
             /** Email */
             email: string;
             role: components["schemas"]["Role"];
         };
         /** InvitationOut */
         InvitationOut: {
+            /** Access Expires On */
+            access_expires_on?: string | null;
             /** Email */
             email: string;
             /**
@@ -1103,6 +1132,8 @@ export interface components {
         };
         /** MemberOut */
         MemberOut: {
+            /** Access Expires On */
+            access_expires_on?: string | null;
             /** Display Name */
             display_name: string | null;
             /** Email */
@@ -1116,6 +1147,8 @@ export interface components {
         };
         /** MembershipOut */
         MembershipOut: {
+            /** Access Expires On */
+            access_expires_on?: string | null;
             /**
              * Organization Id
              * Format: uuid
@@ -1124,6 +1157,23 @@ export interface components {
             /** Organization Name */
             organization_name: string;
             role: components["schemas"]["Role"];
+        };
+        /** MyWorkItem */
+        MyWorkItem: {
+            applicability: components["schemas"]["Applicability"] | null;
+            /** Code */
+            code: string;
+            /** Due On */
+            due_on: string | null;
+            /** Framework Key */
+            framework_key: string;
+            /** Framework Name */
+            framework_name: string;
+            implementation: components["schemas"]["Implementation"] | null;
+            /** Title En */
+            title_en: string | null;
+            /** Title Es */
+            title_es: string;
         };
         /** @enum {string} */
         Observation: "pass" | "fail" | "manual" | "not_evaluated";
@@ -1343,9 +1393,11 @@ export interface components {
          * Role
          * @enum {string}
          */
-        Role: "owner" | "admin" | "member";
+        Role: "owner" | "admin" | "member" | "auditor";
         /** RoleIn */
         RoleIn: {
+            /** Access Expires On */
+            access_expires_on?: string | null;
             role: components["schemas"]["Role"];
         };
         /** ScanOut */
@@ -2548,6 +2600,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MemberOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_work_api_v1_orgs__org_id__my_work_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyWorkItem"][];
                 };
             };
             /** @description Validation Error */

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { loginUrl } from "@/lib/auth";
 import { selectOrg } from "@/lib/org";
-import { canChangeRoles, canInvite, canRemove, invitableRoles } from "@/lib/permissions";
+import { auditorWindow, canAssess, canChangeRoles, canInvite, canRemove, invitableRoles, isContributor } from "@/lib/permissions";
 
 describe("permissions mirror the API (identity-auth spec); the API stays the authority", () => {
   it("only owners change roles", () => {
@@ -11,16 +11,35 @@ describe("permissions mirror the API (identity-auth spec); the API stays the aut
   it.each([
     ["owner", "owner", true], ["owner", "admin", true], ["owner", "member", true],
     ["admin", "owner", false], ["admin", "admin", false], ["admin", "member", true],
-    ["member", "member", false],
+    ["admin", "auditor", true], ["member", "member", false], ["auditor", "member", false],
   ] as const)("%s removing %s: %s", (caller, target, allowed) => {
     expect(canRemove(caller, target)).toBe(allowed);
   });
 
   it("admins and owners invite, up to their own role", () => {
     expect(canInvite("member")).toBe(false);
-    expect(invitableRoles("admin")).toEqual(["admin", "member"]);
-    expect(invitableRoles("owner")).toEqual(["owner", "admin", "member"]);
+    expect(invitableRoles("admin")).toEqual(["admin", "member", "auditor"]);
+    expect(invitableRoles("owner")).toEqual(["owner", "admin", "member", "auditor"]);
     expect(invitableRoles("member")).toEqual([]);
+    expect(invitableRoles("auditor")).toEqual([]);
+  });
+});
+
+describe("roles and access (rbac spec)", () => {
+  it("auditors are not contributors", () => {
+    expect((["owner", "admin", "member", "auditor"] as const).map(isContributor)).toEqual([true, true, true, false]);
+  });
+
+  it.each([
+    ["admin", "someone-else", true], ["owner", null, true],
+    ["member", "me", true], ["member", "someone-else", false], ["member", null, false],
+    ["auditor", "me", false],
+  ] as const)("%s assessing a measure owned by %s: %s", (role, owner, allowed) => {
+    expect(canAssess(role, owner, "me")).toBe(allowed);
+  });
+
+  it("the auditor end date runs from tomorrow to a year ahead", () => {
+    expect(auditorWindow(new Date("2026-11-22T23:30:00Z"))).toEqual({ min: "2026-11-23", max: "2027-11-22" });
   });
 });
 

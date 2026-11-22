@@ -128,7 +128,7 @@ function StateBadge({ item }: { item: RegisterItem }) {
 }
 
 /** The organization's own assessment of one requirement; the API decides who may write. */
-export function AssessmentForm({ item, orgId, frameworkKey, canEdit }: Ctx & { item: RegisterItem }) {
+export function AssessmentForm({ item, orgId, frameworkKey, canEdit, canAssess = canEdit }: Ctx & { item: RegisterItem; canAssess?: boolean }) {
   const t = useTranslations("register");
   const format = useFormatter();
   const save = useRecordAssessment(orgId, frameworkKey);
@@ -160,8 +160,8 @@ export function AssessmentForm({ item, orgId, frameworkKey, canEdit }: Ctx & { i
         {a.notes ? <div><dt>{t("notes")}</dt><dd>{a.notes}</dd></div> : null}
       </dl>
       <p className="text-sm text-muted">{t("recordedAt", { date: format.dateTime(new Date(a.recorded_at), { dateStyle: "medium", timeStyle: "short" }) })}</p>
-      {canEdit ? <button className="dashboard-button" onClick={() => setEditing(true)}>{t("update")}</button> : null}
-    </> : !canEdit ? <p className="text-sm text-muted">{t("pendingMember")}</p> : !editing && !a ? <button className="button-primary" onClick={() => setEditing(true)}>{t("assess")}</button>
+      {canAssess ? <button className="dashboard-button" onClick={() => setEditing(true)}>{t("update")}</button> : null}
+    </> : !canAssess ? <p className="text-sm text-muted">{t("pendingMember")}</p> : !editing && !a ? <button className="button-primary" onClick={() => setEditing(true)}>{t("assess")}</button>
       : <form onSubmit={submit} className="register-form">
         <fieldset><legend>{t("applicability")}</legend>
           {(["applies", "not_applicable"] as const).map((v) => <label key={v} className="radio"><input type="radio" name={`app-${item.code}`} checked={form.applicability === v} onChange={() => setForm({ ...form, applicability: v })} />{t(`proposal.${v}`)}</label>)}
@@ -204,9 +204,10 @@ function OwnerField({ item, orgId, frameworkKey, canEdit }: Ctx & { item: Regist
     e.preventDefault();
     save.mutate({ code: item.code, body: { owner_user_id: owner || null, due_on: due || null } }, { onSuccess: () => setEditing(false) });
   };
+  const named = members.isSuccess ? email ?? t("formerMember") : t("assignedOwner"); // auditors see no names
   if (!editing) return <p className="owner-line text-sm">
-    <span className="text-muted">{t("owner")}:</span> {item.assignment?.owner_user_id ? email ?? t("formerMember") : t("noOwner")}
-    {item.assignment?.due_on ? <> · <span className="text-muted">{t("dueOn")}:</span> {format.dateTime(new Date(`${item.assignment.due_on}T00:00:00`), { dateStyle: "medium" })}</> : null}
+    <span className="text-muted">{t("owner")}:</span> {item.assignment?.owner_user_id ? named : t("noOwner")}
+    {item.assignment?.due_on ? <> · <span className="text-muted">{t("dueOn")}:</span> {format.dateTime(new Date(`${item.assignment.due_on}T00:00:00Z`), { dateStyle: "medium", timeZone: "UTC" })}</> : null}
     {canEdit ? <> <button type="button" className="text-link underline owner-edit" onClick={() => setEditing(true)}>{t("changeOwner")}</button></> : null}
   </p>;
   return <form onSubmit={submit} className="register-form owner-form">

@@ -39,7 +39,7 @@ it("creates an invitation and shows the link once, with a copy button", async ()
   fireEvent.change(screen.getByLabelText("Rol"), { target: { value: "admin" } });
   fireEvent.click(screen.getByRole("button", { name: "Invitar" }));
   const shown = await screen.findByDisplayValue(link);
-  expect(await requests.find((r) => r.method === "POST")!.json()).toEqual({ email: "eva@example.com", role: "admin" });
+  expect(await requests.find((r) => r.method === "POST")!.json()).toEqual({ email: "eva@example.com", role: "admin", access_expires_on: null });
   expect(screen.getByText(/solo se muestra una vez/)).toBeTruthy();
   fireEvent.click(screen.getByRole("button", { name: "Copiar enlace" }));
   expect(writeText).toHaveBeenCalledWith(link);
@@ -49,7 +49,23 @@ it("creates an invitation and shows the link once, with a copy button", async ()
 it("offers only roles up to the caller's own", async () => {
   show("admin");
   const options = within(await screen.findByLabelText("Rol")).getAllByRole("option");
-  expect(options.map((o) => (o as HTMLOptionElement).value)).toEqual(["admin", "member"]);
+  expect(options.map((o) => (o as HTMLOptionElement).value)).toEqual(["admin", "member", "auditor"]);
+});
+
+it("asks for the access end date only when inviting an external auditor", async () => {
+  const requests = show("admin", {
+    [`POST ${PATH}`]: [201, { id: "i-3", email: "aud@example.com", role: "auditor", expires_at: "2026-11-20T10:00:00Z", access_expires_on: "2026-12-31", accept_link: "http://localhost:3000/invite#token=t" }],
+  });
+  fireEvent.change(await screen.findByLabelText("Correo electrónico"), { target: { value: "aud@example.com" } });
+  expect(screen.queryByLabelText("Acceso hasta")).toBeNull();
+  fireEvent.change(screen.getByLabelText("Rol"), { target: { value: "auditor" } });
+  const until = screen.getByLabelText("Acceso hasta") as HTMLInputElement;
+  expect(until.required).toBe(true);
+  expect(screen.getByText(/solo puede leer/)).toBeTruthy();
+  fireEvent.change(until, { target: { value: "2026-12-31" } });
+  fireEvent.click(screen.getByRole("button", { name: "Invitar" }));
+  await screen.findByDisplayValue("http://localhost:3000/invite#token=t");
+  expect(await requests.find((r) => r.method === "POST")!.json()).toEqual({ email: "aud@example.com", role: "auditor", access_expires_on: "2026-12-31" });
 });
 
 it("lists pending invitations and revokes after confirmation", async () => {

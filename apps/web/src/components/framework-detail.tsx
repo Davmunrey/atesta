@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useFrameworkDetail } from "@/lib/api/hooks";
 import { groupByPrefix, useRegister, type Register } from "@/lib/api/register-hooks";
 import type { components } from "@/lib/api/schema";
 import { orgHome } from "@/lib/org";
-import { type Role, canReviewControls } from "@/lib/permissions";
+import { type Role, canAssess, canReviewControls, isContributor } from "@/lib/permissions";
 import { CatalogPreparation, PreparationGuides, RequirementGuidance } from "./catalog-preparation";
 import { CatalogReference as Reference } from "./catalog-reference";
 import { ControlReview } from "./control-review";
@@ -21,8 +21,8 @@ type Requirement = components["schemas"]["RequirementDetail"];
 const statuses = ["fail", "manual", "not_evaluated", "pass", "not_applicable"] as const;
 type Filter = "all" | typeof statuses[number];
 
-/** role is a UI hint only: it hides the review form from members. The API decides. */
-export function FrameworkDetailView({ orgId, frameworkKey, role = "member" }: { orgId: string; frameworkKey: string; role?: Role }) {
+/** role is a UI hint only: it hides the forms a role cannot use. The API decides. */
+export function FrameworkDetailView({ orgId, frameworkKey, role = "member", userId = "" }: { orgId: string; frameworkKey: string; role?: Role; userId?: string }) {
   const t = useTranslations("framework");
   const dashboard = useTranslations("dashboard");
   const format = useFormatter();
@@ -49,14 +49,14 @@ export function FrameworkDetailView({ orgId, frameworkKey, role = "member" }: { 
           <SelfAssessmentPanel register={register} orgId={orgId} frameworkKey={frameworkKey} canEdit={canEdit} />
           <div className="insights-grid">
             <ProgressInsights orgId={orgId} frameworkKey={frameworkKey} register={register} />
-            <OwnerInsights orgId={orgId} register={register} />
+            <OwnerInsights orgId={orgId} register={register} showPeople={isContributor(role)} />
           </div>
         </> : null}
         {query.data.catalog_context ? register
           ? <details className="catalog-about"><summary>{t("aboutContent")}</summary>
             <CatalogPreparation context={query.data.catalog_context} requirements={query.data.requirements.length} controls={query.data.preparation_controls?.length ?? 0} /></details>
           : <CatalogPreparation context={query.data.catalog_context} requirements={query.data.requirements.length} controls={query.data.preparation_controls?.length ?? 0} /> : null}
-        <RequirementRegister key={`${orgId}:${frameworkKey}`} detail={query.data} register={register} review={{ orgId, frameworkKey, canReview: canEdit }} />
+        <RequirementRegister key={`${orgId}:${frameworkKey}`} detail={query.data} register={register} review={{ orgId, frameworkKey, canReview: canEdit, role, userId }} />
         <PreparationGuides orgId={orgId} controls={query.data.preparation_controls ?? []} />
         <div className="framework-catalog"><h2>{t("catalogTitle")}</h2>
           <p>{t("catalogHelp")}</p><Reference value={query.data.source} />
@@ -67,7 +67,7 @@ export function FrameworkDetailView({ orgId, frameworkKey, role = "member" }: { 
   </section>;
 }
 
-type ReviewContext = { orgId: string; frameworkKey: string; canReview: boolean };
+type ReviewContext = { orgId: string; frameworkKey: string; canReview: boolean; role?: Role; userId?: string };
 const assessmentFilters = ["all", "pending", "applies", "implemented", "not_applicable"] as const;
 type AssessmentFilter = typeof assessmentFilters[number];
 type Item = Register["items"][number];
@@ -131,14 +131,23 @@ function RequirementRow({ requirement: r, initiallyOpen, review, item, recorded 
   const r9 = useTranslations("register");
   const english = useLocale() === "en";
   const title = (english ? r.title_en ?? r.title_es : r.title_es) ?? t("historicalTitle");
-  return <details className="requirement-row" open={initiallyOpen}>
+  const row = useRef<HTMLDetailsElement>(null);
+  useEffect(() => { // a link from Mi trabajo (#req-<code>) opens the measure and its group
+    if (window.location.hash !== `#req-${r.code}` || !row.current) return;
+    for (let node: HTMLElement | null = row.current; node; node = node.parentElement) {
+      if (node instanceof HTMLDetailsElement) node.open = true;
+    }
+    row.current.scrollIntoView({ block: "start" });
+  }, [r.code]);
+  const mayAssess = canAssess(review.role ?? (review.canReview ? "admin" : "member"), item?.assignment?.owner_user_id, review.userId ?? "");
+  return <details ref={row} id={`req-${r.code}`} className="requirement-row" open={initiallyOpen}>
     <summary><span className="requirement-heading"><span className="requirement-code">{r.code}</span><strong>{title}</strong></span>
       {item ? <AssessmentBadge item={item} /> : null}
       {!item || recorded ? <span className="requirement-state" data-state={r.status}>{t(`states.${r.status}`)}</span> : null}
       <svg className="disclosure-icon" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m6 3 5 5-5 5" /></svg>
     </summary>
     <div className="requirement-body">
-      {item ? <AssessmentForm item={item} orgId={review.orgId} frameworkKey={review.frameworkKey} canEdit={review.canReview} /> : null}
+      {item ? <AssessmentForm item={item} orgId={review.orgId} frameworkKey={review.frameworkKey} canEdit={review.canReview} canAssess={mayAssess} /> : null}
       <Collapsible open={!item} label={r9("guideAndText")}>
       {!item || recorded ? <><p className="requirement-explanation">{t(`meaning.${r.status}`)}</p>
       <h3>{t("nextStep")}</h3><p>{t(`next.${r.status}`)}</p></> : null}
