@@ -19,6 +19,7 @@ export default defineConfig({
   retries: 0,
   reporter: "list",
   use: {
+    locale: "es-ES", // a Spanish browser: the default market; English detection has its own test
     baseURL: "http://localhost:3000",
     trace: "off",
     launchOptions: process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {},
