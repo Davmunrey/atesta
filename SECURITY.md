@@ -6,16 +6,18 @@ enforces and with which test, and what it does not yet do.
 
 ## Reporting a vulnerability
 
-Do not open a GitHub issue for a vulnerability.
+Do not open a public issue for a vulnerability.
 
-- **Channel:** pending. A `security@` address on Atesta's own domain, plus a
-  `/.well-known/security.txt` served by the web app, is a release gate: no customer is onboarded
-  before both exist. Until then, report to the repository owner (GitHub `Davmunrey`) directly.
+- **Channel:** GitHub private vulnerability reporting, "Report a vulnerability" on the
+  [Security tab](https://github.com/Davmunrey/atesta/security/advisories/new). The report is
+  visible only to the owner. A `security@` address and a `/.well-known/security.txt` served by
+  the web app follow when Atesta's domain exists; both are release gates before the first
+  customer.
 - **Include:** the component (api, worker, web, scanner image, connector consent flow), the
   steps, and what you observed. Use only your own test tenant and synthetic data; never access
   another organization's data to prove a point.
 - **Expect:** an acknowledgement and a fix or mitigation plan. Response targets will be published
-  with the channel.
+  with the domain.
 
 ## Scope
 
@@ -65,17 +67,38 @@ AI output (prompt injection); customer data processed outside the EU.
 
 ## Repository hardening
 
-**Committed in this repository:** actions pinned to full commit SHAs, checkout without persisted
-credentials, locked installs (`uv sync --locked`, `pnpm install --frozen-lockfile`), a 7-day
-dependency cooldown, and the CI jobs above.
+The repository is public since 2026-11-22; the code stays proprietary (`LICENSE`). Every
+setting below was applied through the GitHub API and read back the same day.
 
-**Owner settings, applied on 2026-11-22:** Dependabot alerts and Dependabot security updates on;
-branches deleted on merge; squash commits take the pull request's title and body.
+**Committed in this repository:** actions pinned to full commit SHAs with their version, tested
+(`apps/api/tests/test_ci_workflow.py`); read-only top-level permissions in every workflow, with
+write scopes only on the job that needs them; a timeout on every job; checkout without persisted
+credentials; locked installs; a 7-day dependency cooldown; the `main` ruleset as code
+(`.github/rulesets/main-branch.json`), tested against the CI jobs; `CODEOWNERS`; OpenSSF Scorecard
+(`.github/workflows/scorecard.yml`).
 
-**Unavailable on the current plan** (private repository on GitHub Free; the API returns HTTP 403):
-branch protection and rulesets, so no check can be made required; secret scanning with push
-protection. Until the plan changes, CI green is a convention the reviewer keeps (see
-`AGENTS.md`, "How a pull request lands").
+**Enforced by GitHub:**
+
+- Ruleset on `main`: no deletion or force-push; changes only through a pull request, squash
+  merge only, conversations resolved; every CI job required. Nobody bypasses it, the owner
+  included; in an emergency the owner disables the ruleset, which GitHub records.
+- Secret scanning with push protection; Dependabot alerts and security updates.
+- Private vulnerability reporting.
+- Default workflow token read-only, and workflows cannot approve pull requests.
+- Pull requests from any outside contributor's fork wait for the owner's approval before
+  their workflows run.
+- Branches deleted on merge.
+
+**History scan:** gitleaks 8.30.1 (MIT, release checksum verified) over all 138 commits on
+2026-11-22 reported 6 matches, all test data or public identifiers: truncated PKCS#8 headers in
+`scanner/tests/test_scrub.py` and `apps/api/tests/db/test_connections_table.py`, Microsoft Graph
+permission ids in `packages/core/src/atesta_core/connectors/readonly.py`, and a test session key
+that decodes to `0123456789abcdef0123456789abcdef`. No credential was found.
+
+**Not used:** CodeQL. Its terms allow it only on code released under an OSI-approved licence,
+or with a paid GitHub Advanced Security licence
+([GitHub CodeQL Terms and Conditions](https://github.com/github/codeql-cli-binaries/blob/main/LICENSE.md)).
+Atesta's code is proprietary, so static analysis is semgrep in the CI `security` job.
 
 ## Known limits
 
@@ -83,4 +106,4 @@ protection. Until the plan changes, CI green is a convention the reviewer keeps 
   customers. It prepares evidence.
 - The service is not deployed. Infrastructure in `infra/` has not been applied.
 - No independent penetration test has been run.
-- No secret scanning runs over the git history yet.
+- Secret scanning in CI covers only what GitHub scans; gitleaks is not yet a CI step.

@@ -1,0 +1,39 @@
+name: labels
+
+# GitHub's labels follow .github/labels.json. Creates or updates every label in the file;
+# a label on GitHub that the file does not list is reported, never deleted.
+on:
+  push:
+    branches: [main]
+    paths: [.github/labels.json, .github/workflows/labels.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/labels.json
+          sparse-checkout-cone-mode: false
+      - name: Sync labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          jq -c '.[]' .github/labels.json | while read -r label; do
+            gh label create "$(jq -r .name <<<"$label")" --force \
+              --color "$(jq -r .color <<<"$label")" \
+              --description "$(jq -r .description <<<"$label")"
+          done
+          extra=$(comm -13 <(jq -r '.[].name' .github/labels.json | sort) \
+            <(gh label list --limit 200 --json name --jq '.[].name' | sort))
+          if [ -n "$extra" ]; then echo "Labels on GitHub not in labels.json:"; echo "$extra"; fi

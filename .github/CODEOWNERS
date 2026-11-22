@@ -1,0 +1,15 @@
+# The owner reviews every change (AGENTS.md, "Owner decisions"). The paths below are where a
+# mistake costs most; a reviewer slows down there (CONTRIBUTING.md, review checklist item 8).
+*                                              @Davmunrey
+
+# Tenant isolation and sign-in
+/apps/api/src/atesta_api/platform/             @Davmunrey
+/apps/api/src/atesta_api/modules/identity/     @Davmunrey
+/apps/api/migrations/                          @Davmunrey
+# Read-only connector scopes and the scanner image
+/apps/api/src/atesta_api/modules/connections/  @Davmunrey
+/packages/core/src/atesta_core/connectors/     @Davmunrey
+/scanner/                                      @Davmunrey
+# Anything that runs in CI or in AWS
+/.github/                                      @Davmunrey
+/infra/                                        @Davmunrey
