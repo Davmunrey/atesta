@@ -81,9 +81,9 @@ State what you ran and what you could not run. A check you could not run is "not
 4. **Test first.** Write the failing test, then the code. A new guard is proven by planting
    the fault it catches and watching it fail; the pull request says what was planted.
 5. **Pull request.** The template asks for `Fixes #n`, what changes, why, evidence and limits.
-   Keep it under ~400 lines of non-test code.
+   Related issues may share one pull request, with one commit per issue, to save CI runs.
 6. **Review.** The checklist below.
-7. **Merge.** Squash, once every CI job is green on a branch current with `main`. The owner
+7. **Merge.** Squash, once every CI job is green; the `main` ruleset enforces both. The owner
    merges, or an agent the owner told to merge its own pull requests (AGENTS.md, "Owner
    decisions"). GitHub deletes the branch.
 

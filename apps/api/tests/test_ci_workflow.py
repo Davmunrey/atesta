@@ -158,3 +158,39 @@ def test_the_guards_catch_a_planted_workflow(tmp_path: Path) -> None:
     assert len(unpinned_actions(tmp_path)) == 2  # a tag, and a SHA with no version comment
     assert top_level_write(tmp_path) == ["planted.yml: top-level write"]
     assert jobs_without_timeout(tmp_path) == ["planted.yml: build"]
+
+
+# The main-branch ruleset (issue #112) requires exactly the CI jobs, so a job added to ci.yml
+# without being required, or a required name no job produces (which blocks every merge), fails.
+
+RULESET = WORKFLOWS.parent / "rulesets" / "main-branch.json"
+
+
+def ruleset_gaps(ruleset: dict[str, Any], workflow: dict[str, Any]) -> tuple[set[str], set[str]]:
+    rule = next(r for r in ruleset["rules"] if r["type"] == "required_status_checks")
+    required = {check["context"] for check in rule["parameters"]["required_status_checks"]}
+    jobs = set(workflow["jobs"])
+    return jobs - required, required - jobs
+
+
+def test_the_ruleset_requires_every_ci_job_and_nothing_else() -> None:
+    ruleset = json.loads(RULESET.read_text())
+    workflow = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())
+    assert ruleset_gaps(ruleset, workflow) == (set(), set())
+
+
+def test_the_ruleset_protects_main() -> None:
+    ruleset = json.loads(RULESET.read_text())
+    types = {rule["type"] for rule in ruleset["rules"]}
+    assert {"deletion", "non_fast_forward", "pull_request", "required_status_checks"} <= types
+    assert ruleset["enforcement"] == "active"
+    assert ruleset["bypass_actors"] == []
+    pull_request = next(r for r in ruleset["rules"] if r["type"] == "pull_request")
+    assert pull_request["parameters"]["allowed_merge_methods"] == ["squash"]
+
+
+def test_a_job_missing_from_the_ruleset_is_caught() -> None:
+    ruleset = json.loads(RULESET.read_text())
+    workflow = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())
+    workflow["jobs"]["planted"] = {"runs-on": "ubuntu-latest"}
+    assert ruleset_gaps(ruleset, workflow) == ({"planted"}, set())
