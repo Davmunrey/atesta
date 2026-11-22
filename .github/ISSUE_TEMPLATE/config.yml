@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Write the spec first
+    url: https://github.com/Davmunrey/atesta/blob/main/docs/specs/_template.md
+    about: A feature starts with a spec in docs/specs (AGENTS.md rule 7).
+  - name: Report a vulnerability privately
+    url: https://github.com/Davmunrey/atesta/blob/main/SECURITY.md
+    about: A live, exploitable vulnerability is never a public issue.

@@ -1,0 +1,34 @@
+name: Feature
+description: A new capability. The spec comes first (AGENTS.md rule 7).
+labels: [feature]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Who has it, how they solve it today, and what it costs them.
+    validations:
+      required: true
+  - type: input
+    id: spec
+    attributes:
+      label: Spec
+      description: docs/specs/<slug>.md, existing or written first from docs/specs/_template.md.
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+    validations:
+      required: true
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Rules this touches
+      options:
+        - label: New tenant table (organization_id and RLS, rule 3)
+        - label: Connector scope (read-only, rule 1)
+        - label: User-visible action (audit event, ES and EN strings)
+        - label: AI output (citations, never decides pass or fail, rules 5-6)
+        - label: Architecture change (ADR)

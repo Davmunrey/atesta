@@ -1,0 +1,36 @@
+name: Security hardening
+description: Strengthen a control. Not for live vulnerabilities; see SECURITY.md.
+labels: [security-hardening]
+body:
+  - type: markdown
+    attributes:
+      value: A live, exploitable vulnerability is reported privately as SECURITY.md says, never here.
+  - type: dropdown
+    id: rule
+    attributes:
+      label: Rule or control
+      options:
+        - rule 1 read-only scopes
+        - rule 2 no secrets or customer content in logs
+        - rule 3 tenant isolation (RLS)
+        - rule 4 licences
+        - rule 5-6 AI input and citations
+        - supply chain (CI, dependencies, images)
+        - authentication and sessions
+        - infrastructure
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: The gap, and how you know
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+      description: Include the fault to plant to prove the new guard fails without the fix.
+    validations:
+      required: true

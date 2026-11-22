@@ -1,0 +1,44 @@
+name: Catalog change
+description: A framework requirement, mapping, common control or guide.
+labels: [catalog]
+body:
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework
+      options:
+        - ens_rd311_2022
+        - nis2
+        - gdpr_art32
+        - dora
+        - iso27001_2022
+        - soc2
+        - common controls only
+        - new framework (say which below)
+    validations:
+      required: true
+  - type: dropdown
+    id: change
+    attributes:
+      label: What changes
+      options:
+        - requirement text
+        - requirement-to-control mapping
+        - common control
+        - implementation guide
+        - pack metadata or release state
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Official source
+      description: URL of the official text and the date it was read (BOE, EUR-Lex, CCN...). Requirement texts are copied from it, never written from memory (rule 10). ISO and AICPA texts are never copied.
+    validations:
+      required: true
+  - type: textarea
+    id: detail
+    attributes:
+      label: Detail and acceptance criteria
+    validations:
+      required: true
