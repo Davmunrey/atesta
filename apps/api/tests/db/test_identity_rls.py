@@ -66,7 +66,7 @@ def seed(superuser: Engine, probe: object) -> None:
 
 def counts(session: Session, *tables: str) -> list[int]:
     return [
-        int(session.execute(text(f"SELECT count(*) FROM {t}")).scalar_one())  # noqa: S608
+        int(session.execute(text(f"SELECT count(*) FROM {t}")).scalar_one())  # noqa: S608  # nosemgrep: python.sqlalchemy.security.audit.avoid-sqlalchemy-text.avoid-sqlalchemy-text - fixed table names, no user input
         for t in tables
     ]
 

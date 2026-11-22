@@ -69,14 +69,14 @@ test("an admin scopes, assesses and exports the self-assessment, accessibly at e
   await expect(page.getByText(/Alcance registrado/)).toBeVisible();
 
   const row = page.locator("details.requirement-row").filter({ hasText: "R.R1" });
-  await row.locator("summary").click();
+  await row.locator("summary").first().click();
   await row.getByRole("button", { name: "Evaluar esta medida" }).click();
   await row.getByRole("radio", { name: "No aplica" }).check();
   const justification = row.getByLabel("Justificación (obligatoria)");
   await expect(justification).toHaveAttribute("required", "");
   await justification.fill("No prestamos ese servicio.");
   await row.getByRole("button", { name: "Guardar" }).click();
-  await expect(row.locator("summary").getByText("No aplica")).toBeVisible();
+  await expect(row.locator("summary").first().getByText("No aplica")).toBeVisible();
   await expect(page.getByText("1 de 4 medidas evaluadas")).toBeVisible();
   await expect(page.getByRole("link", { name: "Descargar CSV" })).toHaveAttribute("href", `/api/v1/orgs/${org}/frameworks/synthetic_alpha/applicability.csv`);
 

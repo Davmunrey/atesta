@@ -273,5 +273,5 @@ def test_register_rows_are_append_only(
         tx = conn.begin()
         conn.execute(text("SELECT set_config('app.organization_id', :o, true)"), {"o": org})
         with pytest.raises(DBAPIError):
-            conn.execute(text(f"UPDATE {table} SET framework_key = 'x'"))  # noqa: S608 - fixed names
+            conn.execute(text(f"UPDATE {table} SET framework_key = 'x'"))  # noqa: S608 - fixed names  # nosemgrep: python.sqlalchemy.security.audit.avoid-sqlalchemy-text.avoid-sqlalchemy-text - fixed table names, no user input
         tx.rollback()
