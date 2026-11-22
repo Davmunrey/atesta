@@ -76,3 +76,85 @@ def test_node_types_follow_the_runtime_major() -> None:
     assert {"dependency-name": "@types/node", "update-types": ["version-update:semver-major"]} in (
         npm.get("ignore", [])
     )
+
+
+# Workflow hardening (issue #106). Each check takes the workflow directory as an argument so a
+# planted copy in tmp_path can prove it fails.
+
+WRITE_SCOPES = re.compile(r":\s*write\b")
+PINNED = re.compile(r"uses:\s*[\w.-]+/[\w./-]+@[0-9a-f]{40}\s+#\s*v\d")
+
+
+def _workflow_files(root: Path = WORKFLOWS) -> list[Path]:
+    return sorted(root.glob("*.yml"))
+
+
+def unpinned_actions(root: Path = WORKFLOWS) -> list[str]:
+    bad = []
+    for path in _workflow_files(root):
+        for number, line in enumerate(path.read_text().splitlines(), 1):
+            stripped = line.strip().removeprefix("- ")
+            if not stripped.startswith("uses:") or stripped.startswith("uses: ./"):
+                continue
+            if not PINNED.match(stripped):
+                bad.append(f"{path.name}:{number}: {stripped}")
+    return bad
+
+
+def top_level_write(root: Path = WORKFLOWS) -> list[str]:
+    bad = []
+    for path in _workflow_files(root):
+        permissions = yaml.safe_load(path.read_text()).get("permissions")
+        if not isinstance(permissions, dict):
+            bad.append(f"{path.name}: no top-level permissions map")
+        elif "write" in permissions.values():
+            bad.append(f"{path.name}: top-level write")
+    return bad
+
+
+def jobs_without_timeout(root: Path = WORKFLOWS) -> list[str]:
+    bad = []
+    for path in _workflow_files(root):
+        for name, job in yaml.safe_load(path.read_text())["jobs"].items():
+            if "uses" not in job and "timeout-minutes" not in job:
+                bad.append(f"{path.name}: {name}")
+    return bad
+
+
+def test_every_action_is_pinned_to_a_commit_with_its_version() -> None:
+    assert unpinned_actions() == []
+
+
+def test_no_workflow_grants_write_at_the_top_level() -> None:
+    assert top_level_write() == []
+
+
+def test_every_job_has_a_timeout() -> None:
+    assert jobs_without_timeout() == []
+
+
+def test_ci_cancels_only_superseded_pull_request_runs() -> None:
+    concurrency = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())["concurrency"]
+    assert "pull_request.number" in concurrency["group"]
+    assert concurrency["cancel-in-progress"] == "${{ github.event_name == 'pull_request' }}"
+
+
+PLANTED = """
+name: planted
+on: [push]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@0123456789abcdef0123456789abcdef01234567
+"""
+
+
+def test_the_guards_catch_a_planted_workflow(tmp_path: Path) -> None:
+    (tmp_path / "planted.yml").write_text(PLANTED)
+    assert len(unpinned_actions(tmp_path)) == 2  # a tag, and a SHA with no version comment
+    assert top_level_write(tmp_path) == ["planted.yml: top-level write"]
+    assert jobs_without_timeout(tmp_path) == ["planted.yml: build"]
