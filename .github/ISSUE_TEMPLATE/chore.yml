@@ -1,0 +1,28 @@
+name: Chore
+description: Dependencies, CI, tooling, documentation or a refactor with no behaviour change.
+labels: [chore]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - dependency
+        - CI or workflow
+        - tooling
+        - documentation or ADR
+        - refactor without behaviour change
+    validations:
+      required: true
+  - type: textarea
+    id: what-why
+    attributes:
+      label: What and why
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+    validations:
+      required: true
