@@ -16,7 +16,8 @@ async function createOrganization(page: Page) {
 test("dashboard reads a real empty organization and recovers after an API failure", async ({ page }) => {
   await createOrganization(page);
   await expect(page.getByText("Todavía no hay marcos publicados")).toBeVisible();
-  await expect(page.getByText("Aún no hay análisis registrados")).toBeVisible();
+  // The empty collection panel teaches nothing; it appears once a scan or evidence exists.
+  await expect(page.getByText("Aún no hay análisis registrados")).toHaveCount(0);
   // An empty organization has nothing to refresh, so no refresh button (workspace-ux spec):
   // the failure comes from a reload instead.
   await expect(page.getByRole("button", { name: "Actualizar resultados" })).toHaveCount(0);
@@ -32,7 +33,9 @@ test("dashboard reads a real empty organization and recovers after an API failur
 test("recorded-result design supports filters, keyboard disclosure, both locales and responsive themes", async ({ page }) => {
   const csp: string[] = [];
   page.on("console", (message) => { if (message.text().includes("Content Security Policy")) csp.push(message.text()); });
-  await page.route("**/api/v1/orgs/*/overview", (route) => route.fulfill({ json: overview }));
+  // Nine frameworks: past the eight a glance covers, so the search box is offered.
+  const many = { ...overview, frameworks: [...overview.frameworks, ...Array.from({ length: 5 }, (_, i) => ({ ...overview.frameworks[3]!, key: `synthetic_extra_${i}`, name: `Synthetic Extra ${i}` }))] };
+  await page.route("**/api/v1/orgs/*/overview", (route) => route.fulfill({ json: many }));
   await createOrganization(page);
   await expect(page.locator(".evidence-count")).toHaveCSS("font-size", "32px");
   const row = page.locator("details").filter({ hasText: "Synthetic Alpha" });

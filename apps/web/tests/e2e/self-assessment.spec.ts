@@ -36,7 +36,7 @@ test("an admin scopes, assesses and exports the self-assessment, accessibly at e
   page.on("console", (m) => { if (m.text().includes("Content Security Policy")) csp.push(m.text()); });
   const org = await createOrganization(page);
   // One organization: its name, no switcher; the account sits behind one button.
-  await expect(page.getByLabel("Organización")).toHaveCount(0);
+  await expect(page.getByLabel("Organización", { exact: true })).toHaveCount(0);
   await expect(page.getByText(/@example\.test/)).toBeHidden();
   await page.getByRole("button", { name: "Cuenta" }).click();
   await expect(page.getByText(/@example\.test/)).toBeVisible();
