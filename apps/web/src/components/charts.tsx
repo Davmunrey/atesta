@@ -129,13 +129,13 @@ export function ColumnChart({ title, points, valueLabel, tableLabel }: { title: 
 }
 
 /** Part of a whole, compared: ranked horizontal bars, one hue, largest first, value at the tip. */
-export function RankedBars({ title, rows, empty }: { title: string; rows: Point[]; empty: string }) {
+export function RankedBars({ title, rows, empty }: { title: string; rows: (Point & { id?: string })[]; empty: string }) {
   const sorted = [...rows].sort((a, b) => b.value - a.value || a.label.localeCompare(b.label));
   const max = Math.max(1, ...sorted.map((r) => r.value));
   return <figure className="chart">
     <figcaption className="chart-title">{title}</figcaption>
     {sorted.length === 0 ? <p className="text-sm text-muted">{empty}</p> : <ul className="ranked-bars">
-      {sorted.map((r) => <li key={r.label}>
+      {sorted.map((r) => <li key={r.id ?? r.label}>
         <span className="ranked-label" title={r.label}>{r.label}</span>
         <span className="ranked-track"><span className="ranked-bar" style={{ inlineSize: `${(r.value / max) * 100}%` }} /></span>
         <span className="ranked-value">{r.value}</span>

@@ -117,3 +117,19 @@ export function workload(items: RegisterItem[]): Map<string | null, number> {
   }
   return counts;
 }
+
+export type MyWorkItem = components["schemas"]["MyWorkItem"];
+
+/** Mi trabajo: the measures assigned to the signed-in person, across frameworks (rbac spec). */
+export function useMyWork(orgId: string) {
+  return useQuery({
+    queryKey: ["my-work", orgId], retry: false,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/my-work", { params: { path: { org_id: orgId } } })),
+  });
+}
+
+/** A Mi trabajo row is overdue on the same rule as the register: past due and still open. */
+export function isMyWorkOverdue(item: MyWorkItem, today: string): boolean {
+  const done = item.applicability === "not_applicable" || item.implementation === "implemented";
+  return Boolean(item.due_on && item.due_on < today && !done);
+}

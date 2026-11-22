@@ -14,10 +14,10 @@ export default function FrameworkPage() {
 
 function FrameworkHome() {
   const params = useSearchParams();
-  const { memberships } = useMe();
+  const { id: userId, memberships } = useMe();
   const org = selectOrg(memberships, params.get("org"));
   const key = params.get("framework");
   if (!org) return <ErrorMessage error={new ApiError(404, "identity.not_found")} />;
   if (!key) return <ErrorMessage error={new ApiError(404, "compliance.not_found")} />;
-  return <FrameworkDetailView key={`${org.organization_id}:${key}`} orgId={org.organization_id} frameworkKey={key} role={org.role} />;
+  return <FrameworkDetailView key={`${org.organization_id}:${key}`} orgId={org.organization_id} frameworkKey={key} role={org.role} userId={userId} />;
 }

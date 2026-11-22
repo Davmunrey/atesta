@@ -1,12 +1,14 @@
 """Identity endpoints: profile and org creation (identity-auth spec)."""
 
 import uuid
+from datetime import date
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 
+from atesta_api.modules.identity.access import end_date
 from atesta_api.modules.identity.activity import router as activity_router
 from atesta_api.modules.identity.cognito import IdentityProvider
 from atesta_api.modules.identity.context import ContextReason, enter_org_context
@@ -34,6 +36,7 @@ class MembershipOut(BaseModel):
     organization_id: uuid.UUID
     organization_name: str
     role: Role
+    access_expires_on: date | None = None
 
 
 class MeOut(BaseModel):
@@ -63,7 +66,12 @@ def me(
         refresh_profile(session, provider, caller.sub, caller.access_token)
     user = session.execute(select(User).where(User.id == caller.user_id)).scalar_one()
     rows = session.execute(
-        select(Membership.organization_id, Organization.name, Membership.role)
+        select(
+            Membership.organization_id,
+            Organization.name,
+            Membership.role,
+            Membership.access_expires_at,
+        )
         .join(Organization, Organization.id == Membership.organization_id)
         .where(Membership.user_id == caller.user_id)
         .order_by(Organization.name)
@@ -74,7 +82,10 @@ def me(
         email_verified=user.email_verified,
         locale=user.locale,
         memberships=[
-            MembershipOut(organization_id=o, organization_name=n, role=Role(r)) for o, n, r in rows
+            MembershipOut(
+                organization_id=o, organization_name=n, role=Role(r), access_expires_on=end_date(x)
+            )
+            for o, n, r, x in rows
         ],
     )
 

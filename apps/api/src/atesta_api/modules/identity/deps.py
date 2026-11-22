@@ -3,6 +3,7 @@
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request, Response
@@ -36,7 +37,7 @@ from atesta_api.modules.identity.models import Membership, Role, User
 from atesta_api.platform.db import DbSession
 
 _bearer = HTTPBearer(auto_error=False)
-RANK = {Role.MEMBER: 0, Role.ADMIN: 1, Role.OWNER: 2}
+RANK = {Role.AUDITOR: -1, Role.MEMBER: 0, Role.ADMIN: 1, Role.OWNER: 2}
 
 
 def error(status: int, code: str) -> HTTPException:
@@ -164,17 +165,28 @@ def refresh_profile(
 CurrentCaller = Annotated[Caller, Depends(authenticate)]
 
 
-def require_member(org_id: uuid.UUID, caller: CurrentCaller, session: DbSession) -> Member:
-    """Membership check, then the org context. Non-members get 404: no org enumeration."""
-    role = session.execute(
-        select(Membership.role).where(
+def require_member(
+    org_id: uuid.UUID, request: Request, caller: CurrentCaller, session: DbSession
+) -> Member:
+    """Membership check, then the org context. Non-members get 404: no org enumeration.
+
+    The auditor rules live here so that no endpoint can forget them (rbac spec): access ends
+    at the end date, and an auditor never writes, whatever the route.
+    """
+    row = session.execute(
+        select(Membership.role, Membership.access_expires_at).where(
             Membership.organization_id == org_id, Membership.user_id == caller.user_id
         )
-    ).scalar()
-    if role is None:
+    ).first()
+    if row is None:
         raise error(404, "identity.not_found")
+    role, expires_at = Role(row.role), row.access_expires_at
+    if expires_at is not None and expires_at <= datetime.now(UTC):
+        raise error(403, "identity.access_expired")
+    if role == Role.AUDITOR and request.method in _WRITES:
+        raise error(403, "identity.forbidden")
     enter_org_context(session, org_id, ContextReason.MEMBERSHIP)
-    return Member(user_id=caller.user_id, organization_id=org_id, role=Role(role))
+    return Member(user_id=caller.user_id, organization_id=org_id, role=role)
 
 
 def require_role(minimum: Role) -> Callable[[Member], Member]:

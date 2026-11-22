@@ -13,10 +13,10 @@ vi.mock("next/navigation", () => ({
 const primary = { organization_id: "primary", organization_name: "Synthetic Team", role: "owner" as const };
 const secondary = { organization_id: "secondary", organization_name: "Other Synthetic Team", role: "member" as const };
 
-function renderShell(role: "owner" | "admin" | "member" = "owner") {
+function renderShell(role: "owner" | "admin" | "member" | "auditor" = "owner") {
   stubApi({ "GET /api/v1/me": [200, {
     id: "synthetic-user", email: "navigation@example.test", email_verified: true, locale: "es",
-    memberships: [{ ...primary, role }, secondary],
+    memberships: [{ ...primary, role, access_expires_on: role === "auditor" ? "2026-12-31" : null }, secondary],
   }] });
   return renderWithProviders(<AppLayout><h1>Page content</h1></AppLayout>);
 }
@@ -38,6 +38,20 @@ it("hides invitations from a member", async () => {
   const nav = await screen.findByRole("navigation", { name: "Secciones de la organización" });
   expect(within(nav).queryByRole("link", { name: "Invitaciones" })).toBeNull();
   expect(within(nav).getByRole("link", { name: "Miembros" })).toBeTruthy();
+});
+
+it("gives contributors Mi trabajo", async () => {
+  renderShell("member");
+  const nav = await screen.findByRole("navigation", { name: "Secciones de la organización" });
+  expect(within(nav).getByRole("link", { name: "Mi trabajo" }).getAttribute("href")).toBe("/app/my-work?org=primary");
+});
+
+it("shows an auditor only what they may read, with the end of their access", async () => {
+  window.history.replaceState(null, "", "/app/org?org=primary");
+  renderShell("auditor");
+  const nav = await screen.findByRole("navigation", { name: "Secciones de la organización" });
+  expect(within(nav).getAllByRole("link").map((link) => link.textContent)).toEqual(["Resumen"]);
+  expect(screen.getByRole("note").textContent).toBe("Acceso de auditor, solo lectura, hasta el 31 de diciembre de 2026");
 });
 
 it("keeps the members section when switching organizations", async () => {

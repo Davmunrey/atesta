@@ -6,15 +6,16 @@ import secrets
 import string
 import uuid
 from collections.abc import Callable, Coroutine
-from datetime import UTC, datetime, timedelta
-from typing import Annotated, Any
+from datetime import UTC, date, datetime, timedelta
+from typing import Annotated, Any, Self
 
 from fastapi import APIRouter, Depends, Request, Response
 from fastapi.routing import APIRoute
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 
+from atesta_api.modules.identity.access import check_end_date, end_of
 from atesta_api.modules.identity.cognito import IdentityProvider
 from atesta_api.modules.identity.context import (
     ContextReason,
@@ -63,6 +64,10 @@ def normalize_email(value: str) -> str:
     return value.strip().translate(_ASCII_LOWER)
 
 
+def _iso(value: date | None) -> str | None:
+    return None if value is None else value.isoformat()
+
+
 def token_hash(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
 
@@ -70,6 +75,12 @@ def token_hash(token: str) -> str:
 class InvitationIn(BaseModel):
     email: str = Field(max_length=320)
     role: Role
+    access_expires_on: date | None = None
+
+    @model_validator(mode="after")
+    def auditor_end_date(self) -> Self:
+        check_end_date(self.role, self.access_expires_on)
+        return self
 
     @field_validator("email")
     @classmethod
@@ -84,6 +95,7 @@ class InvitationOut(BaseModel):
     email: str
     role: Role
     expires_at: datetime
+    access_expires_on: date | None = None
 
 
 class CreatedInvitation(InvitationOut):
@@ -116,6 +128,7 @@ def create_invitation(
         token_sha256=token_hash(token),
         invited_by=member.user_id,
         expires_at=datetime.now(UTC) + TTL,
+        access_expires_on=body.access_expires_on,
     )
     session.add(invitation)
     session.flush()
@@ -126,7 +139,7 @@ def create_invitation(
         target_type="invitation",
         target_id=str(invitation.id),
         actor_user_id=member.user_id,
-        metadata={"role": body.role},
+        metadata={"role": body.role, "access_expires_on": _iso(body.access_expires_on)},
     )
     link = f"{request.app.state.web_base_url}/invite#token={token}"  # fragment: never logged
     return CreatedInvitation(
@@ -134,6 +147,7 @@ def create_invitation(
         email=body.email,
         role=body.role,
         expires_at=invitation.expires_at,
+        access_expires_on=body.access_expires_on,
         accept_link=link,
     )
 
@@ -151,7 +165,13 @@ def list_invitations(
         )
     ).scalars()
     return [
-        InvitationOut(id=i.id, email=i.email, role=Role(i.role), expires_at=i.expires_at)
+        InvitationOut(
+            id=i.id,
+            email=i.email,
+            role=Role(i.role),
+            expires_at=i.expires_at,
+            access_expires_on=i.access_expires_on,
+        )
         for i in rows
     ]
 
@@ -243,7 +263,14 @@ def accept_invitation(
         raise error(410, "identity.invitation_invalid")
     try:
         with session.begin_nested():
-            session.add(Membership(organization_id=org_id, user_id=caller.user_id, role=role))
+            session.add(
+                Membership(
+                    organization_id=org_id,
+                    user_id=caller.user_id,
+                    role=role,
+                    access_expires_at=end_of(invitation.access_expires_on),
+                )
+            )
     except IntegrityError:
         raise error(409, "identity.already_member") from None
     record(

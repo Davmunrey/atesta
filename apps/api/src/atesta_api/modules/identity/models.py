@@ -1,12 +1,13 @@
 """Identity tables (identity-auth spec). Private to the identity module."""
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from enum import StrEnum
 
 from sqlalchemy import (
     Boolean,
     CheckConstraint,
+    Date,
     DateTime,
     ForeignKey,
     Index,
@@ -25,9 +26,10 @@ class Role(StrEnum):
     OWNER = "owner"
     ADMIN = "admin"
     MEMBER = "member"
+    AUDITOR = "auditor"  # read-only and time-boxed (rbac spec)
 
 
-_ROLES = "role IN ('owner', 'admin', 'member')"
+_ROLES = "role IN ('owner', 'admin', 'member', 'auditor')"
 
 
 def _now(onupdate: bool = False) -> Mapped[datetime]:
@@ -62,6 +64,9 @@ class Membership(TenantMixin, Base):
     __table_args__ = (
         PrimaryKeyConstraint("organization_id", "user_id"),
         CheckConstraint(_ROLES, name="role"),
+        CheckConstraint(
+            "(role = 'auditor') = (access_expires_at IS NOT NULL)", name="auditor_end_date"
+        ),
     )
 
     user_id: Mapped[uuid.UUID] = mapped_column(
@@ -69,6 +74,7 @@ class Membership(TenantMixin, Base):
     )
     role: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = _now()
+    access_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class Invitation(TenantMixin, Base):
@@ -78,6 +84,9 @@ class Invitation(TenantMixin, Base):
     __table_args__ = (
         UniqueConstraint("organization_id", "id"),
         CheckConstraint(_ROLES, name="role"),
+        CheckConstraint(
+            "(role = 'auditor') = (access_expires_on IS NOT NULL)", name="auditor_end_date"
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -89,3 +98,4 @@ class Invitation(TenantMixin, Base):
     accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = _now()
+    access_expires_on: Mapped[date | None] = mapped_column(Date)

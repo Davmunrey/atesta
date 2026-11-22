@@ -60,7 +60,8 @@
       "justification_required": "Indica la justificación: es obligatoria si la medida no aplica o si tu decisión difiere de la propuesta.",
       "requirement_not_found": "Este requisito no existe en el catálogo actual.",
       "scope_invalid": "El alcance contiene valores que este marco no define.",
-      "owner_not_member": "Solo una persona de esta organización puede ser responsable."
+      "owner_not_member": "Solo una persona de esta organización puede ser responsable.",
+      "not_owner": "Solo puedes evaluar las medidas que tienes asignadas."
     },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
@@ -84,7 +85,8 @@
       "not_found": "No encontramos lo que buscas, o no tienes acceso.",
       "role_not_allowed": "No puedes asignar ese rol.",
       "token_in_query": "El enlace de invitación no es válido. Ábrelo de nuevo desde el mensaje recibido.",
-      "period_invalid": "El periodo debe ser de 30 o 90 días."
+      "period_invalid": "El periodo debe ser de 30 o 90 días.",
+      "access_expired": "Tu acceso de auditor a esta organización ha terminado. Pide a un administrador que lo amplíe."
     },
     "request": {
       "error": "No se ha podido completar la solicitud. Vuelve a intentarlo.",
@@ -132,12 +134,15 @@
     "sections": "Secciones de la organización",
     "members": "Miembros",
     "invitations": "Invitaciones",
-    "activity": "Actividad"
+    "activity": "Actividad",
+    "myWork": "Mi trabajo",
+    "auditorUntil": "Acceso de auditor, solo lectura, hasta el {date}"
   },
   "roles": {
     "owner": "Propietario",
     "admin": "Administrador",
-    "member": "Miembro"
+    "member": "Colaborador",
+    "auditor": "Auditor externo"
   },
   "members": {
     "title": "Miembros de {org}",
@@ -149,7 +154,10 @@
     "remove": "Quitar",
     "confirmRemove": "¿Quitar a {email} de la organización?",
     "confirm": "Confirmar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "accessUntil": "Acceso de {email} hasta",
+    "accessOn": "Hasta el {date}",
+    "apply": "Aplicar"
   },
   "invitations": {
     "title": "Invitaciones de {org}",
@@ -164,7 +172,10 @@
     "pending": "Invitaciones pendientes",
     "none": "No hay invitaciones pendientes.",
     "expires": "Caduca el {date}",
-    "revoke": "Revocar"
+    "revoke": "Revocar",
+    "accessUntil": "Acceso hasta",
+    "accessHelp": "El auditor externo solo puede leer, y pierde el acceso al terminar ese día. Máximo un año.",
+    "accessOn": "Acceso hasta el {date}"
   },
   "invite": {
     "title": "Únete a la organización",
@@ -465,7 +476,8 @@
     "changeOwner": "Cambiar",
     "saveOwner": "Guardar responsable",
     "overdue": "Vencida",
-    "formerMember": "Antiguo miembro"
+    "formerMember": "Antiguo miembro",
+    "assignedOwner": "Asignada"
   },
   "insights": {
     "title": "Evolución",
@@ -519,5 +531,19 @@
       "connection_disconnected": "Desconectó una conexión",
       "scan_requested": "Solicitó un análisis"
     }
+  },
+  "myWork": {
+    "title": "Mi trabajo",
+    "intro": "Las medidas que tienes asignadas, por fecha límite.",
+    "empty": "No tienes medidas asignadas. Un administrador puede asignártelas desde el registro de cada marco.",
+    "framework": "Marco",
+    "measure": "Medida",
+    "due": "Fecha límite",
+    "state": "Estado",
+    "noDue": "Sin fecha",
+    "overdue": "Vencida",
+    "pending": "Sin evaluar",
+    "loading": "Cargando…",
+    "open": "Abrir {code}"
   }
 }

@@ -38,21 +38,21 @@ export function ProgressInsights({ orgId, frameworkKey, register }: Ctx) {
 }
 
 /** Who holds the open measures, and what is overdue (insights spec). */
-export function OwnerInsights({ orgId, register }: Omit<Ctx, "frameworkKey">) {
+export function OwnerInsights({ orgId, register, showPeople = true }: Omit<Ctx, "frameworkKey"> & { showPeople?: boolean }) {
   const t = useTranslations("insights");
-  const members = useMembers(orgId);
+  const members = useMembers(orgId, showPeople); // auditors do not see the people list
   const emails = new Map((members.data ?? []).map((m) => [m.user_id, m.email]));
   const load = workload(register.items);
   const today = new Date().toISOString().slice(0, 10);
   const overdue = register.items.filter((i) => isOverdue(i, today)).length;
   const rows = [...load.entries()].filter(([owner]) => owner !== null)
-    .map(([owner, value]) => ({ label: emails.get(owner!) ?? t("formerMember"), value }));
+    .map(([owner, value]) => ({ id: owner!, label: emails.get(owner!) ?? t("formerMember"), value }));
   return <section aria-labelledby="owners-heading" className="insights">
     <h2 id="owners-heading">{t("owners")}</h2>
     <StatTiles tiles={[
       { label: t("unowned"), value: load.get(null) ?? 0 },
       { label: t("overdue"), value: overdue },
     ]} />
-    <RankedBars title={t("openByOwner")} rows={rows} empty={t("noOwners")} />
+    {showPeople && members.isSuccess ? <RankedBars title={t("openByOwner")} rows={rows} empty={t("noOwners")} /> : null}
   </section>;
 }

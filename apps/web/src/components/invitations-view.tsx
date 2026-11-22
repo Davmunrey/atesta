@@ -4,7 +4,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { useCreateInvitation, useInvitations, useRevokeInvitation } from "@/lib/api/hooks";
 import type { Membership } from "@/lib/org";
-import { type Role, invitableRoles } from "@/lib/permissions";
+import { type Role, auditorWindow, invitableRoles } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
 
 export function InvitationsView({ org }: { org: Membership }) {
@@ -15,14 +15,20 @@ export function InvitationsView({ org }: { org: Membership }) {
   const create = useCreateInvitation(org.organization_id);
   const revoke = useRevokeInvitation(org.organization_id);
   const [confirming, setConfirming] = useState<string | null>(null);
+  const [role, setRole] = useState<Role>("member");
+  const range = auditorWindow();
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
     create.mutate(
-      { email: String(data.get("email") ?? "").trim(), role: data.get("role") as Role },
-      { onSuccess: () => form.reset() },
+      {
+        email: String(data.get("email") ?? "").trim(),
+        role,
+        access_expires_on: role === "auditor" ? String(data.get("access_expires_on") ?? "") : null,
+      },
+      { onSuccess: () => { form.reset(); setRole("member"); } },
     );
   }
 
@@ -36,7 +42,7 @@ export function InvitationsView({ org }: { org: Membership }) {
         </span>
         <span className="flex flex-col gap-1">
           <label htmlFor={`${id}-role`}>{t("invitations.role")}</label>
-          <select id={`${id}-role`} name="role" defaultValue="member" className="rounded-md border border-border bg-bg px-2 py-2">
+          <select id={`${id}-role`} name="role" value={role} onChange={(event) => setRole(event.target.value as Role)} className="rounded-md border border-border bg-bg px-2 py-2">
             {invitableRoles(org.role).map((role) => (
               <option key={role} value={role}>
                 {t(`roles.${role}`)}
@@ -44,10 +50,16 @@ export function InvitationsView({ org }: { org: Membership }) {
             ))}
           </select>
         </span>
+        {role === "auditor" ? <span className="flex flex-col gap-1">
+          <label htmlFor={`${id}-until`}>{t("invitations.accessUntil")}</label>
+          <input id={`${id}-until`} name="access_expires_on" type="date" required min={range.min} max={range.max}
+            aria-describedby={`${id}-until-help`} className="rounded-md border border-border bg-bg px-3 py-2" />
+        </span> : null}
         <button type="submit" disabled={create.isPending} className="rounded-md bg-accent px-4 py-2 font-medium text-accent-fg">
           {t("invitations.invite")}
         </button>
       </form>
+      {role === "auditor" ? <p id={`${id}-until-help`} className="text-sm text-muted">{t("invitations.accessHelp")}</p> : null}
       {create.isError ? <ErrorMessage error={create.error} /> : null}
       {create.data ? <CreatedLink email={create.data.email} link={create.data.accept_link} /> : null}
 
@@ -65,6 +77,9 @@ export function InvitationsView({ org }: { org: Membership }) {
             <li key={i.id} className="flex flex-wrap items-center gap-3 border-t border-border pt-2">
               <span>{i.email}</span>
               <span className="text-sm text-muted">{t(`roles.${i.role}`)}</span>
+              {i.access_expires_on ? <span className="text-sm text-muted">
+                {t("invitations.accessOn", { date: format.dateTime(new Date(`${i.access_expires_on}T00:00:00Z`), { dateStyle: "medium", timeZone: "UTC" }) })}
+              </span> : null}
               <span className="text-sm text-muted">
                 {t("invitations.expires", { date: format.dateTime(new Date(i.expires_at), { dateStyle: "medium" }) })}
               </span>

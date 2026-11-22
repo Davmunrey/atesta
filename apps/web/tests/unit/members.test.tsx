@@ -44,7 +44,7 @@ it("an owner changes a role", async () => {
   const requests = show("owner", { [`PATCH ${PATH}/u-cai`]: [200, { ...MEMBERS[2], role: "admin" }] });
   fireEvent.change((await row("cai@example.com")).getByRole("combobox"), { target: { value: "admin" } });
   await vi.waitFor(() => expect(requests.some((r) => r.method === "PATCH")).toBe(true));
-  expect(await requests.find((r) => r.method === "PATCH")!.json()).toEqual({ role: "admin" });
+  expect(await requests.find((r) => r.method === "PATCH")!.json()).toEqual({ role: "admin", access_expires_on: null });
 });
 
 it("removing asks for confirmation, then deletes", async () => {

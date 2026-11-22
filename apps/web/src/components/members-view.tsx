@@ -1,10 +1,10 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { useChangeRole, useMembers, useRemoveMember } from "@/lib/api/hooks";
 import type { Membership } from "@/lib/org";
-import { ROLES, type Role, canChangeRoles, canRemove } from "@/lib/permissions";
+import { ROLES, type Role, auditorWindow, canChangeRoles, canRemove } from "@/lib/permissions";
 import { useMe } from "./auth-gate";
 import { ErrorMessage } from "./error-message";
 
@@ -15,6 +15,9 @@ export function MembersView({ org }: { org: Membership }) {
   const changeRole = useChangeRole(org.organization_id);
   const remove = useRemoveMember(org.organization_id);
   const [confirming, setConfirming] = useState<string | null>(null);
+  const [auditorFor, setAuditorFor] = useState<string | null>(null); // the end date comes first
+  const format = useFormatter();
+  const range = auditorWindow();
 
   if (list.isPending) return <p role="status">{t("app.loading")}</p>;
   if (list.isError) return <ErrorMessage error={list.error} />;
@@ -45,9 +48,14 @@ export function MembersView({ org }: { org: Membership }) {
                 {canChangeRoles(org.role) ? (
                   <select
                     aria-label={t("members.roleOf", { email: m.email })}
-                    value={m.role}
+                    value={auditorFor === m.user_id ? "auditor" : m.role}
                     disabled={changeRole.isPending}
-                    onChange={(event) => changeRole.mutate({ userId: m.user_id, role: event.target.value as Role })}
+                    onChange={(event) => {
+                      const role = event.target.value as Role;
+                      if (role === "auditor") { setAuditorFor(m.user_id); return; }
+                      setAuditorFor(null);
+                      changeRole.mutate({ userId: m.user_id, role });
+                    }}
                     className="rounded-md border border-border bg-bg px-2 py-1"
                   >
                     {ROLES.map((role) => (
@@ -59,6 +67,23 @@ export function MembersView({ org }: { org: Membership }) {
                 ) : (
                   t(`roles.${m.role}`)
                 )}
+                {auditorFor === m.user_id ? (
+                  <form className="mt-2 flex flex-wrap items-end gap-2" onSubmit={(event) => {
+                    event.preventDefault();
+                    const until = String(new FormData(event.currentTarget).get("until") ?? "");
+                    changeRole.mutate({ userId: m.user_id, role: "auditor", accessExpiresOn: until }, { onSuccess: () => setAuditorFor(null) });
+                  }}>
+                    <label className="flex flex-col gap-1 text-sm">{t("members.accessUntil", { email: m.email })}
+                      <input name="until" type="date" required min={range.min} max={range.max} className="rounded-md border border-border bg-bg px-2 py-1" />
+                    </label>
+                    <button type="submit" disabled={changeRole.isPending} className="rounded-md bg-accent px-3 py-1 text-accent-fg">{t("members.apply")}</button>
+                    <button type="button" onClick={() => setAuditorFor(null)} className="underline">{t("members.cancel")}</button>
+                  </form>
+                ) : m.access_expires_on ? (
+                  <span className="ml-2 text-sm text-muted">
+                    {t("members.accessOn", { date: format.dateTime(new Date(`${m.access_expires_on}T00:00:00Z`), { dateStyle: "medium", timeZone: "UTC" }) })}
+                  </span>
+                ) : null}
               </td>
               <td className="py-2">
                 {!canRemove(org.role, m.role) ? null : confirming === m.user_id ? (
