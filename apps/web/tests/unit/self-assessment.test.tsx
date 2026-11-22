@@ -17,7 +17,7 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 const register: Register = {
   framework_key: "synthetic_alpha", framework_version: "2", catalog_version: "synthetic-2",
   axes: { tier: { keys: [], levels: ["LOW", "MID", "HIGH"] }, level: { keys: ["C", "I"], levels: ["L", "M", "H"] } },
-  scope: null, review: null, groups_es: [{ prefix: "R", title: "Requisitos sintéticos" }],
+  scope: null, review: null, groups_es: [{ prefix: "R", title: "Requisitos sintéticos" }], term_labels: [],
   items: [
     { code: "R1", title_es: "Protección de cuentas de prueba", title_en: null, selection_basis: "tier · Todas", proposal: { decision: "applies", rule: "+ R1", level: "MID" }, assessment: null, assignment: null },
     { code: "R2", title_es: "Registro de revisión", title_en: null, selection_basis: "tier · Todas", proposal: { decision: "not_applicable", rule: "n.a.", level: "MID" }, assessment: null, assignment: null },
@@ -40,6 +40,20 @@ it("leads with the self-assessment and shows each requirement's decision or prop
   // Without a recorded assessment the "Sin evaluar" status is noise; the register replaces it.
   expect(within(row("R1") as HTMLElement).queryByText("Sin evaluar")).toBeNull();
   expect(screen.queryByRole("button", { name: "Actualizar resultados" })).toBeNull();
+});
+
+it("shows the pack's readable labels for scope terms but stores the official values", async () => {
+  const labelled = { ...register, term_labels: [
+    { term: "tier", es: "Categoría sintética", en: "Synthetic tier" },
+    { term: "HIGH", es: "Alta", en: "High (HIGH)" },
+  ] };
+  const requests = stubApi({ [`GET ${base}`]: [200, unassessed], [`GET ${base}/register`]: [200, labelled], [`POST ${base}/scope`]: [201, { axis_values: {}, decided_by: "u", decided_at: "2026-11-22T10:00:00Z" }] }); render();
+  const tier = await screen.findByLabelText("Categoría sintética") as HTMLSelectElement;
+  expect([...tier.options].map((o) => o.textContent)).toEqual(["LOW", "MID", "Alta"]);
+  fireEvent.change(tier, { target: { value: "HIGH" } });
+  fireEvent.click(screen.getByRole("button", { name: "Guardar alcance" }));
+  const post = await vi.waitFor(() => { const r = requests.find((q) => q.method === "POST"); if (!r) throw new Error("no post"); return r; });
+  expect((await post.json()).axis_values.tier).toBe("HIGH");
 });
 
 it("records the scope from the pack's declared levels", async () => {
@@ -79,7 +93,7 @@ it("lets members read the register but not edit it", async () => {
 it("links the statement of applicability export and says it is not a certification", async () => {
   stubApi({ [`GET ${base}`]: [200, unassessed], [`GET ${base}/register`]: [200, register] }); render();
   const csv = await screen.findByRole("link", { name: "Descargar CSV" });
-  expect(csv.getAttribute("href")).toBe(`${base}/applicability.csv`);
+  expect(csv.getAttribute("href")).toBe(`${base}/applicability.csv?lang=es`);
   expect(screen.getByText(/No es una certificación/)).toBeTruthy();
 });
 

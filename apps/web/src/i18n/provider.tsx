@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { type ReactNode, useEffect, useSyncExternalStore } from "react";
 import en from "../../messages/en.json";
 import es from "../../messages/es.json";
-import { DEFAULT_LOCALE, type Locale, localeCookie, localeFromCookie } from "./locale";
+import { DEFAULT_LOCALE, type Locale, localeCookie, preferredLocale } from "./locale";
 
 const MESSAGES = { es, en } as const;
 const listeners = new Set<() => void>();
@@ -14,7 +14,7 @@ function subscribe(listener: () => void): () => void {
   return () => listeners.delete(listener);
 }
 
-const readCookie = (): Locale => localeFromCookie(document.cookie);
+const readCookie = (): Locale => preferredLocale(document.cookie, navigator.languages ?? []);
 // The export is prerendered in Spanish and UTC; React re-renders after hydration with the
 // cookie's locale and the browser's time zone.
 const prerendered = (): Locale => DEFAULT_LOCALE;

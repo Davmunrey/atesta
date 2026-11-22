@@ -1838,6 +1838,13 @@
             "title": "Summary Es",
             "type": "string"
           },
+          "term_labels": {
+            "items": {
+              "$ref": "#/components/schemas/TermLabel"
+            },
+            "title": "Term Labels",
+            "type": "array"
+          },
           "verified_on": {
             "format": "date",
             "title": "Verified On",
@@ -2034,6 +2041,13 @@
                 "type": "null"
               }
             ]
+          },
+          "term_labels": {
+            "items": {
+              "$ref": "#/components/schemas/TermLabelOut"
+            },
+            "title": "Term Labels",
+            "type": "array"
           }
         },
         "required": [
@@ -2042,6 +2056,7 @@
           "catalog_version",
           "axes",
           "groups_es",
+          "term_labels",
           "scope",
           "items",
           "review"
@@ -2762,6 +2777,57 @@
           "statement"
         ],
         "title": "StatementIn",
+        "type": "object"
+      },
+      "TermLabel": {
+        "additionalProperties": false,
+        "description": "A readable label for an official scope term (axis, dimension key or level). Authored text,\nnot official: the stored scope keeps the official term.",
+        "properties": {
+          "en": {
+            "minLength": 1,
+            "title": "En",
+            "type": "string"
+          },
+          "es": {
+            "minLength": 1,
+            "title": "Es",
+            "type": "string"
+          },
+          "term": {
+            "minLength": 1,
+            "title": "Term",
+            "type": "string"
+          }
+        },
+        "required": [
+          "term",
+          "es",
+          "en"
+        ],
+        "title": "TermLabel",
+        "type": "object"
+      },
+      "TermLabelOut": {
+        "properties": {
+          "en": {
+            "title": "En",
+            "type": "string"
+          },
+          "es": {
+            "title": "Es",
+            "type": "string"
+          },
+          "term": {
+            "title": "Term",
+            "type": "string"
+          }
+        },
+        "required": [
+          "term",
+          "es",
+          "en"
+        ],
+        "title": "TermLabelOut",
         "type": "object"
       },
       "TrendPoint": {
@@ -3693,6 +3759,7 @@
     },
     "/api/v1/orgs/{org_id}/frameworks/{framework_key}/applicability.csv": {
       "get": {
+        "description": "The statement in the reader's language (i18n-complete spec). Official titles stay Spanish.",
         "operationId": "applicability_csv_api_v1_orgs__org_id__frameworks__framework_key__applicability_csv_get",
         "parameters": [
           {
@@ -3711,6 +3778,20 @@
             "schema": {
               "format": "uuid",
               "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "es",
+              "enum": [
+                "es",
+                "en"
+              ],
+              "title": "Lang",
               "type": "string"
             }
           }

@@ -16,7 +16,7 @@ const assessed = (implementation: "implemented" | "not_implemented", applicabili
   applicability, implementation, regularly_reviewed: false, justification: "", performed_by: "", performed_on: null, evidence_statement_ids: [], notes: "", recorded_by: "u", recorded_at: "2026-11-20T10:00:00Z",
 });
 const register: Register = {
-  framework_key: "synthetic_alpha", framework_version: "2", catalog_version: "c", axes: {}, groups_es: [], scope: null, review: null,
+  framework_key: "synthetic_alpha", framework_version: "2", catalog_version: "c", axes: {}, groups_es: [], term_labels: [], scope: null, review: null,
   items: [
     item("a.1", { assessment: assessed("implemented"), assignment: { owner_user_id: "u-ana", due_on: "2026-12-31", assigned_at: "2026-11-20T10:00:00Z" } }),
     item("a.2", { assignment: { owner_user_id: "u-ana", due_on: "2026-01-01", assigned_at: "2026-11-20T10:00:00Z" } }),

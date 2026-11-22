@@ -14,7 +14,7 @@ it("explains template boundaries and offers preparation without fabricating cove
   expect(await screen.findByRole("heading", { name: "Plantilla de preparación" })).toBeTruthy();
   expect(screen.getByText(/Puntuación automática desactivada/)).toBeTruthy();
   expect(screen.getByRole("link", { name: "0 requisitos disponibles" })).toBeTruthy();
-  expect(screen.getByRole("link", { name: "1 guías de preparación" }).getAttribute("href")).toBe("#preparation-controls-heading");
+  expect(screen.getByRole("link", { name: "1 guía de preparación" }).getAttribute("href")).toBe("#preparation-controls-heading");
   expect(screen.getByText("Faltan requisitos y mapeos revisados.")).toBeTruthy();
   expect(screen.getByText("synthetic_access_check")).toBeTruthy();
   expect(screen.queryByText(/%/)).toBeNull();

@@ -29,7 +29,7 @@ function cspReports(page: Page): string[] {
 }
 
 test("sign in, create an org, invite, accept as a second user, change role, remove", async ({ browser }) => {
-  const ownerPage = await (await browser.newContext()).newPage();
+  const ownerPage = await (await browser.newContext({ locale: "es-ES" })).newPage();
   const ownerCsp = cspReports(ownerPage);
   await ownerPage.goto("/");
   await expectAccessible(ownerPage, "landing");
@@ -50,7 +50,7 @@ test("sign in, create an org, invite, accept as a second user, change role, remo
   await expect(ownerPage.getByText(/solo se muestra una vez/)).toBeVisible();
   await expectAccessible(ownerPage, "invitations");
 
-  const guestPage = await (await browser.newContext()).newPage();
+  const guestPage = await (await browser.newContext({ locale: "es-ES" })).newPage();
   const guestCsp = cspReports(guestPage);
   // Hold /me so the page stays put while we look at the address bar and storage; once
   // released, the route just lets every /me through.
@@ -105,6 +105,18 @@ test("Spanish by default, English after switching, kept after reload and sent to
   await page.getByRole("link", { name: "Sign in" }).click();
   await page.waitForURL(/localhost:9000/);
   expect(new URL(page.url()).searchParams.get("lang")).toBe("en");
+});
+
+test("a first visit from an English browser opens in English; a choice then wins", async ({ browser }) => {
+  const context = await browser.newContext({ locale: "en-US" });
+  const page = await context.newPage();
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible();
+  await page.getByRole("button", { name: "Español" }).click();
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("lang", "es");
+  await context.close();
 });
 
 test("the policy blocks an injected inline script", async ({ page }) => {

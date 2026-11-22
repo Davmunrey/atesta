@@ -35,7 +35,7 @@ export function MyWorkView({ org }: { org: Membership }) {
                     aria-label={t("open", { code: item.code })} className="text-link underline">
                     <span className="requirement-code">{item.code}</span>
                   </Link>{" "}
-                  {english ? item.title_en ?? item.title_es : item.title_es}
+                  <span lang={english && !item.title_en ? "es" : undefined}>{english ? item.title_en ?? item.title_es : item.title_es}</span>
                 </td>
                 <td className="py-3 pr-4 whitespace-nowrap max-sm:block max-sm:p-0 max-sm:text-sm max-sm:text-muted">{item.framework_name}</td>
                 <td className="py-3 pr-4 whitespace-nowrap max-sm:inline-block max-sm:p-0 max-sm:pr-3 max-sm:text-sm">{item.due_on ? format.dateTime(new Date(`${item.due_on}T00:00:00Z`), { dateStyle: "medium", timeZone: "UTC" }) : t("noDue")}

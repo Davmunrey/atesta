@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from atesta_core.applicability import axis_levels
 
 from atesta_api.modules.compliance.catalog_schema import (
     ControlContent,
@@ -98,6 +99,11 @@ def read_catalog(root: Path, *, expected_checks: set[str], engine_version: str) 
             mapped[mapping.requirement_id].append(catalog.controls[mapping.control_id])
         if set(metadata.attributes.preparation_controls) - catalog.controls.keys():
             raise ValueError("unknown preparation control")
+        axes = axis_levels(r.attributes.model_dump() for r in pack.requirements)
+        terms = {t for axis, d in axes.items() for t in (axis, *d["keys"], *d["levels"])}
+        _unique([t.term for t in metadata.attributes.term_labels], "term label")
+        if terms - {t.term for t in metadata.attributes.term_labels}:
+            raise ValueError(f"scope terms without readable labels in {metadata.id}")
         if any(not any(c.manual for c in group) for group in mapped.values()):
             raise ValueError("candidate mappings must retain documentary review")
         catalog.packs.append(pack)

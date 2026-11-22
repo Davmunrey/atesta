@@ -240,7 +240,7 @@ def test_the_statement_of_applicability_exports_every_requirement(
     response = client.get(base(org, pack) + "/applicability.csv", headers=auth(subs["ana"]))
     assert response.headers["content-type"].startswith("text/csv")
     rows = list(csv.reader(io.StringIO(response.text)))
-    header = next(i for i, row in enumerate(rows) if row and row[0] == "code")
+    header = next(i for i, row in enumerate(rows) if row and row[0] == "Código")
     data = rows[header + 1 :]
     assert len(data) == 3
     assert all(not cell.startswith(("=", "+", "-", "@")) for row in data for cell in row)

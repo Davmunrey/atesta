@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormatter, useTranslations } from "next-intl";
+import { percent } from "@/lib/format";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useMembers } from "@/lib/api/hooks";
 import {
   isOverdue, registerProgress, useRegisterHistory, useScoreTrend, workload, type Register,
@@ -13,6 +14,7 @@ type Ctx = { orgId: string; frameworkKey: string; register: Register };
 export function ProgressInsights({ orgId, frameworkKey, register }: Ctx) {
   const t = useTranslations("insights");
   const format = useFormatter();
+  const locale = useLocale();
   const history = useRegisterHistory(orgId, frameworkKey);
   const trend = useScoreTrend(orgId, frameworkKey);
   const p = registerProgress(register.items);
@@ -32,7 +34,7 @@ export function ProgressInsights({ orgId, frameworkKey, register }: Ctx) {
       ? <LineChart title={t("implementedOverTime")} points={points} valueLabel={t("implemented")} tableLabel={t("showTable")} integer />
       : <p className="text-sm text-muted">{t("historyHelp")}</p>}
     {scores.length >= 2
-      ? <LineChart title={t("scoreOverTime")} points={scores} valueLabel={t("score")} tableLabel={t("showTable")} format={(v) => `${format.number(v, { maximumFractionDigits: 1 })} %`} />
+      ? <LineChart title={t("scoreOverTime")} points={scores} valueLabel={t("score")} tableLabel={t("showTable")} format={(v) => percent(locale, v)} />
       : null}
   </section>;
 }

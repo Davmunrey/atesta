@@ -42,6 +42,15 @@ class GroupHeading(Content):
     title: Text
 
 
+class TermLabel(Content):
+    """A readable label for an official scope term (axis, dimension key or level). Authored text,
+    not official: the stored scope keeps the official term."""
+
+    term: Text
+    es: Text
+    en: Text
+
+
 class PackContext(Content):
     content_state: Literal["template", "partial", "complete"]
     assessment_enabled: Literal[False]
@@ -59,6 +68,7 @@ class PackContext(Content):
     # Official group headings in the source's order, by requirement-code prefix (rule 10). A list,
     # because JSONB does not keep object key order.
     groups_es: list[GroupHeading] = Field(default_factory=list)
+    term_labels: list[TermLabel] = Field(default_factory=list)
 
 
 class PackMetadata(Content):

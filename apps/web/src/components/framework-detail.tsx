@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 import { useFrameworkDetail } from "@/lib/api/hooks";
+import { percent } from "@/lib/format";
 import { groupByPrefix, useRegister, type Register } from "@/lib/api/register-hooks";
 import type { components } from "@/lib/api/schema";
 import { orgHome } from "@/lib/org";
@@ -26,6 +27,7 @@ export function FrameworkDetailView({ orgId, frameworkKey, role = "member", user
   const t = useTranslations("framework");
   const dashboard = useTranslations("dashboard");
   const format = useFormatter();
+  const locale = useLocale();
   const query = useFrameworkDetail(orgId, frameworkKey);
   const registerQuery = useRegister(orgId, frameworkKey);
   // A framework with no register (404) or no requirements keeps the recorded-results view only.
@@ -40,8 +42,9 @@ export function FrameworkDetailView({ orgId, frameworkKey, role = "member", user
           {query.data.snapshot ? <button className="dashboard-button" disabled={query.isFetching} onClick={() => void query.refetch()}>{dashboard(query.isFetching ? "refreshing" : "refresh")}</button> : null}
         </div>
         {query.data.development ? <p className="framework-environment">{t("development")}</p> : null}
+        {locale === "en" && query.data.requirements.some((r) => !r.title_en && r.title_es) ? <p className="text-sm text-muted">{t("officialSpanish")}</p> : null}
         {query.data.snapshot ? <div className="framework-record">
-          <p><strong>{t("recordedScore")}</strong> {query.data.snapshot.score === null ? dashboard("unscored") : `${format.number(query.data.snapshot.score, { maximumFractionDigits: 1 })} %`}</p>
+          <p><strong>{t("recordedScore")}</strong> {query.data.snapshot.score === null ? dashboard("unscored") : percent(locale, query.data.snapshot.score)}</p>
           <p><time dateTime={query.data.snapshot.computed_at}>{format.dateTime(new Date(query.data.snapshot.computed_at), { dateStyle: "medium", timeStyle: "short" })}</time> · {dashboard("version", { version: query.data.snapshot.framework_version })} · {dashboard("organizationScope")}</p>
         </div> : register ? null : <p className="framework-notice">{t("unassessed")}</p>}
         {query.data.snapshot && !query.data.catalog_matches_snapshot ? <p className="framework-notice">{t("catalogChanged")}</p> : null}
@@ -131,6 +134,7 @@ function RequirementRow({ requirement: r, initiallyOpen, review, item, recorded 
   const r9 = useTranslations("register");
   const english = useLocale() === "en";
   const title = (english ? r.title_en ?? r.title_es : r.title_es) ?? t("historicalTitle");
+  const spanishOnly = english && !r.title_en && Boolean(r.title_es); // official text, never translated
   const row = useRef<HTMLDetailsElement>(null);
   useEffect(() => { // a link from Mi trabajo (#req-<code>) opens the measure and its group
     if (window.location.hash !== `#req-${r.code}` || !row.current) return;
@@ -141,7 +145,7 @@ function RequirementRow({ requirement: r, initiallyOpen, review, item, recorded 
   }, [r.code]);
   const mayAssess = canAssess(review.role ?? (review.canReview ? "admin" : "member"), item?.assignment?.owner_user_id, review.userId ?? "");
   return <details ref={row} id={`req-${r.code}`} className="requirement-row" open={initiallyOpen}>
-    <summary><span className="requirement-heading"><span className="requirement-code">{r.code}</span><strong>{title}</strong></span>
+    <summary><span className="requirement-heading"><span className="requirement-code">{r.code}</span><strong lang={spanishOnly ? "es" : undefined}>{title}</strong></span>
       {item ? <AssessmentBadge item={item} /> : null}
       {!item || recorded ? <span className="requirement-state" data-state={r.status}>{t(`states.${r.status}`)}</span> : null}
       <svg className="disclosure-icon" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m6 3 5 5-5 5" /></svg>

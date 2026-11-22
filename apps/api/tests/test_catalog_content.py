@@ -181,3 +181,29 @@ def test_duplicate_yaml_keys_are_not_silently_overwritten(tmp_path: Path) -> Non
     path.write_text(path.read_text() + "status: released\n")
     with pytest.raises(ValueError, match="duplicate"):
         read(tmp_path)
+
+
+def test_every_scope_term_needs_readable_labels(tmp_path: Path) -> None:
+    """i18n-complete spec: axes, dimension keys and levels read in ES and EN, not as bare codes."""
+    catalog_files(tmp_path)
+    change(
+        tmp_path,
+        "frameworks/sample/requirements.yaml",
+        lambda d: d["requirements"][0]["attributes"].update(selection_basis="nivel · C"),
+    )
+    with pytest.raises(ValueError, match="readable labels"):
+        read(tmp_path)
+    labels = [{"term": t, "es": t, "en": t.lower()} for t in ("nivel", "C", "LOW")]
+    change(
+        tmp_path,
+        "frameworks/sample/pack.yaml",
+        lambda d: d["attributes"].update(term_labels=labels[:2]),
+    )
+    with pytest.raises(ValueError, match="readable labels"):
+        read(tmp_path)
+    change(
+        tmp_path,
+        "frameworks/sample/pack.yaml",
+        lambda d: d["attributes"].update(term_labels=labels),
+    )
+    assert read(tmp_path).packs[0].metadata.attributes.term_labels[2].en == "low"
