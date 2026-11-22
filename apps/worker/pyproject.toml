@@ -5,7 +5,7 @@ description = "Atesta background jobs on Procrastinate (ADR-003)"
 requires-python = ">=3.12"
 dependencies = [
     "atesta-api",
-    "procrastinate==3.10.0",
+    "procrastinate==3.11.0",
     "pyyaml>=6.0",
 ]
 
