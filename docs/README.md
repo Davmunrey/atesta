@@ -9,6 +9,7 @@ Start with the question you have.
 - [DESIGN.md](../DESIGN.md): visual and interaction design.
 - [status/dashboard-readiness.md](status/dashboard-readiness.md): implementation inventory and
   what is missing per framework.
+- [ROADMAP.md](../ROADMAP.md): the engineering order of work and its gates.
 
 ## How to change it
 
