@@ -59,7 +59,8 @@
       "evidence_not_found": "Some of the evidence given does not exist in this organization.",
       "justification_required": "Add a justification: it is required when the measure does not apply or your decision differs from the proposal.",
       "requirement_not_found": "This requirement is not in the current catalog.",
-      "scope_invalid": "The scope contains values this framework does not define."
+      "scope_invalid": "The scope contains values this framework does not define.",
+      "owner_not_member": "Only a member of this organization can be the owner."
     },
     "unknown": "Something went wrong. Try again, and contact support if it keeps happening.",
     "auth": {
@@ -82,7 +83,8 @@
       "last_owner": "The organization needs at least one owner. Make someone else an owner first.",
       "not_found": "We could not find that, or you do not have access.",
       "role_not_allowed": "You cannot assign that role.",
-      "token_in_query": "This invitation link is not valid. Open it again from the message you received."
+      "token_in_query": "This invitation link is not valid. Open it again from the message you received.",
+      "period_invalid": "The period must be 30 or 90 days."
     },
     "request": {
       "error": "The request could not be completed. Try again.",
@@ -129,7 +131,8 @@
     "yourRole": "Your role: {role}",
     "sections": "Organization sections",
     "members": "Members",
-    "invitations": "Invitations"
+    "invitations": "Invitations",
+    "activity": "Activity"
   },
   "roles": {
     "owner": "Owner",
@@ -455,6 +458,66 @@
     "performedOn": "Date",
     "notes": "Notes",
     "recordedAt": "Recorded on {date}.",
-    "pendingMember": "Pending. An administrator can record the self-assessment."
+    "pendingMember": "Pending. An administrator can record the self-assessment.",
+    "owner": "Owner",
+    "noOwner": "No owner",
+    "dueOn": "Due date",
+    "changeOwner": "Change",
+    "saveOwner": "Save owner",
+    "overdue": "Overdue",
+    "formerMember": "Former member"
+  },
+  "insights": {
+    "title": "Progress",
+    "assessed": "Assessed",
+    "implemented": "Implemented",
+    "notApplicable": "Do not apply",
+    "pending": "Pending",
+    "implementedOverTime": "Measures implemented over time",
+    "historyHelp": "The chart appears once self-assessments exist on at least two different days.",
+    "scoreOverTime": "Recorded score over time",
+    "score": "Score",
+    "showTable": "Show the data as a table",
+    "owners": "Owners",
+    "unowned": "Open without an owner",
+    "overdue": "Overdue",
+    "openByOwner": "Open measures by owner",
+    "noOwners": "No measure has an owner yet. Assign one from each measure.",
+    "formerMember": "Former member"
+  },
+  "activity": {
+    "title": "Activity",
+    "intro": "Who did what in the organization. Only administrators see it.",
+    "period": "Period",
+    "lastDays": "Last {days} days",
+    "loading": "Loading activity…",
+    "perDay": "Actions per day",
+    "events": "Actions",
+    "showTable": "Show the data as a table",
+    "latest": "Latest actions",
+    "empty": "No activity in this period.",
+    "when": "When",
+    "who": "Who",
+    "what": "What",
+    "system": "System",
+    "adminsOnly": "Only administrators can see the activity.",
+    "actions": {
+      "org_created": "Created the organization",
+      "invitation_created": "Invited someone",
+      "invitation_accepted": "Accepted an invitation",
+      "invitation_revoked": "Revoked an invitation",
+      "membership_role_changed": "Changed a role",
+      "membership_removed": "Removed a member",
+      "framework_scope_recorded": "Defined the scope",
+      "requirement_assessed": "Assessed a measure",
+      "requirement_assigned": "Assigned an owner",
+      "framework_assessment_reviewed": "Recorded the security officer review",
+      "framework_applicability_exported": "Exported the statement of applicability",
+      "control_reviewed": "Reviewed a control",
+      "evidence_statement_recorded": "Recorded evidence",
+      "connection_created": "Created a connection",
+      "connection_disconnected": "Disconnected a connection",
+      "scan_requested": "Requested a scan"
+    }
   }
 }

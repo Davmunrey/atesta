@@ -2,9 +2,10 @@
 
 import { useFormatter, useTranslations } from "next-intl";
 import { useId, useState, type FormEvent } from "react";
+import { useMembers } from "@/lib/api/hooks";
 import {
-  applicabilityUrl, registerProgress, useRecordAssessment, useRecordAssessmentReview, useRecordScope,
-  type AssessmentInput, type AxisValues, type Register, type RegisterItem,
+  applicabilityUrl, isOverdue, registerProgress, useRecordAssessment, useRecordAssessmentReview, useRecordAssignment,
+  useRecordScope, type AssessmentInput, type AxisValues, type Register, type RegisterItem,
 } from "@/lib/api/register-hooks";
 import { ErrorMessage } from "./error-message";
 
@@ -112,6 +113,12 @@ function ReviewStep({ register, orgId, frameworkKey, canEdit }: Ctx & { register
 export function AssessmentBadge({ item }: { item: RegisterItem | undefined }) {
   const t = useTranslations("register");
   if (!item) return null;
+  const overdue = isOverdue(item, new Date().toISOString().slice(0, 10));
+  return <span className="assessment-badges">{overdue ? <span className="overdue-flag">{t("overdue")}</span> : null}<StateBadge item={item} /></span>;
+}
+
+function StateBadge({ item }: { item: RegisterItem }) {
+  const t = useTranslations("register");
   if (item.assessment) {
     const state = item.assessment.applicability === "not_applicable" ? "not_applicable" : item.assessment.implementation;
     return <span className="requirement-state" data-assessment={state}>{t(`states.${state}`)}</span>;
@@ -141,6 +148,7 @@ export function AssessmentForm({ item, orgId, frameworkKey, canEdit }: Ctx & { i
   const proposal = item.proposal.decision === "undecided" ? t("proposalUndecided")
     : t("proposalText", { decision: t(`proposal.${item.proposal.decision}`), rule: item.proposal.rule ?? "", level: item.proposal.level ?? "" });
   return <div className="assessment-card">
+    <OwnerField item={item} orgId={orgId} frameworkKey={frameworkKey} canEdit={canEdit} />
     <h3>{t("yourAssessment")}</h3>
     <p className="text-sm text-muted">{proposal}</p>
     {a && !editing ? <>
@@ -179,4 +187,39 @@ export function AssessmentForm({ item, orgId, frameworkKey, canEdit }: Ctx & { i
           <button type="button" className="dashboard-button" onClick={() => setEditing(false)}>{t("cancel")}</button></div>
       </form>}
   </div>;
+}
+
+/** Who owns the measure and by when (insights spec); the owner is a member, the API checks it. */
+function OwnerField({ item, orgId, frameworkKey, canEdit }: Ctx & { item: RegisterItem }) {
+  const t = useTranslations("register");
+  const format = useFormatter();
+  const members = useMembers(orgId);
+  const save = useRecordAssignment(orgId, frameworkKey);
+  const [editing, setEditing] = useState(false);
+  const [owner, setOwner] = useState(item.assignment?.owner_user_id ?? "");
+  const [due, setDue] = useState(item.assignment?.due_on ?? "");
+  const ids = { owner: useId(), due: useId() };
+  const email = (members.data ?? []).find((m) => m.user_id === item.assignment?.owner_user_id)?.email;
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    save.mutate({ code: item.code, body: { owner_user_id: owner || null, due_on: due || null } }, { onSuccess: () => setEditing(false) });
+  };
+  if (!editing) return <p className="owner-line text-sm">
+    <span className="text-muted">{t("owner")}:</span> {item.assignment?.owner_user_id ? email ?? t("formerMember") : t("noOwner")}
+    {item.assignment?.due_on ? <> · <span className="text-muted">{t("dueOn")}:</span> {format.dateTime(new Date(`${item.assignment.due_on}T00:00:00`), { dateStyle: "medium" })}</> : null}
+    {canEdit ? <> <button type="button" className="text-link underline owner-edit" onClick={() => setEditing(true)}>{t("changeOwner")}</button></> : null}
+  </p>;
+  return <form onSubmit={submit} className="register-form owner-form">
+    <div className="form-row">
+      <span><label htmlFor={ids.owner}>{t("owner")}</label>
+        <select id={ids.owner} value={owner} onChange={(e) => setOwner(e.target.value)}>
+          <option value="">{t("noOwner")}</option>
+          {(members.data ?? []).map((m) => <option key={m.user_id} value={m.user_id}>{m.display_name ?? m.email}</option>)}
+        </select></span>
+      <span><label htmlFor={ids.due}>{t("dueOn")}</label><input id={ids.due} type="date" value={due} onChange={(e) => setDue(e.target.value)} /></span>
+    </div>
+    {save.isError ? <ErrorMessage error={save.error} /> : null}
+    <div className="form-actions"><button type="submit" className="button-primary" disabled={save.isPending}>{t("saveOwner")}</button>
+      <button type="button" className="dashboard-button" onClick={() => setEditing(false)}>{t("cancel")}</button></div>
+  </form>;
 }

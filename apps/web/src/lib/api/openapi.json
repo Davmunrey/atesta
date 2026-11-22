@@ -34,6 +34,76 @@
         "title": "Accepted",
         "type": "object"
       },
+      "Activity": {
+        "properties": {
+          "daily": {
+            "items": {
+              "$ref": "#/components/schemas/DayCount"
+            },
+            "title": "Daily",
+            "type": "array"
+          },
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityEvent"
+            },
+            "title": "Events",
+            "type": "array"
+          }
+        },
+        "required": [
+          "days",
+          "daily",
+          "events"
+        ],
+        "title": "Activity",
+        "type": "object"
+      },
+      "ActivityEvent": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "actor_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Email"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "target_id": {
+            "title": "Target Id",
+            "type": "string"
+          },
+          "target_type": {
+            "title": "Target Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "occurred_at",
+          "actor_email",
+          "action",
+          "target_type",
+          "target_id"
+        ],
+        "title": "ActivityEvent",
+        "type": "object"
+      },
       "Applicability": {
         "enum": [
           "applies",
@@ -402,6 +472,79 @@
         "title": "AssessmentReviewOut",
         "type": "object"
       },
+      "AssignmentIn": {
+        "properties": {
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "owner_user_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner User Id"
+          }
+        },
+        "required": [
+          "owner_user_id"
+        ],
+        "title": "AssignmentIn",
+        "type": "object"
+      },
+      "AssignmentOut": {
+        "properties": {
+          "assigned_at": {
+            "format": "date-time",
+            "title": "Assigned At",
+            "type": "string"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "owner_user_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner User Id"
+          }
+        },
+        "required": [
+          "owner_user_id",
+          "due_on",
+          "assigned_at"
+        ],
+        "title": "AssignmentOut",
+        "type": "object"
+      },
       "CheckDetail": {
         "properties": {
           "check_id": {
@@ -749,6 +892,25 @@
           "accept_link"
         ],
         "title": "CreatedInvitation",
+        "type": "object"
+      },
+      "DayCount": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          }
+        },
+        "required": [
+          "day",
+          "count"
+        ],
+        "title": "DayCount",
         "type": "object"
       },
       "EvidenceOut": {
@@ -1169,6 +1331,35 @@
           }
         },
         "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HistoryPoint": {
+        "properties": {
+          "assessed": {
+            "title": "Assessed",
+            "type": "integer"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "implemented": {
+            "title": "Implemented",
+            "type": "integer"
+          },
+          "not_applicable": {
+            "title": "Not Applicable",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "day",
+          "assessed",
+          "implemented",
+          "not_applicable"
+        ],
+        "title": "HistoryPoint",
         "type": "object"
       },
       "Implementation": {
@@ -1735,6 +1926,16 @@
               }
             ]
           },
+          "assignment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AssignmentOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "code": {
             "title": "Code",
             "type": "string"
@@ -1775,7 +1976,8 @@
           "title_en",
           "selection_basis",
           "proposal",
-          "assessment"
+          "assessment",
+          "assignment"
         ],
         "title": "RegisterItem",
         "type": "object"
@@ -2414,6 +2616,37 @@
         "title": "StatementIn",
         "type": "object"
       },
+      "TrendPoint": {
+        "properties": {
+          "computed_at": {
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "framework_version": {
+            "title": "Framework Version",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          }
+        },
+        "required": [
+          "computed_at",
+          "score",
+          "framework_version"
+        ],
+        "title": "TrendPoint",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -2581,6 +2814,64 @@
           }
         ],
         "summary": "Create Org",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/activity": {
+      "get": {
+        "operationId": "read_activity_api_v1_orgs__org_id__activity_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "title": "Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Activity"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Activity",
         "tags": [
           "identity"
         ]
@@ -3485,6 +3776,67 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/register/history": {
+      "get": {
+        "operationId": "read_history_api_v1_orgs__org_id__frameworks__framework_key__register_history_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HistoryPoint"
+                  },
+                  "title": "Response Read History Api V1 Orgs  Org Id  Frameworks  Framework Key  Register History Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read History",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/frameworks/{framework_key}/register/{requirement_code}": {
       "post": {
         "operationId": "record_assessment_api_v1_orgs__org_id__frameworks__framework_key__register__requirement_code__post",
@@ -3556,6 +3908,82 @@
           }
         ],
         "summary": "Record Assessment",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/register/{requirement_code}/assignment": {
+      "post": {
+        "operationId": "record_assignment_api_v1_orgs__org_id__frameworks__framework_key__register__requirement_code__assignment_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "requirement_code",
+            "required": true,
+            "schema": {
+              "title": "Requirement Code",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignmentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Record Assignment",
         "tags": [
           "compliance"
         ]
@@ -3680,6 +4108,67 @@
           }
         ],
         "summary": "Record Scope",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/trend": {
+      "get": {
+        "operationId": "read_trend_api_v1_orgs__org_id__frameworks__framework_key__trend_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TrendPoint"
+                  },
+                  "title": "Response Read Trend Api V1 Orgs  Org Id  Frameworks  Framework Key  Trend Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Trend",
         "tags": [
           "compliance"
         ]

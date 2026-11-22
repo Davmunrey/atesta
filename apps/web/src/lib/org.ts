@@ -16,3 +16,5 @@ export const orgMembers = (orgId: string): string => `/app/members?org=${encodeU
 
 export const orgInvitations = (orgId: string): string =>
   `/app/invitations?org=${encodeURIComponent(orgId)}`;
+
+export const orgActivity = (orgId: string): string => `/app/activity?org=${encodeURIComponent(orgId)}`;

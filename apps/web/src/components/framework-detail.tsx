@@ -13,6 +13,7 @@ import { CatalogReference as Reference } from "./catalog-reference";
 import { ControlReview } from "./control-review";
 import { ControlEvidence } from "./control-evidence";
 import { ErrorMessage } from "./error-message";
+import { OwnerInsights, ProgressInsights } from "./insights";
 import { AssessmentBadge, AssessmentForm, SelfAssessmentPanel } from "./self-assessment";
 
 type Detail = components["schemas"]["FrameworkDetail"];
@@ -44,7 +45,13 @@ export function FrameworkDetailView({ orgId, frameworkKey, role = "member" }: { 
           <p><time dateTime={query.data.snapshot.computed_at}>{format.dateTime(new Date(query.data.snapshot.computed_at), { dateStyle: "medium", timeStyle: "short" })}</time> · {dashboard("version", { version: query.data.snapshot.framework_version })} · {dashboard("organizationScope")}</p>
         </div> : register ? null : <p className="framework-notice">{t("unassessed")}</p>}
         {query.data.snapshot && !query.data.catalog_matches_snapshot ? <p className="framework-notice">{t("catalogChanged")}</p> : null}
-        {register ? <SelfAssessmentPanel register={register} orgId={orgId} frameworkKey={frameworkKey} canEdit={canEdit} /> : null}
+        {register ? <>
+          <SelfAssessmentPanel register={register} orgId={orgId} frameworkKey={frameworkKey} canEdit={canEdit} />
+          <div className="insights-grid">
+            <ProgressInsights orgId={orgId} frameworkKey={frameworkKey} register={register} />
+            <OwnerInsights orgId={orgId} register={register} />
+          </div>
+        </> : null}
         {query.data.catalog_context ? register
           ? <details className="catalog-about"><summary>{t("aboutContent")}</summary>
             <CatalogPreparation context={query.data.catalog_context} requirements={query.data.requirements.length} controls={query.data.preparation_controls?.length ?? 0} /></details>

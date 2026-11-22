@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useId } from "react";
-import { orgHome, orgInvitations, orgMembers, selectOrg } from "@/lib/org";
-import { canInvite } from "@/lib/permissions";
+import { orgActivity, orgHome, orgInvitations, orgMembers, selectOrg } from "@/lib/org";
+import { canInvite, canReviewControls } from "@/lib/permissions";
 import { useMe } from "./auth-gate";
 
 export function OrganizationNav() {
@@ -15,7 +15,7 @@ export function OrganizationNav() {
   const router = useRouter();
   const switcherId = useId();
   const org = selectOrg(memberships, useSearchParams().get("org"));
-  if (!org || !["/app/org", "/app/framework", "/app/members", "/app/invitations"].includes(pathname)) return null;
+  if (!org || !["/app/org", "/app/framework", "/app/members", "/app/invitations", "/app/activity"].includes(pathname)) return null;
 
   function switchOrganization(id: string) {
     const next = selectOrg(memberships, id);
@@ -29,6 +29,7 @@ export function OrganizationNav() {
     { label: t("overview"), href: orgHome(org.organization_id) },
     { label: t("members"), href: orgMembers(org.organization_id) },
     ...(canInvite(org.role) ? [{ label: t("invitations"), href: orgInvitations(org.organization_id) }] : []),
+    ...(canReviewControls(org.role) ? [{ label: t("activity"), href: orgActivity(org.organization_id) }] : []),
   ];
   return (
     <aside className="organization-context">

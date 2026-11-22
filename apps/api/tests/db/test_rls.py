@@ -117,6 +117,8 @@ INSERT INTO requirement_assessments (id, organization_id, framework_key, require
 INSERT INTO assessment_reviews (id, organization_id, framework_key, reviewer_name, reviewer_role,
   reviewed_on, conclusions, recorded_by) VALUES (gen_random_uuid(), :o, 'fw_rls', 'n', 'r',
   current_date, 'c', :u);
+INSERT INTO requirement_assignments (id, organization_id, framework_key, requirement_code,
+  owner_user_id, assigned_by) VALUES (gen_random_uuid(), :o, 'fw_rls', 'r1', :u, :u);
 INSERT INTO probe_child VALUES (:o, :p);
 """
 

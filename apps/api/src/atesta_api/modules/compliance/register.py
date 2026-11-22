@@ -14,6 +14,8 @@ from datetime import date, datetime
 from typing import Annotated, Any, Literal
 
 from atesta_core.applicability import Proposal, axis_levels, propose, valid_scope
+from atesta_core.history import Assessment as HistoryRow
+from atesta_core.history import progress_history
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel, Field, field_validator
@@ -27,10 +29,12 @@ from atesta_api.modules.compliance.models import (
     FrameworkScope,
     Requirement,
     RequirementAssessment,
+    RequirementAssignment,
+    ScoreSnapshot,
 )
 from atesta_api.modules.compliance.scoring import active_frameworks
 from atesta_api.modules.evidence.api import statements_in_org
-from atesta_api.modules.identity.api import Member, Role, require_member, require_role
+from atesta_api.modules.identity.api import Member, Role, is_member, require_member, require_role
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 
@@ -104,6 +108,17 @@ class ProposalOut(BaseModel):
     level: str | None
 
 
+class AssignmentIn(BaseModel):
+    owner_user_id: uuid.UUID | None  # None clears the owner
+    due_on: date | None = None
+
+
+class AssignmentOut(BaseModel):
+    owner_user_id: uuid.UUID | None
+    due_on: date | None
+    assigned_at: datetime
+
+
 class RegisterItem(BaseModel):
     code: str
     title_es: str
@@ -111,6 +126,20 @@ class RegisterItem(BaseModel):
     selection_basis: str | None
     proposal: ProposalOut
     assessment: AssessmentOut | None
+    assignment: AssignmentOut | None
+
+
+class HistoryPoint(BaseModel):
+    day: date
+    assessed: int
+    implemented: int
+    not_applicable: int
+
+
+class TrendPoint(BaseModel):
+    computed_at: datetime
+    score: float | None
+    framework_version: str
 
 
 class AssessmentReviewIn(BaseModel):
@@ -276,6 +305,29 @@ def _groups(framework: Framework) -> list[GroupTitle]:
     ]
 
 
+def _assignments(
+    session: Session, organization_id: uuid.UUID, framework_key: str
+) -> dict[str, AssignmentOut]:
+    rows = session.scalars(
+        select(RequirementAssignment)
+        .where(
+            RequirementAssignment.organization_id == organization_id,
+            RequirementAssignment.framework_key == framework_key,
+        )
+        .ext(distinct_on(RequirementAssignment.requirement_code))
+        .order_by(
+            RequirementAssignment.requirement_code,
+            RequirementAssignment.assigned_at.desc(),
+            RequirementAssignment.id.desc(),
+        )
+    )
+    return {
+        row.requirement_code: AssignmentOut.model_validate(row, from_attributes=True)
+        for row in rows
+        if row.owner_user_id is not None or row.due_on is not None
+    }
+
+
 def _proposal(requirement: Requirement, scope: ScopeOut | None) -> Proposal:
     attributes = requirement.attributes
     return propose(
@@ -335,6 +387,7 @@ def read_register(
     requirements = _requirements(session, framework_key)
     scope = _scope(session, member.organization_id, framework_key)
     assessments = _assessments(session, member.organization_id, framework_key)
+    assignments = _assignments(session, member.organization_id, framework_key)
     items = [
         RegisterItem(
             code=r.code,
@@ -343,6 +396,7 @@ def read_register(
             selection_basis=r.attributes.get("selection_basis"),
             proposal=ProposalOut(**vars(_proposal(r, scope))),
             assessment=assessments.get(r.code),
+            assignment=assignments.get(r.code),
         )
         for r in requirements
     ]
@@ -412,6 +466,89 @@ def record_assessment(
         },
     )
     return AssessmentOut.model_validate(row, from_attributes=True)
+
+
+@router.post("/register/{requirement_code}/assignment", status_code=201)
+def record_assignment(
+    framework_key: str,
+    requirement_code: str,
+    body: AssignmentIn,
+    member: Annotated[Member, Depends(require_role(Role.ADMIN))],
+    session: DbSession,
+) -> AssignmentOut:
+    _framework(session, framework_key)
+    if requirement_code not in {r.code for r in _requirements(session, framework_key)}:
+        raise HTTPException(404, detail={"code": "compliance.requirement_not_found"})
+    if body.owner_user_id is not None and not is_member(
+        session, member.organization_id, body.owner_user_id
+    ):
+        raise HTTPException(422, detail={"code": "compliance.owner_not_member"})
+    row = RequirementAssignment(
+        organization_id=member.organization_id,
+        framework_key=framework_key,
+        requirement_code=requirement_code,
+        owner_user_id=body.owner_user_id,
+        due_on=body.due_on,
+        assigned_by=member.user_id,
+    )
+    session.add(row)
+    session.flush()
+    session.refresh(row)
+    record(
+        session,
+        organization_id=member.organization_id,
+        action="requirement.assigned",
+        target_type="requirement",
+        target_id=f"{framework_key}:{requirement_code}",
+        actor_user_id=member.user_id,
+        metadata={"has_owner": body.owner_user_id is not None, "has_due": body.due_on is not None},
+    )
+    return AssignmentOut.model_validate(row, from_attributes=True)
+
+
+@router.get("/register/history")
+def read_history(
+    framework_key: str, member: Annotated[Member, Depends(require_member)], session: DbSession
+) -> list[HistoryPoint]:
+    _framework(session, framework_key)
+    rows = session.execute(
+        select(
+            RequirementAssessment.recorded_at,
+            RequirementAssessment.requirement_code,
+            RequirementAssessment.applicability,
+            RequirementAssessment.implementation,
+        ).where(
+            RequirementAssessment.organization_id == member.organization_id,
+            RequirementAssessment.framework_key == framework_key,
+        )
+    ).all()
+    today = datetime.now().astimezone().date()
+    points = progress_history((HistoryRow(*row) for row in rows), today=today)
+    return [HistoryPoint(**vars(p)) for p in points]
+
+
+@router.get("/trend")
+def read_trend(
+    framework_key: str, member: Annotated[Member, Depends(require_member)], session: DbSession
+) -> list[TrendPoint]:
+    _framework(session, framework_key)
+    rows = session.scalars(
+        select(ScoreSnapshot)
+        .where(
+            ScoreSnapshot.organization_id == member.organization_id,
+            ScoreSnapshot.framework_key == framework_key,
+            ScoreSnapshot.scope_id.is_(None),
+        )
+        .order_by(ScoreSnapshot.computed_at, ScoreSnapshot.id)
+    )
+    return [
+        TrendPoint(
+            computed_at=r.computed_at,
+            score=float(r.score) if r.score is not None else None,
+            framework_version=r.framework_version,
+        )
+        for r in rows
+    ]
 
 
 @router.post("/assessment-reviews", status_code=201)
