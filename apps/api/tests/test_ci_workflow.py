@@ -226,3 +226,10 @@ def test_dependabot_leaves_procrastinate_to_a_migration() -> None:
     config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
     uv = next(u for u in config["updates"] if u["package-ecosystem"] == "uv")
     assert {"dependency-name": "procrastinate"} in uv["ignore"]
+
+
+def test_dependabot_bumps_opentofu_providers_in_one_pull_request() -> None:
+    # Per-directory pull requests left modules and the lock file out of step (#125-#127).
+    config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
+    tofu = next(u for u in config["updates"] if u["package-ecosystem"] == "opentofu")
+    assert tofu["groups"]["opentofu-providers"]["patterns"] == ["*"]
