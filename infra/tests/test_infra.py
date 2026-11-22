@@ -109,7 +109,7 @@ def test_dev_state_and_versions_are_pinned() -> None:
         "eu-south-2",
     )
     assert dev["required_version"] == f"= {(INFRA / '.opentofu-version').read_text().strip()}"
-    assert dev["required_providers"][0]["aws"]["version"] == "= 6.72.0"
+    assert dev["required_providers"][0]["aws"]["version"] == "= 6.73.0"
 
 
 def test_github_roles_are_scoped_to_pull_requests_and_the_protected_environment() -> None:

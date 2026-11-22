@@ -65,3 +65,8 @@ updates:
       timezone: "Europe/Madrid"
     cooldown:
       default-days: 7
+    # One pull request for every directory: a provider bumped in one module but not the others,
+    # or without its lock file, fails `tofu validate` (#125-#127). infra/tests pins the version.
+    groups:
+      opentofu-providers:
+        patterns: ["*"]
