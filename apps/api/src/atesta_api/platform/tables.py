@@ -21,6 +21,7 @@ TENANT = frozenset(
         "framework_scopes",
         "requirement_assessments",
         "assessment_reviews",
+        "requirement_assignments",
     }
 )
 APPEND_ONLY = frozenset(
@@ -36,6 +37,7 @@ APPEND_ONLY = frozenset(
         "framework_scopes",
         "requirement_assessments",
         "assessment_reviews",
+        "requirement_assignments",
     }
 )
 GLOBAL_IDENTITY = frozenset({"users"})

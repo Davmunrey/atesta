@@ -275,3 +275,120 @@ def test_register_rows_are_append_only(
         with pytest.raises(DBAPIError):
             conn.execute(text(f"UPDATE {table} SET framework_key = 'x'"))  # noqa: S608 - fixed names  # nosemgrep: python.sqlalchemy.security.audit.avoid-sqlalchemy-text.avoid-sqlalchemy-text - fixed table names, no user input
         tx.rollback()
+
+
+# --- insights: owners, history, trend, activity (insights spec) ------------------------------
+
+
+def _uid(client: TestClient, sub: str) -> str:
+    return str(client.get("/api/v1/me", headers=auth(sub)).json()["id"])
+
+
+def test_an_admin_assigns_an_owner_and_a_due_date_and_can_clear_them(
+    client: TestClient, superuser: Engine, pack: str
+) -> None:
+    org, subs = _scoped(client, superuser, pack)
+    ana = _uid(client, subs["ana"])
+    url = base(org, pack) + "/register/m.cat/assignment"
+    body = {"owner_user_id": ana, "due_on": "2026-12-31"}
+    assert client.post(url, json=body, headers=auth(subs["ana"])).status_code == 403
+    assert client.post(url, json=body, headers=auth(subs["owner"])).status_code == 201
+    items = client.get(base(org, pack) + "/register", headers=auth(subs["ana"])).json()["items"]
+    item = next(i for i in items if i["code"] == "m.cat")
+    assert (item["assignment"]["owner_user_id"], item["assignment"]["due_on"]) == (
+        ana,
+        "2026-12-31",
+    )
+    cleared = {"owner_user_id": None, "due_on": None}
+    assert client.post(url, json=cleared, headers=auth(subs["owner"])).status_code == 201
+    items = client.get(base(org, pack) + "/register", headers=auth(subs["ana"])).json()["items"]
+    assert next(i for i in items if i["code"] == "m.cat")["assignment"] is None
+    with superuser.connect() as conn:
+        details = (
+            conn.execute(
+                text(
+                    "SELECT metadata::text FROM audit_events WHERE organization_id = :o"
+                    " AND action = 'requirement.assigned'"
+                ),
+                {"o": org},
+            )
+            .scalars()
+            .all()
+        )
+    assert len(details) == 2 and all("@" not in d for d in details)
+
+
+def test_only_a_member_of_the_organization_can_own_a_requirement(
+    client: TestClient, superuser: Engine, pack: str
+) -> None:
+    org, subs = _scoped(client, superuser, pack)
+    _, outsider_subs = org_with(client, superuser)
+    outsider = _uid(client, outsider_subs["owner"])
+    response = client.post(
+        base(org, pack) + "/register/m.cat/assignment",
+        json={"owner_user_id": outsider},
+        headers=auth(subs["owner"]),
+    )
+    assert response.status_code == 422
+    assert response.json()["detail"]["code"] == "compliance.owner_not_member"
+
+
+def test_history_replays_assessments_day_by_day(
+    client: TestClient, superuser: Engine, pack: str
+) -> None:
+    org, subs = _scoped(client, superuser, pack)
+    owner = _uid(client, subs["owner"])
+    with superuser.begin() as conn:
+        for code, days_ago, implementation in (
+            ("m.cat", 3, "not_implemented"),
+            ("m.cat", 1, "implemented"),
+            ("m.dim", 2, "partially_implemented"),
+        ):
+            conn.execute(
+                text(
+                    "INSERT INTO requirement_assessments (id, organization_id, framework_key,"
+                    " requirement_code, applicability, implementation, regularly_reviewed,"
+                    " recorded_by, recorded_at) VALUES (gen_random_uuid(), :o, :f, :c, 'applies',"
+                    " :i, false, :u, now() - make_interval(days => :d))"
+                ),
+                {"o": org, "f": pack, "c": code, "i": implementation, "u": owner, "d": days_ago},
+            )
+    points = client.get(base(org, pack) + "/register/history", headers=auth(subs["ana"])).json()
+    assert len(points) == 4
+    assert [p["assessed"] for p in points] == [1, 2, 2, 2]
+    assert [p["implemented"] for p in points] == [0, 0, 1, 1]
+
+
+def test_trend_is_empty_without_recorded_snapshots(
+    client: TestClient, superuser: Engine, pack: str
+) -> None:
+    org, subs = _scoped(client, superuser, pack)
+    assert client.get(base(org, pack) + "/trend", headers=auth(subs["ana"])).json() == []
+
+
+def test_activity_is_for_admins_and_carries_no_metadata(
+    client: TestClient, superuser: Engine, pack: str
+) -> None:
+    org, subs = _scoped(client, superuser, pack)
+    client.post(
+        base(org, pack) + "/register/m.cat",
+        json=assessment(notes="Texto privado del cliente"),
+        headers=auth(subs["owner"]),
+    )
+    url = f"/api/v1/orgs/{org}/activity"
+    assert client.get(url, headers=auth(subs["ana"])).status_code == 403
+    activity = client.get(url, headers=auth(subs["owner"])).json()
+    assert activity["days"] == 30 and len(activity["daily"]) == 31
+    assert sum(d["count"] for d in activity["daily"]) >= 3  # org created, scope, assessment
+    actions = {e["action"] for e in activity["events"]}
+    assert {"org.created", "framework.scope_recorded", "requirement.assessed"} <= actions
+    assert all(
+        set(e) == {"occurred_at", "actor_email", "action", "target_type", "target_id"}
+        for e in activity["events"]
+    )
+    assert any(e["actor_email"] for e in activity["events"])
+    assert "Texto privado" not in str(activity)
+    ninety = client.get(url + "?days=90", headers=auth(subs["owner"]))
+    assert ninety.status_code == 200 and len(ninety.json()["daily"]) == 91  # a real query string
+    assert client.get(url + "?days=30", headers=auth(subs["owner"])).status_code == 200
+    assert client.get(url + "?days=7", headers=auth(subs["owner"])).status_code == 422

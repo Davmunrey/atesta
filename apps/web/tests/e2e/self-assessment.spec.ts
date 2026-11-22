@@ -9,7 +9,7 @@ const register = {
   scope: null as null | { axis_values: Record<string, string>; decided_by: string; decided_at: string }, review: null,
   items: framework.requirements.filter((r) => r.in_current_catalog).map((r) => ({
     code: `R.${r.code}`, title_es: r.title_es!, title_en: null, selection_basis: "tier · Todas",
-    proposal: { decision: "applies", rule: "+ R1", level: "MID" }, assessment: null as null | Record<string, unknown>,
+    proposal: { decision: "applies", rule: "+ R1", level: "MID" }, assessment: null as null | Record<string, unknown>, assignment: null,
   })),
 };
 const detail = { ...framework, snapshot: null, requirements: framework.requirements.filter((r) => r.in_current_catalog).map((r) => ({ ...r, code: `R.${r.code}` })) };

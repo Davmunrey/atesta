@@ -52,6 +52,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Activity */
+        get: operations["read_activity_api_v1_orgs__org_id__activity_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/connections": {
         parameters: {
             query?: never;
@@ -227,6 +244,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/register/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read History */
+        get: operations["read_history_api_v1_orgs__org_id__frameworks__framework_key__register_history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/frameworks/{framework_key}/register/{requirement_code}": {
         parameters: {
             query?: never;
@@ -238,6 +272,23 @@ export interface paths {
         put?: never;
         /** Record Assessment */
         post: operations["record_assessment_api_v1_orgs__org_id__frameworks__framework_key__register__requirement_code__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/register/{requirement_code}/assignment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record Assignment */
+        post: operations["record_assignment_api_v1_orgs__org_id__frameworks__framework_key__register__requirement_code__assignment_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -256,6 +307,23 @@ export interface paths {
         put?: never;
         /** Record Scope */
         post: operations["record_scope_api_v1_orgs__org_id__frameworks__framework_key__scope_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/trend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Trend */
+        get: operations["read_trend_api_v1_orgs__org_id__frameworks__framework_key__trend_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -486,6 +554,31 @@ export interface components {
             organization_id: string;
             role: components["schemas"]["Role"];
         };
+        /** Activity */
+        Activity: {
+            /** Daily */
+            daily: components["schemas"]["DayCount"][];
+            /** Days */
+            days: number;
+            /** Events */
+            events: components["schemas"]["ActivityEvent"][];
+        };
+        /** ActivityEvent */
+        ActivityEvent: {
+            /** Action */
+            action: string;
+            /** Actor Email */
+            actor_email: string | null;
+            /**
+             * Occurred At
+             * Format: date-time
+             */
+            occurred_at: string;
+            /** Target Id */
+            target_id: string;
+            /** Target Type */
+            target_type: string;
+        };
         /** @enum {string} */
         Applicability: "applies" | "not_applicable";
         /** ApplicabilityRow */
@@ -641,6 +734,25 @@ export interface components {
             /** Reviewer Role */
             reviewer_role: string;
         };
+        /** AssignmentIn */
+        AssignmentIn: {
+            /** Due On */
+            due_on?: string | null;
+            /** Owner User Id */
+            owner_user_id: string | null;
+        };
+        /** AssignmentOut */
+        AssignmentOut: {
+            /**
+             * Assigned At
+             * Format: date-time
+             */
+            assigned_at: string;
+            /** Due On */
+            due_on: string | null;
+            /** Owner User Id */
+            owner_user_id: string | null;
+        };
         /** CheckDetail */
         CheckDetail: {
             /** Check Id */
@@ -760,6 +872,16 @@ export interface components {
              */
             id: string;
             role: components["schemas"]["Role"];
+        };
+        /** DayCount */
+        DayCount: {
+            /** Count */
+            count: number;
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
         };
         /** EvidenceOut */
         EvidenceOut: {
@@ -912,6 +1034,20 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** HistoryPoint */
+        HistoryPoint: {
+            /** Assessed */
+            assessed: number;
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Implemented */
+            implemented: number;
+            /** Not Applicable */
+            not_applicable: number;
         };
         /** @enum {string} */
         Implementation: "not_implemented" | "partially_implemented" | "implemented";
@@ -1114,6 +1250,7 @@ export interface components {
         /** RegisterItem */
         RegisterItem: {
             assessment: components["schemas"]["AssessmentOut"] | null;
+            assignment: components["schemas"]["AssignmentOut"] | null;
             /** Code */
             code: string;
             proposal: components["schemas"]["ProposalOut"];
@@ -1375,6 +1512,18 @@ export interface components {
             /** Title */
             title: string;
         };
+        /** TrendPoint */
+        TrendPoint: {
+            /**
+             * Computed At
+             * Format: date-time
+             */
+            computed_at: string;
+            /** Framework Version */
+            framework_version: string;
+            /** Score */
+            score: number | null;
+        };
         /** ValidationError */
         ValidationError: {
             /** Context */
@@ -1470,6 +1619,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrgOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_activity_api_v1_orgs__org_id__activity_get: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Activity"];
                 };
             };
             /** @description Validation Error */
@@ -1978,6 +2160,38 @@ export interface operations {
             };
         };
     };
+    read_history_api_v1_orgs__org_id__frameworks__framework_key__register_history_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryPoint"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     record_assessment_api_v1_orgs__org_id__frameworks__framework_key__register__requirement_code__post: {
         parameters: {
             query?: never;
@@ -2002,6 +2216,43 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AssessmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_assignment_api_v1_orgs__org_id__frameworks__framework_key__register__requirement_code__assignment_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                requirement_code: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssignmentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignmentOut"];
                 };
             };
             /** @description Validation Error */
@@ -2072,6 +2323,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ScopeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_trend_api_v1_orgs__org_id__frameworks__framework_key__trend_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrendPoint"][];
                 };
             };
             /** @description Validation Error */

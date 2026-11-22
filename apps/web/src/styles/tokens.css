@@ -11,6 +11,7 @@
   --color-accent: #ffe58a;
   --color-accent-fg: #141414;
   --color-link: #23389a;
+  --color-chart: #3a55c9; /* single-series marks; dataviz validator: all checks pass on this surface */
   --color-danger: #a3241c;
   --color-success: #236044;
   --color-warning: #76520d;
@@ -41,6 +42,7 @@
     --color-accent: #ffe58a;
     --color-accent-fg: #141414;
     --color-link: #b9c5ff;
+    --color-chart: #6f86ff; /* single-series marks; dataviz validator: all checks pass on this surface */
     --color-danger: #ffaaa1;
     --color-success: #a1d2b0;
     --color-warning: #eec278;
@@ -60,6 +62,7 @@
   --color-accent: #ffe58a;
   --color-accent-fg: #141414;
   --color-link: #23389a;
+  --color-chart: #3a55c9; /* single-series marks; dataviz validator: all checks pass on this surface */
   --color-danger: #a3241c;
   --color-success: #236044;
   --color-warning: #76520d;

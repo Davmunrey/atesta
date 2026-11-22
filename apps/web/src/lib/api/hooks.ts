@@ -150,3 +150,11 @@ export function useAcceptInvitation() {
     onSuccess: () => client.invalidateQueries({ queryKey: ME }),
   });
 }
+
+/** Organization activity from the audit log (insights spec); admins and owners only. */
+export function useActivity(orgId: string, days: 30 | 90) {
+  return useQuery({
+    queryKey: ["activity", orgId, days], retry: false,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/activity", { params: { path: { org_id: orgId }, query: { days } } })),
+  });
+}

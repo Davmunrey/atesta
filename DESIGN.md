@@ -15,6 +15,7 @@ colors:
   warning: "#76520d"
   danger-fg: "#f4f1ea"
   focus: "#23389a"
+  chart: "#3a55c9"
   dark-bg: "#171715"
   dark-surface: "#22221f"
   dark-fg: "#f4f1ea"
@@ -26,6 +27,7 @@ colors:
   dark-warning: "#eec278"
   dark-danger-fg: "#171715"
   dark-focus: "#ffe58a"
+  dark-chart: "#6f86ff"
 typography:
   display:
     fontFamily: "Newsreader, serif"
@@ -134,6 +136,13 @@ Warm neutrals establish the reading surface; the highlighter marks location and 
 ### Primary
 
 `accent` is the highlighter, paired with `accent-fg` for selected navigation and primary actions. `link` supplies functional blue, including collection progress and the input caret. These are distinct roles, not interchangeable decoration.
+
+### Charts
+
+`chart` is the one hue for single-series data marks (lines, bars, columns), distinct from `link`
+so data never reads as a link. It passed the dataviz palette validator on both surfaces (lightness
+band, chroma floor, contrast ≥ 3:1): `#3a55c9` on `bg` and `#6f86ff` on `dark-bg`. Charts stay
+single-series; counts that compete for colour become figures instead (insights spec).
 
 ### Neutral
 

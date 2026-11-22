@@ -145,6 +145,15 @@
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
+   "requirement_assignments",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
    "scan_check_results",
    "tenant_isolation",
    "ALL",
@@ -352,6 +361,12 @@
   ],
   [
    "requirement_assessments",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
+   "requirement_assignments",
    "",
    "atesta_app",
    "INSERT,SELECT"

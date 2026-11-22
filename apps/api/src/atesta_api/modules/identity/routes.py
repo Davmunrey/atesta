@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 
+from atesta_api.modules.identity.activity import router as activity_router
 from atesta_api.modules.identity.cognito import IdentityProvider
 from atesta_api.modules.identity.context import ContextReason, enter_org_context
 from atesta_api.modules.identity.deps import (
@@ -24,6 +25,7 @@ from atesta_api.platform.tenancy import Organization
 
 router = APIRouter(prefix="/api/v1", tags=["identity"])
 router.include_router(members_router)
+router.include_router(activity_router)
 router.include_router(invitations_router)
 router.include_router(accept_router)
 

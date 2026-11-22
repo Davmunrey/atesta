@@ -327,3 +327,31 @@ class AssessmentReview(TenantMixin, Base):
     recorded_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+class RequirementAssignment(TenantMixin, Base):
+    """Who owns a requirement and by when (insights spec). Append-only; the latest row per
+    requirement is current, and a row with no owner clears it. owner_user_id has no FK to users
+    (ADR-008); membership is checked at write time through identity.api."""
+
+    __tablename__ = "requirement_assignments"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        Index(
+            "ix_requirement_assignments_latest",
+            "organization_id",
+            "framework_key",
+            "requirement_code",
+            "assigned_at",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    framework_key: Mapped[str] = mapped_column(Text)
+    requirement_code: Mapped[str] = mapped_column(Text)
+    owner_user_id: Mapped[uuid.UUID | None]
+    due_on: Mapped[date | None] = mapped_column(Date)
+    assigned_by: Mapped[uuid.UUID]
+    assigned_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )

@@ -59,7 +59,8 @@
       "evidence_not_found": "Alguna evidencia indicada no existe en esta organización.",
       "justification_required": "Indica la justificación: es obligatoria si la medida no aplica o si tu decisión difiere de la propuesta.",
       "requirement_not_found": "Este requisito no existe en el catálogo actual.",
-      "scope_invalid": "El alcance contiene valores que este marco no define."
+      "scope_invalid": "El alcance contiene valores que este marco no define.",
+      "owner_not_member": "Solo una persona de esta organización puede ser responsable."
     },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
@@ -82,7 +83,8 @@
       "last_owner": "La organización necesita al menos un propietario. Nombra otro antes de este cambio.",
       "not_found": "No encontramos lo que buscas, o no tienes acceso.",
       "role_not_allowed": "No puedes asignar ese rol.",
-      "token_in_query": "El enlace de invitación no es válido. Ábrelo de nuevo desde el mensaje recibido."
+      "token_in_query": "El enlace de invitación no es válido. Ábrelo de nuevo desde el mensaje recibido.",
+      "period_invalid": "El periodo debe ser de 30 o 90 días."
     },
     "request": {
       "error": "No se ha podido completar la solicitud. Vuelve a intentarlo.",
@@ -129,7 +131,8 @@
     "yourRole": "Tu rol: {role}",
     "sections": "Secciones de la organización",
     "members": "Miembros",
-    "invitations": "Invitaciones"
+    "invitations": "Invitaciones",
+    "activity": "Actividad"
   },
   "roles": {
     "owner": "Propietario",
@@ -455,6 +458,66 @@
     "performedOn": "Fecha",
     "notes": "Notas",
     "recordedAt": "Registrado el {date}.",
-    "pendingMember": "Pendiente. Una persona administradora puede registrar la autoevaluación."
+    "pendingMember": "Pendiente. Una persona administradora puede registrar la autoevaluación.",
+    "owner": "Responsable",
+    "noOwner": "Sin responsable",
+    "dueOn": "Fecha límite",
+    "changeOwner": "Cambiar",
+    "saveOwner": "Guardar responsable",
+    "overdue": "Vencida",
+    "formerMember": "Antiguo miembro"
+  },
+  "insights": {
+    "title": "Evolución",
+    "assessed": "Evaluadas",
+    "implemented": "Implantadas",
+    "notApplicable": "No aplican",
+    "pending": "Pendientes",
+    "implementedOverTime": "Medidas implantadas a lo largo del tiempo",
+    "historyHelp": "La gráfica aparece cuando haya autoevaluaciones en al menos dos días distintos.",
+    "scoreOverTime": "Puntuación registrada a lo largo del tiempo",
+    "score": "Puntuación",
+    "showTable": "Ver los datos en una tabla",
+    "owners": "Encargados",
+    "unowned": "Pendientes sin responsable",
+    "overdue": "Vencidas",
+    "openByOwner": "Medidas abiertas por responsable",
+    "noOwners": "Todavía no hay medidas asignadas. Asigna un responsable desde cada medida.",
+    "formerMember": "Antiguo miembro"
+  },
+  "activity": {
+    "title": "Actividad",
+    "intro": "Quién ha hecho qué en la organización. Solo lo ven las personas administradoras.",
+    "period": "Periodo",
+    "lastDays": "Últimos {days} días",
+    "loading": "Cargando actividad…",
+    "perDay": "Acciones por día",
+    "events": "Acciones",
+    "showTable": "Ver los datos en una tabla",
+    "latest": "Últimas acciones",
+    "empty": "No hay actividad en este periodo.",
+    "when": "Cuándo",
+    "who": "Quién",
+    "what": "Qué",
+    "system": "Sistema",
+    "adminsOnly": "Solo las personas administradoras pueden ver la actividad.",
+    "actions": {
+      "org_created": "Creó la organización",
+      "invitation_created": "Invitó a una persona",
+      "invitation_accepted": "Aceptó una invitación",
+      "invitation_revoked": "Revocó una invitación",
+      "membership_role_changed": "Cambió un rol",
+      "membership_removed": "Quitó a un miembro",
+      "framework_scope_recorded": "Definió el alcance",
+      "requirement_assessed": "Evaluó una medida",
+      "requirement_assigned": "Asignó un responsable",
+      "framework_assessment_reviewed": "Registró la revisión del responsable de seguridad",
+      "framework_applicability_exported": "Exportó la declaración de aplicabilidad",
+      "control_reviewed": "Revisó un control",
+      "evidence_statement_recorded": "Registró una evidencia",
+      "connection_created": "Creó una conexión",
+      "connection_disconnected": "Desconectó una conexión",
+      "scan_requested": "Solicitó un análisis"
+    }
   }
 }

@@ -19,11 +19,11 @@ const register: Register = {
   axes: { tier: { keys: [], levels: ["LOW", "MID", "HIGH"] }, level: { keys: ["C", "I"], levels: ["L", "M", "H"] } },
   scope: null, review: null, groups_es: [{ prefix: "R", title: "Requisitos sintéticos" }],
   items: [
-    { code: "R1", title_es: "Protección de cuentas de prueba", title_en: null, selection_basis: "tier · Todas", proposal: { decision: "applies", rule: "+ R1", level: "MID" }, assessment: null },
-    { code: "R2", title_es: "Registro de revisión", title_en: null, selection_basis: "tier · Todas", proposal: { decision: "not_applicable", rule: "n.a.", level: "MID" }, assessment: null },
-    { code: "R3", title_es: "Configuración pendiente de evaluar", title_en: null, selection_basis: null, proposal: { decision: "undecided", rule: null, level: null }, assessment: null },
+    { code: "R1", title_es: "Protección de cuentas de prueba", title_en: null, selection_basis: "tier · Todas", proposal: { decision: "applies", rule: "+ R1", level: "MID" }, assessment: null, assignment: null },
+    { code: "R2", title_es: "Registro de revisión", title_en: null, selection_basis: "tier · Todas", proposal: { decision: "not_applicable", rule: "n.a.", level: "MID" }, assessment: null, assignment: null },
+    { code: "R3", title_es: "Configuración pendiente de evaluar", title_en: null, selection_basis: null, proposal: { decision: "undecided", rule: null, level: null }, assessment: null, assignment: null },
     { code: "R4", title_es: "Registro comprobado", title_en: null, selection_basis: null, proposal: { decision: "undecided", rule: null, level: null },
-      assessment: { applicability: "applies", implementation: "implemented", regularly_reviewed: true, justification: "", performed_by: "Ana", performed_on: "2026-11-20", evidence_statement_ids: [], notes: "", recorded_by: "u", recorded_at: "2026-11-21T10:00:00Z" } },
+      assessment: { applicability: "applies", implementation: "implemented", regularly_reviewed: true, justification: "", performed_by: "Ana", performed_on: "2026-11-20", evidence_statement_ids: [], notes: "", recorded_by: "u", recorded_at: "2026-11-21T10:00:00Z" }, assignment: null },
   ],
 };
 const unassessed = { ...framework, snapshot: null };

@@ -22,6 +22,7 @@ export function useRegister(orgId: string, frameworkKey: string) {
 
 function useRegisterMutation<T>(orgId: string, frameworkKey: string, mutationFn: (input: T) => Promise<unknown>) {
   const client = useQueryClient();
+  // Invalidating the register prefix also refreshes its history.
   return useMutation({ mutationFn, onSuccess: () => client.invalidateQueries({ queryKey: key(orgId, frameworkKey) }) });
 }
 
@@ -72,4 +73,47 @@ export function groupByPrefix<T extends { code: string }>(items: T[]): [string, 
     groups.set(prefix, [...(groups.get(prefix) ?? []), item]);
   }
   return [...groups.entries()];
+}
+
+export type HistoryPoint = components["schemas"]["HistoryPoint"];
+export type AssignmentInput = components["schemas"]["AssignmentIn"];
+
+export function useRegisterHistory(orgId: string, frameworkKey: string) {
+  return useQuery({
+    queryKey: [...key(orgId, frameworkKey), "history"], retry: false,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/frameworks/{framework_key}/register/history", { params: path(orgId, frameworkKey) })),
+  });
+}
+
+export function useScoreTrend(orgId: string, frameworkKey: string) {
+  return useQuery({
+    queryKey: ["trend", orgId, frameworkKey], retry: false,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/frameworks/{framework_key}/trend", { params: path(orgId, frameworkKey) })),
+  });
+}
+
+export function useRecordAssignment(orgId: string, frameworkKey: string) {
+  return useRegisterMutation(orgId, frameworkKey, ({ code, body }: { code: string; body: AssignmentInput }) =>
+    unwrap(api.POST("/api/v1/orgs/{org_id}/frameworks/{framework_key}/register/{requirement_code}/assignment", {
+      params: { path: { org_id: orgId, framework_key: frameworkKey, requirement_code: code } }, body,
+    })));
+}
+
+/** Not implemented and past its due date: the one state an owner must act on now. */
+export function isOverdue(item: RegisterItem, today: string): boolean {
+  const due = item.assignment?.due_on;
+  const done = item.assessment?.applicability === "not_applicable" || item.assessment?.implementation === "implemented";
+  return Boolean(due && due < today && !done);
+}
+
+/** Open measures (applicable and not yet implemented) per owner id; null collects the unowned. */
+export function workload(items: RegisterItem[]): Map<string | null, number> {
+  const counts = new Map<string | null, number>();
+  for (const item of items) {
+    const done = item.assessment?.applicability === "not_applicable" || item.assessment?.implementation === "implemented";
+    if (done) continue;
+    const owner = item.assignment?.owner_user_id ?? null;
+    counts.set(owner, (counts.get(owner) ?? 0) + 1);
+  }
+  return counts;
 }

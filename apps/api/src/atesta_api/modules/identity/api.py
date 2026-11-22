@@ -6,6 +6,7 @@ import os
 import httpx
 from fastapi import FastAPI
 
+from atesta_api.modules.identity.activity import is_member
 from atesta_api.modules.identity.bff import SessionCrypto, SessionEndedError, session_ended_handler
 from atesta_api.modules.identity.bff import router as auth_router
 from atesta_api.modules.identity.cognito import (
@@ -58,6 +59,7 @@ __all__ = [
     "require_member",
     "require_role",
     "install_identity",
+    "is_member",
     "router",
     "wire_identity",
 ]
