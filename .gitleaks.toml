@@ -1,0 +1,7 @@
+# gitleaks configuration (SECURITY.md, "History scan"). Default rules, plus one path allowlist.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Vendored third-party agent skills: text reviewed before commit and pinned file by file in .claude/skills/VENDORED.sha256 (ADR-013), so a change fails the tests anyway. Their guides quote algorithm names and sample keys that match generic rules."
+paths = ['''^\.claude/skills/(impeccable|modern-web-guidance|react-best-practices|frontend-design|test-driven-development|systematic-debugging|verification-before-completion)/''']
