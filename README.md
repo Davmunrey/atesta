@@ -45,4 +45,8 @@ ADR in `docs/adr/`.
 
 ## License
 
-Proprietary. All rights reserved. Third-party notices in `THIRD_PARTY_NOTICES.md`.
+Proprietary. All rights reserved: see `LICENSE`. Third-party notices in `THIRD_PARTY_NOTICES.md`.
+
+## Security
+
+How to report a vulnerability, and which control is held by which test: `SECURITY.md`.
