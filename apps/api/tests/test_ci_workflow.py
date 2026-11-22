@@ -194,3 +194,35 @@ def test_a_job_missing_from_the_ruleset_is_caught() -> None:
     workflow = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())
     workflow["jobs"]["planted"] = {"runs-on": "ubuntu-latest"}
     assert ruleset_gaps(ruleset, workflow) == ({"planted"}, set())
+
+
+def test_ci_also_runs_weekly_and_on_demand() -> None:
+    # yaml.safe_load reads the `on:` key as True (YAML 1.1).
+    triggers = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())[True]
+    assert {"push", "pull_request", "schedule", "workflow_dispatch"} <= set(triggers)
+    assert triggers["schedule"][0]["cron"]
+
+
+def test_pull_request_only_work_stays_off_other_runs() -> None:
+    jobs = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())["jobs"]
+    assert jobs["changes"]["if"] == "github.event_name == 'pull_request'"
+    guide = yaml.safe_load((WORKFLOWS / "pr-guide.yml").read_text())["jobs"]["guide"]
+    assert "github.event.workflow_run.event == 'pull_request'" in guide["if"]
+
+
+def test_the_secret_scan_is_pinned_verified_and_redacted() -> None:
+    job = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())["jobs"]["secrets"]
+    assert re.fullmatch(r"\d+\.\d+\.\d+", job["env"]["GITLEAKS_VERSION"])
+    assert re.fullmatch(r"[0-9a-f]{64}", job["env"]["GITLEAKS_SHA256"])
+    run = "\n".join(step.get("run", "") for step in job["steps"])
+    assert "sha256sum --check --strict" in run
+    assert "--redact" in run
+    assert job["steps"][0]["with"]["fetch-depth"] == 0
+
+
+def test_dependabot_leaves_procrastinate_to_a_migration() -> None:
+    # Migration 0009 pins procrastinate's schema.sql digest; a bump without a migration fails
+    # every database test (#122, #123).
+    config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
+    uv = next(u for u in config["updates"] if u["package-ecosystem"] == "uv")
+    assert {"dependency-name": "procrastinate"} in uv["ignore"]

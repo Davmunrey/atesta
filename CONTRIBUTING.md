@@ -32,6 +32,7 @@ uv run ruff format --check .
 uv run mypy
 uv run python -m apps.api.devtools.preview_catalog
 uv run lint-imports
+uv run python -m apps.api.devtools.python_licenses
 uv run pytest -q
 ```
 

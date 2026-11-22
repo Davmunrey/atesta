@@ -67,3 +67,27 @@ def test_dependabot_labels_exist() -> None:
 def test_blank_issues_are_disabled() -> None:
     config = yaml.safe_load((GITHUB / "ISSUE_TEMPLATE" / "config.yml").read_text())
     assert config["blank_issues_enabled"] is False
+
+
+def forms_without_privacy_confirmation(forms: dict[str, dict[str, Any]]) -> list[str]:
+    """Forms with no required checkbox confirming the issue carries no private data (#116)."""
+    missing = []
+    for name, form in forms.items():
+        options = [
+            option
+            for item in form["body"]
+            if item["type"] == "checkboxes"
+            for option in item["attributes"]["options"]
+        ]
+        if not any(o.get("required") and "customer data" in o["label"] for o in options):
+            missing.append(name)
+    return missing
+
+
+def test_every_form_confirms_no_private_data() -> None:
+    assert forms_without_privacy_confirmation(_forms()) == []
+
+
+def test_a_form_without_the_confirmation_is_caught() -> None:
+    planted = {"planted.yml": {"body": [{"type": "textarea", "id": "x"}]}}
+    assert forms_without_privacy_confirmation(planted) == ["planted.yml"]

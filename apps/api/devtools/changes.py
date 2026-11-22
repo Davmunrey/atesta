@@ -61,7 +61,7 @@ def check(added: dict[str, str], changed: list[str], pr_body: str, author: str) 
 
 def _git(root: Path, *args: str) -> str:
     command = ["git", *args]  # git from PATH, as in CI; arguments are fixed, never user text
-    result = subprocess.run(command, cwd=root, check=True, capture_output=True, text=True)  # noqa: S603
+    result = subprocess.run(command, cwd=root, check=True, capture_output=True, text=True)  # noqa: S603 - fixed args
     return result.stdout
 
 

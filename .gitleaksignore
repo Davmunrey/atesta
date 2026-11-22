@@ -1,0 +1,10 @@
+# Reviewed gitleaks matches that are not secrets (SECURITY.md, "History scan"), by fingerprint
+# commit:file:rule:line, so a new secret in the same file is still caught.
+# Truncated PKCS#8 header, no key material (test of the scrubber's key detection)
+6b4a04075826a995f5e9b69be2483a1a547e4dd8:apps/api/tests/db/test_connections_table.py:generic-api-key:85
+973e328ade3b2c94be7fcda450a0c5b600505c88:scanner/tests/test_scrub.py:private-key:16
+973e328ade3b2c94be7fcda450a0c5b600505c88:scanner/tests/test_scrub.py:private-key:50
+# Microsoft Graph permission ids, public identifiers documented by Microsoft
+e06211a4209c334409d7eaac6df371e6cf72786e:packages/core/src/atesta_core/connectors/readonly.py:generic-api-key:55
+# Test session key: base64 of the ASCII string 0123456789abcdef0123456789abcdef
+641e1f3dee0a6fceaea79fd9a759b0b8efe6f3ab:apps/api/tests/db/test_identity_http.py:generic-api-key:116

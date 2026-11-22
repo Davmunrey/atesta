@@ -49,7 +49,7 @@ AI output (prompt injection); customer data processed outside the EU.
 | Audit events are append-only and atomic with the action | definition of done | `apps/api/tests/db/test_audit.py` |
 | AI never decides pass or fail; answers cite retrieved chunks | rules 5–6, ADR-005, ADR-010 | Design rule. The AI module is not built yet (`apps/api/src/atesta_api/modules/ai/api.py`), so no test holds it today |
 | Locked, audited, cooled-down dependencies | ADR-006, ADR-013 | `.github/workflows/ci.yml` job `security` (pip-audit on the exported lock and the scanner requirements, semgrep), `apps/api/tests/test_ci_workflow.py`, `.github/dependabot.yml` (7-day cooldown) |
-| No GPL or AGPL in the web bundle | rule 4, ADR-006 | `apps/web/scripts/check-licenses.ts`, run by CI job `web` |
+| No GPL or AGPL in the web bundle or the Python dependencies; LGPL only where listed | rule 4, ADR-006 | `apps/web/scripts/check-licenses.ts` (CI job `web`), `apps/api/devtools/python_licenses.py` (CI job `python`), `apps/api/tests/test_python_licenses.py` |
 | Strict Content Security Policy for the static web | web-shell spec | `apps/web/scripts/csp.ts`, run by `pnpm build` in CI |
 
 ## Data handling
@@ -93,7 +93,9 @@ credentials; locked installs; a 7-day dependency cooldown; the `main` ruleset as
 2026-11-22 reported 6 matches, all test data or public identifiers: truncated PKCS#8 headers in
 `scanner/tests/test_scrub.py` and `apps/api/tests/db/test_connections_table.py`, Microsoft Graph
 permission ids in `packages/core/src/atesta_core/connectors/readonly.py`, and a test session key
-that decodes to `0123456789abcdef0123456789abcdef`. No credential was found.
+that decodes to `0123456789abcdef0123456789abcdef`. No credential was found. Those six are
+listed by fingerprint in `.gitleaksignore`, and the CI `secrets` job runs the same pinned,
+checksum-verified gitleaks on every pull request's commits and weekly over the whole history.
 
 **Not used:** CodeQL. Its terms allow it only on code released under an OSI-approved licence,
 or with a paid GitHub Advanced Security licence
@@ -106,4 +108,4 @@ Atesta's code is proprietary, so static analysis is semgrep in the CI `security`
   customers. It prepares evidence.
 - The service is not deployed. Infrastructure in `infra/` has not been applied.
 - No independent penetration test has been run.
-- Secret scanning in CI covers only what GitHub scans; gitleaks is not yet a CI step.
+- Secret scans catch known patterns and high-entropy strings, not every secret a human could recognise.

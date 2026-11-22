@@ -27,11 +27,11 @@ class TokenTransientError(Exception):
 
 
 def m365_graph_token(client_id: str, tenant: str, certificate_b64: str) -> str:
-    from azure.core.exceptions import (  # type: ignore[import-not-found]
+    from azure.core.exceptions import (  # type: ignore[import-not-found]  # in the image only
         ClientAuthenticationError,
         ServiceRequestError,
     )
-    from azure.identity import CertificateCredential  # type: ignore[import-not-found]
+    from azure.identity import CertificateCredential  # type: ignore[import-not-found]  # in the image only
 
     try:
         certificate = base64.b64decode(certificate_b64, validate=True)

@@ -35,7 +35,8 @@ jobs:
       checks: read
       statuses: read
     # Fork pull requests get a read-only token; the guide stays quiet there.
-    if: github.event_name == 'workflow_run' || github.event.pull_request.head.repo.full_name == github.repository
+    # A scheduled or manual CI run has no pull request to comment on.
+    if: (github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request') || github.event.pull_request.head.repo.full_name == github.repository
     env:
       PR_GUIDE_COMMIT: 79390c8d569cc38b8fa2f20f95eead9061da512c
       PR_GUIDE_SHA256: 6c2434d21965cd081cae7e9ecce9a70484c6b73b0cad0bc09138c66b7290b852
