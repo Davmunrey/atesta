@@ -42,3 +42,11 @@ body:
       label: Detail and acceptance criteria
     validations:
       required: true
+  - type: checkboxes
+    id: no-private-data
+    attributes:
+      label: Public issue
+      description: This repository is public. Use synthetic data only.
+      options:
+        - label: This issue contains no customer data, personal data, secrets or tokens.
+          required: true
