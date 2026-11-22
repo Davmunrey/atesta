@@ -197,8 +197,8 @@
       "title": "Human review",
       "none": "No review recorded. Until someone records one, this control counts as pending.",
       "status": {
-        "pass": "Meets",
-        "fail": "Does not meet"
+        "pass": "Implemented",
+        "fail": "Not implemented"
       },
       "expired": "Review expired",
       "summary": "Recorded by {author} on {date}. Valid until {until}.",
@@ -227,10 +227,10 @@
     "catalogHelp": "Explanations and references come from the catalog. Atesta reads configuration; changes are applied outside Atesta and must be verified afterward.",
     "states": {
       "all": "All",
-      "fail": "Fail",
+      "fail": "Not passed",
       "manual": "Manual review",
       "not_evaluated": "Not assessed",
-      "pass": "Pass",
+      "pass": "Passed",
       "not_applicable": "Not applicable"
     },
     "observations": {
@@ -267,15 +267,15 @@
     "draft": "Draft",
     "notAssessed": "Not assessed",
     "unscored": "No score",
-    "passed": "Pass",
-    "failed": "Fail",
+    "passed": "Passed",
+    "failed": "Not passed",
     "manual": "Manual review",
     "not_applicable": "Not applicable",
     "scope": "Scope",
     "organizationScope": "Whole organization",
     "assessedAt": "Assessed on",
     "catalog": "Recorded catalog",
-    "scoreHelp": "The percentage compares passing and failing requirements. Manual reviews and not-applicable requirements are excluded.",
+    "scoreHelp": "The percentage compares requirements passed and not passed in the recorded checks. Manual reviews and not-applicable requirements are excluded. It is not a conformity assessment.",
     "notAssessedHelp": "This framework has no recorded assessment for the whole organization yet.",
     "noMatches": "No framework matches your search",
     "clearSearch": "Clear search",

@@ -22,7 +22,7 @@ it("shows the current review, its author and expiry to every member, without a f
   stubApi({ [detailPath]: [200, withPaper(review)], [membersPath]: [200, members] });
   render("member");
   const card = await paperCard();
-  expect(within(card).getByText("Cumple")).toBeTruthy();
+  expect(within(card).getByText("Implantado")).toBeTruthy();
   expect(await within(card).findByText(/ana@example\.com/)).toBeTruthy();
   expect(within(card).getByText(/1 oct 2027/)).toBeTruthy();
   expect(within(card).getByText(/Punto 3 aprobado/)).toBeTruthy();
@@ -48,7 +48,7 @@ it("lets an admin record a review and refreshes the register", async () => {
   render("admin");
   const card = await paperCard();
   fireEvent.click(within(card).getByRole("button", { name: "Registrar revisión" }));
-  fireEvent.click(within(card).getByRole("radio", { name: "Cumple" }));
+  fireEvent.click(within(card).getByRole("radio", { name: "Implantado" }));
   fireEvent.change(within(card).getByLabelText(/Justificación/), { target: { value: "  Acta 12 aprobada.  " } });
   fireEvent.change(within(card).getByLabelText(/Válida hasta/), { target: { value: "2027-10-01" } });
   fireEvent.click(within(card).getByRole("button", { name: "Guardar revisión" }));
@@ -67,7 +67,7 @@ it("shows the API's reason when a review is refused", async () => {
   render("owner");
   const card = await paperCard();
   fireEvent.click(within(card).getByRole("button", { name: "Registrar revisión" }));
-  fireEvent.click(within(card).getByRole("radio", { name: "No cumple" }));
+  fireEvent.click(within(card).getByRole("radio", { name: "No implantado" }));
   fireEvent.change(within(card).getByLabelText(/Justificación/), { target: { value: "Sin plan aprobado." } });
   fireEvent.click(within(card).getByRole("button", { name: "Guardar revisión" }));
   expect(await within(card).findByRole("alert")).toBeTruthy();

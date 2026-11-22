@@ -197,8 +197,8 @@
       "title": "Revisión humana",
       "none": "Sin revisión registrada. Hasta que alguien la registre, este control cuenta como pendiente.",
       "status": {
-        "pass": "Cumple",
-        "fail": "No cumple"
+        "pass": "Implantado",
+        "fail": "No implantado"
       },
       "expired": "Revisión caducada",
       "summary": "Registrada por {author} el {date}. Válida hasta el {until}.",
@@ -227,10 +227,10 @@
     "catalogHelp": "Las explicaciones y referencias proceden del catálogo. Atesta consulta la configuración; los cambios se aplican fuera de Atesta y deben verificarse después.",
     "states": {
       "all": "Todos",
-      "fail": "No cumple",
+      "fail": "No superado",
       "manual": "Revisión manual",
       "not_evaluated": "Sin evaluar",
-      "pass": "Cumple",
+      "pass": "Superado",
       "not_applicable": "No aplica"
     },
     "observations": {
@@ -267,15 +267,15 @@
     "draft": "Borrador",
     "notAssessed": "Sin evaluar",
     "unscored": "Sin puntuación",
-    "passed": "Cumple",
-    "failed": "No cumple",
+    "passed": "Superado",
+    "failed": "No superado",
     "manual": "Revisión manual",
     "not_applicable": "No aplica",
     "scope": "Alcance",
     "organizationScope": "Organización completa",
     "assessedAt": "Evaluado el",
     "catalog": "Catálogo registrado",
-    "scoreHelp": "El porcentaje compara requisitos que cumplen o no cumplen. La revisión manual y «No aplica» quedan fuera.",
+    "scoreHelp": "El porcentaje compara los requisitos superados y no superados en las comprobaciones registradas. La revisión manual y «No aplica» quedan fuera. No es una evaluación de conformidad.",
     "notAssessedHelp": "Este marco aún no tiene una evaluación registrada para toda la organización.",
     "noMatches": "Ningún marco coincide con la búsqueda",
     "clearSearch": "Limpiar búsqueda",

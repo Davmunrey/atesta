@@ -90,7 +90,7 @@ test("framework register supports navigation, guidance, filters, locales and res
   await expect(row).toHaveJSProperty("open", true);
   await expect(row.getByRole("link", { name: "https://example.test/guide" })).toHaveAttribute("rel", "noopener noreferrer");
   await expect(row.getByRole("link", { name: "javascript:alert(1)" })).toHaveCount(0);
-  await page.getByRole("button", { name: "No cumple 1", exact: true }).click();
+  await page.getByRole("button", { name: "No superado 1", exact: true }).click();
   await expect(page.locator("details.requirement-row")).toHaveCount(1);
   await page.getByRole("searchbox").fill("absent");
   await page.getByRole("button", { name: "Limpiar filtros" }).click();
@@ -162,7 +162,7 @@ test("an owner records a human review of a manual control, accessibly and within
     const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
     expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id), `${width}`).toEqual([]);
   }
-  await card.getByRole("radio", { name: "Cumple", exact: true }).check();
+  await card.getByRole("radio", { name: "Implantado", exact: true }).check();
   await card.getByLabel("Justificación").fill("Acta 12 aprobada por la dirección.");
   const post = page.waitForRequest((request) => request.method() === "POST" && request.url().includes("/reviews"));
   await card.getByRole("button", { name: "Guardar revisión" }).click();
