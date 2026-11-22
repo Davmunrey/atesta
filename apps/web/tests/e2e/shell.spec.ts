@@ -70,7 +70,10 @@ test("sign in, create an org, invite, accept as a second user, change role, remo
   await expect(guestPage.getByRole("button", { name: "Aceptar invitación" })).toBeVisible();
   await expectAccessible(guestPage, "accept invitation");
   await guestPage.getByRole("button", { name: "Aceptar invitación" }).click();
-  await expect(guestPage.getByText("Tu rol: Miembro")).toBeVisible();
+  // The role is no longer repeated under the heading (workspace-ux spec); the guest lands in the
+  // organization, and a member sees no invitations section.
+  await expect(guestPage.getByRole("heading", { name: org })).toBeVisible();
+  await expect(guestPage.getByRole("navigation", { name: "Secciones de la organización" }).getByRole("link", { name: "Invitaciones", exact: true })).toHaveCount(0);
   expect(await guestPage.evaluate(() => sessionStorage.getItem("atesta_invite:v1"))).toBeNull();
 
   await ownerPage.goto(orgHome);

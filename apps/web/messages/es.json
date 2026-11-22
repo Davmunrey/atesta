@@ -3,7 +3,8 @@
     "name": "Atesta"
   },
   "footer": {
-    "label": "Información del sitio"
+    "label": "Información del sitio",
+    "readiness": "Preparación de auditorías. No certifica cumplimiento."
   },
   "cookies": {
     "title": "Cookies y almacenamiento",
@@ -106,7 +107,9 @@
     "skipContent": "Saltar al contenido",
     "loading": "Cargando…",
     "signOut": "Cerrar sesión",
-    "signedInAs": "Sesión iniciada como {email}"
+    "signedInAs": "Sesión iniciada como {email}",
+    "account": "Cuenta",
+    "signedInLabel": "Sesión iniciada como"
   },
   "home": {
     "title": "Tus organizaciones",
@@ -258,7 +261,8 @@
       "pass": "Conserva la evidencia y revisa el resultado después de cambios de configuración, alcance o catálogo.",
       "not_applicable": "Conserva la justificación de alcance y revísala cuando cambie la organización o el marco."
     },
-    "technicalDetails": "Detalles técnicos del catálogo"
+    "technicalDetails": "Detalles técnicos del catálogo",
+    "aboutContent": "Sobre este contenido: borrador en revisión, fuentes y alcance"
   },
   "dashboard": {
     "viewRequirements": "Ver requisitos y configuración",

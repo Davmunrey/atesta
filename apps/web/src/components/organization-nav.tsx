@@ -32,13 +32,15 @@ export function OrganizationNav() {
   ];
   return (
     <aside className="organization-context">
-      <label htmlFor={switcherId} className="text-sm text-muted">{t("switcher")}</label>
-      <select id={switcherId} value={org.organization_id} onChange={(event) => switchOrganization(event.target.value)}
-        className="organization-switcher">
-        {memberships.map((membership) => (
-          <option key={membership.organization_id} value={membership.organization_id}>{membership.organization_name}</option>
-        ))}
-      </select>
+      {memberships.length > 1 ? <>
+        <label htmlFor={switcherId} className="text-sm text-muted">{t("switcher")}</label>
+        <select id={switcherId} value={org.organization_id} onChange={(event) => switchOrganization(event.target.value)}
+          className="organization-switcher">
+          {memberships.map((membership) => (
+            <option key={membership.organization_id} value={membership.organization_id}>{membership.organization_name}</option>
+          ))}
+        </select>
+      </> : <p className="organization-name">{org.organization_name}</p>}
       <nav aria-label={t("sections")} className="organization-nav">
         {sections.map(({ label, href }) => (
           <Link key={href} href={href} aria-current={href.split("?")[0] === (pathname === "/app/framework" ? "/app/org" : pathname) ? "page" : undefined}>

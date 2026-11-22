@@ -1,6 +1,6 @@
 id: ens_rd311_2022
 name: ENS · RD 311/2022
-version: 2024-11-06.draft1
+version: 2024-11-06.draft2
 jurisdiction: ES
 source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191
 license_notes: Legislative text excluded from copyright under Article 13 of RDL 1/1996. Official Spanish paragraphs and tables are reproduced from BOE; no CCN guide or third-party diagram is reproduced. English guidance is authored, not an official translation.
@@ -30,3 +30,40 @@ attributes:
     - https://www.boe.es/buscar/act.php?id=BOE-A-1996-8930#a13
     - https://www.ccn-cert.cni.es/es/seguridad-al-dia/novedades-ccn-cert/13155-el-ccn-actualiza-cuatro-guias-ccn-stic-de-su-serie-800-sobre-el-esquema-nacional-de-seguridad.html
   verified_on: '2026-11-13'
+  groups_es:
+    - prefix: org
+      title: Marco organizativo
+    - prefix: op
+      title: Marco operacional
+    - prefix: op.pl
+      title: Planificación
+    - prefix: op.acc
+      title: Control de acceso
+    - prefix: op.exp
+      title: Explotación
+    - prefix: op.ext
+      title: Recursos externos
+    - prefix: op.nub
+      title: Servicios en la nube
+    - prefix: op.cont
+      title: Continuidad del servicio
+    - prefix: op.mon
+      title: Monitorización del sistema
+    - prefix: mp
+      title: Medidas de protección
+    - prefix: mp.if
+      title: Protección de las instalaciones e infraestructuras
+    - prefix: mp.per
+      title: Gestión del personal
+    - prefix: mp.eq
+      title: Protección de los equipos
+    - prefix: mp.com
+      title: Protección de las comunicaciones
+    - prefix: mp.si
+      title: Protección de los soportes de información
+    - prefix: mp.sw
+      title: Protección de las aplicaciones informáticas
+    - prefix: mp.info
+      title: Protección de la información
+    - prefix: mp.s
+      title: Protección de los servicios

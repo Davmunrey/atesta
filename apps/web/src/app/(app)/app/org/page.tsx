@@ -1,7 +1,6 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { Suspense } from "react";
 import { useMe } from "@/components/auth-gate";
 import { ErrorMessage } from "@/components/error-message";
@@ -19,14 +18,12 @@ export default function OrgPage() {
 }
 
 function OrgHome() {
-  const t = useTranslations();
   const { memberships } = useMe();
   const org = selectOrg(memberships, useSearchParams().get("org"));
   if (org === null) return <ErrorMessage error={new ApiError(404, "identity.not_found")} />;
   return (
     <section className="overview-page flex flex-col gap-2">
       <h1 className="page-title">{org.organization_name}</h1>
-      <p className="text-muted">{t("org.yourRole", { role: t(`roles.${org.role}`) })}</p>
       <OverviewDashboard key={org.organization_id} orgId={org.organization_id} />
     </section>
   );

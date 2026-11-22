@@ -37,6 +37,11 @@ class RequirementContext(Content):
     source_sha256: Annotated[str, StringConstraints(pattern=r"^[a-f0-9]{64}$")]
 
 
+class GroupHeading(Content):
+    prefix: Text
+    title: Text
+
+
 class PackContext(Content):
     content_state: Literal["template", "partial", "complete"]
     assessment_enabled: Literal[False]
@@ -51,6 +56,9 @@ class PackContext(Content):
     preparation_controls: list[Text]
     source_refs: list[Link] = Field(min_length=1)
     verified_on: date
+    # Official group headings in the source's order, by requirement-code prefix (rule 10). A list,
+    # because JSONB does not keep object key order.
+    groups_es: list[GroupHeading] = Field(default_factory=list)
 
 
 class PackMetadata(Content):

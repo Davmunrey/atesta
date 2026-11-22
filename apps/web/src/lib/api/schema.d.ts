@@ -894,6 +894,20 @@ export interface components {
             /** Version */
             version: string;
         };
+        /** GroupHeading */
+        GroupHeading: {
+            /** Prefix */
+            prefix: string;
+            /** Title */
+            title: string;
+        };
+        /** GroupTitle */
+        GroupTitle: {
+            /** Prefix */
+            prefix: string;
+            /** Title */
+            title: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -1019,6 +1033,8 @@ export interface components {
              * @enum {string}
              */
             content_state: "template" | "partial" | "complete";
+            /** Groups Es */
+            groups_es?: components["schemas"]["GroupHeading"][];
             /** Limitations En */
             limitations_en: string;
             /** Limitations Es */
@@ -1088,6 +1104,8 @@ export interface components {
             framework_key: string;
             /** Framework Version */
             framework_version: string;
+            /** Groups Es */
+            groups_es: components["schemas"]["GroupTitle"][];
             /** Items */
             items: components["schemas"]["RegisterItem"][];
             review: components["schemas"]["AssessmentReviewOut"] | null;

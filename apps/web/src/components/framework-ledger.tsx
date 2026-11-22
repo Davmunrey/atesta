@@ -8,6 +8,8 @@ import { orgFramework } from "@/lib/org";
 
 type Framework = components["schemas"]["FrameworkSummary"];
 const states = ["passed", "failed", "manual", "not_applicable"] as const;
+/** A handful of frameworks is scanned faster than searched (workspace-ux spec). */
+const SEARCH_FROM = 8;
 
 export function FrameworkLedger({ frameworks, orgId }: { frameworks: Framework[]; orgId: string }) {
   const t = useTranslations("dashboard");
@@ -30,8 +32,10 @@ export function FrameworkLedger({ frameworks, orgId }: { frameworks: Framework[]
       {frameworks.length === 0 ? <div className="dashboard-empty">
         <h3>{t("emptyFrameworks")}</h3><p>{t("emptyFrameworksHelp")}</p>
       </div> : <>
-        <label htmlFor={searchId} className="dashboard-search-label">{t("search")}</label>
-        <input id={searchId} type="search" value={search} onChange={(e) => setSearch(e.target.value)} className="dashboard-search" />
+        {frameworks.length > SEARCH_FROM ? <>
+          <label htmlFor={searchId} className="dashboard-search-label">{t("search")}</label>
+          <input id={searchId} type="search" value={search} onChange={(e) => setSearch(e.target.value)} className="dashboard-search" />
+        </> : null}
         <p className="sr-only" role="status">{t("matches", { count: visible.length })}</p>
         <div className="framework-ledger">
           {visible.map((framework, index) => {

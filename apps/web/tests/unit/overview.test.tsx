@@ -20,7 +20,8 @@ it("explains an empty organization without inventing a score or scan action", as
   stubApi({ [path]: [200, emptyOverview] });
   renderWithProviders(<OverviewDashboard orgId="primary" />);
   expect(await screen.findByText("Todavía no hay marcos publicados")).toBeTruthy();
-  expect(screen.getByText("Aún no hay análisis registrados")).toBeTruthy();
+  // An empty collection panel teaches nothing; it appears once a scan or evidence exists.
+  expect(screen.queryByText("Aún no hay análisis registrados")).toBeNull();
   expect(screen.queryByText(/%/)).toBeNull();
   expect(screen.queryByRole("button", { name: /Iniciar análisis|Exportar/ })).toBeNull();
 });
@@ -40,8 +41,16 @@ it("distinguishes zero, unscored and missing snapshots, retaining recorded prove
   expect(screen.getByText("Entorno de desarrollo")).toBeTruthy();
 });
 
-it("filters frameworks and clears an empty result", async () => {
+it("offers search only once there are more frameworks than a glance covers", async () => {
   stubApi({ [path]: [200, overview] });
+  renderWithProviders(<OverviewDashboard orgId="primary" />);
+  await screen.findByText("Synthetic Alpha");
+  expect(screen.queryByRole("searchbox", { name: "Buscar marco" })).toBeNull();
+});
+
+it("filters frameworks and clears an empty result", async () => {
+  const extra = Array.from({ length: 5 }, (_, i) => ({ ...overview.frameworks[3]!, key: `synthetic_extra_${i}`, name: `Synthetic Extra ${i}` }));
+  stubApi({ [path]: [200, { ...overview, frameworks: [...overview.frameworks, ...extra] }] });
   renderWithProviders(<OverviewDashboard orgId="primary" />);
   const input = await screen.findByRole("searchbox", { name: "Buscar marco" });
   fireEvent.change(input, { target: { value: " ALPHA " } });

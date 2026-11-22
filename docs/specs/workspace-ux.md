@@ -38,6 +38,25 @@ The register the API records has no screen. The framework page is a single 10,70
 - [ ] **Standards:** ES and EN strings; 2.75 rem targets; visible labels; no horizontal overflow at 375 px;
       DESIGN.md tokens only.
 
+## Second pass: distill (owner, 2026-11-22: "no tenga más información de la cuenta, sino la necesaria")
+
+Applied with the vendored impeccable references (Operate mode, `distill.md`, `craft-floor.md`) and
+modern-web-guidance (`ui-components/menu.md`):
+
+- [ ] The header shows the language and one account button. The signed-in email and sign-out live
+      in a popover (`popover` and `popovertarget`, Baseline Widely available; light dismiss, Esc and
+      focus return come from the platform; anchor positioning only under `@supports`).
+- [ ] One organization shows its name, not a switcher; more than one keeps the switcher. The name
+      hides below the rail breakpoint, where the page heading already says it.
+- [ ] The overview drops the role line, the empty collection panel and the search below nine
+      frameworks.
+- [ ] "Not a certification" moves into the footer, once.
+- [ ] On a framework with a register, the content-status block folds into "Sobre este contenido".
+- [ ] Groups carry the pack's official headings (\`groups_es\`, copied from the BOE, an ordered list
+      because JSONB loses object key order) in the source's order. Changing the pack bumps its
+      version (\`2024-11-06.draft2\`), because imported drafts are immutable.
+- [ ] Every value keeps to DESIGN.md: no shadows and no colour outside the tokens, both checked by tests.
+
 ## Out of scope
 
 - Named group titles from the catalog (needs a pack field; the prefix is shown meanwhile).

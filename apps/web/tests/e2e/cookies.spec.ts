@@ -56,6 +56,8 @@ test("rendered cookie lifetimes match actual sign-in, language choice and sign-o
   await expect(page.getByRole("heading", { name: "Crea tu organización" })).toBeVisible();
   await page.getByRole("button", { name: "English" }).click();
   await expectLifetime(context, "atesta_locale", inventory.atesta_locale!, false);
+  // Sign-out lives in the account popover (workspace-ux spec).
+  await page.getByRole("button", { name: "Account" }).click();
   await page.getByRole("link", { name: "Sign out" }).click();
   await page.waitForURL("/");
   expect((await context.cookies()).map(({ name }) => name)).toEqual(["atesta_locale"]);

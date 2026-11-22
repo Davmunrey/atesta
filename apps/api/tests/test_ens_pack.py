@@ -44,3 +44,31 @@ def test_ens_preserves_dimension_levels_and_alternative_reinforcements() -> None
     assert len(results) == 73
     assert {r.status for r in results} == {Status.MANUAL}
     assert {m.requirement_id for m in pack.mappings} == requirements.keys()
+
+
+def test_every_requirement_group_has_its_official_heading() -> None:
+    """A pack that declares group headings covers every code prefix (workspace-ux spec)."""
+    expected: set[str] = set()
+    for provider in ("m365", "googleworkspace"):
+        expected.update(
+            json.loads((ROOT / "scanner/expected/5.49.0" / f"{provider}.json").read_text())[
+                provider
+            ]
+        )
+    catalog = read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.49.0")
+    for pack in catalog.packs:
+        titles = {g.prefix: g.title for g in pack.metadata.attributes.groups_es}
+        if not titles:
+            continue
+        prefixes = {r.id.rsplit(".", 1)[0] for r in pack.requirements}
+        assert prefixes <= titles.keys(), (pack.metadata.id, sorted(prefixes - titles.keys()))
+    ens = next(p for p in catalog.packs if p.metadata.id == "ens_rd311_2022")
+    # Copied from the BOE text (catalog/frameworks/ens_rd311_2022/SOURCES.md, Group headings).
+    groups = [g.prefix for g in ens.metadata.attributes.groups_es]
+    titles = {g.prefix: g.title for g in ens.metadata.attributes.groups_es}
+    assert titles["op.acc"] == "Control de acceso"
+    assert titles["mp.eq"] == "Protección de los equipos"
+    # The BOE's order: organizational, then operational, then protective measures.
+    assert (
+        groups.index("org") < groups.index("op.pl") < groups.index("op.mon") < groups.index("mp.if")
+    )

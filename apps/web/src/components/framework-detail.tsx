@@ -45,7 +45,10 @@ export function FrameworkDetailView({ orgId, frameworkKey, role = "member" }: { 
         </div> : register ? null : <p className="framework-notice">{t("unassessed")}</p>}
         {query.data.snapshot && !query.data.catalog_matches_snapshot ? <p className="framework-notice">{t("catalogChanged")}</p> : null}
         {register ? <SelfAssessmentPanel register={register} orgId={orgId} frameworkKey={frameworkKey} canEdit={canEdit} /> : null}
-        {query.data.catalog_context ? <CatalogPreparation context={query.data.catalog_context} requirements={query.data.requirements.length} controls={query.data.preparation_controls?.length ?? 0} /> : null}
+        {query.data.catalog_context ? register
+          ? <details className="catalog-about"><summary>{t("aboutContent")}</summary>
+            <CatalogPreparation context={query.data.catalog_context} requirements={query.data.requirements.length} controls={query.data.preparation_controls?.length ?? 0} /></details>
+          : <CatalogPreparation context={query.data.catalog_context} requirements={query.data.requirements.length} controls={query.data.preparation_controls?.length ?? 0} /> : null}
         <RequirementRegister key={`${orgId}:${frameworkKey}`} detail={query.data} register={register} review={{ orgId, frameworkKey, canReview: canEdit }} />
         <PreparationGuides orgId={orgId} controls={query.data.preparation_controls ?? []} />
         <div className="framework-catalog"><h2>{t("catalogTitle")}</h2>
@@ -53,7 +56,6 @@ export function FrameworkDetailView({ orgId, frameworkKey, role = "member" }: { 
           <details className="technical-details"><summary>{t("technicalDetails")}</summary>
             <p>{t("currentVersion", { version: query.data.version, catalog: query.data.catalog_version ?? t("unknownVersion") })}</p></details>
         </div>
-        <p className="dashboard-note">{dashboard("assessmentNote")}</p>
       </>}
   </section>;
 }
@@ -81,6 +83,7 @@ function RequirementRegister({ detail, register, review }: { detail: Detail; reg
   const [filter, setFilter] = useState<Filter>("all");
   const [assessment, setAssessment] = useState<AssessmentFilter>("all");
   const items = new Map((register?.items ?? []).map((item) => [item.code, item]));
+  const titles = new Map((register?.groups_es ?? []).map((g) => [g.prefix, g.title]));
   const needle = search.trim().toLocaleLowerCase(locale);
   const visible = detail.requirements.filter((r) => (filter === "all" || r.status === filter)
     && (!register || matchesAssessment(items.get(r.code), assessment))
@@ -102,9 +105,11 @@ function RequirementRegister({ detail, register, review }: { detail: Detail; reg
       <label htmlFor={searchId} className="dashboard-search-label">{t("search")}</label>
       <input id={searchId} type="search" className="dashboard-search" value={search} onChange={(e) => setSearch(e.target.value)} />
       <p className="requirement-match" role="status">{t("matches", { shown: visible.length, total: detail.requirements.length })}</p>
-      {register ? <div className="requirement-list">{groupByPrefix([...visible].sort((a, b) => a.code.localeCompare(b.code, locale, { numeric: true }))).map(([prefix, group]) =>
-        <section key={prefix} className="requirement-group" aria-label={prefix}>
-          <h3 className="requirement-group-heading"><span className="requirement-code">{prefix}</span>
+      {register ? <div className="requirement-list">{orderGroups(groupByPrefix([...visible].sort((a, b) => a.code.localeCompare(b.code, locale, { numeric: true }))), register.groups_es.map((g) => g.prefix)).map(([prefix, group]) =>
+        <section key={prefix} className="requirement-group" aria-label={titles.get(prefix) ?? prefix}>
+          <h3 className="requirement-group-heading"><span>{titles.get(prefix)
+            ? <><span lang="es">{titles.get(prefix)}</span> <span className="requirement-code">{prefix}</span></>
+            : <span className="requirement-code">{prefix}</span>}</span>
             <span className="text-sm text-muted">{r9("groupProgress", { assessed: group.filter((r) => items.get(r.code)?.assessment).length, total: group.length })}</span></h3>
           {group.map((requirement) => <RequirementRow key={requirement.code} requirement={requirement} initiallyOpen={false} review={review} item={items.get(requirement.code)} recorded={Boolean(detail.snapshot)} />)}
         </section>)}</div>
@@ -154,6 +159,12 @@ function RequirementRow({ requirement: r, initiallyOpen, review, item, recorded 
       </Collapsible>
     </div>
   </details>;
+}
+
+/** Groups in the order the pack declares its headings (the source's own order), then the rest. */
+function orderGroups<T>(groups: [string, T][], declared: string[]): [string, T][] {
+  const rank = (prefix: string) => { const i = declared.indexOf(prefix); return i === -1 ? declared.length : i; };
+  return [...groups].sort(([a], [b]) => rank(a) - rank(b));
 }
 
 /** Inline when nothing competes for attention; a disclosure when the assessment form leads. */

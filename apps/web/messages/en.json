@@ -3,7 +3,8 @@
     "name": "Atesta"
   },
   "footer": {
-    "label": "Site information"
+    "label": "Site information",
+    "readiness": "Audit readiness. It does not certify compliance."
   },
   "cookies": {
     "title": "Cookies and storage",
@@ -106,7 +107,9 @@
     "skipContent": "Skip to content",
     "loading": "Loading…",
     "signOut": "Sign out",
-    "signedInAs": "Signed in as {email}"
+    "signedInAs": "Signed in as {email}",
+    "account": "Account",
+    "signedInLabel": "Signed in as"
   },
   "home": {
     "title": "Your organizations",
@@ -258,7 +261,8 @@
       "pass": "Retain the evidence and review the result after changes to configuration, scope or catalog.",
       "not_applicable": "Retain the scope justification and revisit it when the organization or framework changes."
     },
-    "technicalDetails": "Catalog technical details"
+    "technicalDetails": "Catalog technical details",
+    "aboutContent": "About this content: draft under review, sources and scope"
   },
   "dashboard": {
     "viewRequirements": "View requirements and configuration",
