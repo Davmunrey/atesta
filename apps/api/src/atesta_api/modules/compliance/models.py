@@ -22,6 +22,7 @@ from sqlalchemy import (
     PrimaryKeyConstraint,
     Text,
     UniqueConstraint,
+    Uuid,
     func,
     text,
 )
@@ -231,5 +232,98 @@ class ControlReview(TenantMixin, Base):
     valid_until: Mapped[date] = mapped_column(Date)
     reviewed_by: Mapped[uuid.UUID]
     reviewed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class FrameworkScope(TenantMixin, Base):
+    """An organization's selection-axis values for a framework (requirement-register spec).
+
+    Append-only: the latest row for a framework is the current scope. framework_key has no FK to
+    the global catalog and decided_by none to users (ADR-008); both are checked at write time.
+    """
+
+    __tablename__ = "framework_scopes"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        Index("ix_framework_scopes_latest", "organization_id", "framework_key", "decided_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    framework_key: Mapped[str] = mapped_column(Text)
+    axis_values: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    decided_by: Mapped[uuid.UUID]
+    decided_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class RequirementAssessment(TenantMixin, Base):
+    """The organization's own assessment of one requirement (requirement-register spec).
+
+    Append-only; the latest row per requirement is current. Free text is customer content (rule 2).
+    """
+
+    __tablename__ = "requirement_assessments"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        CheckConstraint("applicability IN ('applies', 'not_applicable')", name="applicability"),
+        CheckConstraint(
+            "implementation IN ('not_implemented', 'partially_implemented', 'implemented')",
+            name="implementation",
+        ),
+        CheckConstraint("char_length(justification) <= 2000", name="justification_length"),
+        CheckConstraint("char_length(performed_by) <= 200", name="performed_by_length"),
+        CheckConstraint("char_length(notes) <= 2000", name="notes_length"),
+        CheckConstraint("cardinality(evidence_statement_ids) <= 50", name="evidence_count"),
+        Index(
+            "ix_requirement_assessments_latest",
+            "organization_id",
+            "framework_key",
+            "requirement_code",
+            "recorded_at",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    framework_key: Mapped[str] = mapped_column(Text)
+    requirement_code: Mapped[str] = mapped_column(Text)
+    applicability: Mapped[str] = mapped_column(Text)
+    implementation: Mapped[str] = mapped_column(Text)
+    regularly_reviewed: Mapped[bool] = mapped_column(Boolean)
+    justification: Mapped[str] = mapped_column(Text, server_default="")
+    performed_by: Mapped[str] = mapped_column(Text, server_default="")
+    performed_on: Mapped[date | None] = mapped_column(Date)
+    evidence_statement_ids: Mapped[list[uuid.UUID]] = mapped_column(
+        ARRAY(Uuid), server_default=text("'{}'::uuid[]")
+    )
+    notes: Mapped[str] = mapped_column(Text, server_default="")
+    recorded_by: Mapped[uuid.UUID]
+    recorded_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class AssessmentReview(TenantMixin, Base):
+    """The organization's own reviewer's analysis of its self-assessment (requirement-register
+    spec). Atesta records it; the customer's own reviewer is the reviewer, never Atesta."""
+
+    __tablename__ = "assessment_reviews"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        CheckConstraint("char_length(reviewer_name) BETWEEN 1 AND 200", name="reviewer_name"),
+        CheckConstraint("char_length(reviewer_role) BETWEEN 1 AND 200", name="reviewer_role"),
+        CheckConstraint("char_length(conclusions) BETWEEN 1 AND 4000", name="conclusions"),
+        CheckConstraint("char_length(corrective_actions) <= 4000", name="corrective_actions"),
+        Index("ix_assessment_reviews_latest", "organization_id", "framework_key", "recorded_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    framework_key: Mapped[str] = mapped_column(Text)
+    reviewer_name: Mapped[str] = mapped_column(Text)
+    reviewer_role: Mapped[str] = mapped_column(Text)
+    reviewed_on: Mapped[date] = mapped_column(Date)
+    conclusions: Mapped[str] = mapped_column(Text)
+    corrective_actions: Mapped[str] = mapped_column(Text, server_default="")
+    recorded_by: Mapped[uuid.UUID]
+    recorded_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

@@ -18,6 +18,9 @@ TENANT = frozenset(
         "scan_check_results",
         "findings",
         "control_reviews",
+        "framework_scopes",
+        "requirement_assessments",
+        "assessment_reviews",
     }
 )
 APPEND_ONLY = frozenset(
@@ -30,6 +33,9 @@ APPEND_ONLY = frozenset(
         "scan_check_results",
         "findings",
         "control_reviews",
+        "framework_scopes",
+        "requirement_assessments",
+        "assessment_reviews",
     }
 )
 GLOBAL_IDENTITY = frozenset({"users"})

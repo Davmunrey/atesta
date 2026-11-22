@@ -54,7 +54,11 @@
     "compliance": {
       "control_not_found": "Este control no existe o ya no está activo en el catálogo.",
       "control_not_manual": "Este control se evalúa con comprobaciones automáticas; no admite revisión manual.",
-      "not_found": "Este marco no está disponible. Vuelve al resumen y elige un marco publicado."
+      "not_found": "Este marco no está disponible. Vuelve al resumen y elige un marco publicado.",
+      "evidence_not_found": "Alguna evidencia indicada no existe en esta organización.",
+      "justification_required": "Indica la justificación: es obligatoria si la medida no aplica o si tu decisión difiere de la propuesta.",
+      "requirement_not_found": "Este requisito no existe en el catálogo actual.",
+      "scope_invalid": "El alcance contiene valores que este marco no define."
     },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {

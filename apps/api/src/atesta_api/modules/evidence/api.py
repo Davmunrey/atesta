@@ -22,6 +22,24 @@ def install_evidence(app: FastAPI) -> None:
     app.include_router(router)
 
 
+def statements_in_org(
+    session: Session, organization_id: uuid.UUID, evidence_ids: Iterable[uuid.UUID]
+) -> set[uuid.UUID]:
+    """The given evidence ids that are statements of this organization (requirement register)."""
+    ids = set(evidence_ids)
+    if not ids:
+        return set()
+    from atesta_api.modules.evidence.models import EvidenceStatement
+
+    rows = session.scalars(
+        select(EvidenceStatement.evidence_id).where(
+            EvidenceStatement.organization_id == organization_id,
+            EvidenceStatement.evidence_id.in_(ids),
+        )
+    )
+    return set(rows)
+
+
 def evidence_count(session: Session, organization_id: uuid.UUID) -> int:
     """Count tenant records without loading document contents or storage metadata."""
     return session.execute(
