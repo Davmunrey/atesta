@@ -55,7 +55,7 @@ it("lets an admin record a review and refreshes the register", async () => {
   expect(await within(await paperCard()).findByRole("status")).toBeTruthy();
   const post = requests.find((r) => r.method === "POST")!;
   expect(await post.json()).toEqual({ status: "pass", rationale: "Acta 12 aprobada.", valid_until: "2027-10-01" });
-  expect(requests.filter((r) => r.method === "GET" && r.url.includes("/frameworks/"))).toHaveLength(2);
+  expect(requests.filter((r) => r.method === "GET" && new URL(r.url).pathname.endsWith("/frameworks/synthetic_alpha"))).toHaveLength(2);
 });
 
 it("shows the API's reason when a review is refused", async () => {

@@ -88,7 +88,7 @@ test("framework register supports navigation, guidance, filters, locales and res
   await expect(row).toHaveJSProperty("open", false);
   await row.locator("summary").press("Enter");
   await expect(row).toHaveJSProperty("open", true);
-  await expect(row.getByRole("link", { name: "https://example.test/guide" })).toHaveAttribute("rel", "noopener noreferrer");
+  await expect(row.getByRole("link", { name: "example.test · guide" })).toHaveAttribute("rel", "noopener noreferrer");
   await expect(row.getByRole("link", { name: "javascript:alert(1)" })).toHaveCount(0);
   await page.getByRole("button", { name: "No superado 1", exact: true }).click();
   await expect(page.locator("details.requirement-row")).toHaveCount(1);
@@ -123,7 +123,7 @@ test("preparation exposes scope, missing work, official rules and configuration 
     ...preparationFramework, requirements: [{ ...framework.requirements[0], status: "not_evaluated", guidance: requirementGuidance }],
   } }));
   await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
-  await expect(page.getByText(/Evaluación desactivada/)).toBeVisible();
+  await expect(page.getByText(/Puntuación automática desactivada/)).toBeVisible();
   for (const label of ["Alcance y aplicabilidad", "Qué falta para evaluar", "Fuentes oficiales"]) await page.locator("summary").getByText(label, { exact: true }).click();
   await expect(page.getByText("Faltan requisitos y mapeos revisados.")).toBeVisible();
   await page.getByRole("link", { name: "1 guías de preparación" }).click();

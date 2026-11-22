@@ -1085,6 +1085,10 @@
             "title": "Name",
             "type": "string"
           },
+          "requirements": {
+            "title": "Requirements",
+            "type": "integer"
+          },
           "snapshot": {
             "anyOf": [
               {
@@ -1109,6 +1113,7 @@
           "name",
           "version",
           "status",
+          "requirements",
           "snapshot"
         ],
         "title": "FrameworkSummary",

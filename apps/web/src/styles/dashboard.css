@@ -73,4 +73,14 @@
     .dashboard-toolbar { gap: 0.75rem; margin-bottom: 1.5rem; }
     .framework-row > summary { column-gap: 0.5rem; }
   }
+
+  /* First steps (workspace-ux spec): one highlighted next action on a quiet surface. */
+  .first-steps { margin-bottom: 2.5rem; padding: 1.5rem; background: var(--color-surface); border-radius: 0.375rem; }
+  .first-steps h2 { font-size: 1.25rem; font-weight: 500; }
+  .first-steps ol { list-style: none; counter-reset: step; display: grid; gap: 0.5rem; margin-block: 1rem; }
+  @media (min-width: 64rem) { .first-steps ol { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; } }
+  .first-steps li { counter-increment: step; display: flex; gap: 0.625rem; align-items: baseline; padding-block-start: 0.5rem; border-block-start: 1px solid var(--color-border); }
+  .first-steps li::before { content: counter(step); flex-shrink: 0; display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem; border: 1px solid var(--color-border); border-radius: 999px; font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+  .first-steps li[data-done="true"]::before { content: "✓"; background: var(--color-accent); color: var(--color-accent-fg); border-color: var(--color-fg); }
+  .first-steps-cta { display: inline-flex; align-items: center; }
 }

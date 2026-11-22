@@ -10,10 +10,10 @@ const snapshot = {
 export const overview: components["schemas"]["OverviewOut"] = {
   development: true, evidence_count: 4,
   frameworks: [
-    { key: "synthetic_alpha", name: "Synthetic Alpha", version: "2", status: "released", snapshot },
-    { key: "synthetic_beta", name: "Synthetic Beta", version: "1", status: "draft", snapshot: { ...snapshot, id: "other", score: 0, passed: 0, failed: 3 } },
-    { key: "synthetic_gamma", name: "Synthetic Gamma", version: "1", status: "released", snapshot: { ...snapshot, id: "manual", score: null, passed: 0, failed: 0, manual: 4 } },
-    { key: "synthetic_delta", name: "Synthetic Delta", version: "1", status: "released", snapshot: null },
+    { key: "synthetic_alpha", name: "Synthetic Alpha", version: "2", status: "released", requirements: 5, snapshot },
+    { key: "synthetic_beta", name: "Synthetic Beta", version: "1", status: "draft", requirements: 3, snapshot: { ...snapshot, id: "other", score: 0, passed: 0, failed: 3 } },
+    { key: "synthetic_gamma", name: "Synthetic Gamma", version: "1", status: "released", requirements: 2, snapshot: { ...snapshot, id: "manual", score: null, passed: 0, failed: 0, manual: 4 } },
+    { key: "synthetic_delta", name: "Synthetic Delta", version: "1", status: "released", requirements: 0, snapshot: null },
   ],
   scans: [
     { id: snapshot.scan_id, provider: "m365", status: "partial", evaluated_checks: 7, expected_checks: 10, queued_at: "2026-11-13T09:45:00Z", finished_at: "2026-11-13T10:00:00Z" },
