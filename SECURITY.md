@@ -93,7 +93,9 @@ credentials; locked installs; a 7-day dependency cooldown; the `main` ruleset as
 2026-11-22 reported 6 matches, all test data or public identifiers: truncated PKCS#8 headers in
 `scanner/tests/test_scrub.py` and `apps/api/tests/db/test_connections_table.py`, Microsoft Graph
 permission ids in `packages/core/src/atesta_core/connectors/readonly.py`, and a test session key
-that decodes to `0123456789abcdef0123456789abcdef`. No credential was found.
+that decodes to `0123456789abcdef0123456789abcdef`. No credential was found. Those six are
+listed by fingerprint in `.gitleaksignore`, and the CI `secrets` job runs the same pinned,
+checksum-verified gitleaks on every pull request's commits and weekly over the whole history.
 
 **Not used:** CodeQL. Its terms allow it only on code released under an OSI-approved licence,
 or with a paid GitHub Advanced Security licence
@@ -106,4 +108,4 @@ Atesta's code is proprietary, so static analysis is semgrep in the CI `security`
   customers. It prepares evidence.
 - The service is not deployed. Infrastructure in `infra/` has not been applied.
 - No independent penetration test has been run.
-- Secret scanning in CI covers only what GitHub scans; gitleaks is not yet a CI step.
+- Secret scans catch known patterns and high-entropy strings, not every secret a human could recognise.

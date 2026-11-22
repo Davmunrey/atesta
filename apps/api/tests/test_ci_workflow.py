@@ -208,3 +208,13 @@ def test_pull_request_only_work_stays_off_other_runs() -> None:
     assert jobs["changes"]["if"] == "github.event_name == 'pull_request'"
     guide = yaml.safe_load((WORKFLOWS / "pr-guide.yml").read_text())["jobs"]["guide"]
     assert "github.event.workflow_run.event == 'pull_request'" in guide["if"]
+
+
+def test_the_secret_scan_is_pinned_verified_and_redacted() -> None:
+    job = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())["jobs"]["secrets"]
+    assert re.fullmatch(r"\d+\.\d+\.\d+", job["env"]["GITLEAKS_VERSION"])
+    assert re.fullmatch(r"[0-9a-f]{64}", job["env"]["GITLEAKS_SHA256"])
+    run = "\n".join(step.get("run", "") for step in job["steps"])
+    assert "sha256sum --check --strict" in run
+    assert "--redact" in run
+    assert job["steps"][0]["with"]["fetch-depth"] == 0
