@@ -1,0 +1,32 @@
+{
+  "statement": {
+    "not_a_certification": "Generado por Atesta a partir de los registros de la propia organización. No es una certificación."
+  },
+  "applicability": {
+    "framework": "Marco",
+    "catalog_version": "Versión del catálogo",
+    "signer": "Firma del responsable de la seguridad (nombre, cargo, fecha y firma)",
+    "columns": {
+      "code": "Código",
+      "title_es": "Medida (título oficial)",
+      "decision": "Decisión",
+      "decided_by_person": "Decidido por la organización",
+      "rule": "Regla oficial",
+      "level": "Nivel",
+      "justification": "Justificación",
+      "implementation": "Implantación"
+    },
+    "decision": {
+      "applies": "Aplica",
+      "not_applicable": "No aplica",
+      "undecided": "Sin decidir"
+    },
+    "implementation": {
+      "implemented": "Implantada",
+      "partially_implemented": "Implantada en parte",
+      "not_implemented": "No implantada"
+    },
+    "yes": "Sí",
+    "no": "No"
+  }
+}

@@ -126,7 +126,7 @@ test("preparation exposes scope, missing work, official rules and configuration 
   await expect(page.getByText(/Puntuación automática desactivada/)).toBeVisible();
   for (const label of ["Alcance y aplicabilidad", "Qué falta para evaluar", "Fuentes oficiales"]) await page.locator("summary").getByText(label, { exact: true }).click();
   await expect(page.getByText("Faltan requisitos y mapeos revisados.")).toBeVisible();
-  await page.getByRole("link", { name: "1 guías de preparación" }).click();
+  await page.getByRole("link", { name: "1 guía de preparación" }).click();
   const control = page.locator(".preparation-control");
   await control.locator("summary").press("Enter");
   await expect(control.getByText("synthetic_access_check")).toBeVisible();

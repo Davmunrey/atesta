@@ -3,13 +3,14 @@ import { render } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
 import { vi } from "vitest";
+import en from "../../messages/en.json";
 import es from "../../messages/es.json";
 
-export function renderWithProviders(ui: ReactNode) {
+export function renderWithProviders(ui: ReactNode, locale: "es" | "en" = "es") {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={client}>
-      <NextIntlClientProvider locale="es" messages={es} timeZone="UTC">
+      <NextIntlClientProvider locale={locale} messages={locale === "es" ? es : en} timeZone="UTC">
         {ui}
       </NextIntlClientProvider>
     </QueryClientProvider>,

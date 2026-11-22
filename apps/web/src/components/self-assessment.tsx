@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useId, useState, type FormEvent } from "react";
 import { useMembers } from "@/lib/api/hooks";
 import {
@@ -14,6 +14,7 @@ type Ctx = { orgId: string; frameworkKey: string; canEdit: boolean };
 /** Scope, progress, reviewer sign-off and export for one framework (requirement-register spec). */
 export function SelfAssessmentPanel({ register, ...ctx }: Ctx & { register: Register }) {
   const t = useTranslations("register");
+  const locale = useLocale();
   const progress = registerProgress(register.items);
   return <section aria-labelledby="self-assessment-heading" className="self-assessment">
     <h2 id="self-assessment-heading">{t("title")}</h2>
@@ -31,7 +32,7 @@ export function SelfAssessmentPanel({ register, ...ctx }: Ctx & { register: Regi
         <h3>{t("stepExport")}</h3>
         <p className="text-sm text-muted">{t("exportHelp")}</p>
         <p className="export-links">
-          <a className="dashboard-button" href={applicabilityUrl(ctx.orgId, ctx.frameworkKey, "csv")} download>{t("exportCsv")}</a>
+          <a className="dashboard-button" href={applicabilityUrl(ctx.orgId, ctx.frameworkKey, "csv", locale)} download>{t("exportCsv")}</a>
           <a className="text-link underline" href={applicabilityUrl(ctx.orgId, ctx.frameworkKey, "json")} target="_blank" rel="noopener">{t("exportJson")}</a>
         </p>
       </li>
@@ -39,9 +40,17 @@ export function SelfAssessmentPanel({ register, ...ctx }: Ctx & { register: Regi
   </section>;
 }
 
+/** The pack's readable label for an official scope term; the bare term (Spanish) when it has none. */
+function useTermLabel(register: Register) {
+  const english = useLocale() === "en";
+  const labels = new Map(register.term_labels.map((l) => [l.term, english ? l.en : l.es]));
+  return (term: string) => ({ text: labels.get(term) ?? term, lang: labels.has(term) ? undefined : "es" });
+}
+
 function ScopeStep({ register, orgId, frameworkKey, canEdit }: Ctx & { register: Register }) {
   const t = useTranslations("register");
   const format = useFormatter();
+  const term = useTermLabel(register);
   const save = useRecordScope(orgId, frameworkKey);
   const axes = Object.entries(register.axes).map(([axis, def]) => [axis, { keys: def.keys ?? [], levels: def.levels ?? [] }] as const);
   const current = (register.scope?.axis_values ?? {}) as Record<string, unknown>;
@@ -54,20 +63,21 @@ function ScopeStep({ register, orgId, frameworkKey, canEdit }: Ctx & { register:
   })));
   if (axes.length === 0) return <><h3>{t("stepScope")}</h3><p className="text-sm text-muted">{t("noAxes")}</p></>;
   const submit = (e: FormEvent) => { e.preventDefault(); save.mutate(values as AxisValues, { onSuccess: () => setEditing(false) }); };
-  const summary = axes.map(([axis, def]) => def.keys.length === 0 ? `${axis}: ${String(current[axis] ?? "—")}`
-    : `${axis}: ${def.keys.map((k) => `${k} ${((current[axis] ?? {}) as Record<string, string>)[k] ?? "—"}`).join(" · ")}`).join(" — ");
+  const show = (value: unknown) => (typeof value === "string" ? term(value).text : "—");
+  const summary = axes.map(([axis, def]) => def.keys.length === 0 ? `${term(axis).text}: ${show(current[axis])}`
+    : `${term(axis).text}: ${def.keys.map((k) => `${term(k).text} ${show(((current[axis] ?? {}) as Record<string, string>)[k])}`).join(" · ")}`).join(" — ");
   return <>
     <h3>{t("stepScope")}</h3>
     {register.scope && !editing ? <>
-      <p>{summary}</p>
+      <p lang={register.term_labels.length ? undefined : "es"}>{summary}</p>
       <p className="text-sm text-muted">{t("scopeRecorded", { date: format.dateTime(new Date(register.scope.decided_at), { dateStyle: "medium" }) })}</p>
       {canEdit ? <button className="dashboard-button" onClick={() => setEditing(true)}>{t("changeScope")}</button> : null}
     </> : canEdit ? <form onSubmit={submit} className="scope-form">
       <p className="text-sm text-muted">{t("scopeHelp")}</p>
       {axes.map(([axis, def]) => def.keys.length === 0
-        ? <AxisSelect key={axis} label={axis} levels={def.levels} value={values[axis] as string} onChange={(v) => setValues({ ...values, [axis]: v })} />
-        : <fieldset key={axis}><legend>{axis}</legend><div className="scope-dimensions">{def.keys.map((k) =>
-          <AxisSelect key={k} label={k} levels={def.levels} value={(values[axis] as Record<string, string>)[k] ?? ""}
+        ? <AxisSelect key={axis} label={axis} term={term} levels={def.levels} value={values[axis] as string} onChange={(v) => setValues({ ...values, [axis]: v })} />
+        : <fieldset key={axis}><legend lang={term(axis).lang}>{term(axis).text}</legend><div className="scope-dimensions">{def.keys.map((k) =>
+          <AxisSelect key={k} label={k} term={term} levels={def.levels} value={(values[axis] as Record<string, string>)[k] ?? ""}
             onChange={(v) => setValues({ ...values, [axis]: { ...(values[axis] as Record<string, string>), [k]: v } })} />)}</div></fieldset>)}
       {save.isError ? <ErrorMessage error={save.error} /> : null}
       <div className="form-actions"><button type="submit" className="button-primary" disabled={save.isPending}>{t("saveScope")}</button>
@@ -76,10 +86,13 @@ function ScopeStep({ register, orgId, frameworkKey, canEdit }: Ctx & { register:
   </>;
 }
 
-function AxisSelect({ label, levels, value, onChange }: { label: string; levels: string[]; value: string; onChange: (v: string) => void }) {
+type TermLabel = (term: string) => { text: string; lang: string | undefined };
+
+/** Shows readable labels; the value sent stays the pack's official term. */
+function AxisSelect({ label, term, levels, value, onChange }: { label: string; term: TermLabel; levels: string[]; value: string; onChange: (v: string) => void }) {
   const id = useId();
-  return <span className="axis-select"><label htmlFor={id}>{label}</label>
-    <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>{levels.map((l) => <option key={l} value={l}>{l}</option>)}</select></span>;
+  return <span className="axis-select"><label htmlFor={id} lang={term(label).lang}>{term(label).text}</label>
+    <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>{levels.map((l) => <option key={l} value={l} lang={term(l).lang}>{term(l).text}</option>)}</select></span>;
 }
 
 function ReviewStep({ register, orgId, frameworkKey, canEdit }: Ctx & { register: Register }) {
@@ -146,7 +159,8 @@ export function AssessmentForm({ item, orgId, frameworkKey, canEdit, canAssess =
   const needsJustification = form.applicability === "not_applicable" || differs;
   const submit = (e: FormEvent) => { e.preventDefault(); save.mutate({ code: item.code, body: form }, { onSuccess: () => setEditing(false) }); };
   const proposal = item.proposal.decision === "undecided" ? t("proposalUndecided")
-    : t("proposalText", { decision: t(`proposal.${item.proposal.decision}`), rule: item.proposal.rule ?? "", level: item.proposal.level ?? "" });
+    : t.rich("proposalText", { decision: t(`proposal.${item.proposal.decision}`), rule: item.proposal.rule ?? "", level: item.proposal.level ?? "",
+      official: (chunks) => <span lang="es">{chunks}</span> });
   return <div className="assessment-card">
     <OwnerField item={item} orgId={orgId} frameworkKey={frameworkKey} canEdit={canEdit} />
     <h3>{t("yourAssessment")}</h3>

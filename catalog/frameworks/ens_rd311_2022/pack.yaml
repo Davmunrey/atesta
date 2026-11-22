@@ -1,6 +1,6 @@
 id: ens_rd311_2022
 name: ENS · RD 311/2022
-version: 2024-11-06.draft2
+version: 2024-11-06.draft3
 jurisdiction: ES
 source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191
 license_notes: Legislative text excluded from copyright under Article 13 of RDL 1/1996. Official Spanish paragraphs and tables are reproduced from BOE; no CCN guide or third-party diagram is reproduced. English guidance is authored, not an official translation.
@@ -30,6 +30,46 @@ attributes:
     - https://www.boe.es/buscar/act.php?id=BOE-A-1996-8930#a13
     - https://www.ccn-cert.cni.es/es/seguridad-al-dia/novedades-ccn-cert/13155-el-ccn-actualiza-cuatro-guias-ccn-stic-de-su-serie-800-sobre-el-esquema-nacional-de-seguridad.html
   verified_on: '2026-11-13'
+  term_labels:
+    - term: categoría
+      es: Categoría del sistema
+      en: System category (categoría)
+    - term: nivel
+      es: Nivel de cada dimensión de seguridad
+      en: Level of each security dimension (nivel)
+    - term: A
+      es: Autenticidad [A]
+      en: Authenticity [A]
+    - term: C
+      es: Confidencialidad [C]
+      en: Confidentiality [C]
+    - term: D
+      es: Disponibilidad [D]
+      en: Availability [D]
+    - term: I
+      es: Integridad [I]
+      en: Integrity [I]
+    - term: T
+      es: Trazabilidad [T]
+      en: Traceability [T]
+    - term: BÁSICA
+      es: BÁSICA
+      en: Basic (BÁSICA)
+    - term: MEDIA
+      es: MEDIA
+      en: Medium (MEDIA)
+    - term: ALTA
+      es: ALTA
+      en: High (ALTA)
+    - term: BAJO
+      es: BAJO
+      en: Low (BAJO)
+    - term: MEDIO
+      es: MEDIO
+      en: Medium (MEDIO)
+    - term: ALTO
+      es: ALTO
+      en: High (ALTO)
   groups_es:
     - prefix: org
       title: Marco organizativo

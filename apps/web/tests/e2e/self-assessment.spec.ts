@@ -84,7 +84,7 @@ test("an admin scopes, assesses and exports the self-assessment, accessibly at e
   await row.getByRole("button", { name: "Guardar" }).click();
   await expect(row.locator("summary").first().getByText("No aplica")).toBeVisible();
   await expect(page.getByText("1 de 4 medidas evaluadas")).toBeVisible();
-  await expect(page.getByRole("link", { name: "Descargar CSV" })).toHaveAttribute("href", `/api/v1/orgs/${org}/frameworks/synthetic_alpha/applicability.csv`);
+  await expect(page.getByRole("link", { name: "Descargar CSV" })).toHaveAttribute("href", `/api/v1/orgs/${org}/frameworks/synthetic_alpha/applicability.csv?lang=es`);
 
   for (const colorScheme of ["light", "dark"] as const) {
     await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });

@@ -44,9 +44,10 @@ export function useRecordAssessmentReview(orgId: string, frameworkKey: string) {
 }
 
 /** Same-origin download links; the session cookie authenticates them. */
-export function applicabilityUrl(orgId: string, frameworkKey: string, format: "csv" | "json"): string {
+/** The CSV is written in the interface language (i18n-complete spec); JSON stays neutral. */
+export function applicabilityUrl(orgId: string, frameworkKey: string, format: "csv" | "json", locale = "es"): string {
   const base = `/api/v1/orgs/${encodeURIComponent(orgId)}/frameworks/${encodeURIComponent(frameworkKey)}/applicability`;
-  return format === "csv" ? `${base}.csv` : base;
+  return format === "csv" ? `${base}.csv?lang=${encodeURIComponent(locale)}` : base;
 }
 
 export type Progress = { total: number; applies: number; notApplicable: number; assessed: number; implemented: number; partial: number };

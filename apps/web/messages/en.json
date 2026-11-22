@@ -200,7 +200,7 @@
     "registerHelp": "Open a requirement to understand its state and inspect the associated configuration.",
     "filter": "Filter by state",
     "search": "Search requirements, configurations or checks",
-    "matches": "{shown} of {total} requirements",
+    "matches": "{shown} of {total, plural, one {# requirement} other {# requirements}}",
     "noMatches": "No matching requirements",
     "clear": "Clear filters",
     "empty": "This framework has no available requirements yet",
@@ -276,7 +276,8 @@
       "not_applicable": "Retain the scope justification and revisit it when the organization or framework changes."
     },
     "technicalDetails": "Catalog technical details",
-    "aboutContent": "About this content: draft under review, sources and scope"
+    "aboutContent": "About this content: draft under review, sources and scope",
+    "officialSpanish": "Measure titles and official texts are the official Spanish text, as published. Atesta does not translate them."
   },
   "dashboard": {
     "viewRequirements": "View requirements and configuration",
@@ -306,7 +307,7 @@
     "scans": "Recent scans",
     "emptyScans": "No recorded scans yet",
     "emptyScansHelp": "Each scan and its coverage will appear here once recorded.",
-    "coverage": "{evaluated} of {expected} checks evaluated",
+    "coverage": "{evaluated} of {expected, plural, one {# check evaluated} other {# checks evaluated}}",
     "unknownCoverage": "Coverage not available yet",
     "coverageLabel": "Coverage for {provider}",
     "providers": {
@@ -339,7 +340,7 @@
     "firstSteps": "First steps",
     "firstStepsIntro": "Prepare the {framework} self-assessment in four steps.",
     "stepScope": "Define the scope",
-    "stepAssess": "Assess the measures ({assessed} of {total})",
+    "stepAssess": "Assess the measures ({assessed} of {total, plural, one {#} other {#}})",
     "stepReview": "Security officer review",
     "stepExport": "Export the statement of applicability",
     "continue": "Continue with {framework}",
@@ -353,8 +354,8 @@
     },
     "disabled": "Automatic scoring is disabled while the content is under review. Your self-assessment is still recorded and can be exported.",
     "navigate": "Preparation contents",
-    "requirementsCount": "{count} available requirements",
-    "controlsCount": "{count} preparation guides",
+    "requirementsCount": "{count, plural, one {# available requirement} other {# available requirements}}",
+    "controlsCount": "{count, plural, one {# preparation guide} other {# preparation guides}}",
     "scope": "Scope and applicability",
     "applicability": "How to decide what applies",
     "missing": "What is missing for assessment",
@@ -409,9 +410,9 @@
     "scopeRecorded": "Scope recorded on {date}.",
     "scopeMissingMember": "An administrator must define the scope.",
     "stepAssess": "Assess each measure",
-    "progress": "{assessed} of {total} measures assessed",
+    "progress": "{assessed} of {total, plural, one {# measure assessed} other {# measures assessed}}",
     "progressLabel": "Measures assessed",
-    "breakdown": "{applies} apply: {implemented} implemented and {partial} partially. {notApplicable} do not apply.",
+    "breakdown": "{applies, plural, one {# applies} other {# apply}}: {implemented} implemented and {partial} partially. {notApplicable, plural, one {# does not apply} other {# do not apply}}.",
     "stepReview": "Security officer review",
     "reviewHelp": "Your organization's security officer analyses the self-assessment and records conclusions and corrective actions.",
     "reviewRecorded": "Reviewed by {name} ({role}) on {date}.",
@@ -437,7 +438,7 @@
       "implemented": "Implemented",
       "not_applicable": "Do not apply"
     },
-    "groupProgress": "{assessed} of {total} assessed",
+    "groupProgress": "{assessed} of {total, plural, one {# assessed} other {# assessed}}",
     "guideAndText": "Guide and official text",
     "configurationAndEvidence": "Configuration, evidence and review ({count, plural, one {# control} other {# controls}})",
     "states": {
@@ -451,7 +452,7 @@
       "applies": "Applies",
       "not_applicable": "Does not apply"
     },
-    "proposalText": "Proposed from the official tables: {decision} ({level}: {rule}). Confirm it or justify another decision.",
+    "proposalText": "Proposed from the official tables: {decision} (<official>{level}: {rule}</official>). Confirm it or justify another decision.",
     "proposalUndecided": "No proposal: define the scope or decide from the official text.",
     "yourAssessment": "Your self-assessment",
     "assess": "Assess this measure",
@@ -501,7 +502,7 @@
     "title": "Activity",
     "intro": "Who did what in the organization. Only administrators see it.",
     "period": "Period",
-    "lastDays": "Last {days} days",
+    "lastDays": "{days, plural, one {Last day} other {Last # days}}",
     "loading": "Loading activity…",
     "perDay": "Actions per day",
     "events": "Actions",

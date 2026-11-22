@@ -69,6 +69,12 @@ changes are refinement, not a new visual world. It checks the matching guide in
 not Baseline Widely available ship only with the guide's fallback. A user-facing change is checked
 in the rendered app, at 1280 and 375 pixels and in dark mode, before it is called done.
 
+Every word a person reads exists in Spanish and English (`docs/specs/i18n-complete.md`).
+- **Web:** text comes from `apps/web/messages`, never inline. Counts use ICU plural forms, and percentages use `percent()` from `lib/format.ts`.
+- **API:** user-facing text comes from `apps/api/src/atesta_api/messages`.
+- **Official text:** official text published only in Spanish is shown as is and marked `lang="es"`, never translated from memory.
+- **Guards:** tests in `tests/unit/i18n.test.tsx` and `tests/test_api_messages.py` keep this complete.
+
 ## Owner decisions
 
 The owner (GitHub `Davmunrey`) decides these. An agent does them only when the owner has said so

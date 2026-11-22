@@ -199,7 +199,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Applicability Csv */
+        /**
+         * Applicability Csv
+         * @description The statement in the reader's language (i18n-complete spec). Official titles stay Spanish.
+         */
         get: operations["applicability_csv_api_v1_orgs__org_id__frameworks__framework_key__applicability_csv_get"];
         put?: never;
         post?: never;
@@ -1237,6 +1240,8 @@ export interface components {
             summary_en: string;
             /** Summary Es */
             summary_es: string;
+            /** Term Labels */
+            term_labels?: components["schemas"]["TermLabel"][];
             /**
              * Verified On
              * Format: date
@@ -1296,6 +1301,8 @@ export interface components {
             items: components["schemas"]["RegisterItem"][];
             review: components["schemas"]["AssessmentReviewOut"] | null;
             scope: components["schemas"]["ScopeOut"] | null;
+            /** Term Labels */
+            term_labels: components["schemas"]["TermLabelOut"][];
         };
         /** RegisterItem */
         RegisterItem: {
@@ -1563,6 +1570,28 @@ export interface components {
             submission_id: string;
             /** Title */
             title: string;
+        };
+        /**
+         * TermLabel
+         * @description A readable label for an official scope term (axis, dimension key or level). Authored text,
+         *     not official: the stored scope keeps the official term.
+         */
+        TermLabel: {
+            /** En */
+            en: string;
+            /** Es */
+            es: string;
+            /** Term */
+            term: string;
+        };
+        /** TermLabelOut */
+        TermLabelOut: {
+            /** En */
+            en: string;
+            /** Es */
+            es: string;
+            /** Term */
+            term: string;
         };
         /** TrendPoint */
         TrendPoint: {
@@ -2084,7 +2113,9 @@ export interface operations {
     };
     applicability_csv_api_v1_orgs__org_id__frameworks__framework_key__applicability_csv_get: {
         parameters: {
-            query?: never;
+            query?: {
+                lang?: "es" | "en";
+            };
             header?: never;
             path: {
                 framework_key: string;

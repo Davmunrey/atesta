@@ -200,7 +200,7 @@
     "registerHelp": "Abre un requisito para entender su estado y revisar la configuración asociada.",
     "filter": "Filtrar por estado",
     "search": "Buscar requisito, configuración o comprobación",
-    "matches": "{shown} de {total} requisitos",
+    "matches": "{shown} de {total, plural, one {# requisito} other {# requisitos}}",
     "noMatches": "Ningún requisito coincide",
     "clear": "Limpiar filtros",
     "empty": "Este marco aún no tiene requisitos disponibles",
@@ -276,7 +276,8 @@
       "not_applicable": "Conserva la justificación de alcance y revísala cuando cambie la organización o el marco."
     },
     "technicalDetails": "Detalles técnicos del catálogo",
-    "aboutContent": "Sobre este contenido: borrador en revisión, fuentes y alcance"
+    "aboutContent": "Sobre este contenido: borrador en revisión, fuentes y alcance",
+    "officialSpanish": "Los títulos y textos de las medidas son el texto oficial en español, tal como se publicó."
   },
   "dashboard": {
     "viewRequirements": "Ver requisitos y configuración",
@@ -306,7 +307,7 @@
     "scans": "Últimos análisis",
     "emptyScans": "Aún no hay análisis registrados",
     "emptyScansHelp": "Aquí verás cada análisis y su cobertura cuando se registre.",
-    "coverage": "{evaluated} de {expected} comprobaciones evaluadas",
+    "coverage": "{evaluated} de {expected, plural, one {# comprobación evaluada} other {# comprobaciones evaluadas}}",
     "unknownCoverage": "Cobertura aún no disponible",
     "coverageLabel": "Cobertura de {provider}",
     "providers": {
@@ -339,7 +340,7 @@
     "firstSteps": "Primeros pasos",
     "firstStepsIntro": "Prepara la autoevaluación de {framework} en cuatro pasos.",
     "stepScope": "Define el alcance",
-    "stepAssess": "Evalúa las medidas ({assessed} de {total})",
+    "stepAssess": "Evalúa las medidas ({assessed} de {total, plural, one {#} other {#}})",
     "stepReview": "Revisión del responsable de seguridad",
     "stepExport": "Exporta la declaración de aplicabilidad",
     "continue": "Continuar con {framework}",
@@ -353,8 +354,8 @@
     },
     "disabled": "Puntuación automática desactivada mientras el contenido está en revisión. Tu autoevaluación sí se registra y puedes exportarla.",
     "navigate": "Contenido de preparación",
-    "requirementsCount": "{count} requisitos disponibles",
-    "controlsCount": "{count} guías de preparación",
+    "requirementsCount": "{count, plural, one {# requisito disponible} other {# requisitos disponibles}}",
+    "controlsCount": "{count, plural, one {# guía de preparación} other {# guías de preparación}}",
     "scope": "Alcance y aplicabilidad",
     "applicability": "Cómo decidir qué aplica",
     "missing": "Qué falta para evaluar",
@@ -409,9 +410,9 @@
     "scopeRecorded": "Alcance registrado el {date}.",
     "scopeMissingMember": "Una persona administradora debe definir el alcance.",
     "stepAssess": "Evalúa cada medida",
-    "progress": "{assessed} de {total} medidas evaluadas",
+    "progress": "{assessed} de {total, plural, one {# medida evaluada} other {# medidas evaluadas}}",
     "progressLabel": "Medidas evaluadas",
-    "breakdown": "Aplican {applies}: {implemented} implantadas y {partial} parcialmente. No aplican {notApplicable}.",
+    "breakdown": "{applies, plural, one {Aplica #} other {Aplican #}}: {implemented, plural, one {# implantada} other {# implantadas}} y {partial} parcialmente. {notApplicable, plural, one {No aplica #} other {No aplican #}}.",
     "stepReview": "Revisión del responsable de seguridad",
     "reviewHelp": "Quien sea responsable de la seguridad en tu organización analiza la autoevaluación y anota conclusiones y acciones correctoras.",
     "reviewRecorded": "Revisada por {name} ({role}) el {date}.",
@@ -437,7 +438,7 @@
       "implemented": "Implantadas",
       "not_applicable": "No aplican"
     },
-    "groupProgress": "{assessed} de {total} evaluadas",
+    "groupProgress": "{assessed} de {total, plural, one {# evaluada} other {# evaluadas}}",
     "guideAndText": "Guía y texto oficial",
     "configurationAndEvidence": "Configuración, evidencias y revisión ({count, plural, one {# control} other {# controles}})",
     "states": {
@@ -451,7 +452,7 @@
       "applies": "Aplica",
       "not_applicable": "No aplica"
     },
-    "proposalText": "Propuesta según las tablas oficiales: {decision} ({level}: {rule}). Confírmala o justifica otra decisión.",
+    "proposalText": "Propuesta según las tablas oficiales: {decision} (<official>{level}: {rule}</official>). Confírmala o justifica otra decisión.",
     "proposalUndecided": "Sin propuesta: define el alcance o decide según el texto oficial.",
     "yourAssessment": "Tu autoevaluación",
     "assess": "Evaluar esta medida",
@@ -501,7 +502,7 @@
     "title": "Actividad",
     "intro": "Quién ha hecho qué en la organización. Solo lo ven las personas administradoras.",
     "period": "Periodo",
-    "lastDays": "Últimos {days} días",
+    "lastDays": "{days, plural, one {Último día} other {Últimos # días}}",
     "loading": "Cargando actividad…",
     "perDay": "Acciones por día",
     "events": "Acciones",

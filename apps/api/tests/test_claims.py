@@ -14,6 +14,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[3]
 MESSAGES = ROOT / "apps" / "web" / "messages"
+API_MESSAGES = ROOT / "apps" / "api" / "src" / "atesta_api" / "messages"
 DOCS = [ROOT / "README.md", ROOT / "PRODUCT.md"]
 
 FORBIDDEN = [
@@ -45,8 +46,8 @@ def claims(texts: dict[str, str]) -> list[str]:
 
 def _repository_texts() -> dict[str, str]:
     texts = {
-        f"{path.name}:{key}": value
-        for path in sorted(MESSAGES.glob("*.json"))
+        f"{path.relative_to(ROOT)}:{key}": value
+        for path in [*sorted(MESSAGES.glob("*.json")), *sorted(API_MESSAGES.glob("*.json"))]
         for key, value in _values(json.loads(path.read_text()))
     }
     texts.update({path.name: path.read_text() for path in DOCS})

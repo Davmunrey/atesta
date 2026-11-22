@@ -1,9 +1,10 @@
 "use client";
 
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import type { components } from "@/lib/api/schema";
 import Link from "next/link";
+import { percent } from "@/lib/format";
 import { orgFramework } from "@/lib/org";
 
 type Framework = components["schemas"]["FrameworkSummary"];
@@ -14,6 +15,7 @@ const SEARCH_FROM = 8;
 export function FrameworkLedger({ frameworks, orgId }: { frameworks: Framework[]; orgId: string }) {
   const t = useTranslations("dashboard");
   const format = useFormatter();
+  const locale = useLocale();
   const searchId = useId();
   const [search, setSearch] = useState("");
   const query = search.trim().toLocaleLowerCase();
@@ -47,7 +49,7 @@ export function FrameworkLedger({ frameworks, orgId }: { frameworks: Framework[]
                   <span>{framework.requirements > 0 ? t("requirementCount", { count: framework.requirements }) : t("preparationOnly")}{framework.status === "draft" ? ` · ${t("draft")}` : ""}</span>
                   {snapshot && snapshot.manual > 0 ? <span>{t("pendingReviews", { count: snapshot.manual })}</span> : null}
                 </span>
-                <span className="framework-score">{snapshot === null ? t("notAssessed") : snapshot.score === null ? t("unscored") : `${format.number(snapshot.score, { maximumFractionDigits: 1 })} %`}</span>
+                <span className="framework-score">{snapshot === null ? t("notAssessed") : snapshot.score === null ? t("unscored") : percent(locale, snapshot.score)}</span>
                 <svg className="disclosure-icon" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m6 3 5 5-5 5" /></svg>
               </summary>
               <div className="framework-detail">
