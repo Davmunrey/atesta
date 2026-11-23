@@ -92,8 +92,19 @@ def store_tokens(response: Response, crypto: SessionCrypto, tokens: TokenSet) ->
 
 
 def _safe_return(target: str | None) -> str:
-    """Only same-site absolute paths: no scheme, no '//' host, no backslash tricks."""
-    if target and target.startswith("/") and not target.startswith("//") and "\\" not in target:
+    """Only same-site absolute paths: no scheme, no '//' host, no backslash tricks.
+
+    Whitespace and control characters are refused here, not left to the framework's encoding of
+    the Location header: a browser strips tab, LF and CR, so "/<TAB>/evil" would read "//evil"
+    (#325).
+    """
+    if (
+        target
+        and target.startswith("/")
+        and not target.startswith("//")
+        and "\\" not in target
+        and not any(ord(c) <= 0x20 or ord(c) == 0x7F for c in target)
+    ):
         return target
     return "/app"
 

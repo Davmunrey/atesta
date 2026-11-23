@@ -56,6 +56,28 @@ def test_login_refuses_open_redirects(client: TestClient, target: str) -> None:
     assert state["return_to"] == "/app"
 
 
+@pytest.mark.parametrize(
+    "target",
+    [
+        "/\t/evil.example",  # a browser strips tab, LF and CR: //evil.example (#325)
+        "/\n/evil.example",
+        "/\r/evil.example",
+        "\t//evil.example",
+        "/ /evil.example",
+        "/\x00/evil.example",
+        "/\x7f/evil.example",
+        "/app\t",
+    ],
+)
+def test_login_refuses_control_characters_and_whitespace_in_the_return_path(
+    client: TestClient, target: str
+) -> None:
+    """Safe by our own check, not only by the framework percent-encoding the Location header."""
+    response = client.get("/auth/login", params={"return_to": target}, follow_redirects=False)
+    state = json.loads(CRYPTO.open(AUTH_COOKIE, response.cookies[AUTH_COOKIE]))
+    assert state["return_to"] == "/app"
+
+
 def test_login_defaults_to_spanish(client: TestClient) -> None:
     params, _ = login(client)
     assert params["lang"] == "es"
