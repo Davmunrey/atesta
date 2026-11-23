@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
+import { settled } from "./polish";
 import { overview } from "../fixtures/overview";
 
 async function createOrganization(page: Page) {
@@ -62,6 +63,7 @@ test("recorded-result design supports filters, keyboard disclosure, both locales
         await expect(row.locator("summary strong")).toHaveCSS("color", dark ? "rgb(244, 241, 234)" : "rgb(20, 20, 20)");
         await expect(page.getByRole("contentinfo").getByRole("link")).toHaveCSS("color", dark ? "rgb(192, 186, 174)" : "rgb(85, 81, 74)");
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        await settled(page);
         const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
         expect(violations.filter((v) => v.impact === "serious" || v.impact === "critical")
           .map((v) => `${v.id}: ${v.nodes.map((n) => n.failureSummary).join("; ")}`), `${locale}/${colorScheme}/${width}`).toEqual([]);
