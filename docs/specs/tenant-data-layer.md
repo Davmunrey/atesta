@@ -17,7 +17,7 @@ for a compliance vendor. Isolation must not depend on every query being written 
 
 - [ ] SQLAlchemy 2 (sync, typed `Mapped[]`) and Alembic, one migration history for the monolith
       in `apps/api/migrations/`.
-- [ ] Postgres 16. Roles and schema grants come from one idempotent file,
+- [ ] Postgres 18 (#299). Roles and schema grants come from one idempotent file,
       `apps/api/migrations/bootstrap.sql`, with no passwords. The test fixture runs it as
       superuser; the infra spec runs it as the RDS master user.
   - `atesta_owner` owns every table and runs migrations (USAGE, CREATE on schema `public`;
@@ -65,7 +65,7 @@ for a compliance vendor. Isolation must not depend on every query being written 
 - [ ] Migrations are immutable once merged, forward-only, and import no application code. RLS
       SQL comes from frozen helpers in `apps/api/migrations/rls_v1.py`. A policy change is a
       `rls_v2.py` plus a migration that reapplies it to every affected table.
-- [ ] CI runs DB tests against a Postgres 16 service container pinned by digest, with
+- [ ] CI runs DB tests against a Postgres 18 service container pinned by digest, with
       `ATESTA_TEST_DATABASE_URL` set. Locally DB tests skip when the URL is unset. When `CI` is
       `true` and the URL is unset, the pytest session fails before any test. `compose.yaml` starts
       the same image digest for local runs.

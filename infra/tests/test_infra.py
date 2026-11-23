@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import hcl2
+import yaml
 
 INFRA = Path(__file__).resolve().parents[1]
 
@@ -221,9 +222,9 @@ RDS = resources("modules/rds/main.tf")
 RDS_VARS = {k: v for b in load("modules/rds/main.tf")["variable"] for k, v in b.items()}
 
 
-def test_the_database_is_postgres_16_encrypted_private_and_protected() -> None:
+def test_the_database_is_postgres_18_encrypted_private_and_protected() -> None:
     db = RDS["aws_db_instance.this"]
-    assert (db["engine"], db["engine_version"]) == ("postgres", "16")
+    assert (db["engine"], db["engine_version"]) == ("postgres", "18")
     assert db["storage_encrypted"] is True and db["kms_key_id"] == "${var.kms_key_arn}"
     assert db["publicly_accessible"] is False
     assert db["deletion_protection"] is True and db["skip_final_snapshot"] is False
@@ -248,8 +249,23 @@ def test_the_database_requires_tls_and_logs_without_statements() -> None:
     assert params["rds.force_ssl"] == "1"
     assert params["log_statement"] == "none"  # statements may carry customer data (rule 2)
     assert params["log_min_duration_statement"] == "-1"
+    # PostgreSQL 18 made log_connections a list; RDS documents this list as the old "1" (#299).
+    assert params["log_connections"] == "receipt,authentication,authorization"
     assert RDS["aws_cloudwatch_log_group.postgres"]["kms_key_id"] == "${var.logs_key_arn}"
     assert "retention_in_days" in RDS["aws_cloudwatch_log_group.postgres"]
+
+
+def test_rds_ci_and_compose_run_the_same_postgres_major() -> None:
+    """Engine major, parameter group family and the CI/compose image move together (#299)."""
+    db = RDS["aws_db_instance.this"]
+    group = RDS["aws_db_parameter_group.this"]
+    compose = yaml.safe_load((INFRA.parent / "compose.yaml").read_text())
+    image = compose["services"]["postgres"]["image"]
+    tag = image.split("@", 1)[0].split(":", 1)[1]
+    assert image.startswith("postgres:") and "@sha256:" in image
+    assert db["engine_version"] == tag.split(".")[0] == "18"
+    assert group["family"] == f"postgres{db['engine_version']}"
+    assert group["name"] == f"${{var.name}}-pg{db['engine_version']}"
 
 
 def test_only_the_application_security_group_reaches_the_database() -> None:

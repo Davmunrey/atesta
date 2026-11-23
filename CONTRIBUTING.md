@@ -10,7 +10,7 @@ the two seem to differ, `AGENTS.md` wins.
 ## Set up
 
 Python 3.12 with [uv](https://docs.astral.sh/uv/), Node 22 with pnpm 10 (`apps/web/.nvmrc`,
-`apps/web/package.json`), Postgres 16 for database tests, Docker for the scanner image, and
+`apps/web/package.json`), Postgres 18 for database tests, Docker for the scanner image, and
 OpenTofu for `infra/`.
 
 ```bash
@@ -23,7 +23,7 @@ pnpm --dir apps/web install --frozen-lockfile
 Each block is one CI job in `.github/workflows/ci.yml`, with the same commands. A test keeps
 this section and the workflow in step (`apps/api/tests/test_contributing.py`).
 
-**python** (needs Postgres 16; any empty database the test user owns):
+**python** (needs Postgres 18; any empty database the test user owns):
 
 ```bash
 export ATESTA_TEST_DATABASE_URL=postgresql+psycopg://postgres@localhost:5432/postgres
