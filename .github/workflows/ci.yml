@@ -239,10 +239,10 @@ jobs:
           docker build -f apps/Dockerfile --target worker -t atesta-worker:ci .
       - name: Smoke as ECS runs them (read-only root, user 10001, no capabilities)
         run: |
-          locked="--rm --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges"
-          docker run $locked atesta-api:ci python -c "import atesta_api.main"
-          docker run $locked atesta-worker:ci python -c "import atesta_worker.__main__"
-          test "$(docker run $locked atesta-api:ci id -u)" = 10001
+          locked=(--rm --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges)
+          docker run "${locked[@]}" atesta-api:ci python -c "import atesta_api.main"
+          docker run "${locked[@]}" atesta-worker:ci python -c "import atesta_worker.__main__"
+          test "$(docker run "${locked[@]}" atesta-api:ci id -u)" = 10001
 
   infra:
     runs-on: ubuntu-latest

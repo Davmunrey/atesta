@@ -55,7 +55,8 @@ def bootstrap(engine: Engine, script: str, passwords: Mapping[str, str]) -> None
                 statement = sql.SQL("ALTER ROLE {} LOGIN PASSWORD {}").format(
                     sql.Identifier(role), sql.Literal(password)
                 )
-                cursor.execute(statement)
+                # Composed with sql.Identifier and sql.Literal: psycopg quotes both.
+                cursor.execute(statement)  # noqa: E501  # nosemgrep: python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query
 
 
 def main() -> None:
