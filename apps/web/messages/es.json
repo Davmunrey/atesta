@@ -991,5 +991,26 @@
     "accessReviewClosed": "{total, plural, one {# cuenta revisada} other {# cuentas revisadas}} (mantener: {keep}; retirar: {revoke}); cerrada el {date}",
     "trainingClosed": "{count, plural, one {# confirmación} other {# confirmaciones}}; cerrada el {date}",
     "incidentClosed": "constancia el {aware}; cerrado el {date}"
+  },
+  "portfolio": {
+    "title": "Tus organizaciones",
+    "summary": "Resumen de la cartera",
+    "organizations": "{count, plural, one {# organización} other {# organizaciones}}",
+    "withOverdue": "{count, plural, one {# con algo vencido} other {# con algo vencido}}",
+    "notStarted": "{count, plural, one {# sin empezar} other {# sin empezar}}",
+    "organization": "Organización",
+    "assessed": "Medidas evaluadas",
+    "overdue": "Medidas vencidas",
+    "routines": "Rutinas pendientes",
+    "lastAssessed": "Última evaluación",
+    "frameworks": "{count, plural, =0 {ningún marco en curso} one {# marco en curso} other {# marcos en curso}}",
+    "ofTotal": "{assessed} de {total, plural, one {#} other {#}}",
+    "noRoutines": "Ninguna",
+    "pending": "{count, plural, one {# pendiente} other {# pendientes}}",
+    "pendingWithOverdue": "{count, plural, one {# ({overdue} vencida)} other {# ({overdue, plural, one {# vencida} other {# vencidas}})}}",
+    "never": "Nunca",
+    "failed": "No se ha podido cargar",
+    "loading": "Cargando…",
+    "notStartedCell": "Sin empezar"
   }
 }
