@@ -1,6 +1,6 @@
 # apps/worker
 
-Background jobs on Procrastinate 3.10.0 (Postgres-backed queue, ADR-003): scan scheduling, OCSF
+Background jobs on Procrastinate 3.11.0 (Postgres-backed queue, ADR-003): scan scheduling, OCSF
 ingest, score snapshots, regression alerts, report builds.
 
 - Jobs call module `api.py` functions only (import-linter contract, rule 8).

@@ -221,8 +221,8 @@ def test_the_secret_scan_is_pinned_verified_and_redacted() -> None:
 
 
 def test_dependabot_leaves_procrastinate_to_a_migration() -> None:
-    # Migration 0009 pins procrastinate's schema.sql digest; a bump without a migration fails
-    # every database test (#122, #123).
+    # A bump that changes the queue schema needs a migration (#122, #123). The ignore stays until
+    # the owner lifts it; tests/db/test_queue_migrations.py also fails such a bump.
     config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
     uv = next(u for u in config["updates"] if u["package-ecosystem"] == "uv")
     assert {"dependency-name": "procrastinate"} in uv["ignore"]
