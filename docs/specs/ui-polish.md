@@ -3,7 +3,7 @@
 - Issues: #238 (phones), #239 (readable activity, consistent panels), #240 (executive summaries),
   #276 (incident criteria on phones), #283 (loading, error and empty states),
   #287 (records at a glance on the overview), #295 (expected evidence polish),
-  #301 (public pages).
+  #301 (public pages), #330 (the brand in the console), #345 (polish from the #305 and #315 reviews).
 - Builds on `console-shell.md`, `insights.md`, `recorded-routines.md` and DESIGN.md. Operate mode:
   refinement of the console, not a new visual world.
 - Status: draft
@@ -152,8 +152,20 @@ get the same quality bar as the console.
 - [ ] **Classify input:** the classification time input names its help with `aria-describedby`, and its `min` is the incident's awareness time.
 - [ ] **Print:** the incident page's classify and note forms do not print.
 
+## The brand in the console (#330)
+
+The owner wants the app and the site to feel like one product (23/11/2026). The console adopts the
+brand system recorded in DESIGN.md (#323), sparingly.
+
+- [ ] **Lockup:** the top bar shows the seal mark beside the live wordmark; the link's name stays the brand name.
+- [ ] **Title tab:** every console page title carries the highlighter tab (3rem × 4px) below it.
+- [ ] **Key figure:** the overview's lead figure (measures assessed) is the page's one key figure.
+  - In light mode, the highlighter band sits behind ink text.
+  - In dark mode there is no band, because light text on yellow fails contrast; the figure is set in the accent yellow on the panel (about 13:1).
+- [ ] **Never state:** the motif never marks state.
+
 
 | Area | Cases |
 |---|---|
-| Unit | classify input min and description; expected evidence: shared reference once, per-item references otherwise, dossier lists open for print and restored after; overview records rows: order, states and links from fixtures; incident criteria grouped by framework, with counts; a failed list load offers a retry that refetches; members keeps its header while loading; no retry on 4xx; stacked tables carry a `data-label` per cell; every API audit action has ES and EN labels; unknown actions and UUIDs never show; incident button name; summaries count from fixtures; dark `surface`/`panel` differ and pass contrast |
+| Unit | classify input min and description; console lockup and the overview's key figure; expected evidence: shared reference once, per-item references otherwise, dossier lists open for print and restored after; overview records rows: order, states and links from fixtures; incident criteria grouped by framework, with counts; a failed list load offers a retry that refetches; members keeps its header while loading; no retry on 4xx; stacked tables carry a `data-label` per cell; every API audit action has ES and EN labels; unknown actions and UUIDs never show; incident button name; summaries count from fixtures; dark `surface`/`panel` differ and pass contrast |
 | e2e | axe with no violations and no horizontal overflow at 375 and 1280 px on the pages above; CSP reports stay empty |
