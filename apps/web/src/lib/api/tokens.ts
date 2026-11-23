@@ -4,6 +4,14 @@ import { api } from "./client";
 import { expectOk, unwrap } from "./hooks";
 
 export type ApiToken = components["schemas"]["TokenOut"];
+export type Scope = components["schemas"]["TokenIn"]["scopes"][number];
+
+/** Scopes grouped as the create form shows them (api-keys-v2 spec); reads never imply writes. */
+export const SCOPES = {
+  read: ["compliance:read", "incidents:read"],
+  write: ["evidence:write", "assessment:propose", "routines:write"],
+} as const satisfies Record<string, readonly Scope[]>;
+export const RATE_LIMITS = [10, 30, 60, 120, 300, 600] as const;
 
 const org = (orgId: string) => ({ params: { path: { org_id: orgId } } });
 
@@ -17,6 +25,14 @@ export function useCreateApiToken(orgId: string) {
   return useMutation({
     mutationFn: (body: components["schemas"]["TokenIn"]) => unwrap(api.POST("/api/v1/orgs/{org_id}/api-tokens", { ...org(orgId), body })),
     onSettled: () => client.invalidateQueries({ queryKey: ["api-tokens", orgId] }),
+  });
+}
+
+/** A key's usage log, fetched only when an admin opens it. */
+export function useApiTokenUsage(orgId: string, tokenId: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ["api-token-usage", orgId, tokenId], enabled,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/api-tokens/{token_id}/usage", { params: { path: { org_id: orgId, token_id: tokenId } } })),
   });
 }
 

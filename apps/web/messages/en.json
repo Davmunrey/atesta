@@ -201,7 +201,9 @@
       "period_invalid": "The period must be 30 or 90 days.",
       "access_expired": "Your auditor access to this organization has ended. Ask an administrator to extend it.",
       "closure_name_mismatch": "The name does not match. Type it exactly as shown.",
-      "api_token_invalid": "The API token is not valid, revoked or expired."
+      "api_token_invalid": "The API token is not valid, revoked or expired.",
+      "api_token_scope": "This token does not have the permission needed.",
+      "api_token_rate_limited": "This token has gone over its limit of requests per minute. Wait a moment."
     },
     "request": {
       "error": "The request could not be completed. Try again.",
@@ -1032,7 +1034,7 @@
   },
   "integrations": {
     "title": "Integrations",
-    "intro": "Tokens that let your tools (CI, backups, scanners) record evidence in Atesta. They can only write evidence; they read nothing.",
+    "intro": "Tokens that let your tools (CI, backups, scanners) and your AI agents work with Atesta. Each token has only the permissions you choose and a limit of requests per minute.",
     "loading": "Loading…",
     "list": "Tokens",
     "empty": "No tokens yet.",
@@ -1059,6 +1061,35 @@
     "revokedOn": "Revoked on {date}",
     "revoke": "Revoke",
     "revokeNamed": "Revoke the token {name}",
+    "rateLimit": "Request limit",
+    "perMinute": "{count, plural, one {# per minute} other {# per minute}}",
+    "scopes": "Permissions",
+    "scopesHelp": "Tick only what the tool needs. Reading does not allow writing. No permission starts a scan or touches your systems.",
+    "scopeGroup": {
+      "read": "Read",
+      "write": "Write"
+    },
+    "scope": {
+      "compliance:read": "Read the compliance status: frameworks, measures and their official text, gaps and due items",
+      "incidents:read": "Read incidents and their reporting deadlines",
+      "evidence:write": "Record evidence",
+      "assessment:propose": "Propose self-assessments (a person confirms or rejects them)",
+      "routines:write": "Record routines: incidents, training and access reviews"
+    },
+    "scopeShort": {
+      "compliance:read": "Read compliance",
+      "incidents:read": "Read incidents",
+      "evidence:write": "Record evidence",
+      "assessment:propose": "Propose self-assessments",
+      "routines:write": "Record routines"
+    },
+    "readOnlyPreset": "Tick read-only",
+    "readOnly": "Read-only",
+    "scopesRequired": "Choose at least one permission.",
+    "usageOf": "Show the usage of {name}",
+    "usageCount": "{count, plural, =0 {No requests in the last 24 hours} one {# request in the last 24 hours} other {# requests in the last 24 hours}}",
+    "usageEmpty": "Not used yet.",
+    "noScope": "None",
     "templates": {
       "title": "Automatic evidence templates",
       "help": "Choose what to record and where it runs, then copy the script to that machine or your repository. Each run records evidence; a repeat on the same day or for the same run is not duplicated.",

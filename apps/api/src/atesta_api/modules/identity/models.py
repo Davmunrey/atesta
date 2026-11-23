@@ -10,13 +10,16 @@ from sqlalchemy import (
     Date,
     DateTime,
     ForeignKey,
+    ForeignKeyConstraint,
     Index,
+    Integer,
     PrimaryKeyConstraint,
     Text,
     UniqueConstraint,
     func,
     text,
 )
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
 
 from atesta_api.platform.db import Base, TenantMixin
@@ -101,9 +104,16 @@ class Invitation(TenantMixin, Base):
     access_expires_on: Mapped[date | None] = mapped_column(Date)
 
 
+# API key scopes (api-keys-v2 spec). Reads never imply writes; there is no default for new keys.
+READ_SCOPES = ("compliance:read", "incidents:read")
+WRITE_SCOPES = ("evidence:write", "assessment:propose", "routines:write")
+SCOPES = READ_SCOPES + WRITE_SCOPES
+_SCOPE_LIST = ", ".join(f"'{s}'" for s in SCOPES)
+
+
 class ApiToken(TenantMixin, Base):
-    """A write-only token for a customer's own tools (evidence-ingestion-api spec). Only the
-    SHA-256 is kept, indexed and not unique: tenant unique keys lead with organization_id."""
+    """An API key for a customer's own tools and agents (api-keys-v2 spec). Only the SHA-256
+    is kept, indexed and not unique: tenant unique keys lead with organization_id."""
 
     __tablename__ = "api_tokens"
     __table_args__ = (
@@ -111,7 +121,11 @@ class ApiToken(TenantMixin, Base):
         CheckConstraint("length(btrim(name)) BETWEEN 1 AND 100", name="name_length"),
         CheckConstraint("token_sha256 ~ '^[0-9a-f]{64}$'", name="token_format"),
         CheckConstraint("length(prefix) = 12", name="prefix_length"),
-        CheckConstraint("scope = 'evidence:write'", name="scope"),
+        CheckConstraint(
+            f"cardinality(scopes) >= 1 AND scopes <@ ARRAY[{_SCOPE_LIST}]::text[]",
+            name="scopes_known",
+        ),
+        CheckConstraint("rate_limit_per_minute BETWEEN 1 AND 600", name="rate_limit_range"),
         CheckConstraint("expires_at > created_at", name="expires_after_creation"),
         CheckConstraint("(revoked_at IS NULL) = (revoked_by IS NULL)", name="revoked_together"),
     )
@@ -120,7 +134,10 @@ class ApiToken(TenantMixin, Base):
     name: Mapped[str] = mapped_column(Text)
     prefix: Mapped[str] = mapped_column(Text)
     token_sha256: Mapped[str] = mapped_column(Text, index=True)
-    scope: Mapped[str] = mapped_column(Text, server_default="evidence:write")
+    scopes: Mapped[list[str]] = mapped_column(
+        ARRAY(Text), server_default=text("'{evidence:write}'::text[]")
+    )
+    rate_limit_per_minute: Mapped[int] = mapped_column(Integer, server_default="60")
     created_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"))
     created_at: Mapped[datetime] = _now()
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
@@ -129,3 +146,32 @@ class ApiToken(TenantMixin, Base):
     revoked_by: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("users.id", ondelete="RESTRICT")
     )
+
+
+class ApiTokenUsage(TenantMixin, Base):
+    """One accepted request of a key (api-keys-v2 spec): the route template and the scope, never
+    a body, query or customer content (rule 2). Append-only; the rate limit counts these rows."""
+
+    __tablename__ = "api_token_usage"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        ForeignKeyConstraint(
+            ["organization_id", "token_id"],
+            ["api_tokens.organization_id", "api_tokens.id"],
+            ondelete="RESTRICT",
+        ),
+        CheckConstraint("method IN ('GET', 'POST', 'PUT', 'PATCH', 'DELETE')", name="method"),
+        CheckConstraint(
+            "route ~ '^/api/v1/[a-z0-9/{}_.-]+$' AND length(route) <= 200", name="route_template"
+        ),
+        Index(
+            "ix_api_token_usage_organization_id_token_id_at", "organization_id", "token_id", "at"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    token_id: Mapped[uuid.UUID]
+    at: Mapped[datetime] = _now()
+    method: Mapped[str] = mapped_column(Text)
+    route: Mapped[str] = mapped_column(Text)
+    scope: Mapped[str | None] = mapped_column(Text)
