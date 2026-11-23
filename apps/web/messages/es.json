@@ -75,7 +75,8 @@
       "incident_closed": "El incidente está cerrado y no admite más anotaciones.",
       "clock_unknown": "Ese plazo no se aplica a este incidente.",
       "clock_met": "Ese plazo ya está registrado.",
-      "clock_waiting": "Ese plazo empieza cuando se registre el anterior."
+      "clock_waiting": "Ese plazo empieza cuando se registre el anterior.",
+      "report_month_invalid": "El mes no es válido o todavía no ha empezado."
     },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
@@ -683,7 +684,8 @@
     "policies": "Políticas",
     "training": "Formación",
     "incidents": "Incidentes",
-    "integrations": "Integraciones"
+    "integrations": "Integraciones",
+    "report": "Informe mensual"
   },
   "routines": {
     "access": {
@@ -1048,5 +1050,41 @@
         "help": "El responsable de seguridad revisa; la dirección lee el resumen y firma."
       }
     }
+  },
+  "report": {
+    "title": "Informe mensual",
+    "intro": "Para la dirección: qué se hizo en el mes, cómo están los marcos y qué vence. Imprímelo o guárdalo en PDF y fírmalo.",
+    "print": "Imprimir o guardar en PDF",
+    "month": "Mes",
+    "loading": "Preparando el informe…",
+    "kicker": "Informe mensual para la dirección",
+    "done": "Hecho en {month}",
+    "nothingDone": "No se registró actividad en este mes.",
+    "lines": {
+      "measures_assessed": "Medidas evaluadas",
+      "assessments_reviewed": "Revisiones del responsable",
+      "evidence_by_people": "Evidencias registradas por personas",
+      "evidence_by_tools": "Evidencias enviadas por herramientas",
+      "policies_approved": "Políticas aprobadas",
+      "access_reviews_closed": "Revisiones de acceso cerradas",
+      "trainings_closed": "Formaciones cerradas",
+      "incidents_recorded": "Incidentes registrados",
+      "incidents_closed": "Incidentes cerrados",
+      "deadlines_met": "Plazos de notificación cumplidos",
+      "people_joined": "Personas incorporadas"
+    },
+    "status": "Estado de los marcos",
+    "statusHelp": "Es el estado actual, no el del final del mes.",
+    "noFrameworks": "Ningún marco en curso.",
+    "framework": "Marco",
+    "assessed": "Evaluadas",
+    "implemented": "Implantadas",
+    "overdue": "Vencidas",
+    "review": "Última revisión",
+    "noReview": "Sin revisión",
+    "ofTotal": "{done} de {total, plural, one {#} other {#}}",
+    "due": "Lo que vence",
+    "nothingDue": "No hay nada pendiente de vencer.",
+    "notCertification": "Este informe reúne lo registrado por la organización en Atesta. No es una certificación ni una evaluación de conformidad."
   }
 }
