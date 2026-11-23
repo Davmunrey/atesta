@@ -40,7 +40,7 @@ jobs:
           persist-credentials: false
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          python-version: "3.12"
+          python-version: "3.13"
           version: "0.11.32"
       - name: Install
         run: uv sync --all-packages --locked
@@ -71,7 +71,7 @@ jobs:
           fetch-depth: 0
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          python-version: "3.12"
+          python-version: "3.13"
           version: "0.11.32"
       - name: Changelog fragment
         env:
@@ -167,7 +167,7 @@ jobs:
           persist-credentials: false
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          python-version: "3.12"
+          python-version: "3.13"
           version: "0.11.32"
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
         with:
@@ -198,7 +198,7 @@ jobs:
           persist-credentials: false
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          python-version: "3.12"
+          python-version: "3.13"
           version: "0.11.32"
       # uvx ignores the workspace cooldown, so each tool is pinned and gets --exclude-newer.
       - name: Dependency audit (locked runtime dependencies)

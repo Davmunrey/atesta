@@ -14,7 +14,7 @@ framework. Atesta builds evidence packs for auditors.
 
 ## Architecture (see docs/adr)
 
-- Python 3.12 backend: FastAPI modular monolith in `apps/api`, jobs in `apps/worker`.
+- Python 3.13 backend: FastAPI modular monolith in `apps/api`, jobs in `apps/worker`.
 - Next.js + TypeScript UI in `apps/web`, typed client generated from the OpenAPI spec.
 - Modules in `apps/api/src/atesta_api/modules/`: identity, connections, scanning, compliance,
   evidence, ai, billing. Modules talk ONLY through their `api.py`. Enforced by `lint-imports`.
