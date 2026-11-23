@@ -69,7 +69,6 @@
   @media (min-width: 40rem) { .result-counts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   @media (max-width: 40rem) {
     .overview-page > .page-title { font-size: 2rem; }
-    .workspace:has(.overview-page) .organization-context { padding-block: 1.25rem; }
     .dashboard-toolbar { gap: 0.75rem; margin-bottom: 1.5rem; }
     .framework-row > summary { column-gap: 0.5rem; }
   }
