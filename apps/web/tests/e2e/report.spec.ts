@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { settled } from "./polish";
 
 test("the monthly report reads well on a phone and a laptop, and prints clean", async ({ page }) => {
   await page.goto("/app");
@@ -16,6 +17,7 @@ test("the monthly report reads well on a phone and a laptop, and prints clean", 
   for (const width of [375, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `report ${width}`).toBe(true);
+    await settled(page);
     const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
     expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id), `report ${width}`).toEqual([]);
   }

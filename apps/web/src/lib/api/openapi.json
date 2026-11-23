@@ -1111,6 +1111,36 @@
         "title": "CheckReference",
         "type": "object"
       },
+      "CitedEvidenceOut": {
+        "properties": {
+          "collected_at": {
+            "format": "date-time",
+            "title": "Collected At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "kind",
+          "collected_at"
+        ],
+        "title": "CitedEvidenceOut",
+        "type": "object"
+      },
       "ClockLabel": {
         "properties": {
           "en": {
@@ -3338,6 +3368,18 @@
             "title": "Aware At",
             "type": "string"
           },
+          "classified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classified At"
+          },
           "personal_data": {
             "title": "Personal Data",
             "type": "boolean"
@@ -3368,6 +3410,18 @@
             "format": "date-time",
             "title": "Aware At",
             "type": "string"
+          },
+          "classified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classified At"
           },
           "clocks": {
             "items": {
@@ -3438,6 +3492,7 @@
           "id",
           "title",
           "aware_at",
+          "classified_at",
           "significant",
           "personal_data",
           "created_at",
@@ -3456,6 +3511,18 @@
             "format": "date-time",
             "title": "Aware At",
             "type": "string"
+          },
+          "classified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classified At"
           },
           "closed_at": {
             "anyOf": [
@@ -3512,6 +3579,7 @@
           "id",
           "title",
           "aware_at",
+          "classified_at",
           "significant",
           "personal_data",
           "created_at",
@@ -4716,7 +4784,7 @@
       },
       "ReportingClock": {
         "additionalProperties": false,
-        "description": "A reporting deadline copied from the official text (recorded-routines spec). It starts when\nthe organization became aware of the incident, or when the clock named in `after` was met.",
+        "description": "A reporting deadline copied from the official text (recorded-routines spec). It starts when\nthe organization became aware of the incident, when it classified the incident as significant\n(`starts: classified`), or when the clock named in `after` was met. A classified clock may\nkeep an outer limit in hours from awareness, which lapses when classification is later.",
         "properties": {
           "after": {
             "anyOf": [
@@ -4769,9 +4837,31 @@
             "title": "Needs",
             "type": "string"
           },
+          "outer_limit_hours": {
+            "anyOf": [
+              {
+                "maximum": 8760.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outer Limit Hours"
+          },
           "requirement": {
             "minLength": 1,
             "title": "Requirement",
+            "type": "string"
+          },
+          "starts": {
+            "default": "aware",
+            "enum": [
+              "aware",
+              "classified"
+            ],
+            "title": "Starts",
             "type": "string"
           },
           "title_en": {
@@ -4971,6 +5061,15 @@
       },
       "ReviewIn": {
         "properties": {
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Evidence Ids",
+            "type": "array"
+          },
           "rationale": {
             "title": "Rationale",
             "type": "string"
@@ -4997,6 +5096,13 @@
           "control_key": {
             "title": "Control Key",
             "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/CitedEvidenceOut"
+            },
+            "title": "Evidence",
+            "type": "array"
           },
           "expired": {
             "title": "Expired",
@@ -5038,7 +5144,8 @@
           "valid_until",
           "reviewed_by",
           "reviewed_at",
-          "expired"
+          "expired",
+          "evidence"
         ],
         "title": "ReviewOut",
         "type": "object"
@@ -6032,6 +6139,18 @@
       },
       "UpdateIn": {
         "properties": {
+          "classified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classified At"
+          },
           "clock": {
             "anyOf": [
               {
@@ -6064,12 +6183,25 @@
         "enum": [
           "note",
           "clock",
-          "closed"
+          "closed",
+          "classified"
         ],
         "type": "string"
       },
       "UpdateOut": {
         "properties": {
+          "classified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classified At"
+          },
           "clock": {
             "anyOf": [
               {
@@ -7139,6 +7271,62 @@
           }
         ],
         "summary": "Get Connection",
+        "tags": [
+          "connections"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/connections/{connection_id}/m365/signin": {
+      "post": {
+        "operationId": "start_signin_api_v1_orgs__org_id__connections__connection_id__m365_signin_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "connection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Connection Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Start Signin",
         "tags": [
           "connections"
         ]
@@ -10137,6 +10325,138 @@
           }
         },
         "summary": "Logout",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/m365/consent-callback": {
+      "get": {
+        "operationId": "consent_callback_auth_m365_consent_callback_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "State",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Tenant",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "admin_consent",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Admin Consent",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "error",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Error",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Consent Callback",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/m365/signin-callback": {
+      "get": {
+        "operationId": "signin_callback_auth_m365_signin_callback_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "code",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Code",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "State",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Signin Callback",
         "tags": [
           "auth"
         ]

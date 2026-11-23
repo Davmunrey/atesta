@@ -9,6 +9,7 @@ import { captureInviteToken, forgetInviteToken } from "@/lib/invite";
 import { goTo } from "@/lib/navigation";
 import { orgHome } from "@/lib/org";
 import { ErrorMessage } from "./error-message";
+import { LinkProblem } from "./public-header";
 
 // A different account might still accept these; anything else means the token is spent.
 const RETRYABLE = new Set(["identity.email_mismatch", "identity.email_unverified", "auth.invalid_token"]);
@@ -41,7 +42,7 @@ export function AcceptInvite() {
     });
   }
 
-  if (token === null) return <p role="alert">{t("missing")}</p>;
+  if (token === null) return <LinkProblem title={t("unavailable")}>{t("missing")}</LinkProblem>;
   if (token === undefined || me.isPending || signedOut) return <p role="status">{t("loading")}</p>;
   if (me.isError) return <ErrorMessage error={me.error} />;
   return (

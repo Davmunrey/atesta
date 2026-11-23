@@ -1,6 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
-import { framework, passingReview, preparationFramework, requirementGuidance, withManualControl } from "../fixtures/framework";
+import { settled } from "./polish";
+import { framework, paperEvidence, passingReview, preparationFramework, requirementGuidance, withManualControl } from "../fixtures/framework";
 import { overview } from "../fixtures/overview";
 
 async function createOrganization(page: Page) {
@@ -42,6 +43,7 @@ test("evidence form supports keyboard submission and responsive themes", async (
       await page.setViewportSize({ width, height: 900 });
       await expect(page.locator("body")).toHaveCSS("background-color", colorScheme === "dark" ? "rgb(23, 23, 21)" : "rgb(244, 241, 234)");
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await settled(page);
       const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
       expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id)).toEqual([]);
     }
@@ -107,6 +109,7 @@ test("framework register supports navigation, guidance, filters, locales and res
         await expect(row.locator("summary strong")).toHaveCSS("color", dark ? "rgb(244, 241, 234)" : "rgb(20, 20, 20)");
         await expect(page.getByRole("contentinfo").getByRole("link")).toHaveCSS("color", dark ? "rgb(192, 186, 174)" : "rgb(85, 81, 74)");
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        await settled(page);
         const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
         expect(violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => `${v.id}: ${v.nodes.map((n) => n.failureSummary).join("; ")}`), `${locale}/${colorScheme}/${width}`).toEqual([]);
       }
@@ -133,6 +136,7 @@ test("preparation exposes scope, missing work, official rules and configuration 
   for (const width of [375, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await settled(page);
     const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
     expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id)).toEqual([]);
   }
@@ -151,6 +155,7 @@ test("an owner records a human review of a manual control, accessibly and within
   let reviewed = false;
   await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha", (route) => route.fulfill({ json: withManualControl(reviewed ? passingReview : null) }));
   await page.route("**/api/v1/orgs/*/controls/ctl.paper/reviews", (route) => { reviewed = true; return route.fulfill({ status: 201, json: passingReview }); });
+  await page.route("**/api/v1/orgs/*/controls/ctl.paper/evidence?*", (route) => route.fulfill({ json: paperEvidence }));
   await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
   await page.locator("details.requirement-row").filter({ hasText: "R2" }).locator("summary").click();  // failures open first
   const card = page.locator("article.control-guide").filter({ hasText: "Plan de respuesta sintético" });
@@ -159,15 +164,20 @@ test("an owner records a human review of a manual control, accessibly and within
   for (const width of [375, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await settled(page);
     const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
     expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id), `${width}`).toEqual([]);
   }
+  await card.getByRole("checkbox", { name: /Acta del comité 12/ }).check();
   await card.getByRole("radio", { name: "Implantado", exact: true }).check();
   await card.getByLabel("Justificación").fill("Acta 12 aprobada por la dirección.");
   const post = page.waitForRequest((request) => request.method() === "POST" && request.url().includes("/reviews"));
   await card.getByRole("button", { name: "Guardar revisión" }).click();
-  expect((await post).postDataJSON()).toMatchObject({ status: "pass", rationale: "Acta 12 aprobada por la dirección." });
+  expect((await post).postDataJSON()).toMatchObject({
+    status: "pass", rationale: "Acta 12 aprobada por la dirección.", evidence_ids: [paperEvidence.items[0]!.id],
+  });
   await expect(card.getByRole("status")).toContainText("Revisión registrada");
   await expect(card.getByText("Punto 3 aprobado.", { exact: false })).toBeVisible();
+  await expect(card.getByRole("list", { name: "Evidencias citadas" })).toContainText("Acta del comité 12");
   expect(csp).toEqual([]);
 });

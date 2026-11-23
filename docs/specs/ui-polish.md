@@ -2,7 +2,8 @@
 
 - Issues: #238 (phones), #239 (readable activity, consistent panels), #240 (executive summaries),
   #276 (incident criteria on phones), #283 (loading, error and empty states),
-  #287 (records at a glance on the overview), #295 (expected evidence polish).
+  #287 (records at a glance on the overview), #295 (expected evidence polish),
+  #301 (public pages).
 - Builds on `console-shell.md`, `insights.md`, `recorded-routines.md` and DESIGN.md. Operate mode:
   refinement of the console, not a new visual world.
 - Status: draft
@@ -83,6 +84,67 @@ frameworks active, one flag can carry twenty or more criteria.
 - [ ] **One disclosure per framework:** a framework with several criteria shows a single disclosure, "Qué dice DORA (9 criterios)" / "What DORA says (9 criteria)". It opens onto one disclosure per criterion, titled by the criterion alone. A framework with one criterion keeps the single disclosure "Qué dice RGPD: …".
 - [ ] **Official text unchanged:** text keeps `lang="es"` when no official English exists, and each criterion keeps its official source link.
 
+## Loading, error and empty states (#283)
+
+**Shared components**
+
+`page-frame.tsx` exports three components, and every console page load and records list uses them:
+- `Loading`: visible text inside a polite status region.
+- `LoadError`: the error plus a "Reintentar" / "Try again" button that refetches.
+- `Empty`: a muted line saying nothing is recorded yet.
+
+**Acceptance criteria**
+- [ ] **Header stays:** while loading and on error, the page header and breadcrumbs stay in place.
+- [ ] **No silent status:** no status region is empty.
+- [ ] **Fast failure:** queries never retry a 4xx answer. They retry a 5xx or network failure once, so a failing page shows its error within a few seconds instead of about seven.
+
+## Records at a glance on the overview (#287)
+
+Management reads the records an auditor asks for from the overview, without opening each page.
+
+**The panel**
+- [ ] **Rows:** when work is underway, the overview has a "Registros" / "Records" table with one row per record type, in a fixed order: policies, access reviews, training, incidents.
+- [ ] **Cells:** each row has three cells:
+  - the record type, linking to its page;
+  - a state written as icon plus text: "Requiere acción", "Al día" or "Sin registros";
+  - the summary sentence that the records page shows.
+
+**Needs action when**
+- [ ] **Policies:** a review is overdue or a policy is unapproved.
+- [ ] **Access reviews:** an open review is past its due date.
+- [ ] **Training:** an open campaign is past its closing date.
+- [ ] **Incidents:** an open incident has an overdue deadline.
+
+**Data**
+- [ ] **No new endpoint:** figures come from the list endpoints the records pages use; the query cache is shared with them.
+- [ ] **Honest rows:** a row that is loading or failed says so and claims no state.
+
+## Expected evidence polish (#295)
+
+Refines the expected-evidence disclosure from `requirement-register.md` and `auditor-dossier.md` (#226).
+
+- [ ] **Reference once:** when every item of a requirement shares one guide reference, it is shown once under the status line ("Referencia: …" / "Reference: …"), and the items carry no reference of their own. When references differ, each item keeps its own.
+- [ ] **Dossier for print:** in the dossier, the lists are closed on screen and open while printing, from the print button or the browser. A `beforeprint`/`afterprint` handler opens them and restores their state; it is Baseline widely available, and no inline script is added.
+- [ ] **Register style:** in the register, the disclosure uses the requirement row's section style: one rule, no triangle, the same summary type as its siblings.
+
+## Public pages (#301)
+
+The public side (`/`, `/cookies`, `/invite`, `/training`, the 404 page) and the dossier print view
+get the same quality bar as the console.
+
+**Frame**
+- [ ] **One frame:** every public page has the same header (skip link, wordmark linking home, language switcher) and the site footer.
+- [ ] **Light only:** public pages are light only (landing-legal spec, L4) and render the light theme under dark emulation.
+
+**Link states**
+- [ ] **Heading and next step:** the invite and training link states (missing, invalid or expired) have an h1 and one sentence on what to do.
+- [ ] **Training link refused:** when the API refuses a training link with a 4xx, the page says the link is not valid or no longer active, never a form-validation message. A 5xx keeps the generic error.
+
+**Checks**
+- [ ] **e2e:** a public-pages e2e spec runs axe, overflow, the 13 px floor and 44 px targets on these routes at 375 and 1280 px, in light and dark, and on the dossier print view.
+
+
+## Tests
 
 | Area | Cases |
 |---|---|

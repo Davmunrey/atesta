@@ -288,6 +288,12 @@ CLOCK = {
         ([{**CLOCK, "after": "notice"}], "starts from an unknown clock"),
         ([{**CLOCK, "months": 1}], "hours or months"),
         ([{k: v for k, v in CLOCK.items() if k != "hours"}], "hours or months"),
+        ([{**CLOCK, "starts": "classified"}], "needs significant"),
+        (
+            [{**CLOCK, "needs": "significant", "starts": "classified", "after": "notice"}],
+            "needs significant and no other clock",
+        ),
+        ([{**CLOCK, "outer_limit_hours": 24}], "only a clock from classification"),
     ],
 )
 def test_reporting_clocks_are_checked_against_the_pack(
