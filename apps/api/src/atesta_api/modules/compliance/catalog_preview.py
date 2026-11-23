@@ -49,6 +49,9 @@ def import_preview(conn: Connection, catalog: Catalog) -> list[str]:
                         **metadata.model_dump(exclude={"id", "attributes"}),
                         "attributes": {
                             **metadata.attributes.model_dump(mode="json"),
+                            "coverage": pack.coverage.model_dump(mode="json")
+                            if pack.coverage
+                            else None,
                             "preview_fingerprint": fingerprint,
                         },
                         "catalog_version": fingerprint,

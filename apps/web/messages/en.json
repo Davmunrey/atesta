@@ -370,7 +370,8 @@
     "controlsHelp": "Shared guides for reviewing settings and gathering evidence. These are not covered requirements, findings or approved mappings. Review scope and impact before changing settings.",
     "manual": "Documentary review",
     "technical": "Technical configuration",
-    "candidateChecks": "Candidate checks, no observation"
+    "candidateChecks": "Candidate checks, no observation",
+    "officialTextOwn": "Read the full official text"
   },
   "evidence": {
     "show": "View evidence",
@@ -546,5 +547,19 @@
     "pending": "Not assessed",
     "loading": "Loading…",
     "open": "Open {code}"
+  },
+  "coverage": {
+    "title": "Coverage of the official source",
+    "summary": "{covered, plural, one {# part imported as requirements} other {# parts imported as requirements}} and {excluded, plural, one {# excluded with its reason} other {# excluded with their reasons}}.",
+    "help": "Every article, provision and annex of the source appears here: either imported as requirements, or with the reason it is not.",
+    "covered": "imported: {count, plural, one {# requirement} other {# requirements}}",
+    "units": {
+      "art": "Art. {n}",
+      "annex": "Annex {n}",
+      "da": "Additional provision {n}",
+      "df": "Final provision {n}",
+      "dt": "Transitional provision",
+      "dd": "Repealing provision"
+    }
   }
 }

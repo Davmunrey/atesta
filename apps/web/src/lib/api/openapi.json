@@ -860,6 +860,91 @@
         "title": "ControlDetail",
         "type": "object"
       },
+      "Coverage": {
+        "additionalProperties": false,
+        "properties": {
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/CoverageEntry"
+            },
+            "minItems": 1,
+            "title": "Entries",
+            "type": "array"
+          },
+          "source": {
+            "minLength": 1,
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "entries"
+        ],
+        "title": "Coverage",
+        "type": "object"
+      },
+      "CoverageEntry": {
+        "additionalProperties": false,
+        "description": "Units of the official source (articles, provisions, annexes) and what the pack does with\nthem: covered by named requirements, or excluded with a reason in ES and EN.",
+        "properties": {
+          "reason_en": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason En"
+          },
+          "reason_es": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason Es"
+          },
+          "requirements": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Requirements",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "covered",
+              "excluded"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "units": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Units",
+            "type": "array"
+          }
+        },
+        "required": [
+          "units",
+          "status"
+        ],
+        "title": "CoverageEntry",
+        "type": "object"
+      },
       "CreatedInvitation": {
         "properties": {
           "accept_link": {
@@ -1185,6 +1270,16 @@
             ],
             "title": "Catalog Version"
           },
+          "coverage": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Coverage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "development": {
             "title": "Development",
             "type": "boolean"
@@ -1305,6 +1400,18 @@
             "minLength": 1,
             "title": "Title",
             "type": "string"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
           }
         },
         "required": [
@@ -1323,6 +1430,17 @@
           "title": {
             "title": "Title",
             "type": "string"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
           }
         },
         "required": [
@@ -2134,11 +2252,31 @@
       },
       "RequirementContext": {
         "additionalProperties": false,
+        "description": "Official text of one requirement (content model v2). Selection tables by category or\ndimension are optional; an act also published in English carries its official English text.",
         "properties": {
           "applicability_es": {
-            "minLength": 1,
-            "title": "Applicability Es",
-            "type": "string"
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicability Es"
+          },
+          "official_text_en": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Text En"
           },
           "official_text_es": {
             "minLength": 1,
@@ -2151,15 +2289,21 @@
             "type": "string"
           },
           "selection_basis": {
-            "minLength": 1,
-            "title": "Selection Basis",
-            "type": "string"
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selection Basis"
           },
           "selection_rules": {
             "items": {
               "$ref": "#/components/schemas/SelectionRule"
             },
-            "minItems": 1,
             "title": "Selection Rules",
             "type": "array"
           },
@@ -2171,9 +2315,6 @@
         },
         "required": [
           "official_text_es",
-          "applicability_es",
-          "selection_basis",
-          "selection_rules",
           "section",
           "source_sha256"
         ],

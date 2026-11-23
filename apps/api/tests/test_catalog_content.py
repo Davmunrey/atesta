@@ -69,8 +69,21 @@ def catalog_files(root: Path) -> None:
         "source": "https://example.test/standard#r1",
         "reviewed_by": None,
     }
+    coverage = {
+        "source": "Synthetic standard",
+        "entries": [
+            {"units": ["s1"], "status": "covered", "requirements": ["R1"]},
+            {
+                "units": ["s2"],
+                "status": "excluded",
+                "reason_es": "Glosario",
+                "reason_en": "Glossary",
+            },
+        ],
+    }
     for path, data in [
         (pack / "pack.yaml", metadata),
+        (pack / "coverage.yaml", coverage),
         (pack / "requirements.yaml", {"requirements": [requirement]}),
         (pack / "mappings.yaml", {"mappings": [mapping]}),
         (controls / "review.yaml", control),
@@ -207,3 +220,49 @@ def test_every_scope_term_needs_readable_labels(tmp_path: Path) -> None:
         lambda d: d["attributes"].update(term_labels=labels),
     )
     assert read(tmp_path).packs[0].metadata.attributes.term_labels[2].en == "low"
+
+
+@pytest.mark.parametrize(
+    ("case", "message"),
+    [
+        ("missing", "no coverage.yaml"),
+        ("unknown", "unknown requirements"),
+        ("uncovered", "outside any covered unit"),
+        ("duplicate", "duplicate coverage unit"),
+        ("unexplained", "reason in ES and EN"),
+    ],
+)
+def test_every_requirement_sits_in_a_unit_of_the_source(
+    tmp_path: Path, case: str, message: str
+) -> None:
+    """Content model v2: the coverage ledger accounts for the source and every requirement."""
+    catalog_files(tmp_path)
+    ledger = tmp_path / "frameworks/sample/coverage.yaml"
+    if case == "missing":
+        ledger.unlink()
+    elif case == "unknown":
+        change(
+            tmp_path,
+            "frameworks/sample/coverage.yaml",
+            lambda d: d["entries"][0].update(requirements=["R1", "R9"]),
+        )
+    elif case == "uncovered":
+        change(
+            tmp_path,
+            "frameworks/sample/coverage.yaml",
+            lambda d: d["entries"][0].update(
+                status="excluded", requirements=[], reason_es="x", reason_en="x"
+            ),
+        )
+    elif case == "duplicate":
+        change(
+            tmp_path,
+            "frameworks/sample/coverage.yaml",
+            lambda d: d["entries"][1].update(units=["s1"]),
+        )
+    else:
+        change(
+            tmp_path, "frameworks/sample/coverage.yaml", lambda d: d["entries"][1].pop("reason_en")
+        )
+    with pytest.raises(ValueError, match=message):
+        read(tmp_path)

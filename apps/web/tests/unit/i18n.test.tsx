@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { cleanup, screen } from "@testing-library/react";
 import { createTranslator } from "next-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { RequirementGuidance, SourceCoverage } from "@/components/catalog-preparation";
 import { FrameworkDetailView } from "@/components/framework-detail";
 import { preferredLocale } from "@/i18n/locale";
 import { percent } from "@/lib/format";
@@ -101,5 +102,36 @@ describe("official Spanish text in the English interface", () => {
     const title = await screen.findByText(framework.requirements[0]!.title_es!);
     expect(title.closest("[lang]")?.getAttribute("lang")).toBe("es");
     expect(screen.getAllByText(/official Spanish text/)).toHaveLength(1);
+  });
+});
+
+describe("official text in both languages (content model v2)", () => {
+  const eu = { official_text_es: "Texto oficial en español.", official_text_en: "Official English text.", section: "Artículo 21", source_sha256: "b".repeat(64) };
+
+  it.each([["es", "Texto oficial en español.", "es"], ["en", "Official English text.", "en"]] as const)(
+    "%s interface shows the official text in its own language", async (locale, text, lang) => {
+      stubApi({});
+      renderWithProviders(<RequirementGuidance guidance={eu} />, locale);
+      expect(screen.getByText(text).getAttribute("lang")).toBe(lang);
+      expect(screen.queryByRole("table")).toBeNull(); // no selection table without selection rules
+    });
+
+  it("falls back to the Spanish text, marked as such, when no official English exists", () => {
+    stubApi({});
+    renderWithProviders(<RequirementGuidance guidance={{ ...eu, official_text_en: null }} />, "en");
+    expect(screen.getByText("Texto oficial en español.").getAttribute("lang")).toBe("es");
+  });
+
+  it("lists every unit of the source, imported or excluded with its reason", () => {
+    stubApi({});
+    renderWithProviders(<SourceCoverage coverage={{ source: "Synthetic act", entries: [
+      { units: ["art20", "art21.1-4"], status: "covered", requirements: ["a", "b", "c"] },
+      { units: ["art1", "annex3", "da2", "dt"], status: "excluded", reason_es: "Motivo sintético.", reason_en: "Synthetic reason." },
+    ] }} />, "en");
+    expect(screen.getByText("2 parts imported as requirements and 4 excluded with their reasons.")).toBeTruthy();
+    expect(screen.getByText("Art. 20, Art. 21.1-4")).toBeTruthy();
+    expect(screen.getByText("imported: 3 requirements")).toBeTruthy();
+    expect(screen.getByText("Art. 1, Annex III, Additional provision 2, Transitional provision")).toBeTruthy();
+    expect(screen.getByText("Synthetic reason.")).toBeTruthy();
   });
 });
