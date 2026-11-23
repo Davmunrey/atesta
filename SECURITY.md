@@ -84,6 +84,10 @@ for a control.
   (`evidence/links.py`).
 - **Scores and ended connections.** A disconnected or revoked connection's results leave the
   score by the connection's current status, not as of the scan (`scanning/scoring.py`, `_as_of`).
+- **Sign-in codes in load balancer logs.** The API never logs query strings (#257), but the load
+  balancer's access logs record the sign-in callback's code and state. The code is single-use,
+  short-lived and bound to the PKCE verifier held only in the sealed `atesta_auth` cookie; the log
+  bucket is private, encrypted and retention-limited (`infra/modules/ecs/api.tf`).
 - **Local Docker runner (development only).** The attempt's `out/` folder is opened to the
   container's user 10001 (`scanning/local.py`); `LocalDockerRunner` refuses to start outside a
   development `ATESTA_ENV`.

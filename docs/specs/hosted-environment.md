@@ -27,9 +27,11 @@ happen now, at no cost. Applying it is the owner's decision.
       ADR-004, with a task role scoped to that tenant's prefix.
     - Secrets come from Secrets Manager, never from environment files.
     - Logs go to CloudWatch with a retention period; no secrets or customer content (rule 2).
-    - The API runs with uvicorn's access log off and the load balancer's access logs stay off:
-      both would record the sign-in callback's query string, which holds the OAuth code and
-      state (#257; `apps/api/tests/test_app_image.py`).
+    - The API runs with uvicorn's access log off, so the sign-in callback's query string (the
+      OAuth code and state) never reaches CloudWatch (#257; `apps/api/tests/test_app_image.py`).
+      The load balancer's access logs do record it: accepted, because the code is single-use,
+      short-lived and bound to the PKCE verifier held only in the sealed `atesta_auth` cookie, and
+      the log bucket is private, encrypted and retention-limited (`infra/modules/ecs/api.tf`).
   - **`web`:**
     - The static export lives in a private S3 bucket behind CloudFront with origin access control.
     - `/api/*` and `/auth/*` go to the API's load balancer.
