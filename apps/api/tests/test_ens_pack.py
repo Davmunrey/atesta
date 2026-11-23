@@ -14,22 +14,22 @@ def _catalog() -> Catalog:
     expected: set[str] = set()
     for provider in ("m365", "googleworkspace"):
         expected.update(
-            json.loads((ROOT / "scanner/expected/5.49.0" / f"{provider}.json").read_text())[
+            json.loads((ROOT / "scanner/expected/5.52.0" / f"{provider}.json").read_text())[
                 provider
             ]
         )
-    return read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.49.0")
+    return read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.52.0")
 
 
 def test_ens_preserves_dimension_levels_and_alternative_reinforcements() -> None:
     expected = set()
     for provider in ("m365", "googleworkspace"):
         expected.update(
-            json.loads((ROOT / "scanner/expected/5.49.0" / f"{provider}.json").read_text())[
+            json.loads((ROOT / "scanner/expected/5.52.0" / f"{provider}.json").read_text())[
                 provider
             ]
         )
-    catalog = read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.49.0")
+    catalog = read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.52.0")
     pack = next(p for p in catalog.packs if p.metadata.id == "ens_rd311_2022")
     requirements = {r.id: r for r in pack.requirements}
     assert len(requirements) == 73
@@ -64,11 +64,11 @@ def test_every_requirement_group_has_its_official_heading() -> None:
     expected: set[str] = set()
     for provider in ("m365", "googleworkspace"):
         expected.update(
-            json.loads((ROOT / "scanner/expected/5.49.0" / f"{provider}.json").read_text())[
+            json.loads((ROOT / "scanner/expected/5.52.0" / f"{provider}.json").read_text())[
                 provider
             ]
         )
-    catalog = read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.49.0")
+    catalog = read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.52.0")
     for pack in catalog.packs:
         titles = {g.prefix: g.title for g in pack.metadata.attributes.groups_es}
         if not titles:

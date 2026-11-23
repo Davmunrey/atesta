@@ -6,7 +6,7 @@
 set -euo pipefail
 
 image=$1
-version=5.49.0
+version=5.52.0
 expected=scanner/expected/$version
 out=$(mktemp -d)
 

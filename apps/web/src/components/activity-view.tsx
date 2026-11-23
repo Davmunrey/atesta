@@ -1,14 +1,13 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { PageHeader, Panel } from "./page-frame";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { orgHome as homeOf } from "@/lib/org";
 import { useState } from "react";
 import { useActivity } from "@/lib/api/hooks";
 import type { Membership } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
 import { ColumnChart } from "./charts";
-import { ErrorMessage } from "./error-message";
 import { activityLabel, activityTarget } from "@/lib/activity";
 
 const PERIODS = [30, 90] as const;
@@ -25,13 +24,13 @@ export function ActivityView({ org }: { org: Membership }) {
       actions={<div role="group" aria-label={t("period")} className="requirement-filters">
         {PERIODS.map((d) => <button key={d} type="button" className="dashboard-button" aria-pressed={days === d} onClick={() => setDays(d)}>{t("lastDays", { days: d })}</button>)}
       </div>} />
-    {query.isPending ? <div className="dashboard-loading" role="status" aria-busy="true"><p>{t("loading")}</p></div>
-      : query.isError ? <ErrorMessage error={query.error} />
+    {query.isPending ? <Loading label={t("loading")} />
+      : query.isError ? <LoadError error={query.error} onRetry={() => void query.refetch()} />
       : <div className={`panel-grid${query.isFetching ? " is-refetching" : ""}`}>
         <Panel><ColumnChart title={t("perDay")} periodLabel={t("day")} valueLabel={t("events")} tableLabel={t("showTable")}
           points={query.data.daily.map((d) => ({ label: format.dateTime(new Date(`${d.day}T00:00:00`), { day: "numeric", month: "short" }), value: d.count }))} /></Panel>
         <Panel title={t("latest")}>
-        {query.data.events.length === 0 ? <p className="text-muted">{t("empty")}</p> : <div className="table-region" role="region" aria-label={t("latest")} tabIndex={0}><table className="activity-table">
+        {query.data.events.length === 0 ? <Empty>{t("empty")}</Empty> : <div className="table-region" role="region" aria-label={t("latest")} tabIndex={0}><table className="activity-table">
           <thead><tr><th scope="col">{t("when")}</th><th scope="col">{t("who")}</th><th scope="col">{t("what")}</th></tr></thead>
           <tbody>{query.data.events.map((e, i) => <tr key={`${e.occurred_at}-${i}`}>
             <td data-label={t("when")}><time dateTime={e.occurred_at}>{format.dateTime(new Date(e.occurred_at), { dateStyle: "medium", timeStyle: "short" })}</time></td>

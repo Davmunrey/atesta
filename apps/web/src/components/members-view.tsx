@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { PageHeader, Panel } from "./page-frame";
+import { LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { orgHome as homeOf } from "@/lib/org";
 import { useState } from "react";
 import { useChangeRole, useMembers, useRemoveMember } from "@/lib/api/hooks";
@@ -21,14 +21,15 @@ export function MembersView({ org }: { org: Membership }) {
   const format = useFormatter();
   const range = auditorWindow();
 
-  if (list.isPending) return <p role="status">{t("app.loading")}</p>;
-  if (list.isError) return <ErrorMessage error={list.error} />;
+  const header = <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("org.members") }]}
+    title={t("members.title", { org: org.organization_name })} description={t("org.membersHelp")} />;
+  if (list.isPending) return <>{header}<Loading /></>;
+  if (list.isError) return <>{header}<LoadError error={list.error} onRetry={() => void list.refetch()} /></>;
   const failure = changeRole.error ?? remove.error;
 
   return (
     <>
-      <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("org.members") }]}
-        title={t("members.title", { org: org.organization_name })} description={t("org.membersHelp")} />
+      {header}
       {failure ? <ErrorMessage error={failure} /> : null}
       <Panel>
       <div className="table-region" role="region" aria-label={t("members.title", { org: org.organization_name })} tabIndex={0}>

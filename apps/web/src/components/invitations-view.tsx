@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { PageHeader, Panel } from "./page-frame";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { orgHome as homeOf } from "@/lib/org";
 import { useId, useState } from "react";
 import { useCreateInvitation, useInvitations, useRevokeInvitation } from "@/lib/api/hooks";
@@ -71,11 +71,11 @@ export function InvitationsView({ org }: { org: Membership }) {
       <Panel title={t("invitations.pending")}>
       {revoke.isError ? <ErrorMessage error={revoke.error} /> : null}
       {list.isPending ? (
-        <p role="status">{t("app.loading")}</p>
+        <Loading />
       ) : list.isError ? (
-        <ErrorMessage error={list.error} />
+        <LoadError error={list.error} onRetry={() => void list.refetch()} />
       ) : list.data.length === 0 ? (
-        <p className="text-muted">{t("invitations.none")}</p>
+        <Empty>{t("invitations.none")}</Empty>
       ) : (
         <ul className="flex flex-col gap-2">
           {list.data.map((i) => (

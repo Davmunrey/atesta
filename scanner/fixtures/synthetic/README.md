@@ -8,6 +8,10 @@ No tenant data: tenant ids, domains, resource names and messages are fictitious.
 - Findings are built with `py_ocsf_models` 0.10.0 `DetectionFinding`, field by field as Prowler's
   `lib/outputs/ocsf/ocsf.py` does; `packages/core/tests/test_ocsf.py` validates every finding
   against that model.
+- They hold for the pinned 5.52.0 too: between the two wheels no M365 or Google Workspace
+  `*.metadata.json` and no `lib/outputs/finding.py` line changes, and `lib/outputs/ocsf/ocsf.py`
+  changes only in how the array is closed when the last batch is empty. Only `product.version`
+  would read 5.52.0, and ingest does not read it.
 
 | File | Covers |
 |---|---|

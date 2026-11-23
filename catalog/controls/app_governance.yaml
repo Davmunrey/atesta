@@ -39,18 +39,18 @@ remediation_refs:
   - https://learn.microsoft.com/entra/identity-platform/reply-url
   - https://learn.microsoft.com/en-us/graph/api/resources/tenantappmanagementpolicy
   - https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/security-planning#prefer-certificate-credentials
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_app_registration_client_secret_unused/entra_app_registration_client_secret_unused.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_app_registration_redirect_uris_secure/entra_app_registration_redirect_uris_secure.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_default_app_management_policy_enabled/entra_default_app_management_policy_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_service_principal_no_secrets_for_permanent_tier0_roles/entra_service_principal_no_secrets_for_permanent_tier0_roles.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_service_principal_privileged_role_no_owners/entra_service_principal_privileged_role_no_owners.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_thirdparty_integrated_apps_not_allowed/entra_thirdparty_integrated_apps_not_allowed.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_restricts_user_consent_for_apps/entra_policy_restricts_user_consent_for_apps.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_msol_powershell_blocked/entra_policy_msol_powershell_blocked.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/sharepoint/sharepoint_modern_authentication_required/sharepoint_modern_authentication_required.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/marketplace/marketplace_apps_access_restricted/marketplace_apps_access_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_app_access_restricted/security_app_access_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_internal_apps_trusted/security_internal_apps_trusted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/chat/chat_apps_installation_disabled/chat_apps_installation_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/chat/chat_incoming_webhooks_disabled/chat_incoming_webhooks_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_pop_imap_access_disabled/gmail_pop_imap_access_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_app_registration_client_secret_unused/entra_app_registration_client_secret_unused.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_app_registration_redirect_uris_secure/entra_app_registration_redirect_uris_secure.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_default_app_management_policy_enabled/entra_default_app_management_policy_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_service_principal_no_secrets_for_permanent_tier0_roles/entra_service_principal_no_secrets_for_permanent_tier0_roles.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_service_principal_privileged_role_no_owners/entra_service_principal_privileged_role_no_owners.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_thirdparty_integrated_apps_not_allowed/entra_thirdparty_integrated_apps_not_allowed.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_policy_restricts_user_consent_for_apps/entra_policy_restricts_user_consent_for_apps.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_policy_msol_powershell_blocked/entra_policy_msol_powershell_blocked.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/sharepoint/sharepoint_modern_authentication_required/sharepoint_modern_authentication_required.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/marketplace/marketplace_apps_access_restricted/marketplace_apps_access_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/security/security_app_access_restricted/security_app_access_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/security/security_internal_apps_trusted/security_internal_apps_trusted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/chat/chat_apps_installation_disabled/chat_apps_installation_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/chat/chat_incoming_webhooks_disabled/chat_incoming_webhooks_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_pop_imap_access_disabled/gmail_pop_imap_access_disabled.py

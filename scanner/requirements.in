@@ -1,3 +1,3 @@
 # Scanner image dependencies (scanner-connectors spec). Prowler is pinned; everything else is
 # resolved and hash-locked into requirements.txt by the command in its header.
-prowler==5.49.0
+prowler==5.52.0

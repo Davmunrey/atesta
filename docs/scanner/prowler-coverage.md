@@ -6,18 +6,22 @@ PowerShell-backed M365 checks need. The rules live in the
 [scanner-connectors spec](../specs/scanner-connectors.md) (D1, D3, D6) and in
 `atesta_core.exclusions`; this note does not change them.
 
-State as of #242 (issues #233 and #234). Written 2026-11-23.
+State as of #242 (issues #233 and #234). Written 2026-11-23; engine moved to 5.52.0 the same day
+(#243).
 
 ## Sources
 
-- **Engine:** Prowler `5.49.0` (`scanner/requirements.in`), cloned at that tag (commit
-  `9cd1a8ee450049195b1484e274fa626b72bd26e7`) as a read-only reference. Nothing was run against a
-  tenant.
-- **Check lists:** `scanner/expected/5.49.0/{m365,googleworkspace,m365-powershell}.json`
-  (see [its README](../../scanner/expected/README.md) for hashes). Severity and service come from
-  each check's `*.metadata.json` at the tag.
+- **Engine:** Prowler `5.52.0` (`scanner/requirements.in`). The note was first written against
+  `5.49.0`, cloned at that tag (commit `9cd1a8ee450049195b1484e274fa626b72bd26e7`) as a read-only
+  reference, and re-checked against the `5.52.0` wheel (sha256 `b9134bdb...a96`). Nothing was run
+  against a tenant.
+- **Check lists:** `scanner/expected/5.52.0/{m365,googleworkspace,m365-powershell}.json`
+  (see [its README](../../scanner/expected/README.md) for hashes), byte-identical to the 5.49.0
+  lists. Severity and service come from each check's `*.metadata.json`; no M365 or Google
+  metadata file differs between the two versions.
 - **Prowler compliance files:** `prowler/compliance/` at `5.49.0`, and
-  `prowler/compliance/m365/ens_rd2022_m365.json` at `5.52.0` (added in `5.51.0`).
+  `prowler/compliance/m365/ens_rd2022_m365.json` at `5.52.0` (added in `5.51.0`). Every other
+  file in the table below is byte-identical at `5.52.0`.
 - **ENS ground truth:** CCN-STIC 808 (April 2026 edition) and the 885A, 885B, 885C, 885D and
   888A configuration guides, cited by section and page. No guide text is reproduced.
 - **ISO/IEC 27001 and CIS:** identifiers only; no text from those standards.
@@ -191,10 +195,12 @@ data that Prowler collects only through two PowerShell sessions:
 
 | Session | Services (checks) | Connect, certificate path |
 |---|---|---|
-| Exchange Online | exchange 17, defender 17, admincenter 3, purview 1 (38) | `Connect-ExchangeOnline -Certificate $certificate -AppId $clientID -Organization $tenantDomain` (`m365_powershell.py:234`) |
-| Microsoft Teams | teams 16 | `Connect-MicrosoftTeams -Certificate $certificate -ApplicationId $clientID -TenantId $tenantID` (`m365_powershell.py:198`) |
+| Exchange Online | exchange 17, defender 17, admincenter 3, purview 1 (38) | `Connect-ExchangeOnline -Certificate $certificate -AppId $clientID -Organization $tenantDomain` (`m365_powershell.py:274`) |
+| Microsoft Teams | teams 16 | `Connect-MicrosoftTeams -Certificate $certificate -ApplicationId $clientID -TenantId $tenantID` (`m365_powershell.py:235`) |
 
-### Cmdlets at 5.49.0
+### Cmdlets at 5.52.0
+
+The cmdlet names in the file are the same set as at 5.49.0.
 
 `prowler/providers/m365/lib/powershell/m365_powershell.py` calls only `Get-*` cmdlets to collect
 data:
@@ -217,8 +223,8 @@ The other cmdlets in the file, and why Atesta never reaches them:
 
 | Cmdlet | Where | Atesta |
 |---|---|---|
-| `Install-Module ... -Force` | `--init-modules` only (`m365_powershell.py:1162`) | Never passed. Modules are baked into the image; nothing installs at scan time (spec, Image) |
-| `Invoke-RestMethod` (token endpoint), `Get-MsalToken` | Client-secret path (`m365_powershell.py:155`, `:180`, `:212`) | Not used: Atesta authenticates with a certificate (`--certificate-auth`, `scanner/atesta_scanner/invocation.py`) |
+| `Install-Module ... -Force` | `--init-modules` only (`m365_powershell.py:1203`) | Never passed. Modules are baked into the image; nothing installs at scan time (spec, Image) |
+| `Invoke-RestMethod` (token endpoint), `Get-MsalToken` | Client-secret path (`m365_powershell.py:191`, `:216`, `:250`) | Not used: Atesta authenticates with a certificate (`--certificate-auth`, `scanner/atesta_scanner/invocation.py`) |
 | `Set-OrganizationConfig` | The only M365 fixer, `exchange_organization_delicensing_resiliency_enabled_fixer.py` | Never run: the wrapper never passes `--fixer` (spec, Image) |
 
 ### Permissions and rule 1
@@ -256,13 +262,14 @@ The other cmdlets in the file, and why Atesta never reaches them:
 
 5.50.0, 5.51.0 and 5.52.0 add or remove no M365 or Google Workspace check. 5.51.0 adds the ENS
 M365 compliance file used above. 5.52.0 fixes a `KeyError` in two Defender outbound-spam checks
-(both PowerShell-backed). The upgrade is written up in #243; the pin is unchanged.
+(both PowerShell-backed). The pin moved to 5.52.0 in #243; the live goldens (M365, Google) still
+run before a customer scan uses it.
 
 ## Reproduce
 
 ```bash
-git clone --depth 1 --branch 5.49.0 https://github.com/prowler-cloud/prowler.git <empty dir>
-# Inventory: join scanner/expected/5.49.0/*.json with each check's *.metadata.json and with
+git clone --depth 1 --branch 5.52.0 https://github.com/prowler-cloud/prowler.git <empty dir>
+# Inventory: join scanner/expected/5.52.0/*.json with each check's *.metadata.json and with
 # catalog/controls/*.yaml (prowler_checks); never run Prowler against a tenant for this.
 uv run pytest -q apps/api/tests/test_catalog_checks.py
 ```

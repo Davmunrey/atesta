@@ -22,9 +22,9 @@ FOLDER = {"m365": "m365", "google_workspace": "googleworkspace"}
 
 @pytest.mark.parametrize(("provider", "count"), [("m365", 149), ("google_workspace", 65)])
 def test_the_lists_are_the_pinned_engine_output(provider: str, count: int) -> None:
-    # `prowler <provider> --list-checks-json` from the 5.49.0 wheel (sha256 e5ed983e...705).
+    # `prowler <provider> --list-checks-json` from the 5.52.0 wheel (sha256 b9134bdb...a96).
     checks = expected_checks(EXPECTED, provider)
-    assert ENGINE_VERSION == "5.49.0"
+    assert ENGINE_VERSION == "5.52.0"
     assert len(checks) == count
     assert checks == sorted(set(checks))
 
@@ -78,7 +78,7 @@ def test_an_unknown_provider_is_refused() -> None:
 
 
 def test_the_powershell_list_is_the_d1_set() -> None:
-    # scanner/tools/powershell_checks.py over the 5.49.0 source; the spec counts per service.
+    # scanner/tools/powershell_checks.py over the 5.52.0 source; the spec counts per service.
     checks = powershell_checks(EXPECTED)
     assert checks == sorted(set(checks))
     assert set(checks) <= set(expected_checks(EXPECTED, "m365"))
