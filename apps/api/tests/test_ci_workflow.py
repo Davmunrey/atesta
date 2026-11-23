@@ -220,12 +220,14 @@ def test_the_secret_scan_is_pinned_verified_and_redacted() -> None:
     assert job["steps"][0]["with"]["fetch-depth"] == 0
 
 
-def test_dependabot_leaves_procrastinate_to_a_migration() -> None:
-    # A bump that changes the queue schema needs a migration (#122, #123). The ignore stays until
-    # the owner lifts it; tests/db/test_queue_migrations.py also fails such a bump.
+def test_procrastinate_bumps_are_guarded_by_the_queue_migration_test() -> None:
+    # The owner lifted the Dependabot ignore on 2026-11-23. A bump that ships queue SQL still needs
+    # a vendored, reviewed migration (#122, #123): tests/db/test_queue_migrations.py fails it.
     config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
     uv = next(u for u in config["updates"] if u["package-ecosystem"] == "uv")
-    assert {"dependency-name": "procrastinate"} in uv["ignore"]
+    assert {"dependency-name": "procrastinate"} not in uv.get("ignore", [])
+    guard = WORKFLOWS.parents[1] / "apps" / "api" / "tests" / "db" / "test_queue_migrations.py"
+    assert "def test_the_installed_procrastinate_ships_no_queue_migration" in guard.read_text()
 
 
 def test_dependabot_bumps_opentofu_providers_in_one_pull_request() -> None:
