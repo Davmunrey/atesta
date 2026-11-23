@@ -194,7 +194,8 @@ mappings:
   control_id: ctl.app_governance
   rationale: "Candidate: app consent, registration and credential settings, and legacy access. What each app does with data needs documentary review."
   source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
-  reviewed_by: null
+  reviewed_by: David Muñoz
+  reviewed_on: 2026-11-23
 - requirement_id: art32.1b
   control_id: ctl.password_and_recovery
   rationale: "Candidate: password, lockout and recovery settings. They complement MFA; the credential lifecycle needs documentary review."
@@ -214,9 +215,11 @@ mappings:
   control_id: ctl.m365_mail_threat_policies
   rationale: "Candidate: Defender for Office 365 and Exchange mail-flow policies. Mirrors ctl.email_protection. Needs PowerShell; no result until it is granted."
   source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
-  reviewed_by: null
+  reviewed_by: David Muñoz
+  reviewed_on: 2026-11-23
 - requirement_id: art32.1b
   control_id: ctl.teams_external_access
   rationale: "Candidate: Teams external access and meeting policies. Mirrors ctl.m365_external_sharing. Needs PowerShell; no result until it is granted."
   source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
-  reviewed_by: null
+  reviewed_by: David Muñoz
+  reviewed_on: 2026-11-23
