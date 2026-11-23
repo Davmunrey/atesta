@@ -131,7 +131,9 @@ class TermLabel(Content):
 
 class ReportingClock(Content):
     """A reporting deadline copied from the official text (recorded-routines spec). It starts when
-    the organization became aware of the incident, or when the clock named in `after` was met."""
+    the organization became aware of the incident, when it classified the incident as significant
+    (`starts: classified`), or when the clock named in `after` was met. A classified clock may
+    keep an outer limit in hours from awareness, which lapses when classification is later."""
 
     key: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{0,39}$")]
     title_es: Text
@@ -139,6 +141,8 @@ class ReportingClock(Content):
     hours: Annotated[int, Field(ge=1, le=8760)] | None = None
     months: Annotated[int, Field(ge=1, le=36)] | None = None
     after: Text | None = None
+    starts: Literal["aware", "classified"] = "aware"
+    outer_limit_hours: Annotated[int, Field(ge=1, le=8760)] | None = None
     needs: Literal["significant", "personal_data"]
     requirement: Text
 
@@ -146,6 +150,10 @@ class ReportingClock(Content):
     def one_duration(self) -> Self:
         if (self.hours is None) == (self.months is None):
             raise ValueError("a reporting clock lasts hours or months, not both")
+        if self.starts == "classified" and (self.after is not None or self.needs != "significant"):
+            raise ValueError("a clock from classification needs significant and no other clock")
+        if self.outer_limit_hours is not None and self.starts != "classified":
+            raise ValueError("only a clock from classification has an outer limit")
         return self
 
 

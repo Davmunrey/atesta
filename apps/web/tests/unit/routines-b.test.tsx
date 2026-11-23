@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, screen } from "@testing-library/react";
+import { cleanup, fireEvent, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { IncidentView } from "@/components/incident-view";
 import { IncidentsView } from "@/components/incidents-view";
@@ -70,7 +70,7 @@ const clock = (over: object) => ({
   title_es: "Alerta temprana", title_en: "Early warning", state: "overdue", due_at: "2026-11-21T09:30:00Z", met_at: null, late: false, ...over,
 });
 const incident = {
-  id: "i1", title: "Ransomware", aware_at: "2026-11-20T09:30:00Z", significant: true, personal_data: false,
+  id: "i1", title: "Ransomware", aware_at: "2026-11-20T09:30:00Z", classified_at: null, significant: true, personal_data: false,
   created_at: "2026-11-20T10:00:00Z", closed_at: null, next_due_at: "2026-11-21T09:30:00Z", overdue: 1,
   clocks: [
     clock({}),
@@ -100,6 +100,37 @@ it("reads an incident in English and offers no actions to an auditor", async () 
   renderWithProviders(<IncidentView org={auditor} incidentId="i1" />, "en");
   expect(await screen.findByText("Early warning")).toBeTruthy();
   expect(screen.queryByRole("button")).toBeNull();
+});
+
+it("records when a significant incident was classified, and shows it once recorded (#224)", async () => {
+  const classified = { ...incident, classified_at: "2026-11-20T11:00:00Z",
+    updates: [...incident.updates, { kind: "classified", clock: null, note: "", recorded_at: "2026-11-20T12:00:00Z", classified_at: "2026-11-20T11:00:00Z" }] };
+  const requests = stubApi({ [`GET ${base}/incidents/i1`]: [[200, incident], [200, classified]], [`POST ${base}/incidents/i1/updates`]: [201, classified] });
+  renderWithProviders(<IncidentView org={owner} incidentId="i1" />);
+  expect(await screen.findByText(/falta cuándo se clasificó como significativo/)).toBeTruthy();
+  expect(screen.getByRole("note").textContent).toContain("Este incidente es significativo, pero falta cuándo se clasificó.");
+  expect(screen.getByRole("heading", { level: 3, name: "Clasificación como significativo" })).toBeTruthy();
+  fireEvent.change(screen.getByLabelText("Clasificado como significativo"), { target: { value: "2026-11-20T12:00" } });
+  fireEvent.click(screen.getByRole("button", { name: "Registrar la clasificación" }));
+  expect(await posted(requests, "/updates")).toEqual({ kind: "classified", classified_at: new Date("2026-11-20T12:00").toISOString(), note: "" });
+  expect(await screen.findByText(/Clasificado como significativo el 20 nov 2026/)).toBeTruthy();
+  expect(screen.queryByRole("button", { name: "Registrar la clasificación" })).toBeNull();
+});
+
+it("sends the classification time with a new significant incident, and none otherwise", async () => {
+  const requests = stubApi({ [`GET ${base}/incidents`]: [200, []], [`GET ${base}/incidents/criteria`]: [200, []], [`POST ${base}/incidents`]: [201, incident] });
+  renderWithProviders(<IncidentsView org={owner} />);
+  fireEvent.change(await screen.findByLabelText("Descripción breve"), { target: { value: "Caída" } });
+  fireEvent.change(screen.getByLabelText("Constancia del incidente"), { target: { value: "2026-11-20T09:30" } });
+  expect(screen.queryByLabelText("Clasificado como significativo")).toBeNull();  // only for a significant incident
+  fireEvent.click(screen.getByRole("button", { name: "Registrar" }));
+  expect((await posted(requests, "/incidents")).classified_at).toBeNull();
+  fireEvent.click(screen.getByLabelText("Incidente significativo"));
+  fireEvent.change(screen.getByLabelText("Clasificado como significativo"), { target: { value: "2026-11-20T11:00" } });
+  fireEvent.click(screen.getByRole("button", { name: "Registrar" }));
+  await waitFor(() => expect(requests.filter((r) => r.method === "POST")).toHaveLength(2));
+  const second = await requests.filter((r) => r.method === "POST")[1]!.clone().json();
+  expect(second).toMatchObject({ significant: true, classified_at: new Date("2026-11-20T11:00").toISOString() });
 });
 
 function Attention() {

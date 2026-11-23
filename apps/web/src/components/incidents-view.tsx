@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
-import { type FormEvent, useId } from "react";
+import { type FormEvent, useId, useState } from "react";
 import { type IncidentCriterion, useCreateIncident, useIncidentCriteria, useIncidents } from "@/lib/api/routines";
 import { goTo } from "@/lib/navigation";
 import { type Membership, orgHome, orgIncident } from "@/lib/org";
@@ -54,25 +54,30 @@ function CreateIncident({ orgId }: { orgId: string }) {
   const t = useTranslations("routines.incidents");
   const create = useCreateIncident(orgId);
   const criteria = useIncidentCriteria(orgId).data ?? [];
-  const ids = { title: useId(), aware: useId(), significant: useId(), help: useId(), personal: useId() };
+  const ids = { title: useId(), aware: useId(), significant: useId(), help: useId(), personal: useId(), classified: useId(), classifiedHelp: useId() };
   const now = localInput(new Date());
+  const [significant, setSignificant] = useState(false);
   function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
+    const classified = String(data.get("classified_at") ?? "");
     create.mutate({
       title: String(data.get("title") ?? ""),
       aware_at: new Date(String(data.get("aware_at") ?? "")).toISOString(),
-      significant: data.get("significant") === "on",
+      significant,
       personal_data: data.get("personal_data") === "on",
+      classified_at: significant && classified ? new Date(classified).toISOString() : null,
     }, { onSuccess: (created) => goTo(orgIncident(orgId, created.id)) });
   }
   return <Panel title={t("create")} description={t("createHelp")}>
     <form onSubmit={submit} className="routine-form">
       <span><label htmlFor={ids.title}>{t("incidentTitle")}</label><input id={ids.title} name="title" required maxLength={200} /></span>
       <span><label htmlFor={ids.aware}>{t("awareAt")}</label><input id={ids.aware} name="aware_at" type="datetime-local" required defaultValue={now} max={now} /></span>
-      <span className="routine-form-wide checkbox-row"><input id={ids.significant} name="significant" type="checkbox" aria-describedby={ids.help} />
+      <span className="routine-form-wide checkbox-row"><input id={ids.significant} name="significant" type="checkbox" aria-describedby={ids.help} checked={significant} onChange={(e) => setSignificant(e.target.checked)} />
         <label htmlFor={ids.significant}>{t("significant")}</label><span id={ids.help} className="text-sm text-muted">{t("significantHelp")}</span>
         <Criteria items={criteria.filter((c) => c.needs === "significant")} /></span>
+      {significant ? <span><label htmlFor={ids.classified}>{t("classifiedAt")}</label><input id={ids.classified} name="classified_at" type="datetime-local" max={now} aria-describedby={ids.classifiedHelp} />
+        <span id={ids.classifiedHelp} className="text-sm text-muted">{t("classifiedHelp")}</span></span> : null}
       <span className="routine-form-wide checkbox-row"><input id={ids.personal} name="personal_data" type="checkbox" />
         <label htmlFor={ids.personal}>{t("personalData")}</label>
         <Criteria items={criteria.filter((c) => c.needs === "personal_data")} /></span>
