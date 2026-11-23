@@ -1450,5 +1450,85 @@
         "body": "Cookies and browser storage are described on their own page."
       }
     }
+  },
+  "assistant": {
+    "open": "Assistant",
+    "title": "Catalog assistant",
+    "close": "Close",
+    "intro": "Answers with the catalog's text as it is, with its source. No AI.",
+    "search": {
+      "label": "Search the catalog",
+      "placeholder": "op.acc.6, backups…",
+      "submit": "Search"
+    },
+    "loading": "Loading the catalog…",
+    "loadError": "The catalog could not be loaded.",
+    "retry": "Retry",
+    "results": "{count, plural, one {# answer} other {# answers}}",
+    "noAnswer": "No answer in the catalog for this search.",
+    "contact": "Write to us at <link>{email}</link> and we will reply.",
+    "flowsTitle": "Guided questions",
+    "back": "Back",
+    "kind": {
+      "requirement": "Official text",
+      "evidence": "Expected evidence",
+      "profile": "Specific compliance profile",
+      "valuation": "System valuation",
+      "clock": "Reporting deadline",
+      "faq": "Frequently asked questions"
+    },
+    "cite": {
+      "label": "Source:",
+      "section": "section {section}",
+      "guide": "{guide} ({edition}), section {section}, p. {page}",
+      "official": "Official text",
+      "faq": "Atesta FAQ",
+      "pending": "Pending review"
+    },
+    "fullText": "Full text",
+    "inOrg": "View in your organization",
+    "flows": {
+      "category": {
+        "title": "Which ENS category is mine?",
+        "intro": "Pick each dimension's level by the harm a failure would cause.",
+        "result": "Indicative category: {category}",
+        "waiting": "Answer the five questions to see the category.",
+        "basis": "The category is indicative and is not saved."
+      },
+      "evidence": {
+        "title": "What evidence does a measure ask for?",
+        "pick": "Measure",
+        "choose": "Choose a measure"
+      },
+      "profile": {
+        "title": "Does the essential profile (890C) apply to me?",
+        "low": "Are all your system's dimensions at level BAJO (low)?",
+        "scope": "What does your system cover?",
+        "it": "Information technology (IT) only",
+        "ot": "IT with operational technology (OT) or IoT",
+        "yes": "Yes",
+        "no": "No",
+        "notFit": "The essential profile is for systems whose dimensions are all at level BAJO (low).",
+        "levels": "Each measure's value in the profile",
+        "measure": "Measure",
+        "value": "Value",
+        "criterion": "Criterion: section {section}, p. {page}"
+      },
+      "clocks": {
+        "title": "What deadlines apply after an incident?",
+        "pick": "What happened?",
+        "needs": {
+          "significant": "Significant incident ({framework})",
+          "personal_data": "Personal data breach ({framework})"
+        },
+        "hours": "{count, plural, one {# hour} other {# hours}}",
+        "months": "{count, plural, one {# month} other {# months}}",
+        "after": "From: {step}",
+        "criteria": "When to report"
+      },
+      "faq": {
+        "title": "What does Atesta cover?"
+      }
+    }
   }
 }
