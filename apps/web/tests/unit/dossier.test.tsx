@@ -46,13 +46,17 @@ it("reads in English, keeping official Spanish titles marked", async () => {
   expect(screen.getByText("Administrator MFA")).toBeTruthy();
 });
 
-it("shows the expected evidence of a requirement that has no controls yet, open for printing", async () => {
+it("shows the expected evidence of a requirement that has no controls yet, opened only while printing", async () => {
   const withEvidence = { ...dossier, requirements: [...dossier.requirements, { code: "org.1", title_es: "Política de seguridad", title_en: null, source: null, decision: "undecided", implementation: null, justification: "", controls: [],
     expected_evidence: { reviewed_by: null, items: [{ es: "Política aprobada por la dirección.", en: "Policy approved by management.", ref: { guide: "CCN-STIC 808", edition: "2026-04", section: "6.2.1 (org.1)", page: 18 } }] } }] };
   stubApi({ [`GET ${url}`]: [200, withEvidence] });
   renderWithProviders(<DossierView org={auditor} frameworkKey="ens" />);
   const evidence = await screen.findByRole("region", { name: "Evidencias por requisito" });
   const disclosure = within(evidence).getByText("Política aprobada por la dirección.").closest("details")!;
+  expect(disclosure.hasAttribute("open")).toBe(false);
+  window.dispatchEvent(new Event("beforeprint"));
   expect(disclosure.hasAttribute("open")).toBe(true);
-  expect(within(disclosure).getByText("CCN-STIC 808 (abril de 2026), apartado 6.2.1 (org.1), pág. 18")).toBeTruthy();
+  window.dispatchEvent(new Event("afterprint"));
+  expect(disclosure.hasAttribute("open")).toBe(false);
+  expect(within(disclosure).getByText("Referencia: CCN-STIC 808 (abril de 2026), apartado 6.2.1 (org.1), pág. 18")).toBeTruthy();
 });

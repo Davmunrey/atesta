@@ -7,14 +7,13 @@ import { percent } from "@/lib/format";
 import { groupByPrefix, useRegister, type Register } from "@/lib/api/register-hooks";
 import type { components } from "@/lib/api/schema";
 import { orgFrameworks, orgHome } from "@/lib/org";
-import { Breadcrumbs, PageHeader } from "./page-frame";
+import { LoadError, Loading, PageHeader } from "./page-frame";
 import { type Role, canAssess, canReviewControls, isContributor } from "@/lib/permissions";
 import { CatalogPreparation, PreparationGuides, RequirementGuidance } from "./catalog-preparation";
 import { ExpectedEvidence } from "./expected-evidence";
 import { CatalogReference as Reference } from "./catalog-reference";
 import { ControlReview } from "./control-review";
 import { ControlEvidence } from "./control-evidence";
-import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { OwnerInsights, ProgressInsights } from "./insights";
 import { AssessmentBadge, AssessmentForm, SelfAssessmentPanel } from "./self-assessment";
@@ -41,9 +40,9 @@ export function FrameworkDetailView({ orgId, frameworkKey, role = "member", user
   const canEdit = canReviewControls(role);
   const crumbs = [{ label: orgName || t("back"), href: orgHome(orgId) }, { label: c("frameworks"), href: orgFrameworks(orgId) }];
   return <section className="framework-page">
-    {query.data ? null : <Breadcrumbs crumbs={crumbs} />}
-    {query.isPending ? <div className="dashboard-loading" role="status" aria-busy="true"><p>{t("loading")}</p><div className="dashboard-skeleton" aria-hidden="true" /></div>
-      : query.isError ? <div className="dashboard-error"><ErrorMessage error={query.error} /><button className="dashboard-button" onClick={() => void query.refetch()}>{dashboard("retry")}</button></div>
+    {query.data ? null : <PageHeader crumbs={crumbs} title={c("frameworks")} />}
+    {query.isPending ? <Loading label={t("loading")} />
+      : query.isError ? <LoadError error={query.error} onRetry={() => void query.refetch()} />
       : <>
         <PageHeader crumbs={[...crumbs, { label: query.data.name }]} title={query.data.name} description={t("intro")}
           actions={query.data.snapshot ? <button className="dashboard-button" disabled={query.isFetching} onClick={() => void query.refetch()}>{dashboard(query.isFetching ? "refreshing" : "refresh")}</button> : null} />

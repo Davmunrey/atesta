@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { useMe } from "@/components/auth-gate";
 import { ErrorMessage } from "@/components/error-message";
 import { FrameworkLedger } from "@/components/framework-ledger";
-import { PageHeader } from "@/components/page-frame";
+import { LoadError, Loading, PageHeader } from "@/components/page-frame";
 import { ApiError, useOverview } from "@/lib/api/hooks";
 import { useReadiness } from "@/lib/api/register-hooks";
 import { orgHome, selectOrg } from "@/lib/org";
@@ -24,8 +24,8 @@ function Frameworks() {
   return <>
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: c("frameworks") }]}
       title={c("frameworks")} description={c("frameworksPage")} />
-    {overview.isError ? <ErrorMessage error={overview.error} />
+    {overview.isError ? <LoadError error={overview.error} onRetry={() => void overview.refetch()} />
       : overview.data ? <FrameworkLedger frameworks={overview.data.frameworks} orgId={org.organization_id} readiness={readiness.data ?? []} headless />
-      : <div className="dashboard-loading" role="status" aria-busy="true"><div className="dashboard-skeleton" aria-hidden="true" /></div>}
+      : <Loading />}
   </>;
 }

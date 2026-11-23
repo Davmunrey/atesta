@@ -137,6 +137,7 @@
   "app": {
     "skipContent": "Skip to content",
     "loading": "Loading…",
+    "retry": "Try again",
     "signOut": "Sign out",
     "signedInAs": "Signed in as {email}",
     "account": "Account",
@@ -867,6 +868,7 @@
       "flags": "Characteristics",
       "noFlags": "Neither significant nor involving personal data",
       "criteria": "What {framework} says: {title}",
+      "criteriaGroup": "What {framework} says ({count, plural, one {# criterion} other {# criteria}})",
       "criteriaSource": "View in the official source",
       "sentWhich": ": “{clock}”"
     }
@@ -1132,6 +1134,15 @@
   "summary": {
     "label": "Summary",
     "never": "Never",
+    "glance": {
+      "title": "Records",
+      "help": "What an audit asks for, at a glance. Each row links to its record.",
+      "record": "Record",
+      "state": "State",
+      "summary": "Summary",
+      "none": "No records",
+      "failed": "Could not load."
+    },
     "policies": {
       "lead": "{attention, plural, =0 {Every policy is approved and up to date.} one {# policy needs attention.} other {# policies need attention.}}",
       "total": "Policies",
@@ -1169,6 +1180,7 @@
     "title": "Evidence the guide proposes ({count, plural, one {# item} other {# items}})",
     "candidate": "A guidance list Atesta wrote from the cited guide. Pending qualified review; it does not assess your organization.",
     "reviewed": "A list Atesta wrote from the cited guide, reviewed by {name} on {date}. It does not assess your organization.",
-    "reference": "{guide} ({edition}), section {section}, p. {page}"
+    "reference": "{guide} ({edition}), section {section}, p. {page}",
+    "shared": "Reference: {reference}"
   }
 }

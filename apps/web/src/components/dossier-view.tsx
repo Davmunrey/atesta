@@ -3,9 +3,8 @@
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { type Dossier, useDossier } from "@/lib/api/dossier";
 import { type Membership, orgFramework, orgFrameworks, orgHome } from "@/lib/org";
-import { ErrorMessage } from "./error-message";
 import { ExpectedEvidence } from "./expected-evidence";
-import { PageHeader } from "./page-frame";
+import { LoadError, Loading, PageHeader } from "./page-frame";
 
 type Requirement = Dossier["requirements"][number];
 
@@ -17,8 +16,8 @@ export function DossierView({ org, frameworkKey }: { org: Membership; frameworkK
     { label: org.organization_name, href: orgHome(org.organization_id) },
     { label: t("frameworks"), href: orgFrameworks(org.organization_id) },
   ];
-  if (query.isPending) return <><PageHeader crumbs={crumbs} title={t("title")} /><p role="status">{t("loading")}</p></>;
-  if (query.isError) return <><PageHeader crumbs={crumbs} title={t("title")} /><ErrorMessage error={query.error} /></>;
+  if (query.isPending) return <><PageHeader crumbs={crumbs} title={t("title")} /><Loading label={t("loading")} /></>;
+  if (query.isError) return <><PageHeader crumbs={crumbs} title={t("title")} /><LoadError error={query.error} onRetry={() => void query.refetch()} /></>;
   const d = query.data;
   return <div className="dossier">
     <div className="dossier-toolbar">
@@ -115,7 +114,7 @@ function RequirementEvidence({ r }: { r: Requirement }) {
   const title = english && r.title_en ? r.title_en : r.title_es;
   return <article className="dossier-requirement">
     <h3><span className="font-mono">{r.code}</span> <span lang={english && r.title_en ? undefined : "es"}>{title}</span></h3>
-    {r.expected_evidence ? <ExpectedEvidence evidence={r.expected_evidence} open /> : null}
+    {r.expected_evidence ? <ExpectedEvidence evidence={r.expected_evidence} forPrint /> : null}
     {r.controls.map((c) => <div key={c.key} className="dossier-control">
       <p><strong>{english ? c.title_en : c.title_es}</strong> · {c.manual
         ? (c.review ? t("reviewed", { date: format.dateTime(new Date(c.review.reviewed_at), { dateStyle: "medium" }) }) : t("notReviewed"))
