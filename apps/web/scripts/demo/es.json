@@ -1,0 +1,86 @@
+{
+  "organization": "Construcciones Demo Atesta S.L.",
+  "owner": "demo.responsable@example.test",
+  "assessed": 40,
+  "assessor": "Responsable de sistemas",
+  "justification": "No aplica: el sistema no dispone de este componente.",
+  "notes": "Revisado en el comité de seguridad.",
+  "review": {
+    "reviewer_name": "Laura Martín",
+    "reviewer_role": "Responsable de seguridad",
+    "conclusions": "El avance es adecuado; quedan pendientes las medidas de continuidad.",
+    "corrective_actions": "Completar el plan de continuidad antes de la auditoría."
+  },
+  "policies": [
+    {
+      "title": "Política de seguridad de la información",
+      "location_url": "https://intranet.example.test/politicas/seguridad.pdf",
+      "review_months": 12,
+      "version": "2.0",
+      "approver_name": "Comité de dirección"
+    },
+    {
+      "title": "Política de copias de seguridad",
+      "location_url": "https://intranet.example.test/politicas/copias.pdf",
+      "review_months": 12,
+      "version": "1.1",
+      "approver_name": "Comité de seguridad"
+    },
+    {
+      "title": "Política de uso aceptable",
+      "location_url": "https://intranet.example.test/politicas/uso-aceptable.pdf",
+      "review_months": 24
+    }
+  ],
+  "access_review": {
+    "title": "Administradores de Microsoft 365 · Q4",
+    "system": "Microsoft 365",
+    "accounts": [
+      [
+        "it.admin@example.test",
+        "Administrador global"
+      ],
+      [
+        "backup.admin@example.test",
+        "Administrador de Exchange"
+      ],
+      [
+        "exbecario@example.test",
+        "Administrador de usuarios"
+      ]
+    ],
+    "revoke": [
+      "exbecario@example.test"
+    ]
+  },
+  "training": {
+    "title": "Concienciación sobre phishing 2026",
+    "material_url": "https://intranet.example.test/formacion/phishing.pdf",
+    "people": [
+      [
+        "Ana García",
+        "ana.garcia@example.test"
+      ],
+      [
+        "Luis Pérez",
+        "luis.perez@example.test"
+      ],
+      [
+        "Marta Ruiz",
+        "marta.ruiz@example.test"
+      ]
+    ]
+  },
+  "incident": {
+    "title": "Correo de phishing con enlace pulsado",
+    "hours_ago": 30,
+    "note": "Contraseña cambiada y sesiones revocadas."
+  },
+  "evidence": {
+    "control": "ctl.continuity_restore",
+    "title": "Copia de seguridad verificada",
+    "statement": "La copia de seguridad nocturna y su prueba de restauración terminaron sin errores.",
+    "source": "demo-seed"
+  },
+  "justification_applies": "Aplica al sistema según el alcance declarado."
+}
