@@ -51,7 +51,7 @@ USER 10001
 
 FROM runtime AS api
 EXPOSE 8000
-CMD ["uvicorn", "atesta_api.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-server-header"]
+CMD ["uvicorn", "atesta_api.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-server-header", "--no-access-log"]
 
 FROM runtime AS worker
 CMD ["atesta-worker"]

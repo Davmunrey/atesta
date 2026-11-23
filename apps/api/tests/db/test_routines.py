@@ -231,3 +231,17 @@ def test_routine_records_are_append_only(superuser: Engine, table: str) -> None:
             )
         )
     assert grants == {"SELECT", "INSERT"}
+
+
+def test_a_policy_link_that_is_itself_a_credential_is_refused(
+    client: TestClient, superuser: Engine
+) -> None:
+    """Its approval copies the link into append-only evidence (rule 2, #256)."""
+    org, subs = org_with(client, superuser)
+    body = {
+        "title": "Política",
+        "location_url": "https://acct.blob.core.windows.net/c/pol.pdf?sv=2024-01-01&sig=abc",
+        "review_months": 12,
+    }
+    result = client.post(f"/api/v1/orgs/{org}/policies", json=body, headers=auth(subs["owner"]))
+    assert result.status_code == 422

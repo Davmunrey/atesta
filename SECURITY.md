@@ -52,6 +52,55 @@ AI output (prompt injection); customer data processed outside the EU.
 | No GPL or AGPL in the web bundle or the Python dependencies; LGPL only where listed | rule 4, ADR-006 | `apps/web/scripts/check-licenses.ts` (CI job `web`), `apps/api/devtools/python_licenses.py` (CI job `python`), `apps/api/tests/test_python_licenses.py` |
 | Strict Content Security Policy for the static web | web-shell spec | `apps/web/scripts/csp.ts`, run by `pnpm build` in CI |
 
+## Trusted inputs and accepted gaps
+
+What Atesta takes from outside, where the boundary is enforced, and which gaps are accepted on
+purpose. An accepted gap is named here with the issue that would close it, so nobody mistakes it
+for a control.
+
+| Input | Trust | Boundary that holds it |
+| --- | --- | --- |
+| Prowler output from the scanner container | Untrusted data (rule 5) | `scanning/ingest.py`: the manifest's sha256 for every file (`atesta_core.manifest.verify_manifest`), strict OCSF parsing with NUL refused (`atesta_core.ocsf`), and every finding pinned to the connection's tenant (`pin_tenant`); a rejected scan writes no rows (`apps/api/tests/db/test_scan_ingest.py`) |
+| Microsoft Graph answers to the verifier | Untrusted; read-only verification fails closed (rule 1) | `scanner/atesta_scanner/verify_m365.py`: a role it cannot name counts as extra, a read it may not make is `incomplete`; `graph.py` follows `@odata.nextLink` only under the Graph root, so the token never leaves Graph (`scanner/tests/test_verify_m365.py`) |
+| The verifier's report (`verification.json`) back in the worker | Untrusted container output | `scanning/attempts.py` `_verification` reads only its fields, each as text; an unreadable report changes no connection (`apps/api/tests/db/test_scan_attempts.py`) |
+| The M365 tenant a scan reaches | Pinned by the connection, never by the secret | The wrapper sets `AZURE_TENANT_ID` from the job's pin and refuses a secret that names a tenant (`scanner/atesta_scanner/invocation.py`, `scanner/tests/test_invocation.py`) |
+| Catalog packs (frameworks, controls, mappings) | Trusted once the owner releases them after qualified review | `catalog/`, each pack's `SOURCES.md`; loaded as `atesta_owner`, read-only to the app role (ADR-012); release is an owner decision (GOVERNANCE.md) |
+| Sign-in tokens | Trusted after signature, issuer and audience checks against Cognito's JWKS | `identity/cognito.py`, `apps/api/tests/db/test_bff.py` |
+| Evidence statements and their links | Customer content: untrusted, never fetched, rendered as text | `evidence/links.py` refuses a link whose query or fragment carries a credential on every path into evidence: the web form, the ingestion API, policies, training campaigns, and `record_attestation` (#256; `apps/api/tests/db/test_ingestion.py`, `test_routines.py`, `test_routines_b.py`, `test_control_workspace.py`) |
+| API tokens for evidence ingestion | Write-only, stored as a sha256 | `identity/api_tokens.py`; a token in a query string is refused before parsing (`QueryFreeRoute`, `apps/api/tests/db/test_ingestion.py`) |
+| Device agent reports | Evidence noise at worst: a device credential reads nothing | `docs/security/device-agent-threat-model.md`, including its own residual risks |
+
+**Accepted gaps, not closed here:**
+
+- **M365 verifier limits.** Until PR 10 the verifier opens no Exchange session, so Exchange
+  service principal pointers, role groups and RBAC for Applications grants are not read. Roles
+  held through groups and Azure RBAC stay candidates until the live golden test, and tokens issued
+  before a revocation are not seen. Every report lists these limits
+  (`scanner/atesta_scanner/verify_m365.py`, `M365_LIMITS`).
+- **Google has no verifier yet.** Google scans fail closed (`scanner/atesta_scanner/run.py`,
+  `verify_job`), so no Google connection is scanned until its verifier exists.
+- **Capability links.** A link whose path is itself the capability ("anyone with the link") cannot
+  be told apart from a normal link; only credentials in the query or fragment are refused
+  (`evidence/links.py`).
+- **Scores and ended connections.** A disconnected or revoked connection's results leave the
+  score by the connection's current status, not as of the scan (`scanning/scoring.py`, `_as_of`).
+- **Sign-in codes in load balancer logs.** The API never logs query strings (#257), but the load
+  balancer's access logs record the sign-in callback's code and state. The code is single-use,
+  short-lived and bound to the PKCE verifier held only in the sealed `atesta_auth` cookie; the log
+  bucket is private, encrypted and retention-limited (`infra/modules/ecs/api.tf`).
+- **Local Docker runner (development only).** The attempt's `out/` folder is opened to the
+  container's user 10001 (`scanning/local.py`); `LocalDockerRunner` refuses to start outside a
+  development `ATESTA_ENV`.
+- **Open hardening work:**
+  - agents cannot yet be told apart from the owner on GitHub, and review is not enforced on the
+    critical paths (#261);
+  - a manual review can pass a control without citing evidence (#262);
+  - stored evidence files are not re-hashed on read (#263);
+  - the AI design relies on filtering, not structural framing (#264);
+  - manual scans have no daily budget (#265).
+- **Owner decisions pending:** disclosure timing and a safe-harbour statement for researchers
+  (#260).
+
 ## Data handling
 
 - **Residency:** every data store and all compute in AWS eu-south-2 (Spain). The only exception

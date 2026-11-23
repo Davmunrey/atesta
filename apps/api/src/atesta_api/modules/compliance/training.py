@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 
 from atesta_api.modules.compliance.models import TrainingAcknowledgement, TrainingCampaign
 from atesta_api.modules.compliance.text import filled
-from atesta_api.modules.evidence.api import record_attestation
+from atesta_api.modules.evidence.api import record_attestation, refuse_credential_link
 from atesta_api.modules.identity.api import (
     ContextReason,
     Member,
@@ -70,6 +70,12 @@ class CampaignIn(BaseModel):
         if value < _today():
             raise ValueError("the closing date has passed")
         return value
+
+    @field_validator("material_url")
+    @classmethod
+    def no_credential_link(cls, value: str) -> str:
+        """Closing the campaign copies it into append-only evidence (rule 2, #256)."""
+        return refuse_credential_link(value)
 
 
 class CampaignOut(BaseModel):

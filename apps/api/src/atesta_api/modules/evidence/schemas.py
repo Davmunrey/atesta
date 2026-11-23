@@ -4,46 +4,14 @@ import re
 import uuid
 from datetime import datetime
 from typing import Annotated
-from urllib.parse import parse_qsl, urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, StringConstraints, field_validator
+
+from atesta_api.modules.evidence.links import carries_credential
 
 Title = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
 Statement = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=10000)]
 _CONTROLS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
-# Parameters that make a link a credential (Azure SAS, S3 and GCS signed URLs, OAuth tokens,
-# API keys). Statements are append-only, so such a link could never be purged (rule 2).
-_CREDENTIAL_PARAMETERS = frozenset(
-    {
-        "sig",
-        "signature",
-        "x-amz-signature",
-        "x-amz-credential",
-        "x-amz-security-token",
-        "x-goog-signature",
-        "x-goog-credential",
-        "token",
-        "access_token",
-        "id_token",
-        "refresh_token",
-        "code",
-        "key",
-        "apikey",
-        "api_key",
-        "password",
-        "secret",
-    }
-)
-
-
-def _carries_credential(url: str) -> bool:
-    parts = urlsplit(url)
-    names = {
-        name.lower()
-        for part in (parts.query, parts.fragment)
-        for name, _ in parse_qsl(part, keep_blank_values=True)
-    }
-    return bool(names & _CREDENTIAL_PARAMETERS)
 
 
 class StatementIn(BaseModel):
@@ -72,7 +40,7 @@ class StatementIn(BaseModel):
             or parsed.username
             or parsed.password
             or any(ord(c) < 33 or ord(c) == 127 for c in value)
-            or _carries_credential(value)
+            or carries_credential(value)
         ):
             raise ValueError("reference must be HTTPS without credentials or whitespace")
         return value

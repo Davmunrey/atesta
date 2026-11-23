@@ -11,6 +11,11 @@ from sqlalchemy import func, insert, select
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.compliance.api import active_control_keys, control_is_active
+from atesta_api.modules.evidence.links import (
+    CredentialLinkError,
+    carries_credential,
+    refuse_credential_link,
+)
 from atesta_api.modules.evidence.models import Evidence, EvidenceControl
 
 _UNSAFE = re.compile(r"[^A-Za-z0-9_.-]+")
@@ -139,9 +144,15 @@ def record_attestation(
 ) -> uuid.UUID:
     """A statement written by a recorded routine (recorded-routines spec) or an API token
     (evidence-ingestion-api spec, source "api" naming the token). It is linked to the control
-    when the control is active in the catalog; the statement itself is always kept."""
+    when the control is active in the catalog; the statement itself is always kept.
+
+    A reference link that carries a credential is refused before anything is written (#256):
+    callers validate their input, this is the last barrier."""
     import hashlib
     import json
+
+    if reference_url is not None and carries_credential(reference_url):
+        raise CredentialLinkError("the link carries a signature or a token")
 
     from atesta_api.modules.evidence.models import EvidenceStatement
 
@@ -237,3 +248,11 @@ def register_scan_output(
     if links:
         session.execute(insert(EvidenceControl), links)
     return ids
+
+
+__all__ = [
+    "CredentialLinkError",
+    "carries_credential",
+    "record_attestation",
+    "refuse_credential_link",
+]

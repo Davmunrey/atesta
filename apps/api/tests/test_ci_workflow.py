@@ -61,8 +61,45 @@ def test_dependabot_keeps_the_seven_day_cooldown() -> None:
     ecosystem the repo uses is covered."""
     config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
     updates = config["updates"]
-    assert {u["package-ecosystem"] for u in updates} == {"uv", "npm", "github-actions", "opentofu"}
+    assert {u["package-ecosystem"] for u in updates} == {
+        "uv",
+        "npm",
+        "github-actions",
+        "opentofu",
+        "docker",
+        "docker-compose",
+    }
     assert all(u.get("cooldown", {}).get("default-days", 0) >= 7 for u in updates)
+
+
+def test_every_digest_pinned_image_is_kept_current() -> None:
+    """Base images are pinned by tag and digest; Dependabot moves the digest (#259)."""
+    root = WORKFLOWS.parents[1]
+    config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
+    docker = next(u for u in config["updates"] if u["package-ecosystem"] == "docker")
+    compose = next(u for u in config["updates"] if u["package-ecosystem"] == "docker-compose")
+    dockerfiles = {
+        "/" + str(p.parent.relative_to(root))
+        for p in root.glob("**/Dockerfile")
+        if "node_modules" not in p.parts and ".venv" not in p.parts
+    }
+    assert dockerfiles and dockerfiles <= set(docker["directories"])
+    assert compose["directory"] == "/" and (root / "compose.yaml").exists()
+
+
+def test_ci_uses_the_same_postgres_image_as_compose() -> None:
+    """Dependabot does not update workflow service images, so CI follows compose.yaml (#259)."""
+    root = WORKFLOWS.parents[1]
+    compose = yaml.safe_load((root / "compose.yaml").read_text())
+    pinned = {s["image"] for s in compose["services"].values() if "postgres" in s.get("image", "")}
+    ci = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())
+    services = {
+        svc["image"]
+        for job in ci["jobs"].values()
+        for svc in job.get("services", {}).values()
+        if "postgres" in svc.get("image", "")
+    }
+    assert len(pinned) == 1 and services == pinned
 
 
 def test_node_types_follow_the_runtime_major() -> None:

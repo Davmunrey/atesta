@@ -26,7 +26,7 @@ from atesta_api.modules.compliance.models import (
 )
 from atesta_api.modules.compliance.text import collapse, filled
 from atesta_api.modules.compliance.training import unclosed_campaigns
-from atesta_api.modules.evidence.api import record_attestation
+from atesta_api.modules.evidence.api import record_attestation, refuse_credential_link
 from atesta_api.modules.identity.api import Member, Role, person, require_member, require_role
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
@@ -342,6 +342,12 @@ class PolicyIn(BaseModel):
     @classmethod
     def tidy(cls, value: str) -> str:
         return filled(value)
+
+    @field_validator("location_url")
+    @classmethod
+    def no_credential_link(cls, value: str) -> str:
+        """Approval copies it into append-only evidence (rule 2, #256)."""
+        return refuse_credential_link(value)
 
 
 class ApprovalIn(BaseModel):

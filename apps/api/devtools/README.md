@@ -13,7 +13,7 @@ psql postgresql://postgres@localhost:5432/postgres -c "ALTER ROLE atesta_app LOG
 uv run python apps/api/devtools/fake_cognito.py   # http://localhost:9000
 set -a; . apps/api/.env.example; set +a
 export ATESTA_SESSION_KEY="$(python3 -c 'import base64,os;print(base64.b64encode(os.urandom(32)).decode())')"
-uv run uvicorn atesta_api.main:app --port 8000
+uv run uvicorn atesta_api.main:app --port 8000 --no-access-log
 ```
 
 Sign in at http://localhost:3000/auth/login once the web shell runs (its dev server rewrites
