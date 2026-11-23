@@ -35,7 +35,7 @@ it("rounds axis ticks to clean steps", () => {
 });
 
 it("draws a line with its end value, a table view and a keyboard-driven readout", () => {
-  renderWithProviders(<LineChart title="Implantadas" valueLabel="Implantadas" tableLabel="Ver tabla"
+  renderWithProviders(<LineChart title="Implantadas" valueLabel="Implantadas" periodLabel="Día" tableLabel="Ver tabla"
     points={[{ label: "1 nov", value: 1 }, { label: "2 nov", value: 3 }, { label: "3 nov", value: 4 }]} />);
   const chart = screen.getByRole("img", { name: /Implantadas/ });
   expect(chart.querySelector(".chart-end-label")?.textContent).toBe("4");
@@ -47,7 +47,7 @@ it("draws a line with its end value, a table view and a keyboard-driven readout"
 });
 
 it("draws columns only for non-zero days and lists every day in the table", () => {
-  renderWithProviders(<ColumnChart title="Acciones" valueLabel="Acciones" tableLabel="Ver tabla"
+  renderWithProviders(<ColumnChart title="Acciones" valueLabel="Acciones" periodLabel="Día" tableLabel="Ver tabla"
     points={[{ label: "1", value: 0 }, { label: "2", value: 5 }, { label: "3", value: 2 }]} />);
   expect(document.querySelectorAll(".chart-bar")).toHaveLength(2);
   expect(within(screen.getByRole("table")).getAllByRole("row")).toHaveLength(4);

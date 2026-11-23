@@ -10,6 +10,7 @@ import {
   useRecordScope, type AssessmentInput, type AxisValues, type Register, type RegisterItem,
 } from "@/lib/api/register-hooks";
 import { ErrorMessage } from "./error-message";
+import { Icon } from "./icons";
 
 type Ctx = { orgId: string; frameworkKey: string; canEdit: boolean };
 
@@ -130,16 +131,19 @@ export function AssessmentBadge({ item }: { item: RegisterItem | undefined }) {
   const t = useTranslations("register");
   if (!item) return null;
   const overdue = isOverdue(item, new Date().toISOString().slice(0, 10));
-  return <span className="assessment-badges">{overdue ? <span className="overdue-flag">{t("overdue")}</span> : null}<StateBadge item={item} /></span>;
+  return <span className="assessment-badges">{overdue ? <span className="overdue-flag"><Icon name="overdue" size={14} />{t("overdue")}</span> : null}<StateBadge item={item} /></span>;
 }
 
-function StateBadge({ item }: { item: RegisterItem }) {
+// Never colour alone (ui-polish spec): each state carries its own drawn icon beside the label.
+const STATE_ICON = { implemented: "done", partially_implemented: "partial", not_implemented: "missing", not_applicable: "notApplicable", pending: "pending" } as const;
+
+export function StateBadge({ item }: { item: RegisterItem }) {
   const t = useTranslations("register");
   if (item.assessment) {
     const state = item.assessment.applicability === "not_applicable" ? "not_applicable" : item.assessment.implementation;
-    return <span className="requirement-state" data-assessment={state}>{t(`states.${state}`)}</span>;
+    return <span className="requirement-state" data-assessment={state}><Icon name={STATE_ICON[state]} size={16} />{t(`states.${state}`)}</span>;
   }
-  return <span className="requirement-state" data-assessment="pending">{t("states.pending")}
+  return <span className="requirement-state" data-assessment="pending"><Icon name="pending" size={16} />{t("states.pending")}
     {item.proposal.decision !== "undecided" ? <span className="proposal-hint"> · {t(`proposal.${item.proposal.decision}`)}</span> : null}</span>;
 }
 

@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-const css = readFileSync(join(import.meta.dirname, "../../src/styles/tokens.css"), "utf8");
+const [css = "", print = ""] = readFileSync(join(import.meta.dirname, "../../src/styles/tokens.css"), "utf8").split("@media print");
 const [workspace = "", publicLight = ""] = css.split(".public-surface");
 const [light = "", dark = ""] = workspace.split("prefers-color-scheme: dark");
 
@@ -39,4 +39,27 @@ describe.each([["light", light], ["dark", dark], ["public", publicLight]])("%s t
   it.each(NON_TEXT)("%s on %s is at least 3:1", (fg, bg) => {
     expect(ratio(colors.get(fg)!, colors.get(bg)!)).toBeGreaterThanOrEqual(3);
   });
+});
+
+// Console panels (ui-polish spec): text reads on the panel, and the surface level (header rows,
+// hover, inline forms) stays distinct from the panel in both themes.
+describe.each([["light", light], ["dark", dark]])("%s console", (_, block) => {
+  const colors = palette(block);
+  it.each([["fg", "panel"], ["muted", "panel"], ["link", "panel"], ["success", "panel"], ["warning", "panel"], ["danger", "panel"], ["link", "surface"]])(
+    "%s on %s is at least 4.5:1",
+    (fg, bg) => expect(ratio(colors.get(fg)!, colors.get(bg)!)).toBeGreaterThanOrEqual(4.5),
+  );
+  it("keeps surface and panel apart", () => {
+    expect(ratio(colors.get("surface")!, colors.get("panel")!)).toBeGreaterThanOrEqual(1.05);
+  });
+});
+
+// Paper: print uses the light palette on white, so text keeps its contrast on any screen theme.
+describe("print", () => {
+  const colors = palette(print);
+  it.each([["fg", "bg"], ["muted", "bg"], ["link", "bg"], ["danger", "bg"], ["success", "bg"], ["warning", "bg"], ["muted", "surface"]])(
+    "%s on %s is at least 4.5:1",
+    (fg, bg) => expect(ratio(colors.get(fg)!, colors.get(bg)!)).toBeGreaterThanOrEqual(4.5),
+  );
+  it("prints on white", () => expect([colors.get("bg"), colors.get("page"), colors.get("panel")]).toEqual(["#ffffff", "#ffffff", "#ffffff"]));
 });

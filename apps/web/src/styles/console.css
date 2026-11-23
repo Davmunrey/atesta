@@ -1,9 +1,9 @@
 /* Console workspace (console-shell spec, owner decision 2026-11-23). Values come from tokens.css. */
 @layer components {
-  .console { min-height: 100dvh; display: grid; grid-template-rows: 3.5rem minmax(0, 1fr); background: var(--color-page); }
+  .console { min-height: 100dvh; display: grid; grid-template-rows: 3.5rem minmax(0, 1fr); grid-template-columns: minmax(0, 1fr); background: var(--color-page); }
 
   /* Top bar: ink, full width, fixed. Focus switches to the highlighter so it shows on ink. */
-  .topbar { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 0.75rem; padding-inline: 0.75rem 1rem; background: var(--color-topbar); color: var(--color-topbar-fg); --color-focus: var(--color-accent); }
+  .topbar { position: sticky; top: 0; z-index: 30; min-width: 0; overflow-x: clip; display: flex; align-items: center; gap: 0.75rem; padding-inline: 0.75rem 1rem; background: var(--color-topbar); color: var(--color-topbar-fg); --color-focus: var(--color-accent); }
   .topbar-icon { display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: var(--radius-sm); color: var(--color-topbar-fg); cursor: pointer; }
   .topbar-icon:hover { background: var(--color-topbar-field); }
   .topbar-brand { font-family: var(--font-display); font-size: 1.375rem; font-weight: 500; letter-spacing: -0.02em; padding-inline: 0.25rem; border-bottom: 3px solid var(--color-accent); line-height: 1.3; }
@@ -15,7 +15,7 @@
   .topbar-search input::placeholder { color: var(--color-topbar-muted); }
   .topbar-search input:focus { outline: 2px solid var(--color-accent); outline-offset: 1px; }
   .topbar-search-icon { position: absolute; left: 0.625rem; top: 50%; translate: 0 -50%; width: 1.125rem; height: 1.125rem; color: var(--color-topbar-muted); pointer-events: none; }
-  .topbar-kbd { position: absolute; right: 0.5rem; top: 50%; translate: 0 -50%; padding: 0 0.375rem; border: 1px solid var(--color-topbar-muted); border-radius: var(--radius-sm); color: var(--color-topbar-muted); font-family: var(--font-sans); font-size: 0.75rem; line-height: 1.5; }
+  .topbar-kbd { position: absolute; right: 0.5rem; top: 50%; translate: 0 -50%; padding: 0 0.375rem; border: 1px solid var(--color-topbar-muted); border-radius: var(--radius-sm); color: var(--color-topbar-muted); font-family: var(--font-sans); font-size: 0.8125rem; line-height: 1.5; }
   .topbar-end { display: flex; align-items: center; gap: 0.75rem; margin-left: auto; }
   .topbar-locale { display: flex; gap: 0.125rem; }
   .topbar-locale button { min-width: 2.25rem; min-height: 2.25rem; border-radius: var(--radius-sm); color: var(--color-topbar-muted); font-size: 0.8125rem; font-weight: 500; cursor: pointer; }
@@ -28,16 +28,16 @@
   .search-results { position: absolute; top: calc(100% + 0.375rem); left: 0; right: 0; z-index: 40; max-height: min(26rem, 70dvh); overflow-y: auto; padding: 0.375rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-panel); color: var(--color-fg); }
   .search-results li { display: grid; grid-template-columns: 6rem minmax(0, 1fr); column-gap: 0.75rem; padding: 0.5rem 0.625rem; border-radius: var(--radius-sm); cursor: pointer; }
   .search-results li[aria-selected="true"] { background: var(--color-accent); color: var(--color-accent-fg); }
-  .search-group { grid-row: span 2; font-size: 0.75rem; color: var(--color-muted); padding-top: 0.125rem; }
+  .search-group { grid-row: span 2; font-size: 0.8125rem; color: var(--color-muted); padding-top: 0.125rem; }
   li[aria-selected="true"] .search-group, li[aria-selected="true"] .search-detail { color: var(--color-accent-fg); }
   .search-label { font-size: 0.875rem; overflow-wrap: anywhere; }
-  .search-detail { font-size: 0.75rem; color: var(--color-muted); font-family: var(--font-mono); }
+  .search-detail { font-size: 0.8125rem; color: var(--color-muted); font-family: var(--font-mono); }
   .search-empty { color: var(--color-muted); font-size: 0.875rem; cursor: default; grid-template-columns: 1fr !important; }
 
   /* Side navigation: grouped, icon plus text; collapses to a rail on desktop, a drawer below. */
   .console-body { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 0; }
   .sidenav { display: grid; align-content: start; gap: 1rem; padding: 1rem 0.75rem; background: var(--color-panel); border-right: 1px solid var(--color-border-subtle); overflow-y: auto; }
-  .sidenav-label { padding-inline: 0.625rem; margin-bottom: 0.25rem; font-size: 0.75rem; font-weight: 500; color: var(--color-muted); }
+  .sidenav-label { padding-inline: 0.625rem; margin-bottom: 0.25rem; font-size: 0.8125rem; font-weight: 500; color: var(--color-muted); }
   .sidenav ul { display: grid; gap: 0.125rem; }
   .sidenav a { display: flex; align-items: center; gap: 0.75rem; min-height: 2.5rem; padding-inline: 0.625rem; border-radius: var(--radius-sm); font-size: 0.9375rem; }
   .sidenav a:hover { background: var(--color-surface); }
@@ -93,6 +93,8 @@
   .panel-description { margin-top: 0.125rem; font-size: 0.8125rem; color: var(--color-muted); }
   .panel-body { padding: 1rem 1.25rem 1.25rem; min-width: 0; }
   .panel-actions { display: flex; gap: 0.5rem; }
+  /* Prose panels (settings): paragraphs, forms and actions keep a steady gap. */
+  .panel-flow .panel-body > * + * { margin-top: 0.75rem; }
   .panel-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
   @media (min-width: 75rem) {
     .panel-grid-main { grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr); align-items: start; }
@@ -132,10 +134,12 @@
 
   /* Existing sections read as panels inside the console, without changing their markup. */
   .console .framework-page { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
-  .console :is(.self-assessment, .insights, .requirement-register, .preparation-guides, .framework-catalog, .first-steps, .collection-summary, .evidence-summary, .framework-record) {
+  .console :is(.self-assessment, .insights, .requirement-register, .preparation-guides, .framework-catalog, .first-steps, .collection-summary, .framework-record) {
     margin: 0; padding: 1.25rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-panel);
   }
   .console .insights-grid { gap: 1.25rem; }
+  /* Evidence totals sit inside the collections panel as a ruled row: panels never nest. */
+  .console .evidence-summary { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--color-border-subtle); }
   .console .framework-page > .page-header { margin-bottom: 0; }
   .console .catalog-about { padding: 0.75rem 1.25rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-panel); }
 
@@ -189,7 +193,7 @@
   .console-body, .console-main, .console-page { display: block !important; margin: 0 !important; padding: 0 !important; }
   .dossier-section + .dossier-section { break-before: page; }
   .table-region { overflow: visible !important; }
-  .dossier a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.75rem; }
+  .dossier a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8125rem; }
 }
 .dossier th, .dossier td { padding: 0.375rem 0.5rem; vertical-align: top; }
 .dossier td.font-mono { white-space: nowrap; }
@@ -200,3 +204,33 @@
 .getting-started li { display: flex; gap: 0.625rem; align-items: flex-start; }
 .getting-started li svg { flex: none; margin-top: 0.2rem; }
 .getting-started li[data-done="true"] svg { color: var(--color-success, inherit); }
+
+/* Phones (ui-polish spec, phones). Unlayered on purpose: these win over spacing utilities.
+   Data tables stack by their own width (modern-web-guidance responsive-table): one block per
+   row, each cell named by its data-label; the hidden header row is not read twice. */
+.table-region { container-type: inline-size; }
+@container (width < 36rem) {
+  .table-region table { display: block; min-width: 0; }
+  .table-region thead { display: none; }
+  .table-region tbody, .table-region tr { display: block; }
+  .table-region tr { padding-block: 0.75rem; }
+  .table-region tr + tr { border-top: 1px solid var(--color-border-subtle); }
+  .table-region td { display: block; max-width: none; padding: 0.125rem 0; border: 0; white-space: normal; overflow-wrap: anywhere; }
+  .table-region td:empty { display: none; }
+  .table-region td + td { margin-top: 0.375rem; }
+  .table-region td[data-label]:not(:first-child)::before { content: attr(data-label); display: block; font-size: 0.8125rem; font-weight: 400; color: var(--color-muted); }
+}
+/* Focus and anchors never land under the sticky top bar (WCAG 2.4.11). */
+html { scroll-padding-top: 4.5rem; }
+/* Links that stand alone as actions (not inside running text) are full-height targets. */
+.action-link, .preparation-jumps a, .policy-index a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+@media (max-width: 40rem), (pointer: coarse) {
+  /* 16px fields: iOS zooms the page into anything smaller. */
+  input, select, textarea, .topbar-search input { font-size: 1rem; }
+  /* 44px targets for controls outside running text. */
+  button, select, input:not([type="checkbox"], [type="radio"]), summary, .topbar-icon, .topbar-locale button, .topbar .account-trigger { min-height: 2.75rem; }
+  .topbar-icon, .topbar .account-trigger { min-width: 2.75rem; }
+  summary { padding-block: 0.5rem; }
+  .breadcrumbs li { display: flex; align-items: center; }
+  .breadcrumbs a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+}

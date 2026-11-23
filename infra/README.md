@@ -4,7 +4,8 @@ OpenTofu for AWS eu-south-2 (Spain), ADR-007.
 
 ```text
 infra/
-  modules/        network, ecs, rds, s3-evidence, kms, cognito, ses
+  modules/        platform (composes the rest), network, kms, rds, s3-evidence, ecr, ecs,
+                  web, ses, cognito, github-oidc
   envs/dev/
   envs/prod/
 ```
@@ -14,10 +15,11 @@ OIDC, no long-lived keys. Budget alerts at 150, 250 and 400 EUR/month.
 
 ## Status (2026-11-23)
 
-Modules `kms`, `network`, `s3-evidence`, `rds`, `ses`, `ecr` and `ecs` follow
-docs/specs/hosted-environment.md and are used by `envs/dev`. They are validated (`tofu validate`)
-and their security settings are tested (`infra/tests`). Nothing is applied. The API's load
-balancer and `web`, `envs/prod`, the deploy workflow and the runbook follow in separate PRs.
+Modules `kms`, `network`, `s3-evidence`, `rds`, `ses`, `ecr`, `ecs` and `web` follow
+docs/specs/hosted-environment.md. `modules/platform` composes them, and `envs/dev` and `envs/prod`
+call it with their sizes only, so prod cannot drift from what dev exercises. Both environments
+are validated (`tofu validate`) and their security settings are tested (`infra/tests`). Nothing is
+applied. The deploy workflow and the runbook follow in separate PRs.
 
 - `rds`: the application roles come from `apps/api/migrations/bootstrap.sql`, run once as the
   master user. Their connection URLs go into the two secrets the module creates; values are set by
@@ -27,6 +29,9 @@ balancer and `web`, `envs/prod`, the deploy workflow and the runbook follow in s
 - `ecs`: the scan task definition carries no role; the worker passes a per-org role whose path is
   `atesta-scan/<env>/` and whose permissions boundary is `scan_boundary`. The Fargate runner, the
   S3 scan store and the egress allowlist are #237; until then scan jobs fail their scan in AWS.
+- `web`: CloudFront needs its certificate in us-east-1 (a certificate only, no customer data);
+  the load balancer's is in eu-south-2 and names `api_origin_domain`. Both come from the
+  `edge` variable, null until the owner has a domain.
 - `ses`: dev creates it only when `mail_domain` is set. The `mail_dns_records` output lists the
   DKIM, MAIL FROM and DMARC records to publish.
 

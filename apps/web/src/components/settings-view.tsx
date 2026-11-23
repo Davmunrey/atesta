@@ -22,12 +22,12 @@ export function SettingsView({ org }: { org: Membership }) {
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("crumb") }]} title={t("title", { org: org.organization_name })} />
 
-    <Panel title={t("exportTitle")}>
+    <Panel title={t("exportTitle")} className="panel-flow">
       <p className="text-muted">{t("exportHelp")}</p>
-      <p><a className="dashboard-button" href={`/api/v1/orgs/${encodeURIComponent(org.organization_id)}/export`} download>{t("exportAction")}</a></p>
+      <p><a className="dashboard-button action-link" href={`/api/v1/orgs/${encodeURIComponent(org.organization_id)}/export`} download>{t("exportAction")}</a></p>
     </Panel>
 
-    <Panel title={t("closeTitle")} className="danger-zone">
+    <Panel title={t("closeTitle")} className="danger-zone panel-flow">
       {closing ? <>
         <p role="status">{t("closing", { date: day(closing) })}</p>
         {cancel.isError ? <ErrorMessage error={cancel.error} /> : null}

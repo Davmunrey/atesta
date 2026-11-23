@@ -14,8 +14,12 @@ import { CatalogReference as Reference } from "./catalog-reference";
 import { ControlReview } from "./control-review";
 import { ControlEvidence } from "./control-evidence";
 import { ErrorMessage } from "./error-message";
+import { Icon } from "./icons";
 import { OwnerInsights, ProgressInsights } from "./insights";
 import { AssessmentBadge, AssessmentForm, SelfAssessmentPanel } from "./self-assessment";
+
+// Recorded results carry an icon with their label, never colour alone (ui-polish spec).
+const RESULT_ICON: Record<string, "done" | "missing" | "pending" | "notApplicable"> = { pass: "done", fail: "missing", manual: "pending", not_evaluated: "pending", not_applicable: "notApplicable" };
 
 type Detail = components["schemas"]["FrameworkDetail"];
 type Requirement = components["schemas"]["RequirementDetail"];
@@ -150,7 +154,7 @@ function RequirementRow({ requirement: r, initiallyOpen, review, item, recorded 
   return <details ref={row} id={`req-${r.code}`} className="requirement-row" open={initiallyOpen}>
     <summary><span className="requirement-heading"><span className="requirement-code">{r.code}</span><strong lang={spanishOnly ? "es" : undefined}>{title}</strong></span>
       {item ? <AssessmentBadge item={item} /> : null}
-      {!item || recorded ? <span className="requirement-state" data-state={r.status}>{t(`states.${r.status}`)}</span> : null}
+      {!item || recorded ? <span className="requirement-state" data-state={r.status}><Icon name={RESULT_ICON[r.status] ?? "pending"} size={16} />{t(`states.${r.status}`)}</span> : null}
       <svg className="disclosure-icon" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m6 3 5 5-5 5" /></svg>
     </summary>
     <div className="requirement-body">

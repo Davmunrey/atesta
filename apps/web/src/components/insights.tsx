@@ -31,10 +31,10 @@ export function ProgressInsights({ orgId, frameworkKey, register }: Ctx) {
       { label: t("pending"), value: p.total - p.assessed },
     ]} />
     {points.length >= 2
-      ? <LineChart title={t("implementedOverTime")} points={points} valueLabel={t("implemented")} tableLabel={t("showTable")} integer />
+      ? <LineChart title={t("implementedOverTime")} points={points} periodLabel={t("day")} valueLabel={t("implemented")} tableLabel={t("showTable")} integer />
       : <p className="text-sm text-muted">{t("historyHelp")}</p>}
     {scores.length >= 2
-      ? <LineChart title={t("scoreOverTime")} points={scores} valueLabel={t("score")} tableLabel={t("showTable")} format={(v) => percent(locale, v)} />
+      ? <LineChart title={t("scoreOverTime")} points={scores} periodLabel={t("day")} valueLabel={t("score")} tableLabel={t("showTable")} format={(v) => percent(locale, v)} />
       : null}
   </section>;
 }

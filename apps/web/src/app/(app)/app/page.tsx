@@ -14,7 +14,7 @@ export default function AppHome() {
   return (
     <div className="flex flex-col gap-4">
       <Portfolio memberships={memberships} />
-      <Link href="/app/new" className="self-start text-sm underline">
+      <Link href="/app/new" className="dashboard-button action-link self-start">
         {t("home.createAnother")}
       </Link>
     </div>

@@ -37,12 +37,12 @@ function TokenRow({ token, orgId }: { token: ApiToken; orgId: string }) {
   const day = (value: string) => format.dateTime(new Date(value), { dateStyle: "medium" });
   const expired = new Date(token.expires_at).getTime() <= new Date().getTime();
   return <tr>
-    <td>{token.name}<span className="block text-sm text-muted"><span className="font-mono">{token.prefix}…</span> · {t("createdBy", { email: token.created_by_email, date: day(token.created_at) })}</span></td>
-    <td className="tabular-nums">{token.last_used_at ? format.dateTime(new Date(token.last_used_at), { dateStyle: "medium", timeStyle: "short" }) : <span className="text-muted">{t("never")}</span>}</td>
-    <td>{token.revoked_at ? <span className="badge" data-severity="missing"><Icon name="missing" />{t("revokedOn", { date: day(token.revoked_at) })}</span>
+    <td data-label={t("name")}>{token.name}<span className="block text-sm text-muted"><span className="font-mono">{token.prefix}…</span> · {t("createdBy", { email: token.created_by_email, date: day(token.created_at) })}</span></td>
+    <td data-label={t("lastUsed")} className="tabular-nums">{token.last_used_at ? format.dateTime(new Date(token.last_used_at), { dateStyle: "medium", timeStyle: "short" }) : <span className="text-muted">{t("never")}</span>}</td>
+    <td data-label={t("state")}>{token.revoked_at ? <span className="badge" data-severity="missing"><Icon name="missing" />{t("revokedOn", { date: day(token.revoked_at) })}</span>
       : expired ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("expiredOn", { date: day(token.expires_at) })}</span>
       : <span className="badge" data-severity="done"><Icon name="done" />{t("activeUntil", { date: day(token.expires_at) })}</span>}</td>
-    <td>{token.revoked_at ? null : <button type="button" className="dashboard-button" disabled={revoke.isPending}
+    <td data-label={t("actions")}>{token.revoked_at ? null : <button type="button" className="dashboard-button" disabled={revoke.isPending}
       aria-label={t("revokeNamed", { name: token.name })} onClick={() => revoke.mutate(token.id)}>{t("revoke")}</button>}
       {revoke.isError ? <ErrorMessage error={revoke.error} /> : null}</td>
   </tr>;

@@ -261,4 +261,9 @@ jobs:
         run: |
           tofu init -backend=false -input=false
           tofu validate
+      - name: Validate prod
+        working-directory: infra/envs/prod
+        run: |
+          tofu init -backend=false -input=false
+          tofu validate
       # Plan with the OIDC plan role is added once the dev AWS account exists (AWS postponed).

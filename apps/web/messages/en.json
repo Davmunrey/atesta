@@ -520,7 +520,8 @@
     "overdue": "Overdue",
     "openByOwner": "Open measures by owner",
     "noOwners": "No measure has an owner yet. Assign one from each measure.",
-    "formerMember": "Former member"
+    "formerMember": "Former member",
+    "day": "Day"
   },
   "activity": {
     "title": "Activity",
@@ -554,8 +555,38 @@
       "evidence_statement_recorded": "Recorded evidence",
       "connection_created": "Created a connection",
       "connection_disconnected": "Disconnected a connection",
-      "scan_requested": "Requested a scan"
-    }
+      "scan_requested": "Requested a scan",
+      "access_review_created": "Opened an access review",
+      "access_review_decided": "Decided on an account in an access review",
+      "access_review_closed": "Closed an access review",
+      "api_token_created": "Created an integration token",
+      "api_token_revoked": "Revoked an integration token",
+      "connection_verified": "Connection verified as read-only",
+      "connection_incomplete": "Connection with incomplete permissions",
+      "connection_over_privileged": "Connection with more permissions than needed",
+      "connection_revoked": "Connection revoked at the provider",
+      "evidence_ingested": "A tool recorded evidence",
+      "framework_dossier_viewed": "Opened the auditor dossier",
+      "incident_created": "Recorded an incident",
+      "incident_note": "Added a note to an incident",
+      "incident_clock_met": "Marked an incident notice as sent",
+      "incident_closed": "Closed an incident",
+      "organization_exported": "Exported the organization's data",
+      "organization_report_viewed": "Opened the monthly report",
+      "organization_closure_requested": "Asked to close the organization",
+      "organization_closure_cancelled": "Cancelled the organization's closure",
+      "policy_created": "Added a policy",
+      "policy_approved": "Recorded a policy approval",
+      "scan_succeeded": "Scan completed",
+      "scan_partial": "Scan partly completed",
+      "scan_failed": "Scan failed",
+      "scan_blocked": "Scan blocked",
+      "training_created": "Opened a training",
+      "training_acknowledged": "Someone confirmed a training",
+      "training_closed": "Closed a training"
+    },
+    "day": "Day",
+    "unknown": "Other action"
   },
   "myWork": {
     "title": "My work",
@@ -685,7 +716,8 @@
     "training": "Training",
     "incidents": "Incidents",
     "integrations": "Integrations",
-    "report": "Monthly report"
+    "report": "Monthly report",
+    "searchShort": "Search"
   },
   "routines": {
     "access": {
@@ -810,7 +842,6 @@
       "running": "Running",
       "late": "Overdue",
       "waiting": "Starts with the previous notice",
-      "markSent": "Mark “{clock}” as sent",
       "sent": "Mark as sent",
       "updates": "Entries",
       "noUpdates": "No entries.",
@@ -826,7 +857,8 @@
       "flags": "Characteristics",
       "noFlags": "Neither significant nor involving personal data",
       "criteria": "What {framework} says: {title}",
-      "criteriaSource": "View in the official source"
+      "criteriaSource": "View in the official source",
+      "sentWhich": ": “{clock}”"
     }
   },
   "trainingLink": {

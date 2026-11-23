@@ -202,6 +202,8 @@ function GlobalSearch({ org }: { org: Membership }) {
     })),
   ];
   const shown = open && needle.length >= 2;
+  // Below the desktop width the bar has room for one word, not a cut-off sentence.
+  const wide = useSyncExternalStore(subscribeMedia, isDesktop, () => true);
   const current = Math.min(active, Math.max(results.length - 1, 0));
   function go(result: Result | undefined) {
     if (!result) return;
@@ -210,7 +212,7 @@ function GlobalSearch({ org }: { org: Membership }) {
   }
   return <div className="topbar-search" role="search">
     <Icon name="search" className="topbar-search-icon" />
-    <input ref={input} type="search" role="combobox" aria-label={c("searchLabel")} placeholder={c("searchPlaceholder")}
+    <input ref={input} type="search" role="combobox" aria-label={c("searchLabel")} placeholder={c(wide ? "searchPlaceholder" : "searchShort")}
       aria-expanded={shown} aria-controls={listId} aria-autocomplete="list"
       aria-activedescendant={shown && results[current] ? `${listId}-${current}` : undefined}
       value={query} onChange={(e) => { setQuery(e.target.value); setOpen(true); setActive(0); }} onFocus={() => setOpen(true)}

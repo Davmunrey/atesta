@@ -1,5 +1,5 @@
 # Containers (hosted-environment spec, ADR-004): the API and the worker run as Fargate services in
-# private subnets (the API's load balancer is in api.tf); migrations run as a one-off task; each scan attempt is one RunTask of the scan
+# private subnets (the API service and its load balancer are in api.tf); migrations run as a one-off task; each scan attempt is one RunTask of the scan
 # task definition with the per-org, per-provider role passed by the worker (overrides.taskRoleArn).
 # Secrets reach containers only through ECS secrets from Secrets Manager; images are pinned by
 # digest. The scan egress allowlist (scanner-connectors spec, Runners) is not built yet: the scan
