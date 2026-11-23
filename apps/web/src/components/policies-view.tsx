@@ -7,7 +7,7 @@ import { type Membership, orgHome } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
-import { PageHeader, Panel } from "./page-frame";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { RecordSummary } from "./record-summary";
 import { policySummary } from "@/lib/summaries";
 
@@ -26,8 +26,8 @@ export function PoliciesView({ org }: { org: Membership }) {
       { label: s("overdue"), value: format.number(sum.overdue), attention: sum.overdue > 0 },
       { label: s("unapproved"), value: format.number(sum.unapproved), attention: sum.unapproved > 0 }]} /> : null}
     <Panel title={t("list")}>
-      {list.isPending ? <p role="status">{t("loading")}</p> : list.isError ? <ErrorMessage error={list.error} />
-        : list.data.length === 0 ? <p className="text-muted">{t("empty")}</p>
+      {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
+        : list.data.length === 0 ? <Empty>{t("empty")}</Empty>
         : <ul className="policy-list">{list.data.map((p) => <PolicyRow key={p.id} policy={p} orgId={org.organization_id} admin={admin} />)}</ul>}
     </Panel>
     {admin ? <CreatePolicy orgId={org.organization_id} /> : null}

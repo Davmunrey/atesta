@@ -8,7 +8,7 @@ import { type Membership, orgAccessReview, orgHome } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
-import { PageHeader, Panel } from "./page-frame";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { RecordSummary } from "./record-summary";
 import { reviewSummary } from "@/lib/summaries";
 
@@ -26,8 +26,8 @@ export function AccessReviewsView({ org }: { org: Membership }) {
       { label: s("total"), value: format.number(sum.total) }, { label: s("open"), value: format.number(sum.open), attention: sum.late > 0 },
       { label: s("closed"), value: format.number(sum.closed) }, { label: s("pending"), value: format.number(sum.pending) }]} /> : null}
     <Panel title={t("list")}>
-      {list.isPending ? <p role="status">{t("loading")}</p> : list.isError ? <ErrorMessage error={list.error} />
-        : list.data.length === 0 ? <p className="text-muted">{t("empty")}</p>
+      {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
+        : list.data.length === 0 ? <Empty>{t("empty")}</Empty>
         : <div className="table-region" role="region" aria-label={t("list")} tabIndex={0}><table className="w-full text-left">
           <thead><tr><th scope="col">{t("review")}</th><th scope="col">{t("progress")}</th><th scope="col">{t("state")}</th></tr></thead>
           <tbody>{list.data.map((r) => <tr key={r.id}>

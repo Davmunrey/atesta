@@ -4,11 +4,11 @@ import { useTranslations } from "next-intl";
 import { useOverview } from "@/lib/api/hooks";
 import { useReadiness } from "@/lib/api/register-hooks";
 import type { Membership } from "@/lib/org";
-import { ErrorMessage } from "./error-message";
 import { FirstSteps } from "./first-steps";
 import { FrameworkLedger } from "./framework-ledger";
 import { GettingStarted } from "./getting-started";
-import { PageHeader } from "./page-frame";
+import { LoadError, PageHeader } from "./page-frame";
+import { RecordsGlance } from "./records-glance";
 import { AttentionList, Kpis, ReadinessSummary, RecentActivity, TeamLoad, YourWork, started, useAttention } from "./readiness";
 import { ScanHistory } from "./scan-history";
 
@@ -25,7 +25,7 @@ export function OverviewDashboard({ orgId, org }: { orgId: string; org?: Members
   if (query.isPending) return <>{header()}<div className="dashboard-loading" role="status" aria-busy="true">
     <p>{t("loading")}</p><div className="dashboard-skeleton" aria-hidden="true" /><div className="dashboard-skeleton" aria-hidden="true" />
   </div></>;
-  if (query.isError) return <>{header()}<div className="dashboard-error"><ErrorMessage error={query.error} /><button className="dashboard-button" onClick={() => void query.refetch()}>{t("retry")}</button></div></>;
+  if (query.isError) return <>{header()}<LoadError error={query.error} onRetry={() => void query.refetch()} /></>;
   const underway = readiness.some(started);
   const collections = query.data.scans.length > 0 || query.data.evidence_count > 0;
   const refresh = query.data.frameworks.some((f) => f.snapshot) || query.data.scans.length > 0
@@ -42,6 +42,7 @@ export function OverviewDashboard({ orgId, org }: { orgId: string; org?: Members
         <AttentionList items={attention} readiness={readiness} orgId={orgId} />
         <YourWork org={membership} />
       </div>
+      <RecordsGlance org={membership} />
       {ledger}
       <div className="panel-grid panel-grid-halves">
         <TeamLoad org={membership} readiness={readiness} />
