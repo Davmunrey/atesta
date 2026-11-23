@@ -61,6 +61,7 @@ Start with the question you have.
 - [organization-shell-design](specs/organization-shell-design.md)
 - [rbac](specs/rbac.md)
 - [readiness-cockpit](specs/readiness-cockpit.md)
+- [recorded-routines](specs/recorded-routines.md)
 - [requirement-register](specs/requirement-register.md)
 - [scanner-connectors](specs/scanner-connectors.md)
 - [tenant-data-layer](specs/tenant-data-layer.md)

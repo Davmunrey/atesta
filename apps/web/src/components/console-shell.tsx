@@ -7,14 +7,14 @@ import { type ReactNode, useDeferredValue, useEffect, useId, useRef, useState, u
 import { useOverview } from "@/lib/api/hooks";
 import { useSearch } from "@/lib/api/register-hooks";
 import { LOGOUT_URL } from "@/lib/auth";
-import { type Membership, orgActivity, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgMyWork, orgSettings, selectOrg } from "@/lib/org";
+import { type Membership, orgAccessReviews, orgActivity, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgMyWork, orgPolicies, orgSettings, selectOrg } from "@/lib/org";
 import { canInvite, canReviewControls, isContributor } from "@/lib/permissions";
 import { useMe } from "./auth-gate";
 import { Icon, type IconName } from "./icons";
 import { LocaleSwitcher } from "./locale-switcher";
 import { SiteFooter } from "./site-footer";
 
-const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings"];
+const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings", "/app/access-reviews", "/app/access-review", "/app/policies"];
 const DESKTOP = "(min-width: 64rem)";
 
 // The collapsed rail is a remembered preference; media and storage are read as external stores.
@@ -45,6 +45,10 @@ export function useSections(org: Membership | null): { group: string; items: Sec
       { key: "/app/org", label: t("overview"), href: orgHome(id), icon: "home" as const },
       ...(isContributor(org.role) ? [{ key: "/app/my-work", label: t("myWork"), href: orgMyWork(id), icon: "work" as const }] : []),
       { key: "/app/frameworks", label: c("frameworks"), href: orgFrameworks(id), icon: "frameworks" as const },
+    ] },
+    { group: c("groups.records"), items: [
+      { key: "/app/access-reviews", label: c("accessReviews"), href: orgAccessReviews(id), icon: "reviews" as const },
+      { key: "/app/policies", label: c("policies"), href: orgPolicies(id), icon: "policies" as const },
     ] },
     { group: c("groups.team"), items: [
       ...(isContributor(org.role) ? [{ key: "/app/members", label: t("members"), href: orgMembers(id), icon: "members" as const }] : []),
@@ -100,7 +104,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
 function SideNav({ id, org, pathname, collapsed, onNavigate, onEscape }: { id: string; org: Membership; pathname: string; collapsed: boolean; onNavigate: () => void; onEscape: () => void }) {
   const t = useTranslations("org");
   const groups = useSections(org);
-  const current = pathname === "/app/framework" ? "/app/frameworks" : pathname;
+  const current = pathname === "/app/framework" ? "/app/frameworks" : pathname === "/app/access-review" ? "/app/access-reviews" : pathname;
   return <nav id={id} aria-label={t("sections")} className="sidenav" data-collapsed={collapsed ? "true" : "false"}
     onKeyDown={(e) => { if (e.key === "Escape") onEscape(); }}>
     {groups.map(({ group, items }) => <div key={group} className="sidenav-group">

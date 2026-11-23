@@ -1,6 +1,33 @@
 {
  "policies": [
   [
+   "access_review_decisions",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "access_review_entries",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "access_reviews",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
    "assessment_reviews",
    "tenant_isolation",
    "ALL",
@@ -136,6 +163,24 @@
    "(id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
+   "policies",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "policy_approvals",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
    "requirement_assessments",
    "tenant_isolation",
    "ALL",
@@ -209,6 +254,24 @@
   ]
  ],
  "grants": [
+  [
+   "access_review_decisions",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
+   "access_review_entries",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
+   "access_reviews",
+   "",
+   "atesta_app",
+   "INSERT,SELECT,UPDATE"
+  ],
   [
    "assessment_reviews",
    "",
@@ -310,6 +373,18 @@
    "",
    "atesta_app",
    "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "policies",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
+   "policy_approvals",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
   ],
   [
    "procrastinate_events",

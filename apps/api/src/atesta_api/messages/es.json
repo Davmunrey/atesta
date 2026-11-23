@@ -28,5 +28,12 @@
     },
     "yes": "Sí",
     "no": "No"
+  },
+  "routines": {
+    "access_review_title": "Revisión de accesos: {title}",
+    "access_review_closed": "Revisión de accesos «{title}» ({system}). Cuentas revisadas: {total}; mantener: {keep}; retirar: {revoke}. Cerrada el {date} por {email}.",
+    "policy_title": "Aprobación de política: {title}",
+    "policy_approved": "Política «{title}», versión {version}, aprobada por {approver} el {date}. Registrada por {email}.",
+    "policy_hash": " Huella SHA-256 del documento: {sha256}."
   }
 }

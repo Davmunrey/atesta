@@ -34,6 +34,231 @@
         "title": "Accepted",
         "type": "object"
       },
+      "AccessReviewIn": {
+        "properties": {
+          "accounts": {
+            "items": {
+              "$ref": "#/components/schemas/AccountIn"
+            },
+            "maxItems": 2000,
+            "minItems": 1,
+            "title": "Accounts",
+            "type": "array"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "system": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "System",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "system",
+          "accounts"
+        ],
+        "title": "AccessReviewIn",
+        "type": "object"
+      },
+      "AccessReviewOut": {
+        "properties": {
+          "closed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/EntryOut"
+            },
+            "title": "Entries",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "keep": {
+            "title": "Keep",
+            "type": "integer"
+          },
+          "pending": {
+            "title": "Pending",
+            "type": "integer"
+          },
+          "revoke": {
+            "title": "Revoke",
+            "type": "integer"
+          },
+          "system": {
+            "title": "System",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "system",
+          "due_on",
+          "created_at",
+          "closed_at",
+          "total",
+          "keep",
+          "revoke",
+          "pending",
+          "entries"
+        ],
+        "title": "AccessReviewOut",
+        "type": "object"
+      },
+      "AccessReviewSummary": {
+        "properties": {
+          "closed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "keep": {
+            "title": "Keep",
+            "type": "integer"
+          },
+          "pending": {
+            "title": "Pending",
+            "type": "integer"
+          },
+          "revoke": {
+            "title": "Revoke",
+            "type": "integer"
+          },
+          "system": {
+            "title": "System",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "system",
+          "due_on",
+          "created_at",
+          "closed_at",
+          "total",
+          "keep",
+          "revoke",
+          "pending"
+        ],
+        "title": "AccessReviewSummary",
+        "type": "object"
+      },
+      "AccountIn": {
+        "properties": {
+          "account": {
+            "maxLength": 320,
+            "minLength": 1,
+            "title": "Account",
+            "type": "string"
+          },
+          "detail": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "required": [
+          "account"
+        ],
+        "title": "AccountIn",
+        "type": "object"
+      },
       "Activity": {
         "properties": {
           "daily": {
@@ -263,6 +488,88 @@
           "rows"
         ],
         "title": "ApplicabilityStatement",
+        "type": "object"
+      },
+      "ApprovalIn": {
+        "properties": {
+          "approved_on": {
+            "format": "date",
+            "title": "Approved On",
+            "type": "string"
+          },
+          "approver_name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Approver Name",
+            "type": "string"
+          },
+          "sha256": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sha256"
+          },
+          "version": {
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "approver_name",
+          "approved_on"
+        ],
+        "title": "ApprovalIn",
+        "type": "object"
+      },
+      "ApprovalOut": {
+        "properties": {
+          "approved_on": {
+            "format": "date",
+            "title": "Approved On",
+            "type": "string"
+          },
+          "approver_name": {
+            "title": "Approver Name",
+            "type": "string"
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "title": "Recorded At",
+            "type": "string"
+          },
+          "sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sha256"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "approver_name",
+          "approved_on",
+          "sha256",
+          "recorded_at"
+        ],
+        "title": "ApprovalOut",
         "type": "object"
       },
       "AssessmentIn": {
@@ -1042,6 +1349,137 @@
           "count"
         ],
         "title": "DayCount",
+        "type": "object"
+      },
+      "Decision": {
+        "enum": [
+          "keep",
+          "revoke"
+        ],
+        "type": "string"
+      },
+      "DecisionIn": {
+        "properties": {
+          "decision": {
+            "$ref": "#/components/schemas/Decision"
+          },
+          "entry_id": {
+            "format": "uuid",
+            "title": "Entry Id",
+            "type": "string"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entry_id",
+          "decision"
+        ],
+        "title": "DecisionIn",
+        "type": "object"
+      },
+      "DueItem": {
+        "properties": {
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "policy_review",
+              "policy_unapproved",
+              "access_review_overdue"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "boolean"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "id",
+          "title",
+          "due_on",
+          "overdue"
+        ],
+        "title": "DueItem",
+        "type": "object"
+      },
+      "EntryOut": {
+        "properties": {
+          "account": {
+            "title": "Account",
+            "type": "string"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Decision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "account",
+          "detail",
+          "decision",
+          "note",
+          "decided_at"
+        ],
+        "title": "EntryOut",
         "type": "object"
       },
       "EvidenceOut": {
@@ -2136,6 +2574,95 @@
           "verified_on"
         ],
         "title": "PackContext",
+        "type": "object"
+      },
+      "PolicyIn": {
+        "properties": {
+          "location_url": {
+            "maxLength": 2000,
+            "minLength": 9,
+            "pattern": "^https://\\S+$",
+            "title": "Location Url",
+            "type": "string"
+          },
+          "review_months": {
+            "maximum": 36.0,
+            "minimum": 1.0,
+            "title": "Review Months",
+            "type": "integer"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "location_url",
+          "review_months"
+        ],
+        "title": "PolicyIn",
+        "type": "object"
+      },
+      "PolicyOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "latest": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApprovalOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "location_url": {
+            "title": "Location Url",
+            "type": "string"
+          },
+          "next_review_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Review On"
+          },
+          "review_months": {
+            "title": "Review Months",
+            "type": "integer"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "location_url",
+          "review_months",
+          "created_at",
+          "latest",
+          "next_review_on"
+        ],
+        "title": "PolicyOut",
         "type": "object"
       },
       "PreparationControl": {
@@ -3362,6 +3889,298 @@
         "summary": "Create Org",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/access-reviews": {
+      "get": {
+        "operationId": "list_access_reviews_api_v1_orgs__org_id__access_reviews_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AccessReviewSummary"
+                  },
+                  "title": "Response List Access Reviews Api V1 Orgs  Org Id  Access Reviews Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Access Reviews",
+        "tags": [
+          "compliance"
+        ]
+      },
+      "post": {
+        "operationId": "create_access_review_api_v1_orgs__org_id__access_reviews_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccessReviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Access Review",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/access-reviews/{review_id}": {
+      "get": {
+        "operationId": "read_access_review_api_v1_orgs__org_id__access_reviews__review_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "review_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Review Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Access Review",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/access-reviews/{review_id}/close": {
+      "post": {
+        "operationId": "close_access_review_api_v1_orgs__org_id__access_reviews__review_id__close_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "review_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Review Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Close Access Review",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/access-reviews/{review_id}/decisions": {
+      "post": {
+        "operationId": "decide_api_v1_orgs__org_id__access_reviews__review_id__decisions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "review_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Review Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Decide",
+        "tags": [
+          "compliance"
         ]
       }
     },
@@ -5308,6 +6127,182 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/policies": {
+      "get": {
+        "operationId": "list_policies_api_v1_orgs__org_id__policies_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PolicyOut"
+                  },
+                  "title": "Response List Policies Api V1 Orgs  Org Id  Policies Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Policies",
+        "tags": [
+          "compliance"
+        ]
+      },
+      "post": {
+        "operationId": "create_policy_api_v1_orgs__org_id__policies_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Policy",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/policies/{policy_id}/approvals": {
+      "post": {
+        "operationId": "approve_policy_api_v1_orgs__org_id__policies__policy_id__approvals_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "policy_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Policy Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovalIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Approve Policy",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/readiness": {
       "get": {
         "operationId": "readiness_api_v1_orgs__org_id__readiness_get",
@@ -5355,6 +6350,58 @@
           }
         ],
         "summary": "Readiness",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/routines/due": {
+      "get": {
+        "operationId": "routines_due_api_v1_orgs__org_id__routines_due_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DueItem"
+                  },
+                  "title": "Response Routines Due Api V1 Orgs  Org Id  Routines Due Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Routines Due",
         "tags": [
           "compliance"
         ]

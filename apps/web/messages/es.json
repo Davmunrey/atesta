@@ -61,7 +61,12 @@
       "requirement_not_found": "Este requisito no existe en el catálogo actual.",
       "scope_invalid": "El alcance contiene valores que este marco no define.",
       "owner_not_member": "Solo una persona de esta organización puede ser responsable.",
-      "not_owner": "Solo puedes evaluar las medidas que tienes asignadas."
+      "not_owner": "Solo puedes evaluar las medidas que tienes asignadas.",
+      "access_review_not_found": "Esta revisión de accesos no existe.",
+      "access_review_entry_not_found": "Esta cuenta no forma parte de la revisión.",
+      "access_review_closed": "La revisión ya está cerrada; no admite más decisiones.",
+      "access_review_pending": "Quedan cuentas sin decidir; decide todas antes de cerrar.",
+      "policy_not_found": "Esta política no existe."
     },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
@@ -598,7 +603,12 @@
       "review": "Revisión del responsable de la seguridad de {framework}: toda la autoevaluación está completa",
       "unowned": "{count, plural, one {# medida abierta sin responsable} other {# medidas abiertas sin responsable}} en {framework}",
       "scope": "Alcance de {framework}",
-      "auditor": "El acceso de auditor de {email} termina el {date}"
+      "auditor": "El acceso de auditor de {email} termina el {date}",
+      "due": {
+        "policy_review": "Revisar la política «{title}» antes del {date}",
+        "policy_unapproved": "Registrar la aprobación de la política «{title}»",
+        "access_review_overdue": "Terminar la revisión de accesos «{title}» (vencía el {date})"
+      }
     },
     "step": {
       "scope": "Define el alcance de {framework}",
@@ -629,7 +639,8 @@
       "general": "General",
       "team": "Equipo",
       "oversight": "Supervisión",
-      "organization": "Organización"
+      "organization": "Organización",
+      "records": "Registro"
     },
     "searchLabel": "Buscar en Atesta",
     "searchPlaceholder": "Buscar medidas, marcos y páginas",
@@ -652,6 +663,68 @@
       "act": "Requiere acción",
       "clear": "Al día"
     },
-    "frameworksPage": "Progreso de la autoevaluación y resultados registrados de cada marco."
+    "frameworksPage": "Progreso de la autoevaluación y resultados registrados de cada marco.",
+    "accessReviews": "Revisiones de acceso",
+    "policies": "Políticas"
+  },
+  "routines": {
+    "access": {
+      "title": "Revisiones de acceso",
+      "intro": "Decide, cuenta por cuenta, quién mantiene el acceso. Al cerrar, queda una evidencia con el resultado. Atesta no cambia nada en tus sistemas.",
+      "loading": "Cargando…",
+      "list": "Revisiones",
+      "empty": "Aún no hay revisiones de acceso.",
+      "review": "Revisión",
+      "progress": "Progreso",
+      "state": "Estado",
+      "decided": "{decided} de {total, plural, one {# cuenta decidida} other {# cuentas decididas}}",
+      "closedOn": "Cerrada el {date}",
+      "dueOn": "Vence el {date}",
+      "open": "Abierta",
+      "create": "Nueva revisión",
+      "createHelp": "Pega una cuenta por línea (puedes añadir un detalle tras una coma) o elige un CSV. Se lee en tu navegador; no se sube ningún fichero.",
+      "reviewTitle": "Nombre de la revisión",
+      "system": "Sistema revisado",
+      "due": "Fecha límite (opcional)",
+      "accounts": "Cuentas",
+      "accountsHelp": "{count, plural, =0 {Ninguna cuenta todavía} one {# cuenta lista} other {# cuentas listas}}",
+      "csv": "O elige un CSV",
+      "start": "Empezar la revisión",
+      "close": "Cerrar y registrar",
+      "closeBlocked": "{count, plural, one {Falta # cuenta por decidir} other {Faltan # cuentas por decidir}}",
+      "closedEvidence": "Revisión cerrada. La evidencia se ha registrado en el control de revisión de accesos.",
+      "account": "Cuenta",
+      "decision": "Decisión",
+      "decisionFor": "Decisión para {account}",
+      "keep": "Mantener",
+      "revoke": "Retirar",
+      "pending": "Sin decidir"
+    },
+    "policies": {
+      "title": "Políticas",
+      "intro": "Dónde vive cada política, qué versión está aprobada y cuándo toca revisarla. Cada aprobación queda como evidencia.",
+      "loading": "Cargando…",
+      "list": "Registro de políticas",
+      "empty": "Aún no hay políticas registradas.",
+      "unapproved": "Sin aprobar",
+      "reviewOverdue": "Revisión vencida el {date}",
+      "reviewBy": "Revisar antes del {date}",
+      "latest": "Versión {version}, aprobada por {approver} el {date}",
+      "never": "Nunca aprobada",
+      "approve": "Registrar aprobación",
+      "version": "Versión",
+      "approver": "Aprobada por",
+      "approvedOn": "Fecha de aprobación",
+      "file": "Documento aprobado (opcional)",
+      "fileHelp": "Se calcula su huella SHA-256 en tu navegador; el documento no se sube.",
+      "hash": "Huella SHA-256: {hash}",
+      "record": "Registrar",
+      "create": "Nueva política",
+      "createHelp": "Enlaza el documento donde lo guardas (SharePoint, Drive…). Atesta no lo copia.",
+      "policyTitle": "Nombre de la política",
+      "location": "Enlace al documento (https)",
+      "reviewMonths": "Revisar cada (meses)",
+      "add": "Añadir política"
+    }
   }
 }

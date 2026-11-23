@@ -53,6 +53,12 @@ def is_member(session: Session, organization_id: uuid.UUID, user_id: uuid.UUID) 
     )
 
 
+def person(session: Session, user_id: uuid.UUID) -> tuple[str, str]:
+    """A signed-in person's email and language, for records written in their name (api.py)."""
+    row = session.execute(select(User.email, User.locale).where(User.id == user_id)).one()
+    return str(row.email), str(row.locale)
+
+
 @router.get("")
 def read_activity(
     member: Annotated[Member, Depends(require_role(Role.ADMIN))],

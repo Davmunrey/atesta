@@ -69,6 +69,62 @@ def link_evidence(
     session.flush()
 
 
+def record_attestation(
+    session: Session,
+    *,
+    organization_id: uuid.UUID,
+    author: uuid.UUID,
+    control_key: str,
+    title: str,
+    statement: str,
+    reference_url: str | None = None,
+) -> uuid.UUID:
+    """A statement written by a recorded routine (recorded-routines spec). It is linked to the
+    control when the control is active in the catalog; the statement itself is always kept."""
+    import hashlib
+    import json
+
+    from atesta_api.modules.evidence.models import EvidenceStatement
+
+    evidence_id = uuid.uuid4()
+    session.add(
+        Evidence(
+            id=evidence_id,
+            organization_id=organization_id,
+            kind="attestation",
+            title=title[:200],
+            source_type="user",
+            created_by=author,
+            collected_at=datetime.now().astimezone(),
+        )
+    )
+    session.flush()
+    payload = {
+        "control": control_key,
+        "title": title,
+        "statement": statement,
+        "author": str(author),
+    }
+    session.add(
+        EvidenceStatement(
+            organization_id=organization_id,
+            evidence_id=evidence_id,
+            submission_id=uuid.uuid4(),
+            payload_hash=hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest(),
+            statement=statement,
+            reference_url=reference_url,
+        )
+    )
+    if control_is_active(session, control_key):
+        session.add(
+            EvidenceControl(
+                organization_id=organization_id, evidence_id=evidence_id, control_key=control_key
+            )
+        )
+    session.flush()
+    return evidence_id
+
+
 @dataclass(frozen=True, slots=True)
 class ScanOutputFile:
     storage_key: str  # under <org_id>/scans/<scan_id>/attempt-<n>/out/, checked by the table

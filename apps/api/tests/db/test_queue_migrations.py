@@ -65,4 +65,4 @@ def test_a_fresh_database_runs_the_3_11_fetch_function_with_frozen_grants(
             )
         )
         assert public is False
-        assert conn.scalar(text("SELECT version_num FROM alembic_version")) == "0018"
+        assert conn.scalar(text("SELECT version_num FROM alembic_version")) >= "0018"

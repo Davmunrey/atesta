@@ -28,5 +28,12 @@
     },
     "yes": "Yes",
     "no": "No"
+  },
+  "routines": {
+    "access_review_title": "Access review: {title}",
+    "access_review_closed": "Access review “{title}” ({system}). Accounts reviewed: {total}; keep: {keep}; revoke: {revoke}. Closed on {date} by {email}.",
+    "policy_title": "Policy approval: {title}",
+    "policy_approved": "Policy “{title}”, version {version}, approved by {approver} on {date}. Recorded by {email}.",
+    "policy_hash": " Document SHA-256: {sha256}."
   }
 }

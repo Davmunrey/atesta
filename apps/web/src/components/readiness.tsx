@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useFormatter, useLocale, useNow, useTranslations } from "next-intl";
 import { useActivity, useMembers } from "@/lib/api/hooks";
 import { isMyWorkOverdue, type Readiness, useMyWork } from "@/lib/api/register-hooks";
-import { type Membership, orgActivity, orgFramework, orgMembers, orgMyWork } from "@/lib/org";
+import { useRoutinesDue } from "@/lib/api/routines";
+import { type Membership, orgAccessReview, orgActivity, orgFramework, orgMembers, orgMyWork, orgPolicies } from "@/lib/org";
 import { canReviewControls, isContributor } from "@/lib/permissions";
 import { RankedBars } from "./charts";
 import { Icon } from "./icons";
@@ -45,6 +46,13 @@ export function useAttention(org: Membership, readiness: Readiness[]): Attention
   }
   for (const r of readiness.filter((x) => x.assessed > 0 && x.has_axes && !x.scope_defined)) {
     items.push({ key: `scope:${r.key}`, severity: "missing", text: t("scope", { framework: r.name }), href: at(r) });
+  }
+  const due = useRoutinesDue(org.organization_id);
+  for (const d of due.data ?? []) {
+    const date = d.due_on ? format.dateTime(new Date(`${d.due_on}T00:00:00Z`), { dateStyle: "long", timeZone: "UTC" }) : "";
+    const href = d.kind === "access_review_overdue" ? orgAccessReview(org.organization_id, d.id) : orgPolicies(org.organization_id);
+    items.push({ key: `due:${d.kind}:${d.id}`, severity: d.overdue ? "overdue" : d.kind === "policy_unapproved" ? "missing" : "pending",
+      text: t(`due.${d.kind}`, { title: d.title, date }), href });
   }
   const soon = now.getTime() + AUDITOR_WARNING_DAYS * 86_400_000;
   for (const m of members.data ?? []) {
