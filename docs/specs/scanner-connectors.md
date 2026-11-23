@@ -727,8 +727,8 @@ Error codes (ES and EN texts in the web i18n files): `connections.state_invalid`
 
 | Step | Who | Blocks |
 |---|---|---|
-| Entra tenant for Atesta with a DNS-verified custom domain; dev app registrations (Scanner, Sign-in); scanner certificate | Owner | PR 8 |
-| M365 test tenant: E5 developer sandbox if eligible (Visual Studio Pro/Enterprise, ISV Success or an eligible partner tier, Premier/Unified; MCA billing account with an active Azure subscription; may be recreated every 90 days), otherwise a paid or trial tenant (candidate); custom domain added | Owner | PR 9 live golden |
+| Dev: a separate "Atesta dev" Entra ID Free tenant holds the dev app registrations (Scanner, Sign-in); the scanner certificate is generated inside AWS (owner, 2026-11-23; `docs/runbooks/m365-test-tenant.md`). Prod: Atesta's tenant with a DNS-verified custom domain | Owner | PR 9 live golden |
+| M365 test tenant: paid Microsoft 365 Business Premium, not a trial, since a trial tenant cannot create the Atesta dev tenant (owner, 2026-11-23; the E5 developer sandbox needs Visual Studio or partner eligibility). Steps in `docs/runbooks/m365-test-tenant.md` | Owner | PR 9 live golden |
 | Cloud Partner Program account verified as PGA (D12) | Owner | First M365 customer |
 | Legal review of the Exchange and Teams module terms (D11) | Owner and counsel | PR 10 |
 | GCP organization, dedicated project, key-creation exemption | Owner | PR 11 |
