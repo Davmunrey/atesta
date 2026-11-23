@@ -4,7 +4,8 @@ OpenTofu for AWS eu-south-2 (Spain), ADR-007.
 
 ```text
 infra/
-  modules/        network, ecs, rds, s3-evidence, kms, cognito, ses
+  modules/        platform (composes the rest), network, kms, rds, s3-evidence, ecr, ecs,
+                  web, ses, cognito, github-oidc
   envs/dev/
   envs/prod/
 ```
@@ -15,9 +16,10 @@ OIDC, no long-lived keys. Budget alerts at 150, 250 and 400 EUR/month.
 ## Status (2026-11-23)
 
 Modules `kms`, `network`, `s3-evidence`, `rds`, `ses`, `ecr`, `ecs` and `web` follow
-docs/specs/hosted-environment.md and are used by `envs/dev`. They are validated (`tofu validate`)
-and their security settings are tested (`infra/tests`). Nothing is applied. `envs/prod`, the
-deploy workflow and the runbook follow in separate PRs.
+docs/specs/hosted-environment.md. `modules/platform` composes them, and `envs/dev` and `envs/prod`
+call it with their sizes only, so prod cannot drift from what dev exercises. Both environments
+are validated (`tofu validate`) and their security settings are tested (`infra/tests`). Nothing is
+applied. The deploy workflow and the runbook follow in separate PRs.
 
 - `rds`: the application roles come from `apps/api/migrations/bootstrap.sql`, run once as the
   master user. Their connection URLs go into the two secrets the module creates; values are set by

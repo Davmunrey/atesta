@@ -62,60 +62,14 @@ output "cognito_domain" {
   value = module.cognito.domain
 }
 
-# Hosted environment, base layer (hosted-environment spec). Nothing is applied until the owner
-# decides; a plan shows what an apply would create.
-module "kms" {
-  source = "../../modules/kms"
-  name   = "atesta-dev"
-}
-
-module "network" {
-  source       = "../../modules/network"
-  name         = "atesta-dev"
-  logs_key_arn = module.kms.logs_key_arn
-}
-
-module "evidence" {
-  source      = "../../modules/s3-evidence"
-  bucket_name = "atesta-dev-evidence-${data.aws_caller_identity.current.account_id}"
-  kms_key_arn = module.kms.evidence_key_arn
-}
-
-# The API, worker and migration tasks share this group; the ECS module (next PR) attaches it.
-resource "aws_security_group" "app" {
-  name        = "atesta-dev-app"
-  description = "Application tasks: the only clients of the database"
-  vpc_id      = module.network.vpc_id
-}
-
-module "database" {
-  source                = "../../modules/rds"
-  name                  = "atesta-dev"
-  vpc_id                = module.network.vpc_id
-  private_subnet_ids    = module.network.private_subnet_ids
-  app_security_group_id = aws_security_group.app.id
-  kms_key_arn           = module.kms.database_key_arn
-  secrets_key_arn       = module.kms.secrets_key_arn
-  logs_key_arn          = module.kms.logs_key_arn
-  multi_az              = false
-  backup_retention_days = 14
-}
-
-module "ecr" {
-  source      = "../../modules/ecr"
-  name        = "atesta-dev"
-  kms_key_arn = module.kms.secrets_key_arn
-}
-
-# Services come up once images are pushed (pinned by digest) and the edge certificates exist;
-# until then images and edge stay null and only the base layer is planned.
+# Hosted environment (hosted-environment spec): dev sizes. Nothing is applied until the owner
+# decides. images, edge and mail_domain stay null until images are pushed and the owner has a
+# domain and certificates (docs/runbooks/deploy.md); until then only the base layer is planned.
 variable "images" {
   type    = object({ api = string, worker = string, scan = string })
   default = null
 }
 
-# Public edge: hostnames and certificates the owner creates (docs/runbooks/deploy.md). The API
-# certificate is in eu-south-2 for the load balancer; the web one is in us-east-1 for CloudFront.
 variable "edge" {
   type = object({
     aliases                 = list(string)
@@ -133,78 +87,31 @@ variable "app_environment" {
   default     = {}
 }
 
-resource "aws_secretsmanager_secret" "session_key" {
-  name        = "atesta/atesta-dev/api/session-key"
-  description = "ATESTA_SESSION_KEY (base64, 32 bytes), set by hand"
-  kms_key_id  = module.kms.secrets_key_arn
+variable "mail_domain" {
+  type    = string
+  default = null
 }
 
-module "ecs" {
-  source                = "../../modules/ecs"
-  count                 = var.images == null || var.edge == null ? 0 : 1
+module "platform" {
+  source                = "../../modules/platform"
   name                  = "atesta-dev"
-  vpc_id                = module.network.vpc_id
-  public_subnet_ids     = module.network.public_subnet_ids
-  private_subnet_ids    = module.network.private_subnet_ids
-  app_security_group_id = aws_security_group.app.id
-  db_security_group_id  = module.database.security_group_id
-  logs_key_arn          = module.kms.logs_key_arn
-  secrets_key_arn       = module.kms.secrets_key_arn
-  evidence_bucket_arn   = module.evidence.bucket_arn
-  certificate_arn       = var.edge.api_certificate_arn
+  multi_az              = false
+  backup_retention_days = 14
+  nat_per_az            = false
+  api_count             = 1
+  worker_count          = 1
   images                = var.images
-  environment           = var.app_environment
-  secrets = {
-    api = {
-      ATESTA_DATABASE_URL = module.database.app_url_secret_arn
-      ATESTA_SESSION_KEY  = aws_secretsmanager_secret.session_key.arn
-    }
-    worker  = { ATESTA_DATABASE_URL = module.database.app_url_secret_arn }
-    migrate = { ATESTA_MIGRATION_DATABASE_URL = module.database.migration_url_secret_arn }
+  edge                  = var.edge
+  app_environment       = var.app_environment
+  mail_domain           = var.mail_domain
+}
+
+output "platform" {
+  value = {
+    database_endpoint = module.platform.database_endpoint
+    ecr_repositories  = module.platform.ecr_repositories
+    api_load_balancer = module.platform.api_load_balancer
+    web               = module.platform.web
+    mail_dns_records  = module.platform.mail_dns_records
   }
 }
-
-module "web" {
-  source                  = "../../modules/web"
-  count                   = var.edge == null ? 0 : 1
-  name                    = "atesta-dev"
-  aliases                 = var.edge.aliases
-  certificate_arn         = var.edge.web_certificate_arn
-  api_origin_domain       = var.edge.api_origin_domain
-  content_security_policy = var.edge.content_security_policy
-}
-
-output "api_load_balancer" {
-  value = try(module.ecs[0].alb_dns_name, null)
-}
-
-output "web" {
-  value = try({ bucket = module.web[0].bucket_name, distribution = module.web[0].distribution_id, domain = module.web[0].domain_name }, null)
-}
-
-output "ecr_repositories" {
-  value = module.ecr.repository_urls
-}
-
-variable "mail_domain" {
-  description = "Sending domain for notification email; leave unset until the owner picks one."
-  type        = string
-  default     = null
-}
-
-module "ses_notifications" {
-  source = "../../modules/ses"
-  count  = var.mail_domain == null ? 0 : 1
-  name   = "atesta-dev-notifications"
-  domain = var.mail_domain
-}
-
-output "database_endpoint" {
-  value = module.database.endpoint
-}
-
-output "mail_dns_records" {
-  value = try(module.ses_notifications[0].dns_records, [])
-}
-
-data "aws_caller_identity" "current" {}

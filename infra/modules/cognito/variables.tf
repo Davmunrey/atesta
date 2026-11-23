@@ -33,3 +33,9 @@ variable "ses_source_arn" {
   type        = string
   default     = null
 }
+
+variable "from_email_address" {
+  description = "From address with DEVELOPER email, inside the verified SES domain."
+  type        = string
+  default     = null
+}

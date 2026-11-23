@@ -268,16 +268,6 @@ def test_ses_requires_tls_and_suppresses_bounces_and_complaints() -> None:
     assert config["reputation_options"] == [{"reputation_metrics_enabled": True}]
 
 
-def test_dev_wires_the_database_and_optional_notification_email() -> None:
-    dev = load("envs/dev/main.tf")
-    modules = {k: v for m in dev["module"] for k, v in m.items()}
-    assert "providers" not in modules["ses_notifications"]  # eu-south-2, not the Paris exception
-    assert modules["ses_notifications"]["count"] == "${var.mail_domain == null ? 0 : 1}"
-    database = modules["database"]
-    assert database["backup_retention_days"] == 14 and database["multi_az"] is False
-    assert database["kms_key_arn"] == "${module.kms.database_key_arn}"
-
-
 ECS_FILE = load("modules/ecs/main.tf")
 ECS = resources("modules/ecs/main.tf")
 CONTAINERS = ECS_FILE["locals"][0]["containers"]
@@ -454,3 +444,38 @@ def test_the_distribution_routes_api_and_private_pages_and_forces_https() -> Non
     origin = api["custom_origin_config"][0]
     assert origin["origin_protocol_policy"] == "https-only"
     assert origin["origin_ssl_protocols"] == ["TLSv1.2"]
+
+
+def _modules(env: str) -> dict[str, Any]:
+    return {k: v for m in load(f"envs/{env}/main.tf")["module"] for k, v in m.items()}
+
+
+def test_prod_uses_the_same_platform_as_dev_with_prod_sizes() -> None:
+    dev, prod = _modules("dev")["platform"], _modules("prod")["platform"]
+    assert dev["source"] == prod["source"] == "../../modules/platform"
+    assert (dev["multi_az"], dev["backup_retention_days"], dev["nat_per_az"]) == (False, 14, False)
+    assert (prod["multi_az"], prod["backup_retention_days"], prod["nat_per_az"]) == (True, 35, True)
+    assert prod["api_count"] >= 2
+    platform = {k: v for m in load("modules/platform/main.tf")["module"] for k, v in m.items()}
+    assert platform["database"]["kms_key_arn"] == "${module.kms.database_key_arn}"
+    assert platform["ses_notifications"]["count"] == "${var.mail_domain == null ? 0 : 1}"
+    assert "providers" not in platform["ses_notifications"]  # eu-south-2
+
+
+def test_prod_has_its_own_state_and_apply_environment() -> None:
+    prod = load("envs/prod/main.tf")
+    assert prod["terraform"][0]["backend"][0]["s3"]["key"] == "prod/terraform.tfstate"
+    assert _modules("prod")["github_oidc"]["apply_environment"] == "prod"
+
+
+def test_cognito_email_in_prod_uses_ses_in_paris_and_nothing_else_leaves_spain() -> None:
+    prod = load("envs/prod/main.tf")
+    aliases = {
+        p["aws"]["alias"]: p["aws"]["region"] for p in prod["provider"] if "alias" in p["aws"]
+    }
+    assert aliases == {"paris": "eu-west-3"}  # ADR-007 amendment 1, the only EU exception
+    modules = _modules("prod")
+    assert modules["ses_cognito"]["providers"] == {"aws": "${aws.paris}"}
+    assert [k for k, v in modules.items() if "providers" in v] == ["ses_cognito"]
+    assert modules["cognito"]["email_sending_account"] == "DEVELOPER"
+    assert modules["cognito"]["ses_source_arn"] == "${module.ses_cognito.identity_arn}"

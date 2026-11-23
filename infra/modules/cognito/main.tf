@@ -72,6 +72,7 @@ resource "aws_cognito_user_pool" "this" {
   email_configuration {
     email_sending_account = var.email_sending_account
     source_arn            = var.ses_source_arn
+    from_email_address    = var.from_email_address
   }
 
   verification_message_template {
