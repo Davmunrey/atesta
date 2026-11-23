@@ -101,6 +101,59 @@ module "database" {
   backup_retention_days = 14
 }
 
+module "ecr" {
+  source      = "../../modules/ecr"
+  name        = "atesta-dev"
+  kms_key_arn = module.kms.secrets_key_arn
+}
+
+# Services come up once images are pushed (pinned by digest); until then images stays null and
+# only the base layer is planned.
+variable "images" {
+  type    = object({ api = string, worker = string, scan = string })
+  default = null
+}
+
+variable "app_environment" {
+  description = "Plain settings (ATESTA_ENV, Cognito ids, web origin). Never secrets."
+  type        = map(string)
+  default     = {}
+}
+
+resource "aws_secretsmanager_secret" "session_key" {
+  name        = "atesta/atesta-dev/api/session-key"
+  description = "ATESTA_SESSION_KEY (base64, 32 bytes), set by hand"
+  kms_key_id  = module.kms.secrets_key_arn
+}
+
+module "ecs" {
+  source                = "../../modules/ecs"
+  count                 = var.images == null ? 0 : 1
+  name                  = "atesta-dev"
+  vpc_id                = module.network.vpc_id
+  public_subnet_ids     = module.network.public_subnet_ids
+  private_subnet_ids    = module.network.private_subnet_ids
+  app_security_group_id = aws_security_group.app.id
+  db_security_group_id  = module.database.security_group_id
+  logs_key_arn          = module.kms.logs_key_arn
+  secrets_key_arn       = module.kms.secrets_key_arn
+  evidence_bucket_arn   = module.evidence.bucket_arn
+  images                = var.images
+  environment           = var.app_environment
+  secrets = {
+    api = {
+      ATESTA_DATABASE_URL = module.database.app_url_secret_arn
+      ATESTA_SESSION_KEY  = aws_secretsmanager_secret.session_key.arn
+    }
+    worker  = { ATESTA_DATABASE_URL = module.database.app_url_secret_arn }
+    migrate = { ATESTA_MIGRATION_DATABASE_URL = module.database.migration_url_secret_arn }
+  }
+}
+
+output "ecr_repositories" {
+  value = module.ecr.repository_urls
+}
+
 variable "mail_domain" {
   description = "Sending domain for notification email; leave unset until the owner picks one."
   type        = string

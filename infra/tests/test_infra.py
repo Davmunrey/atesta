@@ -276,3 +276,92 @@ def test_dev_wires_the_database_and_optional_notification_email() -> None:
     database = modules["database"]
     assert database["backup_retention_days"] == 14 and database["multi_az"] is False
     assert database["kms_key_arn"] == "${module.kms.database_key_arn}"
+
+
+ECS_FILE = load("modules/ecs/main.tf")
+ECS = resources("modules/ecs/main.tf")
+CONTAINERS = ECS_FILE["locals"][0]["containers"]
+ECS_VARS = {k: v for b in ECS_FILE["variable"] for k, v in b.items()}
+ECS_POLICIES = {
+    name: body
+    for block in ECS_FILE["data"]
+    for kind, named in block.items()
+    if kind == "aws_iam_policy_document"
+    for name, body in named.items()
+}
+
+
+def test_every_container_is_locked_down_and_logs_to_its_own_group() -> None:
+    locked = ECS_FILE["locals"][0]["locked"]
+    assert locked["readonlyRootFilesystem"] is True and locked["privileged"] is False
+    assert locked["user"] == "10001"
+    assert locked["linuxParameters"]["capabilities"]["drop"] == ["ALL"]
+    assert set(CONTAINERS) == {"api", "worker", "migrate", "scan"}
+    for name, container in CONTAINERS.items():
+        assert container.startswith("${merge(local.locked, {"), name
+        assert 'logDriver = "awslogs"' in container, name
+        assert f'aws_cloudwatch_log_group.this["{name}"].name' in container, name
+
+
+def test_secrets_come_only_from_secrets_manager_never_from_plain_environment() -> None:
+    for name in ("api", "worker", "migrate"):
+        assert f"secrets = [for k, arn in var.secrets.{name} :" in CONTAINERS[name], name
+    assert (
+        "secrets" not in CONTAINERS["scan"]
+    )  # the wrapper reads its credential with the task role
+    rule = ECS_VARS["environment"]["validation"][0]["condition"]
+    assert "DATABASE_URL|_KEY|SECRET|PASSWORD|TOKEN" in rule
+    exec_policy = ECS_POLICIES["execution"]["statement"]
+    read = next(s for s in exec_policy if "secretsmanager:GetSecretValue" in s["actions"])
+    assert "*" not in str(read["resources"])
+
+
+def test_images_are_pinned_by_digest_and_registries_are_immutable() -> None:
+    rule = ECS_VARS["images"]["validation"][0]["condition"]
+    assert "@sha256:[0-9a-f]{64}$" in rule
+    repos = resources("modules/ecr/main.tf")["aws_ecr_repository.this"]
+    assert repos["for_each"] == '${toset(["api", "worker", "scan"])}'
+    assert repos["image_tag_mutability"] == "IMMUTABLE"
+    assert repos["image_scanning_configuration"] == [{"scan_on_push": True}]
+    assert repos["encryption_configuration"][0]["encryption_type"] == "KMS"
+
+
+def test_services_run_on_fargate_in_private_subnets_and_roll_back() -> None:
+    for name in ("worker",):
+        service = ECS[f"aws_ecs_service.{name}"]
+        assert service["launch_type"] == "FARGATE", name
+        network = service["network_configuration"][0]
+        assert network["assign_public_ip"] is False, name
+        assert network["subnets"] == "${var.private_subnet_ids}", name
+        breaker = service["deployment_circuit_breaker"][0]
+        assert breaker == {"enable": True, "rollback": True}, name
+    task = ECS["aws_ecs_task_definition.this"]
+    assert task["network_mode"] == "awsvpc" and task["requires_compatibilities"] == ["FARGATE"]
+
+
+def test_one_scan_task_definition_with_no_baked_role_and_https_only_egress() -> None:
+    scan = ECS["aws_ecs_task_definition.scan"]
+    assert "task_role_arn" not in scan  # ADR-004: the worker passes the per-org role per run
+    assert (scan["cpu"], scan["memory"]) == ("2048", "4096")  # scanner-connectors D13
+    egress = [k for k in ECS if k.startswith("aws_vpc_security_group_egress_rule.scan")]
+    assert egress == ["aws_vpc_security_group_egress_rule.scan_https"]
+    assert ECS["aws_vpc_security_group_egress_rule.scan_https"]["from_port"] == 443
+    assert not [k for k in ECS if k.startswith("aws_vpc_security_group_ingress_rule.scan")]
+
+
+def test_the_worker_may_only_start_scans_with_bounded_roles() -> None:
+    statements = {s["sid"]: s for s in ECS_POLICIES["worker"]["statement"]}
+    assert statements["RunScans"]["actions"] == ["ecs:RunTask"]
+    assert statements["RunScans"]["resources"] == ["${local.scan_family_arn}:*"]
+    passable = statements["PassScanRoles"]["resources"]
+    assert "${aws_iam_role.scan_execution.arn}" in passable
+    assert "arn:aws:iam::${local.account}:role/atesta-scan/${var.name}/*" in passable
+    boundary = ECS_POLICIES["scan_boundary"]["statement"]
+    assert all("*" not in s["actions"] for s in boundary)
+    assert all(s["resources"] != ["*"] for s in boundary)
+
+
+def test_every_log_group_is_encrypted_and_expires() -> None:
+    group = ECS["aws_cloudwatch_log_group.this"]
+    assert group["kms_key_id"] == "${var.logs_key_arn}"
+    assert group["retention_in_days"] == "${var.log_retention_days}"

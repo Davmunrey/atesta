@@ -192,3 +192,7 @@ output "app_url_secret_arn" {
 output "migration_url_secret_arn" {
   value = aws_secretsmanager_secret.migration_url.arn
 }
+
+output "security_group_id" {
+  value = aws_security_group.db.id
+}
