@@ -196,6 +196,8 @@
   .chart-table > summary { min-height: 2.75rem; display: flex; align-items: center; cursor: pointer; color: var(--color-link); text-decoration: underline; }
   .chart-table table, .activity-table { inline-size: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
   .chart-table th, .chart-table td, .activity-table th, .activity-table td { text-align: start; padding: 0.375rem 0.5rem; border-block-end: 1px solid var(--color-border); }
+  /* Emails and ids have no break points; let them wrap so a phone never scrolls sideways. */
+  .activity-table td { overflow-wrap: anywhere; }
   .ranked-bars { list-style: none; display: grid; gap: 0.5rem; }
   .ranked-bars li { display: grid; grid-template-columns: minmax(6rem, 12rem) minmax(0, 1fr) 2.5rem; align-items: center; gap: 0.75rem; font-size: 0.875rem; }
   .ranked-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
