@@ -1291,6 +1291,10 @@
             ],
             "title": "Allowlist Version"
           },
+          "consented": {
+            "title": "Consented",
+            "type": "boolean"
+          },
           "created_at": {
             "format": "date-time",
             "title": "Created At",
@@ -1348,6 +1352,17 @@
             "title": "Status",
             "type": "string"
           },
+          "tenant_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tenant Id"
+          },
           "verified_at": {
             "anyOf": [
               {
@@ -1369,6 +1384,8 @@
           "allowlist_version",
           "created_at",
           "verified_at",
+          "consented",
+          "tenant_id",
           "google_client_id",
           "google_verifier_client_id",
           "expected_access",
@@ -1414,6 +1431,10 @@
             ],
             "title": "Allowlist Version"
           },
+          "consented": {
+            "title": "Consented",
+            "type": "boolean"
+          },
           "created_at": {
             "format": "date-time",
             "title": "Created At",
@@ -1436,6 +1457,17 @@
             "title": "Status",
             "type": "string"
           },
+          "tenant_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tenant Id"
+          },
           "verified_at": {
             "anyOf": [
               {
@@ -1456,7 +1488,9 @@
           "display_name",
           "allowlist_version",
           "created_at",
-          "verified_at"
+          "verified_at",
+          "consented",
+          "tenant_id"
         ],
         "title": "ConnectionOut",
         "type": "object"
@@ -3839,6 +3873,19 @@
           "token"
         ],
         "title": "LinkIn",
+        "type": "object"
+      },
+      "M365SignInOut": {
+        "properties": {
+          "authorize_url": {
+            "title": "Authorize Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "authorize_url"
+        ],
+        "title": "M365SignInOut",
         "type": "object"
       },
       "MeOut": {
@@ -7531,7 +7578,9 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/M365SignInOut"
+                }
               }
             },
             "description": "Successful Response"

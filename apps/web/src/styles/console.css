@@ -256,3 +256,13 @@ html { scroll-padding-top: 4.5rem; }
   .breadcrumbs li { display: flex; align-items: center; }
   .breadcrumbs a { display: inline-flex; align-items: center; min-height: 2.75rem; }
 }
+
+/* Connections (web-connections spec): the row the consent callback returned to, and providers. */
+tr[aria-current="true"] { background: var(--color-surface); }
+.connections-table .badge { white-space: normal; }
+.connections-table .row-detail > td { padding-top: 0; }
+.disclosure-button { display: block; min-height: 2.75rem; padding: 0; text-align: start; font-size: 0.8125rem; color: var(--color-muted); text-decoration: underline; text-underline-offset: 0.2em; }
+.permission-detail { display: grid; gap: 0.5rem; }
+.permission-list { columns: 16rem auto; column-gap: 2rem; margin: 0; padding: 0; list-style: none; font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.8125rem; }
+.provider-list { display: grid; gap: 0.5rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.provider-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }

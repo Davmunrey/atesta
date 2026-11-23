@@ -145,7 +145,7 @@ def _connection(
     return connection
 
 
-@api_router.post("/{connection_id}/m365/signin")
+@api_router.post("/{connection_id}/m365/signin", response_model=M365SignInOut)
 def start_signin(
     connection_id: uuid.UUID,
     request: Request,
