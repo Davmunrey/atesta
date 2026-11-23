@@ -10,6 +10,8 @@
 !apps/api/alembic.ini
 !apps/api/migrations/**
 !apps/api/src/**
+!apps/mcp/pyproject.toml
+!apps/mcp/src/**
 !apps/worker/pyproject.toml
 !apps/worker/src/**
 !catalog/**

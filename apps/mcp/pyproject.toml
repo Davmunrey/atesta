@@ -1,0 +1,19 @@
+[project]
+name = "atesta-mcp"
+version = "0.0.0"
+description = "MCP server for AI agents: a thin client of the Atesta API (ADR-016)"
+requires-python = ">=3.13"
+dependencies = [
+    "mcp==2.3.0",  # MIT; Python SDK of the Model Context Protocol, spec 2026-07-28 (ADR-016)
+    "httpx>=0.27",
+]
+
+[project.scripts]
+atesta-mcp = "atesta_mcp.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atesta_mcp"]

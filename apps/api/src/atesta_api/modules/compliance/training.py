@@ -8,6 +8,7 @@ training_token_read, then write in the organization's context (ADR-012 amendment
 
 import secrets
 import uuid
+from collections.abc import Mapping
 from datetime import UTC, date, datetime
 from typing import Annotated
 
@@ -155,27 +156,40 @@ def create_campaign(
     member: Annotated[Member, Depends(require_role(Role.ADMIN))],
     session: DbSession,
 ) -> CreatedCampaign:
+    base = request.app.state.web_base_url
+    return start_campaign(session, member.organization_id, member.user_id, body, base)
+
+
+def start_campaign(
+    session: Session,
+    org: uuid.UUID,
+    author: uuid.UUID,
+    body: CampaignIn,
+    web_base_url: str,
+    via: Mapping[str, str] | None = None,
+) -> CreatedCampaign:
     token = secrets.token_urlsafe(32)
     campaign = TrainingCampaign(
-        organization_id=member.organization_id,
+        organization_id=org,
         title=body.title,
         material_url=body.material_url,
         closes_on=body.closes_on,
         token_sha256=token_hash(token),
-        created_by=member.user_id,
+        created_by=author,
     )
     session.add(campaign)
     session.flush()
     session.refresh(campaign)
     record(
         session,
-        organization_id=member.organization_id,
+        organization_id=org,
         action="training.created",
         target_type="training_campaign",
         target_id=str(campaign.id),
-        actor_user_id=member.user_id,
+        actor_user_id=author,
+        metadata=via,
     )
-    link = f"{request.app.state.web_base_url}/training#token={token}"  # fragment: never logged
+    link = f"{web_base_url}/training#token={token}"  # fragment: never logged
     return CreatedCampaign(**_out(campaign, 0).model_dump(), link=link)
 
 

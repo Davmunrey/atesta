@@ -8,6 +8,7 @@ dependencies = [
     "uvicorn[standard]>=0.32",
     "pydantic>=2.9",
     "atesta-core",
+    "atesta-mcp",  # mounted at /mcp only with ATESTA_MCP_REMOTE=1 (ADR-016)
     "sqlalchemy>=2.0.36",
     "alembic>=1.14",
     "psycopg[binary,pool]>=3.2",
@@ -19,6 +20,7 @@ dependencies = [
 
 [tool.uv.sources]
 atesta-core = { workspace = true }
+atesta-mcp = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

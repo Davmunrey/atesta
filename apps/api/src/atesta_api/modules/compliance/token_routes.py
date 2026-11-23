@@ -1,4 +1,8 @@
-"""What an API key may read (api-keys-v2 spec, #341): the compliance state and incidents.
+"""What an API key may read and record (api-keys-v2 spec #341; mcp-server spec #333).
+
+Reads: the compliance state and incidents. Writes (routines:write): incidents and their updates,
+training campaigns and access reviews; deciding or closing a review stays with a person. The
+author of a write is the admin who owns the key, and its audit event names the key.
 
 Every route runs in the key's own organization, which identity resolved from the key (ADR-012
 amendment 6); no route takes an organization. The answers reuse the functions behind the app's
@@ -10,7 +14,7 @@ import uuid
 from datetime import date, datetime
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -19,12 +23,16 @@ from atesta_api.modules.billing.api import entitlements, has_framework
 from atesta_api.modules.compliance.catalog_schema import ExpectedEvidenceItem, RequirementContext
 from atesta_api.modules.compliance.detail_context import public_context
 from atesta_api.modules.compliance.incidents import (
+    IncidentIn,
     IncidentOut,
+    UpdateIn,
     _incident,
     _out,
     _updates,
+    add_incident_update,
     clock_defs,
     open_incidents,
+    record_incident,
 )
 from atesta_api.modules.compliance.models import Mapping
 from atesta_api.modules.compliance.proposal_view import pending_proposals
@@ -40,14 +48,22 @@ from atesta_api.modules.compliance.register import (
     _requirements,
     _scope,
 )
-from atesta_api.modules.compliance.routines import DueItem, due_items
+from atesta_api.modules.compliance.routines import (
+    AccessReviewIn,
+    AccessReviewOut,
+    DueItem,
+    due_items,
+    start_access_review,
+)
 from atesta_api.modules.compliance.scoring import FrameworkInfo, active_frameworks
+from atesta_api.modules.compliance.training import CampaignIn, CreatedCampaign, start_campaign
 from atesta_api.modules.identity.api import ApiCaller, QueryFreeRoute, require_scope
 from atesta_api.platform.db import DbSession
 
 router = APIRouter(prefix="/api/v1", tags=["api-keys"], route_class=QueryFreeRoute)
 ComplianceReader = Annotated[ApiCaller, Depends(require_scope("compliance:read"))]
 IncidentReader = Annotated[ApiCaller, Depends(require_scope("incidents:read"))]
+RoutineWriter = Annotated[ApiCaller, Depends(require_scope("routines:write"))]
 
 type GapState = Literal["not_assessed", "not_implemented", "partially_implemented"]
 
@@ -230,3 +246,40 @@ def read_incident(
     org = caller.organization_id
     incident = _incident(session, org, incident_id)
     return _out(incident, _updates(session, org, [incident_id]), clock_defs(session))
+
+
+def _via(caller: ApiCaller) -> dict[str, str]:
+    """Audit metadata naming the key; the event's actor is the admin who owns it."""
+    return {"via": "api_token", "token_id": str(caller.token_id), "token": caller.prefix}
+
+
+@router.post("/incidents", status_code=201)
+def create_incident(body: IncidentIn, caller: RoutineWriter, session: DbSession) -> IncidentOut:
+    org, author = caller.organization_id, caller.created_by
+    return record_incident(session, org, author, body, _via(caller))
+
+
+@router.post("/incidents/{incident_id}/updates", status_code=201)
+def update_incident(
+    incident_id: uuid.UUID, body: UpdateIn, caller: RoutineWriter, session: DbSession
+) -> IncidentOut:
+    org, author = caller.organization_id, caller.created_by
+    return add_incident_update(session, org, author, incident_id, body, _via(caller))
+
+
+@router.post("/training-campaigns", status_code=201)
+def create_campaign(
+    body: CampaignIn, request: Request, caller: RoutineWriter, session: DbSession
+) -> CreatedCampaign:
+    base = request.app.state.web_base_url
+    return start_campaign(
+        session, caller.organization_id, caller.created_by, body, base, _via(caller)
+    )
+
+
+@router.post("/access-reviews", status_code=201)
+def create_access_review(
+    body: AccessReviewIn, caller: RoutineWriter, session: DbSession
+) -> AccessReviewOut:
+    org, author = caller.organization_id, caller.created_by
+    return start_access_review(session, org, author, body, _via(caller))
