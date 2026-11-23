@@ -100,6 +100,41 @@ test("an admin scopes, assesses and exports the self-assessment, accessibly at e
   expect(csp).toEqual([]);
 });
 
+test("an agent's proposal reads as one block a person decides, at every width", async ({ page }) => {
+  const org = await createOrganization(page);
+  const proposal = {
+    id: "p1", applicability: "applies", implementation: "partially_implemented", regularly_reviewed: false,
+    justification: "", performed_by: "Responsable de sistemas", performed_on: null, evidence_statement_ids: [],
+    notes: "Política publicada en la intranet; falta la revisión anual del comité de seguridad de la información.",
+    rationale: "El acta del comité de 2026-11-02 aprueba la política, pero no consta ninguna revisión posterior. ".repeat(3),
+    proposed_at: "2026-11-22T10:00:00Z", token_name: "Agente de Claude del equipo de sistemas", token_prefix: "atesta_abcde",
+  };
+  const state = { ...register, items: register.items.map((i, n) => n === 0 ? { ...i, pending_proposal: proposal } : i) };
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha", (route) => route.fulfill({ json: detail }));
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha/register", (route) => route.fulfill({ json: state }));
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha/register/history", (route) => route.fulfill({ json: [] }));
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha/trend", (route) => route.fulfill({ json: [] }));
+  await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
+  const row = page.locator("details.requirement-row").filter({ hasText: "R.R1" });
+  await row.locator("summary").first().click();
+  const notice = row.getByRole("region", { name: "Propuesta de un agente" });
+  await expect(notice).toBeVisible();
+  for (const colorScheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
+    for (const width of [375, 1280]) {
+      await page.setViewportSize({ width, height: 900 });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${colorScheme} ${width}`).toBe(true);
+      expect(await notice.evaluate((el) => getComputedStyle(el).display), `${width}`).toBe("grid");
+      const box = (await notice.boundingBox())!;
+      for (const name of ["Confirmar la propuesta", "Rechazar la propuesta"]) {
+        const button = (await notice.getByRole("button", { name }).boundingBox())!;
+        expect(button.x >= box.x && button.x + button.width <= box.x + box.width + 1, `${name} ${width}`).toBe(true);
+      }
+      await expectAccessible(page, `proposal ${colorScheme} ${width}`);
+    }
+  }
+});
+
 test("an admin reads the organization's real activity, accessibly", async ({ page }) => {
   const org = await createOrganization(page);
   await page.getByRole("navigation", { name: "Secciones de la organización" }).getByRole("link", { name: "Actividad", exact: true }).click();

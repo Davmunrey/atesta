@@ -261,8 +261,8 @@ function AgentProposal({ item, orgId, frameworkKey, canAssess }: { item: Registe
   const heading = useId();
   const p = item.pending_proposal;
   if (!p) return null;
-  return <section className="notice" aria-labelledby={heading}>
-    <h4 id={heading}>{t("agentProposal")}</h4>
+  return <section className="notice proposal-notice" aria-labelledby={heading}>
+    <h4 id={heading}><Icon name="integrations" size={16} />{t("agentProposal")}</h4>
     <p className="text-sm text-muted">{t("agentProposalFrom", { name: p.token_name, date: format.dateTime(new Date(p.proposed_at), { dateStyle: "medium", timeStyle: "short" }) })} <span className="font-mono">{p.token_prefix}…</span></p>
     <dl className="assessment-summary">
       <div><dt>{t("applicability")}</dt><dd>{t(`proposal.${p.applicability}`)}</dd></div>
@@ -273,7 +273,7 @@ function AgentProposal({ item, orgId, frameworkKey, canAssess }: { item: Registe
       <div><dt>{t("agentRationale")}</dt><dd>{p.rationale}</dd></div>
     </dl>
     <p className="text-sm text-muted">{t("agentProposalHelp")}</p>
-    {canAssess ? <div className="form-actions">
+    {canAssess ? <div className="proposal-actions">
       <button type="button" className="button-primary" disabled={decide.isPending} onClick={() => decide.mutate({ id: p.id, verb: "confirm" })}>{t("confirmProposal")}</button>
       <button type="button" className="dashboard-button" disabled={decide.isPending} onClick={() => decide.mutate({ id: p.id, verb: "reject" })}>{t("rejectProposal")}</button>
     </div> : null}
