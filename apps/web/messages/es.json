@@ -349,7 +349,8 @@
     "continue": "Continuar con {framework}",
     "start": "Empezar con {framework}",
     "templates": "{count, plural, one {# marco en preparación, aún sin requisitos} other {# marcos en preparación, aún sin requisitos}}",
-    "supporting": "Trabajo y actividad"
+    "supporting": "Trabajo y actividad",
+    "frameworkCount": "{count, plural, one {# marco} other {# marcos}}"
   },
   "preparation": {
     "states": {
@@ -578,7 +579,8 @@
     "confirmLabel": "Escribe «{org}» para confirmar",
     "closeAction": "Cerrar la organización",
     "closing": "Cierre solicitado: los datos se borrarán el {date}.",
-    "cancelAction": "Cancelar el cierre"
+    "cancelAction": "Cancelar el cierre",
+    "crumb": "Ajustes"
   },
   "cockpit": {
     "summary": "{framework}: {assessed} de {total, plural, one {# medida evaluada} other {# medidas evaluadas}}, {implemented, plural, one {# implantada} other {# implantadas}}.",
@@ -617,5 +619,39 @@
     "recentEmpty": "Sin actividad en los últimos 30 días.",
     "system": "Sistema",
     "allActivity": "Ver toda la actividad"
+  },
+  "console": {
+    "skip": "Saltar al contenido",
+    "menuShow": "Mostrar el menú",
+    "menuHide": "Ocultar el menú",
+    "frameworks": "Marcos",
+    "groups": {
+      "general": "General",
+      "team": "Equipo",
+      "oversight": "Supervisión",
+      "organization": "Organización"
+    },
+    "searchLabel": "Buscar en Atesta",
+    "searchPlaceholder": "Buscar medidas, marcos y páginas",
+    "searching": "Buscando…",
+    "noResults": "Sin resultados",
+    "results": {
+      "pages": "Página",
+      "frameworks": "Marco",
+      "measures": "Medida"
+    },
+    "breadcrumbs": "Ruta",
+    "kpis": "Indicadores",
+    "kpi": {
+      "inProgress": "Marcos en curso",
+      "assessed": "Medidas evaluadas",
+      "ofTotal": "de {total, plural, one {#} other {#}}",
+      "implemented": "Implantadas",
+      "overdue": "Vencidas",
+      "unowned": "Sin responsable",
+      "act": "Requiere acción",
+      "clear": "Al día"
+    },
+    "frameworksPage": "Progreso de la autoevaluación y resultados registrados de cada marco."
   }
 }

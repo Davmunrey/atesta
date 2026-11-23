@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { PageHeader, Panel } from "./page-frame";
+import { orgHome as homeOf } from "@/lib/org";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { isMyWorkOverdue, useMyWork } from "@/lib/api/register-hooks";
 import { type Membership, orgFramework } from "@/lib/org";
@@ -14,8 +16,9 @@ export function MyWorkView({ org }: { org: Membership }) {
   const english = useLocale() === "en";
   const query = useMyWork(org.organization_id);
   const today = new Date().toISOString().slice(0, 10);
-  return <section className="flex flex-col gap-4">
-    <div><h1 className="page-title">{t("title")}</h1><p className="text-muted">{t("intro")}</p></div>
+  return <>
+    <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
+    <Panel>
     {query.isPending ? <p role="status">{t("loading")}</p>
       : query.isError ? <ErrorMessage error={query.error} />
       : query.data.length === 0 ? <p className="text-muted">{t("empty")}</p>
@@ -46,5 +49,5 @@ export function MyWorkView({ org }: { org: Membership }) {
           </tbody>
         </table>
       </div>}
-  </section>;
+  </Panel></>;
 }

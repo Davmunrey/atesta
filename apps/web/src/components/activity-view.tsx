@@ -1,6 +1,8 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
+import { PageHeader, Panel } from "./page-frame";
+import { orgHome as homeOf } from "@/lib/org";
 import { useState } from "react";
 import { useActivity } from "@/lib/api/hooks";
 import type { Membership } from "@/lib/org";
@@ -19,18 +21,17 @@ export function ActivityView({ org }: { org: Membership }) {
   if (!canReviewControls(org.role)) return <p className="text-muted">{t("adminsOnly")}</p>;
   // Message keys cannot hold dots, so "requirement.assessed" is stored as "requirement_assessed".
   const action = (name: string) => { const key = `actions.${name.replaceAll(".", "_")}`; return t.has(key) ? t(key) : name; };
-  return <section className="activity-page" aria-labelledby="activity-heading">
-    <h1 id="activity-heading" className="page-title">{t("title")}</h1>
-    <p className="text-muted">{t("intro")}</p>
-    <div role="group" aria-label={t("period")} className="requirement-filters">
-      {PERIODS.map((d) => <button key={d} type="button" className="dashboard-button" aria-pressed={days === d} onClick={() => setDays(d)}>{t("lastDays", { days: d })}</button>)}
-    </div>
+  return <div className="activity-page panel-grid">
+    <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")}
+      actions={<div role="group" aria-label={t("period")} className="requirement-filters">
+        {PERIODS.map((d) => <button key={d} type="button" className="dashboard-button" aria-pressed={days === d} onClick={() => setDays(d)}>{t("lastDays", { days: d })}</button>)}
+      </div>} />
     {query.isPending ? <div className="dashboard-loading" role="status" aria-busy="true"><p>{t("loading")}</p></div>
       : query.isError ? <ErrorMessage error={query.error} />
-      : <div className={query.isFetching ? "is-refetching" : undefined}>
-        <ColumnChart title={t("perDay")} valueLabel={t("events")} tableLabel={t("showTable")}
-          points={query.data.daily.map((d) => ({ label: format.dateTime(new Date(`${d.day}T00:00:00`), { day: "numeric", month: "short" }), value: d.count }))} />
-        <h2 className="activity-subtitle">{t("latest")}</h2>
+      : <div className={`panel-grid${query.isFetching ? " is-refetching" : ""}`}>
+        <Panel><ColumnChart title={t("perDay")} valueLabel={t("events")} tableLabel={t("showTable")}
+          points={query.data.daily.map((d) => ({ label: format.dateTime(new Date(`${d.day}T00:00:00`), { day: "numeric", month: "short" }), value: d.count }))} /></Panel>
+        <Panel title={t("latest")}>
         {query.data.events.length === 0 ? <p className="text-muted">{t("empty")}</p> : <div className="table-region" role="region" aria-label={t("latest")} tabIndex={0}><table className="activity-table">
           <thead><tr><th scope="col">{t("when")}</th><th scope="col">{t("who")}</th><th scope="col">{t("what")}</th></tr></thead>
           <tbody>{query.data.events.map((e, i) => <tr key={`${e.occurred_at}-${i}`}>
@@ -39,6 +40,7 @@ export function ActivityView({ org }: { org: Membership }) {
             <td>{action(e.action)}<span className="activity-target">{e.target_id}</span></td>
           </tr>)}</tbody>
         </table></div>}
+        </Panel>
       </div>}
-  </section>;
+  </div>;
 }

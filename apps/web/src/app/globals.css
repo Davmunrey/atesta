@@ -2,6 +2,7 @@
 @import "../styles/tokens.css";
 @import "../styles/dashboard.css";
 @import "../styles/framework.css";
+@import "../styles/console.css";
 
 @layer base {
   body { line-height: 1.6; }

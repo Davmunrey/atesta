@@ -63,7 +63,7 @@ test("framework route handles a real absent catalog and recovers from read failu
   const org = await createOrganization(page);
   await page.goto(`/app/framework?org=${org}&framework=absent`);
   await expect(page.getByRole("main").getByRole("alert")).toContainText("Este marco no está disponible");
-  await page.getByRole("link", { name: "Volver al resumen" }).click();
+  await page.getByRole("navigation", { name: "Ruta" }).getByRole("link").first().click();
   await expect(page.getByText("Todavía no hay marcos publicados")).toBeVisible();
   await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha", (route) => route.fulfill({ status: 503, json: {} }));
   await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
@@ -82,7 +82,7 @@ test("framework register supports navigation, guidance, filters, locales and res
   await createOrganization(page);
   await page.getByRole("link", { name: "Ver requisitos y configuración" }).first().click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Synthetic Alpha");
-  await expect(page.getByRole("navigation", { name: "Secciones de la organización" }).getByRole("link", { name: "Resumen" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("navigation", { name: "Secciones de la organización" }).getByRole("link", { name: "Marcos" })).toHaveAttribute("aria-current", "page");
   const row = page.locator("details.requirement-row").filter({ hasText: "R1" });
   await row.locator("summary").press("Enter");
   await expect(row).toHaveJSProperty("open", false);

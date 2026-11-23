@@ -17,6 +17,15 @@
   --color-warning: #76520d;
   --color-danger-fg: #f4f1ea;
   --color-focus: #23389a;
+  /* Console workspace (console-shell spec, owner decision 2026-11-23): ink top bar, lighter paper
+     panels on a surface page, subtle panel borders. */
+  --color-page: #eeebe4;
+  --color-panel: #faf8f3;
+  --color-border-subtle: #d6d1c6;
+  --color-topbar: #141414;
+  --color-topbar-fg: #f4f1ea;
+  --color-topbar-muted: #c0baae;
+  --color-topbar-field: #2b2a27;
 
   --font-*: initial;
   --font-sans: var(--font-plex-sans), sans-serif;
@@ -48,6 +57,13 @@
     --color-warning: #eec278;
     --color-danger-fg: #171715;
     --color-focus: #ffe58a;
+    --color-page: #171715;
+    --color-panel: #22221f;
+    --color-border-subtle: #3b3a35;
+    --color-topbar: #0e0e0d;
+    --color-topbar-fg: #f4f1ea;
+    --color-topbar-muted: #c0baae;
+    --color-topbar-field: #262522;
   }
 }
 

@@ -144,3 +144,11 @@ export function useReadiness(orgId: string) {
     queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/readiness", { params: { path: { org_id: orgId } } })),
   });
 }
+
+/** Global search over the catalog's requirements (console-shell spec); 2 characters or more. */
+export function useSearch(orgId: string, q: string) {
+  return useQuery({
+    queryKey: ["search", orgId, q], retry: false, enabled: q.length >= 2, staleTime: 60_000,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/search", { params: { path: { org_id: orgId }, query: { q } } })),
+  });
+}

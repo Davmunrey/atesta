@@ -1,13 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 import { useFrameworkDetail } from "@/lib/api/hooks";
 import { percent } from "@/lib/format";
 import { groupByPrefix, useRegister, type Register } from "@/lib/api/register-hooks";
 import type { components } from "@/lib/api/schema";
-import { orgHome } from "@/lib/org";
+import { orgFrameworks, orgHome } from "@/lib/org";
+import { Breadcrumbs, PageHeader } from "./page-frame";
 import { type Role, canAssess, canReviewControls, isContributor } from "@/lib/permissions";
 import { CatalogPreparation, PreparationGuides, RequirementGuidance } from "./catalog-preparation";
 import { CatalogReference as Reference } from "./catalog-reference";
@@ -23,7 +23,8 @@ const statuses = ["fail", "manual", "not_evaluated", "pass", "not_applicable"] a
 type Filter = "all" | typeof statuses[number];
 
 /** role is a UI hint only: it hides the forms a role cannot use. The API decides. */
-export function FrameworkDetailView({ orgId, frameworkKey, role = "member", userId = "" }: { orgId: string; frameworkKey: string; role?: Role; userId?: string }) {
+export function FrameworkDetailView({ orgId, frameworkKey, role = "member", userId = "", orgName = "" }: { orgId: string; frameworkKey: string; role?: Role; userId?: string; orgName?: string }) {
+  const c = useTranslations("console");
   const t = useTranslations("framework");
   const dashboard = useTranslations("dashboard");
   const format = useFormatter();
@@ -33,14 +34,14 @@ export function FrameworkDetailView({ orgId, frameworkKey, role = "member", user
   // A framework with no register (404) or no requirements keeps the recorded-results view only.
   const register = registerQuery.data && registerQuery.data.items.length > 0 ? registerQuery.data : null;
   const canEdit = canReviewControls(role);
+  const crumbs = [{ label: orgName || t("back"), href: orgHome(orgId) }, { label: c("frameworks"), href: orgFrameworks(orgId) }];
   return <section className="framework-page">
-    <Link href={orgHome(orgId)} className="framework-back">{t("back")}</Link>
+    {query.data ? null : <Breadcrumbs crumbs={crumbs} />}
     {query.isPending ? <div className="dashboard-loading" role="status" aria-busy="true"><p>{t("loading")}</p><div className="dashboard-skeleton" aria-hidden="true" /></div>
       : query.isError ? <div className="dashboard-error"><ErrorMessage error={query.error} /><button className="dashboard-button" onClick={() => void query.refetch()}>{dashboard("retry")}</button></div>
       : <>
-        <div className="framework-title"><div><h1 className="page-title">{query.data.name}</h1><p className="text-muted">{t("intro")}</p></div>
-          {query.data.snapshot ? <button className="dashboard-button" disabled={query.isFetching} onClick={() => void query.refetch()}>{dashboard(query.isFetching ? "refreshing" : "refresh")}</button> : null}
-        </div>
+        <PageHeader crumbs={[...crumbs, { label: query.data.name }]} title={query.data.name} description={t("intro")}
+          actions={query.data.snapshot ? <button className="dashboard-button" disabled={query.isFetching} onClick={() => void query.refetch()}>{dashboard(query.isFetching ? "refreshing" : "refresh")}</button> : null} />
         {query.data.development ? <p className="framework-environment">{t("development")}</p> : null}
         {locale === "en" && query.data.requirements.some((r) => !r.title_en && r.title_es) ? <p className="text-sm text-muted">{t("officialSpanish")}</p> : null}
         {query.data.snapshot ? <div className="framework-record">

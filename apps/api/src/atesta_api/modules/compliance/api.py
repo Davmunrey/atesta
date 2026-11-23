@@ -28,6 +28,7 @@ def install_compliance(app: FastAPI) -> None:
     from atesta_api.modules.compliance.readiness import router as readiness_router
     from atesta_api.modules.compliance.register import router as register_router
     from atesta_api.modules.compliance.reviews import router as reviews_router
+    from atesta_api.modules.compliance.search import router as search_router
 
     app.include_router(router)
     app.include_router(detail_router)
@@ -35,6 +36,7 @@ def install_compliance(app: FastAPI) -> None:
     app.include_router(register_router)
     app.include_router(my_work_router)
     app.include_router(readiness_router)
+    app.include_router(search_router)
 
 
 __all__ = [

@@ -1,6 +1,8 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
+import { PageHeader, Panel } from "./page-frame";
+import { orgHome as homeOf } from "@/lib/org";
 import { useId, useState } from "react";
 import { useCancelClosure, useRequestClosure } from "@/lib/api/hooks";
 import type { Membership } from "@/lib/org";
@@ -17,17 +19,15 @@ export function SettingsView({ org }: { org: Membership }) {
   if (org.role !== "owner") return <p className="text-muted">{t("ownersOnly")}</p>;
   const closing = org.closure_erase_after;
   const day = (iso: string) => format.dateTime(new Date(iso), { dateStyle: "long" });
-  return <section className="flex flex-col gap-8">
-    <h1 className="page-title">{t("title", { org: org.organization_name })}</h1>
+  return <div className="panel-grid">
+    <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("crumb") }]} title={t("title", { org: org.organization_name })} />
 
-    <section aria-labelledby={`${id}-export`} className="flex flex-col gap-2">
-      <h2 id={`${id}-export`} className="text-lg font-semibold">{t("exportTitle")}</h2>
+    <Panel title={t("exportTitle")}>
       <p className="text-muted">{t("exportHelp")}</p>
       <p><a className="dashboard-button" href={`/api/v1/orgs/${encodeURIComponent(org.organization_id)}/export`} download>{t("exportAction")}</a></p>
-    </section>
+    </Panel>
 
-    <section aria-labelledby={`${id}-close`} className="danger-zone flex flex-col gap-2">
-      <h2 id={`${id}-close`} className="text-lg font-semibold">{t("closeTitle")}</h2>
+    <Panel title={t("closeTitle")} className="danger-zone">
       {closing ? <>
         <p role="status">{t("closing", { date: day(closing) })}</p>
         {cancel.isError ? <ErrorMessage error={cancel.error} /> : null}
@@ -43,6 +43,6 @@ export function SettingsView({ org }: { org: Membership }) {
         </form>
         {request.isError ? <ErrorMessage error={request.error} /> : null}
       </>}
-    </section>
-  </section>;
+    </Panel>
+  </div>;
 }
