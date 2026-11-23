@@ -94,7 +94,11 @@
       "not_found": "We couldn't find that connection, or you don't have access.",
       "over_privileged": "The scan stopped: the connection has more permissions than it needs. Atesta only uses read permissions; remove the others and verify it again.",
       "revoked": "The scan stopped: the connection's access was revoked. Connect it again to keep scanning.",
-      "state_invalid": "This connection no longer allows that change. Reload the page."
+      "state_invalid": "This connection no longer allows that change. Reload the page.",
+      "signin_invalid": "The Microsoft sign-in is not valid or has expired. Start the connection again from Atesta.",
+      "consent_denied": "Admin consent was not granted in Microsoft, so the connection cannot continue. Try again with a Global Administrator or Privileged Role Administrator account.",
+      "tenant_mismatch": "Microsoft returned a tenant different from your sign-in, or from this link. Nothing was saved; start again with an account in the right tenant.",
+      "microsoft_unavailable": "We cannot reach Microsoft right now, or the Microsoft 365 connection is not available here yet. Try again later."
     },
     "identity": {
       "already_member": "This person is already a member of the organization.",
