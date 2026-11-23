@@ -1,6 +1,6 @@
 # Spec: requirement register and statement of applicability
 
-- Issue: #133. Requirement ids: FR-07 (human assessment), Gate A items 2-4 in `ROADMAP.md`
+- Issues: #133, #226 (expected evidence). Requirement ids: FR-07 (human assessment), Gate A items 2-4 in `ROADMAP.md`
 - Status: draft
 
 ## Problem
@@ -48,6 +48,41 @@ consultant templates. Atesta shows the measures but cannot record any of it.
 - [ ] Nothing is framework-specific (rule 9). The engine reads axes from `selection_basis`
       strings of the form `<axis> · <keys>` (`categoría · Todas`, `nivel · C I T A`), and any
       pack that uses that form gets the same behaviour.
+
+## Expected evidence per requirement (issue #226)
+
+An auditor asks for the same kinds of evidence for each measure. For ENS, CCN-STIC 808 (April
+2026) proposes them per Annex II measure. People preparing an audit want that list next to the
+measure, not in a 106-page PDF.
+
+- [ ] A pack may give a requirement an optional `expected_evidence` block in its
+      `attributes`: a short checklist (1 to 8 items) of what an auditor is likely to ask for. Any
+      pack may use it (rule 9); nothing in the code names a framework or a guide.
+- [ ] Each item is Atesta's own wording in ES and EN (at most 200 characters each) and cites
+      its source: guide, edition (`YYYY-MM`), section and page. Guides are cited, never
+      copied: no sentence or table of the guide is reproduced.
+- [ ] The block carries a review marker: `reviewed_by` (the signer's name) and `reviewed_on`
+      (the review date). New content has `reviewed_by: null` and no date: it is a candidate.
+      Only the owner signs, one measure at a time; a signature sets both fields, and the schema
+      rejects one without the other. Signing changes no other content.
+- [ ] Each item's `page` is the guide's printed page number. In CCN-STIC 808 (2026-04) the
+      printed number equals the PDF page index from the body onwards (pages 13 to 105). An item
+      whose list continues on the next page cites the page where that part appears.
+- [ ] The catalog schema rejects a block with no items, an item without ES or EN text, a page
+      below 1, an edition that is not `YYYY-MM`, a blank reviewer, or a reviewer without a date
+      (or a date without a reviewer).
+- [ ] The framework detail returns the block with the requirement's guidance. The register
+      and the auditor dossier show it as a disclosure under the requirement: each item with
+      its reference, and a note that the list is a candidate pending review and never a
+      verdict on the organization (ADR-005).
+- [ ] The dossier lists a requirement that has expected evidence even when it has no
+      controls yet.
+- [ ] Every label exists in ES and EN.
+
+The ENS pack fills the block for all 73 Annex II measures from the "Propuesta de evidencias"
+of CCN-STIC 808, section 6.2; each reference names the subsection (6.2.1, 6.2.2.1 to 6.2.2.7,
+6.2.3.1 to 6.2.3.8) and the measure. At least ten references are re-opened in the PDF before the pull
+request, and the pull request lists them.
 
 ## Out of scope
 

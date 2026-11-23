@@ -2191,6 +2191,16 @@
             "title": "Decision",
             "type": "string"
           },
+          "expected_evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExpectedEvidence"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "implementation": {
             "anyOf": [
               {
@@ -2248,7 +2258,8 @@
           "decision",
           "implementation",
           "justification",
-          "controls"
+          "controls",
+          "expected_evidence"
         ],
         "title": "DossierRequirement",
         "type": "object"
@@ -2617,6 +2628,78 @@
           "verifier_scopes"
         ],
         "title": "ExpectedAccess",
+        "type": "object"
+      },
+      "ExpectedEvidence": {
+        "additionalProperties": false,
+        "description": "What an auditor is likely to ask for, in Atesta's own words with the guide reference.\nA candidate until the owner signs it: a signature is the reviewer's name and the date.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ExpectedEvidenceItem"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "reviewed_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed On"
+          }
+        },
+        "required": [
+          "items",
+          "reviewed_by"
+        ],
+        "title": "ExpectedEvidence",
+        "type": "object"
+      },
+      "ExpectedEvidenceItem": {
+        "additionalProperties": false,
+        "properties": {
+          "en": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "En",
+            "type": "string"
+          },
+          "es": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Es",
+            "type": "string"
+          },
+          "ref": {
+            "$ref": "#/components/schemas/GuideReference"
+          }
+        },
+        "required": [
+          "es",
+          "en",
+          "ref"
+        ],
+        "title": "ExpectedEvidenceItem",
         "type": "object"
       },
       "FindingOut": {
@@ -3035,6 +3118,40 @@
           "title"
         ],
         "title": "GroupTitle",
+        "type": "object"
+      },
+      "GuideReference": {
+        "additionalProperties": false,
+        "description": "Where a guide says it: cited, never copied (requirement-register spec, issue 226).",
+        "properties": {
+          "edition": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Edition",
+            "type": "string"
+          },
+          "guide": {
+            "minLength": 1,
+            "title": "Guide",
+            "type": "string"
+          },
+          "page": {
+            "minimum": 1.0,
+            "title": "Page",
+            "type": "integer"
+          },
+          "section": {
+            "minLength": 1,
+            "title": "Section",
+            "type": "string"
+          }
+        },
+        "required": [
+          "guide",
+          "edition",
+          "section",
+          "page"
+        ],
+        "title": "GuideReference",
         "type": "object"
       },
       "HTTPValidationError": {
@@ -4462,6 +4579,16 @@
               }
             ],
             "title": "Applicability Es"
+          },
+          "expected_evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExpectedEvidence"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "official_text_en": {
             "anyOf": [

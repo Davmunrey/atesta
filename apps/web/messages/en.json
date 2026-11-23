@@ -1154,5 +1154,11 @@
       "inactive": "Revoked or expired",
       "lastUsed": "Last used"
     }
+  },
+  "expectedEvidence": {
+    "title": "Evidence the guide proposes ({count, plural, one {# item} other {# items}})",
+    "candidate": "A guidance list Atesta wrote from the cited guide. Pending qualified review; it does not assess your organization.",
+    "reviewed": "A list Atesta wrote from the cited guide, reviewed by {name} on {date}. It does not assess your organization.",
+    "reference": "{guide} ({edition}), section {section}, p. {page}"
   }
 }

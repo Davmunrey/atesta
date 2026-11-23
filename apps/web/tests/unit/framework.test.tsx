@@ -86,3 +86,31 @@ it("shows loading while a framework read is pending", () => {
   expect(screen.getByRole("status").textContent).toContain("Cargando requisitos");
   expect(screen.queryByText("Synthetic Alpha")).toBeNull();
 });
+
+const expectedEvidence = { reviewed_by: null, items: [
+  { es: "Registro de altas y bajas de cuentas.", en: "Record of accounts created and removed.", ref: { guide: "CCN-STIC 808", edition: "2026-04", section: "6.2.2.2 (op.acc.1)", page: 32 } },
+] };
+
+it("lists the evidence a guide expects under the requirement, cited and marked as a candidate", async () => {
+  stubApi({ [path]: [200, { ...framework, requirements: [{ ...framework.requirements[0], guidance: { ...requirementGuidance, expected_evidence: expectedEvidence } }] }] }); render();
+  const disclosure = (await screen.findByText(/Evidencias que propone la guía/)).closest("details")!;
+  expect(disclosure.className).toContain("catalog-disclosure");
+  expect(within(disclosure).getByText("Registro de altas y bajas de cuentas.")).toBeTruthy();
+  expect(within(disclosure).getByText("CCN-STIC 808 (abril de 2026), apartado 6.2.2.2 (op.acc.1), pág. 32")).toBeTruthy();
+  expect(within(disclosure).getByText(/Pendiente de revisión cualificada/)).toBeTruthy();
+});
+
+it("reads the expected evidence in English", async () => {
+  stubApi({ [path]: [200, { ...framework, requirements: [{ ...framework.requirements[0], guidance: { ...requirementGuidance, expected_evidence: expectedEvidence } }] }] });
+  renderWithProviders(<FrameworkDetailView orgId="primary" frameworkKey="synthetic_alpha" />, "en");
+  expect(await screen.findByText("Record of accounts created and removed.")).toBeTruthy();
+  expect(screen.getByText("CCN-STIC 808 (April 2026), section 6.2.2.2 (op.acc.1), p. 32")).toBeTruthy();
+});
+
+it("names the reviewer and the date once the owner signs the expected evidence", async () => {
+  const signed = { ...expectedEvidence, reviewed_by: "David Muñoz", reviewed_on: "2026-11-23" };
+  stubApi({ [path]: [200, { ...framework, requirements: [{ ...framework.requirements[0], guidance: { ...requirementGuidance, expected_evidence: signed } }] }] }); render();
+  const disclosure = (await screen.findByText(/Evidencias que propone la guía/)).closest("details")!;
+  expect(within(disclosure).getByText(/revisada por David Muñoz el 23 de noviembre de 2026/)).toBeTruthy();
+  expect(within(disclosure).queryByText(/Pendiente de revisión/)).toBeNull();
+});
