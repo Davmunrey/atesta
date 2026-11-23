@@ -48,7 +48,7 @@ function TokenRow({ token, orgId }: { token: ApiToken; orgId: string }) {
   const day = (value: string) => format.dateTime(new Date(value), { dateStyle: "medium" });
   const expired = new Date(token.expires_at).getTime() <= new Date().getTime();
   return <tr>
-    <td data-label={t("name")}>{token.name}{token.read_only ? <> <span className="badge">{t("readOnly")}</span></> : null}
+    <td data-label={t("name")}>{token.name}{token.read_only ? <span className="tag">{t("readOnly")}</span> : null}
       <span className="block text-sm text-muted"><span className="font-mono">{token.prefix}…</span> · {t("createdBy", { email: token.created_by_email, date: day(token.created_at) })}</span>
       <span className="block text-sm text-muted">{[...token.scopes.map((s) => t(`scopeShort.${s as Scope}`)), t("perMinute", { count: token.rate_limit_per_minute })].join(" · ")}</span>
       <Usage token={token} orgId={orgId} /></td>
