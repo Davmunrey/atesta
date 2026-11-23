@@ -32,7 +32,7 @@ async function seed(page: Page) {
   await call(`${o}/training-campaigns`, { title: "Concienciación sobre phishing", material_url: "https://example.com/t", closes_on: new Date(Date.now() + 7 * 86_400_000).toISOString().slice(0, 10) });
   const incident = await call(`${o}/incidents`, { title: "Correo de phishing con enlace pulsado", aware_at: new Date(Date.now() - 3_600_000).toISOString(), significant: false, personal_data: true });
   await call(`${o}/incidents/${incident.id}/updates`, { kind: "note", note: "Contraseña cambiada y sesiones revocadas." });
-  await call(`${o}/api-tokens`, { name: "Copias nocturnas", expires_in_days: 90 });
+  await call(`${o}/api-tokens`, { name: "Copias nocturnas", expires_in_days: 90, scopes: ["evidence:write"] });
   return { org, review: review.id as string, incident: incident.id as string };
 }
 

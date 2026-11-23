@@ -82,5 +82,12 @@
     "statement": "La copia de seguridad nocturna y su prueba de restauración terminaron sin errores.",
     "source": "demo-seed"
   },
-  "justification_applies": "Aplica al sistema según el alcance declarado."
+  "justification_applies": "Aplica al sistema según el alcance declarado.",
+  "api_token": {
+    "name": "Copias nocturnas",
+    "expires_in_days": 90,
+    "scopes": [
+      "evidence:write"
+    ]
+  }
 }

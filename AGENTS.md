@@ -75,6 +75,19 @@ Every word a person reads exists in Spanish and English (`docs/specs/i18n-comple
 - **Official text:** official text published only in Spanish is shown as is and marked `lang="es"`, never translated from memory.
 - **Guards:** tests in `tests/unit/i18n.test.tsx` and `tests/test_api_messages.py` keep this complete.
 
+## Planning, review and message skills
+
+These are vendored skills (ADR-013). Where one conflicts with this file, this file wins; the
+conflicts are listed in `.claude/skills/VENDORED.md`.
+
+- **Planning and reviews:** `brainstorming`, `writing-plans`, `executing-plans`,
+  `requesting-code-review`, `receiving-code-review` and `finishing-a-development-branch`. Specs
+  still go in `docs/specs/`. Integration means pushing and opening a pull request, never a local
+  merge, a branch deletion or a worktree removal.
+- **Messages to the owner:** follow `i-have-adhd`.
+- **Agent-to-coordinator chat and status messages:** use `caveman`. Pull requests, issues,
+  commits, specs and docs stay in plain, clear English, as caveman itself requires.
+
 ## Owner decisions
 
 The owner (GitHub `Davmunrey`) decides these. An agent does them only when the owner has said so

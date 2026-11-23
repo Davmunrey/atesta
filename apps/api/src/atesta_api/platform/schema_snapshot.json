@@ -37,6 +37,15 @@
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
+   "api_token_usage",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
    "api_tokens",
    "api_token_read",
    "SELECT",
@@ -355,6 +364,12 @@
   ],
   [
    "api_ingestions",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
+   "api_token_usage",
    "",
    "atesta_app",
    "INSERT,SELECT"
