@@ -9,7 +9,7 @@ pnpm install          # pnpm 10, minimumReleaseAge 7 days (pnpm-workspace.yaml)
 pnpm dev              # http://localhost:3000; /api and /auth rewritten to ATESTA_API_URL (default :8000)
 pnpm test             # vitest unit tests
 pnpm typecheck && pnpm lint
-pnpm build            # static export to out/, then CSP hashes to csp-policy.json
+pnpm build            # static export to out/; inline scripts move to files, CSP to csp-policy.json
 pnpm check-licenses   # fails on GPL, AGPL or undeclared licenses
 ```
 
