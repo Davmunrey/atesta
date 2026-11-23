@@ -12,6 +12,8 @@ import logging
 import re
 import stat
 import subprocess
+import uuid
+from collections.abc import Callable
 from pathlib import Path
 
 from atesta_api.modules.scanning.runners import JOB_FILE, ScanJob, output_prefix
@@ -25,6 +27,27 @@ _HARDENING = (
     *("--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--cpus", "2", "--memory", "4g"),
 )
 scanner_log = logging.getLogger("atesta.scanner")
+_EVENT = re.compile(r"scan\.[a-z_]{1,64}")
+
+
+def _is_uuid(value: object) -> bool:
+    try:
+        return isinstance(value, str) and str(uuid.UUID(value)) == value
+    except ValueError:
+        return False
+
+
+def _is_int(value: object) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+# The wrapper's own event keys (scanner/atesta_scanner/__main__.py); nothing else is forwarded.
+_FIELDS: dict[str, Callable[[object], bool]] = {
+    "scan_id": _is_uuid,
+    "organization_id": _is_uuid,
+    "attempt": _is_int,
+    "exit_code": _is_int,
+}
 
 
 class LocalCredentialStore:
@@ -115,11 +138,19 @@ class LocalDockerRunner:
 
 
 def _forward(stdout: bytes) -> None:
-    """Re-log the wrapper's own events; anything else on stdout is dropped (rule 2)."""
+    """Re-log the wrapper's own events, allowed keys of the right shape only (rule 2).
+
+    Anything else on stdout, and any other key or value in an event, is dropped.
+    """
     for line in stdout.decode(errors="replace").splitlines():
         try:
             event = json.loads(line)
         except ValueError:
             continue
-        if isinstance(event, dict) and str(event.get("event", "")).startswith("scan."):
-            scanner_log.info(json.dumps(event, sort_keys=True))
+        if not isinstance(event, dict):
+            continue
+        name = event.get("event")
+        if not (isinstance(name, str) and _EVENT.fullmatch(name)):
+            continue
+        kept = {key: event[key] for key, valid in _FIELDS.items() if valid(event.get(key))}
+        scanner_log.info(json.dumps({"event": name, **kept}, sort_keys=True))
