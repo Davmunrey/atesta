@@ -35,7 +35,7 @@ test("sign in, create an org, invite, accept as a second user, change role, remo
   const ownerCsp = cspReports(ownerPage);
   await ownerPage.goto("/");
   await expectAccessible(ownerPage, "landing");
-  await ownerPage.getByRole("link", { name: "Iniciar sesión" }).click();
+  await ownerPage.getByRole("link", { name: "Entrar" }).click();
   await signIn(ownerPage, owner);
   await expect(ownerPage.getByLabel("Nombre de la organización")).toBeVisible();
   await expectAccessible(ownerPage, "create organization");
@@ -154,7 +154,7 @@ test("organization navigation, local fonts and long content work across sizes an
   page.on("request", (request) => { if (request.resourceType() === "font") fonts.push(request.url()); });
   const reports = cspReports(page);
   await page.goto("/");
-  await page.getByRole("link", { name: "Iniciar sesión" }).click();
+  await page.getByRole("link", { name: "Entrar" }).click();
   await signIn(page, `layout-${run}@example.test`);
   const longName = "Synthetic accessibility organization " + "x".repeat(100);
   await page.getByLabel("Nombre de la organización").fill(longName);

@@ -43,8 +43,59 @@
     }
   },
   "landing": {
-    "summary": "Continuous audit readiness for ENS and NIS2. Sign in to manage your organization.",
-    "signIn": "Sign in"
+    "headline": "Get ENS-ready without a full-time consultant",
+    "sub": "For SMEs that sell to the public sector.",
+    "covers": "Also covers, depending on the plan: NIS2, GDPR, LOPDGDD and DORA.",
+    "consultancies": "For consultancies: many clients, one account.",
+    "close": "Your next audit, prepared.",
+    "requestAccess": "Request access",
+    "signIn": "Sign in",
+    "view": {
+      "label": "An organization's overview in Atesta",
+      "category": "Category {category}",
+      "bar": "{implemented, plural, one {# implemented} other {# implemented}} · {partial, plural, one {# partly} other {# partly}} · {missing, plural, one {# not implemented} other {# not implemented}} · {na, plural, one {# not applicable} other {# not applicable}}",
+      "now": "Now",
+      "state": {
+        "overdue": "Review overdue",
+        "missing": "No evidence",
+        "pending": "No owner"
+      },
+      "measure": {
+        "label": "An ENS measure in Atesta",
+        "official": "Official text (RD 311/2022, annex II)",
+        "assessment": "Your self-assessment",
+        "decision": "Applies (category {level})",
+        "implementation": "Partly implemented",
+        "owner": "Owner: systems team"
+      },
+      "records": {
+        "label": "An organization's records in Atesta",
+        "policies": "Policies",
+        "policiesLine": "One policy is overdue for review.",
+        "access": "Access reviews",
+        "accessLine": "Quarterly review closed; every account decided.",
+        "training": "Training",
+        "trainingLine": "Annual awareness: 18 confirmations recorded.",
+        "incidents": "Incidents",
+        "incidentsLine": "One open incident, no overdue notices.",
+        "act": "Needs action",
+        "clear": "Up to date"
+      },
+      "dossier": {
+        "label": "An Atesta dossier",
+        "kicker": "Audit readiness dossier",
+        "statement": "It gathers what the organization recorded. It is not a certification or a conformity assessment; the decision is the auditor's.",
+        "name": "Name",
+        "role": "Role",
+        "date": "Date",
+        "signature": "Signature"
+      }
+    },
+    "moments": {
+      "measure": "The official text of every measure",
+      "records": "The records your auditor asks for",
+      "dossier": "A dossier ready to sign"
+    }
   },
   "locale": {
     "label": "Language",

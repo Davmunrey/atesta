@@ -1,19 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { legalEntity } from "@/content/legal-entity";
 import { LocaleSwitcher } from "./locale-switcher";
 
 /** The header every public page shares (ui-polish spec, issue 301): skip link, wordmark home and
- *  the language switcher. Each public page's main element carries id="content". */
+ *  the language switcher. Each public page's main element carries id="content". The landing adds
+ *  sign-in and the access request (landing-legal spec, issue 308). */
 export function PublicHeader() {
   const t = useTranslations("cookies");
   const brand = useTranslations("brand");
   const app = useTranslations("app");
+  const landing = useTranslations("landing");
+  const locale = useLocale();
+  const onLanding = usePathname() === "/";
   return <header className="document-header">
     <a href="#content" className="skip-link">{app("skipContent")}</a>
     <Link href="/" className="brand-mark" aria-label={t("home", { brand: brand("name") })}>{brand("name")}</Link>
-    <LocaleSwitcher />
+    <div className="public-header-end">
+      <LocaleSwitcher />
+      {onLanding ? <nav aria-label={landing("signIn")} className="public-header-actions">
+        <a href={`/auth/login?lang=${locale}`} className="landing-signin">{landing("signIn")}</a>
+        <a href={`mailto:${legalEntity.email}`} className="landing-cta">{landing("requestAccess")}</a>
+      </nav> : null}
+    </div>
   </header>;
 }
 

@@ -10,7 +10,8 @@ export function legalIssues(value: unknown): string[] {
   const entity = value as Record<string, unknown>;
   return FIELDS.filter((field) => {
     const item = entity[field];
-    return !Object.hasOwn(entity, field) || typeof item !== "string" || item.trim().length === 0;
+    // A value the owner has not set yet carries the PENDIENTE marker (landing-legal spec, #308).
+    return !Object.hasOwn(entity, field) || typeof item !== "string" || item.trim().length === 0 || /pendiente/i.test(item);
   });
 }
 

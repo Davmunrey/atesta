@@ -9,6 +9,7 @@
 | anthropics/skills frontend-design | Apache-2.0 | Agent skill vendored in `.claude/skills/`, LICENSE.txt kept beside it, not shipped (ADR-013). |
 | pbakaus/impeccable (text subset) | Apache-2.0 | Agent skill vendored in `.claude/skills/impeccable/`, LICENSE.txt kept beside it, not shipped (ADR-013). |
 | GoogleChrome/modern-web-guidance (text subset) | Apache-2.0 | Agent skill vendored in `.claude/skills/modern-web-guidance/`, LICENSE.txt kept beside it, not shipped (ADR-013). |
+| Leonxlnx/taste-skill (text subset) | MIT | Agent skill vendored in `.claude/skills/taste-skill/` for the landing page, LICENSE kept beside it, not shipped (ADR-013). |
 | vercel-labs/agent-skills react-best-practices (subset) | MIT | Agent skill vendored in `.claude/skills/`, not shipped (ADR-013). |
 | Newsreader, IBM Plex Sans, IBM Plex Mono | OFL-1.1 | Unmodified Latin WOFF2 fonts, self-hosted. Fontsource packages pinned to 5.3.0; copyright, licenses and checksums in `apps/web/src/styles/fonts/`. |
 
