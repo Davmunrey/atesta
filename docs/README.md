@@ -89,6 +89,8 @@ Start with the question you have.
 - [security-incident](runbooks/security-incident.md): triage, containment, fix and notification.
 - [deploy](runbooks/deploy.md): from no AWS account to a running environment, rollback, and the
   monthly cost estimate.
+- [m365-test-tenant](runbooks/m365-test-tenant.md): the Microsoft 365 test tenant, the Atesta
+  dev tenant and the two app registrations, before the first real scan.
 
 Restore drills come with the first applied environment.
 
