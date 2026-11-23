@@ -1,11 +1,12 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { type FormEvent, useId, useRef, useState } from "react";
-import { useControlEvidence } from "@/lib/api/evidence-hooks";
+import { type FormEvent, useEffect, useId, useRef, useState } from "react";
+import { EVIDENCE_PAGE_SIZE, useControlEvidence } from "@/lib/api/evidence-hooks";
 import { useMembers, useRecordReview } from "@/lib/api/hooks";
 import type { components } from "@/lib/api/schema";
 import { ErrorMessage } from "./error-message";
+import { Icon } from "./icons";
 
 type Review = components["schemas"]["ReviewOut"];
 type Decision = Review["status"];
@@ -48,15 +49,21 @@ function ReviewForm({ orgId, frameworkKey, controlKey, onDone }: { orgId: string
   const format = useFormatter();
   const id = useId();
   const record = useRecordReview(orgId, frameworkKey);
-  const evidence = useControlEvidence(orgId, controlKey, 0);
+  const [offset, setOffset] = useState(0);
+  const evidence = useControlEvidence(orgId, controlKey, offset);
   const firstItem = useRef<HTMLInputElement>(null);
   const [decision, setDecision] = useState<Decision | null>(null);
+  // Ids in the order cited; items on other pages stay cited while the reviewer pages (issue 321).
   const [cited, setCited] = useState<ReadonlySet<string>>(new Set());
   const [missingEvidence, setMissingEvidence] = useState(false);
   const [rationale, setRationale] = useState("");
   const [until, setUntil] = useState(isoDay(365));
   const items = evidence.data?.items ?? [];
-  const canPass = items.length > 0;
+  const total = evidence.data?.total ?? 0;
+  const canPass = total > 0;
+  const uncited = decision === "pass" && cited.size === 0;
+  // One validation pass with the other fields: the browser blocks the submit and reports it here.
+  useEffect(() => { firstItem.current?.setCustomValidity(uncited ? t("evidenceRequired") : ""); }, [uncited, items, t]);
   const toggle = (itemId: string) => {
     const next = new Set(cited);
     if (!next.delete(itemId)) next.add(itemId);
@@ -71,12 +78,12 @@ function ReviewForm({ orgId, frameworkKey, controlKey, onDone }: { orgId: string
       firstItem.current?.focus();
       return;
     }
-    const evidence_ids = items.filter((item) => cited.has(item.id)).map((item) => item.id);
+    const evidence_ids = [...cited];
     record.mutate({ controlKey, status: decision, rationale: rationale.trim(), valid_until: until, evidence_ids }, { onSuccess: () => onDone(true) });
   };
   const describedBy = [`${id}-evidence-help`, missingEvidence ? `${id}-evidence-error` : null].filter(Boolean).join(" ");
   return <form className="control-review-form" onSubmit={submit}>
-    <fieldset><legend>{t("decision")}</legend>
+    <fieldset aria-describedby={`${id}-evidence-help`}><legend>{t("decision")}</legend>
       {(["pass", "fail"] as const).map((value) => <label key={value} className="control-review-choice">
         <input type="radio" name={`${id}-decision`} value={value} required checked={decision === value} disabled={value === "pass" && !canPass}
           onChange={() => setDecision(value)} /> {t(`status.${value}`)}
@@ -87,11 +94,16 @@ function ReviewForm({ orgId, frameworkKey, controlKey, onDone }: { orgId: string
       <p id={`${id}-evidence-help`} className="text-sm text-muted">{evidence.isPending ? t("evidenceLoading") : canPass ? t("evidenceHelp") : t("evidenceNone")}</p>
       {evidence.isError ? <ErrorMessage error={evidence.error} /> : null}
       {items.map((item, index) => <label key={item.id} className="control-review-choice">
-        <input ref={index === 0 ? firstItem : undefined} type="checkbox" name={`${id}-evidence`} value={item.id} checked={cited.has(item.id)} onChange={() => toggle(item.id)} />
+        <input ref={index === 0 ? firstItem : undefined} type="checkbox" name={`${id}-evidence`} value={item.id} checked={cited.has(item.id)} onChange={() => toggle(item.id)}
+          onInvalid={index === 0 ? (e) => { e.preventDefault(); setMissingEvidence(true); } : undefined} aria-invalid={index === 0 && missingEvidence ? true : undefined} />
         <span>{item.title} <span className="text-muted">· {format.dateTime(new Date(item.collected_at), { dateStyle: "medium" })}</span></span>
       </label>)}
-      {evidence.data && evidence.data.total > items.length ? <p className="text-sm text-muted">{t("evidenceNewest", { count: items.length })}</p> : null}
-      {missingEvidence ? <p id={`${id}-evidence-error`} role="alert" className="control-review-error">{t("evidenceRequired")}</p> : null}
+      {total > EVIDENCE_PAGE_SIZE ? <div className="control-review-actions">
+        <span className="text-sm text-muted">{t("evidencePage", { from: offset + 1, to: offset + items.length, total, cited: cited.size })}</span>
+        <button type="button" className="dashboard-button" disabled={offset === 0} onClick={() => setOffset(offset - EVIDENCE_PAGE_SIZE)}>{t("evidenceNewer")}</button>
+        <button type="button" className="dashboard-button" disabled={offset + EVIDENCE_PAGE_SIZE >= total} onClick={() => setOffset(offset + EVIDENCE_PAGE_SIZE)}>{t("evidenceOlder")}</button>
+      </div> : null}
+      {missingEvidence ? <p id={`${id}-evidence-error`} role="alert" className="rounded-md border border-danger px-3 py-2 text-danger"><Icon name="overdue" />{t("evidenceRequired")}</p> : null}
     </fieldset>
     <label htmlFor={`${id}-rationale`}>{t("rationale")}</label>
     <p id={`${id}-rationale-help`} className="text-sm text-muted">{t("rationaleHelp")}</p>
