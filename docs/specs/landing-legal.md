@@ -56,8 +56,8 @@ Content
 - [ ] ENS measure codes and names shown in the product views are copied from RD 311/2022,
       anexo II (BOE-A-2022-7191).
 - [ ] Main CTA "Solicitar acceso": `mailto:` to the contact address in `src/content/legal-entity.ts`.
-      Until the owner sets it, the address is a marked placeholder on the reserved `.invalid`
-      domain, and `check-legal` blocks any placeholder value (owner, 23/11/2026). Secondary:
+      The address is hello@atesta.cloud (owner, 23/11/2026). Any value still marked PENDIENTE
+      is a placeholder, and `check-legal` blocks a release while one is left. Secondary:
       "Entrar" (sign-in). No form until a form spec exists.
 - [ ] The product name is one message key (`brand.name`). Internal identifiers (`atesta_api`,
       cookie names) do not change with the brand.
@@ -79,6 +79,36 @@ Motion
 - [ ] `prefers-reduced-motion: reduce` stops every animation and transition.
 - [ ] Motion tokens in `tokens.css`: ease-out `cubic-bezier(.215, .61, .355, 1)`; 200 ms for
       hover, 700 to 1400 ms for entrances; entrance distance 24 to 28 px.
+
+Amendment A1: brand identity and a fuller page (#323). Status: **accepted (owner, 23/11/2026).**
+The owner asked on 23/11/2026 for a confident, recognisable brand at the level of the large
+compliance players, original rather than copied. A1 replaces the 60-word copy budget and the section
+list above; every other criterion stays.
+
+- [ ] Copy budget: at most 200 words of marketing copy on the page, product views and footer
+      excluded (unit test). Claims honesty is unchanged: no "certificado", no "cumple", no logos
+      of customers, testimonials or figures other than facts of the product or the law (73
+      measures in RD 311/2022, anexo II).
+- [ ] Sections, in order:
+      1. the hero (ENS headline, the request, the overview);
+      2. the problem;
+      3. how it works, in four steps. "Conecta tus sistemas" carries a visible "Próximamente" tag
+         and no product view until the connect flow ships (#221; owner, 23/11/2026);
+      4. the three product moments (L7);
+      5. the frameworks it covers, the ENS first and the rest "según el plan";
+      6. one line for consultancies;
+      7. the closing request.
+- [ ] Brand system:
+      - **Mark:** an original seal, an ink ring around three ledger lines with the middle one on
+        the highlighter, as SVG in the repository.
+      - **Lockup:** the mark beside the live wordmark.
+      - **Motif:** the highlighter stroke, used on one phrase of the hero headline, on the lead figure
+        of the hero's overview, on the section dividers and as the tab of every product frame.
+      - **Layout:** from 80rem the hero is one viewport, the headline left and the overview right,
+        running past the fold; "how it works" sits on a full-bleed ink band.
+      - DESIGN.md records it.
+- [ ] Every product view is labelled "Datos de ejemplo" / "Sample data" while the fixture's
+      origin is `illustrative`.
 
 Legal pages (Spanish is the binding version)
 

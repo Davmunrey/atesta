@@ -207,11 +207,70 @@ Controls and navigation use the small radius; shared primary actions and the col
 
 **Records at a glance.** When work is underway, the overview has a "Registros" table, in the fixed order policies, access reviews, training, incidents. Each row links to its page, writes its state as a badge ("Requiere acción", "Al día" or "Sin registros") and repeats the lead sentence of that page's record summary. A row that is loading or failed says so and claims no state.
 
-**Landing.** The public landing is light only, on the public content column (73.5rem plus 1.25rem gutters, which the header and footer share). The ENS headline is set in the display face up to 5.5rem and never animates, because it is the LCP. The product's own overview, drawn from the landing fixture in an ink-topped frame, is the argument. Three product moments follow, each a display headline beside one view of what the console ships (L7): a measure's official text and self-assessment, the records, the dossier. They share the content column, with hairline dividers. The page closes on an ink band with the yellow CTA. Motion is CSS only: the view rises once, its bar fills, its rows arrive, and everything rests by about 2 s. No shadows, no stock imagery, no eyebrow labels.
+**Landing.** The public landing is light only, on the public content column (73.5rem plus 1.25rem gutters, which the header and footer share). The ENS headline is set in the display face up to 6rem and never moves, because it is the LCP; only its highlighter stroke draws. After the hero come the problem, four steps (the connect step tagged "Próximamente" until it ships), the product moments, the frameworks and the consultancy line; see Brand system. The product's own overview, drawn from the landing fixture in an ink-topped frame, is the argument. Three product moments follow, each a display headline beside one view of what the console ships (L7): a measure's official text and self-assessment, the records, the dossier. They share the content column, with hairline dividers. The page closes on an ink band with the yellow CTA. Motion is CSS only: the view rises once, its bar fills, its rows arrive, and everything rests by about 2 s. No shadows, no stock imagery, no eyebrow labels.
 
 **Activity.** Audit actions read as sentences in ES and EN; an action without a label reads "Otra acción", database ids are never shown, readable targets (framework keys, requirement codes) stay in mono.
 
 **Loading, empty and error states.** Every page load and records list uses the shared `Loading`, `LoadError` and `Empty` components. Loading is muted status text, never an empty status region; the overview alone adds static surface-coloured placeholders. A failed load shows the error and "Reintentar", which refetches. The page header and breadcrumbs stay in place while a page loads or fails. A 4xx answer is not retried, and a server or network failure is retried once, so errors show within seconds. Empty states explain the absence; search can be cleared. Refresh temporarily disables its control and changes its label. Development data stays visibly labeled and synthetic framework results are not presented as ENS/NIS2 assessments.
+
+## Brand system
+
+Introduced with the landing (#323, landing-legal amendment A1, accepted by the owner on 2026-11-23). The console adopts it
+later; until then it keeps its own wordmark treatment.
+
+**Mark.** A double seal ring around three ledger lines, with the middle line on the highlighter: a
+record that has been attested. Original work, geometry only, in `apps/web/public/brand/atesta-mark.svg`
+(fixed colours, for use outside the app) and `components/brand-mark.tsx` (`currentColor` plus the
+highlighter token, for use inside it). It is also the favicon (`app/icon.svg`).
+- **Size:** at least 1rem.
+- **Colour:** ink on paper, paper on ink. The highlighter line stays yellow on both grounds.
+- **Treatment:** never recoloured, rotated, outlined or set inside another shape.
+
+**Lockup.** The mark (2rem) beside the live wordmark ("Atesta" in Newsreader 600, 1.75rem, tracking
+-0.04em), with a 0.625rem gap. The lockup links home; the mark is decorative, and the link's name
+carries the brand. No SVG wordmark exists, because the wordmark is set live in the self-hosted
+face.
+
+**Signature motif: the highlighter stroke.** One motif, used in four places only:
+- the key phrase of the hero headline, as a band behind the lower half of the letters;
+- the lead figure of the hero's overview (measures assessed);
+- the 3rem × 4px tab on every section divider;
+- the 3rem × 3px tab under the ink bar of every product frame.
+
+It never marks state; status keeps its icon and label. On load it draws once, left to right; reduced
+motion shows it drawn.
+
+**Ink band.** One full-bleed ink section per page ("Cómo funciona" on the landing), besides the closing band: paper text, yellow step numbers (`--color-cta`), muted text in `--color-on-ink-muted`, focus rings in the CTA yellow. From 80rem the hero is one viewport, with the headline left (up to 5rem) and the overview frame right, running past the fold.
+
+**Type scale (public pages).**
+
+| Role | Face | Size |
+|---|---|---|
+| Hero headline | Newsreader 500 | up to 6rem, tracking -0.04em, at most 14ch |
+| Section titles | Newsreader 500 | up to 4.5rem, at most 16ch |
+| Statements | Newsreader 400 | up to 1.75rem, at most 44ch |
+| Text and UI | IBM Plex Sans | 1rem, 1.25rem for step titles |
+| Codes and step numbers | IBM Plex Mono | 0.875rem |
+
+The floor stays 13px.
+
+**Colour roles.**
+
+| Role | Token | Value |
+|---|---|---|
+| Paper, the ground | `--color-bg` | #f4f1ea |
+| Panels and frames | `--color-panel` | #faf8f3 |
+| Ink, text and the closing band | `--color-fg` / `--color-ink` | #141414 |
+| Muted text | `--color-muted` | #55514a |
+| Highlighter, motif and primary buttons | `--color-accent` | #ffe58a |
+| Yellow on ink, the closing CTA | `--color-cta` | #ffd23f |
+| Stamp blue, links and focus | `--color-link` | #23389a |
+| Muted text on ink | `--color-on-ink-muted` | #c0baae |
+
+Every pair is checked by `tests/unit/contrast.test.ts`.
+
+**Product frames.** Every product view on public pages sits in a frame: an ink bar carrying the mark,
+the context and a "Datos de ejemplo" label while the fixture is illustrative.
 
 ## Do's and Don'ts
 

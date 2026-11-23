@@ -144,9 +144,16 @@ get the same quality bar as the console.
 - [ ] **e2e:** a public-pages e2e spec runs axe, overflow, the 13 px floor and 44 px targets on these routes at 375 and 1280 px, in light and dark, and on the dossier print view.
 
 
-## Tests
+## Polish from the #305 and #315 reviews (#345)
+
+- [ ] **One control size:** radios and checkboxes in the manual review form are 1.125rem on fine pointers and 1.5rem on coarse ones.
+- [ ] **Evidence labels:** evidence options read at regular weight, with their date muted.
+- [ ] **Saved state:** after saving a review, the saved line is a `.notice` with an icon, and the cited list, the notice and the button keep the panel's spacing.
+- [ ] **Classify input:** the classification time input names its help with `aria-describedby`, and its `min` is the incident's awareness time.
+- [ ] **Print:** the incident page's classify and note forms do not print.
+
 
 | Area | Cases |
 |---|---|
-| Unit | expected evidence: shared reference once, per-item references otherwise, dossier lists open for print and restored after; overview records rows: order, states and links from fixtures; incident criteria grouped by framework, with counts; a failed list load offers a retry that refetches; members keeps its header while loading; no retry on 4xx; stacked tables carry a `data-label` per cell; every API audit action has ES and EN labels; unknown actions and UUIDs never show; incident button name; summaries count from fixtures; dark `surface`/`panel` differ and pass contrast |
+| Unit | classify input min and description; expected evidence: shared reference once, per-item references otherwise, dossier lists open for print and restored after; overview records rows: order, states and links from fixtures; incident criteria grouped by framework, with counts; a failed list load offers a retry that refetches; members keeps its header while loading; no retry on 4xx; stacked tables carry a `data-label` per cell; every API audit action has ES and EN labels; unknown actions and UUIDs never show; incident button name; summaries count from fixtures; dark `surface`/`panel` differ and pass contrast |
 | e2e | axe with no violations and no horizontal overflow at 375 and 1280 px on the pages above; CSP reports stay empty |

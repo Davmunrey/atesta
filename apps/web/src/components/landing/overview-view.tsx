@@ -3,6 +3,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 import fixture from "@/content/landing-fixture.json";
 import { Icon } from "../icons";
+import { ViewFrame } from "./view-frame";
 
 const ICON = { overdue: "overdue", missing: "missing", pending: "pending" } as const;
 
@@ -14,16 +15,14 @@ const ICON = { overdue: "overdue", missing: "missing", pending: "pending" } as c
 export function OverviewView() {
   const t = useTranslations("landing.view");
   const kpi = useTranslations("console.kpi");
-  const brand = useTranslations("brand");
   const format = useFormatter();
   const c = fixture.counts;
   const segments = [["implemented", c.implemented], ["partial", c.partial], ["missing", c.not_implemented], ["na", c.not_applicable]] as const;
-  return <figure className="landing-view" aria-label={t("label")}>
-    <div className="lv-bar-top" aria-hidden="true"><span className="lv-mark">{brand("name")}</span><span>{fixture.organization}</span></div>
+  return <ViewFrame label={t("label")} context={fixture.organization}>
     <div className="lv-body">
       <p className="lv-title"><strong>{fixture.framework}</strong> <span>{t("category", { category: fixture.category })}</span></p>
       <dl className="lv-kpis">
-        <div><dt>{kpi("assessed")}</dt><dd>{format.number(c.assessed)} <span>{kpi("ofTotal", { total: c.total })}</span></dd></div>
+        <div><dt>{kpi("assessed")}</dt><dd><mark className="hl lv-figure">{format.number(c.assessed)}</mark> <span>{kpi("ofTotal", { total: c.total })}</span></dd></div>
         <div><dt>{kpi("implemented")}</dt><dd>{format.number(c.implemented)} <span>{kpi("ofTotal", { total: c.total })}</span></dd></div>
         <div><dt>{kpi("overdue")}</dt><dd>{format.number(c.overdue)}</dd><dd className="lv-state" data-severity="overdue"><Icon name="overdue" width={16} height={16} />{kpi("act")}</dd></div>
         <div><dt>{kpi("unowned")}</dt><dd>{format.number(c.unowned)}</dd><dd className="lv-state" data-severity="overdue"><Icon name="overdue" width={16} height={16} />{kpi("act")}</dd></div>
@@ -40,5 +39,5 @@ export function OverviewView() {
         <span className="badge" data-severity={item.state}><Icon name={ICON[item.state as keyof typeof ICON]} />{t(`state.${item.state as keyof typeof ICON}`)}</span>
       </li>)}</ul>
     </div>
-  </figure>;
+  </ViewFrame>;
 }

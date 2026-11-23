@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { legalEntity } from "@/content/legal-entity";
+import { BrandMark } from "./brand-mark";
 import { LocaleSwitcher } from "./locale-switcher";
 
 /** The header every public page shares (ui-polish spec, issue 301): skip link, wordmark home and
@@ -18,7 +19,7 @@ export function PublicHeader() {
   const onLanding = usePathname() === "/";
   return <header className="document-header">
     <a href="#content" className="skip-link">{app("skipContent")}</a>
-    <Link href="/" className="brand-mark" aria-label={t("home", { brand: brand("name") })}>{brand("name")}</Link>
+    <Link href="/" className="brand-lockup" aria-label={t("home", { brand: brand("name") })}><BrandMark /><span className="brand-word">{brand("name")}</span></Link>
     <div className="public-header-end">
       <LocaleSwitcher />
       {onLanding ? <nav aria-label={landing("signIn")} className="public-header-actions">
