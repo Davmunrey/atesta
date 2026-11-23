@@ -14,10 +14,16 @@ OIDC, no long-lived keys. Budget alerts at 150, 250 and 400 EUR/month.
 
 ## Status (2026-11-23)
 
-Base modules `kms`, `network` and `s3-evidence` follow docs/specs/hosted-environment.md and are
-used by `envs/dev`. They are validated (`tofu validate`) and their security settings are tested
-(`infra/tests`). Nothing is applied. The other modules (rds, ecs, web, ses), `envs/prod`, the deploy
-workflow and the runbook follow in separate PRs.
+Modules `kms`, `network`, `s3-evidence`, `rds` and `ses` follow docs/specs/hosted-environment.md
+and are used by `envs/dev`. They are validated (`tofu validate`) and their security settings are
+tested (`infra/tests`). Nothing is applied. `ecs`, `web`, `envs/prod`, the deploy workflow and the
+runbook follow in separate PRs.
+
+- `rds`: the application roles come from `apps/api/migrations/bootstrap.sql`, run once as the
+  master user. Their connection URLs go into the two secrets the module creates; values are set by
+  hand, never committed.
+- `ses`: dev creates it only when `mail_domain` is set. The `mail_dns_records` output lists the
+  DKIM, MAIL FROM and DMARC records to publish.
 
 ## Status (2026-11-13)
 

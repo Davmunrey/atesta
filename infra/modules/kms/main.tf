@@ -1,5 +1,6 @@
-# Customer-managed keys (hosted-environment spec): one per data class, yearly rotation. The logs
-# key lets CloudWatch Logs in this region use it, scoped to this account's log groups.
+# Customer-managed keys (hosted-environment spec): one per data class (database, evidence,
+# application secrets, logs), yearly rotation. The logs key lets CloudWatch Logs in this region
+# use it, scoped to this account's log groups.
 
 terraform {
   required_providers {
@@ -67,6 +68,13 @@ resource "aws_kms_key" "evidence" {
   policy                  = data.aws_iam_policy_document.base.json
 }
 
+resource "aws_kms_key" "secrets" {
+  description             = "${var.name} application secrets"
+  enable_key_rotation     = true
+  deletion_window_in_days = 30
+  policy                  = data.aws_iam_policy_document.base.json
+}
+
 resource "aws_kms_key" "logs" {
   description             = "${var.name} logs"
   enable_key_rotation     = true
@@ -84,6 +92,11 @@ resource "aws_kms_alias" "evidence" {
   target_key_id = aws_kms_key.evidence.key_id
 }
 
+resource "aws_kms_alias" "secrets" {
+  name          = "alias/${var.name}-secrets"
+  target_key_id = aws_kms_key.secrets.key_id
+}
+
 resource "aws_kms_alias" "logs" {
   name          = "alias/${var.name}-logs"
   target_key_id = aws_kms_key.logs.key_id
@@ -95,6 +108,10 @@ output "database_key_arn" {
 
 output "evidence_key_arn" {
   value = aws_kms_key.evidence.arn
+}
+
+output "secrets_key_arn" {
+  value = aws_kms_key.secrets.arn
 }
 
 output "logs_key_arn" {

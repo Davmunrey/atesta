@@ -137,7 +137,12 @@ NETWORK = resources("modules/network/main.tf")
 
 def test_every_key_rotates_and_waits_before_deletion() -> None:
     keys = {name: body for name, body in KMS.items() if name.startswith("aws_kms_key.")}
-    assert set(keys) == {"aws_kms_key.database", "aws_kms_key.evidence", "aws_kms_key.logs"}
+    assert set(keys) == {
+        "aws_kms_key.database",
+        "aws_kms_key.evidence",
+        "aws_kms_key.secrets",
+        "aws_kms_key.logs",
+    }
     for name, key in keys.items():
         assert key["enable_key_rotation"] is True, name
         assert key["deletion_window_in_days"] == 30, name
@@ -182,3 +187,89 @@ def test_private_subnets_take_no_public_addresses_and_flow_logs_are_on() -> None
     assert "nat_gateway_id" in private_routes and "gateway_id" not in private_routes
     assert NETWORK["aws_flow_log.this"]["traffic_type"] == "ALL"
     assert "kms_key_id" in NETWORK["aws_cloudwatch_log_group.flow"]
+
+
+RDS = resources("modules/rds/main.tf")
+RDS_VARS = {k: v for b in load("modules/rds/main.tf")["variable"] for k, v in b.items()}
+
+
+def test_the_database_is_postgres_16_encrypted_private_and_protected() -> None:
+    db = RDS["aws_db_instance.this"]
+    assert (db["engine"], db["engine_version"]) == ("postgres", "16")
+    assert db["storage_encrypted"] is True and db["kms_key_id"] == "${var.kms_key_arn}"
+    assert db["publicly_accessible"] is False
+    assert db["deletion_protection"] is True and db["skip_final_snapshot"] is False
+    assert db["manage_master_user_password"] is True  # master secret lives in Secrets Manager
+    assert db["master_user_secret_kms_key_id"] == "${var.kms_key_arn}"
+    assert "password" not in db
+    assert db["iam_database_authentication_enabled"] is False
+    assert db["multi_az"] == "${var.multi_az}"
+    assert db["backup_retention_period"] == "${var.backup_retention_days}"
+    assert db["copy_tags_to_snapshot"] is True and db["auto_minor_version_upgrade"] is True
+
+
+def test_backups_are_14_days_in_dev_and_at_most_35() -> None:
+    retention = RDS_VARS["backup_retention_days"]
+    assert retention["default"] == 14
+    rule = retention["validation"][0]["condition"]
+    assert "var.backup_retention_days >= 14" in rule and "var.backup_retention_days <= 35" in rule
+
+
+def test_the_database_requires_tls_and_logs_without_statements() -> None:
+    params = {p["name"]: p["value"] for p in RDS["aws_db_parameter_group.this"]["parameter"]}
+    assert params["rds.force_ssl"] == "1"
+    assert params["log_statement"] == "none"  # statements may carry customer data (rule 2)
+    assert params["log_min_duration_statement"] == "-1"
+    assert RDS["aws_cloudwatch_log_group.postgres"]["kms_key_id"] == "${var.logs_key_arn}"
+    assert "retention_in_days" in RDS["aws_cloudwatch_log_group.postgres"]
+
+
+def test_only_the_application_security_group_reaches_the_database() -> None:
+    rule = RDS["aws_vpc_security_group_ingress_rule.from_app"]
+    assert (rule["from_port"], rule["to_port"], rule["ip_protocol"]) == (5432, 5432, "tcp")
+    assert "cidr_ipv4" not in rule and "referenced_security_group_id" in rule
+    ingress = [k for k in RDS if k.startswith("aws_vpc_security_group_ingress_rule.")]
+    assert ingress == ["aws_vpc_security_group_ingress_rule.from_app"]
+    assert RDS["aws_db_subnet_group.this"]["subnet_ids"] == "${var.private_subnet_ids}"
+
+
+def test_role_connection_secrets_are_encrypted_and_hold_no_value_in_code() -> None:
+    secrets = {k: v for k, v in RDS.items() if k.startswith("aws_secretsmanager_secret.")}
+    assert set(secrets) == {
+        "aws_secretsmanager_secret.app_url",
+        "aws_secretsmanager_secret.migration_url",
+    }
+    for name, secret in secrets.items():
+        assert secret["kms_key_id"] == "${var.secrets_key_arn}", name
+    assert not [k for k in RDS if k.startswith("aws_secretsmanager_secret_version.")]
+
+
+SES = resources("modules/ses/main.tf")
+
+
+def test_ses_identity_signs_with_dkim_and_uses_its_own_mail_from() -> None:
+    identity = SES["aws_sesv2_email_identity.this"]
+    assert identity["dkim_signing_attributes"] == [{"next_signing_key_length": "RSA_2048_BIT"}]
+    assert identity["configuration_set_name"] == "${aws_sesv2_configuration_set.this.configuration_set_name}"
+    mail_from = SES["aws_sesv2_email_identity_mail_from_attributes.this"]
+    assert mail_from["behavior_on_mx_failure"] == "REJECT_MESSAGE"
+
+
+def test_ses_requires_tls_and_suppresses_bounces_and_complaints() -> None:
+    config = SES["aws_sesv2_configuration_set.this"]
+    assert config["delivery_options"] == [{"tls_policy": "REQUIRE"}]
+    assert sorted(config["suppression_options"][0]["suppressed_reasons"]) == [
+        "BOUNCE",
+        "COMPLAINT",
+    ]
+    assert config["reputation_options"] == [{"reputation_metrics_enabled": True}]
+
+
+def test_dev_wires_the_database_and_optional_notification_email() -> None:
+    dev = load("envs/dev/main.tf")
+    modules = {k: v for m in dev["module"] for k, v in m.items()}
+    assert "providers" not in modules["ses_notifications"]  # eu-south-2, not the Paris exception
+    assert modules["ses_notifications"]["count"] == "${var.mail_domain == null ? 0 : 1}"
+    database = modules["database"]
+    assert database["backup_retention_days"] == 14 and database["multi_az"] is False
+    assert database["kms_key_arn"] == "${module.kms.database_key_arn}"
