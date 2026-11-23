@@ -65,6 +65,10 @@ A read-only, on-device posture agent (disk encryption, screen lock, supported OS
 firewall, platform integrity, malware protection) for macOS first. It never changes a setting,
 runs a remote command or remediates. The ADR, the threat model, the data boundary and the
 employee-notice templates come first; the build starts when customers ask for it.
+- **Status (2026-11-23):** design done (#154):
+  - ADR-014;
+  - `docs/specs/device-agent.md`, which includes the notice template;
+  - `docs/security/device-agent-threat-model.md`.
 
 ## Later
 

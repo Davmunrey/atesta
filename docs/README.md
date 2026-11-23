@@ -34,35 +34,51 @@ Start with the question you have.
 | [ADR-011: Framework-agnostic control model; frameworks are content packs](adr/0011-framework-agnostic-control-model.md) | accepted (2026-11-12) |
 | [ADR-012: Tenant isolation with Postgres row-level security](adr/0012-tenant-isolation-rls.md) | accepted (2026-11-12) |
 | [ADR-013: Third-party agent tooling is vendored, pinned and reviewed](adr/0013-agent-tooling.md) | accepted (2026-11-12) |
+| [ADR-014: A read-only device agent that reports posture and never acts](adr/0014-device-agent.md) | accepted for design (2026-11-23) |
 
 ## Feature specs
 
+- [claims-honesty](specs/claims-honesty.md)
+- [content-model-v2](specs/content-model-v2.md)
 - [control-evidence-statements](specs/control-evidence-statements.md)
 - [control-model-schema](specs/control-model-schema.md)
 - [cookie-information](specs/cookie-information.md)
 - [dashboard-overview](specs/dashboard-overview.md)
+- [device-agent](specs/device-agent.md)
 - [framework-catalog-preview](specs/framework-catalog-preview.md)
 - [framework-detail](specs/framework-detail.md)
+- [i18n-complete](specs/i18n-complete.md)
 - [identity-auth](specs/identity-auth.md)
 - [infra-dev](specs/infra-dev.md)
+- [insights](specs/insights.md)
 - [landing-legal](specs/landing-legal.md)
 - [local-dev-auth](specs/local-dev-auth.md)
 - [manual-control-review](specs/manual-control-review.md)
 - [organization-shell-design](specs/organization-shell-design.md)
+- [rbac](specs/rbac.md)
+- [requirement-register](specs/requirement-register.md)
 - [scanner-connectors](specs/scanner-connectors.md)
 - [tenant-data-layer](specs/tenant-data-layer.md)
 - [web-shell](specs/web-shell.md)
+- [workspace-ux](specs/workspace-ux.md)
 
 ## Catalog
 
 - [catalog/README.md](../catalog/README.md): common controls and framework packs.
 - [catalog/PREPARATION.md](../catalog/PREPARATION.md): preparation templates and their limits.
-- [ENS sources](../catalog/frameworks/ens_rd311_2022/SOURCES.md): official texts behind the ENS
-  draft.
+- Sources behind each official pack:
+  - [ENS](../catalog/frameworks/ens_rd311_2022/SOURCES.md)
+  - [NIS2](../catalog/frameworks/nis2/SOURCES.md)
+  - [GDPR, Art. 32 to 34](../catalog/frameworks/gdpr_art32/SOURCES.md)
+  - [DORA](../catalog/frameworks/dora/SOURCES.md)
+
+  Each pack's `coverage.yaml` lists every unit of its source.
 
 ## Security and legal
 
 - [SECURITY.md](../SECURITY.md): reporting, controls and the tests that hold them.
+- [security/device-agent-threat-model.md](security/device-agent-threat-model.md): STRIDE threat
+  model of the device agent (design only).
 - [LICENSE](../LICENSE) and [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
 
 ## Components
