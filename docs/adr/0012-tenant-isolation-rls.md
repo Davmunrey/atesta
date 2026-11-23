@@ -90,3 +90,16 @@ other than `<name>_id: str`.
   with at most 1000 per campaign.
 - **Why not a user context:** the people who confirm training are often not Atesta users, and
   making them sign up would stop the routine from being used.
+
+## Amendment 5 (proposed 2026-11-23, evidence-ingestion-api spec; the owner accepts it)
+
+- **New named read policy:** `api_tokens` gets `api_token_read`, `FOR SELECT` on
+  `token_sha256 = app_setting_text('app.api_token_sha256')`, set only by
+  `identity.api.enter_api_token_context()`. Like `invitation_token_read`, it lets a caller who
+  holds a token read that one row before the organization is known.
+- **Sixth reason to enter an organization's context:** `api_token`, after the token was found,
+  not revoked and not expired. Writes then pass `tenant_isolation` as usual: the token's last use
+  and the evidence it records.
+- **Scope:** a token is write-only (`evidence:write`); no endpoint reads data with it.
+- **Why not a user session:** tools in a customer's CI have no person signed in, and a person's
+  session must not be copied into a pipeline.

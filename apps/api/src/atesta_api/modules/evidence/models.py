@@ -22,12 +22,13 @@ from atesta_api.platform.db import Base, TenantMixin
 # attestations name their human author. The key lives under the tenant's S3 prefix (ADR-004).
 EVIDENCE_CHECKS = {
     "kind": "kind IN ('scan_output', 'document', 'attestation')",
-    "source_type": "source_type IN ('scan', 'upload', 'user')",
+    "source_type": "source_type IN ('scan', 'upload', 'user', 'api')",
     "file_described": "num_nulls(storage_key, sha256, media_type, size_bytes) IN (0, 4)",
     "file_required": "kind = 'attestation' OR storage_key IS NOT NULL",
     "sha256_format": "sha256 ~ '^[0-9a-f]{64}$'",
     "size_positive": "size_bytes >= 0",
     "scan_named": "source_type <> 'scan' OR source_id IS NOT NULL",
+    "api_named": "source_type <> 'api' OR source_id IS NOT NULL",
     "author_named": "source_type = 'scan' OR created_by IS NOT NULL",
     "storage_key_in_tenant_prefix": (
         "storage_key IS NULL OR (left(storage_key, 37) = organization_id::text || '/'"
@@ -97,3 +98,34 @@ class EvidenceStatement(TenantMixin, Base):
     payload_hash: Mapped[str] = mapped_column(CHAR(64))
     statement: Mapped[str] = mapped_column(Text)
     reference_url: Mapped[str | None] = mapped_column(Text)
+
+
+class ApiIngestion(TenantMixin, Base):
+    """Evidence written through an API token (evidence-ingestion-api spec). Append-only; the
+    external id makes a tool's retries idempotent per token. token_id has no FK to the identity
+    module's table (ADR-008); it comes from an accepted token."""
+
+    __tablename__ = "api_ingestions"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        UniqueConstraint("organization_id", "token_id", "external_id"),
+        ForeignKeyConstraint(
+            ["organization_id", "evidence_id"],
+            ["evidence.organization_id", "evidence.id"],
+            ondelete="RESTRICT",
+        ),
+        CheckConstraint("length(btrim(source)) BETWEEN 1 AND 50", name="source_length"),
+        CheckConstraint(
+            "external_id IS NULL OR length(external_id) BETWEEN 1 AND 200",
+            name="external_id_length",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    token_id: Mapped[uuid.UUID]
+    evidence_id: Mapped[uuid.UUID]
+    source: Mapped[str] = mapped_column(Text)
+    external_id: Mapped[str | None] = mapped_column(Text)
+    received_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )

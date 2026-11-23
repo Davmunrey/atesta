@@ -99,3 +99,33 @@ class Invitation(TenantMixin, Base):
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = _now()
     access_expires_on: Mapped[date | None] = mapped_column(Date)
+
+
+class ApiToken(TenantMixin, Base):
+    """A write-only token for a customer's own tools (evidence-ingestion-api spec). Only the
+    SHA-256 is kept, indexed and not unique: tenant unique keys lead with organization_id."""
+
+    __tablename__ = "api_tokens"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        CheckConstraint("length(btrim(name)) BETWEEN 1 AND 100", name="name_length"),
+        CheckConstraint("token_sha256 ~ '^[0-9a-f]{64}$'", name="token_format"),
+        CheckConstraint("length(prefix) = 12", name="prefix_length"),
+        CheckConstraint("scope = 'evidence:write'", name="scope"),
+        CheckConstraint("expires_at > created_at", name="expires_after_creation"),
+        CheckConstraint("(revoked_at IS NULL) = (revoked_by IS NULL)", name="revoked_together"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    name: Mapped[str] = mapped_column(Text)
+    prefix: Mapped[str] = mapped_column(Text)
+    token_sha256: Mapped[str] = mapped_column(Text, index=True)
+    scope: Mapped[str] = mapped_column(Text, server_default="evidence:write")
+    created_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"))
+    created_at: Mapped[datetime] = _now()
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_by: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="RESTRICT")
+    )

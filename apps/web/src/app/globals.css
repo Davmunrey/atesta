@@ -111,7 +111,7 @@
   .section-links > a, .organization-list a { display: flex; flex-direction: column; gap: 0.375rem; padding: 1.5rem 0.75rem; border-bottom: 1px solid var(--color-border); }
   .section-links > a:hover, .organization-list a:hover { background: var(--color-surface); }
   .section-link-title { font-size: 1.25rem; font-weight: 500; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
-  .table-region { overflow-x: auto; padding: 0.25rem; }
+  .table-region { position: relative; overflow-x: auto; padding: 0.25rem; } /* clips sr-only text too */
   .table-region table { min-width: 34rem; }
   .table-region th, .table-region td { padding-block: 1rem; }
   .table-region td:first-child { overflow-wrap: anywhere; max-width: 24rem; }

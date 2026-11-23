@@ -48,6 +48,7 @@ Start with the question you have.
 - [cookie-information](specs/cookie-information.md)
 - [dashboard-overview](specs/dashboard-overview.md)
 - [device-agent](specs/device-agent.md)
+- [evidence-ingestion-api](specs/evidence-ingestion-api.md)
 - [framework-catalog-preview](specs/framework-catalog-preview.md)
 - [framework-detail](specs/framework-detail.md)
 - [i18n-complete](specs/i18n-complete.md)

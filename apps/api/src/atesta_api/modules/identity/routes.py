@@ -10,6 +10,7 @@ from sqlalchemy import select
 
 from atesta_api.modules.identity.access import end_date
 from atesta_api.modules.identity.activity import router as activity_router
+from atesta_api.modules.identity.api_tokens import router as api_tokens_router
 from atesta_api.modules.identity.closure import erase_after
 from atesta_api.modules.identity.closure import router as closure_router
 from atesta_api.modules.identity.cognito import IdentityProvider
@@ -33,6 +34,7 @@ router.include_router(activity_router)
 router.include_router(closure_router)
 router.include_router(invitations_router)
 router.include_router(accept_router)
+router.include_router(api_tokens_router)
 
 
 class MembershipOut(BaseModel):

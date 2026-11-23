@@ -22,7 +22,7 @@ export async function unwrap<T>(call: Promise<Result<T>>): Promise<T> {
 }
 
 /** For 204 responses, which carry no body. */
-async function expectOk(call: Promise<{ error?: unknown; response: Response }>): Promise<void> {
+export async function expectOk(call: Promise<{ error?: unknown; response: Response }>): Promise<void> {
   const { error, response } = await call;
   if (!response.ok) throw new ApiError(response.status, errorCode(error));
 }

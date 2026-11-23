@@ -17,6 +17,7 @@ SETTINGS = (
     "app.organization_id",
     "app.invitation_token_sha256",
     "app.training_token_sha256",
+    "app.api_token_sha256",
 )
 
 
@@ -147,6 +148,15 @@ WITH i AS (INSERT INTO incidents (id, organization_id, title, aware_at, signific
   RETURNING id)
 INSERT INTO incident_updates (id, organization_id, incident_id, kind, note, recorded_by)
   SELECT gen_random_uuid(), :o, id, 'note', 'n', :u FROM i;
+WITH k AS (INSERT INTO api_tokens (id, organization_id, name, prefix, token_sha256, created_by,
+  expires_at)
+  VALUES (gen_random_uuid(), :o, 'n', 'atesta_xxxxx', :tok, :u, now() + interval '1 day')
+  RETURNING id),
+v AS (INSERT INTO evidence (id, organization_id, kind, title, source_type, source_id, created_by,
+  collected_at) SELECT gen_random_uuid(), :o, 'attestation', 't', 'api', id, :u, now() FROM k
+  RETURNING id, (SELECT id FROM k) AS token_id)
+INSERT INTO api_ingestions (id, organization_id, token_id, evidence_id, source)
+  SELECT gen_random_uuid(), :o, token_id, id, 'ci' FROM v;
 INSERT INTO probe_child VALUES (:o, :p);
 """
 

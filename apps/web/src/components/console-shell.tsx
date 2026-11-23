@@ -7,7 +7,7 @@ import { type ReactNode, useDeferredValue, useEffect, useId, useRef, useState, u
 import { useOverview } from "@/lib/api/hooks";
 import { useSearch } from "@/lib/api/register-hooks";
 import { LOGOUT_URL } from "@/lib/auth";
-import { type Membership, orgAccessReviews, orgActivity, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgIncidents, orgMyWork, orgPolicies, orgSettings, orgTraining, selectOrg } from "@/lib/org";
+import { type Membership, orgAccessReviews, orgActivity, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgIncidents, orgIntegrations, orgMyWork, orgPolicies, orgSettings, orgTraining, selectOrg } from "@/lib/org";
 import { canInvite, canReviewControls, isContributor } from "@/lib/permissions";
 import { useMe } from "./auth-gate";
 import { Icon, type IconName } from "./icons";
@@ -21,7 +21,7 @@ const DETAIL_PAGES: Record<string, string> = {
   "/app/training-campaign": "/app/training-campaigns",
   "/app/incident": "/app/incidents",
 };
-const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings", "/app/access-reviews", "/app/access-review", "/app/policies", "/app/training-campaigns", "/app/training-campaign", "/app/incidents", "/app/incident"];
+const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings", "/app/access-reviews", "/app/access-review", "/app/policies", "/app/training-campaigns", "/app/training-campaign", "/app/incidents", "/app/incident", "/app/integrations"];
 const DESKTOP = "(min-width: 64rem)";
 
 // The collapsed rail is a remembered preference; media and storage are read as external stores.
@@ -64,7 +64,10 @@ export function useSections(org: Membership | null): { group: string; items: Sec
       ...(canInvite(org.role) ? [{ key: "/app/invitations", label: t("invitations"), href: orgInvitations(id), icon: "invitations" as const }] : []),
     ] },
     { group: c("groups.oversight"), items: canReviewControls(org.role) ? [{ key: "/app/activity", label: t("activity"), href: orgActivity(id), icon: "activity" as const }] : [] },
-    { group: c("groups.organization"), items: org.role === "owner" ? [{ key: "/app/settings", label: t("settings"), href: orgSettings(id), icon: "settings" as const }] : [] },
+    { group: c("groups.organization"), items: [
+      ...(canReviewControls(org.role) ? [{ key: "/app/integrations", label: c("integrations"), href: orgIntegrations(id), icon: "integrations" as const }] : []),
+      ...(org.role === "owner" ? [{ key: "/app/settings", label: t("settings"), href: orgSettings(id), icon: "settings" as const }] : []),
+    ] },
   ];
   return groups.filter((g) => g.items.length > 0);
 }

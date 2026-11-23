@@ -33,6 +33,7 @@
   "evidence.submission_conflict",
   "identity.access_expired",
   "identity.already_member",
+  "identity.api_token_invalid",
   "identity.closure_name_mismatch",
   "identity.email_mismatch",
   "identity.email_unverified",
