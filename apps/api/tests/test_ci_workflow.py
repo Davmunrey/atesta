@@ -274,6 +274,42 @@ def test_dependabot_bumps_opentofu_providers_in_one_pull_request() -> None:
     assert tofu["groups"]["opentofu-providers"]["patterns"] == ["*"]
 
 
+def _minor(version: str) -> tuple[int, int]:
+    major, minor = version.split(".")[:2]
+    return int(major), int(minor)
+
+
+def test_the_newest_python_runs_weekly_and_never_blocks() -> None:
+    """#266: a break on the newest CPython shows up on the Monday run, not on the upgrade day.
+
+    The owner chose weekly and non-blocking (2026-11-23): its own workflow, never triggered by a
+    pull request or a push and never a required check, so it costs no minutes there and a failure
+    never stops a merge.
+    """
+    workflow = yaml.safe_load((WORKFLOWS / "python-newest.yml").read_text())
+    triggers = workflow[True]  # PyYAML reads the bare key `on` as the boolean True
+    assert set(triggers) == {"schedule", "workflow_dispatch"}
+    newest = workflow["jobs"]["python-newest"]
+    current = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())["jobs"]["python"]
+
+    def setup(job: dict[str, Any]) -> dict[str, Any]:
+        steps = job["steps"]
+        return next(s for s in steps if s.get("uses", "").startswith("astral-sh/setup-uv@"))
+
+    assert _minor(setup(newest)["with"]["python-version"]) > _minor(
+        setup(current)["with"]["python-version"]
+    )
+    assert newest["services"] == current["services"]  # the database tests run, never skip
+    assert newest["env"] == current["env"]
+    runs = [s.get("run", "") for s in newest["steps"]]
+    assert "uv run pytest -q" in runs
+    assert any(r.startswith("uv sync") and "--locked" in r for r in runs)
+    ruleset = json.loads(RULESET.read_text())
+    required = next(r for r in ruleset["rules"] if r["type"] == "required_status_checks")
+    contexts = {c["context"] for c in required["parameters"]["required_status_checks"]}
+    assert "python-newest" not in contexts
+
+
 def test_dependabot_keeps_python_on_3_12_and_postgres_on_16() -> None:
     # Python and PostgreSQL majors and minors are planned upgrades of every image, CI job and
     # the RDS engine together; Dependabot proposes only patches (3.12.x, 16.x).

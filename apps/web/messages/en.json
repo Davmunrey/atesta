@@ -55,6 +55,8 @@
     "compliance": {
       "control_not_found": "This control does not exist or is no longer active in the catalog.",
       "control_not_manual": "Automated checks evaluate this control, so it cannot be reviewed manually.",
+      "review_evidence_required": "To mark it implemented, cite at least one evidence item of this control.",
+      "review_evidence_invalid": "One of the cited evidence items is not from this control. Reload the page and choose them again.",
       "not_found": "This framework is unavailable. Return to the overview and choose a published framework.",
       "evidence_not_found": "Some of the evidence given does not exist in this organization.",
       "justification_required": "Add a justification: it is required when the measure does not apply or your decision differs from the proposal.",
@@ -130,6 +132,7 @@
     },
     "scanning": {
       "already_queued": "A scan of this connection is already queued or running. Wait for it to finish.",
+      "daily_limit": "You have used today's 6 manual scans for this connection. Scheduled scans keep running. You can scan again after midnight, Madrid time.",
       "connection_not_active": "This connection is not active yet. Finish its setup and verify it before scanning.",
       "engine_failed": "The scan could not finish. Run it again later.",
       "not_found": "We couldn't find that scan, or you don't have access.",
@@ -141,6 +144,7 @@
   "app": {
     "skipContent": "Skip to content",
     "loading": "Loading…",
+    "retry": "Try again",
     "signOut": "Sign out",
     "signedInAs": "Signed in as {email}",
     "account": "Account",
@@ -267,7 +271,15 @@
       "save": "Save review",
       "saving": "Saving…",
       "cancel": "Cancel",
-      "saved": "Review recorded. The score will update within seconds."
+      "saved": "Review recorded. The score will update within seconds.",
+      "evidence": "Evidence it cites",
+      "evidenceHelp": "Tick what supports the decision. Marking it implemented needs at least one item.",
+      "evidenceLoading": "Loading evidence…",
+      "evidenceNone": "Record evidence for this control first (under “View evidence”) to mark it implemented.",
+      "evidenceRequired": "Tick at least one evidence item to mark it implemented.",
+      "evidenceNewest": "{count, plural, one {Showing the newest item.} other {Showing the # newest items.}}",
+      "cited": "Cited evidence",
+      "citesNone": "Cites no evidence."
     },
     "observationHelp": "Technical observation as of the scan, aggregated across connections. It is distinct from the recorded requirement result.",
     "mappingUnreviewed": "The relationship between this requirement and control has no recorded review yet.",
@@ -872,6 +884,7 @@
       "flags": "Characteristics",
       "noFlags": "Neither significant nor involving personal data",
       "criteria": "What {framework} says: {title}",
+      "criteriaGroup": "What {framework} says ({count, plural, one {# criterion} other {# criteria}})",
       "criteriaSource": "View in the official source",
       "sentWhich": ": “{clock}”"
     }
@@ -1137,6 +1150,15 @@
   "summary": {
     "label": "Summary",
     "never": "Never",
+    "glance": {
+      "title": "Records",
+      "help": "What an audit asks for, at a glance. Each row links to its record.",
+      "record": "Record",
+      "state": "State",
+      "summary": "Summary",
+      "none": "No records",
+      "failed": "Could not load."
+    },
     "policies": {
       "lead": "{attention, plural, =0 {Every policy is approved and up to date.} one {# policy needs attention.} other {# policies need attention.}}",
       "total": "Policies",
@@ -1174,6 +1196,7 @@
     "title": "Evidence the guide proposes ({count, plural, one {# item} other {# items}})",
     "candidate": "A guidance list Atesta wrote from the cited guide. Pending qualified review; it does not assess your organization.",
     "reviewed": "A list Atesta wrote from the cited guide, reviewed by {name} on {date}. It does not assess your organization.",
-    "reference": "{guide} ({edition}), section {section}, p. {page}"
+    "reference": "{guide} ({edition}), section {section}, p. {page}",
+    "shared": "Reference: {reference}"
   }
 }

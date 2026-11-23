@@ -1486,6 +1486,23 @@ export interface components {
             /** Engine */
             engine: string;
         };
+        /** CitedEvidenceOut */
+        CitedEvidenceOut: {
+            /**
+             * Collected At
+             * Format: date-time
+             */
+            collected_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Kind */
+            kind: string;
+            /** Title */
+            title: string;
+        };
         /** ClockLabel */
         ClockLabel: {
             /** En */
@@ -2726,6 +2743,8 @@ export interface components {
         };
         /** ReviewIn */
         ReviewIn: {
+            /** Evidence Ids */
+            evidence_ids?: string[];
             /** Rationale */
             rationale: string;
             status: components["schemas"]["ReviewStatus"];
@@ -2739,6 +2758,8 @@ export interface components {
         ReviewOut: {
             /** Control Key */
             control_key: string;
+            /** Evidence */
+            evidence: components["schemas"]["CitedEvidenceOut"][];
             /** Expired */
             expired: boolean;
             /**

@@ -4,8 +4,9 @@ Findings hold tenant data (message and resource_name may name people): returned 
 of the org, never logged, rendered as text (rules 2 and 5).
 """
 
+import math
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -18,6 +19,7 @@ from atesta_api.modules.scanning.lifecycle import (
     AlreadyQueuedError,
     ConnectionNotActiveError,
     ConnectionNotFoundError,
+    DailyLimitError,
     queue_scan,
 )
 from atesta_api.modules.scanning.models import Finding, Scan
@@ -105,7 +107,22 @@ def scan_now(
         raise _error(409, "scanning.connection_not_active") from None
     except AlreadyQueuedError:
         raise _error(409, "scanning.already_queued") from None
+    except DailyLimitError as limit:
+        raise _daily_limit(limit.retry_at) from None
     return ScanOut.model_validate(scan)
+
+
+def _daily_limit(retry_at: datetime) -> HTTPException:
+    """429 with the next Madrid midnight, as ISO 8601 in UTC and as Retry-After seconds (#265)."""
+    wait = max(1, math.ceil((retry_at - datetime.now(UTC)).total_seconds()))
+    return HTTPException(
+        status_code=429,
+        detail={
+            "code": "scanning.daily_limit",
+            "retry_at": retry_at.astimezone(UTC).isoformat().replace("+00:00", "Z"),
+        },
+        headers={"Retry-After": str(wait)},
+    )
 
 
 @router.get("/scans")
