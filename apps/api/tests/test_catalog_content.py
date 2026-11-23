@@ -535,3 +535,78 @@ def test_scope_profiles_are_checked_against_the_pack(
     )
     with pytest.raises(ValueError, match=message):
         read(tmp_path)
+
+
+# --- scope guide (requirement-register spec, issue 225) -------------------------------------
+
+STEP = {"asset": "information", "key": "C", "es": "¿Qué daño?", "en": "What harm?", "ref": REF}
+GUIDE = {
+    "axis": "nivel",
+    "category_axis": "categoría",
+    "category_by_level": {"BAJO": "BÁSICA"},
+    "steps": [STEP, {**STEP, "asset": "service", "key": "D"}],
+    "notes": [{"es": "Nota propia.", "en": "Own note.", "ref": REF}],
+    "reviewed_by": None,
+}
+
+
+def _guided(root: Path, guide: dict[str, object]) -> None:
+    catalog_files(root)
+
+    def selection(d: dict[str, object]) -> None:
+        req = d["requirements"][0]["attributes"]  # type: ignore[index]
+        req["selection_basis"] = "nivel · C D"
+        req["selection_rules"] = [{"level": "BAJO", "rule": "aplica"}]
+
+    change(root, "frameworks/sample/requirements.yaml", selection)
+    extra = {
+        "id": "R2",
+        "title_es": "Categoría",
+        "source": "https://example.test/standard#r2",
+        "attributes": {
+            "official_text_es": "Texto.",
+            "selection_basis": "categoría · Todas",
+            "selection_rules": [{"level": "BÁSICA", "rule": "aplica"}],
+            "section": "2",
+            "source_sha256": "b" * 64,
+        },
+    }
+    change(root, "frameworks/sample/requirements.yaml", lambda d: d["requirements"].append(extra))
+    change(
+        root,
+        "frameworks/sample/coverage.yaml",
+        lambda d: d["entries"][0]["requirements"].append("R2"),
+    )
+    terms = ("nivel", "C", "D", "BAJO", "categoría", "BÁSICA")
+    labels = [{"term": t, "es": t, "en": t} for t in terms]
+    change(
+        root,
+        "frameworks/sample/pack.yaml",
+        lambda d: d["attributes"].update(scope_guide=guide, term_labels=labels),
+    )
+
+
+def test_a_pack_may_guide_the_scope_dimension_by_dimension(tmp_path: Path) -> None:
+    _guided(tmp_path, GUIDE)
+    guide = read(tmp_path).packs[0].metadata.attributes.scope_guide
+    assert guide is not None
+    assert [(s.asset, s.key) for s in guide.steps] == [("information", "C"), ("service", "D")]
+
+
+@pytest.mark.parametrize(
+    ("guide", "message"),
+    [
+        ({**GUIDE, "steps": [{**STEP, "key": "Z"}]}, "not a key"),
+        ({**GUIDE, "axis": "missing"}, "not a key"),
+        ({**GUIDE, "category_by_level": {"ALTO": "BÁSICA"}}, "category mapping"),
+        ({**GUIDE, "category_by_level": {"BAJO": "ALTA"}}, "category mapping"),
+        ({**GUIDE, "reviewed_on": "2026-11-23"}, "reviewer and the review date"),
+        ({**GUIDE, "steps": [{**STEP, "asset": "person"}]}, "asset"),
+    ],
+)
+def test_a_scope_guide_is_checked_against_the_packs_axes(
+    tmp_path: Path, guide: dict[str, object], message: str
+) -> None:
+    _guided(tmp_path, guide)
+    with pytest.raises(ValueError, match=message):
+        read(tmp_path)

@@ -215,12 +215,39 @@ class TermLabelOut(BaseModel):
     en: str
 
 
+class GuideStepOut(BaseModel):
+    asset: Literal["information", "service"]
+    key: str
+    es: str
+    en: str
+    ref: GuideRef
+
+
+class GuideNoteOut(BaseModel):
+    es: str
+    en: str
+    ref: GuideRef
+
+
+class ScopeGuideOut(BaseModel):
+    """How to value the system, from the pack (requirement-register spec, issue 225)."""
+
+    axis: str
+    category_axis: str
+    category_by_level: dict[str, str]
+    steps: list[GuideStepOut]
+    notes: list[GuideNoteOut]
+    reviewed_by: str | None
+    reviewed_on: date | None
+
+
 class Register(BaseModel):
     framework_key: str
     framework_version: str
     catalog_version: str | None
     axes: dict[str, dict[str, list[str]]]
     profiles: list[ProfileOut]  # published profiles the scope may name (issue 227)
+    scope_guide: ScopeGuideOut | None  # the pack's valuation steps (issue 225)
     groups_es: list[GroupTitle]  # official group headings in the source's order; empty if none
     term_labels: list[TermLabelOut]  # readable ES/EN labels for the official scope terms
     scope: ScopeOut | None
@@ -385,6 +412,11 @@ def _profiles(framework: Framework) -> list[ProfileOut]:
     return [ProfileOut(**p) for p in framework.attributes.get("scope_profiles", [])]
 
 
+def _scope_guide(framework: Framework) -> ScopeGuideOut | None:
+    guide = framework.attributes.get("scope_guide")
+    return ScopeGuideOut(**guide) if guide else None
+
+
 def _profile_levels(framework: Framework, scope: ScopeOut | None) -> dict[str, Any] | None:
     """The profile the scope names, as the pack publishes it; None without one."""
     chosen = scope.axis_values.get(PROFILE) if scope else None
@@ -488,6 +520,7 @@ def read_register(
         catalog_version=framework.catalog_version,
         axes=_axes(requirements),
         profiles=_profiles(framework),
+        scope_guide=_scope_guide(framework),
         groups_es=_groups(framework),
         term_labels=_term_labels(framework),
         scope=scope,

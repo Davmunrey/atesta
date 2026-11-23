@@ -105,3 +105,18 @@ are dropped.
   conditions in section 5 apply only by reference; CCN-STIC 890A (local entities) is not
   imported.
 - **Review:** both profiles carry `reviewed_by: null`. They are candidates until the owner signs.
+
+## Scope guide (draft8, issue 225)
+
+- **Guide:** CCN-STIC 803, "ENS. Valoración de los sistemas", June 2025 edition (NIPO
+  083-25-216-7). Read on 2026-11-23 from the owner's copy (SHA-256
+  `274f34fa4e064978c54a7de28773c854302f32bc53dcbaae75503f3a26c84f56`, 17 pages; printed page
+  numbers equal the PDF page index).
+- **What is taken:** the valuation order (section 1.2, page 5: information for C, I, T and A,
+  then services for D), one question per dimension (sections 3.1 to 3.5, page 9), and notes on
+  the common criteria (2.1, page 7), the recovery time objective (2.2.2, page 8), personal data
+  (3.6, page 9), the result (4.1, page 12) and documentation (4.5, page 15). Every question and
+  note is Atesta's own wording; no sentence and no table (Tables 1 and 2) of the guide is
+  reproduced. `category_by_level` follows RD 311/2022 Annex I section 4, which the guide quotes
+  on page 4.
+- **Review:** `reviewed_by: null`; a candidate until the owner signs.

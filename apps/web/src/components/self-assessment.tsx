@@ -10,6 +10,7 @@ import {
   useRecordScope, type AssessmentInput, type AxisValues, type Register, type RegisterItem,
 } from "@/lib/api/register-hooks";
 import { ErrorMessage } from "./error-message";
+import { ScopeGuide } from "./scope-guide";
 import { Icon } from "./icons";
 
 type Ctx = { orgId: string; frameworkKey: string; canEdit: boolean };
@@ -70,6 +71,7 @@ function ScopeStep({ register, orgId, frameworkKey, canEdit }: Ctx & { register:
   if (axes.length === 0) return <><h3>{t("stepScope")}</h3><p className="text-sm text-muted">{t("noAxes")}</p></>;
   const submit = (e: FormEvent) => { e.preventDefault(); save.mutate((profile ? { ...values, profile } : values) as AxisValues, { onSuccess: () => setEditing(false) }); };
   const adopted = register.profiles.find((p) => p.key === current.profile);
+  const guide = register.scope_guide;
   const show = (value: unknown) => (typeof value === "string" ? term(value).text : "—");
   const summary = axes.map(([axis, def]) => def.keys.length === 0 ? `${term(axis).text}: ${show(current[axis])}`
     : `${term(axis).text}: ${def.keys.map((k) => `${term(k).text} ${show(((current[axis] ?? {}) as Record<string, string>)[k])}`).join(" · ")}`).join(" — ");
@@ -82,6 +84,8 @@ function ScopeStep({ register, orgId, frameworkKey, canEdit }: Ctx & { register:
       {canEdit ? <button className="dashboard-button" onClick={() => setEditing(true)}>{t("changeScope")}</button> : null}
     </> : canEdit ? <form onSubmit={submit} className="scope-form">
       <p className="text-sm text-muted">{t("scopeHelp")}</p>
+      {guide && register.axes[guide.axis] ? <ScopeGuide guide={guide} levels={register.axes[guide.axis]!.levels ?? []} term={term}
+        onApply={(dims, category) => setValues({ ...values, [guide.axis]: { ...(values[guide.axis] as Record<string, string>), ...dims }, ...(category ? { [guide.category_axis]: category } : {}) })} /> : null}
       {axes.map(([axis, def]) => def.keys.length === 0
         ? <AxisSelect key={axis} label={axis} term={term} levels={def.levels} value={values[axis] as string} onChange={(v) => setValues({ ...values, [axis]: v })} />
         : <fieldset key={axis}><legend lang={term(axis).lang}>{term(axis).text}</legend><div className="scope-dimensions">{def.keys.map((k) =>

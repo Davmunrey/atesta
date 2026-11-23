@@ -179,3 +179,21 @@ def test_ens_offers_the_ccn_stic_890c_profiles_as_scope_options() -> None:
         "mp.com.4",
     }
     assert profiles["pce_rfs_small_it"].levels["mp.eq.2"] == "MEDIO"
+
+
+def test_ens_guides_the_scope_with_the_ccn_stic_803_valuation_order() -> None:
+    """requirement-register spec, issue 225: information (C, I, T, A), then services (D)."""
+    ens = next(p for p in _catalog().packs if p.metadata.id == "ens_rd311_2022")
+    guide = ens.metadata.attributes.scope_guide
+    assert guide is not None and guide.reviewed_by is None
+    assert [(s.asset, s.key) for s in guide.steps] == [
+        ("information", "C"),
+        ("information", "I"),
+        ("information", "T"),
+        ("information", "A"),
+        ("service", "D"),
+    ]
+    assert guide.category_by_level == {"BAJO": "BÁSICA", "MEDIO": "MEDIA", "ALTO": "ALTA"}
+    refs = {(r.ref.guide, r.ref.edition, r.ref.section, r.ref.page) for r in guide.notes}
+    assert ("CCN-STIC 803", "2025-06", "4.1", 12) in refs
+    assert ("CCN-STIC 803", "2025-06", "4.5", 15) in refs

@@ -482,3 +482,28 @@ def test_a_decision_against_the_profile_needs_a_justification(
     assert refused.json()["detail"]["code"] == "compliance.justification_required"
     justified = assessment(justification="Prestamos un servicio del anexo I de NIS2.")
     assert client.post(url, json=justified, headers=auth(subs["owner"])).status_code == 201
+
+
+def test_the_register_returns_the_packs_scope_guide(
+    client: TestClient, superuser: Engine, pack: str
+) -> None:
+    guide = {
+        "axis": "nivel",
+        "category_axis": "categoría",
+        "category_by_level": {"BAJO": "BÁSICA"},
+        "steps": [{"asset": "information", "key": "C", "es": "¿Qué daño?", "en": "What harm?",
+                   "ref": PROFILE["refs"][0]}],
+        "notes": [],
+        "reviewed_by": None,
+        "reviewed_on": None,
+    }  # fmt: skip
+    with superuser.begin() as conn:
+        conn.execute(
+            text("UPDATE frameworks SET attributes = CAST(:a AS jsonb) WHERE key = :k"),
+            {"k": pack, "a": json.dumps({"scope_guide": guide})},
+        )
+    org, subs = org_with(client, superuser)
+    register = client.get(base(org, pack) + "/register", headers=auth(subs["owner"])).json()
+    assert register["scope_guide"]["steps"][0]["key"] == "C"
+    assert register["scope_guide"]["category_by_level"] == {"BAJO": "BÁSICA"}
+    assert register["profiles"] == []

@@ -47,6 +47,58 @@ attributes:
     - https://www.boe.es/buscar/act.php?id=BOE-A-1996-8930#a13
     - https://www.ccn-cert.cni.es/es/seguridad-al-dia/novedades-ccn-cert/13155-el-ccn-actualiza-cuatro-guias-ccn-stic-de-su-serie-800-sobre-el-esquema-nacional-de-seguridad.html
   verified_on: '2026-11-13'
+  # Scope guide (requirement-register spec, issue 225): the valuation order of CCN-STIC 803
+  # (June 2025), in Atesta's own words with section and page. Never copied; a candidate.
+  scope_guide:
+    axis: nivel
+    category_axis: categoría
+    category_by_level: {BAJO: BÁSICA, MEDIO: MEDIA, ALTO: ALTA}
+    steps:
+    - asset: information
+      key: C
+      es: "Confidencialidad: ¿qué daño causaría que esta información llegara a personas sin autorización para conocerla?"
+      en: "Confidentiality: what harm would follow if this information reached people not authorised to know it?"
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '3.1', page: 9}
+    - asset: information
+      key: I
+      es: "Integridad: ¿qué daño causaría que alguien sin permiso la cambiara, o que quedara incompleta o inexacta?"
+      en: "Integrity: what harm would follow if someone without permission changed it, or it were left incomplete or inaccurate?"
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '3.2', page: 9}
+    - asset: information
+      key: T
+      es: "Trazabilidad: ¿qué daño causaría no poder averiguar después quién la consultó o la modificó?"
+      en: "Traceability: what harm would follow if you could not find out afterwards who read or changed it?"
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '3.3', page: 9}
+    - asset: information
+      key: A
+      es: "Autenticidad: ¿qué daño causaría que la información no fuera auténtica, es decir, que no viniera de quien dice venir?"
+      en: "Authenticity: what harm would follow if the information were not authentic, that is, not from whom it claims to be?"
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '3.4', page: 9}
+    - asset: service
+      key: D
+      es: "Disponibilidad: ¿qué daño causaría que quien está autorizado no pudiera usar el servicio cuando lo necesita? Pensad en el tiempo máximo de interrupción tolerable."
+      en: "Availability: what harm would follow if authorised people could not use the service when they need it? Think of the longest interruption you can tolerate."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '3.5', page: 9}
+    notes:
+    - es: "Valorad primero cada tipo de información (C, I, T, A) y después cada servicio (D); los servicios finalistas suelen marcar los niveles más exigentes."
+      en: "Value each information type first (C, I, T, A), then each service (D); the services you exist to provide usually set the most demanding levels."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '1.2', page: 5}
+    - es: "Para cada dimensión, medid el daño sobre los objetivos de la organización, sus activos y el cumplimiento de la normativa, incluidos los derechos de las personas: limitado es bajo, grave es medio y muy grave es alto."
+      en: "For each dimension, weigh the harm to the organization's objectives, its assets and legal compliance, including people's rights: limited is low, serious is medium and very serious is high."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '2.1', page: 7}
+    - es: "En disponibilidad, cuanto más corto sea el tiempo de recuperación objetivo (RTO), más alto el nivel. La guía da plazos orientativos."
+      en: "For availability, the shorter the recovery time objective (RTO), the higher the level. The guide gives indicative times."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '2.2.2', page: 8}
+    - es: "Si hay datos personales, partid del análisis de riesgos o de la evaluación de impacto de esos tratamientos."
+      en: "Where there is personal data, start from the risk analysis or impact assessment of that processing."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '3.6', page: 9}
+    - es: "El sistema toma en cada dimensión el nivel más alto de sus activos, y su categoría sigue a la dimensión más alta."
+      en: "The system takes, in each dimension, the highest level among its assets, and its category follows the highest dimension."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '4.1', page: 12}
+    - es: "Atesta no guarda esta hoja. Documentad las valoraciones y sus razones, y que las aprueben los responsables de la información y de los servicios."
+      en: "Atesta does not keep this worksheet. Document the valuations and their reasons, and have the information and service owners approve them."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '4.5', page: 15}
+    reviewed_by: null
   # Scope profiles (requirement-register spec, issue 227): CCN-STIC 890C (November 2026),
   # section 4 statement of applicability, pages 8 to 10. Each value is the column's category or
   # level, or n.a. (N/A and N/A (*) in the guide). Criteria cite section 5; never copied.

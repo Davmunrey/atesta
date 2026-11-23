@@ -104,6 +104,44 @@ class ScopeProfile(Content):
         return self
 
 
+GuideText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)]
+
+
+class ScopeGuideStep(Content):
+    """One valuation question: an asset type and one dimension key, in Atesta's own words."""
+
+    asset: Literal["information", "service"]
+    key: Text
+    es: GuideText
+    en: GuideText
+    ref: GuideReference
+
+
+class ScopeGuideNote(Content):
+    es: GuideText
+    en: GuideText
+    ref: GuideReference
+
+
+class ScopeGuide(Content):
+    """How to value the system before recording the scope (requirement-register spec, issue 225):
+    ordered steps on the pack's dimension axis, and the category each level leads to."""
+
+    axis: Text
+    category_axis: Text
+    category_by_level: dict[str, Text] = Field(min_length=1)
+    steps: list[ScopeGuideStep] = Field(min_length=1, max_length=20)
+    notes: list[ScopeGuideNote] = Field(default_factory=list, max_length=10)
+    reviewed_by: Text | None
+    reviewed_on: date | None = None
+
+    @model_validator(mode="after")
+    def signed_in_full(self) -> Self:
+        if (self.reviewed_by is None) != (self.reviewed_on is None):
+            raise ValueError("a signed guide names its reviewer and the review date")
+        return self
+
+
 class RequirementContext(Content):
     """Official text of one requirement (content model v2). Selection tables by category or
     dimension are optional; an act also published in English carries its official English text."""
@@ -233,6 +271,7 @@ class PackContext(Content):
     term_labels: list[TermLabel] = Field(default_factory=list)
     reporting_clocks: list[ReportingClock] = Field(default_factory=list)
     scope_profiles: list[ScopeProfile] = Field(default_factory=list)
+    scope_guide: ScopeGuide | None = None
     incident_criteria: list[IncidentCriterion] = Field(default_factory=list)
 
 

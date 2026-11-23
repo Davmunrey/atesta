@@ -2124,6 +2124,14 @@ export interface components {
             /** Title En */
             title_en?: string | null;
         };
+        /** GuideNoteOut */
+        GuideNoteOut: {
+            /** En */
+            en: string;
+            /** Es */
+            es: string;
+            ref: components["schemas"]["GuideRef"];
+        };
         /** GuideRef */
         GuideRef: {
             /** Edition */
@@ -2148,6 +2156,21 @@ export interface components {
             page: number;
             /** Section */
             section: string;
+        };
+        /** GuideStepOut */
+        GuideStepOut: {
+            /**
+             * Asset
+             * @enum {string}
+             */
+            asset: "information" | "service";
+            /** En */
+            en: string;
+            /** Es */
+            es: string;
+            /** Key */
+            key: string;
+            ref: components["schemas"]["GuideRef"];
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -2454,6 +2477,7 @@ export interface components {
             scope_en: string;
             /** Scope Es */
             scope_es: string;
+            scope_guide?: components["schemas"]["ScopeGuide"] | null;
             /** Scope Profiles */
             scope_profiles?: components["schemas"]["ScopeProfile"][];
             /** Source Refs */
@@ -2602,6 +2626,7 @@ export interface components {
             profiles: components["schemas"]["ProfileOut"][];
             review: components["schemas"]["AssessmentReviewOut"] | null;
             scope: components["schemas"]["ScopeOut"] | null;
+            scope_guide: components["schemas"]["ScopeGuideOut"] | null;
             /** Term Labels */
             term_labels: components["schemas"]["TermLabelOut"][];
         };
@@ -2873,6 +2898,77 @@ export interface components {
              * @enum {string}
              */
             status: "queued" | "running" | "collected" | "succeeded" | "partial" | "failed" | "blocked";
+        };
+        /**
+         * ScopeGuide
+         * @description How to value the system before recording the scope (requirement-register spec, issue 225):
+         *     ordered steps on the pack's dimension axis, and the category each level leads to.
+         */
+        ScopeGuide: {
+            /** Axis */
+            axis: string;
+            /** Category Axis */
+            category_axis: string;
+            /** Category By Level */
+            category_by_level: {
+                [key: string]: string;
+            };
+            /** Notes */
+            notes?: components["schemas"]["ScopeGuideNote"][];
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed On */
+            reviewed_on?: string | null;
+            /** Steps */
+            steps: components["schemas"]["ScopeGuideStep"][];
+        };
+        /** ScopeGuideNote */
+        ScopeGuideNote: {
+            /** En */
+            en: string;
+            /** Es */
+            es: string;
+            ref: components["schemas"]["GuideReference"];
+        };
+        /**
+         * ScopeGuideOut
+         * @description How to value the system, from the pack (requirement-register spec, issue 225).
+         */
+        ScopeGuideOut: {
+            /** Axis */
+            axis: string;
+            /** Category Axis */
+            category_axis: string;
+            /** Category By Level */
+            category_by_level: {
+                [key: string]: string;
+            };
+            /** Notes */
+            notes: components["schemas"]["GuideNoteOut"][];
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed On */
+            reviewed_on: string | null;
+            /** Steps */
+            steps: components["schemas"]["GuideStepOut"][];
+        };
+        /**
+         * ScopeGuideStep
+         * @description One valuation question: an asset type and one dimension key, in Atesta's own words.
+         */
+        ScopeGuideStep: {
+            /**
+             * Asset
+             * @enum {string}
+             */
+            asset: "information" | "service";
+            /** En */
+            en: string;
+            /** Es */
+            es: string;
+            /** Key */
+            key: string;
+            ref: components["schemas"]["GuideReference"];
         };
         /** ScopeIn */
         ScopeIn: {
