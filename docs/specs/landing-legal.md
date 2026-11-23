@@ -82,6 +82,11 @@ Motion
 
 Legal pages (Spanish is the binding version)
 
+- [ ] Until the owner supplies the identity and a lawyer reviews the texts, both pages open with a
+      visible draft notice, mark every clause as a draft pending legal review, and show the
+      PENDIENTE placeholders of `src/content/legal-entity.ts`; no identity data is invented and no
+      clause reads as final (owner, 23/11/2026; #316). `check-legal` blocks a release meanwhile.
+
 - [ ] `/aviso-legal` shows the information in LSSI art. 10.1 a), b), e) and g): name or company
       name, address, email and another direct contact channel, registry details (if a company),
       NIF, codes of conduct (none). 10.1 f) does not apply while no price is shown.
