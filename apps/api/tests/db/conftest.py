@@ -22,6 +22,7 @@ from atesta_api.modules.identity.cognito import (
     AccessToken,
     ExpiredTokenError,
     InvalidTokenError,
+    ProviderUnavailableError,
     UserInfo,
 )
 from atesta_api.platform import db
@@ -162,6 +163,8 @@ class FakeOAuth:
     def __init__(self) -> None:
         self.exchanged: list[tuple[str, str]] = []
         self.refreshed: list[str] = []
+        self.revoked: list[str] = []
+        self.revoke_fails = False
         self.nonce = ""
 
     def authorize_url(self, *, state: str, nonce: str, challenge: str, lang: str) -> str:
@@ -178,13 +181,18 @@ class FakeOAuth:
 
     def refresh(self, refresh_token: str) -> TokenSet:
         self.refreshed.append(refresh_token)
-        if not refresh_token.startswith("rt-"):
+        if not refresh_token.startswith("rt-") or refresh_token in self.revoked:
             raise InvalidTokenError
         return TokenSet(
             access_token=f"tok-{refresh_token.removeprefix('rt-')}",
             refresh_token=None,
             id_token=None,
         )
+
+    def revoke(self, refresh_token: str) -> None:
+        if self.revoke_fails:
+            raise ProviderUnavailableError
+        self.revoked.append(refresh_token)
 
     def logout_url(self) -> str:
         return "https://auth.example.com/logout?client_id=client-1&logout_uri=https%3A%2F%2Fapp.example.com%2F"

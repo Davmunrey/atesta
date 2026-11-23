@@ -275,6 +275,30 @@ def test_rejected_grant_raises_invalid_token() -> None:
         _oauth(lambda r: httpx.Response(400, json={"error": "invalid_grant"})).refresh("r")
 
 
+def test_revoke_posts_the_refresh_token_and_tells_an_outage_from_a_refusal() -> None:
+    """POST /oauth2/revoke with token and client_id, no secret (public client, #324)."""
+    seen: list[dict[str, str]] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        assert request.url == "https://auth.example.com/oauth2/revoke"
+        assert "authorization" not in request.headers
+        seen.append(dict(httpx.QueryParams(request.content.decode())))
+        return httpx.Response(200)
+
+    _oauth(handler).revoke("r-1")
+    assert seen == [{"token": "r-1", "client_id": "client-1"}]
+    with pytest.raises(InvalidTokenError):
+        _oauth(lambda r: httpx.Response(400, json={"error": "invalid_request"})).revoke("r")
+    with pytest.raises(ProviderUnavailableError):
+        _oauth(lambda r: httpx.Response(503)).revoke("r")
+
+    def down(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("unreachable")
+
+    with pytest.raises(ProviderUnavailableError):
+        _oauth(down).revoke("r")
+
+
 def test_id_token_nonce_needs_a_valid_id_token() -> None:
     id_token = token(token_use="id", aud="client-1", nonce="n-1", client_id=None, scope=None)
     oauth = _oauth(lambda r: httpx.Response(500))
