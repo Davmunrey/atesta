@@ -286,15 +286,16 @@ def test_every_container_is_locked_down_and_logs_to_its_own_group() -> None:
     assert locked["readonlyRootFilesystem"] is True and locked["privileged"] is False
     assert locked["user"] == "10001"
     assert locked["linuxParameters"]["capabilities"]["drop"] == ["ALL"]
-    assert set(CONTAINERS) == {"api", "worker", "migrate", "scan"}
+    assert set(CONTAINERS) == {"api", "worker", "migrate", "bootstrap", "scan"}
     for name, container in CONTAINERS.items():
         assert container.startswith("${merge(local.locked, {"), name
         assert 'logDriver = "awslogs"' in container, name
-        assert f'aws_cloudwatch_log_group.this["{name}"].name' in container, name
+        group = "migrate" if name == "bootstrap" else name  # one-off tasks share a group
+        assert f'aws_cloudwatch_log_group.this["{group}"].name' in container, name
 
 
 def test_secrets_come_only_from_secrets_manager_never_from_plain_environment() -> None:
-    for name in ("api", "worker", "migrate"):
+    for name in ("api", "worker", "migrate", "bootstrap"):
         assert f"secrets = [for k, arn in var.secrets.{name} :" in CONTAINERS[name], name
     assert (
         "secrets" not in CONTAINERS["scan"]
@@ -303,7 +304,7 @@ def test_secrets_come_only_from_secrets_manager_never_from_plain_environment() -
     assert "DATABASE_URL|_KEY|SECRET|PASSWORD|TOKEN" in rule
     exec_policy = ECS_POLICIES["execution"]["statement"]
     read = next(s for s in exec_policy if "secretsmanager:GetSecretValue" in s["actions"])
-    assert "*" not in str(read["resources"])
+    assert read["resources"] == "${local.secret_arns}"  # listed ARNs only, JSON-key suffix removed
 
 
 def test_images_are_pinned_by_digest_and_registries_are_immutable() -> None:
@@ -501,3 +502,11 @@ def test_the_apply_role_manages_only_what_the_platform_uses() -> None:
     roles = resources("modules/github-oidc/main.tf")["aws_iam_role.github"]
     assert roles["name"] == "${var.name}-${each.key}"
     assert _modules("prod")["github_oidc"]["name"] == "atesta-prod"
+
+
+def test_the_bootstrap_task_gets_the_master_password_only_as_a_secret() -> None:
+    platform = {k: v for m in load("modules/platform/main.tf")["module"] for k, v in m.items()}
+    bootstrap = platform["ecs"]["secrets"]["bootstrap"]
+    assert bootstrap["ATESTA_MASTER_PASSWORD"] == "${module.database.master_secret_arn}:password::"
+    assert platform["ecs"]["decrypt_key_arns"] == ["${module.kms.database_key_arn}"]
+    assert "db_bootstrap" in CONTAINERS["bootstrap"]

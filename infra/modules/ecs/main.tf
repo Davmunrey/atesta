@@ -69,8 +69,19 @@ variable "environment" {
 }
 
 variable "secrets" {
-  description = "Per container: environment variable name to Secrets Manager ARN."
-  type        = object({ api = map(string), worker = map(string), migrate = map(string) })
+  description = "Per container: variable name to Secrets Manager ARN (or ARN:json-key:: for one key)."
+  type = object({
+    api       = map(string)
+    worker    = map(string)
+    migrate   = map(string)
+    bootstrap = optional(map(string), {})
+  })
+}
+
+variable "decrypt_key_arns" {
+  description = "Other KMS keys the listed secrets use, such as the database key of the RDS master secret."
+  type        = list(string)
+  default     = []
 }
 
 variable "migrate_command" {
@@ -95,6 +106,11 @@ locals {
   account         = data.aws_caller_identity.current.account_id
   region          = data.aws_region.current.region
   scan_family_arn = "arn:aws:ecs:${local.region}:${local.account}:task-definition/${var.name}-scan"
+  # IAM needs the secret's own ARN, without a ":json-key::" suffix.
+  secret_arns = distinct([
+    for ref in concat(values(var.secrets.api), values(var.secrets.worker), values(var.secrets.migrate), values(var.secrets.bootstrap)) :
+    regex("^arn:aws:secretsmanager:[^:]+:[0-9]+:secret:[^:]+", ref)
+  ])
   # Every container: read-only root, non-root user, no privileges, no Linux capabilities.
   locked = {
     readonlyRootFilesystem = true
@@ -125,6 +141,15 @@ locals {
       environment      = [for k, v in var.environment : { name = k, value = v }]
       secrets          = [for k, arn in var.secrets.migrate : { name = k, valueFrom = arn }]
       logConfiguration = { logDriver = "awslogs", options = { "awslogs-group" = aws_cloudwatch_log_group.this["migrate"].name, "awslogs-region" = local.region, "awslogs-stream-prefix" = "migrate" } }
+    })
+    # One-off: bootstrap.sql and role passwords as the RDS master (deploy runbook).
+    bootstrap = merge(local.locked, {
+      mountPoints      = [{ sourceVolume = "tmp", containerPath = "/tmp" }]
+      image            = var.images.api
+      command          = ["python", "-m", "atesta_api.platform.db_bootstrap"]
+      environment      = [for k, v in var.environment : { name = k, value = v }]
+      secrets          = [for k, arn in var.secrets.bootstrap : { name = k, valueFrom = arn }]
+      logConfiguration = { logDriver = "awslogs", options = { "awslogs-group" = aws_cloudwatch_log_group.this["migrate"].name, "awslogs-region" = local.region, "awslogs-stream-prefix" = "bootstrap" } }
     })
     scan = merge(local.locked, {
       # Same writable paths as the local runner's tmpfs mounts (scanner-connectors spec).
@@ -176,12 +201,12 @@ data "aws_iam_policy_document" "execution" {
   statement {
     sid       = "ReadListedSecrets"
     actions   = ["secretsmanager:GetSecretValue"]
-    resources = distinct(concat(values(var.secrets.api), values(var.secrets.worker), values(var.secrets.migrate)))
+    resources = local.secret_arns
   }
   statement {
     sid       = "DecryptSecretsAndImages"
     actions   = ["kms:Decrypt"]
-    resources = [var.secrets_key_arn]
+    resources = concat([var.secrets_key_arn], var.decrypt_key_arns)
   }
 }
 
@@ -320,7 +345,7 @@ resource "aws_vpc_security_group_egress_rule" "scan_https" {
 # --- Tasks and services ---------------------------------------------------------------------
 
 resource "aws_ecs_task_definition" "this" {
-  for_each                 = { api = aws_iam_role.api.arn, worker = aws_iam_role.worker.arn, migrate = null }
+  for_each                 = { api = aws_iam_role.api.arn, worker = aws_iam_role.worker.arn, migrate = null, bootstrap = null }
   family                   = "${var.name}-${each.key}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]

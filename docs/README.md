@@ -84,8 +84,10 @@ Start with the question you have.
 - [demo](runbooks/demo.md): a realistic demo organization on the local stack.
 - [offboarding](runbooks/offboarding.md): export, closure and erasure at the end of a contract.
 - [security-incident](runbooks/security-incident.md): triage, containment, fix and notification.
+- [deploy](runbooks/deploy.md): from no AWS account to a running environment, rollback, and the
+  monthly cost estimate.
 
-The deploy, rollback and restore runbooks come with the production infrastructure (ROADMAP Gate A).
+Restore drills come with the first applied environment.
 
 ## Catalog
 
