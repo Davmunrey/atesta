@@ -60,3 +60,16 @@ it("shows the expected evidence of a requirement that has no controls yet, opene
   expect(disclosure.hasAttribute("open")).toBe(false);
   expect(within(disclosure).getByText("Referencia: CCN-STIC 808 (abril de 2026), apartado 6.2.1 (org.1), pág. 18")).toBeTruthy();
 });
+
+it("names the evidence each manual review cites, and says when a review cites none (issue 321)", async () => {
+  const review = { id: "r1", control_key: "ctl.paper", status: "pass" as const, rationale: "Acta.", valid_until: "2027-10-01", reviewed_by: "u1",
+    reviewed_at: "2026-10-02T09:30:00Z", expired: false, evidence: [{ id: "e1", title: "Acta del comité", kind: "attestation", collected_at: "2026-10-01T10:00:00Z" }] };
+  const paper = { key: "ctl.paper", title_es: "Política", title_en: "Policy", manual: true, observed_status: "manual", review, evidence: [] };
+  const old = { ...paper, key: "ctl.old", title_es: "Antigua", review: { ...review, evidence: [] } };
+  const withReviews = { ...dossier, requirements: [{ ...dossier.requirements[0]!, controls: [paper, old] }] };
+  stubApi({ [`GET ${url}`]: [200, withReviews] });
+  renderWithProviders(<DossierView org={auditor} frameworkKey="ens" />);
+  const evidence = await screen.findByRole("region", { name: "Evidencias por requisito" });
+  expect(within(evidence).getByText("Cita una evidencia: Acta del comité.")).toBeTruthy();
+  expect(within(evidence).getByText("La revisión no cita evidencias.")).toBeTruthy();
+});

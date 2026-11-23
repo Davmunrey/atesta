@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { LocaleSwitcher } from "@/components/locale-switcher";
 import { LOCALE_COOKIE, ONE_YEAR_SECONDS } from "@/i18n/locale";
 import { INVITE_KEY } from "@/lib/invite";
 
@@ -18,7 +16,6 @@ const SECTIONS = ["inventory", "storage", "signin", "choices"] as const;
 export default function CookiesPage() {
   const t = useTranslations("cookies");
   const brand = useTranslations("brand");
-  const app = useTranslations("app");
   function duration(seconds: number) {
     if (seconds >= 86400) return t("days", { count: seconds / 86400 });
     if (seconds >= 3600) return t("hours", { count: seconds / 3600 });
@@ -26,12 +23,7 @@ export default function CookiesPage() {
   }
   return (
     <>
-      <header className="document-header">
-        <a href="#cookie-content" className="skip-link">{app("skipContent")}</a>
-        <Link href="/" className="brand-mark" aria-label={t("home", { brand: brand("name") })}>{brand("name")}</Link>
-        <LocaleSwitcher />
-      </header>
-      <main id="cookie-content" tabIndex={-1} className="policy-page">
+      <main id="content" tabIndex={-1} className="policy-page">
         <div className="policy-heading">
           <h1 className="page-title">{t("title")}</h1>
           <p className="text-sm text-muted">{t("updated")}</p>

@@ -31,7 +31,7 @@ router = APIRouter(prefix="/api/v1/orgs/{org_id}", tags=["compliance"])
 INCIDENT_CONTROL = "ctl.incident_response"
 CLOCK_SKEW = timedelta(minutes=5)
 
-type UpdateKind = Literal["note", "clock", "closed"]
+type UpdateKind = Literal["note", "clock", "closed", "classified"]
 
 
 def _error(status: int, code: str) -> HTTPException:
@@ -66,6 +66,8 @@ def clock_defs(session: Session) -> list[ClockDef]:
                 months=clock.get("months"),
                 after=f"{key}:{after}" if after else None,
                 needs=clock["needs"],
+                starts=clock.get("starts", "aware"),
+                outer_limit_hours=clock.get("outer_limit_hours"),
             )
             out.append(
                 ClockDef(
@@ -87,36 +89,53 @@ class CriterionOut(BaseModel):
     source: str
 
 
+def _known_and_past(value: datetime | None) -> datetime | None:
+    if value is None:
+        return None
+    if value.tzinfo is None:
+        raise ValueError("the time needs a time zone")
+    if value > datetime.now(UTC) + CLOCK_SKEW:
+        raise ValueError("the time is in the future")
+    return value
+
+
 class IncidentIn(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     aware_at: datetime
     significant: bool
     personal_data: bool
+    classified_at: datetime | None = None  # classification as significant (#224)
 
     @field_validator("title")
     @classmethod
     def tidy(cls, value: str) -> str:
         return filled(value)
 
-    @field_validator("aware_at")
-    @classmethod
-    def known_and_past(cls, value: datetime) -> datetime:
-        if value.tzinfo is None:
-            raise ValueError("the time needs a time zone")
-        if value > datetime.now(UTC) + CLOCK_SKEW:
-            raise ValueError("the time is in the future")
-        return value
+    _times = field_validator("aware_at", "classified_at")(_known_and_past)
+
+    @model_validator(mode="after")
+    def classified_when_significant(self) -> "IncidentIn":
+        if self.classified_at is not None and not self.significant:
+            raise ValueError("only a significant incident has a classification time")
+        if self.classified_at is not None and self.classified_at < self.aware_at:
+            raise ValueError("an incident is classified after the organization became aware")
+        return self
 
 
 class UpdateIn(BaseModel):
     kind: UpdateKind
     clock: str | None = Field(default=None, max_length=100)
     note: str = Field(default="", max_length=2000)
+    classified_at: datetime | None = None
+
+    _time = field_validator("classified_at")(_known_and_past)
 
     @model_validator(mode="after")
     def clock_for_clocks(self) -> "UpdateIn":
         if (self.kind == "clock") != (self.clock is not None):
             raise ValueError("a clock update names its clock, and only it does")
+        if (self.kind == "classified") != (self.classified_at is not None):
+            raise ValueError("a classification gives its time, and only it does")
         if self.kind == "note" and not self.note.strip():
             raise ValueError("a note needs text")
         return self
@@ -140,12 +159,14 @@ class UpdateOut(BaseModel):
     clock: str | None
     note: str
     recorded_at: datetime
+    classified_at: datetime | None = None
 
 
 class IncidentSummary(BaseModel):
     id: uuid.UUID
     title: str
     aware_at: datetime
+    classified_at: datetime | None  # when it was classified as significant, if recorded
     significant: bool
     personal_data: bool
     created_at: datetime
@@ -169,19 +190,25 @@ def _updates(session: Session, org: uuid.UUID, ids: Sequence[uuid.UUID]) -> list
     )
 
 
+def _classification(updates: list[IncidentUpdate]) -> IncidentUpdate | None:
+    return next((u for u in updates if u.kind == "classified"), None)
+
+
 def _clocks(
     incident: Incident, updates: list[IncidentUpdate], defs: list[ClockDef]
 ) -> list[ClockOut]:
     met = {u.clock_ref: u.recorded_at for u in updates if u.clock_ref is not None}
+    classified = _classification(updates)
     states: dict[str, ClockState] = {
         s.ref: s
         for s in clock_states(
             [d.rule for d in defs],
             aware_at=incident.aware_at,
-            significant=incident.significant,
+            significant=incident.significant or classified is not None,
             personal_data=incident.personal_data,
             met=met,
             now=datetime.now(UTC),
+            classified_at=classified.classified_at if classified else None,
         )
     }
     return [
@@ -206,11 +233,13 @@ def _out(incident: Incident, updates: list[IncidentUpdate], defs: list[ClockDef]
     clocks = _clocks(incident, updates, defs)
     closed = next((u.recorded_at for u in updates if u.kind == "closed"), None)
     pending = [c.due_at for c in clocks if c.state in ("running", "overdue") and c.due_at]
+    classified = _classification(updates)
     return IncidentOut(
         id=incident.id,
         title=incident.title,
         aware_at=incident.aware_at,
-        significant=incident.significant,
+        classified_at=classified.classified_at if classified else None,
+        significant=incident.significant or classified is not None,
         personal_data=incident.personal_data,
         created_at=incident.created_at,
         closed_at=closed,
@@ -223,6 +252,7 @@ def _out(incident: Incident, updates: list[IncidentUpdate], defs: list[ClockDef]
                 clock=u.clock_ref,
                 note=u.note,
                 recorded_at=u.recorded_at,
+                classified_at=u.classified_at,
             )
             for u in updates
         ],
@@ -264,6 +294,9 @@ def create_incident(
     session.add(incident)
     session.flush()
     session.refresh(incident)
+    updates: list[IncidentUpdate] = []
+    if body.classified_at is not None:
+        updates.append(_classify(session, incident, member.user_id, body.classified_at))
     record(
         session,
         organization_id=member.organization_id,
@@ -271,9 +304,33 @@ def create_incident(
         target_type="incident",
         target_id=str(incident.id),
         actor_user_id=member.user_id,
-        metadata={"significant": body.significant, "personal_data": body.personal_data},
+        metadata={
+            "significant": body.significant,
+            "personal_data": body.personal_data,
+            "classified": body.classified_at is not None,
+        },
     )
-    return _out(incident, [], clock_defs(session))
+    return _out(incident, updates, clock_defs(session))
+
+
+def _classify(
+    session: Session, incident: Incident, author: uuid.UUID, at: datetime, note: str = ""
+) -> IncidentUpdate:
+    """The time the organization classified the incident as significant; once per incident."""
+    if at < incident.aware_at:
+        raise _error(422, "compliance.classified_before_aware")
+    update = IncidentUpdate(
+        organization_id=incident.organization_id,
+        incident_id=incident.id,
+        kind="classified",
+        classified_at=at,
+        note=note.strip(),
+        recorded_by=author,
+    )
+    session.add(update)
+    session.flush()
+    session.refresh(update)
+    return update
 
 
 @router.get("/incidents")
@@ -421,17 +478,23 @@ def add_update(
             raise _error(409, "compliance.clock_met")
         if clock.state == "waiting":
             raise _error(409, "compliance.clock_waiting")
-    update = IncidentUpdate(
-        organization_id=org,
-        incident_id=incident_id,
-        kind=body.kind,
-        clock_ref=body.clock,
-        note=body.note.strip(),
-        recorded_by=member.user_id,
-    )
-    session.add(update)
-    session.flush()
-    session.refresh(update)
+    if body.kind == "classified":
+        if before.classified_at is not None:
+            raise _error(409, "compliance.incident_classified")
+        at = cast(datetime, body.classified_at)  # UpdateIn requires it for this kind
+        update = _classify(session, incident, member.user_id, at, body.note)
+    else:
+        update = IncidentUpdate(
+            organization_id=org,
+            incident_id=incident_id,
+            kind=body.kind,
+            clock_ref=body.clock,
+            note=body.note.strip(),
+            recorded_by=member.user_id,
+        )
+        session.add(update)
+        session.flush()
+        session.refresh(update)
     after = _out(incident, _updates(session, org, [incident_id]), defs)
     if body.kind == "closed":
         email, locale = person(session, member.user_id)

@@ -78,7 +78,9 @@
       "clock_unknown": "That deadline does not apply to this incident.",
       "clock_met": "That deadline is already recorded.",
       "clock_waiting": "That deadline starts once the previous one is recorded.",
-      "report_month_invalid": "The month is not valid or has not started yet."
+      "report_month_invalid": "The month is not valid or has not started yet.",
+      "incident_classified": "This incident already has its classification as significant recorded.",
+      "classified_before_aware": "The classification cannot be earlier than becoming aware of the incident."
     },
     "unknown": "Something went wrong. Try again, and contact support if it keeps happening.",
     "auth": {
@@ -215,6 +217,7 @@
     "accessOn": "Access until {date}"
   },
   "invite": {
+    "unavailable": "Invitation unavailable",
     "title": "Join the organization",
     "signedInAs": "You are accepting the invitation as {email}.",
     "accept": "Accept invitation",
@@ -277,9 +280,11 @@
       "evidenceLoading": "Loading evidence…",
       "evidenceNone": "Record evidence for this control first (under “View evidence”) to mark it implemented.",
       "evidenceRequired": "Tick at least one evidence item to mark it implemented.",
-      "evidenceNewest": "{count, plural, one {Showing the newest item.} other {Showing the # newest items.}}",
       "cited": "Cited evidence",
-      "citesNone": "Cites no evidence."
+      "citesNone": "Cites no evidence.",
+      "evidencePage": "Evidence {from}–{to} of {total}. {cited, plural, =0 {None cited.} one {# cited.} other {# cited.}}",
+      "evidenceNewer": "Newer",
+      "evidenceOlder": "Older"
     },
     "observationHelp": "Technical observation as of the scan, aggregated across connections. It is distinct from the recorded requirement result.",
     "mappingUnreviewed": "The relationship between this requirement and control has no recorded review yet.",
@@ -528,7 +533,36 @@
     "overdue": "Overdue",
     "formerMember": "Former member",
     "assignedOwner": "Assigned",
-    "exportDossier": "Open the auditor dossier"
+    "exportDossier": "Open the auditor dossier",
+    "profile": "Compliance profile",
+    "profileNone": "None: propose from category and levels",
+    "profileHelp": "If you adopt a published profile, Atesta proposes each measure from its statement of applicability instead of the category tables.",
+    "profileSources": "Sources: {refs}.",
+    "profileCandidate": "Selection Atesta extracted from the cited guide, pending qualified review.",
+    "profileAdopted": "Adopted profile: {title}.",
+    "proposalProfile": "Proposed from the adopted profile: {decision} (<official>{rule}</official>; {reference}). Confirm it or justify another decision.",
+    "proposalCriterion": "The guide gives specific criteria for this measure: {reference}.",
+    "guide": {
+      "title": "Value the system step by step",
+      "candidate": "Steps Atesta wrote from the cited guide, pending qualified review. The valuation is yours.",
+      "reviewed": "Steps Atesta wrote from the cited guide and reviewed by {name}. The valuation is yours.",
+      "addInformation": "Add an information type",
+      "addService": "Add a service",
+      "name": {
+        "information": "Information type name",
+        "service": "Service name"
+      },
+      "unnamed": {
+        "information": "Information {number}",
+        "service": "Service {number}"
+      },
+      "notAssigned": "No level (N/A)",
+      "remove": "Remove “{name}”",
+      "empty": "Add the system's information and services and value them to see the result.",
+      "result": "Result: {levels}. Category: {category}.",
+      "apply": "Use these levels",
+      "applied": "Levels copied to the scope. Check them and save the scope."
+    }
   },
   "insights": {
     "title": "Progress",
@@ -879,17 +913,26 @@
       "kind": {
         "note": "Entry",
         "clock": "Notice sent: {clock}",
-        "closed": "Incident closed"
+        "closed": "Incident closed",
+        "classified": "Classified as significant on {time}"
       },
       "flags": "Characteristics",
       "noFlags": "Neither significant nor involving personal data",
       "criteria": "What {framework} says: {title}",
       "criteriaGroup": "What {framework} says ({count, plural, one {# criterion} other {# criteria}})",
       "criteriaSource": "View in the official source",
-      "sentWhich": ": “{clock}”"
+      "sentWhich": ": “{clock}”",
+      "classifiedAt": "Classified as significant",
+      "classifiedHelp": "When you classified it as significant (major). Some deadlines run from then, such as DORA's initial notification.",
+      "classified": "classified as significant on {time}",
+      "classificationMissing": "the time it was classified as significant is missing",
+      "classify": "Record the classification",
+      "classifyTitle": "Classification as significant",
+      "classificationMissingNotice": "This incident is significant, but the time it was classified is missing. Deadlines that run from classification show only their outer limit until you record it."
     }
   },
   "trainingLink": {
+    "unavailable": "Training unavailable",
     "loading": "Loading…",
     "missing": "The training link is missing. Open it exactly as you received it.",
     "heading": "Confirm you read it",
@@ -1052,7 +1095,9 @@
     "nextReview": "next review: {date}",
     "accessReviewClosed": "{total, plural, one {# account reviewed} other {# accounts reviewed}} (keep: {keep}; revoke: {revoke}); closed on {date}",
     "trainingClosed": "{count, plural, one {# confirmation} other {# confirmations}}; closed on {date}",
-    "incidentClosed": "became aware on {aware}; closed on {date}"
+    "incidentClosed": "became aware on {aware}; closed on {date}",
+    "reviewCites": "{count, plural, one {Cites one item of evidence: {titles}.} other {Cites # items of evidence: {titles}.}}",
+    "reviewCitesNone": "The review cites no evidence."
   },
   "portfolio": {
     "title": "Your organizations",

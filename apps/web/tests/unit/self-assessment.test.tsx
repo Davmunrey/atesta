@@ -17,7 +17,7 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 const register: Register = {
   framework_key: "synthetic_alpha", framework_version: "2", catalog_version: "synthetic-2",
   axes: { tier: { keys: [], levels: ["LOW", "MID", "HIGH"] }, level: { keys: ["C", "I"], levels: ["L", "M", "H"] } },
-  scope: null, review: null, groups_es: [{ prefix: "R", title: "Requisitos sintéticos" }], term_labels: [],
+  scope: null, review: null, groups_es: [{ prefix: "R", title: "Requisitos sintéticos" }], term_labels: [], profiles: [], scope_guide: null,
   items: [
     { code: "R1", title_es: "Protección de cuentas de prueba", title_en: null, selection_basis: "tier · Todas", proposal: { decision: "applies", rule: "+ R1", level: "MID" }, assessment: null, assignment: null },
     { code: "R2", title_es: "Registro de revisión", title_en: null, selection_basis: "tier · Todas", proposal: { decision: "not_applicable", rule: "n.a.", level: "MID" }, assessment: null, assignment: null },
@@ -64,6 +64,56 @@ it("records the scope from the pack's declared levels", async () => {
   await vi.waitFor(() => expect(requests.some((r) => r.method === "POST")).toBe(true));
   const post = requests.find((r) => r.method === "POST")!;
   expect(await post.json()).toEqual({ axis_values: { tier: "HIGH", level: { C: "L", I: "M" } } });
+});
+
+const profile = { key: "small_it", title_es: "Perfil sintético IT", title_en: "Synthetic IT profile", summary_es: "Resumen propio del perfil.", summary_en: "Own profile summary.",
+  refs: [{ guide: "Guía sintética", edition: "2026-11", section: "4", page: 8 }], reviewed_by: null, reviewed_on: null };
+
+it("offers the pack's profiles as a scope option and stores the profile key (issue 227)", async () => {
+  const requests = stubApi({ [`GET ${base}`]: [200, unassessed], [`GET ${base}/register`]: [200, { ...register, profiles: [profile] }], [`POST ${base}/scope`]: [201, { axis_values: {}, decided_by: "u", decided_at: "2026-11-22T10:00:00Z" }] }); render();
+  const select = await screen.findByLabelText("Perfil de cumplimiento");
+  fireEvent.change(select, { target: { value: "small_it" } });
+  expect(screen.getByText("Resumen propio del perfil.")).toBeTruthy();
+  expect(screen.getByText(/Fuentes: Guía sintética \(noviembre de 2026\), apartado 4, pág\. 8\./).textContent).toContain("pendiente de revisión cualificada");
+  fireEvent.click(screen.getByRole("button", { name: "Guardar alcance" }));
+  await vi.waitFor(() => expect(requests.some((r) => r.method === "POST")).toBe(true));
+  expect(await requests.find((r) => r.method === "POST")!.json()).toEqual({ axis_values: { tier: "LOW", level: { C: "L", I: "L" }, profile: "small_it" } });
+});
+
+it("cites the profile and its criteria in a proposal that comes from a profile", async () => {
+  const source = profile.refs[0]!;
+  const items = [{ ...register.items[0]!, proposal: { decision: "not_applicable" as const, rule: "n.a.", level: "small_it", source, criterion: { ...source, section: "5.8", page: 13 } } }];
+  stubApi({ [`GET ${base}`]: [200, unassessed], [`GET ${base}/register`]: [200, { ...register, profiles: [profile], items }] }); render();
+  await screen.findByRole("heading", { name: "Autoevaluación de tu organización" });
+  const row = Array.from(document.querySelectorAll("details.requirement-row")).find((r) => r.querySelector(".requirement-code")?.textContent === "R1") as HTMLDetailsElement;
+  row.open = true;
+  const text = Array.from(row.querySelectorAll("p")).map((p) => p.textContent ?? "").find((t) => t.startsWith("Propuesta según el perfil adoptado"));
+  expect(text).toContain("No aplica (n.a.; Guía sintética (noviembre de 2026), apartado 4, pág. 8)");
+  expect(text).toContain("La guía da criterios propios para esta medida: Guía sintética (noviembre de 2026), apartado 5.8, pág. 13.");
+});
+
+const ref = { guide: "Guía sintética", edition: "2025-06", section: "3.1", page: 9 };
+const guide = { axis: "level", category_axis: "tier", category_by_level: { L: "LOW", M: "MID", H: "HIGH" }, reviewed_by: null, reviewed_on: null,
+  steps: [{ asset: "information" as const, key: "C", es: "¿Qué daño si se revela?", en: "What harm if disclosed?", ref },
+    { asset: "information" as const, key: "I", es: "¿Qué daño si se altera?", en: "What harm if altered?", ref: { ...ref, section: "3.2" } }],
+  notes: [{ es: "Primero la información.", en: "Information first.", ref: { ...ref, section: "1.2", page: 5 } }] };
+
+it("values assets dimension by dimension and fills the scope with the highest levels (issue 225)", async () => {
+  const requests = stubApi({ [`GET ${base}`]: [200, unassessed], [`GET ${base}/register`]: [200, { ...register, scope_guide: guide }], [`POST ${base}/scope`]: [201, { axis_values: {}, decided_by: "u", decided_at: "2026-11-22T10:00:00Z" }] }); render();
+  fireEvent.click(await screen.findByText("Valorar el sistema paso a paso"));
+  expect(screen.getByText(/Primero la información\./).textContent).toContain("Guía sintética (junio de 2025), apartado 1.2, pág. 5");
+  fireEvent.click(screen.getByRole("button", { name: "Añadir un tipo de información" }));
+  fireEvent.click(screen.getByRole("button", { name: "Añadir un tipo de información" }));
+  const first = screen.getByRole("group", { name: "Información 1" });
+  fireEvent.change(within(first).getByLabelText("¿Qué daño si se revela?"), { target: { value: "M" } });
+  const second = screen.getByRole("group", { name: "Información 2" });
+  fireEvent.change(within(second).getByLabelText("¿Qué daño si se revela?"), { target: { value: "L" } });
+  fireEvent.change(within(second).getByLabelText("¿Qué daño si se altera?"), { target: { value: "H" } });
+  expect(screen.getByText("Resultado: C M · I H. Categoría: HIGH.").getAttribute("role")).toBe("status");
+  fireEvent.click(screen.getByRole("button", { name: "Usar estos niveles" }));
+  fireEvent.click(screen.getByRole("button", { name: "Guardar alcance" }));
+  await vi.waitFor(() => expect(requests.some((r) => r.method === "POST")).toBe(true));
+  expect(await requests.find((r) => r.method === "POST")!.json()).toEqual({ axis_values: { tier: "HIGH", level: { C: "M", I: "H" } } });
 });
 
 it("requires a justification when the decision differs from the proposal", async () => {

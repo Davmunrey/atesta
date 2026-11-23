@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
+import { settled } from "./polish";
 
 const run = Date.now().toString(36);
 const owner = `owner-${run}@example.com`;
@@ -15,6 +16,7 @@ async function signIn(page: Page, email: string) {
 
 /** WCAG 2.1 AA (web-shell spec): no serious or critical axe violations. */
 async function expectAccessible(page: Page, screen: string) {
+  await settled(page);
   const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
   const serious = violations.filter((v) => v.impact === "serious" || v.impact === "critical");
   expect(serious.flatMap((v) => v.nodes.map((node) => `${v.id}: ${node.target.join(" ")}: ${node.failureSummary}`)), screen).toEqual([]);

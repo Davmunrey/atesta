@@ -68,6 +68,80 @@ class ExpectedEvidence(Content):
         return self
 
 
+class PageReference(Content):
+    """A section and page of the profile's own guide (its first reference)."""
+
+    section: Text
+    page: Annotated[int, Field(ge=1)]
+
+
+class ScopeProfile(Content):
+    """A published compliance profile as a scope option (requirement-register spec, issue 227):
+    one value per requirement of the pack, a level or `n.a.`. The guide is cited, never copied.
+    A candidate until the owner signs it, like expected evidence."""
+
+    key: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{0,39}$")]
+    title_es: Text
+    title_en: Text
+    summary_es: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=600)
+    ]
+    summary_en: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=600)
+    ]
+    refs: list[GuideReference] = Field(min_length=1, max_length=4)
+    levels: dict[str, Text]
+    criteria: dict[str, PageReference] = Field(default_factory=dict)
+    reviewed_by: Text | None
+    reviewed_on: date | None = None
+
+    @model_validator(mode="after")
+    def signed_in_full(self) -> Self:
+        if self.key == "profile":
+            raise ValueError("the profile key 'profile' is reserved")
+        if (self.reviewed_by is None) != (self.reviewed_on is None):
+            raise ValueError("a signed profile names its reviewer and the review date")
+        return self
+
+
+GuideText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)]
+
+
+class ScopeGuideStep(Content):
+    """One valuation question: an asset type and one dimension key, in Atesta's own words."""
+
+    asset: Literal["information", "service"]
+    key: Text
+    es: GuideText
+    en: GuideText
+    ref: GuideReference
+
+
+class ScopeGuideNote(Content):
+    es: GuideText
+    en: GuideText
+    ref: GuideReference
+
+
+class ScopeGuide(Content):
+    """How to value the system before recording the scope (requirement-register spec, issue 225):
+    ordered steps on the pack's dimension axis, and the category each level leads to."""
+
+    axis: Text
+    category_axis: Text
+    category_by_level: dict[str, Text] = Field(min_length=1)
+    steps: list[ScopeGuideStep] = Field(min_length=1, max_length=20)
+    notes: list[ScopeGuideNote] = Field(default_factory=list, max_length=10)
+    reviewed_by: Text | None
+    reviewed_on: date | None = None
+
+    @model_validator(mode="after")
+    def signed_in_full(self) -> Self:
+        if (self.reviewed_by is None) != (self.reviewed_on is None):
+            raise ValueError("a signed guide names its reviewer and the review date")
+        return self
+
+
 class RequirementContext(Content):
     """Official text of one requirement (content model v2). Selection tables by category or
     dimension are optional; an act also published in English carries its official English text."""
@@ -131,7 +205,9 @@ class TermLabel(Content):
 
 class ReportingClock(Content):
     """A reporting deadline copied from the official text (recorded-routines spec). It starts when
-    the organization became aware of the incident, or when the clock named in `after` was met."""
+    the organization became aware of the incident, when it classified the incident as significant
+    (`starts: classified`), or when the clock named in `after` was met. A classified clock may
+    keep an outer limit in hours from awareness, which lapses when classification is later."""
 
     key: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{0,39}$")]
     title_es: Text
@@ -139,6 +215,8 @@ class ReportingClock(Content):
     hours: Annotated[int, Field(ge=1, le=8760)] | None = None
     months: Annotated[int, Field(ge=1, le=36)] | None = None
     after: Text | None = None
+    starts: Literal["aware", "classified"] = "aware"
+    outer_limit_hours: Annotated[int, Field(ge=1, le=8760)] | None = None
     needs: Literal["significant", "personal_data"]
     requirement: Text
 
@@ -146,6 +224,10 @@ class ReportingClock(Content):
     def one_duration(self) -> Self:
         if (self.hours is None) == (self.months is None):
             raise ValueError("a reporting clock lasts hours or months, not both")
+        if self.starts == "classified" and (self.after is not None or self.needs != "significant"):
+            raise ValueError("a clock from classification needs significant and no other clock")
+        if self.outer_limit_hours is not None and self.starts != "classified":
+            raise ValueError("only a clock from classification has an outer limit")
         return self
 
 
@@ -196,6 +278,8 @@ class PackContext(Content):
     groups_es: list[GroupHeading] = Field(default_factory=list)
     term_labels: list[TermLabel] = Field(default_factory=list)
     reporting_clocks: list[ReportingClock] = Field(default_factory=list)
+    scope_profiles: list[ScopeProfile] = Field(default_factory=list)
+    scope_guide: ScopeGuide | None = None
     incident_criteria: list[IncidentCriterion] = Field(default_factory=list)
 
 
