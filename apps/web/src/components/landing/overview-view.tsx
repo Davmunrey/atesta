@@ -1,8 +1,9 @@
 "use client";
 
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import fixture from "@/content/landing-fixture.json";
 import { Icon } from "../icons";
+import { CountUp } from "./count-up";
 import { ViewFrame } from "./view-frame";
 
 const ICON = { overdue: "overdue", missing: "missing", pending: "pending" } as const;
@@ -15,17 +16,16 @@ const ICON = { overdue: "overdue", missing: "missing", pending: "pending" } as c
 export function OverviewView() {
   const t = useTranslations("landing.view");
   const kpi = useTranslations("console.kpi");
-  const format = useFormatter();
   const c = fixture.counts;
   const segments = [["implemented", c.implemented], ["partial", c.partial], ["missing", c.not_implemented], ["na", c.not_applicable]] as const;
   return <ViewFrame label={t("label")} context={fixture.organization}>
     <div className="lv-body">
       <p className="lv-title"><strong>{fixture.framework}</strong> <span>{t("category", { category: fixture.category })}</span></p>
       <dl className="lv-kpis">
-        <div><dt>{kpi("assessed")}</dt><dd><mark className="hl lv-figure">{format.number(c.assessed)}</mark> <span>{kpi("ofTotal", { total: c.total })}</span></dd></div>
-        <div><dt>{kpi("implemented")}</dt><dd>{format.number(c.implemented)} <span>{kpi("ofTotal", { total: c.total })}</span></dd></div>
-        <div><dt>{kpi("overdue")}</dt><dd>{format.number(c.overdue)}</dd><dd className="lv-state" data-severity="overdue"><Icon name="overdue" width={16} height={16} />{kpi("act")}</dd></div>
-        <div><dt>{kpi("unowned")}</dt><dd>{format.number(c.unowned)}</dd><dd className="lv-state" data-severity="overdue"><Icon name="overdue" width={16} height={16} />{kpi("act")}</dd></div>
+        <div><dt>{kpi("assessed")}</dt><dd><mark className="hl lv-figure"><CountUp value={c.assessed} /></mark> <span>{kpi("ofTotal", { total: c.total })}</span></dd></div>
+        <div><dt>{kpi("implemented")}</dt><dd><CountUp value={c.implemented} /> <span>{kpi("ofTotal", { total: c.total })}</span></dd></div>
+        <div><dt>{kpi("overdue")}</dt><dd><CountUp value={c.overdue} /></dd><dd className="lv-state" data-severity="overdue"><Icon name="overdue" width={16} height={16} />{kpi("act")}</dd></div>
+        <div><dt>{kpi("unowned")}</dt><dd><CountUp value={c.unowned} /></dd><dd className="lv-state" data-severity="overdue"><Icon name="overdue" width={16} height={16} />{kpi("act")}</dd></div>
       </dl>
       <svg className="lv-distribution" viewBox={`0 0 ${c.total} 4`} preserveAspectRatio="none" aria-hidden="true">
         <rect className="lv-track" x="0" y="0" width={c.total} height="4" />
