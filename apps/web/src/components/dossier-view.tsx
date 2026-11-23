@@ -119,6 +119,8 @@ function RequirementEvidence({ r }: { r: Requirement }) {
       <p><strong>{english ? c.title_en : c.title_es}</strong> · {c.manual
         ? (c.review ? t("reviewed", { date: format.dateTime(new Date(c.review.reviewed_at), { dateStyle: "medium" }) }) : t("notReviewed"))
         : o(c.observed_status ?? "missing")}</p>
+      {c.manual && c.review ? <p className="text-sm">{c.review.evidence.length === 0 ? t("reviewCitesNone")
+        : t("reviewCites", { count: c.review.evidence.length, titles: format.list(c.review.evidence.map((e) => e.title), { type: "conjunction" }) })}</p> : null}
       {c.evidence.length === 0 ? <p className="text-sm text-muted">{t("noEvidence")}</p>
         : <ul className="dossier-list">{c.evidence.map((e, i) => <li key={i}>
           <span className="text-sm text-muted">{format.dateTime(new Date(e.collected_at), { dateStyle: "medium" })} · {t(`sources.${e.source_type}`)}</span>

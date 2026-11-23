@@ -273,9 +273,11 @@
       "evidenceLoading": "Loading evidence…",
       "evidenceNone": "Record evidence for this control first (under “View evidence”) to mark it implemented.",
       "evidenceRequired": "Tick at least one evidence item to mark it implemented.",
-      "evidenceNewest": "{count, plural, one {Showing the newest item.} other {Showing the # newest items.}}",
       "cited": "Cited evidence",
-      "citesNone": "Cites no evidence."
+      "citesNone": "Cites no evidence.",
+      "evidencePage": "Evidence {from}–{to} of {total}. {cited, plural, =0 {None cited.} one {# cited.} other {# cited.}}",
+      "evidenceNewer": "Newer",
+      "evidenceOlder": "Older"
     },
     "observationHelp": "Technical observation as of the scan, aggregated across connections. It is distinct from the recorded requirement result.",
     "mappingUnreviewed": "The relationship between this requirement and control has no recorded review yet.",
@@ -1047,7 +1049,9 @@
     "nextReview": "next review: {date}",
     "accessReviewClosed": "{total, plural, one {# account reviewed} other {# accounts reviewed}} (keep: {keep}; revoke: {revoke}); closed on {date}",
     "trainingClosed": "{count, plural, one {# confirmation} other {# confirmations}}; closed on {date}",
-    "incidentClosed": "became aware on {aware}; closed on {date}"
+    "incidentClosed": "became aware on {aware}; closed on {date}",
+    "reviewCites": "{count, plural, one {Cites one item of evidence: {titles}.} other {Cites # items of evidence: {titles}.}}",
+    "reviewCitesNone": "The review cites no evidence."
   },
   "portfolio": {
     "title": "Your organizations",

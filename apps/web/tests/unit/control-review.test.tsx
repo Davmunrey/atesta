@@ -107,8 +107,46 @@ it("will not save a pass that cites no evidence", async () => {
   fireEvent.click(within(card).getByRole("radio", { name: "Implantado" }));
   fireEvent.change(within(card).getByLabelText(/Justificación/), { target: { value: "Acta 12." } });
   fireEvent.click(within(card).getByRole("button", { name: "Guardar revisión" }));
-  expect(await within(card).findByText("Marca al menos una evidencia para registrarlo como implantado.")).toBeTruthy();
+  const error = await within(card).findByRole("alert");
+  expect(error.textContent).toBe("Marca al menos una evidencia para registrarlo como implantado.");
+  expect(error.querySelector("svg")).toBeTruthy();  // icon and text, never colour alone
+  const evidence = error.closest("fieldset")!;
+  const first = within(evidence).getByRole("checkbox", { name: /Acta del comité 12/ }) as HTMLInputElement;
+  expect(first.validationMessage).toBe("Marca al menos una evidencia para registrarlo como implantado.");
+  expect(first.getAttribute("aria-invalid")).toBe("true");
   expect(requests.filter((r) => r.method === "POST")).toHaveLength(0);
+  fireEvent.click(first);
+  expect(first.validationMessage).toBe("");
+});
+
+it("ties the decision to the evidence help that explains a disabled pass (issue 321)", async () => {
+  stubApi({ [detailPath]: [200, withPaper(null)], [membersPath]: [200, members], [evidencePath]: [200, { items: [], total: 0 }] });
+  render("admin");
+  const card = await paperCard();
+  fireEvent.click(within(card).getByRole("button", { name: "Registrar revisión" }));
+  const help = await within(card).findByText(/Registra primero una evidencia/);
+  const decision = within(card).getByRole("group", { name: "Decisión" });
+  expect(decision.getAttribute("aria-describedby")).toBe(help.id);
+});
+
+it("lets the reviewer page to older evidence and keeps what was cited (issue 321)", async () => {
+  const item = (n: number) => ({ ...paperEvidence.items[0]!, id: `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`, title: `Acta ${n}` });
+  const newest = { items: Array.from({ length: 20 }, (_, i) => item(i + 1)), total: 21 };
+  const older = { items: [item(21)], total: 21 };
+  const requests = stubApi({ [detailPath]: [200, withPaper(null)], [membersPath]: [200, members], [evidencePath]: [[200, newest], [200, older]], [reviewsPath]: [201, review] });
+  render("admin");
+  const card = await paperCard();
+  fireEvent.click(within(card).getByRole("button", { name: "Registrar revisión" }));
+  fireEvent.click(await within(card).findByRole("checkbox", { name: /Acta 2 ·/ }));
+  fireEvent.click(within(card).getByRole("button", { name: "Anteriores" }));
+  fireEvent.click(await within(card).findByRole("checkbox", { name: /Acta 21/ }));
+  expect(within(card).getByText(/Evidencias 21–21 de 21\. 2 citadas\./)).toBeTruthy();
+  fireEvent.click(within(card).getByRole("radio", { name: "Implantado" }));
+  fireEvent.change(within(card).getByLabelText(/Justificación/), { target: { value: "Actas 2 y 21." } });
+  fireEvent.click(within(card).getByRole("button", { name: "Guardar revisión" }));
+  await vi.waitFor(() => expect(requests.some((r) => r.method === "POST")).toBe(true));
+  expect((await requests.find((r) => r.method === "POST")!.json()).evidence_ids).toEqual([item(2).id, item(21).id]);
+  expect(new URL(requests.filter((r) => r.url.includes("/evidence"))[1]!.url).searchParams.get("offset")).toBe("20");
 });
 
 it("offers only a fail when the control has no evidence yet", async () => {
