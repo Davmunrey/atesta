@@ -188,12 +188,12 @@ entries:
   - art13
   - art14
   status: excluded
-  reason_es: Criterios de incidente significativo y de incidente recurrente, por tipo de entidad. Atesta
-    registra los incidentes y sus plazos; decidir si un incidente es significativo corresponde a la organización
-    (ADR-005). Pendiente de una importación propia.
-  reason_en: Criteria for significant and recurring incidents, per type of entity. Atesta records incidents
-    and their deadlines; deciding whether an incident is significant is the organization's (ADR-005).
-    Awaiting its own import.
+  reason_es: 'Criterios de incidente significativo y de incidente recurrente, por tipo de entidad: no
+    son medidas que se autoevalúen. Su texto oficial se muestra junto al indicador «significativo» del
+    registro de incidentes; decidir si un incidente lo es corresponde a la organización (ADR-005).'
+  reason_en: 'Criteria for significant and recurring incidents, per type of entity: they are not measures
+    to self-assess. Their official text is shown next to the "significant" flag of the incident register;
+    deciding whether an incident is significant is the organization''s (ADR-005).'
 - units:
   - art15
   - art16

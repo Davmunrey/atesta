@@ -339,3 +339,44 @@ def test_incident_criteria_name_requirements_of_their_own_pack(tmp_path: Path) -
     )
     criteria = read(tmp_path).packs[0].metadata.attributes.incident_criteria
     assert [(c.needs, c.requirement) for c in criteria] == [("personal_data", "R1")]
+
+
+INLINE = {
+    "needs": "significant",
+    "text": {
+        "section": "Artículo 3",
+        "title_es": "Incidentes significativos",
+        "title_en": "Significant incidents",
+        "official_text_es": "Texto oficial.",
+        "official_text_en": "Official text.",
+        "source": "https://example.test/act#art_3",
+        "source_sha256": "b" * 64,
+    },
+}
+
+
+@pytest.mark.parametrize(
+    ("criterion", "message"),
+    [
+        ({"needs": "significant"}, "requirement or an official text"),
+        ({**INLINE, "requirement": "R1"}, "requirement or an official text"),
+    ],
+)
+def test_an_incident_criterion_is_a_requirement_or_an_inline_official_text(
+    tmp_path: Path, criterion: dict[str, object], message: str
+) -> None:
+    catalog_files(tmp_path)
+    change(
+        tmp_path,
+        "frameworks/sample/pack.yaml",
+        lambda d: d["attributes"].update(incident_criteria=[criterion]),
+    )
+    with pytest.raises(ValueError, match=message):
+        read(tmp_path)
+    change(
+        tmp_path,
+        "frameworks/sample/pack.yaml",
+        lambda d: d["attributes"].update(incident_criteria=[INLINE]),
+    )
+    found = read(tmp_path).packs[0].metadata.attributes.incident_criteria[0]
+    assert found.text is not None and found.text.section == "Artículo 3"

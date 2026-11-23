@@ -1672,6 +1672,27 @@ export interface components {
             /** Title Es */
             title_es: string;
         };
+        /**
+         * CriterionText
+         * @description An official text shown next to an incident flag, copied from the act (rule 10). For
+         *     criteria that are not measures, so they stay out of the self-assessment register.
+         */
+        CriterionText: {
+            /** Official Text En */
+            official_text_en?: string | null;
+            /** Official Text Es */
+            official_text_es: string;
+            /** Section */
+            section: string;
+            /** Source */
+            source: string;
+            /** Source Sha256 */
+            source_sha256: string;
+            /** Title En */
+            title_en?: string | null;
+            /** Title Es */
+            title_es: string;
+        };
         /** DayCount */
         DayCount: {
             /** Count */
@@ -1947,7 +1968,8 @@ export interface components {
         Implementation: "not_implemented" | "partially_implemented" | "implemented";
         /**
          * IncidentCriterion
-         * @description The requirement whose official text explains an incident flag (recorded-routines spec).
+         * @description What explains an incident flag (recorded-routines spec): a requirement of the pack, or an
+         *     official text given inline.
          */
         IncidentCriterion: {
             /**
@@ -1956,7 +1978,8 @@ export interface components {
              */
             needs: "significant" | "personal_data";
             /** Requirement */
-            requirement: string;
+            requirement?: string | null;
+            text?: components["schemas"]["CriterionText"] | null;
         };
         /** IncidentIn */
         IncidentIn: {

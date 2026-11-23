@@ -1,6 +1,6 @@
 id: nis2_ir_2024_2690
 name: NIS2 · Reglamento de Ejecución (UE) 2024/2690
-version: 2024-2690.draft1
+version: 2024-2690.draft2
 jurisdiction: EU; applies to the relevant entities listed in its Article 1
 source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32024R2690
 license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
@@ -210,3 +210,649 @@ attributes:
   - prefix: '13.3'
     title: Control de acceso perimetral y físico
     title_en: Perimeter and physical access control
+  incident_criteria:
+  - needs: significant
+    text:
+      section: Artículo 3
+      title_es: Incidentes significativos · artículo 3
+      title_en: Significant incidents · Article 3
+      official_text_es: '1. Un incidente se considerará significativo a efectos del artículo 23, apartado
+        3, de la Directiva (UE) 2022/2555 con respecto a las entidades pertinentes cuando se cumplan uno
+        o varios de los siguientes criterios:
+
+
+        a) que el incidente haya causado o pueda causar a la entidad pertinente pérdidas financieras directas
+        superiores a 500 000 EUR o al 5 % de su volumen de negocios total anual en el ejercicio financiero
+        anterior, si esta cifra es inferior;
+
+
+        b) que el incidente haya causado o pueda causar la exfiltración de secretos comerciales a tenor
+        del artículo 2, apartado 1, de la Directiva (UE) 2016/943, de la entidad pertinente;
+
+
+        c) que el incidente haya causado o pueda causar la muerte de una persona física;
+
+
+        d) que el incidente haya causado o pueda causar daños considerables a la salud de una persona
+        física;
+
+
+        e) que se haya producido efectivamente el acceso presuntamente malicioso y no autorizado a los
+        sistemas de redes y de información, lo que puede causar graves perturbaciones operativas;
+
+
+        f) que el incidente cumpla los criterios establecidos en el artículo 4;
+
+
+        g) que el incidente cumpla uno o varios de los criterios establecidos en los artículos 5 a 14.
+
+
+        2. Las interrupciones programadas del servicio y las consecuencias previstas de las operaciones
+        de mantenimiento programadas llevadas a cabo por las entidades pertinentes o en su nombre no se
+        considerarán incidentes significativos.
+
+
+        3. Al calcular el número de usuarios afectados por un incidente a efectos del artículo 7 y los
+        artículos 9 a 14, las entidades pertinentes tendrán en cuenta todo lo siguiente:
+
+
+        a) el número de clientes que tengan un contrato con la entidad pertinente que les permita acceder
+        a las redes y sistemas de información de dicha entidad o a los servicios ofrecidos por dichas
+        redes y sistemas de información, o que sean accesibles a través de ellos;
+
+
+        b) el número de personas físicas y jurídicas asociadas a clientes empresariales que utilicen las
+        redes y los sistemas o servicios de información de las entidades ofrecidos por dichas redes y
+        sistemas de información o que sean accesibles a través de ellos.'
+      official_text_en: '1. An incident shall be considered to be significant for the purposes of Article
+        23(3) of Directive (EU) 2022/2555 with regard to the relevant entities where one or more of the
+        following criteria are fulfilled:
+
+
+        (a) the incident has caused or is capable of causing direct financial loss for the relevant entity
+        that exceeds EUR 500 000 or 5 % of the relevant entity’s total annual turnover in the preceding
+        financial year, whichever is lower;
+
+
+        (b) the incident has caused or is capable of causing the exfiltration of trade secrets as set
+        out in Article 2 point (1), of Directive (EU) 2016/943 of the relevant entity;
+
+
+        (c) the incident has caused or is capable of causing the death of a natural person;
+
+
+        (d) the incident has caused or is capable of causing considerable damage to a natural person’s
+        health;
+
+
+        (e) a successful, suspectedly malicious and unauthorised access to network and information systems
+        occurred, which is capable of causing severe operational disruption;
+
+
+        (f) the incident meets the criteria set out in Article 4;
+
+
+        (g) the incident meets one or more of the criteria set out in Articles 5 to 14.
+
+
+        2. Scheduled interruptions of service and planned consequences of scheduled maintenance operations
+        carried out by or on behalf of the relevant entities shall not be considered to be significant
+        incidents.
+
+
+        3. When calculating the number of users impacted by an incident for the purpose of Articles 7
+        and 9 to 14, the relevant entities shall consider all of the following:
+
+
+        (a) the number of customers that have a contract with the relevant entity which grants them access
+        to the relevant entity’s network and information systems or services offered by, or accessible
+        via, those network and information systems;
+
+
+        (b) the number of natural and legal persons associated with business customers that use the entities’
+        network and information systems or services offered by, or accessible via, those network and information
+        systems.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_3
+      source_sha256: 15d1e3710a904dbac8b53259e8eaabd6b43a267bc45662e3e5969e6dbd7bce32
+  - needs: significant
+    text:
+      section: Artículo 4
+      title_es: Incidentes recurrentes · artículo 4
+      title_en: Recurring incidents · Article 4
+      official_text_es: 'Los incidentes que, individualmente, no se consideren incidentes significativos
+        en el sentido del artículo 3, se considerarán conjuntamente un incidente significativo cuando
+        cumplan todos los criterios siguientes:
+
+
+        a) que se hayan producido al menos dos veces en un plazo de seis meses;
+
+
+        b) que tengan la misma causa fundamental aparente;
+
+
+        c) que cumplan colectivamente los criterios establecidos en el artículo 3, apartado 1, letra a).'
+      official_text_en: 'Incidents that individually are not considered a significant incident within
+        the meaning of Article 3, shall be considered collectively as one significant incident where they
+        meet all of the following criteria:
+
+
+        (a) they have occurred at least twice within 6 months;
+
+
+        (b) they have the same apparent root cause;
+
+
+        (c) they collectively meet the criteria set out in Article 3(1)(a).'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_4
+      source_sha256: 64b62906f389ed264cd4ba2ec224262ddfac056a09fc5865497d3ca32407a93a
+  - needs: significant
+    text:
+      section: Artículo 5
+      title_es: Incidentes significativos con respecto a los proveedores de servicios del sistema de nombres
+        de dominio · artículo 5
+      title_en: Significant incidents with regard to DNS service providers · Article 5
+      official_text_es: 'Por lo que respecta a los proveedores de servicios del sistema de nombres de
+        dominio (DNS, por sus siglas en inglés), un incidente se considerará significativo con arreglo
+        al artículo 3, apartado 1, letra g), cuando cumpla uno o varios de los siguientes criterios:
+
+
+        a) que un servicio de resolución de nombres de dominio recursivo o autoritativo esté completamente
+        indisponible durante más de treinta minutos;
+
+
+        b) que, durante más de una hora, el tiempo medio de respuesta de un servicio de resolución de
+        nombres de dominio recursivo o autoritativo a las solicitudes de DNS sea superior a diez segundos;
+
+
+        c) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con la prestación del servicio de resolución autoritativa de nombres de dominio
+        se vean comprometidas, excepto en los casos en que los datos de menos de 1 000 nombres de dominio
+        gestionados por el proveedor de servicios DNS, que representen como máximo el 1 % de los nombres
+        de dominio gestionados por el proveedor de servicios DNS, no sean correctos debido a fallos de
+        configuración.'
+      official_text_en: 'With regard to DNS service providers, an incident shall be considered significant
+        under Article 3(1)(g), where it fulfils one or more of the following criteria:
+
+
+        (a) a recursive or authoritative domain name resolution service is completely unavailable for
+        more than 30 minutes;
+
+
+        (b) for a period of more than one hour, the average response time of a recursive or authoritative
+        domain name resolution service to DNS requests is more than 10 seconds;
+
+
+        (c) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of the authoritative domain name resolution service is compromised, except in
+        cases where the data of fewer than 1 000 domain names managed by the DNS service provider, amounting
+        to no more than 1 % of the domain names managed by the DNS service provider, are not correct because
+        of misconfiguration.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_5
+      source_sha256: 2178a38668fd3392e69d101d8ce82d08c474b55c7b0d1e014e0a1ae750b6a3fa
+  - needs: significant
+    text:
+      section: Artículo 6
+      title_es: Incidentes significativos con respecto a los registros de nombres de dominio de primer
+        nivel · artículo 6
+      title_en: Significant incidents with regard to TLD name registries · Article 6
+      official_text_es: 'Por lo que respecta a los registros de nombres de dominio de primer nivel, un
+        incidente se considerará significativo con arreglo al artículo 3, apartado 1, letra g), cuando
+        cumpla uno o varios de los criterios siguientes:
+
+
+        a) que un servicio autoritativo de resolución de nombres de dominio esté totalmente indisponible;
+
+
+        b) que, durante más de una hora, el tiempo medio de respuesta de un servicio autoritativo de resolución
+        de nombres de dominio a las solicitudes de DNS sea superior a diez segundos;
+
+
+        c) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con el funcionamiento técnico del dominio de primer nivel se vean comprometidas.'
+      official_text_en: 'With regard to TLD name registries, an incident shall be considered significant
+        under Article 3(1)(g) where it fulfils one or more of the following criteria:
+
+
+        (a) an authoritative domain name resolution service is completely unavailable;
+
+
+        (b) for a period of more than one hour, the average response time of an authoritative domain name
+        resolution service to DNS requests is more than 10 seconds,
+
+
+        (c) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the technical operation of the TLD is compromised.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_6
+      source_sha256: 684287315d0b0cfec005d4ba755e3a7b2117a74cba012c3994d6a84827182a6d
+  - needs: significant
+    text:
+      section: Artículo 7
+      title_es: Incidentes significativos con respecto a los proveedores de servicios de computación en
+        nube · artículo 7
+      title_en: Significant incidents with regard to cloud computing service providers · Article 7
+      official_text_es: 'Por lo que respecta a los proveedores de servicios de computación en nube, un
+        incidente se considerará significativo con arreglo al artículo 3, apartado 1, letra g), cuando
+        cumpla uno o varios de los siguientes criterios:
+
+
+        a) que un servicio de computación en nube esté totalmente indisponible durante más de treinta
+        minutos;
+
+
+        b) que la disponibilidad del servicio de computación en nube de un proveedor esté limitada en
+        el caso de más del 5 % de los usuarios de servicios de computación en nube de la Unión, o de más
+        de un millón de usuarios de servicios de computación en nube en la Unión, si esta cifra es menor,
+        durante más de una hora;
+
+
+        c) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con la prestación de un servicio de computación en nube se vean comprometidas
+        como consecuencia de una acción presuntamente malintencionada;
+
+
+        d) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con la prestación del servicio de computación en la nube se vean comprometidas
+        y ello afecte a más del 5 % de los usuarios de dicho servicio de computación en la nube de la
+        Unión, o a más de un millón de sus usuarios en la Unión, si esta cifra es menor.'
+      official_text_en: 'With regard to cloud computing service providers, an incident shall be considered
+        significant under Article 3(1)(g) where it fulfils one or more of the following criteria:
+
+
+        (a) a cloud computing service provided is completely unavailable for more than 30 minutes;
+
+
+        (b) the availability of a cloud computing service of a provider is limited for more than 5 % of
+        the cloud computing service’s users in the Union, or for more than 1 million of the cloud computing
+        service’s users in the Union, whichever number is smaller, for a duration of more than one hour;
+
+
+        (c) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of a cloud computing service is compromised as a result of a suspectedly malicious
+        action,
+
+
+        (d) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of a cloud computing service is compromised with an impact on more than 5 % of
+        that cloud computing service’s users in the Union, or on more than 1 million of that cloud computing
+        service’s users in the Union, whichever number is smaller.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_7
+      source_sha256: ea24845234daf2a9c08a6b37791ab82f4804f619762c7155f338145e12892581
+  - needs: significant
+    text:
+      section: Artículo 8
+      title_es: Incidentes significativos con respecto a los proveedores de servicios de centros de datos
+        · artículo 8
+      title_en: Significant incidents with regard to data centre service providers · Article 8
+      official_text_es: 'Por lo que respecta a los proveedores de servicios de centros de datos, un incidente
+        se considerará significativo con arreglo al artículo 3, apartado 1, letra g), cuando cumpla uno
+        o varios de los siguientes criterios:
+
+
+        a) que el servicio del centro de datos gestionado por el proveedor esté totalmente indisponible;
+
+
+        b) que la disponibilidad de un servicio de un centro de datos gestionado por el proveedor esté
+        limitada durante más de una hora;
+
+
+        c) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con la prestación de un servicio de centro de datos se vean comprometidas
+        como consecuencia de una acción presuntamente malintencionada;
+
+
+        d) que el acceso físico a un centro de datos gestionado por el proveedor esté en riesgo.'
+      official_text_en: 'With regard to data centre service providers, an incident shall be considered
+        significant under Article 3(1)(g) where it fulfils one or more of the following criteria:
+
+
+        (a) a data centre service of a data centre operated by the provider is completely unavailable;
+
+
+        (b) the availability of a data centre service of a data centre operated by the provider is limited
+        for a duration of more than one hour;
+
+
+        (c) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of a data centre service is compromised as a result of a suspectedly malicious
+        action;
+
+
+        (d) physical access to a data centre operated by the provider is compromised.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_8
+      source_sha256: bd415e51b7337ee7b7ca4b46ff63d82e6756fc3e0659ab04fba75321198027c8
+  - needs: significant
+    text:
+      section: Artículo 9
+      title_es: Incidentes significativos con respecto a los proveedores de redes de distribución de contenidos
+        · artículo 9
+      title_en: Significant incidents with regard to content delivery network providers · Article 9
+      official_text_es: 'Por lo que respecta a los proveedores de redes de distribución de contenidos,
+        un incidente se considerará significativo con arreglo al artículo 3, apartado 1, letra g), cuando
+        cumpla uno o varios de los siguientes criterios:
+
+
+        a) que una red de distribución de contenidos esté totalmente indisponibles durante más de treinta
+        minutos;
+
+
+        b) que la disponibilidad de una red de distribución de contenidos esté limitada en el caso de
+        más del 5 % de los usuarios de la red de distribución de contenidos en la Unión, o de más de un
+        millón de usuarios de la red de distribución de contenidos en la Unión, si esta cifra es menor,
+        durante más de una hora;
+
+
+        c) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con el suministro de la red de distribución de contenidos se vean comprometidas
+        como consecuencia de una acción presuntamente malintencionada;
+
+
+        d) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con el suministro de la red de distribución de contenidos se vean comprometidas
+        y ello afecte a más del 5 % de los usuarios de la red de distribución de contenidos en la Unión,
+        o a más de un millón de usuarios de la red de distribución de contenidos en la Unión, si esta
+        cifra es menor.'
+      official_text_en: 'With regard to content delivery network providers, an incident shall be considered
+        significant under Article 3(1)(g) where it fulfils one or more of the following criteria:
+
+
+        (a) a content delivery network is completely unavailable for more than 30 minutes;
+
+
+        (b) the availability of a content delivery network is limited for more than 5 % of the content
+        delivery network’s users in the Union, or for more than 1 million of the content delivery network’s
+        users in the Union, whichever number is smaller, for a duration of more than one hour;
+
+
+        (c) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of a content delivery network is compromised as a result of a suspectedly malicious
+        action;
+
+
+        (d) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of a content delivery network is compromised with an impact on more than 5 %
+        of that content delivery network’s users in the Union, or on more than 1 million of that content
+        delivery network’s users in the Union, whichever number is smaller.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_9
+      source_sha256: 3570b7924b200e2036574bf695abf67b80a5efd3d1114a3f753b05a5516f14a4
+  - needs: significant
+    text:
+      section: Artículo 10
+      title_es: Incidentes significativos con respecto a los proveedores de servicios gestionados y los
+        proveedores de servicios de seguridad gestionados · artículo 10
+      title_en: Significant incidents with regard to managed service providers and managed security service
+        providers · Article 10
+      official_text_es: 'Por lo que respecta a los proveedores de servicios gestionados y los proveedores
+        de servicios de seguridad gestionados, un incidente se considerará significativo con arreglo al
+        artículo 3, apartado 1, letra g), cuando cumpla uno o varios de los criterios siguientes:
+
+
+        a) que un servicio gestionado o un servicio de seguridad gestionado esté completamente indisponible
+        durante más de treinta minutos;
+
+
+        b) que la disponibilidad de un servicio gestionado o de un servicio de seguridad gestionado esté
+        limitada en el caso de más del 5 % de los usuarios de este servicio en la Unión, o de más de un
+        millón de sus usuarios en la Unión, si esta cifra es menor, durante más de una hora;
+
+
+        c) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con la prestación de un servicio gestionado o de un servicio de seguridad
+        gestionado se vean comprometidas como consecuencia de una acción presuntamente malintencionada;
+
+
+        d) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con la prestación de un servicio gestionado o de un servicio de seguridad
+        gestionado se vean comprometidas y ello afecte a más del 5 % de los usuarios del servicio gestionado
+        o del servicio de seguridad gestionado en la Unión, o a más de un millón de usuarios de estos
+        servicios en la Unión, si esta cifra es menor.'
+      official_text_en: 'With regard to managed service providers and managed security service providers,
+        an incident shall be considered significant under Article 3(1)(g) where it fulfils one or more
+        of the following criteria:
+
+
+        (a) a managed service or managed security service is completely unavailable for more than 30 minutes;
+
+
+        (b) the availability of a managed service or managed security service is limited for more than
+        5 % of the service’s users in the Union, or for more than 1 million of the service’s users in
+        the Union, whichever number is smaller, for a duration of more than one hour;
+
+
+        (c) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of a managed service or managed security service is compromised as a result of
+        a suspectedly malicious action;
+
+
+        (d) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of a managed service or a managed security service, is compromised with an impact
+        on more than 5 % of that managed service’s or that managed security service’s users in the Union,
+        or on more than 1 million of the service users in the Union, whichever number is smaller.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_10
+      source_sha256: 929f19091b63c279d507a4d06fadb9127f23a2add3384d67145092c833ebb964
+  - needs: significant
+    text:
+      section: Artículo 11
+      title_es: Incidentes significativos con respecto a los proveedores de mercados en línea · artículo
+        11
+      title_en: Significant incidents with regard to providers of online marketplaces · Article 11
+      official_text_es: 'Por lo que respecta a los prestadores de mercados en línea, un incidente se considerará
+        significativo con arreglo al artículo 3, apartado 1, letra g), cuando cumpla uno o varios de los
+        siguientes criterios:
+
+
+        a) que un mercado en línea esté completamente indisponible para más del 5 % de los usuarios de
+        un mercado en línea de la Unión, o para más de un millón de sus usuarios en la Unión, si esta
+        cifra es menor;
+
+
+        b) que más del 5 % de los usuarios de un mercado en línea de la Unión, o más de un millón de usuarios,
+        si esta cifra es menor, se vean afectados por la disponibilidad limitada de dicho mercado en línea;
+
+
+        c) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con el suministro de un mercado en línea se vean comprometidas como consecuencia
+        de una acción presuntamente malintencionada;
+
+
+        d) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con el suministro de un mercado en línea se vean comprometidas y ello afecte
+        a más del 5 % de los usuarios del mercado en línea en la Unión, o a más de un millón de usuarios
+        del mercado en línea en la Unión, si esta cifra es menor.'
+      official_text_en: 'With regard to providers of online marketplaces, an incident shall be considered
+        significant under Article 3(1)(g) where it fulfils one or more of the following criteria:
+
+
+        (a) an online marketplace is completely unavailable for more than 5 % of an online marketplace’s
+        users in the Union, or for more than 1 million of an online marketplace’s users in the Union,
+        whichever number is smaller;
+
+
+        (b) more than 5 % of an online marketplace’s users in the Union, or more than 1 million of an
+        online marketplace’s users in the Union, whichever number is smaller, are impacted by limited
+        availability of that online marketplace;
+
+
+        (c) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of an online marketplace is compromised as a result of a suspectedly malicious
+        action;
+
+
+        (d) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of an online marketplace is compromised with an impact on more than 5 % of that
+        online marketplace’s users in the Union, or on more than 1 million of that online marketplace’s
+        users in the Union, whichever number is smaller.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_11
+      source_sha256: dded87631534f90a12cf3a63f37176ce37c672082ee90fb153ceb4c27b1ba299
+  - needs: significant
+    text:
+      section: Artículo 12
+      title_es: Incidentes significativos con respecto a los proveedores de motores de búsqueda en línea
+        · artículo 12
+      title_en: Significant incidents with regard to providers of online search engines · Article 12
+      official_text_es: 'Por lo que respecta a los proveedores de motores de búsqueda en línea, un incidente
+        se considerará significativo con arreglo al artículo 3, apartado 1, letra g), cuando cumpla uno
+        o varios de los siguientes criterios:
+
+
+        a) que un motor de búsqueda en línea esté completamente indisponible para más del 5 % de los usuarios
+        del motor de búsqueda en línea de la Unión, o para más de un millón de sus usuarios en la Unión,
+        si esta cifra es menor;
+
+
+        b) que más del 5 % de los usuarios de los servicios del motor de búsqueda en línea de la Unión,
+        o más de un millón de usuarios, si esta cifra es menor, se vean afectados por la disponibilidad
+        limitada de dicho motor de búsqueda en línea;
+
+
+        c) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con el suministro de un motor de búsqueda en línea se vean comprometidas
+        como consecuencia de una acción presuntamente malintencionada;
+
+
+        d) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con el suministro de un motor de búsqueda en línea se vean comprometidas
+        y ello afecte a más del 5 % de los usuarios del motor de búsqueda en línea en la Unión, o a más
+        de un millón de usuarios de los servicios del motor de búsqueda en línea en la Unión, si esta
+        cifra es menor.'
+      official_text_en: 'With regard to providers of online search engines, an incident shall be considered
+        significant under Article 3(1)(g) where it fulfils one or more of the following criteria:
+
+
+        (a) an online search engine is completely unavailable for more than 5 % of that online search
+        engine’s users in the Union, or for more than 1 million of that online search engine’s users in
+        the Union, whichever number is smaller;
+
+
+        (b) more than 5 % of an online search engine’s users in the Union, or more than 1 million of an
+        online search engine’s users in the Union, whichever number is smaller, are impacted by limited
+        availability of that online search engine;
+
+
+        (c) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of an online search engine is compromised as a result of a suspectedly malicious
+        action;
+
+
+        (d) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of an online search engine is compromised with an impact on more than 5 % of
+        that online search engine’s users in the Union, or on more than 1 million of that online search
+        engine’s users in the Union, whichever number is smaller.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_12
+      source_sha256: a733cb9e5655a5050950511b0c2d66ff6fa213d62e3916a4f60ad77e4df5bb95
+  - needs: significant
+    text:
+      section: Artículo 13
+      title_es: Incidentes significativos con respecto a los proveedores de plataformas de servicios de
+        redes sociales · artículo 13
+      title_en: Significant incidents with regard to providers of social networking services platforms
+        · Article 13
+      official_text_es: 'Por lo que respecta a los proveedores de plataformas de servicios de redes sociales,
+        un incidente se considerará significativo con arreglo al artículo 3, apartado 1, letra g), cuando
+        cumpla uno o varios de los siguientes criterios:
+
+
+        a) que una plataforma de servicios de redes sociales esté completamente indisponible para más
+        del 5 % de los usuarios de la plataforma de servicios de redes sociales en la Unión, o para más
+        de un millón de sus usuarios en la Unión, si esta cifra es menor;
+
+
+        b) que más del 5 % de los usuarios de una plataforma de servicios de redes sociales de la Unión,
+        o más de 1 millón de usuarios de la plataforma de servicios de redes sociales en la Unión, si
+        esta cifra es menor, se vean afectados por la disponibilidad limitada de dicha plataforma de servicios
+        de redes sociales;
+
+
+        c) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con la prestación de una plataforma de servicios de redes sociales se vean
+        comprometidas como consecuencia de una acción presuntamente malintencionada;
+
+
+        d) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados relacionados con la prestación de la plataforma de servicios de redes sociales se vean
+        comprometidas y ello afecte a más del 5 % de los usuarios de la plataforma de servicios de redes
+        sociales en la Unión, o a más de un millón de sus usuarios en la Unión, si esta cifra es menor.'
+      official_text_en: 'With regard to providers of social networking services platforms, an incident
+        shall be considered significant under Article 3(1)(g) where it fulfils one or more of the following
+        criteria:
+
+
+        (a) a social networking service platform is completely unavailable for more than 5 % of that social
+        networking service platform’s users in the Union, or for more than 1 million of that social networking
+        service platform’s users in the Union, whichever number is smaller;
+
+
+        (b) more than 5 % of a social networking service platform’s users in the Union, or more than 1
+        million of a social networking service platform’s users in the Union, whichever number is smaller,
+        are impacted by limited availability of that social networking service platform;
+
+
+        (c) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of a social networking service platform is compromised as a result of a suspectedly
+        malicious action;
+
+
+        (d) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of a social networking service platform is compromised with an impact on more
+        than 5 % of that social networking service platform’s users in the Union, or on more than 1 million
+        of that social networking service platform’s users in the Union, whichever number is smaller.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_13
+      source_sha256: 33e538b2847e34064280f4809706f9d38addb80f553b5ebaab62ac7fc00d1df1
+  - needs: significant
+    text:
+      section: Artículo 14
+      title_es: Incidentes significativos con respecto a los prestadores de servicios de confianza · artículo
+        14
+      title_en: Significant incidents with regard to trust service providers · Article 14
+      official_text_es: 'Por lo que respecta a los prestadores de servicios de confianza, un incidente
+        se considerará significativo con arreglo al artículo 3, apartado 1, letra g), cuando cumpla uno
+        o varios de los siguientes criterios:
+
+
+        a) que un servicio de confianza esté completamente indisponible durante más de veinte minutos;
+
+
+        b) que un servicio de confianza esté indisponible para los usuarios o las partes usuarias durante
+        más de una hora calculada sobre la base de una semana natural;
+
+
+        c) que más del 1 % de los usuarios o partes usuarias en la Unión, o más de 200 000 usuarios o
+        partes usuarias en la Unión, si esta cifra es menor, se vean afectados por la disponibilidad limitada
+        de un servicio de confianza;
+
+
+        d) que el acceso físico a una zona en las que estén situados los sistemas de redes y de información
+        y en la que el acceso esté restringido al personal acreditado del prestador de servicios de confianza
+        o la protección de dicho acceso físico se vea comprometido;
+
+
+        e) que la integridad, confidencialidad o autenticidad de los datos almacenados, transmitidos o
+        tratados en relación con la prestación de un servicio de confianza se vean comprometidas y ello
+        afecte a más del 0,1 % de los usuarios o partes usuarias, o a más de cien usuarios o partes usuarias
+        del servicio de confianza en la Unión, si esta cifra es menor.'
+      official_text_en: 'With regard to trust service providers, an incident shall be considered significant
+        under Article 3(1)(g) where it fulfils one or more of the following criteria:
+
+
+        (a) a trust service is completely unavailable for more than 20 minutes;
+
+
+        (b) a trust service is unavailable to users, or relying parties, for more than one hour calculated
+        on a calendar week basis;
+
+
+        (c) more than 1 % of the users or relying parties in the Union, or more than 200 000 users or
+        relying parties in the Union, whichever number is smaller, are impacted by limited availability
+        of a trust service;
+
+
+        (d) physical access to an area where network and information systems are located and to which
+        access is restricted to trusted personnel of the trust service provider, or the protection of
+        such physical access, is compromised;
+
+
+        (e) the integrity, confidentiality or authenticity of stored, transmitted or processed data related
+        to the provision of a trust service is compromised with an impact on more than 0,1 % of users
+        or relying parties, or more than 100 of users or relying parties, whichever number is smaller,
+        of the trust service in the Union.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_14
+      source_sha256: 77be5b7df34770d0f3d57601f561c6a9979e5ea3b247cdc80f4b6413aff7d3e5

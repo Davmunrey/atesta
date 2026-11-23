@@ -50,3 +50,9 @@ This pack cannot be scored, including when development draft visibility is enabl
   - 13 → `ctl.physical_security`.
 - **No automated control is mapped yet.** The scanner's controls can be added point by point once a reviewer agrees on them.
 - **No reviewer identity is invented;** every `reviewed_by` is null. Mappings are preparation aids, not equivalence claims.
+
+## Incident criteria (draft2)
+
+- **Articles 3 to 14** (significant and recurring incidents, in general and per type of entity) are not measures, so they are not requirements of the self-assessment.
+- **They are `incident_criteria` in `pack.yaml`,** one per article, with `needs: significant`. They carry the official ES and EN text, extracted from the same two captures as above (SHA-256 `65a0fc42…` ES, `1d10f42c…` EN) with the same reader and the same per-text hash scheme (`id` `art<n>`).
+- **What the user sees:** the incident form shows them next to the "significant" flag. Atesta shows the text; whether an incident is significant is the organization's decision (ADR-005).

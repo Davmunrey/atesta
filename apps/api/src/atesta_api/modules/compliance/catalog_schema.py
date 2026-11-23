@@ -115,11 +115,32 @@ class ReportingClock(Content):
         return self
 
 
+class CriterionText(Content):
+    """An official text shown next to an incident flag, copied from the act (rule 10). For
+    criteria that are not measures, so they stay out of the self-assessment register."""
+
+    section: Text
+    title_es: Text
+    title_en: Text | None = None
+    official_text_es: Text
+    official_text_en: Text | None = None
+    source: Link
+    source_sha256: Annotated[str, StringConstraints(pattern=r"^[a-f0-9]{64}$")]
+
+
 class IncidentCriterion(Content):
-    """The requirement whose official text explains an incident flag (recorded-routines spec)."""
+    """What explains an incident flag (recorded-routines spec): a requirement of the pack, or an
+    official text given inline."""
 
     needs: Literal["significant", "personal_data"]
-    requirement: Text
+    requirement: Text | None = None
+    text: CriterionText | None = None
+
+    @model_validator(mode="after")
+    def one_source(self) -> Self:
+        if (self.requirement is None) == (self.text is None):
+            raise ValueError("an incident criterion names a requirement or an official text")
+        return self
 
 
 class PackContext(Content):
