@@ -37,9 +37,11 @@ Start with the question you have.
 | [ADR-013: Third-party agent tooling is vendored, pinned and reviewed](adr/0013-agent-tooling.md) | accepted (2026-11-12) |
 | [ADR-014: A read-only device agent that reports posture and never acts](adr/0014-device-agent.md) | proposed (2026-11-23) |
 | [ADR-015: The repository is public](adr/0015-public-repository.md) | proposed (2026-11-23) |
+| [ADR-016: An MCP server lets AI agents work with Atesta through scoped API keys](adr/0016-mcp-server-for-ai-agents.md) | proposed (2026-11-23) |
 
 ## Feature specs
 
+- [api-keys-v2](specs/api-keys-v2.md)
 - [auditor-dossier](specs/auditor-dossier.md)
 - [claims-honesty](specs/claims-honesty.md)
 - [console-shell](specs/console-shell.md)
@@ -62,6 +64,7 @@ Start with the question you have.
 - [local-dev-auth](specs/local-dev-auth.md)
 - [management-report](specs/management-report.md)
 - [manual-control-review](specs/manual-control-review.md)
+- [mcp-server](specs/mcp-server.md)
 - [organization-closure](specs/organization-closure.md)
 - [organization-shell-design](specs/organization-shell-design.md)
 - [rbac](specs/rbac.md)

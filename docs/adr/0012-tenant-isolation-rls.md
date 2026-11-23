@@ -103,3 +103,16 @@ other than `<name>_id: str`.
 - **Scope:** a token is write-only (`evidence:write`); no endpoint reads data with it.
 - **Why not a user session:** tools in a customer's CI have no person signed in, and a person's
   session must not be copied into a pipeline.
+
+## Amendment 6 (proposed 2026-11-23, ADR-016, api-keys-v2 and mcp-server specs)
+
+- **Keys may read.** Amendment 5 made a key write-only. With ADR-016, a key carries explicit
+  scopes, and its read scopes (`compliance:read`, `incidents:read`) open read routes.
+  - **Entering the context:** the key is resolved as before, through `api_token_read`, and
+    the request then enters the key's organization with the reason `api_token`.
+  - **What a read sees:** it passes `tenant_isolation` like any other request. It can see only
+    the key's own organization, because no token route takes an organization in its path.
+- **New tenant tables, standard policy only:**
+  - `api_token_usage`: append-only, SELECT and INSERT;
+  - `assessment_proposals`: SELECT, INSERT, and UPDATE only to record a person's decision.
+- **No new named policy, setting or context reason.**
