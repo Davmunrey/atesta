@@ -91,3 +91,18 @@ Atesta computes nothing beyond these counts.
 - A single score across frameworks.
 - Notifications and email digests.
 - Trend charts, which stay on each framework's page.
+
+## Getting started (#196)
+
+- [ ] **Who and where:** admins see a "Puesta en marcha" checklist on the overview until every step is
+  done or they hide it (hidden per organization in the browser).
+- [ ] **Steps.** Each is marked done from the organization's own records, never from a click:
+  1. define the scope of the lead framework (the one with selection axes, else the largest);
+  2. assess the first 10 measures;
+  3. invite the team (more than one member);
+  4. approve a policy;
+  5. run an access review or a training;
+  6. connect a tool (an API token exists);
+  7. record the security officer review, which leads to the dossier.
+- [ ] **Not listed until it works:** connecting Microsoft 365 or Google Workspace, because scanning
+  needs the hosted environment.

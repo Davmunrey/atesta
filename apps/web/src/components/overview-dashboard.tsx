@@ -7,6 +7,7 @@ import type { Membership } from "@/lib/org";
 import { ErrorMessage } from "./error-message";
 import { FirstSteps } from "./first-steps";
 import { FrameworkLedger } from "./framework-ledger";
+import { GettingStarted } from "./getting-started";
 import { PageHeader } from "./page-frame";
 import { AttentionList, Kpis, ReadinessSummary, RecentActivity, TeamLoad, YourWork, started, useAttention } from "./readiness";
 import { ScanHistory } from "./scan-history";
@@ -34,6 +35,7 @@ export function OverviewDashboard({ orgId, org }: { orgId: string; org?: Members
     {header(<ReadinessSummary readiness={readiness} attention={attention.length} />, refresh)}
     {!org && refresh ? <div className="dashboard-toolbar">{refresh}</div> : null}
     <p className="dashboard-environment">{query.data.development ? t("development") : t("recordedResults")}</p>
+    {org ? <GettingStarted org={org} readiness={readiness} /> : null}
     {underway ? <>
       <Kpis readiness={readiness} />
       <div className="panel-grid panel-grid-main">

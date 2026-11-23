@@ -195,3 +195,8 @@
 .dossier td.font-mono { white-space: nowrap; }
 .portfolio-summary { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-weight: 600; }
 .portfolio-summary [data-severity="overdue"] { color: var(--color-danger, inherit); }
+
+.getting-started { display: grid; gap: 0.75rem; }
+.getting-started li { display: flex; gap: 0.625rem; align-items: flex-start; }
+.getting-started li svg { flex: none; margin-top: 0.2rem; }
+.getting-started li[data-done="true"] svg { color: var(--color-success, inherit); }
