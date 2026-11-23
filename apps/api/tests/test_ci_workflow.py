@@ -3,6 +3,7 @@ dependency audit reads the locked project dependencies (not the tool's own envir
 
 import json
 import re
+import tomllib
 from pathlib import Path
 from typing import Any
 
@@ -310,9 +311,9 @@ def test_the_newest_python_runs_weekly_and_never_blocks() -> None:
     assert "python-newest" not in contexts
 
 
-def test_dependabot_keeps_python_on_3_12_and_postgres_on_18() -> None:
+def test_dependabot_keeps_python_on_3_13_and_postgres_on_18() -> None:
     # Python and PostgreSQL majors and minors are planned upgrades of every image, CI job and
-    # the RDS engine together; Dependabot proposes only patches (3.12.x, 18.x).
+    # the RDS engine together; Dependabot proposes only patches (3.13.x, 18.x).
     config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
     by_ecosystem = {u["package-ecosystem"]: u for u in config["updates"]}
     docker_ignores = {i["dependency-name"]: i for i in by_ecosystem["docker"]["ignore"]}
@@ -322,3 +323,48 @@ def test_dependabot_keeps_python_on_3_12_and_postgres_on_18() -> None:
     }
     compose_ignores = {i["dependency-name"]: i for i in by_ecosystem["docker-compose"]["ignore"]}
     assert compose_ignores["postgres"]["update-types"] == ["version-update:semver-major"]
+
+
+PYTHON = "3.13"
+
+
+def test_python_is_one_minor_everywhere() -> None:
+    """Runtimes, tools, CI, both image bases and the scanner lock move together (#298)."""
+    root = WORKFLOWS.parents[1]
+    tomls = [
+        root / "pyproject.toml",
+        *root.glob("*/*/pyproject.toml"),
+        root / "scanner" / "pyproject.toml",
+    ]
+    for path in tomls:
+        project = tomllib.loads(path.read_text()).get("project", {})
+        if "requires-python" in project:
+            assert project["requires-python"] == f">={PYTHON}", path
+    tools = tomllib.loads((root / "pyproject.toml").read_text())["tool"]
+    assert tools["ruff"]["target-version"] == "py" + PYTHON.replace(".", "")
+    assert tools["mypy"]["python_version"] == PYTHON
+    ci = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())  # python-newest.yml runs ahead
+    versions = {
+        step["with"]["python-version"]
+        for job in ci["jobs"].values()
+        for step in job.get("steps", [])
+        if step.get("uses", "").startswith("astral-sh/setup-uv@")
+        and "python-version" in step.get("with", {})
+    }
+    assert versions == {PYTHON}
+    bases = {
+        line.split()[1]
+        for name in ("apps/Dockerfile", "scanner/Dockerfile")
+        for line in (root / name).read_text().splitlines()
+        if line.startswith("FROM python:")
+    }
+    assert len(bases) == 1, bases  # one tag and digest for the API, worker and scanner images
+    tag, digest = next(iter(bases)).split("@sha256:")
+    assert re.fullmatch(rf"python:{re.escape(PYTHON)}\.\d+-slim-trixie", tag) and len(digest) == 64
+    for lock in (
+        "scanner/requirements.txt",
+        "scanner/build-requirements.txt",
+        "apps/build-requirements.txt",
+    ):
+        header = (root / lock).read_text().splitlines()[1]
+        assert f"--python-version {PYTHON} " in header, lock

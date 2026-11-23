@@ -1,8 +1,10 @@
 # Atesta scan runner (scanner-connectors spec, Scanner image and wrapper; ADR-002, ADR-004).
 # Build from the repository root: docker build -f scanner/Dockerfile -t atesta-scanner .
-# The base image and PowerShell pins are the ones Prowler 5.52.0's own image uses (its Dockerfile
-# is unchanged since 5.49.0): https://raw.githubusercontent.com/prowler-cloud/prowler/5.52.0/Dockerfile
-FROM python:3.12.16-slim-trixie@sha256:8523d6abeb48ceae0b7240d30c5808fc26cb79c1a635bacdf19cf3baecfbec07
+# The PowerShell and apt pins are the ones Prowler 5.52.0's own image uses (its Dockerfile is
+# unchanged since 5.49.0): https://raw.githubusercontent.com/prowler-cloud/prowler/5.52.0/Dockerfile
+# The base is Python 3.13, the newest Prowler allows (<3.14), where upstream stays on 3.12 (#298);
+# it is the same tag and digest as apps/Dockerfile.
+FROM python:3.13.18-slim-trixie@sha256:e48f59cdba69a3cbd9ed2cf0f348d90d45a8d350d98134cf1070bc106ee9ed90
 
 ARG POWERSHELL_VERSION=7.6.10
 ARG POWERSHELL_SHA256=e261cabc91c78a9afe8d1e5f24731ab0d38204735ab2ec94b0af55102652e10d

@@ -30,7 +30,7 @@ Purview 1, as the spec states; no Entra check (Entra prefers Graph `accountEnabl
 
 ```bash
 python -I scanner/tools/powershell_checks.py \
-  <venv>/lib/python3.12/site-packages/prowler/providers/m365/services \
+  <venv>/lib/python3.13/site-packages/prowler/providers/m365/services \
   scanner/expected/5.52.0/m365.json > m365-powershell.json
 ```
 
