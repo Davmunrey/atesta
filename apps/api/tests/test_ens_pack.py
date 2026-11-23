@@ -3,11 +3,22 @@
 import json
 from pathlib import Path
 
-from atesta_api.modules.compliance.catalog import read_catalog
+from atesta_api.modules.compliance.catalog import Catalog, read_catalog
 from atesta_core.frameworks import Mapping, framework_results
 from atesta_core.scoring import ControlResult, Status
 
 ROOT = Path(__file__).resolve().parents[3]
+
+
+def _catalog() -> Catalog:
+    expected: set[str] = set()
+    for provider in ("m365", "googleworkspace"):
+        expected.update(
+            json.loads((ROOT / "scanner/expected/5.49.0" / f"{provider}.json").read_text())[
+                provider
+            ]
+        )
+    return read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.49.0")
 
 
 def test_ens_preserves_dimension_levels_and_alternative_reinforcements() -> None:
@@ -72,3 +83,12 @@ def test_every_requirement_group_has_its_official_heading() -> None:
     assert (
         groups.index("org") < groups.index("op.pl") < groups.index("op.mon") < groups.index("mp.if")
     )
+
+
+def test_mp_s_2_keeps_the_space_inside_the_italic_web() -> None:
+    """The BOE prints `servicios <em>web </em>deberán`: the space sits inside the italics, and
+    stripping the tag must not drop it (original HTML, SHA-256 6249bcb3…, SOURCES.md)."""
+    pack = next(p for p in _catalog().packs if p.metadata.id == "ens_rd311_2022")
+    text = next(r for r in pack.requirements if r.id == "mp.s.2").attributes.official_text_es
+    assert "Los sistemas que prestan servicios web deberán ser protegidos" in text
+    assert "webdeberán" not in text
