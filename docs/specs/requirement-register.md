@@ -1,7 +1,7 @@
 # Spec: requirement register and statement of applicability
 
 - Issues: #133, #226 (expected evidence). Requirement ids: FR-07 (human assessment), Gate A items 2-4 in `ROADMAP.md`
-- Status: draft
+- Status: built (2026-11-23: every acceptance criterion is implemented and covered by the tests its test plan names)
 
 ## Problem
 

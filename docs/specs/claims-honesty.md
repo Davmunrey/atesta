@@ -1,6 +1,6 @@
 # Spec: claims honesty
 
-Issue: #130. Status: draft.
+Issue: #130. Status: built (2026-11-23: both test-plan items pass).
 
 ## Problem
 

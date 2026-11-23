@@ -1,7 +1,7 @@
 # Spec: organization data export and closure
 
 - Issue: #156. Builds on `identity-auth.md`, `rbac.md` and ADR-012 (amendment 3 below).
-- Status: draft
+- Status: built (2026-11-23: every acceptance criterion is implemented and covered by the tests its test plan names)
 
 At the end of a contract, the customer either takes their data or has it deleted. As a processor,
 Atesta must, "at the choice of the controller, delete or return all the personal data … after
