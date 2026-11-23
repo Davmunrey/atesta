@@ -1,6 +1,7 @@
 """Independent Annex II examples and partial-mapping behavior from the official source."""
 
 import json
+from datetime import date
 from pathlib import Path
 
 from atesta_api.modules.compliance.catalog import Catalog, read_catalog
@@ -96,8 +97,9 @@ def test_mp_s_2_keeps_the_space_inside_the_italic_web() -> None:
     assert "webdeberán" not in text
 
 
-# Measures whose expected evidence the owner has signed in a session, quoted in that PR.
-SIGNED_EXPECTED_EVIDENCE: set[str] = set()
+# The owner signed the expected evidence of all 73 measures in session on 2026-11-23, in four
+# family blocks, after the 808 page references were checked (author 248/248, coordinator 12/12).
+SIGNED_BY, SIGNED_ON = "David Muñoz", date(2026, 11, 23)
 
 SUBSECTIONS = {
     "org": "6.2.1",
@@ -128,7 +130,7 @@ def test_every_ens_measure_lists_the_evidence_ccn_stic_808_proposes() -> None:
     for requirement in pack.requirements:
         block = requirement.attributes.expected_evidence
         assert block is not None, requirement.id
-        if block.reviewed_by is not None:
+        if (block.reviewed_by, block.reviewed_on) == (SIGNED_BY, SIGNED_ON):
             signed.add(requirement.id)
         group = requirement.id.rsplit(".", 1)[0]  # org.1 -> org, op.acc.1 -> op.acc
         for item in block.items:
@@ -136,7 +138,7 @@ def test_every_ens_measure_lists_the_evidence_ccn_stic_808_proposes() -> None:
             assert item.ref.section == f"{SUBSECTIONS[group]} ({requirement.id})"
             assert 18 <= item.ref.page <= 105, requirement.id
             assert item.es != item.en
-    assert signed == SIGNED_EXPECTED_EVIDENCE
+    assert signed == {r.id for r in pack.requirements}
     # Spot checks re-opened in the PDF (pull request for #226 lists them).
     pages = {r.id: r.attributes.expected_evidence.items[0].ref.page for r in pack.requirements}  # type: ignore[union-attr]
     assert (pages["org.1"], pages["op.pl.1"], pages["op.exp.6"], pages["mp.if.4"]) == (
@@ -158,7 +160,8 @@ def test_ens_offers_the_ccn_stic_890c_profiles_as_scope_options() -> None:
     for key, profile in profiles.items():
         assert set(profile.levels) == codes and len(codes) == 73
         applying[key] = {c for c, v in profile.levels.items() if v != "n.a."}
-        assert profile.reviewed_by is None  # a candidate: only the owner signs
+        # Signed by the owner on 2026-11-23; the 73 IT values were checked against §4 (73/73).
+        assert (profile.reviewed_by, profile.reviewed_on) == (SIGNED_BY, SIGNED_ON)
         assert (profile.refs[0].guide, profile.refs[0].section, profile.refs[0].page) == (
             "CCN-STIC 890C",
             "4",
@@ -185,7 +188,7 @@ def test_ens_guides_the_scope_with_the_ccn_stic_803_valuation_order() -> None:
     """requirement-register spec, issue 225: information (C, I, T, A), then services (D)."""
     ens = next(p for p in _catalog().packs if p.metadata.id == "ens_rd311_2022")
     guide = ens.metadata.attributes.scope_guide
-    assert guide is not None and guide.reviewed_by is None
+    assert guide is not None and (guide.reviewed_by, guide.reviewed_on) == (SIGNED_BY, SIGNED_ON)
     assert [(s.asset, s.key) for s in guide.steps] == [
         ("information", "C"),
         ("information", "I"),
