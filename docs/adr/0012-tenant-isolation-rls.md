@@ -62,7 +62,7 @@ referential actions only when both tables are queue tables, which carry no RLS a
 `atesta_app` may already delete. The worker refuses to start if any Atesta task has a parameter
 other than `<name>_id: str`.
 
-## Amendment 3 (proposed 2026-11-23, organization-closure spec; the owner accepts it)
+## Amendment 3 (accepted by the owner 2026-11-23, organization-closure spec)
 
 - **New class, "operator tables":** `erasure_receipts`. It has no `organization_id` foreign key,
   because it outlives the organization it records, and no RLS.
@@ -75,7 +75,7 @@ other than `<name>_id: str`.
   and 30 days must have passed.
 - **The receipt** holds row counts per table and the operator's note; no names or content.
 
-## Amendment 4 (proposed 2026-11-23, recorded-routines spec; the owner accepts it)
+## Amendment 4 (accepted by the owner 2026-11-23, recorded-routines spec)
 
 - **New named read policy:** `training_campaigns` gets `training_token_read`, `FOR SELECT` on
   `token_sha256 = app_setting_text('app.training_token_sha256')`. It works like
@@ -91,7 +91,7 @@ other than `<name>_id: str`.
 - **Why not a user context:** the people who confirm training are often not Atesta users, and
   making them sign up would stop the routine from being used.
 
-## Amendment 5 (proposed 2026-11-23, evidence-ingestion-api spec; the owner accepts it)
+## Amendment 5 (accepted by the owner 2026-11-23, evidence-ingestion-api spec)
 
 - **New named read policy:** `api_tokens` gets `api_token_read`, `FOR SELECT` on
   `token_sha256 = app_setting_text('app.api_token_sha256')`, set only by
