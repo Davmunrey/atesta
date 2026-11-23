@@ -132,7 +132,7 @@ def verify_connection(
     member: Annotated[Member, Depends(require_role(Role.ADMIN))],
     session: DbSession,
 ) -> ScanOut:
-    """Onboarding step 6 (#331): the activation scan verifies, then activates the connection."""
+    """Onboarding step 6 (issue 331): the activation scan verifies, then activates the connection."""
     try:
         found = begin_verification(session, member.organization_id, connection_id, member.user_id)
     except ConnectionStateError:
