@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import TypeGuard
 
 from atesta_api.main import create_app
+from atesta_api.modules.scanning.api import SCAN_ERROR_CODES
 
 _SOURCES = Path(__file__).resolve().parent
 _RAISERS = {"error", "_error"}
@@ -38,7 +39,8 @@ def _is_code(value: object) -> TypeGuard[str]:
 
 
 def error_codes() -> list[str]:
-    codes: set[str] = set()
+    """Codes in error bodies, plus the codes a scan stores in error_code (#270)."""
+    codes: set[str] = set(SCAN_ERROR_CODES)
     for path in sorted(_SOURCES.rglob("*.py")):
         codes |= _code_literals(ast.parse(path.read_text(), filename=str(path)))
     return sorted(codes)

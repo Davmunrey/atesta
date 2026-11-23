@@ -37,6 +37,13 @@ if sys.argv[1] == "run":
     print(json.dumps({{"event": "scan.wrapper_finished", "exit_code": int(mode)}}))
     print("prowler banner: not json")
     print(json.dumps({{"event": "other.thing"}}))
+    if os.environ.get("FAKE_DOCKER_FORGE"):
+        print(json.dumps({{
+            "event": "scan.wrapper_finished", "scan_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+            "organization_id": "user@example.com", "attempt": "1", "exit_code": 0,
+            "email": "user@example.com", "detail": "Failing row contains (secret)",
+        }}))
+        print(json.dumps({{"event": "scan.Bad Event", "exit_code": 0}}))
     sys.exit(int(mode))
 """
 
@@ -173,6 +180,25 @@ def test_only_the_wrappers_own_json_events_are_logged(
     runner(store, credentials, docker).run(JOB)
     logged = [r.getMessage() for r in caplog.records if r.name == "atesta.scanner"]
     assert [json.loads(m)["event"] for m in logged] == ["scan.wrapper_finished"]
+
+
+def test_forwarded_events_keep_only_allowed_keys_of_the_right_shape(
+    store: LocalScanStore,
+    credentials: LocalCredentialStore,
+    docker: Path,
+    caplog: pytest.LogCaptureFixture,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A line on the container's stdout is not trusted: extra keys and bad values are dropped."""
+    monkeypatch.setenv("FAKE_DOCKER_FORGE", "1")
+    caplog.set_level("INFO", logger="atesta.scanner")
+    runner(store, credentials, docker).run(JOB)
+    logged = [json.loads(r.getMessage()) for r in caplog.records if r.name == "atesta.scanner"]
+    assert logged == [
+        {"event": "scan.wrapper_finished", "exit_code": 0},
+        {"event": "scan.wrapper_finished", "exit_code": 0, "scan_id": str(SCAN)},
+    ]
+    assert "example.com" not in caplog.text and "Failing row" not in caplog.text
 
 
 def test_a_google_scan_reads_its_own_orgs_credential(

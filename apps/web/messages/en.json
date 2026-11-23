@@ -87,7 +87,10 @@
       "provider_unavailable": "We cannot verify your session right now. Try again in a few seconds."
     },
     "connections": {
+      "incomplete_permissions": "The scan stopped: the connection is missing read permissions. Check the permissions granted and verify it again.",
       "not_found": "We couldn't find that connection, or you don't have access.",
+      "over_privileged": "The scan stopped: the connection has more permissions than it needs. Atesta only uses read permissions; remove the others and verify it again.",
+      "revoked": "The scan stopped: the connection's access was revoked. Connect it again to keep scanning.",
       "state_invalid": "This connection no longer allows that change. Reload the page."
     },
     "identity": {
@@ -121,7 +124,11 @@
     "scanning": {
       "already_queued": "A scan of this connection is already queued or running. Wait for it to finish.",
       "connection_not_active": "This connection is not active yet. Finish its setup and verify it before scanning.",
-      "not_found": "We couldn't find that scan, or you don't have access."
+      "engine_failed": "The scan could not finish. Run it again later.",
+      "not_found": "We couldn't find that scan, or you don't have access.",
+      "output_invalid": "The scan's output was not valid and was discarded. No data from this attempt was kept.",
+      "tenant_mismatch": "The scan's output belonged to another tenant and was discarded. Check which tenant the connection points to.",
+      "timeout": "The scan ran past its time limit and was stopped."
     }
   },
   "app": {

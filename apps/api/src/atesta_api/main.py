@@ -16,6 +16,7 @@ from atesta_api.platform import db
 from atesta_api.platform.errors import install_error_handlers
 from atesta_api.platform.guard import assert_safe_runtime_role
 from atesta_api.platform.headers import install_response_headers
+from atesta_api.platform.logs import install_log_redaction
 
 
 @asynccontextmanager
@@ -38,6 +39,7 @@ def health() -> dict[str, str]:
 
 def create_app() -> FastAPI:
     """A fresh app; the contract export uses its own so test-only routes never leak into it."""
+    install_log_redaction()  # uvicorn logs unhandled errors with exc_info (rule 2)
     created = FastAPI(title="Atesta API", version="0.0.0", lifespan=lifespan)
     install_error_handlers(created)
     install_response_headers(created)

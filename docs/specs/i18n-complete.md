@@ -17,6 +17,10 @@ marked as Spanish and labelled as official.
 **Messages**
 - [ ] **Plurals:** counted messages use ICU plural forms: "1 requisito disponible", "2 requisitos disponibles", "Applies to 1".
 - [ ] **Guard test:** a message with a count placeholder and no plural form fails.
+- [x] **Stored codes:** a code the API stores and returns in a response field (a scan's
+  `error_code`) is in the contract code list, so the web test that every API error code has
+  ES and EN text covers it (#270). Tests: `apps/api/tests/test_scan_error_codes.py`,
+  `apps/web/tests/unit/errors.test.ts`.
 - [ ] **No hardcoded text:** user-facing text in components is never written inline, neither JSX text nor `aria-label`, `title`, `placeholder` or `alt`. A guard test fails on any.
 
 **Formats**

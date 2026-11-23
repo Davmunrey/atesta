@@ -12,6 +12,7 @@ from atesta_api.modules.scanning.attempts import (
     start_attempt,
 )
 from atesta_api.modules.scanning.devscan import run_fixture_scan
+from atesta_api.modules.scanning.error_codes import SCAN_ERROR_CODES
 from atesta_api.modules.scanning.expected import (
     ENGINE_VERSION,
     exclusions,
@@ -63,6 +64,7 @@ __all__ = [
     "OCSF_FILE",
     "RESCORE_TASK",
     "RUN_TASK",
+    "SCAN_ERROR_CODES",
     "SCHEDULE_TASK",
     "SNAPSHOT_TASK",
     "AlreadyQueuedError",
