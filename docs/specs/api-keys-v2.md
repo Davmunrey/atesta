@@ -1,7 +1,10 @@
 # Spec: API keys v2 (scopes, read-only keys, rate limits, usage log)
 
-- Issues: #332; the decision is recorded in #338. Extends `evidence-ingestion-api.md`; decided
-  in ADR-016 and ADR-012 amendment 6 (both proposed).
+- Issues: the decision is recorded in #338. Extends `evidence-ingestion-api.md`; decided in
+  ADR-016 and ADR-012 amendment 6 (both proposed). Delivered in three parts:
+  - #332: scopes, rate limits, the usage log and the admin UI;
+  - #341: the read routes for keys;
+  - #333: the write routes for keys, with the MCP server.
 - Status: draft
 
 ## Problem
