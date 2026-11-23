@@ -3,6 +3,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { type FormEvent, useId, useState } from "react";
 import { type ApiToken, curlExample, useApiTokens, useCreateApiToken, useRevokeApiToken } from "@/lib/api/tokens";
+import { evidenceTemplate, type TemplateFormat, USE_CASES, type UseCase } from "@/lib/evidence-templates";
 import { type Membership, orgHome } from "@/lib/org";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
@@ -17,6 +18,7 @@ export function IntegrationsView({ org }: { org: Membership }) {
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
     <CreateToken orgId={org.organization_id} />
+    <Templates />
     <Panel title={t("list")}>
       {list.isPending ? <p role="status">{t("loading")}</p> : list.isError ? <ErrorMessage error={list.error} />
         : list.data.length === 0 ? <p className="text-muted">{t("empty")}</p>
@@ -85,5 +87,40 @@ function CreateToken({ orgId }: { orgId: string }) {
       <label htmlFor={ids.example} className="text-sm">{t("example")}</label>
       <textarea id={ids.example} readOnly rows={5} className="code-example" value={curlExample(window.location.origin, token)} />
     </div> : null}
+  </Panel>;
+}
+
+/** Ready-made scripts per use case and runner (evidence-ingestion-api spec, templates). */
+function Templates() {
+  const t = useTranslations("integrations.templates");
+  const ids = { useCase: useId(), format: useId(), script: useId() };
+  const [useCase, setUseCase] = useState<UseCase>("backup");
+  const [format, setFormat] = useState<TemplateFormat>("powershell");
+  const [copied, setCopied] = useState(false);
+  const script = evidenceTemplate(useCase, format, window.location.origin, {
+    title: t(`cases.${useCase}.title`), statement: t(`cases.${useCase}.statement`), when: t(`when.${useCase}`), secret: t("secret"),
+  });
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(script);
+      setCopied(true);
+    } catch {
+      setCopied(false); // the text area stays selectable for a manual copy
+    }
+  }
+  return <Panel title={t("title")} description={t("help")}>
+    <div className="routine-form">
+      <span><label htmlFor={ids.useCase}>{t("useCase")}</label>
+        <select id={ids.useCase} value={useCase} onChange={(e) => { setUseCase(e.target.value as UseCase); setCopied(false); }}>
+          {(Object.keys(USE_CASES) as UseCase[]).map((u) => <option key={u} value={u}>{t(`cases.${u}.label`)}</option>)}
+        </select></span>
+      <span><label htmlFor={ids.format}>{t("format")}</label>
+        <select id={ids.format} value={format} onChange={(e) => { setFormat(e.target.value as TemplateFormat); setCopied(false); }}>
+          {(["powershell", "bash", "github"] as const).map((f) => <option key={f} value={f}>{t(`formats.${f}`)}</option>)}
+        </select></span>
+      <span className="routine-form-wide"><label htmlFor={ids.script}>{t("script")}</label>
+        <textarea id={ids.script} readOnly rows={14} className="code-example" value={script} onFocus={(e) => e.currentTarget.select()} /></span>
+      <div className="form-actions"><button type="button" className="dashboard-button" onClick={() => void copy()}>{copied ? t("copied") : t("copy")}</button></div>
+    </div>
   </Panel>;
 }
