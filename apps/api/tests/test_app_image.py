@@ -4,13 +4,13 @@ The API's start command must never log request query strings (issue #257, rule 2
 callback receives the OAuth code and state there.
 """
 
+import http.client
 import json
 import re
 import socket
 import subprocess
 import sys
 import time
-import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -90,13 +90,17 @@ def test_the_api_server_never_logs_a_query_string(tmp_path: Path) -> None:
         text=True,
     )
     try:
-        url = f"http://127.0.0.1:{port}/auth/callback?code=SYNTHETIC_CODE&state=SYNTHETIC_STATE"
+        path = "/auth/callback?code=SYNTHETIC_CODE&state=SYNTHETIC_STATE"
         for _ in range(50):
+            connection = http.client.HTTPConnection("127.0.0.1", port, timeout=1)
             try:
-                urllib.request.urlopen(url, timeout=1)  # noqa: S310 - loopback test server
+                connection.request("GET", path)
+                connection.getresponse().read()
                 break
             except OSError:
                 time.sleep(0.1)
+            finally:
+                connection.close()
         else:
             raise AssertionError("the stand-in server never answered")
         time.sleep(0.3)
