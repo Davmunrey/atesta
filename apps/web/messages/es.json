@@ -197,7 +197,10 @@
       "clock_waiting": "Ese plazo empieza cuando se registre el anterior.",
       "report_month_invalid": "El mes no es válido o todavía no ha empezado.",
       "incident_classified": "Este incidente ya tiene registrada su clasificación como significativo.",
-      "classified_before_aware": "La clasificación no puede ser anterior a la constancia del incidente."
+      "classified_before_aware": "La clasificación no puede ser anterior a la constancia del incidente.",
+      "proposal_pending": "Esta medida ya tiene una propuesta pendiente. Confírmala o recházala antes de enviar otra.",
+      "proposal_decided": "Esta propuesta ya se confirmó o se rechazó.",
+      "proposal_not_found": "No encontramos esa propuesta."
     },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
@@ -681,7 +684,13 @@
       "result": "Resultado: {levels}. Categoría: {category}.",
       "apply": "Usar estos niveles",
       "applied": "Niveles copiados al alcance. Revísalos y guarda el alcance."
-    }
+    },
+    "agentProposal": "Propuesta de un agente",
+    "agentProposalFrom": "Propuesta con el token «{name}» el {date}.",
+    "agentRationale": "Motivo que da el agente",
+    "agentProposalHelp": "Es solo una propuesta: no cambia la medida hasta que una persona la confirma. Al confirmarla, la evaluación queda registrada a tu nombre.",
+    "confirmProposal": "Confirmar la propuesta",
+    "rejectProposal": "Rechazar la propuesta"
   },
   "insights": {
     "title": "Evolución",
@@ -764,7 +773,10 @@
       "scan_blocked": "Análisis bloqueado",
       "training_created": "Abrió una formación",
       "training_acknowledged": "Una persona confirmó una formación",
-      "training_closed": "Cerró una formación"
+      "training_closed": "Cerró una formación",
+      "assessment_proposal_created": "Un agente propuso una autoevaluación",
+      "assessment_proposal_confirmed": "Confirmó la propuesta de un agente",
+      "assessment_proposal_rejected": "Rechazó la propuesta de un agente"
     },
     "day": "Día",
     "unknown": "Otra acción"

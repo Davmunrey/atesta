@@ -39,6 +39,7 @@ from atesta_api.modules.compliance.models import (
     ScoreSnapshot,
 )
 from atesta_api.modules.compliance.plan_gate import framework_in_plan
+from atesta_api.modules.compliance.proposal_view import PendingProposal, pending_proposals
 from atesta_api.modules.compliance.scoring import active_frameworks
 from atesta_api.modules.evidence.api import statements_in_org
 from atesta_api.modules.identity.api import Member, Role, is_member, require_member, require_role
@@ -160,6 +161,7 @@ class RegisterItem(BaseModel):
     proposal: ProposalOut
     assessment: AssessmentOut | None
     assignment: AssignmentOut | None
+    pending_proposal: PendingProposal | None = None  # an API key's, until a person decides
 
 
 class HistoryPoint(BaseModel):
@@ -502,6 +504,7 @@ def read_register(
     profile = _profile_levels(framework, scope)
     assessments = _assessments(session, member.organization_id, framework_key)
     assignments = _assignments(session, member.organization_id, framework_key)
+    pending = pending_proposals(session, member.organization_id, framework_key)
     items = [
         RegisterItem(
             code=r.code,
@@ -511,6 +514,7 @@ def read_register(
             proposal=_proposal(r, scope, profile),
             assessment=assessments.get(r.code),
             assignment=assignments.get(r.code),
+            pending_proposal=pending.get(r.code),
         )
         for r in requirements
     ]
@@ -529,6 +533,86 @@ def read_register(
     )
 
 
+def requirement_of(session: Session, framework_key: str, code: str) -> Requirement:
+    found = next((r for r in _requirements(session, framework_key) if r.code == code), None)
+    if found is None:
+        raise HTTPException(404, detail={"code": "compliance.requirement_not_found"})
+    return found
+
+
+def may_assess(session: Session, member: Member, framework_key: str, code: str) -> None:
+    """Admins assess any measure; a contributor only the measures they own (rbac spec)."""
+    if member.role == Role.MEMBER:
+        owned = _assignments(session, member.organization_id, framework_key).get(code)
+        if owned is None or owned.owner_user_id != member.user_id:
+            raise HTTPException(403, detail={"code": "compliance.not_owner"})
+
+
+def check_assessment(
+    session: Session,
+    organization_id: uuid.UUID,
+    framework: Framework,
+    requirement: Requirement,
+    body: AssessmentIn,
+) -> bool:
+    """The register's rules for an assessment or a proposal; True when it differs from Atesta's."""
+    scope = _scope(session, organization_id, framework.key)
+    proposal = _proposal(requirement, scope, _profile_levels(framework, scope))
+    differs = proposal.decision != "undecided" and proposal.decision != body.applicability
+    if (body.applicability == "not_applicable" or differs) and not body.justification:
+        raise HTTPException(422, detail={"code": "compliance.justification_required"})
+    wanted = set(body.evidence_statement_ids)
+    if wanted - statements_in_org(session, organization_id, wanted):
+        raise HTTPException(422, detail={"code": "compliance.evidence_not_found"})
+    return differs
+
+
+def write_assessment(
+    session: Session,
+    organization_id: uuid.UUID,
+    requirement: Requirement,
+    body: AssessmentIn,
+    recorded_by: uuid.UUID,
+    differs: bool,
+    from_proposal: bool = False,
+) -> RequirementAssessment:
+    """Record a person's assessment (append-only) and its audit event."""
+    row = RequirementAssessment(
+        organization_id=organization_id,
+        framework_key=requirement.framework_key,
+        requirement_code=requirement.code,
+        applicability=body.applicability,
+        implementation=body.implementation,
+        regularly_reviewed=body.regularly_reviewed,
+        justification=body.justification,
+        performed_by=body.performed_by,
+        performed_on=body.performed_on,
+        evidence_statement_ids=sorted(set(body.evidence_statement_ids)),
+        notes=body.notes,
+        recorded_by=recorded_by,
+    )
+    session.add(row)
+    session.flush()
+    session.refresh(row)
+    record(
+        session,
+        organization_id=organization_id,
+        action="requirement.assessed",
+        target_type="requirement",
+        target_id=f"{requirement.framework_key}:{requirement.code}",
+        actor_user_id=recorded_by,
+        metadata={
+            "applicability": body.applicability,
+            "implementation": body.implementation,
+            "regularly_reviewed": body.regularly_reviewed,
+            "differs_from_proposal": differs,
+            "evidence_count": len(row.evidence_statement_ids),
+            "from_proposal": from_proposal,
+        },
+    )
+    return row
+
+
 @router.post("/register/{requirement_code}", status_code=201)
 def record_assessment(
     framework_key: str,
@@ -539,55 +623,11 @@ def record_assessment(
 ) -> AssessmentOut:
     """Admins assess any measure; a contributor only the measures they own (rbac spec)."""
     framework = _framework(session, framework_key)
-    requirement = next(
-        (r for r in _requirements(session, framework_key) if r.code == requirement_code), None
-    )
-    if requirement is None:
-        raise HTTPException(404, detail={"code": "compliance.requirement_not_found"})
-    if member.role == Role.MEMBER:
-        owned = _assignments(session, member.organization_id, framework_key).get(requirement_code)
-        if owned is None or owned.owner_user_id != member.user_id:
-            raise HTTPException(403, detail={"code": "compliance.not_owner"})
-    scope = _scope(session, member.organization_id, framework_key)
-    proposal = _proposal(requirement, scope, _profile_levels(framework, scope))
-    differs = proposal.decision != "undecided" and proposal.decision != body.applicability
-    if (body.applicability == "not_applicable" or differs) and not body.justification:
-        raise HTTPException(422, detail={"code": "compliance.justification_required"})
-    wanted = set(body.evidence_statement_ids)
-    if wanted - statements_in_org(session, member.organization_id, wanted):
-        raise HTTPException(422, detail={"code": "compliance.evidence_not_found"})
-    row = RequirementAssessment(
-        organization_id=member.organization_id,
-        framework_key=framework_key,
-        requirement_code=requirement_code,
-        applicability=body.applicability,
-        implementation=body.implementation,
-        regularly_reviewed=body.regularly_reviewed,
-        justification=body.justification,
-        performed_by=body.performed_by,
-        performed_on=body.performed_on,
-        evidence_statement_ids=sorted(wanted),
-        notes=body.notes,
-        recorded_by=member.user_id,
-    )
-    session.add(row)
-    session.flush()
-    session.refresh(row)
-    record(
-        session,
-        organization_id=member.organization_id,
-        action="requirement.assessed",
-        target_type="requirement",
-        target_id=f"{framework_key}:{requirement_code}",
-        actor_user_id=member.user_id,
-        metadata={
-            "applicability": body.applicability,
-            "implementation": body.implementation,
-            "regularly_reviewed": body.regularly_reviewed,
-            "differs_from_proposal": differs,
-            "evidence_count": len(wanted),
-        },
-    )
+    requirement = requirement_of(session, framework_key, requirement_code)
+    may_assess(session, member, framework_key, requirement_code)
+    org = member.organization_id
+    differs = check_assessment(session, org, framework, requirement, body)
+    row = write_assessment(session, org, requirement, body, member.user_id, differs)
     return AssessmentOut.model_validate(row, from_attributes=True)
 
 

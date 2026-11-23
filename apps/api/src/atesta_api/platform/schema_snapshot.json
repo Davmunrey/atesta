@@ -64,6 +64,15 @@
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
+   "assessment_proposals",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
    "assessment_reviews",
    "tenant_isolation",
    "ALL",
@@ -376,6 +385,12 @@
   ],
   [
    "api_tokens",
+   "",
+   "atesta_app",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "assessment_proposals",
    "",
    "atesta_app",
    "INSERT,SELECT,UPDATE"

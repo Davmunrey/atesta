@@ -30,6 +30,7 @@ TOKEN_ROUTES = {
     ("GET", "/api/v1/due"),
     ("GET", "/api/v1/incidents"),
     ("GET", "/api/v1/incidents/{incident_id}"),
+    ("POST", "/api/v1/frameworks/{framework_key}/measures/{code}/proposals"),
 }
 # Reached without a session: sign-in, the health check, and the routes that authenticate with
 # their own secret (training link, API key). Adding one is a reviewed change to this list.
