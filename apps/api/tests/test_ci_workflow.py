@@ -308,3 +308,17 @@ def test_the_newest_python_runs_weekly_and_never_blocks() -> None:
     required = next(r for r in ruleset["rules"] if r["type"] == "required_status_checks")
     contexts = {c["context"] for c in required["parameters"]["required_status_checks"]}
     assert "python-newest" not in contexts
+
+
+def test_dependabot_keeps_python_on_3_12_and_postgres_on_16() -> None:
+    # Python and PostgreSQL majors and minors are planned upgrades of every image, CI job and
+    # the RDS engine together; Dependabot proposes only patches (3.12.x, 16.x).
+    config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
+    by_ecosystem = {u["package-ecosystem"]: u for u in config["updates"]}
+    docker_ignores = {i["dependency-name"]: i for i in by_ecosystem["docker"]["ignore"]}
+    assert set(docker_ignores["python"]["update-types"]) == {
+        "version-update:semver-major",
+        "version-update:semver-minor",
+    }
+    compose_ignores = {i["dependency-name"]: i for i in by_ecosystem["docker-compose"]["ignore"]}
+    assert compose_ignores["postgres"]["update-types"] == ["version-update:semver-major"]
