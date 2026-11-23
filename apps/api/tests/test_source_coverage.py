@@ -239,11 +239,12 @@ def test_dora_shows_the_major_incident_criteria_of_2024_1772_verbatim() -> None:
 
 
 def test_dora_reporting_clocks_follow_delegated_regulation_2025_301() -> None:
-    """Article 5(1) of 2025/301 (dora SOURCES.md): 24 h, then 72 h, then one month."""
+    """Article 5(1) and 5(2) of 2025/301 (dora SOURCES.md): 4 h from classification as major and
+    no later than 24 h from awareness (#224), then 72 h, then one month."""
     clocks = pack("dora").metadata.attributes.reporting_clocks
-    assert [(c.key, c.hours, c.months, c.after) for c in clocks] == [
-        ("initial_notification", 24, None, None),
-        ("intermediate_report", 72, None, "initial_notification"),
-        ("final_report", None, 1, "intermediate_report"),
+    assert [(c.key, c.hours, c.months, c.after, c.starts, c.outer_limit_hours) for c in clocks] == [
+        ("initial_notification", 4, None, None, "classified", 24),
+        ("intermediate_report", 72, None, "initial_notification", "aware", None),
+        ("final_report", None, 1, "intermediate_report", "aware", None),
     ]
     assert all(c.needs == "significant" and c.requirement == "c3.art19" for c in clocks)

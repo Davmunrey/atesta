@@ -548,7 +548,8 @@ class Incident(TenantMixin, Base):
 
 
 class IncidentUpdate(TenantMixin, Base):
-    """A note, a reporting clock met (once per clock) or the closing (once)."""
+    """A note, a reporting clock met (once per clock), the classification as significant (once)
+    or the closing (once)."""
 
     __tablename__ = "incident_updates"
     __table_args__ = (
@@ -558,8 +559,12 @@ class IncidentUpdate(TenantMixin, Base):
             ["incidents.organization_id", "incidents.id"],
             ondelete="RESTRICT",
         ),
-        CheckConstraint("kind IN ('note', 'clock', 'closed')", name="kind"),
+        CheckConstraint("kind IN ('note', 'clock', 'closed', 'classified')", name="kind"),
         CheckConstraint("(kind = 'clock') = (clock_ref IS NOT NULL)", name="clock_ref_for_clocks"),
+        CheckConstraint(
+            "(kind = 'classified') = (classified_at IS NOT NULL)",
+            name="classified_at_for_classified",
+        ),
         CheckConstraint("length(note) <= 2000", name="note_length"),
         Index(
             "uq_incident_updates_clock",
@@ -576,12 +581,21 @@ class IncidentUpdate(TenantMixin, Base):
             unique=True,
             postgresql_where=text("kind = 'closed'"),
         ),
+        Index(
+            "uq_incident_updates_classified",
+            "organization_id",
+            "incident_id",
+            unique=True,
+            postgresql_where=text("kind = 'classified'"),
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     incident_id: Mapped[uuid.UUID]
     kind: Mapped[str] = mapped_column(Text)
     clock_ref: Mapped[str | None] = mapped_column(Text)
+    # When the organization classified the incident as significant (#224); may be backdated.
+    classified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     note: Mapped[str] = mapped_column(Text, server_default="")
     recorded_by: Mapped[uuid.UUID]
     recorded_at: Mapped[datetime] = mapped_column(

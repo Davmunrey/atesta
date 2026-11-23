@@ -5,17 +5,21 @@ A pack states, per requirement, a `selection_basis` of the form `<axis> · <keys
 organization (a category), or the dimensions whose levels decide it (`nivel · C I T A`).
 The organization's scope gives one value per single-valued axis and one level per dimension.
 
+A pack may also publish scope profiles (issue #227): one value per requirement, a level or
+`n.a.`. A scope that names a profile under the reserved key `profile` takes its proposals from it.
+
 A proposal is never a decision: a person confirms or overrides it, with a justification.
 Nothing here names a framework (rule 9).
 """
 
-from collections.abc import Iterable, Mapping
+from collections.abc import Collection, Iterable, Mapping
 from dataclasses import dataclass
 from typing import Any, Literal
 
 type Decision = Literal["applies", "not_applicable", "undecided"]
 NOT_APPLICABLE = "n.a."
 ALL_KEYS = "Todas"
+PROFILE = "profile"  # reserved scope key: the pack profile the organization adopts
 _SEPARATOR = "·"
 
 
@@ -69,6 +73,14 @@ def propose(
     return Proposal(decision, rule, level)
 
 
+def profile_proposal(value: str | None, profile: str) -> Proposal:
+    """What a profile proposes: its value for the requirement, read at the profile's key."""
+    if value is None:
+        return _UNDECIDED
+    decision: Decision = "not_applicable" if value.strip() == NOT_APPLICABLE else "applies"
+    return Proposal(decision, value, profile)
+
+
 def axis_levels(requirements: Iterable[Mapping[str, Any]]) -> dict[str, dict[str, list[str]]]:
     """Every axis a pack uses, with its dimension keys (sorted) and levels (in rule order)."""
     axes: dict[str, dict[str, list[str]]] = {}
@@ -85,9 +97,18 @@ def axis_levels(requirements: Iterable[Mapping[str, Any]]) -> dict[str, dict[str
     return axes
 
 
-def valid_scope(scope: Mapping[str, Any], axes: Mapping[str, Mapping[str, list[str]]]) -> bool:
-    """Whether every value in the scope is a level the pack declares for that axis or key."""
+def valid_scope(
+    scope: Mapping[str, Any],
+    axes: Mapping[str, Mapping[str, list[str]]],
+    profiles: Collection[str] = (),
+) -> bool:
+    """Whether every value in the scope is a level the pack declares for that axis or key, and
+    the profile, if any, is one of the pack's."""
     for axis, value in scope.items():
+        if axis == PROFILE:
+            if not isinstance(value, str) or value not in profiles:
+                return False
+            continue
         if axis not in axes:
             return False
         levels, keys = axes[axis]["levels"], axes[axis]["keys"]

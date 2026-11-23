@@ -73,19 +73,34 @@ control, so it shows wherever evidence is read.
   `reporting_clocks`. Each clock has:
   - a key, unique in its pack, and a title in ES and EN;
   - a duration in hours or in months;
-  - what it starts from: becoming aware, or another clock of the same pack being met;
-  - the flag it needs (significant, or personal data);
+  - what it starts from: becoming aware, the incident's classification as significant
+    (`starts: classified`, #224), or another clock of the same pack being met;
+  - optionally an outer limit in hours from becoming aware (`outer_limit_hours`, only with
+    `starts: classified`): the clock is due at the earlier of the two times, and the outer limit
+    lapses when the classification comes after it, so the clock then runs from classification
+    alone;
+  - the flag it needs (significant, or personal data; `starts: classified` needs significant);
   - the requirement it serves, which must exist in the pack.
 
   Durations are copied from the official text:
   - NIS2 Art. 23(4)(a) and (b): 24 h and 72 h from becoming aware of the significant incident;
     (d): one month after the notification under (b);
   - GDPR Art. 33(1): 72 h after becoming aware of the breach.
-  - DORA, Delegated Regulation (EU) 2025/301, Art. 5(1): initial notification 24 h at the latest from
-    becoming aware (the 4 h from classification is not modelled), intermediate report 72 h after it,
-    final report one month after that.
+  - DORA, Delegated Regulation (EU) 2025/301, Art. 5(1): initial notification within 4 h from
+    classification as major and no later than 24 h from becoming aware; Art. 5(2): when the
+    classification comes after those 24 h, 4 h from classification. Intermediate report 72 h
+    after the initial notification, final report one month after that.
 - [ ] **Updates (append-only, contributors and admins):** a note, a clock met (once per clock),
   or closing. A closed incident takes no more updates (409).
+- [ ] **Classification time (#224):** when the organization classified the incident as
+  significant (major). It is given when the incident is recorded as significant
+  (`classified_at`, optional), or later by an update of kind `classified` with its time, which
+  also makes the incident significant from then on (late classification). One classification
+  per incident: a second is 409 `compliance.incident_classified`. The time may not be before
+  becoming aware or in the future (422). An incident recorded as significant without a
+  classification time keeps today's behaviour: a `starts: classified` clock runs on its outer
+  limit only, and the form says the time is missing. The audit events are `incident.created`
+  (metadata adds `classified`) and `incident.classified`.
 - [ ] **Clock states**, computed from pack content and updates: met (with the time), running
   (with the due time), overdue, or waiting for the clock it starts from. A clock is computed
   only from packs that are active in the catalog.
@@ -112,5 +127,11 @@ control, so it shows wherever evidence is read.
   - close preconditions, and the evidence statement and its control link;
   - due items.
   - Part B adds the public link (unknown, closed, cap, duplicate, never another organization) and clocks computed from pack content.
+  - Classification (#224): the DORA initial clock is due 4 h after classification, capped at 24 h
+    from awareness, and 4 h after a classification later than 24 h; without a classification
+    time it is due 24 h from awareness; a second classification 409; a time before awareness or
+    in the future 422.
+- **Core unit:** `starts: classified` with and without the outer limit, before and after it,
+  and with no classification time.
 - **Web unit:** forms, CSV parsing, decision flow, due items in "Ahora", ES and EN.
 - **e2e:** one routine end to end, with axe at 375 and 1280 pixels.

@@ -1,6 +1,6 @@
 id: ens_rd311_2022
 name: ENS · RD 311/2022
-version: 2024-11-06.draft7
+version: 2024-11-06.draft8
 jurisdiction: ES
 source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191
 license_notes: Legislative text excluded from copyright under Article 13 of RDL 1/1996. Official Spanish paragraphs and tables are reproduced from BOE; no CCN guide or third-party diagram is reproduced. English guidance is authored, not an official translation.
@@ -47,6 +47,261 @@ attributes:
     - https://www.boe.es/buscar/act.php?id=BOE-A-1996-8930#a13
     - https://www.ccn-cert.cni.es/es/seguridad-al-dia/novedades-ccn-cert/13155-el-ccn-actualiza-cuatro-guias-ccn-stic-de-su-serie-800-sobre-el-esquema-nacional-de-seguridad.html
   verified_on: '2026-11-13'
+  # Scope guide (requirement-register spec, issue 225): the valuation order of CCN-STIC 803
+  # (June 2025), in Atesta's own words with section and page. Never copied; a candidate.
+  scope_guide:
+    axis: nivel
+    category_axis: categoría
+    category_by_level: {BAJO: BÁSICA, MEDIO: MEDIA, ALTO: ALTA}
+    steps:
+    - asset: information
+      key: C
+      es: "Confidencialidad: ¿qué daño causaría que esta información llegara a personas sin autorización para conocerla?"
+      en: "Confidentiality: what harm would follow if this information reached people not authorised to know it?"
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '3.1', page: 9}
+    - asset: information
+      key: I
+      es: "Integridad: ¿qué daño causaría que alguien sin permiso la cambiara, o que quedara incompleta o inexacta?"
+      en: "Integrity: what harm would follow if someone without permission changed it, or it were left incomplete or inaccurate?"
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '3.2', page: 9}
+    - asset: information
+      key: T
+      es: "Trazabilidad: ¿qué daño causaría no poder averiguar después quién la consultó o la modificó?"
+      en: "Traceability: what harm would follow if you could not find out afterwards who read or changed it?"
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '3.3', page: 9}
+    - asset: information
+      key: A
+      es: "Autenticidad: ¿qué daño causaría que la información no fuera auténtica, es decir, que no viniera de quien dice venir?"
+      en: "Authenticity: what harm would follow if the information were not authentic, that is, not from whom it claims to be?"
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '3.4', page: 9}
+    - asset: service
+      key: D
+      es: "Disponibilidad: ¿qué daño causaría que quien está autorizado no pudiera usar el servicio cuando lo necesita? Pensad en el tiempo máximo de interrupción tolerable."
+      en: "Availability: what harm would follow if authorised people could not use the service when they need it? Think of the longest interruption you can tolerate."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '3.5', page: 9}
+    notes:
+    - es: "Valorad primero cada tipo de información (C, I, T, A) y después cada servicio (D); los servicios finalistas suelen marcar los niveles más exigentes."
+      en: "Value each information type first (C, I, T, A), then each service (D); the services you exist to provide usually set the most demanding levels."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '1.2', page: 5}
+    - es: "Para cada dimensión, medid el daño sobre los objetivos de la organización, sus activos y el cumplimiento de la normativa, incluidos los derechos de las personas: limitado es bajo, grave es medio y muy grave es alto."
+      en: "For each dimension, weigh the harm to the organization's objectives, its assets and legal compliance, including people's rights: limited is low, serious is medium and very serious is high."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '2.1', page: 7}
+    - es: "En disponibilidad, cuanto más corto sea el tiempo de recuperación objetivo (RTO), más alto el nivel. La guía da plazos orientativos."
+      en: "For availability, the shorter the recovery time objective (RTO), the higher the level. The guide gives indicative times."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '2.2.2', page: 8}
+    - es: "Si hay datos personales, partid del análisis de riesgos o de la evaluación de impacto de esos tratamientos."
+      en: "Where there is personal data, start from the risk analysis or impact assessment of that processing."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '3.6', page: 9}
+    - es: "El sistema toma en cada dimensión el nivel más alto de sus activos, y su categoría sigue a la dimensión más alta."
+      en: "The system takes, in each dimension, the highest level among its assets, and its category follows the highest dimension."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '4.1', page: 12}
+    - es: "Atesta no guarda esta hoja. Documentad las valoraciones y sus razones, y que las aprueben los responsables de la información y de los servicios."
+      en: "Atesta does not keep this worksheet. Document the valuations and their reasons, and have the information and service owners approve them."
+      ref: {guide: CCN-STIC 803, edition: 2025-06, section: '4.5', page: 15}
+    reviewed_by: null
+  # Scope profiles (requirement-register spec, issue 227): CCN-STIC 890C (November 2026),
+  # section 4 statement of applicability, pages 8 to 10. Each value is the column's category or
+  # level, or n.a. (N/A and N/A (*) in the guide). Criteria cite section 5; never copied.
+  # Candidates: only the owner signs. See SOURCES.md.
+  scope_profiles:
+  - key: pce_rfs_small_it
+    title_es: "PCE de requisitos fundamentales (CCN-STIC 890C), entidades de menor tamaño, alcance IT"
+    title_en: "Essential security requirements profile (CCN-STIC 890C), smaller entities, IT scope"
+    summary_es: "Perfil transitorio publicado por el CCN para alcanzar la categoría BÁSICA cuando todas las dimensiones del sistema son de nivel bajo y la entidad tiene dificultades para adecuarse al ENS (CCN-STIC 890C, apartado 2). Selección para un alcance solo de tecnologías de la información: 38 medidas aplican. Tres medidas sin aplicación con criterio propio (op.exp.9, op.ext.3, op.cont.2) aplican si prestáis servicios de los anexos I y II de NIS2. Es una propuesta: cada medida la decidís vosotros."
+    summary_en: "A transitional profile published by CCN to reach category BÁSICA when every dimension of the system is at low level and the entity finds it hard to adopt ENS (CCN-STIC 890C, section 2). Selection for a scope of information technology only: 38 measures apply. Three measures marked not applicable with their own criteria (op.exp.9, op.ext.3, op.cont.2) apply if you provide services listed in NIS2 Annexes I and II. It is a proposal: you decide each measure."
+    refs:
+    - {guide: CCN-STIC 890C, edition: 2026-11, section: '4', page: 8}
+    - {guide: CCN-STIC 890C, edition: 2026-11, section: '2', page: 4}
+    - {guide: CCN-STIC 890C, edition: 2026-11, section: '4.1', page: 10}
+    - {guide: CCN-STIC 890, edition: 2026-11, section: '3.4', page: 9}
+    levels:
+      org.1: BÁSICA
+      org.2: BÁSICA
+      org.3: BÁSICA
+      org.4: BÁSICA
+      op.pl.1: BÁSICA
+      op.pl.2: 'n.a.'
+      op.pl.3: BÁSICA
+      op.pl.4: 'n.a.'
+      op.pl.5: 'n.a.'
+      op.acc.1: BAJO
+      op.acc.2: BAJO
+      op.acc.3: 'n.a.'
+      op.acc.4: BAJO
+      op.acc.5: BAJO
+      op.acc.6: BAJO
+      op.exp.1: BÁSICA
+      op.exp.2: BÁSICA
+      op.exp.3: 'n.a.'
+      op.exp.4: BÁSICA
+      op.exp.5: 'n.a.'
+      op.exp.6: BÁSICA
+      op.exp.7: BÁSICA
+      op.exp.8: BAJO
+      op.exp.9: 'n.a.'
+      op.exp.10: BÁSICA
+      op.ext.1: 'n.a.'
+      op.ext.2: 'n.a.'
+      op.ext.3: 'n.a.'
+      op.ext.4: 'n.a.'
+      op.nub.1: 'n.a.'
+      op.cont.1: 'n.a.'
+      op.cont.2: 'n.a.'
+      op.cont.3: 'n.a.'
+      op.cont.4: 'n.a.'
+      op.mon.1: 'n.a.'
+      op.mon.2: BÁSICA
+      op.mon.3: 'n.a.'
+      mp.if.1: BÁSICA
+      mp.if.2: 'n.a.'
+      mp.if.3: 'n.a.'
+      mp.if.4: 'n.a.'
+      mp.if.5: 'n.a.'
+      mp.if.6: 'n.a.'
+      mp.if.7: 'n.a.'
+      mp.per.1: 'n.a.'
+      mp.per.2: BÁSICA
+      mp.per.3: BÁSICA
+      mp.per.4: BÁSICA
+      mp.eq.1: BÁSICA
+      mp.eq.2: MEDIO
+      mp.eq.3: BÁSICA
+      mp.eq.4: BAJO
+      mp.com.1: BÁSICA
+      mp.com.2: BAJO
+      mp.com.3: 'n.a.'
+      mp.com.4: 'n.a.'
+      mp.si.1: 'n.a.'
+      mp.si.2: 'n.a.'
+      mp.si.3: BÁSICA
+      mp.si.4: BÁSICA
+      mp.si.5: BAJO
+      mp.sw.1: 'n.a.'
+      mp.sw.2: 'n.a.'
+      mp.info.1: BÁSICA
+      mp.info.2: 'n.a.'
+      mp.info.3: BAJO
+      mp.info.4: 'n.a.'
+      mp.info.5: BAJO
+      mp.info.6: BAJO
+      mp.s.1: BÁSICA
+      mp.s.2: 'n.a.'
+      mp.s.3: BÁSICA
+      mp.s.4: 'n.a.'
+    criteria:
+      op.pl.1: {section: '5.1', page: 12}
+      op.acc.6: {section: '5.2', page: 12}
+      op.exp.1: {section: '5.3', page: 13}
+      op.exp.4: {section: '5.4', page: 13}
+      op.exp.7: {section: '5.5', page: 13}
+      op.exp.8: {section: '5.6', page: 13}
+      op.exp.9: {section: '5.7', page: 13}
+      op.ext.3: {section: '5.8', page: 13}
+      op.cont.2: {section: '5.9', page: 14}
+      mp.if.1: {section: '5.10', page: 14}
+      mp.if.2: {section: '5.11', page: 14}
+      mp.com.1: {section: '5.12', page: 15}
+      mp.info.6: {section: '5.13', page: 15}
+    reviewed_by: null
+  - key: pce_rfs_small_it_ot_iot
+    title_es: "PCE de requisitos fundamentales (CCN-STIC 890C), entidades de menor tamaño, alcance IT/OT/IoT"
+    title_en: "Essential security requirements profile (CCN-STIC 890C), smaller entities, IT/OT/IoT scope"
+    summary_es: "Perfil transitorio publicado por el CCN para alcanzar la categoría BÁSICA cuando todas las dimensiones del sistema son de nivel bajo y la entidad tiene dificultades para adecuarse al ENS (CCN-STIC 890C, apartado 2). Selección para un alcance convergente de tecnologías de la información, de operación (OT) e internet de las cosas (IoT): 42 medidas aplican. Tres medidas sin aplicación con criterio propio (op.exp.9, op.ext.3, op.cont.2) aplican si prestáis servicios de los anexos I y II de NIS2. Es una propuesta: cada medida la decidís vosotros."
+    summary_en: "A transitional profile published by CCN to reach category BÁSICA when every dimension of the system is at low level and the entity finds it hard to adopt ENS (CCN-STIC 890C, section 2). Selection for a converged scope of information, operational (OT) and Internet of Things (IoT) technology: 42 measures apply. Three measures marked not applicable with their own criteria (op.exp.9, op.ext.3, op.cont.2) apply if you provide services listed in NIS2 Annexes I and II. It is a proposal: you decide each measure."
+    refs:
+    - {guide: CCN-STIC 890C, edition: 2026-11, section: '4', page: 8}
+    - {guide: CCN-STIC 890C, edition: 2026-11, section: '2', page: 4}
+    - {guide: CCN-STIC 890C, edition: 2026-11, section: '4.1', page: 10}
+    - {guide: CCN-STIC 890, edition: 2026-11, section: '3.4', page: 9}
+    levels:
+      org.1: BÁSICA
+      org.2: BÁSICA
+      org.3: BÁSICA
+      org.4: BÁSICA
+      op.pl.1: BÁSICA
+      op.pl.2: 'n.a.'
+      op.pl.3: BÁSICA
+      op.pl.4: 'n.a.'
+      op.pl.5: 'n.a.'
+      op.acc.1: BAJO
+      op.acc.2: BAJO
+      op.acc.3: 'n.a.'
+      op.acc.4: BAJO
+      op.acc.5: BAJO
+      op.acc.6: BAJO
+      op.exp.1: BÁSICA
+      op.exp.2: BÁSICA
+      op.exp.3: 'n.a.'
+      op.exp.4: BÁSICA
+      op.exp.5: MEDIA
+      op.exp.6: BÁSICA
+      op.exp.7: BÁSICA
+      op.exp.8: BAJO
+      op.exp.9: 'n.a.'
+      op.exp.10: BÁSICA
+      op.ext.1: 'n.a.'
+      op.ext.2: 'n.a.'
+      op.ext.3: 'n.a.'
+      op.ext.4: 'n.a.'
+      op.nub.1: 'n.a.'
+      op.cont.1: 'n.a.'
+      op.cont.2: 'n.a.'
+      op.cont.3: 'n.a.'
+      op.cont.4: 'n.a.'
+      op.mon.1: BÁSICA
+      op.mon.2: BÁSICA
+      op.mon.3: 'n.a.'
+      mp.if.1: BÁSICA
+      mp.if.2: BÁSICA
+      mp.if.3: 'n.a.'
+      mp.if.4: 'n.a.'
+      mp.if.5: 'n.a.'
+      mp.if.6: 'n.a.'
+      mp.if.7: 'n.a.'
+      mp.per.1: 'n.a.'
+      mp.per.2: BÁSICA
+      mp.per.3: BÁSICA
+      mp.per.4: BÁSICA
+      mp.eq.1: BÁSICA
+      mp.eq.2: MEDIO
+      mp.eq.3: BÁSICA
+      mp.eq.4: BAJO
+      mp.com.1: BÁSICA
+      mp.com.2: BAJO
+      mp.com.3: 'n.a.'
+      mp.com.4: MEDIA
+      mp.si.1: 'n.a.'
+      mp.si.2: 'n.a.'
+      mp.si.3: BÁSICA
+      mp.si.4: BÁSICA
+      mp.si.5: BAJO
+      mp.sw.1: 'n.a.'
+      mp.sw.2: 'n.a.'
+      mp.info.1: BÁSICA
+      mp.info.2: 'n.a.'
+      mp.info.3: BAJO
+      mp.info.4: 'n.a.'
+      mp.info.5: BAJO
+      mp.info.6: BAJO
+      mp.s.1: BÁSICA
+      mp.s.2: 'n.a.'
+      mp.s.3: BÁSICA
+      mp.s.4: 'n.a.'
+    criteria:
+      op.pl.1: {section: '5.1', page: 12}
+      op.acc.6: {section: '5.2', page: 12}
+      op.exp.1: {section: '5.3', page: 13}
+      op.exp.4: {section: '5.4', page: 13}
+      op.exp.7: {section: '5.5', page: 13}
+      op.exp.8: {section: '5.6', page: 13}
+      op.exp.9: {section: '5.7', page: 13}
+      op.ext.3: {section: '5.8', page: 13}
+      op.cont.2: {section: '5.9', page: 14}
+      mp.if.1: {section: '5.10', page: 14}
+      mp.if.2: {section: '5.11', page: 14}
+      mp.com.1: {section: '5.12', page: 15}
+      mp.info.6: {section: '5.13', page: 15}
+    reviewed_by: null
   term_labels:
     - term: categoría
       es: Categoría del sistema

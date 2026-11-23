@@ -146,3 +146,54 @@ def test_every_ens_measure_lists_the_evidence_ccn_stic_808_proposes() -> None:
         71,
     )
     assert (pages["mp.per.2"], pages["mp.info.6"], pages["mp.s.4"]) == (76, 99, 104)
+
+
+def test_ens_offers_the_ccn_stic_890c_profiles_as_scope_options() -> None:
+    """requirement-register spec, issue 227: 890C section 4 (pages 8-10), totals in 4.1."""
+    ens = next(p for p in _catalog().packs if p.metadata.id == "ens_rd311_2022")
+    codes = {r.id for r in ens.requirements}
+    profiles = {p.key: p for p in ens.metadata.attributes.scope_profiles}
+    assert set(profiles) == {"pce_rfs_small_it", "pce_rfs_small_it_ot_iot"}
+    applying = {}
+    for key, profile in profiles.items():
+        assert set(profile.levels) == codes and len(codes) == 73
+        applying[key] = {c for c, v in profile.levels.items() if v != "n.a."}
+        assert profile.reviewed_by is None  # a candidate: only the owner signs
+        assert (profile.refs[0].guide, profile.refs[0].section, profile.refs[0].page) == (
+            "CCN-STIC 890C",
+            "4",
+            8,
+        )
+        for conditional, section in (
+            ("op.exp.9", "5.7"),
+            ("op.ext.3", "5.8"),
+            ("op.cont.2", "5.9"),
+        ):
+            assert profile.levels[conditional] == "n.a."
+            assert profile.criteria[conditional].section == section
+    assert (len(applying["pce_rfs_small_it"]), len(applying["pce_rfs_small_it_ot_iot"])) == (38, 42)
+    assert applying["pce_rfs_small_it_ot_iot"] - applying["pce_rfs_small_it"] == {
+        "op.exp.5",
+        "op.mon.1",
+        "mp.if.2",
+        "mp.com.4",
+    }
+    assert profiles["pce_rfs_small_it"].levels["mp.eq.2"] == "MEDIO"
+
+
+def test_ens_guides_the_scope_with_the_ccn_stic_803_valuation_order() -> None:
+    """requirement-register spec, issue 225: information (C, I, T, A), then services (D)."""
+    ens = next(p for p in _catalog().packs if p.metadata.id == "ens_rd311_2022")
+    guide = ens.metadata.attributes.scope_guide
+    assert guide is not None and guide.reviewed_by is None
+    assert [(s.asset, s.key) for s in guide.steps] == [
+        ("information", "C"),
+        ("information", "I"),
+        ("information", "T"),
+        ("information", "A"),
+        ("service", "D"),
+    ]
+    assert guide.category_by_level == {"BAJO": "BÁSICA", "MEDIO": "MEDIA", "ALTO": "ALTA"}
+    refs = {(r.ref.guide, r.ref.edition, r.ref.section, r.ref.page) for r in guide.notes}
+    assert ("CCN-STIC 803", "2025-06", "4.1", 12) in refs
+    assert ("CCN-STIC 803", "2025-06", "4.5", 15) in refs

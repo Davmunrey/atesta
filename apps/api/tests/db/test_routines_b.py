@@ -26,6 +26,9 @@ CLOCKS = [
      "after": "notice", "needs": "significant", "requirement": "r3"},
     {"key": "breach", "title_es": "Violación de datos", "title_en": "Breach", "hours": 72,
      "needs": "personal_data", "requirement": "r4"},
+    {"key": "initial", "title_es": "Notificación inicial", "title_en": "Initial notification",
+     "hours": 4, "starts": "classified", "outer_limit_hours": 24, "needs": "significant",
+     "requirement": "r5"},
 ]  # fmt: skip
 
 
@@ -209,6 +212,7 @@ def test_incident_clocks_run_from_pack_content_and_closing_leaves_evidence(
         "notice": "running",
         "final": "waiting",
         "breach": "running",
+        "initial": "overdue",  # no classification time: the 24-hour outer limit runs
     }
     assert incident["overdue"] >= 1
     due = client.get(f"/api/v1/orgs/{org}/routines/due", headers=auth(subs["ana"])).json()
@@ -255,6 +259,99 @@ def test_incident_clocks_run_from_pack_content_and_closing_leaves_evidence(
     assert [d for d in due if d["kind"] == "incident_clock"] == []
     assert events(superuser, org, "incident.clock_met") == 1
     assert events(superuser, org, "incident.closed") == 1
+
+
+def _clock(incident: dict, pack: str, key: str) -> dict:  # type: ignore[type-arg]  # JSON body
+    return next(c for c in incident["clocks"] if c["ref"] == f"{pack}:{key}")
+
+
+def test_a_clock_runs_from_the_classification_given_on_creation(
+    client: TestClient, superuser: Engine, clock_pack: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    aware = datetime.now(UTC).replace(microsecond=0) - timedelta(hours=3)
+    classified = aware + timedelta(hours=2)
+    body = {
+        "title": "Caída del core bancario",
+        "aware_at": aware.isoformat(),
+        "classified_at": classified.isoformat(),
+        "significant": True,
+        "personal_data": False,
+    }
+    response = client.post(f"/api/v1/orgs/{org}/incidents", json=body, headers=auth(subs["owner"]))
+    assert response.status_code == 201, response.text
+    incident = response.json()
+    assert datetime.fromisoformat(incident["classified_at"]) == classified
+    initial = _clock(incident, clock_pack, "initial")
+    assert initial["state"] == "running"
+    assert datetime.fromisoformat(initial["due_at"]) == classified + timedelta(hours=4)
+    with superuser.connect() as conn:
+        metadata = conn.execute(
+            text(
+                "SELECT metadata FROM audit_events WHERE organization_id = :o"
+                " AND action = 'incident.created'"
+            ),
+            {"o": org},
+        ).scalar_one()
+    assert metadata["classified"] is True
+
+
+def test_a_late_classification_makes_the_incident_significant_once(
+    client: TestClient, superuser: Engine, clock_pack: str
+) -> None:
+    org, subs = org_with(client, superuser, ana="member")
+    incident = _incident(client, org, subs["ana"], 30)
+    assert incident["classified_at"] is None
+    assert [c for c in incident["clocks"] if c["ref"].startswith(clock_pack)] == []
+    url = f"/api/v1/orgs/{org}/incidents/{incident['id']}/updates"
+    at = datetime.now(UTC).replace(microsecond=0) - timedelta(minutes=30)
+    classified = client.post(
+        url, json={"kind": "classified", "classified_at": at.isoformat()}, headers=auth(subs["ana"])
+    )
+    assert classified.status_code == 201, classified.text
+    after = classified.json()
+    assert after["significant"] is True
+    initial = _clock(after, clock_pack, "initial")
+    # Classified 29.5 h after awareness: the 24-hour limit has lapsed, 4 h from classification.
+    assert datetime.fromisoformat(initial["due_at"]) == at + timedelta(hours=4)
+    assert initial["state"] == "running"
+    assert _clock(after, clock_pack, "early")["state"] == "overdue"
+    again = client.post(
+        url, json={"kind": "classified", "classified_at": at.isoformat()}, headers=auth(subs["ana"])
+    )
+    assert (again.status_code, again.json()["detail"]["code"]) == (
+        409,
+        "compliance.incident_classified",
+    )
+    assert events(superuser, org, "incident.classified") == 1
+
+
+def test_a_classification_time_is_after_awareness_and_not_in_the_future(
+    client: TestClient, superuser: Engine
+) -> None:
+    org, subs = org_with(client, superuser)
+    aware = datetime.now(UTC) - timedelta(hours=2)
+    base = {"title": "X", "aware_at": aware.isoformat(), "personal_data": False}
+    url = f"/api/v1/orgs/{org}/incidents"
+    for wrong in (
+        {"significant": True, "classified_at": (aware - timedelta(hours=1)).isoformat()},
+        {
+            "significant": True,
+            "classified_at": (datetime.now(UTC) + timedelta(hours=1)).isoformat(),
+        },
+        {"significant": False, "classified_at": aware.isoformat()},
+    ):
+        response = client.post(url, json={**base, **wrong}, headers=auth(subs["owner"]))
+        assert response.status_code == 422, wrong
+    created = client.post(url, json={**base, "significant": False}, headers=auth(subs["owner"]))
+    updates = f"{url}/{created.json()['id']}/updates"
+    for wrong in (
+        {"kind": "classified"},
+        {"kind": "classified", "classified_at": (aware - timedelta(hours=1)).isoformat()},
+        {"kind": "note", "note": "x", "classified_at": aware.isoformat()},
+    ):
+        response = client.post(updates, json=wrong, headers=auth(subs["owner"]))
+        assert response.status_code == 422, wrong
 
 
 def test_clocks_follow_the_flags(client: TestClient, superuser: Engine, clock_pack: str) -> None:

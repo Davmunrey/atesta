@@ -13,7 +13,13 @@ import uuid
 from datetime import date, datetime
 from typing import Annotated, Any, Literal
 
-from atesta_core.applicability import Proposal, axis_levels, propose, valid_scope
+from atesta_core.applicability import (
+    PROFILE,
+    axis_levels,
+    profile_proposal,
+    propose,
+    valid_scope,
+)
 from atesta_core.history import Assessment as HistoryRow
 from atesta_core.history import progress_history
 from fastapi import APIRouter, Depends, HTTPException
@@ -107,10 +113,32 @@ class AssessmentOut(BaseModel):
     recorded_at: datetime
 
 
+class GuideRef(BaseModel):
+    guide: str
+    edition: str
+    section: str
+    page: int
+
+
 class ProposalOut(BaseModel):
     decision: Literal["applies", "not_applicable", "undecided"]
     rule: str | None
-    level: str | None
+    level: str | None  # the scope level, or the profile key when a profile proposed it
+    source: GuideRef | None = None  # a profile's applicability table (issue 227)
+    criterion: GuideRef | None = None  # where the profile's guide gives specific criteria
+
+
+class ProfileOut(BaseModel):
+    """A pack's scope profile as the scope step offers it (requirement-register spec)."""
+
+    key: str
+    title_es: str
+    title_en: str
+    summary_es: str
+    summary_en: str
+    refs: list[GuideRef]
+    reviewed_by: str | None
+    reviewed_on: date | None
 
 
 class AssignmentIn(BaseModel):
@@ -187,11 +215,39 @@ class TermLabelOut(BaseModel):
     en: str
 
 
+class GuideStepOut(BaseModel):
+    asset: Literal["information", "service"]
+    key: str
+    es: str
+    en: str
+    ref: GuideRef
+
+
+class GuideNoteOut(BaseModel):
+    es: str
+    en: str
+    ref: GuideRef
+
+
+class ScopeGuideOut(BaseModel):
+    """How to value the system, from the pack (requirement-register spec, issue 225)."""
+
+    axis: str
+    category_axis: str
+    category_by_level: dict[str, str]
+    steps: list[GuideStepOut]
+    notes: list[GuideNoteOut]
+    reviewed_by: str | None
+    reviewed_on: date | None
+
+
 class Register(BaseModel):
     framework_key: str
     framework_version: str
     catalog_version: str | None
     axes: dict[str, dict[str, list[str]]]
+    profiles: list[ProfileOut]  # published profiles the scope may name (issue 227)
+    scope_guide: ScopeGuideOut | None  # the pack's valuation steps (issue 225)
     groups_es: list[GroupTitle]  # official group headings in the source's order; empty if none
     term_labels: list[TermLabelOut]  # readable ES/EN labels for the official scope terms
     scope: ScopeOut | None
@@ -352,22 +408,54 @@ def _assignments(
     }
 
 
-def _proposal(requirement: Requirement, scope: ScopeOut | None) -> Proposal:
+def _profiles(framework: Framework) -> list[ProfileOut]:
+    return [ProfileOut(**p) for p in framework.attributes.get("scope_profiles", [])]
+
+
+def _scope_guide(framework: Framework) -> ScopeGuideOut | None:
+    guide = framework.attributes.get("scope_guide")
+    return ScopeGuideOut(**guide) if guide else None
+
+
+def _profile_levels(framework: Framework, scope: ScopeOut | None) -> dict[str, Any] | None:
+    """The profile the scope names, as the pack publishes it; None without one."""
+    chosen = scope.axis_values.get(PROFILE) if scope else None
+    found = (p for p in framework.attributes.get("scope_profiles", []) if p["key"] == chosen)
+    return next(found, None)
+
+
+def _proposal(
+    requirement: Requirement, scope: ScopeOut | None, profile: dict[str, Any] | None = None
+) -> ProposalOut:
+    if profile is not None:
+        made = profile_proposal(profile["levels"].get(requirement.code), profile["key"])
+        source = GuideRef(**profile["refs"][0])
+        cited = profile.get("criteria", {}).get(requirement.code)
+        return ProposalOut(
+            **vars(made),
+            source=source,
+            criterion=source.model_copy(update=cited) if cited else None,
+        )
     attributes = requirement.attributes
-    return propose(
+    made = propose(
         attributes.get("selection_basis"),
         attributes.get("selection_rules", []),
         scope.axis_values if scope else {},
     )
+    return ProposalOut(**vars(made))
 
 
 @router.get("/scope")
 def read_scope(
     framework_key: str, member: Annotated[Member, Depends(require_member)], session: DbSession
 ) -> dict[str, Any]:
-    _framework(session, framework_key)
+    framework = _framework(session, framework_key)
     axes = _axes(_requirements(session, framework_key))
-    return {"axes": axes, "scope": _scope(session, member.organization_id, framework_key)}
+    return {
+        "axes": axes,
+        "profiles": _profiles(framework),
+        "scope": _scope(session, member.organization_id, framework_key),
+    }
 
 
 @router.post("/scope", status_code=201)
@@ -377,8 +465,9 @@ def record_scope(
     member: Annotated[Member, Depends(require_role(Role.ADMIN))],
     session: DbSession,
 ) -> ScopeOut:
-    _framework(session, framework_key)
-    if not valid_scope(body.axis_values, _axes(_requirements(session, framework_key))):
+    framework = _framework(session, framework_key)
+    profiles = {p.key for p in _profiles(framework)}
+    if not valid_scope(body.axis_values, _axes(_requirements(session, framework_key)), profiles):
         raise HTTPException(422, detail={"code": "compliance.scope_invalid"})
     row = FrameworkScope(
         organization_id=member.organization_id,
@@ -410,6 +499,7 @@ def read_register(
     framework = _framework(session, framework_key)
     requirements = _requirements(session, framework_key)
     scope = _scope(session, member.organization_id, framework_key)
+    profile = _profile_levels(framework, scope)
     assessments = _assessments(session, member.organization_id, framework_key)
     assignments = _assignments(session, member.organization_id, framework_key)
     items = [
@@ -418,7 +508,7 @@ def read_register(
             title_es=r.title_es,
             title_en=r.title_en,
             selection_basis=r.attributes.get("selection_basis"),
-            proposal=ProposalOut(**vars(_proposal(r, scope))),
+            proposal=_proposal(r, scope, profile),
             assessment=assessments.get(r.code),
             assignment=assignments.get(r.code),
         )
@@ -429,6 +519,8 @@ def read_register(
         framework_version=framework.version,
         catalog_version=framework.catalog_version,
         axes=_axes(requirements),
+        profiles=_profiles(framework),
+        scope_guide=_scope_guide(framework),
         groups_es=_groups(framework),
         term_labels=_term_labels(framework),
         scope=scope,
@@ -446,7 +538,7 @@ def record_assessment(
     session: DbSession,
 ) -> AssessmentOut:
     """Admins assess any measure; a contributor only the measures they own (rbac spec)."""
-    _framework(session, framework_key)
+    framework = _framework(session, framework_key)
     requirement = next(
         (r for r in _requirements(session, framework_key) if r.code == requirement_code), None
     )
@@ -456,7 +548,8 @@ def record_assessment(
         owned = _assignments(session, member.organization_id, framework_key).get(requirement_code)
         if owned is None or owned.owner_user_id != member.user_id:
             raise HTTPException(403, detail={"code": "compliance.not_owner"})
-    proposal = _proposal(requirement, _scope(session, member.organization_id, framework_key))
+    scope = _scope(session, member.organization_id, framework_key)
+    proposal = _proposal(requirement, scope, _profile_levels(framework, scope))
     differs = proposal.decision != "undecided" and proposal.decision != body.applicability
     if (body.applicability == "not_applicable" or differs) and not body.justification:
         raise HTTPException(422, detail={"code": "compliance.justification_required"})
@@ -650,10 +743,11 @@ def applicability_statement(
     framework = _framework(session, framework_key)
     requirements = _requirements(session, framework_key)
     scope = _scope(session, organization_id, framework_key)
+    profile = _profile_levels(framework, scope)
     assessments = _assessments(session, organization_id, framework_key)
     rows = []
     for requirement in requirements:
-        proposal = _proposal(requirement, scope)
+        proposal = _proposal(requirement, scope, profile)
         assessment = assessments.get(requirement.code)
         rows.append(
             ApplicabilityRow(
