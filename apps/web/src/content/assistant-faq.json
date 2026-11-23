@@ -1,7 +1,7 @@
 {
   "_note": "Product FAQ for the assistant (assistant spec). Our own words, ES first. Only the owner sets reviewed_by; until then every card says it is pending review. test_claims.py scans this file.",
-  "reviewed_by": null,
-  "reviewed_on": null,
+  "reviewed_by": "David Muñoz",
+  "reviewed_on": "2026-11-23",
   "entries": [
     {
       "id": "what",

@@ -163,11 +163,11 @@ describe("guided flows", () => {
     expect(cards().some((card) => card.querySelector("footer")?.textContent?.includes("art23.4a"))).toBe(true);
   });
 
-  it("FAQ: every entry, marked pending review until the owner signs", async () => {
+  it("FAQ: every entry, signed by the owner, so no card says it is pending review", async () => {
     panel();
     await open(/qué cubre atesta/i);
     await waitFor(() => expect(cards()).toHaveLength(faq.entries.length));
-    for (const card of cards()) expect((card)?.textContent).toMatch("Pendiente de revisión");
+    for (const card of cards()) expect((card)?.textContent).not.toMatch("Pendiente de revisión");
   });
 
   it("a back button returns to the search", async () => {

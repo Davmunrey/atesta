@@ -158,13 +158,14 @@ describe("the index", () => {
     expect(unsigned.docs.some((d) => d.id === "ens_rd311_2022:op.acc.6")).toBe(true); // official text is public
   });
 
-  it("marks the FAQ as pending review until the owner signs", () => {
+  it("shows the FAQ as reviewed once the owner has signed it", () => {
+    // Signed by the owner in session on 2026-11-23 (#357).
     const cards = index.docs.filter((d) => d.kind === "faq");
     expect(cards.length).toBe(faq.entries.length);
-    expect(faq.reviewed_by).toBeNull();
-    for (const card of cards) expect(card.cite[0]).toMatchObject({ kind: "faq", reviewed: false });
-    const signed = buildIndex(CATALOG, { ...faq, reviewed_by: "Owner" });
-    expect(signed.docs.find((d) => d.kind === "faq")?.cite[0]).toMatchObject({ reviewed: true });
+    expect([faq.reviewed_by, faq.reviewed_on]).toEqual(["David Muñoz", "2026-11-23"]);
+    for (const card of cards) expect(card.cite[0]).toMatchObject({ kind: "faq", reviewed: true });
+    const unsigned = buildIndex(CATALOG, { ...faq, reviewed_by: null });
+    expect(unsigned.docs.find((d) => d.kind === "faq")?.cite[0]).toMatchObject({ reviewed: false });
   });
 
   it("carries the reporting clocks of NIS2 and the GDPR with their official texts", () => {
