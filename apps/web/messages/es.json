@@ -821,7 +821,9 @@
         "closed": "Incidente cerrado"
       },
       "flags": "Características",
-      "noFlags": "Ni significativo ni con datos personales"
+      "noFlags": "Ni significativo ni con datos personales",
+      "criteria": "Qué dice {framework}: {title}",
+      "criteriaSource": "Ver en la fuente oficial"
     }
   },
   "trainingLink": {

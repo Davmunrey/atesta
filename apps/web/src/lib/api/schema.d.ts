@@ -510,6 +510,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/incidents/criteria": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Incident Criteria
+         * @description The official text that explains each incident flag, from the active packs. Atesta shows the
+         *     text; whether an incident meets it is the organization's decision (ADR-005).
+         */
+        get: operations["incident_criteria_api_v1_orgs__org_id__incidents_criteria_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/incidents/{incident_id}": {
         parameters: {
             query?: never;
@@ -1627,6 +1648,30 @@ export interface components {
             /** Token */
             token: string;
         };
+        /** CriterionOut */
+        CriterionOut: {
+            /** Framework Key */
+            framework_key: string;
+            /** Framework Name */
+            framework_name: string;
+            /**
+             * Needs
+             * @enum {string}
+             */
+            needs: "significant" | "personal_data";
+            /** Requirement */
+            requirement: string;
+            /** Source */
+            source: string;
+            /** Text En */
+            text_en: string | null;
+            /** Text Es */
+            text_es: string;
+            /** Title En */
+            title_en: string | null;
+            /** Title Es */
+            title_es: string;
+        };
         /** DayCount */
         DayCount: {
             /** Count */
@@ -1900,6 +1945,19 @@ export interface components {
         };
         /** @enum {string} */
         Implementation: "not_implemented" | "partially_implemented" | "implemented";
+        /**
+         * IncidentCriterion
+         * @description The requirement whose official text explains an incident flag (recorded-routines spec).
+         */
+        IncidentCriterion: {
+            /**
+             * Needs
+             * @enum {string}
+             */
+            needs: "significant" | "personal_data";
+            /** Requirement */
+            requirement: string;
+        };
         /** IncidentIn */
         IncidentIn: {
             /**
@@ -2155,6 +2213,8 @@ export interface components {
             content_state: "template" | "partial" | "complete";
             /** Groups Es */
             groups_es?: components["schemas"]["GroupHeading"][];
+            /** Incident Criteria */
+            incident_criteria?: components["schemas"]["IncidentCriterion"][];
             /** Limitations En */
             limitations_en: string;
             /** Limitations Es */
@@ -3978,6 +4038,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["IncidentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    incident_criteria_api_v1_orgs__org_id__incidents_criteria_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CriterionOut"][];
                 };
             };
             /** @description Validation Error */

@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { type FormEvent, useId } from "react";
-import { useCreateIncident, useIncidents } from "@/lib/api/routines";
+import { type IncidentCriterion, useCreateIncident, useIncidentCriteria, useIncidents } from "@/lib/api/routines";
 import { goTo } from "@/lib/navigation";
 import { type Membership, orgHome, orgIncident } from "@/lib/org";
 import { isContributor } from "@/lib/permissions";
@@ -46,6 +46,7 @@ export function IncidentsView({ org }: { org: Membership }) {
 function CreateIncident({ orgId }: { orgId: string }) {
   const t = useTranslations("routines.incidents");
   const create = useCreateIncident(orgId);
+  const criteria = useIncidentCriteria(orgId).data ?? [];
   const ids = { title: useId(), aware: useId(), significant: useId(), help: useId(), personal: useId() };
   const now = localInput(new Date());
   function submit(e: FormEvent<HTMLFormElement>) {
@@ -63,11 +64,30 @@ function CreateIncident({ orgId }: { orgId: string }) {
       <span><label htmlFor={ids.title}>{t("incidentTitle")}</label><input id={ids.title} name="title" required maxLength={200} /></span>
       <span><label htmlFor={ids.aware}>{t("awareAt")}</label><input id={ids.aware} name="aware_at" type="datetime-local" required defaultValue={now} max={now} /></span>
       <span className="routine-form-wide checkbox-row"><input id={ids.significant} name="significant" type="checkbox" aria-describedby={ids.help} />
-        <label htmlFor={ids.significant}>{t("significant")}</label><span id={ids.help} className="text-sm text-muted">{t("significantHelp")}</span></span>
+        <label htmlFor={ids.significant}>{t("significant")}</label><span id={ids.help} className="text-sm text-muted">{t("significantHelp")}</span>
+        <Criteria items={criteria.filter((c) => c.needs === "significant")} /></span>
       <span className="routine-form-wide checkbox-row"><input id={ids.personal} name="personal_data" type="checkbox" />
-        <label htmlFor={ids.personal}>{t("personalData")}</label></span>
+        <label htmlFor={ids.personal}>{t("personalData")}</label>
+        <Criteria items={criteria.filter((c) => c.needs === "personal_data")} /></span>
       <div className="form-actions"><button type="submit" className="button-primary" disabled={create.isPending}>{t("record")}</button></div>
       {create.isError ? <ErrorMessage error={create.error} /> : null}
     </form>
   </Panel>;
+}
+
+/** The official text behind a flag, one disclosure per framework; never a verdict (ADR-005). */
+function Criteria({ items }: { items: IncidentCriterion[] }) {
+  const t = useTranslations("routines.incidents");
+  const english = useLocale() === "en";
+  if (items.length === 0) return null;
+  return <span className="criteria">{items.map((c) => {
+    const text = english && c.text_en ? c.text_en : c.text_es;
+    const title = english && c.title_en ? c.title_en : c.title_es;
+    const lang = english && c.text_en ? undefined : "es";
+    return <details key={`${c.framework_key}:${c.requirement}`}>
+      <summary>{t("criteria", { framework: c.framework_name, title })}</summary>
+      <div lang={lang} className="criteria-text">{text.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>
+      <a href={c.source} className="text-link underline text-sm" rel="noopener noreferrer" target="_blank">{t("criteriaSource")}</a>
+    </details>;
+  })}</span>;
 }

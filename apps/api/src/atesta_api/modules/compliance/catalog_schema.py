@@ -115,6 +115,13 @@ class ReportingClock(Content):
         return self
 
 
+class IncidentCriterion(Content):
+    """The requirement whose official text explains an incident flag (recorded-routines spec)."""
+
+    needs: Literal["significant", "personal_data"]
+    requirement: Text
+
+
 class PackContext(Content):
     content_state: Literal["template", "partial", "complete"]
     assessment_enabled: Literal[False]
@@ -134,6 +141,7 @@ class PackContext(Content):
     groups_es: list[GroupHeading] = Field(default_factory=list)
     term_labels: list[TermLabel] = Field(default_factory=list)
     reporting_clocks: list[ReportingClock] = Field(default_factory=list)
+    incident_criteria: list[IncidentCriterion] = Field(default_factory=list)
 
 
 class PackMetadata(Content):

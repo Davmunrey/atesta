@@ -1,6 +1,6 @@
 id: nis2
 name: NIS2
-version: 2022-2555.draft5
+version: 2022-2555.draft6
 jurisdiction: EU; national implementation must be reviewed
 source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022L2555
 license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
@@ -99,3 +99,6 @@ attributes:
     after: notification
     needs: significant
     requirement: art23.4d
+  incident_criteria:
+  - needs: significant
+    requirement: art23.3

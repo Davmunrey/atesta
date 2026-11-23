@@ -1783,6 +1783,77 @@
         "title": "CreatedToken",
         "type": "object"
       },
+      "CriterionOut": {
+        "properties": {
+          "framework_key": {
+            "title": "Framework Key",
+            "type": "string"
+          },
+          "framework_name": {
+            "title": "Framework Name",
+            "type": "string"
+          },
+          "needs": {
+            "enum": [
+              "significant",
+              "personal_data"
+            ],
+            "title": "Needs",
+            "type": "string"
+          },
+          "requirement": {
+            "title": "Requirement",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "text_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text En"
+          },
+          "text_es": {
+            "title": "Text Es",
+            "type": "string"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_es": {
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "needs",
+          "framework_key",
+          "framework_name",
+          "requirement",
+          "title_es",
+          "title_en",
+          "text_es",
+          "text_en",
+          "source"
+        ],
+        "title": "CriterionOut",
+        "type": "object"
+      },
       "DayCount": {
         "properties": {
           "count": {
@@ -2552,6 +2623,31 @@
         ],
         "type": "string"
       },
+      "IncidentCriterion": {
+        "additionalProperties": false,
+        "description": "The requirement whose official text explains an incident flag (recorded-routines spec).",
+        "properties": {
+          "needs": {
+            "enum": [
+              "significant",
+              "personal_data"
+            ],
+            "title": "Needs",
+            "type": "string"
+          },
+          "requirement": {
+            "minLength": 1,
+            "title": "Requirement",
+            "type": "string"
+          }
+        },
+        "required": [
+          "needs",
+          "requirement"
+        ],
+        "title": "IncidentCriterion",
+        "type": "object"
+      },
       "IncidentIn": {
         "properties": {
           "aware_at": {
@@ -3259,6 +3355,13 @@
               "$ref": "#/components/schemas/GroupHeading"
             },
             "title": "Groups Es",
+            "type": "array"
+          },
+          "incident_criteria": {
+            "items": {
+              "$ref": "#/components/schemas/IncidentCriterion"
+            },
+            "title": "Incident Criteria",
             "type": "array"
           },
           "limitations_en": {
@@ -7043,6 +7146,59 @@
           }
         ],
         "summary": "Create Incident",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/incidents/criteria": {
+      "get": {
+        "description": "The official text that explains each incident flag, from the active packs. Atesta shows the\ntext; whether an incident meets it is the organization's decision (ADR-005).",
+        "operationId": "incident_criteria_api_v1_orgs__org_id__incidents_criteria_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CriterionOut"
+                  },
+                  "title": "Response Incident Criteria Api V1 Orgs  Org Id  Incidents Criteria Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Incident Criteria",
         "tags": [
           "compliance"
         ]

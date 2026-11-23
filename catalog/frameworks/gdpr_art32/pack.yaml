@@ -1,6 +1,6 @@
 id: gdpr_art32
 name: RGPD · Art. 32-34
-version: 2016-679.art32-34.draft5
+version: 2016-679.art32-34.draft6
 jurisdiction: EU
 source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32016R0679
 license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
@@ -82,4 +82,7 @@ attributes:
     title_en: Notification to the supervisory authority
     hours: 72
     needs: personal_data
+    requirement: art33.1
+  incident_criteria:
+  - needs: personal_data
     requirement: art33.1

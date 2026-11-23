@@ -11,6 +11,7 @@ export type DueItem = components["schemas"]["DueItem"];
 export type TrainingCampaign = components["schemas"]["CampaignOut"];
 export type Incident = components["schemas"]["IncidentOut"];
 export type IncidentClock = components["schemas"]["ClockOut"];
+export type IncidentCriterion = components["schemas"]["CriterionOut"];
 
 const org = (orgId: string) => ({ params: { path: { org_id: orgId } } });
 
@@ -132,6 +133,11 @@ export function useAcknowledge() {
 
 export function useIncidents(orgId: string) {
   return useQuery({ queryKey: ["incidents", orgId], queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/incidents", org(orgId))) });
+}
+
+/** Official texts that explain the incident flags, from the active packs (recorded-routines spec). */
+export function useIncidentCriteria(orgId: string) {
+  return useQuery({ queryKey: ["incident-criteria", orgId], retry: false, queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/incidents/criteria", org(orgId))) });
 }
 
 export function useIncident(orgId: string, incidentId: string) {
