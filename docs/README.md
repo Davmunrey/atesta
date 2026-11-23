@@ -73,6 +73,11 @@ Start with the question you have.
 - [web-shell](specs/web-shell.md)
 - [workspace-ux](specs/workspace-ux.md)
 
+## Scanner notes
+
+- [prowler-coverage](scanner/prowler-coverage.md): where each pinned Prowler check lands, Prowler's
+  own mappings compared, and what the PowerShell-backed M365 checks need.
+
 ## Runbooks
 
 - [onboarding](runbooks/onboarding.md): a new customer, from contract to first review.
