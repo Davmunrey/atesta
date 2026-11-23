@@ -54,6 +54,18 @@ it("shows an auditor only what they may read, with the end of their access", asy
   expect(screen.getByRole("note").textContent).toBe("Acceso de auditor, solo lectura, hasta el 31 de diciembre de 2026");
 });
 
+it("gives owners the settings and warns every member of a closing organization", async () => {
+  window.history.replaceState(null, "", "/app/org?org=primary");
+  stubApi({ "GET /api/v1/me": [200, {
+    id: "synthetic-user", email: "navigation@example.test", email_verified: true, locale: "es",
+    memberships: [{ ...primary, closure_erase_after: "2026-12-23T10:00:00Z" }, secondary],
+  }] });
+  renderWithProviders(<AppLayout><h1>Page content</h1></AppLayout>);
+  const nav = await screen.findByRole("navigation", { name: "Secciones de la organización" });
+  expect(within(nav).getByRole("link", { name: "Ajustes" }).getAttribute("href")).toBe("/app/settings?org=primary");
+  expect(screen.getByRole("note").textContent).toContain("se borrarán el 23 de diciembre de 2026");
+});
+
 it("keeps the members section when switching organizations", async () => {
   renderShell();
   fireEvent.change(await screen.findByLabelText("Organización"), { target: { value: "secondary" } });

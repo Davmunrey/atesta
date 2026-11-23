@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
 import { useId } from "react";
-import { orgActivity, orgHome, orgInvitations, orgMembers, orgMyWork, selectOrg } from "@/lib/org";
+import { orgActivity, orgHome, orgInvitations, orgMembers, orgMyWork, orgSettings, selectOrg } from "@/lib/org";
 import { canInvite, canReviewControls, isContributor } from "@/lib/permissions";
 import { useMe } from "./auth-gate";
 
@@ -16,7 +16,7 @@ export function OrganizationNav() {
   const router = useRouter();
   const switcherId = useId();
   const org = selectOrg(memberships, useSearchParams().get("org"));
-  if (!org || !["/app/org", "/app/framework", "/app/members", "/app/invitations", "/app/activity", "/app/my-work"].includes(pathname)) return null;
+  if (!org || !["/app/org", "/app/framework", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings"].includes(pathname)) return null;
 
   function switchOrganization(id: string) {
     const next = selectOrg(memberships, id);
@@ -35,6 +35,7 @@ export function OrganizationNav() {
     ] : []),
     ...(canInvite(org.role) ? [{ label: t("invitations"), href: orgInvitations(org.organization_id) }] : []),
     ...(canReviewControls(org.role) ? [{ label: t("activity"), href: orgActivity(org.organization_id) }] : []),
+    ...(org.role === "owner" ? [{ label: t("settings"), href: orgSettings(org.organization_id) }] : []),
   ];
   return (
     <aside className="organization-context">
@@ -49,6 +50,9 @@ export function OrganizationNav() {
       </> : <p className="organization-name">{org.organization_name}</p>}
       {org.access_expires_on ? <p className="framework-notice" role="note">
         {t("auditorUntil", { date: format.dateTime(new Date(`${org.access_expires_on}T00:00:00Z`), { dateStyle: "long", timeZone: "UTC" }) })}
+      </p> : null}
+      {org.closure_erase_after ? <p className="framework-notice" role="note">
+        {t("closing", { date: format.dateTime(new Date(org.closure_erase_after), { dateStyle: "long" }) })}
       </p> : null}
       <nav aria-label={t("sections")} className="organization-nav">
         {sections.map(({ label, href }) => (

@@ -86,7 +86,8 @@
       "role_not_allowed": "No puedes asignar ese rol.",
       "token_in_query": "El enlace de invitación no es válido. Ábrelo de nuevo desde el mensaje recibido.",
       "period_invalid": "El periodo debe ser de 30 o 90 días.",
-      "access_expired": "Tu acceso de auditor a esta organización ha terminado. Pide a un administrador que lo amplíe."
+      "access_expired": "Tu acceso de auditor a esta organización ha terminado. Pide a un administrador que lo amplíe.",
+      "closure_name_mismatch": "El nombre no coincide. Escríbelo exactamente como aparece."
     },
     "request": {
       "error": "No se ha podido completar la solicitud. Vuelve a intentarlo.",
@@ -136,7 +137,9 @@
     "invitations": "Invitaciones",
     "activity": "Actividad",
     "myWork": "Mi trabajo",
-    "auditorUntil": "Acceso de auditor, solo lectura, hasta el {date}"
+    "auditorUntil": "Acceso de auditor, solo lectura, hasta el {date}",
+    "settings": "Ajustes",
+    "closing": "Esta organización se cerrará y sus datos se borrarán el {date}. Exporta lo que necesites antes."
   },
   "roles": {
     "owner": "Propietario",
@@ -561,5 +564,18 @@
       "dt": "Disposición transitoria",
       "dd": "Disposición derogatoria"
     }
+  },
+  "settings": {
+    "title": "Ajustes de {org}",
+    "ownersOnly": "Solo la persona propietaria puede ver los ajustes de la organización.",
+    "exportTitle": "Exportar los datos",
+    "exportHelp": "Descarga en un archivo JSON todo lo que la organización ha registrado en Atesta: miembros, alcance, evaluaciones, revisiones, evidencias y actividad. Las credenciales nunca se incluyen.",
+    "exportAction": "Descargar exportación",
+    "closeTitle": "Cerrar la organización",
+    "closeHelp": "Al cerrarla, sus datos se borran 30 días después. Hasta entonces todo sigue funcionando y puedes cancelar el cierre. Exporta antes lo que quieras conservar.",
+    "confirmLabel": "Escribe «{org}» para confirmar",
+    "closeAction": "Cerrar la organización",
+    "closing": "Cierre solicitado: los datos se borrarán el {date}.",
+    "cancelAction": "Cancelar el cierre"
   }
 }

@@ -69,6 +69,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/closure": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request Closure */
+        post: operations["request_closure_api_v1_orgs__org_id__closure_post"];
+        /** Cancel Closure */
+        delete: operations["cancel_closure_api_v1_orgs__org_id__closure_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/connections": {
         parameters: {
             query?: never;
@@ -152,6 +170,23 @@ export interface paths {
         put?: never;
         /** Record Review */
         post: operations["record_review_api_v1_orgs__org_id__controls__control_key__reviews_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export Organization */
+        get: operations["export_organization_api_v1_orgs__org_id__export_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -794,6 +829,24 @@ export interface components {
             /** Engine */
             engine: string;
         };
+        /** ClosureIn */
+        ClosureIn: {
+            /** Confirm Name */
+            confirm_name: string;
+        };
+        /** ClosureOut */
+        ClosureOut: {
+            /**
+             * Erase After
+             * Format: date-time
+             */
+            erase_after: string;
+            /**
+             * Requested At
+             * Format: date-time
+             */
+            requested_at: string;
+        };
         /** ConnectionDetail */
         ConnectionDetail: {
             /** Allowlist Version */
@@ -1184,6 +1237,8 @@ export interface components {
         MembershipOut: {
             /** Access Expires On */
             access_expires_on?: string | null;
+            /** Closure Erase After */
+            closure_erase_after?: string | null;
             /**
              * Organization Id
              * Format: uuid
@@ -1784,6 +1839,70 @@ export interface operations {
             };
         };
     };
+    request_closure_api_v1_orgs__org_id__closure_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClosureIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClosureOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_closure_api_v1_orgs__org_id__closure_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_connections_api_v1_orgs__org_id__connections_get: {
         parameters: {
             query?: never;
@@ -2072,6 +2191,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ReviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_organization_api_v1_orgs__org_id__export_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */

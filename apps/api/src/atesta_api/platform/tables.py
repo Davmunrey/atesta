@@ -41,6 +41,9 @@ APPEND_ONLY = frozenset(
     }
 )
 GLOBAL_IDENTITY = frozenset({"users"})
+# ADR-012 amendment 3: written only by the operator's erasure command, as atesta_owner. No RLS and
+# no privilege for atesta_app; the receipt outlives the organization it records.
+OPERATOR = frozenset({"erasure_receipts"})
 CATALOG = frozenset(
     {"frameworks", "requirements", "controls", "checks", "control_checks", "mappings"}
 )
@@ -63,6 +66,7 @@ def class_sets(extra_tenant: frozenset[str] = frozenset()) -> dict[str, frozense
         "identity": GLOBAL_IDENTITY,
         "catalog": CATALOG,
         "queue": QUEUE,
+        "operator": OPERATOR,
     }
 
 

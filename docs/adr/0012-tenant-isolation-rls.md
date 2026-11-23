@@ -61,3 +61,16 @@ own foreign keys between queue tables use ON DELETE CASCADE and SET NULL; the sc
 referential actions only when both tables are queue tables, which carry no RLS and from which
 `atesta_app` may already delete. The worker refuses to start if any Atesta task has a parameter
 other than `<name>_id: str`.
+
+## Amendment 3 (proposed 2026-11-23, organization-closure spec; the owner accepts it)
+
+- **New class, "operator tables":** `erasure_receipts`. It has no `organization_id` foreign key,
+  because it outlives the organization it records, and no RLS.
+- **Permissions:** `atesta_app` has no privilege on it. Only `atesta_owner` writes it, through
+  the operator command `apps/api/devtools/erase_org.py`.
+- **What erasure does:** it deletes an organization's rows from every tenant table, in the order
+  of the database's own foreign keys, then the organization, then users left without any
+  membership.
+- **Allowed only after a closure request:** an owner must have requested closure through the API,
+  and 30 days must have passed.
+- **The receipt** holds row counts per table and the operator's note; no names or content.
