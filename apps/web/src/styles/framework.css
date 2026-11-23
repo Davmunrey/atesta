@@ -99,10 +99,14 @@
   /* The label is the 2.75rem touch target, as in .register-form; the box aligns with its first line. */
   .control-review-form .control-review-evidence { flex-direction: column; flex-wrap: nowrap; gap: 0; }
   .control-review-evidence .control-review-choice { align-items: flex-start; min-height: 2.75rem; overflow-wrap: anywhere; }
-  .control-review-evidence input[type="checkbox"] { flex: none; width: 1.125rem; height: 1.125rem; min-height: 0; margin-top: 0.125rem; }
+  /* One control size in the review form (issue 345): 1.125rem, 1.5rem on coarse pointers. */
+  .control-review-form input:is([type="checkbox"], [type="radio"]) { flex: none; width: 1.125rem; height: 1.125rem; min-height: 0; margin: 0; }
+  .control-review-evidence input[type="checkbox"] { margin-top: 0.125rem; }
+  .control-review-form .control-review-evidence .control-review-choice { font-weight: 400; }
   .control-review-error { color: var(--color-danger); font-weight: 500; }
   .control-review-cited-label { font-weight: 500; }
   .control-review-cited { list-style: disc; padding-left: 1.25rem; overflow-wrap: anywhere; }
+  .control-review > * + * { margin-top: 0.75rem; }
   .control-review-form label { font-weight: 500; }
   .control-review-form textarea, .control-review-form input[type="date"] { width: 100%; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 0.5rem; background: var(--color-bg); font: inherit; }
   .control-review-form input[type="date"] { max-width: 14rem; }
@@ -224,4 +228,8 @@
   .assessment-badges { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.375rem 0.5rem; min-width: 0; }
   .overdue-flag { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.8125rem; font-weight: 600; color: var(--color-danger); border: 1px solid currentColor; border-radius: 0.25rem; padding: 0 0.375rem; }
   .activity-target { display: block; font-family: var(--font-mono, monospace); font-size: 0.8125rem; color: var(--color-muted); overflow-wrap: anywhere; }
+}
+@media (pointer: coarse) {
+  .control-review-form input:is([type="checkbox"], [type="radio"]) { width: 1.5rem; height: 1.5rem; }
+  .control-review-form .control-review-choice { min-height: 2.75rem; }
 }
