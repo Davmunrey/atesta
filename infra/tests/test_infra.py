@@ -126,3 +126,59 @@ def test_github_roles_are_scoped_to_pull_requests_and_the_protected_environment(
     }
     condition = trust["aws_iam_policy_document"]["trust"]["statement"][0]["condition"]
     assert {c["test"] for c in condition} == {"StringEquals"}  # no wildcard subjects
+
+
+# Hosted environment (hosted-environment spec): security settings of the base modules.
+
+KMS = resources("modules/kms/main.tf")
+EVIDENCE = resources("modules/s3-evidence/main.tf")
+NETWORK = resources("modules/network/main.tf")
+
+
+def test_every_key_rotates_and_waits_before_deletion() -> None:
+    keys = {name: body for name, body in KMS.items() if name.startswith("aws_kms_key.")}
+    assert set(keys) == {"aws_kms_key.database", "aws_kms_key.evidence", "aws_kms_key.logs"}
+    for name, key in keys.items():
+        assert key["enable_key_rotation"] is True, name
+        assert key["deletion_window_in_days"] == 30, name
+
+
+def test_the_evidence_bucket_is_private_encrypted_versioned_and_tls_only() -> None:
+    block = EVIDENCE["aws_s3_bucket_public_access_block.this"]
+    assert all(
+        block[k] is True
+        for k in (
+            "block_public_acls",
+            "block_public_policy",
+            "ignore_public_acls",
+            "restrict_public_buckets",
+        )
+    )
+    assert (
+        EVIDENCE["aws_s3_bucket_versioning.this"]["versioning_configuration"][0]["status"]
+        == "Enabled"
+    )
+    sse = EVIDENCE["aws_s3_bucket_server_side_encryption_configuration.this"]["rule"][0]
+    assert sse["apply_server_side_encryption_by_default"][0]["sse_algorithm"] == "aws:kms"
+    assert (
+        EVIDENCE["aws_s3_bucket_ownership_controls.this"]["rule"][0]["object_ownership"]
+        == "BucketOwnerEnforced"
+    )
+    policy = load("modules/s3-evidence/main.tf")["data"]
+    deny = next(
+        b["aws_iam_policy_document"]["tls_only"] for b in policy if "aws_iam_policy_document" in b
+    )
+    statement = deny["statement"][0]
+    assert (
+        statement["effect"] == "Deny"
+        and statement["condition"][0]["variable"] == "aws:SecureTransport"
+    )
+
+
+def test_private_subnets_take_no_public_addresses_and_flow_logs_are_on() -> None:
+    for kind in ("public", "private"):
+        assert NETWORK[f"aws_subnet.{kind}"]["map_public_ip_on_launch"] is False
+    private_routes = NETWORK["aws_route_table.private"]["route"][0]
+    assert "nat_gateway_id" in private_routes and "gateway_id" not in private_routes
+    assert NETWORK["aws_flow_log.this"]["traffic_type"] == "ALL"
+    assert "kms_key_id" in NETWORK["aws_cloudwatch_log_group.flow"]

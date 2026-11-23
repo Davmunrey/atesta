@@ -61,3 +61,24 @@ output "cognito_app_client_id" {
 output "cognito_domain" {
   value = module.cognito.domain
 }
+
+# Hosted environment, base layer (hosted-environment spec). Nothing is applied until the owner
+# decides; a plan shows what an apply would create.
+module "kms" {
+  source = "../../modules/kms"
+  name   = "atesta-dev"
+}
+
+module "network" {
+  source       = "../../modules/network"
+  name         = "atesta-dev"
+  logs_key_arn = module.kms.logs_key_arn
+}
+
+module "evidence" {
+  source      = "../../modules/s3-evidence"
+  bucket_name = "atesta-dev-evidence-${data.aws_caller_identity.current.account_id}"
+  kms_key_arn = module.kms.evidence_key_arn
+}
+
+data "aws_caller_identity" "current" {}
