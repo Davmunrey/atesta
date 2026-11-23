@@ -144,6 +144,8 @@ def test_campaign_input_and_roles(client: TestClient, superuser: Engine) -> None
     assert client.post(url, json=body, headers=auth(subs["ana"])).status_code == 403
     for wrong in (
         {"material_url": "http://example.com/t"},
+        # Copied into append-only evidence when the campaign closes (rule 2, #256).
+        {"material_url": "https://example.com/t?X-Amz-Signature=abc"},
         {"closes_on": (date.today() - timedelta(days=1)).isoformat()},
     ):
         assert (

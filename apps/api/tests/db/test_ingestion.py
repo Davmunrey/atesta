@@ -267,3 +267,58 @@ def test_an_api_token_reads_nothing(client: TestClient, superuser: Engine, path:
     token = _token(client, org, subs["owner"])["token"]
     response = client.get(path.format(org=org), headers=_bearer(token))
     assert response.status_code == 401
+
+
+CREDENTIAL_LINKS = [
+    "https://acct.blob.core.windows.net/c/doc.pdf?sv=2024-01-01&sig=abc",
+    "https://b.s3.eu-south-2.amazonaws.com/d.pdf?X-Amz-Signature=y",
+    "https://storage.googleapis.com/b/d.pdf?X-Goog-Signature=y",
+    "https://example.test/doc?TOKEN=abc",
+    "https://example.test/doc#access_token=abc",
+]
+
+
+@pytest.mark.parametrize("link", CREDENTIAL_LINKS)
+def test_a_link_that_is_itself_a_credential_is_never_stored(
+    client: TestClient, superuser: Engine, control: str, link: str
+) -> None:
+    """Statements are append-only: a stored credential could never be purged (rule 2, #256)."""
+    org, subs = org_with(client, superuser)
+    token = _token(client, org, subs["owner"])["token"]
+    result = client.post(INGEST, json=_body(control, reference_url=link), headers=_bearer(token))
+    assert (result.status_code, result.json()["detail"]["code"]) == (422, "request.invalid")
+    with superuser.connect() as conn:
+        stored = text("SELECT count(*) FROM evidence WHERE organization_id = :o")
+        assert conn.execute(stored, {"o": org}).scalar_one() == 0
+
+
+def test_a_link_with_a_harmless_query_is_kept(
+    client: TestClient, superuser: Engine, control: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    token = _token(client, org, subs["owner"])["token"]
+    link = "https://contoso.sharepoint.com/sites/sec/Restore.docx?web=1"
+    result = client.post(INGEST, json=_body(control, reference_url=link), headers=_bearer(token))
+    assert result.status_code == 201, result.text
+
+
+def test_record_attestation_refuses_a_credential_link_from_any_caller(
+    db_rollback: Session, control: str
+) -> None:
+    """The last barrier: routines, training and ingestion all write through it."""
+    from atesta_api.modules.evidence.api import CredentialLinkError, record_attestation
+    from atesta_api.modules.identity.api import ContextReason, enter_org_context
+
+    from .conftest import ORG_A
+
+    enter_org_context(db_rollback, ORG_A, ContextReason.JOB)
+    with pytest.raises(CredentialLinkError):
+        record_attestation(
+            db_rollback,
+            organization_id=ORG_A,
+            author=uuid.uuid4(),
+            control_key=control,
+            title="t",
+            statement="s",
+            reference_url=CREDENTIAL_LINKS[0],
+        )

@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import select
 
 from atesta_api.modules.compliance.api import control_is_active
-from atesta_api.modules.evidence.api import record_attestation
+from atesta_api.modules.evidence.api import record_attestation, refuse_credential_link
 from atesta_api.modules.evidence.models import ApiIngestion
 from atesta_api.modules.identity.api import ApiTokenCaller, QueryFreeRoute
 from atesta_api.platform.audit import record
@@ -44,6 +44,12 @@ class IngestIn(BaseModel):
     @classmethod
     def tidy(cls, value: str) -> str:
         return _filled(value)
+
+    @field_validator("reference_url")
+    @classmethod
+    def no_credential_link(cls, value: str | None) -> str | None:
+        """Never store a link that is itself a credential (rule 2, #256)."""
+        return None if value is None else refuse_credential_link(value)
 
 
 class Ingested(BaseModel):
