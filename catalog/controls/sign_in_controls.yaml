@@ -1,0 +1,38 @@
+id: ctl.sign_in_controls
+title_es: "Riesgo de inicio de sesión y duración de las sesiones"
+title_en: "Sign-in risk and session duration"
+description_es: |
+  Preparar: confirma en la documentación enlazada las licencias que exige la protección de identidad y define tiempos de sesión aceptables.
+  1. Crea políticas de acceso condicional que bloqueen o exijan MFA ante riesgo de inicio de sesión alto o medio y ante usuarios de riesgo alto.
+  2. Limita la frecuencia de inicio de sesión y cierra las sesiones inactivas.
+  3. En Google Workspace, limita la duración de la sesión a 12 horas o menos.
+  Evidencia: políticas efectivas, licencias y resultado del escaneo.
+  Límite: sin la licencia adecuada algunos checks fallan aunque la intención sea correcta; documenta la alternativa adoptada.
+description_en: |
+  Prepare: check in the linked documentation which licences identity protection needs, and define acceptable session times.
+  1. Create Conditional Access policies that block or require MFA for high and medium sign-in risk and for high-risk users.
+  2. Limit sign-in frequency and end idle sessions.
+  3. In Google Workspace, limit session duration to 12 hours or less.
+  Evidence: effective policies, licences and the scan result.
+  Limit: without the right licence some checks fail even when the intent is right; document the alternative you adopted.
+manual: false
+prowler_checks:
+  - entra_identity_protection_sign_in_risk_enabled
+  - entra_identity_protection_user_risk_enabled
+  - entra_conditional_access_policy_block_high_medium_sign_in_risk
+  - entra_idle_session_timeout_configured
+  - entra_conditional_access_policy_sign_in_frequency_all_users
+  - security_session_duration_limited
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview
+  - https://learn.microsoft.com/en-us/entra/identity/authentication/tutorial-risk-based-sspr-mfa?WT.mc_id=M365-MVP-6771
+  - https://learn.microsoft.com/en-us/entra/id-protection/concept-identity-protection-policies
+  - https://learn.microsoft.com/en-us/microsoft-365/admin/manage/idle-session-timeout-web-apps
+  - https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-session-lifetime
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_identity_protection_sign_in_risk_enabled/entra_identity_protection_sign_in_risk_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_identity_protection_user_risk_enabled/entra_identity_protection_user_risk_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_block_high_medium_sign_in_risk/entra_conditional_access_policy_block_high_medium_sign_in_risk.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_idle_session_timeout_configured/entra_idle_session_timeout_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_sign_in_frequency_all_users/entra_conditional_access_policy_sign_in_frequency_all_users.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_session_duration_limited/security_session_duration_limited.py

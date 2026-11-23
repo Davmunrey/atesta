@@ -155,3 +155,28 @@ mappings:
     text, the processing concerned and its risks. This shared control is not an equivalence or approval.
   source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_34
   reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.privileged_accounts
+  rationale: "Candidate: tenant settings for privileged accounts (count, dedication, phishing-resistant MFA, PIM approval, recovery). Who holds each role and why needs documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.user_authentication
+  rationale: "Candidate: tenant-wide MFA and authentication method settings. Exclusions, service accounts and the credential lifecycle need documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.sign_in_controls
+  rationale: "Candidate: sign-in risk and session duration policies. Licence-dependent coverage and exceptions need documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.m365_external_sharing
+  rationale: "Candidate: external sharing and guest settings in SharePoint, OneDrive and Entra. Individual sites and links already shared need documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.email_protection
+  rationale: "Candidate: DMARC enforcement and Gmail anti-spoofing and attachment protections. Defender checks that need PowerShell do not run yet; they need documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null

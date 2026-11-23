@@ -540,3 +540,38 @@ mappings:
     Retention, protection, correlation and review require separate evidence.
   source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
   reviewed_by: null
+- requirement_id: op.acc.4
+  control_id: ctl.privileged_accounts
+  rationale: "Candidate: tenant settings for privileged accounts (count, dedication, phishing-resistant MFA, PIM approval, recovery). Who holds each role and why needs documentary review."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.4
+  control_id: ctl.m365_external_sharing
+  rationale: "Candidate: external sharing and guest settings in SharePoint, OneDrive and Entra. Individual sites and links already shared need documentary review."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.5
+  control_id: ctl.user_authentication
+  rationale: "Candidate: tenant-wide MFA and authentication method settings. Exclusions, service accounts and the credential lifecycle need documentary review."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.6
+  control_id: ctl.user_authentication
+  rationale: "Candidate: tenant-wide MFA and authentication method settings. Exclusions, service accounts and the credential lifecycle need documentary review."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.6
+  control_id: ctl.sign_in_controls
+  rationale: "Candidate: sign-in risk and session duration policies. Licence-dependent coverage and exceptions need documentary review."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: mp.s.1
+  control_id: ctl.email_protection
+  rationale: "Candidate: DMARC enforcement and Gmail anti-spoofing and attachment protections. Defender checks that need PowerShell do not run yet; they need documentary review."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.mon.1
+  control_id: ctl.workspace_security_alerts
+  rationale: "Candidate: Google Workspace alert rules are configured. Whether alerts are handled is shown by the incident register and needs documentary review."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null

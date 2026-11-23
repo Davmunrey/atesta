@@ -1,0 +1,42 @@
+id: ctl.m365_external_sharing
+title_es: "Compartición externa e invitados en Microsoft 365"
+title_en: "External sharing and guests in Microsoft 365"
+description_es: |
+  Preparar: decide con quién se comparte información fuera de la organización y qué dominios están permitidos.
+  1. En SharePoint y OneDrive, limita la compartición externa a invitados existentes o a dominios permitidos, e impide que los invitados vuelvan a compartir lo que no es suyo.
+  2. En Microsoft Entra, restringe quién puede invitar, a qué dominios y qué ven los invitados del directorio.
+  3. Restringe el acceso saliente entre inquilinos por defecto y mantén privados los grupos de Microsoft 365.
+  Evidencia: configuración de compartición, lista de dominios permitidos y resultado del escaneo.
+  Límite: los checks no revisan cada sitio ni cada enlace ya compartido; esa revisión sigue siendo manual.
+description_en: |
+  Prepare: decide who information is shared with outside the organization and which domains are allowed.
+  1. In SharePoint and OneDrive, limit external sharing to existing guests or allowed domains, and stop guests from resharing items they do not own.
+  2. In Microsoft Entra, restrict who can invite, to which domains, and what guests can see in the directory.
+  3. Restrict default outbound cross-tenant access and keep Microsoft 365 groups private.
+  Evidence: sharing settings, the allowed domain list and the scan result.
+  Limit: the checks do not review each site or each link already shared; that review stays manual.
+manual: false
+prowler_checks:
+  - sharepoint_external_sharing_restricted
+  - sharepoint_external_sharing_managed
+  - sharepoint_guest_sharing_restricted
+  - entra_policy_guest_invite_only_for_admin_roles
+  - entra_policy_guest_invitations_restricted_to_allowed_domains
+  - entra_policy_guest_users_access_restrictions
+  - entra_cross_tenant_access_default_outbound_restricted
+  - admincenter_groups_not_public_visibility
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/sharepoint/turn-external-sharing-on-or-off
+  - https://learn.microsoft.com/en-us/sharepoint/restricted-domains-sharing
+  - https://learn.microsoft.com/en-us/sharepoint/external-sharing-overview
+  - https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/permissions-reference#guest-inviter
+  - https://learn.microsoft.com/en-us/entra/external-id/allow-deny-list
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/sharepoint/sharepoint_external_sharing_restricted/sharepoint_external_sharing_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/sharepoint/sharepoint_external_sharing_managed/sharepoint_external_sharing_managed.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/sharepoint/sharepoint_guest_sharing_restricted/sharepoint_guest_sharing_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_guest_invite_only_for_admin_roles/entra_policy_guest_invite_only_for_admin_roles.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_guest_invitations_restricted_to_allowed_domains/entra_policy_guest_invitations_restricted_to_allowed_domains.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_guest_users_access_restrictions/entra_policy_guest_users_access_restrictions.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_cross_tenant_access_default_outbound_restricted/entra_cross_tenant_access_default_outbound_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/admincenter/admincenter_groups_not_public_visibility/admincenter_groups_not_public_visibility.py

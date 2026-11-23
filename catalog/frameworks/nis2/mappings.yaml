@@ -255,3 +255,28 @@ mappings:
     or approval.
   source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_23
   reviewed_by: null
+- requirement_id: art21.2i
+  control_id: ctl.privileged_accounts
+  rationale: "Candidate: tenant settings for privileged accounts (count, dedication, phishing-resistant MFA, PIM approval, recovery). Who holds each role and why needs documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2i
+  control_id: ctl.m365_external_sharing
+  rationale: "Candidate: external sharing and guest settings in SharePoint, OneDrive and Entra. Individual sites and links already shared need documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2i
+  control_id: ctl.sign_in_controls
+  rationale: "Candidate: sign-in risk and session duration policies. Licence-dependent coverage and exceptions need documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2j
+  control_id: ctl.user_authentication
+  rationale: "Candidate: tenant-wide MFA and authentication method settings. Exclusions, service accounts and the credential lifecycle need documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2b
+  control_id: ctl.workspace_security_alerts
+  rationale: "Candidate: Google Workspace alert rules are configured. Whether alerts are handled is shown by the incident register and needs documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null

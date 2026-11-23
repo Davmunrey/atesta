@@ -1,0 +1,42 @@
+id: ctl.user_authentication
+title_es: "Autenticación de usuarios: MFA y métodos seguros"
+title_en: "User authentication: MFA and secure methods"
+description_es: |
+  Preparar: comunica el cambio, registra métodos para todas las personas y prueba la recuperación antes de exigirlos.
+  1. Exige MFA a todas las personas usuarias e invitadas mediante políticas de acceso condicional o la verificación en dos pasos de Google.
+  2. Retira los métodos débiles (SMS, voz, código por correo) y muestra en Authenticator la aplicación y la ubicación de cada aprobación.
+  3. Bloquea el flujo de código de dispositivo y el acceso de aplicaciones menos seguras; configura los desafíos de inicio de sesión de Google.
+  Evidencia: políticas efectivas, informe de registro de métodos y resultado del escaneo.
+  Límite: un PASS no prueba que no haya exclusiones justificadas ni cuentas de servicio sin MFA; revísalas aparte.
+description_en: |
+  Prepare: announce the change, register methods for everyone and test recovery before enforcing.
+  1. Require MFA for all users and guests through Conditional Access policies or Google 2-step verification.
+  2. Remove weak methods (SMS, voice, email one-time code) and show the app name and location in Authenticator approvals.
+  3. Block the device code flow and less secure app access; configure Google login challenges.
+  Evidence: effective policies, the method registration report and the scan result.
+  Limit: a PASS does not show that no justified exclusions or service accounts without MFA remain; review those separately.
+manual: false
+prowler_checks:
+  - entra_users_mfa_enabled
+  - entra_conditional_access_policy_mfa_enforced_for_guest_users
+  - entra_authentication_method_sms_voice_disabled
+  - entra_authentication_method_email_otp_disabled
+  - entra_authentication_method_authenticator_show_context
+  - entra_conditional_access_policy_device_code_flow_blocked
+  - security_less_secure_apps_disabled
+  - security_login_challenges_configured
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/entra/identity/authentication/tutorial-enable-azure-mfa
+  - https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-alt-require-mfa-guest-access
+  - https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-phone-options
+  - https://learn.microsoft.com/en-us/entra/identity/authentication/howto-authentication-email-otp
+  - https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-mfa-additional-context
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_users_mfa_enabled/entra_users_mfa_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_mfa_enforced_for_guest_users/entra_conditional_access_policy_mfa_enforced_for_guest_users.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_authentication_method_sms_voice_disabled/entra_authentication_method_sms_voice_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_authentication_method_email_otp_disabled/entra_authentication_method_email_otp_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_authentication_method_authenticator_show_context/entra_authentication_method_authenticator_show_context.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_device_code_flow_blocked/entra_conditional_access_policy_device_code_flow_blocked.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_less_secure_apps_disabled/security_less_secure_apps_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_login_challenges_configured/security_login_challenges_configured.py
