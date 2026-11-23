@@ -1,8 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { DossierView, MeasureView, RecordsView } from "@/components/landing/moment-views";
 import { OverviewView } from "@/components/landing/overview-view";
 import { legalEntity } from "@/content/legal-entity";
+
+const MOMENTS = [{ key: "measure", View: MeasureView }, { key: "records", View: RecordsView }, { key: "dossier", View: DossierView }] as const;
 
 /** The public landing (landing-legal spec, L1 and L6): the ENS lead, the product as the argument. */
 export default function Landing() {
@@ -18,6 +21,10 @@ export default function Landing() {
         </div>
         <OverviewView />
       </section>
+      {MOMENTS.map(({ key, View }) => <section key={key} className="landing-moment" aria-labelledby={`moment-${key}`}>
+        <h2 id={`moment-${key}`} className="landing-moment-title">{t(`moments.${key}`)}</h2>
+        <View />
+      </section>)}
       <section className="landing-covers" aria-label={t("covers")}>
         <p>{t("covers")}</p>
         <p>{t("consultancies")}</p>

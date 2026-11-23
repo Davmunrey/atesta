@@ -46,8 +46,8 @@
     "headline": "Get ENS-ready without a full-time consultant",
     "sub": "For SMEs that sell to the public sector.",
     "covers": "Also covers, depending on the plan: NIS2, GDPR, LOPDGDD and DORA.",
-    "consultancies": "For consultancies: all your clients in one account.",
-    "close": "Reach your audit with the dossier ready.",
+    "consultancies": "For consultancies: many clients, one account.",
+    "close": "Your next audit, prepared.",
     "requestAccess": "Request access",
     "signIn": "Sign in",
     "view": {
@@ -59,7 +59,42 @@
         "overdue": "Review overdue",
         "missing": "No evidence",
         "pending": "No owner"
+      },
+      "measure": {
+        "label": "An ENS measure in Atesta",
+        "official": "Official text (RD 311/2022, annex II)",
+        "assessment": "Your self-assessment",
+        "decision": "Applies (category {level})",
+        "implementation": "Partly implemented",
+        "owner": "Owner: systems team"
+      },
+      "records": {
+        "label": "An organization's records in Atesta",
+        "policies": "Policies",
+        "policiesLine": "One policy is overdue for review.",
+        "access": "Access reviews",
+        "accessLine": "Quarterly review closed; every account decided.",
+        "training": "Training",
+        "trainingLine": "Annual awareness: 18 confirmations recorded.",
+        "incidents": "Incidents",
+        "incidentsLine": "One open incident, no overdue notices.",
+        "act": "Needs action",
+        "clear": "Up to date"
+      },
+      "dossier": {
+        "label": "An Atesta dossier",
+        "kicker": "Audit readiness dossier",
+        "statement": "It gathers what the organization recorded. It is not a certification or a conformity assessment; the decision is the auditor's.",
+        "name": "Name",
+        "role": "Role",
+        "date": "Date",
+        "signature": "Signature"
       }
+    },
+    "moments": {
+      "measure": "The official text of every measure",
+      "records": "The records your auditor asks for",
+      "dossier": "A dossier ready to sign"
     }
   },
   "locale": {

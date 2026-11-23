@@ -18,7 +18,7 @@ test("the landing calls no third party and sets no cookie before the visitor act
 test("motion stops under reduced motion and nothing runs after five seconds", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.getByRole("figure")).toBeVisible();
+  await expect(page.getByRole("figure").first()).toBeVisible();
   expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");

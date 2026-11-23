@@ -26,6 +26,7 @@ how personal data is processed, and information on cookies before the site goes 
 | L4 | Palette A on paper: ink `#141414`, paper `#F4F1EA`, highlighter `#FFE58A` in the product, yellow `#FFD23F` on ink for the closing CTA, stamp blue `#23389A`. Public pages are light only (`color-scheme: light`) | Design canvas version 6; market analysis (yellow is unclaimed in the category) |
 | L5 | Typefaces: Newsreader for display, IBM Plex Sans for text and product UI, IBM Plex Mono for codes and hashes. All SIL OFL | Editorial, non-generic display type; Plex is legible at UI sizes |
 | L6 | Positioning (owner, 23/11/2026, relayed by the coordinator; #308): one product and one brand, sold as plans and modules. The lead message is the ENS: prepare and keep it without a full-time consultant, for SMEs that sell to the public sector. NIS2, RGPD, LOPDGDD and DORA appear only as "también cubre", by plan. Consultancies get at most one short secondary line, never a second hero. No prices | The ENS is what the first buyers must show to public-sector clients; the other frameworks are add-ons, not separate products |
+| L7 | The product moments show only what the console ships (#313): the official text and self-assessment of one ENS measure, the records an auditor asks for, and the dossier ready to sign. The scan across frameworks and the assistant join the page when they ship | L3 applies to each view, not only to the fixture's origin: the web app has no connector flow and the AI module no endpoint yet |
 
 ## Acceptance criteria
 
@@ -42,9 +43,9 @@ Content
 
 - [ ] Sections, in order: header (wordmark, language switcher, "Entrar", "Solicitar acceso");
       hero (one ENS headline per L6, the CTA, the overview screen), then a "también cubre" line
-      naming NIS2, RGPD, LOPDGDD and DORA and one short line for consultancies (#308); four product moments, each a headline of at most six words
-      next to a product view (one scan for every framework, change timeline, evidence pack
-      export, assistant answering with linked evidence); closing headline with the CTA; footer
+      naming NIS2, RGPD, LOPDGDD and DORA and one short line for consultancies (#308); three product moments (L7), each a headline of at most six words
+      next to a product view (the official text and self-assessment of one ENS measure, the
+      records an auditor asks for, the dossier ready to sign); closing headline with the CTA; footer
       with the legal links.
 - [ ] Copy budget: at most 60 words of marketing copy on the page, product views and footer
       excluded. No subtitles, eyebrow labels, section paragraphs or taglines.

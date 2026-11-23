@@ -46,8 +46,8 @@
     "headline": "Prepara el ENS sin un consultor a tiempo completo",
     "sub": "Para pymes que venden al sector público.",
     "covers": "También cubre, según el plan: NIS2, RGPD, LOPDGDD y DORA.",
-    "consultancies": "Para consultoras: todos tus clientes en una cuenta.",
-    "close": "Llega a tu auditoría con el dossier preparado.",
+    "consultancies": "Para consultoras: varios clientes, una cuenta.",
+    "close": "Tu próxima auditoría, preparada.",
     "requestAccess": "Solicitar acceso",
     "signIn": "Entrar",
     "view": {
@@ -59,7 +59,42 @@
         "overdue": "Revisión vencida",
         "missing": "Sin evidencias",
         "pending": "Sin responsable"
+      },
+      "measure": {
+        "label": "Una medida del ENS en Atesta",
+        "official": "Texto oficial (RD 311/2022, anexo II)",
+        "assessment": "Tu autoevaluación",
+        "decision": "Aplica (categoría {level})",
+        "implementation": "Implantada en parte",
+        "owner": "Responsable: área de sistemas"
+      },
+      "records": {
+        "label": "Los registros de una organización en Atesta",
+        "policies": "Políticas",
+        "policiesLine": "Una política con la revisión vencida.",
+        "access": "Revisiones de acceso",
+        "accessLine": "Revisión trimestral cerrada; todas las cuentas decididas.",
+        "training": "Formación",
+        "trainingLine": "Concienciación anual: 18 confirmaciones registradas.",
+        "incidents": "Incidentes",
+        "incidentsLine": "Un incidente abierto, sin avisos vencidos.",
+        "act": "Requiere acción",
+        "clear": "Al día"
+      },
+      "dossier": {
+        "label": "Un dossier de Atesta",
+        "kicker": "Dossier de preparación de auditoría",
+        "statement": "Reúne lo registrado por la organización. No es una certificación ni una evaluación de conformidad; la decisión es del auditor.",
+        "name": "Nombre",
+        "role": "Cargo",
+        "date": "Fecha",
+        "signature": "Firma"
       }
+    },
+    "moments": {
+      "measure": "El texto oficial de cada medida",
+      "records": "Los registros que pide el auditor",
+      "dossier": "Un dossier listo para firmar"
     }
   },
   "locale": {

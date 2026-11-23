@@ -36,6 +36,23 @@ it("names every ENS measure in the product view exactly as the catalog does", ()
   expect(fixture.counts.total).toBe(catalog.size);
 });
 
+it("quotes the measure's official text exactly as the catalog holds it", () => {
+  const yaml = readFileSync(join(import.meta.dirname, "../../../../catalog/frameworks/ens_rd311_2022/requirements.yaml"), "utf8");
+  const start = yaml.indexOf(`- id: ${fixture.measure.code}\n`);
+  const block = yaml.slice(start, yaml.indexOf("\n- id: ", start + 5));
+  expect(block).toContain(`title_es: ${fixture.measure.title_es}`);
+  expect(block).toContain(fixture.measure.excerpt_es);
+});
+
+it("shows three product moments the console ships, each under a short headline", () => {
+  renderWithProviders(<Landing />);
+  const moments = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
+  expect(moments.slice(0, 3)).toEqual(["El texto oficial de cada medida", "Los registros que pide el auditor", "Un dossier listo para firmar"]);
+  for (const title of moments) expect(title!.split(" ").length).toBeLessThanOrEqual(6);
+  expect(screen.getByText(fixture.measure.excerpt_es).closest("[lang]")!.getAttribute("lang")).toBe("es");
+  expect(screen.getAllByRole("figure")).toHaveLength(4);
+});
+
 it("leads with the ENS, says what else it covers, and asks for access by email", () => {
   renderWithProviders(<Landing />);
   expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Prepara el ENS sin un consultor a tiempo completo");
@@ -43,7 +60,7 @@ it("leads with the ENS, says what else it covers, and asks for access by email",
   const requests = screen.getAllByRole("link", { name: "Solicitar acceso" });
   expect(requests.length).toBeGreaterThan(0);
   for (const link of requests) expect(link.getAttribute("href")).toBe(`mailto:${legalEntity.email}`);
-  const view = screen.getByRole("figure");
+  const view = screen.getAllByRole("figure")[0]!;
   expect(within(view).getByText("op.acc.6")).toBeTruthy();
 });
 
