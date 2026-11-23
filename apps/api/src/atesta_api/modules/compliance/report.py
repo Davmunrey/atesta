@@ -96,7 +96,7 @@ def monthly_report(
             AuditEvent.action.in_([a for actions in ACTIONS.values() for a in actions]),
         )
         .group_by(AuditEvent.action)
-    ).tuples()
+    )
     counts: dict[str, int] = {action: n for action, n in rows}
     done = Done(**{key: sum(counts.get(a, 0) for a in actions) for key, actions in ACTIONS.items()})
     today = datetime.now(MADRID).date()

@@ -24,7 +24,7 @@ apps/
 scanner/      Container image: pinned Prowler + Atesta custom checks
 packages/
   core/       Pure domain logic: scoring, diff
-catalog/      ENS / NIS2 / ISO control catalog (YAML)
+catalog/      Common controls and framework packs (YAML): ENS, NIS2, DORA, GDPR, LOPDGDD, ISO 27001, SOC 2
 infra/        OpenTofu (AWS eu-south-2)
 docs/adr/     Architecture decision records
 docs/specs/   One spec per feature, written before code
@@ -34,12 +34,15 @@ docs/specs/   One spec per feature, written before code
 
 ```bash
 uv sync --all-packages
-uv run ruff check .
+uv run ruff check . && uv run ruff format --check .
 uv run mypy
 uv run lint-imports
-uv run pytest
-uv run uvicorn atesta_api.main:app --reload
+docker compose up -d postgres   # database tests need it; without the URL they are skipped
+ATESTA_TEST_DATABASE_URL=postgresql+psycopg://postgres@localhost:5432/postgres uv run pytest
 ```
+
+The API needs a migrated database, a session key and the local sign-in server before it starts:
+`apps/api/devtools/README.md` lists every step. The web app: `apps/web/README.md`.
 
 ## Source of truth
 

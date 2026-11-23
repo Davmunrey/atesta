@@ -1,13 +1,22 @@
 """Monthly report for management (management-report spec), on real PostgreSQL with RLS."""
 
-from datetime import date
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
 
+from atesta_api.modules.compliance.report import ACTIONS
 from fastapi.testclient import TestClient
 from sqlalchemy import Engine, text
 
 from .conftest import auth
 from .test_members import events, org_with
+from .test_overview import overview_catalog as overview_catalog
 from .test_rbac import _add, _future
+from .test_requirement_register import SCOPE, assessment, base
+from .test_requirement_register import pack as pack
+from .test_routines_b import _incident
+from .test_routines_b import clock_pack as clock_pack
+
+MADRID = ZoneInfo("Europe/Madrid")
 
 
 def _policy(client: TestClient, org: str, sub: str) -> None:
@@ -62,3 +71,67 @@ def test_a_bad_or_future_month_is_refused(client: TestClient, superuser: Engine)
         assert response.status_code == 422, month
     default = client.get(f"/api/v1/orgs/{org}/report", headers=auth(subs["owner"]))
     assert default.json()["month"] == date.today().strftime("%Y-%m")
+
+
+def _last_month() -> tuple[str, datetime, datetime]:
+    """The previous calendar month in Madrid, and its first and following-first midnights."""
+    first_this = datetime.now(MADRID).date().replace(day=1)
+    first_last = (first_this - timedelta(days=1)).replace(day=1)
+    start = datetime(first_last.year, first_last.month, 1, tzinfo=MADRID)
+    end = datetime(first_this.year, first_this.month, 1, tzinfo=MADRID)
+    return first_last.strftime("%Y-%m"), start, end
+
+
+def test_every_line_counts_its_actions_within_the_madrid_month(
+    client: TestClient, superuser: Engine
+) -> None:
+    """Half an hour after Madrid midnight on the first is still the previous month in UTC: the
+    month is cut in Europe/Madrid. The other times are on the same side in both zones."""
+    org, subs = org_with(client, superuser)
+    month, start, end = _last_month()
+    half, hours = timedelta(minutes=30), timedelta(hours=3)
+    inside, outside = (start + half, end - hours), (start - hours, end + hours)
+    assert (start + half).astimezone(ZoneInfo("UTC")).month != start.month
+    with superuser.begin() as conn:
+        for line, actions in ACTIONS.items():
+            for action in actions:
+                for at in (*inside, *outside):
+                    conn.execute(
+                        text(
+                            "INSERT INTO audit_events (id, organization_id, action, target_type,"
+                            " target_id, occurred_at) VALUES (gen_random_uuid(), :o, :a, 't',"
+                            " :line, :at)"
+                        ),
+                        {"o": org, "a": action, "line": line, "at": at},
+                    )
+    report = client.get(f"/api/v1/orgs/{org}/report?month={month}", headers=auth(subs["owner"]))
+    assert report.status_code == 200, report.text
+    assert report.json()["done"] == {line: 2 * len(a) for line, a in ACTIONS.items()}
+
+
+def test_recording_an_incident_counts_and_its_clocks_fall_due(
+    client: TestClient, superuser: Engine, clock_pack: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    _incident(client, org, subs["owner"], 1, significant=True, personal_data=True)
+    headers = auth(subs["owner"])
+    report = client.get(f"/api/v1/orgs/{org}/report", headers=headers).json()
+    assert report["done"]["incidents_recorded"] == 1
+    due = client.get(f"/api/v1/orgs/{org}/routines/due", headers=headers).json()
+    assert any(d.get("clock") for d in due) and report["due"] == due
+
+
+def test_the_status_lists_each_framework_in_progress_as_it_is_now(
+    client: TestClient, superuser: Engine, pack: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    owner = auth(subs["owner"])
+    before = client.get(f"/api/v1/orgs/{org}/report", headers=owner).json()
+    assert pack not in {f["key"] for f in before["frameworks"]}
+    client.post(base(org, pack) + "/scope", json={"axis_values": SCOPE}, headers=owner)
+    response = client.post(base(org, pack) + "/register/m.cat", json=assessment(), headers=owner)
+    assert response.status_code == 201, response.text
+    report = client.get(f"/api/v1/orgs/{org}/report", headers=owner).json()
+    status = {f["key"]: f for f in report["frameworks"]}[pack]
+    assert (status["assessed"], status["implemented"], status["scope_defined"]) == (1, 1, True)
+    assert report["status_is_current"] is True

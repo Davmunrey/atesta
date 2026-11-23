@@ -57,7 +57,7 @@ def clock_defs(session: Session) -> list[ClockDef]:
         .order_by(Framework.key)
     )
     out: list[ClockDef] = []
-    for key, name, attributes in rows.tuples():
+    for key, name, attributes in rows:
         for clock in attributes.get("reporting_clocks", []):
             after = clock.get("after")
             rule = ClockRule(
@@ -314,7 +314,7 @@ def incident_criteria(
         .order_by(Framework.key)
     )
     out: list[CriterionOut] = []
-    for key, name, attributes in rows.tuples():
+    for key, name, attributes in rows:
         for criterion in attributes.get("incident_criteria", []):
             if criterion.get("text"):
                 inline = criterion["text"]

@@ -2841,7 +2841,7 @@ requirements:
     official_text_es: |-
       Requisitos.
 
-      Los sistemas que prestan servicios webdeberán ser protegidos frente a las siguientes amenazas:
+      Los sistemas que prestan servicios web deberán ser protegidos frente a las siguientes amenazas:
 
       – [mp.s.2.1] Cuando la información requiera control de acceso se garantizará la imposibilidad de acceder a la información obviando la autenticación, en particular, tomando medidas en los siguientes aspectos:
 
