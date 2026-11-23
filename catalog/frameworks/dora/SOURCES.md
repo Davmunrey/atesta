@@ -55,3 +55,21 @@ This pack cannot be scored, including when development draft visibility is enabl
   - Articles 11 and 12 are addressed to competent authorities;
   - Article 13 is entry into force.
 - **What the user sees:** the incident form shows the criteria next to the "significant" flag. Atesta shows the text; whether an incident is major is the financial entity's decision (ADR-005).
+
+## Reporting clocks (draft6)
+
+- **Act:** Commission Delegated Regulation (EU) 2025/301 (RTS on the content and time limits of major ICT-related incident reports), CELEX `32025R0301`.
+- **Captured** on 2026-11-23 from the Publications Office:
+  - ES manifestation `36795cde-ef2b-11ef-981b-01aa75ed71a1.0007.03`, SHA-256 `190fbfbec28bccbda18e681e4e5f77cdda60da0146a1d350b7a9aa967e0b8cf2`;
+  - EN `…0006.03`, SHA-256 `052c6f97988fc7e0753c2fc64d7b9aa985b3aab309e4e6d7bfc54f11c4b83554`.
+- **Corrigenda:** the only one, `32025R0301R(01)`, is French.
+- **Clocks,** from Article 5(1), copied from the official text:
+  - initial notification "no later than 24 hours from the moment the financial entity has become aware" / "a más tardar veinticuatro horas después del momento en que la entidad financiera haya tenido conocimiento";
+  - intermediate report "within 72 hours from the submission of the initial notification";
+  - final report "no later than one month after … the submission of the intermediate report".
+  - All three need the significant (major) flag and serve `c3.art19`.
+- **Not modelled,** stated here and in the initial clock's title:
+  - the 4-hour limit from classification as major, because the register does not record the classification time;
+  - Article 5(2), late classification;
+  - the "latest updated intermediate report" in 5(1)(c);
+  - the weekend and bank holiday rule of 5(4) to 5(6).

@@ -81,6 +81,9 @@ control, so it shows wherever evidence is read.
   - NIS2 Art. 23(4)(a) and (b): 24 h and 72 h from becoming aware of the significant incident;
     (d): one month after the notification under (b);
   - GDPR Art. 33(1): 72 h after becoming aware of the breach.
+  - DORA, Delegated Regulation (EU) 2025/301, Art. 5(1): initial notification 24 h at the latest from
+    becoming aware (the 4 h from classification is not modelled), intermediate report 72 h after it,
+    final report one month after that.
 - [ ] **Updates (append-only, contributors and admins):** a note, a clock met (once per clock),
   or closing. A closed incident takes no more updates (409).
 - [ ] **Clock states**, computed from pack content and updates: met (with the time), running
