@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { type FormEvent, useId, useState } from "react";
 import { type ApiToken, curlExample, RATE_LIMITS, type Scope, SCOPES, useApiTokens, useApiTokenUsage, useCreateApiToken, useRevokeApiToken } from "@/lib/api/tokens";
@@ -26,6 +27,7 @@ export function IntegrationsView({ org }: { org: Membership }) {
       { label: s("tokens.active"), value: format.number(sum.active), attention: sum.active === 0 },
       { label: s("tokens.inactive"), value: format.number(sum.inactive) },
       { label: s("tokens.lastUsed"), value: sum.lastUsed ? format.dateTime(new Date(sum.lastUsed), { dateStyle: "medium" }) : s("never") }]} /> : null}
+    <p className="text-sm">{t.rich("docs", { api: (c) => <Link href="/docs/api" className="underline">{c}</Link>, mcp: (c) => <Link href="/docs/mcp" className="underline">{c}</Link> })}</p>
     <Panel title={t("list")}>
       {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
         : list.data.length === 0 ? <Empty>{t("empty")}</Empty>

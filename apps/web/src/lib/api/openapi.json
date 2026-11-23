@@ -6987,7 +6987,8 @@
         "summary": "Create Access Review",
         "tags": [
           "api-keys"
-        ]
+        ],
+        "x-atesta-scope": "routines:write"
       }
     },
     "/api/v1/due": {
@@ -7012,7 +7013,8 @@
         "summary": "List Due",
         "tags": [
           "api-keys"
-        ]
+        ],
+        "x-atesta-scope": "compliance:read"
       }
     },
     "/api/v1/frameworks": {
@@ -7037,7 +7039,8 @@
         "summary": "List Frameworks",
         "tags": [
           "api-keys"
-        ]
+        ],
+        "x-atesta-scope": "compliance:read"
       }
     },
     "/api/v1/frameworks/{framework_key}/measures": {
@@ -7083,7 +7086,8 @@
         "summary": "List Measures",
         "tags": [
           "api-keys"
-        ]
+        ],
+        "x-atesta-scope": "compliance:read"
       }
     },
     "/api/v1/frameworks/{framework_key}/measures/{code}": {
@@ -7134,7 +7138,8 @@
         "summary": "Read Measure",
         "tags": [
           "api-keys"
-        ]
+        ],
+        "x-atesta-scope": "compliance:read"
       }
     },
     "/api/v1/frameworks/{framework_key}/measures/{code}/proposals": {
@@ -7195,7 +7200,8 @@
         "summary": "Propose",
         "tags": [
           "api-keys"
-        ]
+        ],
+        "x-atesta-scope": "assessment:propose"
       }
     },
     "/api/v1/gaps": {
@@ -7221,7 +7227,8 @@
         "summary": "List Gaps",
         "tags": [
           "api-keys"
-        ]
+        ],
+        "x-atesta-scope": "compliance:read"
       }
     },
     "/api/v1/incidents": {
@@ -7246,7 +7253,8 @@
         "summary": "List Incidents",
         "tags": [
           "api-keys"
-        ]
+        ],
+        "x-atesta-scope": "incidents:read"
       },
       "post": {
         "operationId": "create_incident_api_v1_incidents_post",
@@ -7285,7 +7293,8 @@
         "summary": "Create Incident",
         "tags": [
           "api-keys"
-        ]
+        ],
+        "x-atesta-scope": "routines:write"
       }
     },
     "/api/v1/incidents/{incident_id}": {
@@ -7328,7 +7337,8 @@
         "summary": "Read Incident",
         "tags": [
           "api-keys"
-        ]
+        ],
+        "x-atesta-scope": "incidents:read"
       }
     },
     "/api/v1/incidents/{incident_id}/updates": {
@@ -7381,7 +7391,8 @@
         "summary": "Update Incident",
         "tags": [
           "api-keys"
-        ]
+        ],
+        "x-atesta-scope": "routines:write"
       }
     },
     "/api/v1/ingest/evidence": {
@@ -7421,8 +7432,9 @@
         },
         "summary": "Ingest Evidence",
         "tags": [
-          "evidence"
-        ]
+          "api-keys"
+        ],
+        "x-atesta-scope": "evidence:write"
       }
     },
     "/api/v1/invitations/accept": {
@@ -11529,7 +11541,8 @@
         "summary": "Create Campaign",
         "tags": [
           "api-keys"
-        ]
+        ],
+        "x-atesta-scope": "routines:write"
       }
     },
     "/api/v1/training/acknowledge": {

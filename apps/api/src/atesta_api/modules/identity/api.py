@@ -10,6 +10,7 @@ from atesta_api.modules.identity.activity import is_member, person
 from atesta_api.modules.identity.api_tokens import (
     ApiCaller,
     ApiTokenCaller,
+    annotate_scopes,
     key_router,
     require_scope,
     token_labels,
@@ -59,6 +60,7 @@ def install_identity(app: FastAPI) -> None:
 
 __all__ = [
     "ApiCaller",
+    "annotate_scopes",
     "ApiTokenCaller",
     "ContextReason",
     "CurrentCaller",

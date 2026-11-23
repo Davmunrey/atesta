@@ -1136,6 +1136,7 @@
     "usageCount": "{count, plural, =0 {No requests in the last 24 hours} one {# request in the last 24 hours} other {# requests in the last 24 hours}}",
     "usageEmpty": "Not used yet.",
     "noScope": "None",
+    "docs": "How to use the API: the <api>API reference</api> and the <mcp>AI agent guide</mcp>.",
     "templates": {
       "title": "Automatic evidence templates",
       "help": "Choose what to record and where it runs, then copy the script to that machine or your repository. Each run records evidence; a repeat on the same day or for the same run is not duplicated.",
@@ -1573,6 +1574,113 @@
       },
       "faq": {
         "title": "What does Atesta cover?"
+      }
+    }
+  },
+  "apiDocs": {
+    "title": "API reference",
+    "intro": "The routes your tools and AI agents can call with a token from Integrations. Each token reaches only what its permissions allow, and only your organization.",
+    "mcpLink": "AI agent guide (MCP)",
+    "index": "On this page",
+    "noScope": "No specific permission",
+    "noScopeHelp": "Any valid token can call these routes.",
+    "fieldsOf": "Fields of {operation}",
+    "field": "Field",
+    "type": "Type",
+    "required": "Required",
+    "limits": "Limits",
+    "yes": "Yes",
+    "no": "No",
+    "basics": {
+      "title": "The basics",
+      "key": "Send the token in the Authorization header, on every request, to your Atesta address:",
+      "query": "Never put it in the URL: a request with query parameters is refused.",
+      "limit": "Each token has a limit of requests per minute. Over it, the response is 429 with a Retry-After header saying how many seconds to wait.",
+      "language": "Error messages come in Spanish, or in English when the Accept-Language header asks for it.",
+      "records": "Atesta keeps the time, route and permission of each accepted request, never its content. Admins see it in Integrations."
+    },
+    "errors": {
+      "title": "Errors",
+      "intro": "An error returns a stable code in detail.code and, on token routes, a message in detail.message.",
+      "code": "Code",
+      "status": "HTTP",
+      "meaning": "What it means",
+      "codes": {
+        "identity_api_token_invalid": "The token is missing, unknown, revoked or expired.",
+        "identity_token_in_query": "The request carries query parameters.",
+        "identity_api_token_scope": "The token lacks the permission the route needs; detail.scope names it.",
+        "identity_api_token_rate_limited": "The token went over its limit per minute; wait as long as Retry-After says.",
+        "request_invalid": "A field is not valid; detail.fields names them.",
+        "billing_plan_limit": "The framework is not included in the organization's plan."
+      }
+    },
+    "operations": {
+      "read_key_api_v1_key_get": "Describes the token: name, permissions, limit per minute and expiry.",
+      "ingest_evidence_api_v1_ingest_evidence_post": "Records an evidence statement on a common control. A repeated external_id writes nothing and returns the first evidence.",
+      "list_frameworks_api_v1_frameworks_get": "The frameworks in the organization's plan, with their readiness counts.",
+      "list_measures_api_v1_frameworks__framework_key__measures_get": "A framework's measures: code, titles, Atesta's applicability proposal, the latest self-assessment, the due date and the pending proposal, if any.",
+      "read_measure_api_v1_frameworks__framework_key__measures__code__get": "One measure with its official text and citation (source, section, source SHA-256 and catalog version), the evidence usually asked for, and the common controls it maps to.",
+      "list_gaps_api_v1_gaps_get": "Measures not assessed, not implemented or partially implemented, per framework.",
+      "list_due_api_v1_due_get": "What falls due: policy reviews, overdue access reviews, unclosed training and incident reporting deadlines.",
+      "list_incidents_api_v1_incidents_get": "Open incidents with their reporting deadlines.",
+      "read_incident_api_v1_incidents__incident_id__get": "One incident with its updates and reporting deadlines.",
+      "propose_api_v1_frameworks__framework_key__measures__code__proposals_post": "Proposes a self-assessment of a measure, with its reason. It stays pending and changes nothing until a person confirms it in the app.",
+      "create_incident_api_v1_incidents_post": "Records an incident.",
+      "update_incident_api_v1_incidents__incident_id__updates_post": "Adds a note to an incident, marks a notice as sent, records when it was classified as significant, or closes it.",
+      "create_campaign_api_v1_training_campaigns_post": "Starts a training campaign. The response includes, once, the link people use to confirm they read the material.",
+      "create_access_review_api_v1_access_reviews_post": "Starts an access review with its accounts. Deciding and closing the review happen in the app."
+    }
+  },
+  "mcpGuide": {
+    "title": "AI agent guide (MCP)",
+    "intro": "Connect an AI agent that supports MCP (Model Context Protocol) to Atesta, so it reads where you stand and records the daily work, with the permissions you choose.",
+    "apiLink": "API reference",
+    "index": "On this page",
+    "what": {
+      "title": "What an agent can do",
+      "body": "With Atesta's MCP server, an agent can tell you what is missing on a framework and what falls due this month, read a measure's official text with its citation, record evidence, propose self-assessments, and record incidents, training and access reviews. Each action is one API call with your token."
+    },
+    "safety": {
+      "title": "What it cannot do",
+      "scopes": "Only what its token allows. A read-only token writes nothing, and no token reaches another organization.",
+      "proposals": "It does not decide whether a measure is implemented. An agent's self-assessment is a proposal: it stays pending until a person confirms it in the app, and it is then recorded in that person's name.",
+      "data": "What it reads from Atesta reaches it marked as data. Text people wrote (titles, notes, evidence) is never presented to it as instructions.",
+      "systems": "It does not touch your systems: it starts no scans and changes no connections. Every write appears in the activity with the token and the admin who created it."
+    },
+    "setup": {
+      "title": "Connect an agent on your computer",
+      "key": "An admin creates a token in <link>Integrations</link> with only the permissions the agent needs.",
+      "install": "Install the atesta-mcp server on the computer where the agent runs. It is not publicly distributed yet: for now, Atesta provides it to pilot customers only.",
+      "config": "Add it to your MCP client's configuration with the token in env, as the <link>official MCP documentation</link> explains. For example:",
+      "configLabel": "Client configuration",
+      "secret": "The token is a secret: keep it only in that configuration, and revoke it in Integrations when it is no longer needed."
+    },
+    "hosted": {
+      "title": "Hosted server",
+      "body": "The hosted server is not available yet. When it is, it will answer at your Atesta address followed by /mcp and ask for the token in the Authorization: Bearer header. Clients that connect only with OAuth will not be able to use it yet."
+    },
+    "tools": {
+      "title": "Tools",
+      "read": "Read",
+      "write": "Write",
+      "name": "Tool",
+      "does": "What it does",
+      "scope": "Permission",
+      "list": {
+        "get_key": "Describes the token: name, permissions and limit.",
+        "list_frameworks": "The plan's frameworks with their readiness.",
+        "list_measures": "A framework's measures and their self-assessment.",
+        "get_measure": "A measure's official text, with its citation.",
+        "list_gaps": "What is still to assess or implement.",
+        "list_due_items": "What falls due and the running deadlines.",
+        "list_incidents": "Open incidents and their deadlines.",
+        "get_incident": "One incident with its updates.",
+        "record_evidence": "Records evidence on a common control.",
+        "propose_assessment": "Proposes a self-assessment; a person confirms it.",
+        "record_incident": "Records an incident.",
+        "add_incident_update": "Adds a note, marks a notice as sent, or closes an incident.",
+        "start_training_campaign": "Starts a training campaign.",
+        "start_access_review": "Starts an access review."
       }
     }
   }

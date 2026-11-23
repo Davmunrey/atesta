@@ -57,7 +57,12 @@ from atesta_api.modules.compliance.routines import (
 )
 from atesta_api.modules.compliance.scoring import FrameworkInfo, active_frameworks
 from atesta_api.modules.compliance.training import CampaignIn, CreatedCampaign, start_campaign
-from atesta_api.modules.identity.api import ApiCaller, QueryFreeRoute, require_scope
+from atesta_api.modules.identity.api import (
+    ApiCaller,
+    QueryFreeRoute,
+    annotate_scopes,
+    require_scope,
+)
 from atesta_api.platform.db import DbSession
 
 router = APIRouter(prefix="/api/v1", tags=["api-keys"], route_class=QueryFreeRoute)
@@ -283,3 +288,6 @@ def create_access_review(
 ) -> AccessReviewOut:
     org, author = caller.organization_id, caller.created_by
     return start_access_review(session, org, author, body, _via(caller))
+
+
+annotate_scopes(router)
