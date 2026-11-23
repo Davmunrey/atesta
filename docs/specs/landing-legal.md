@@ -56,8 +56,8 @@ Content
 - [ ] ENS measure codes and names shown in the product views are copied from RD 311/2022,
       anexo II (BOE-A-2022-7191).
 - [ ] Main CTA "Solicitar acceso": `mailto:` to the contact address in `src/content/legal-entity.ts`.
-      Until the owner sets it, the address is a marked placeholder on the reserved `.invalid`
-      domain, and `check-legal` blocks any placeholder value (owner, 23/11/2026). Secondary:
+      The address is hello@atesta.cloud (owner, 23/11/2026). Any value still marked PENDIENTE
+      is a placeholder, and `check-legal` blocks a release while one is left. Secondary:
       "Entrar" (sign-in). No form until a form spec exists.
 - [ ] The product name is one message key (`brand.name`). Internal identifiers (`atesta_api`,
       cookie names) do not change with the brand.

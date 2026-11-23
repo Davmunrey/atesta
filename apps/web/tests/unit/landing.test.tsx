@@ -93,6 +93,7 @@ it("puts the brand lockup, sign-in and the access request in the landing header"
 });
 
 it("blocks a release while any legal field is still a placeholder", () => {
-  expect(legalIssues(legalEntity)).toEqual(["name", "nif", "address", "registry", "email"]);
+  expect(legalIssues(legalEntity)).toEqual(["name", "nif", "address", "registry"]);
+  expect(legalEntity.email).toBe("hello@atesta.cloud");
   expect(legalIssues({ name: "A", nif: "B", address: "C", registry: "D", email: "pendiente@atesta.invalid" })).toEqual(["email"]);
 });
