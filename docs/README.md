@@ -43,6 +43,7 @@ Start with the question you have.
 - [auditor-dossier](specs/auditor-dossier.md)
 - [claims-honesty](specs/claims-honesty.md)
 - [console-shell](specs/console-shell.md)
+- [consultancy-portfolio](specs/consultancy-portfolio.md)
 - [content-model-v2](specs/content-model-v2.md)
 - [control-evidence-statements](specs/control-evidence-statements.md)
 - [control-model-schema](specs/control-model-schema.md)

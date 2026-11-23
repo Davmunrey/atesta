@@ -4,29 +4,19 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useMe } from "@/components/auth-gate";
 import { CreateOrgForm } from "@/components/create-org-form";
-import { orgHome } from "@/lib/org";
+import { Portfolio } from "@/components/portfolio";
 
-/** First login without memberships lands on the create form; otherwise, pick an organization. */
+/** First login without memberships lands on the create form; otherwise, the portfolio. */
 export default function AppHome() {
   const t = useTranslations();
   const { memberships } = useMe();
   if (memberships.length === 0) return <CreateOrgForm />;
   return (
-    <section className="flex flex-col gap-4">
-      <h1 className="page-title">{t("home.title")}</h1>
-      <ul className="organization-list">
-        {memberships.map((m) => (
-          <li key={m.organization_id}>
-            <Link href={orgHome(m.organization_id)}>
-              <span className="section-link-title">{m.organization_name}</span>
-              <span className="text-sm text-muted">{t(`roles.${m.role}`)}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+    <div className="flex flex-col gap-4">
+      <Portfolio memberships={memberships} />
       <Link href="/app/new" className="self-start text-sm underline">
         {t("home.createAnother")}
       </Link>
-    </section>
+    </div>
   );
 }

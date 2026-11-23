@@ -991,5 +991,26 @@
     "accessReviewClosed": "{total, plural, one {# account reviewed} other {# accounts reviewed}} (keep: {keep}; revoke: {revoke}); closed on {date}",
     "trainingClosed": "{count, plural, one {# confirmation} other {# confirmations}}; closed on {date}",
     "incidentClosed": "became aware on {aware}; closed on {date}"
+  },
+  "portfolio": {
+    "title": "Your organizations",
+    "summary": "Portfolio summary",
+    "organizations": "{count, plural, one {# organization} other {# organizations}}",
+    "withOverdue": "{count, plural, one {# with something overdue} other {# with something overdue}}",
+    "notStarted": "{count, plural, one {# not started} other {# not started}}",
+    "organization": "Organization",
+    "assessed": "Measures assessed",
+    "overdue": "Overdue measures",
+    "routines": "Pending routines",
+    "lastAssessed": "Last assessment",
+    "frameworks": "{count, plural, =0 {no framework in progress} one {# framework in progress} other {# frameworks in progress}}",
+    "ofTotal": "{assessed} of {total, plural, one {#} other {#}}",
+    "noRoutines": "None",
+    "pending": "{count, plural, one {# pending} other {# pending}}",
+    "pendingWithOverdue": "{count, plural, one {# ({overdue} overdue)} other {# ({overdue} overdue)}}",
+    "never": "Never",
+    "failed": "Could not load",
+    "loading": "Loading…",
+    "notStartedCell": "Not started"
   }
 }
