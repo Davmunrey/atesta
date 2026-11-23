@@ -107,3 +107,59 @@ def test_the_cli_reads_a_real_branch(tmp_path: Path, capsys: pytest.CaptureFixtu
     body.write_text("Fixes #8\n")
     assert changes.main(argv) == 1
     assert "issue #7 is not in the body's Fixes lines" in capsys.readouterr().out
+
+
+def _release_root(tmp_path: Path, fragments: dict[str, str]) -> Path:
+    (tmp_path / "changes").mkdir()
+    (tmp_path / "changes" / "README.md").write_text("# Pending changes\n")
+    for name, body in fragments.items():
+        (tmp_path / "changes" / name).write_text(body)
+    (tmp_path / "CHANGELOG.md").write_text(
+        "# Changelog\n\nIntro.\n\n## Unreleased\n\nSee changes/.\n\n"
+        "## v2026.10.1 (2026-10-01)\n\nOld.\n"
+    )
+    return tmp_path
+
+
+def test_a_release_folds_fragments_by_kind_and_deletes_them(tmp_path: Path) -> None:
+    from datetime import date
+
+    root = _release_root(
+        tmp_path,
+        {
+            "12.fixed.md": "**Fixed a thing.** (#12)\n",
+            "10.added.md": "**Added a thing.** (#10)\n- detail one\n- detail two\n",
+            "11.security.md": "**Hardened a thing.** (#11)\n",
+            "9.added.md": "**Added earlier.** (#9)\n",
+        },
+    )
+    names = changes.release(root, "v2026.11.1", date(2026, 11, 23))
+    assert sorted(names) == ["10.added.md", "11.security.md", "12.fixed.md", "9.added.md"]
+    text = (root / "CHANGELOG.md").read_text()
+    new = text[text.index("## v2026.11.1") : text.index("## v2026.10.1")]
+    assert new.splitlines()[0] == "## v2026.11.1 (2026-11-23)"
+    assert new.index("### Added") < new.index("### Fixed") < new.index("### Security")
+    assert new.index("**Added earlier.** (#9)") < new.index("**Added a thing.** (#10)")
+    assert "  - detail one" in new
+    assert text.index("## Unreleased") < text.index("## v2026.11.1") < text.index("## v2026.10.1")
+    assert sorted(p.name for p in (root / "changes").iterdir()) == ["README.md"]
+
+
+@pytest.mark.parametrize(
+    ("version", "fragments", "message"),
+    [
+        ("2026.11.1", {"1.added.md": "**A.** (#1)\n"}, "version must look like"),
+        ("v2026.10.1", {"1.added.md": "**A.** (#1)\n"}, "already in CHANGELOG.md"),
+        ("v2026.11.1", {}, "no fragments"),
+        ("v2026.11.1", {"1.added.md": "no bold sentence (#1)\n"}, "bold sentence"),
+    ],
+)
+def test_a_release_refuses_bad_input(
+    tmp_path: Path, version: str, fragments: dict[str, str], message: str
+) -> None:
+    from datetime import date
+
+    root = _release_root(tmp_path, fragments)
+    with pytest.raises(ValueError, match=message):
+        changes.release(root, version, date(2026, 11, 23))
+    assert sorted(p.name for p in (root / "changes").iterdir()) == sorted(["README.md", *fragments])
