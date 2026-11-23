@@ -4,6 +4,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import { CustomerLogos } from "@/components/public/customer-logos";
 import { ProofStrip } from "@/components/public/proof-strip";
 import { PublicFooter } from "@/components/public/public-footer";
+import { PAGES } from "@/components/public/site-map";
 import { PublicHeader } from "@/components/public-header";
 import { renderWithProviders } from "./render";
 
@@ -18,7 +19,7 @@ it("opens the product and docs menus as disclosures, and closes them on Escape",
   fireEvent.click(producto);
   expect(producto.getAttribute("aria-expanded")).toBe("true");
   const panel = document.getElementById(producto.getAttribute("aria-controls")!)!;
-  expect(within(panel).getByRole("link", { name: /API y MCP/ }).getAttribute("href")).toBe("/docs/api");
+  expect(within(panel).getByRole("link", { name: /API y MCP/ }).getAttribute("href")).toBe("/producto#api");
   fireEvent.keyDown(document, { key: "Escape" });
   expect(producto.getAttribute("aria-expanded")).toBe("false");
   fireEvent.click(screen.getByRole("button", { name: "Docs" }));
@@ -27,7 +28,9 @@ it("opens the product and docs menus as disclosures, and closes them on Escape",
 
 it("links only to public pages that exist", () => {
   renderWithProviders(<PublicHeader />);
-  for (const href of ["/ens", "/seguridad", "/consultoras", "/producto"]) expect(document.querySelector(`a[href="${href}"]`)).toBeNull();
+  const pages = { "/producto": PAGES.producto, "/ens": PAGES.ens, "/seguridad": PAGES.seguridad, "/consultoras": PAGES.consultoras };
+  const linked = (href: string) => [...document.querySelectorAll("a")].some((a) => a.getAttribute("href")?.split("#")[0] === href);
+  for (const [href, live] of Object.entries(pages)) expect(linked(href), href).toBe(live);
 });
 
 it("maps the public site in the footer, with the honest proof and no person's name", () => {

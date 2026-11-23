@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import fixture from "@/content/landing-fixture.json";
 import { Icon } from "../icons";
 import { ViewFrame } from "./view-frame";
@@ -66,6 +66,40 @@ export function IncidentView() {
         <li><span className="lv-code">10:05</span><span>{t("log3")}</span></li>
       </ol>
       <p className="li-source">{t("source")}</p>
+    </div>
+  </ViewFrame>;
+}
+
+/** The assistant (A3, issue 377): a question and its answer, quoted from the ENS pack's reviewed
+ *  expected evidence with the guide it comes from; a test keeps the fixture equal to the catalog. */
+export function AssistantView() {
+  const t = useTranslations("landing.view.assistant");
+  const locale = useLocale();
+  const a = fixture.assistant;
+  return <ViewFrame label={t("label")}>
+    <div className="lv-body la-chat">
+      <p className="la-question">{t("question", { code: a.code })}</p>
+      <div className="la-answer">
+        <p className="lv-title"><span className="lv-code">{a.code}</span> <strong lang="es">{a.title_es}</strong></p>
+        <ul className="la-items">{a.items.map((item) => <li key={item.es}>{locale === "es" ? item.es : item.en}</li>)}</ul>
+        <p className="li-source">{t("cite")} {a.cite}</p>
+      </div>
+    </div>
+  </ViewFrame>;
+}
+
+/** Real MCP tools only (a test checks each name against the server's list). */
+const API_TOOLS = ["list_gaps", "list_due_items", "get_measure"] as const;
+
+/** API and MCP (A3, issue 377): one real request and the read tools an agent calls. */
+export function ApiView() {
+  const t = useTranslations("landing.view.api");
+  const tools = useTranslations("mcpGuide.tools.list");
+  return <ViewFrame label={t("label")}>
+    <div className="lv-body la-api">
+      <pre className="la-code"><code>{"GET /api/v1/gaps\nAuthorization: Bearer atesta_…"}</code></pre>
+      <p className="lm-label">{t("tools")}</p>
+      <ul className="la-tools">{API_TOOLS.map((name) => <li key={name} data-tool={name}><span className="lv-code">{name}</span><span>{tools(name)}</span></li>)}</ul>
     </div>
   </ViewFrame>;
 }

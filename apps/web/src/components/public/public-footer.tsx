@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { legalEntity } from "@/content/legal-entity";
 import { BrandMark } from "../brand-mark";
 import { ProofStrip } from "./proof-strip";
-import { DOCS, LINKS } from "./site-map";
+import { DOCS, LINKS, PAGES } from "./site-map";
 
 /** The public footer (A3): a full map of the public site on ink, with the honest proof. Plain
  *  anchors, so navigations are document loads that View Transitions can morph. */
@@ -23,7 +23,7 @@ export function PublicFooter() {
       </div>
       <nav className="public-footer-map" aria-label={legal("label")}>
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- a document load lets View Transitions morph the page (A3) */}
-        <div><h2>{t("footer.product")}</h2><ul><li><a href="/#how-title">{t("footer.how")}</a></li>
+        <div><h2>{t("footer.product")}</h2><ul>{PAGES.producto ? <li><a href="/producto">{t("nav.product")}</a></li> : null}<li><a href="/#how-title">{t("footer.how")}</a></li>
           {LINKS.map((l) => <li key={l.key}><a href={l.href}>{t(`nav.${l.key}`)}</a></li>)}</ul></div>
         <div><h2>{t("footer.resources")}</h2><ul>{DOCS.map((d) => <li key={d.key}><a href={d.href}>{t(`nav.items.${d.key}.title`)}</a></li>)}</ul></div>
         <div><h2>{t("footer.legal")}</h2><ul>
