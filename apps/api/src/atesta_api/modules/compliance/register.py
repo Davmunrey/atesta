@@ -32,6 +32,7 @@ from atesta_api.modules.compliance.models import (
     RequirementAssignment,
     ScoreSnapshot,
 )
+from atesta_api.modules.compliance.plan_gate import framework_in_plan
 from atesta_api.modules.compliance.scoring import active_frameworks
 from atesta_api.modules.evidence.api import statements_in_org
 from atesta_api.modules.identity.api import Member, Role, is_member, require_member, require_role
@@ -39,7 +40,11 @@ from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 from atesta_api.platform.i18n import Locale, message
 
-router = APIRouter(prefix="/api/v1/orgs/{org_id}/frameworks/{framework_key}", tags=["compliance"])
+router = APIRouter(
+    prefix="/api/v1/orgs/{org_id}/frameworks/{framework_key}",
+    tags=["compliance"],
+    dependencies=[Depends(framework_in_plan)],
+)
 
 _CONTROL_CHARACTERS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")  # tab and line feed allowed
 NOT_A_CERTIFICATION = (

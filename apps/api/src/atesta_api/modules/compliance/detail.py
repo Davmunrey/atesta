@@ -29,6 +29,7 @@ from atesta_api.modules.compliance.models import (
     ScoreSnapshot,
 )
 from atesta_api.modules.compliance.overview import latest_snapshots
+from atesta_api.modules.compliance.plan_gate import framework_in_plan
 from atesta_api.modules.compliance.reviews import current_reviews
 from atesta_api.modules.compliance.scoring import active_control_checks, active_frameworks
 from atesta_api.modules.identity.api import Member, require_member
@@ -112,7 +113,7 @@ def _controls(
     return out
 
 
-@router.get("/frameworks/{framework_key}")
+@router.get("/frameworks/{framework_key}", dependencies=[Depends(framework_in_plan)])
 def framework_detail(
     framework_key: str, member: Annotated[Member, Depends(require_member)], session: DbSession
 ) -> FrameworkDetail:

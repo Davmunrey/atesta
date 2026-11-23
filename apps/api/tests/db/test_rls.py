@@ -157,6 +157,7 @@ v AS (INSERT INTO evidence (id, organization_id, kind, title, source_type, sourc
   RETURNING id, (SELECT id FROM k) AS token_id)
 INSERT INTO api_ingestions (id, organization_id, token_id, evidence_id, source)
   SELECT gen_random_uuid(), :o, token_id, id, 'ci' FROM v;
+INSERT INTO subscriptions (organization_id, plan) VALUES (:o, 'starter');
 INSERT INTO probe_child VALUES (:o, :p);
 """
 
