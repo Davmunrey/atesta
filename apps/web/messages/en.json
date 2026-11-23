@@ -55,6 +55,8 @@
     "compliance": {
       "control_not_found": "This control does not exist or is no longer active in the catalog.",
       "control_not_manual": "Automated checks evaluate this control, so it cannot be reviewed manually.",
+      "review_evidence_required": "To mark it implemented, cite at least one evidence item of this control.",
+      "review_evidence_invalid": "One of the cited evidence items is not from this control. Reload the page and choose them again.",
       "not_found": "This framework is unavailable. Return to the overview and choose a published framework.",
       "evidence_not_found": "Some of the evidence given does not exist in this organization.",
       "justification_required": "Add a justification: it is required when the measure does not apply or your decision differs from the proposal.",
@@ -260,7 +262,15 @@
       "save": "Save review",
       "saving": "Saving…",
       "cancel": "Cancel",
-      "saved": "Review recorded. The score will update within seconds."
+      "saved": "Review recorded. The score will update within seconds.",
+      "evidence": "Evidence it cites",
+      "evidenceHelp": "Tick what supports the decision. Marking it implemented needs at least one item.",
+      "evidenceLoading": "Loading evidence…",
+      "evidenceNone": "Record evidence for this control first (under “View evidence”) to mark it implemented.",
+      "evidenceRequired": "Tick at least one evidence item to mark it implemented.",
+      "evidenceNewest": "{count, plural, one {Showing the newest item.} other {Showing the # newest items.}}",
+      "cited": "Cited evidence",
+      "citesNone": "Cites no evidence."
     },
     "observationHelp": "Technical observation as of the scan, aggregated across connections. It is distinct from the recorded requirement result.",
     "mappingUnreviewed": "The relationship between this requirement and control has no recorded review yet.",

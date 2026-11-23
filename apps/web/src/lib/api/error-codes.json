@@ -23,6 +23,8 @@
   "compliance.policy_not_found",
   "compliance.report_month_invalid",
   "compliance.requirement_not_found",
+  "compliance.review_evidence_invalid",
+  "compliance.review_evidence_required",
   "compliance.scope_invalid",
   "compliance.training_closed",
   "compliance.training_full",

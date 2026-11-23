@@ -1111,6 +1111,36 @@
         "title": "CheckReference",
         "type": "object"
       },
+      "CitedEvidenceOut": {
+        "properties": {
+          "collected_at": {
+            "format": "date-time",
+            "title": "Collected At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "kind",
+          "collected_at"
+        ],
+        "title": "CitedEvidenceOut",
+        "type": "object"
+      },
       "ClockLabel": {
         "properties": {
           "en": {
@@ -4740,6 +4770,15 @@
       },
       "ReviewIn": {
         "properties": {
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Evidence Ids",
+            "type": "array"
+          },
           "rationale": {
             "title": "Rationale",
             "type": "string"
@@ -4766,6 +4805,13 @@
           "control_key": {
             "title": "Control Key",
             "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/CitedEvidenceOut"
+            },
+            "title": "Evidence",
+            "type": "array"
           },
           "expired": {
             "title": "Expired",
@@ -4807,7 +4853,8 @@
           "valid_until",
           "reviewed_by",
           "reviewed_at",
-          "expired"
+          "expired",
+          "evidence"
         ],
         "title": "ReviewOut",
         "type": "object"

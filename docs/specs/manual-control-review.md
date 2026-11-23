@@ -64,9 +64,31 @@ PR 3 (screen):
 - [ ] Accessible (axe WCAG 2.1 AA, keyboard, labels) and inside the strict CSP; no horizontal
       scroll at 375 px.
 
+PR 4 (a pass cites its evidence, #262):
+
+- [ ] A review cites evidence: `evidence_ids`, 0 to 20 distinct ids, in the request. A `pass`
+      cites at least one; a `fail` may cite none. A `pass` without any gives 422
+      `compliance.review_evidence_required`.
+- [ ] Every cited id is evidence of the caller's org linked to the reviewed control, checked
+      through `evidence.api`. Any other id (another control's, another org's, unknown) gives 422
+      `compliance.review_evidence_invalid`: the same answer for all three, so another org's ids
+      reveal nothing. Nothing is written on a refusal.
+- [ ] The row stores the citations: `control_reviews.evidence_ids uuid[] NOT NULL DEFAULT '{}'`,
+      at most 20 (CHECK). Rows stay append-only. Reviews recorded before this change read as
+      citing none (`evidence: []`) and keep deciding their control until they expire; only new
+      reviews must cite.
+- [ ] `ReviewOut.evidence` lists each cited item (id, title, kind, collected_at) in the
+      framework detail, the review history and the auditor dossier.
+- [ ] The `control.reviewed` audit event adds `evidence_count`; titles are never copied into it.
+- [ ] Screen: the review form lists the control's evidence, newest first, as checkboxes. A
+      `pass` needs one checked. With no evidence recorded, the form says to record evidence first
+      and offers `fail` only. Each review shows the titles it cites, or that it cites none.
+- [ ] Error codes have ES and EN texts.
+
 ## Out of scope
 
-- Uploading documents as evidence (needs the S3 evidence store). The rationale is the record.
+- Uploading documents as evidence (needs the S3 evidence store, #222). A cited item is an
+  evidence statement or a scan output today.
 - A second approver (four-eyes) and review reminders before `valid_until`.
 - `not_applicable`: applicability is decided per requirement and scope (FR-06), not per control.
 - Withdrawing a review. A new `fail` review replaces it; expiry ends it.
@@ -87,6 +109,12 @@ PR 3 (screen):
 - The rationale is customer content: never logged, never in audit metadata (rule 2), rendered as
   text only (rule 5).
 - Expiry is computed on read against today's UTC date; nothing rewrites rows.
+- Citations (#262) are an array on the review row, not a link table. A review and its
+  citations are written once and never change, the set is bounded at 20, and evidence is
+  append-only, so a cited id never dangles. An array needs no new tenant table and no
+  cross-module FK (ADR-008). A `pass` must cite evidence because ADR-005 lets a human approve a
+  manual control, and an auditor rejects an approval with nothing to open (ARTEX principle 1:
+  findings keep their receipts).
 
 ## Test plan
 
@@ -103,3 +131,10 @@ PR 3 (screen):
   owner records a review with axe clean at 375 and 1280 px and no CSP violation.
 - Detail: a manual control shows its latest review, `expired` once `valid_until` has passed, and
   never another org's review.
+- Citations (#262): a `pass` without evidence 422; a `fail` without evidence 201; evidence of
+  another control, of another org and an unknown id each 422 with the same code and no row; 21
+  ids 422; a duplicate id is stored once; the detail, history and dossier list the cited titles;
+  a review recorded before the change reads `evidence: []`; the audit event carries
+  `evidence_count`, never a title; the DB CHECK refuses 21 ids. Web: the form offers the
+  control's evidence, needs one for `pass`, offers only `fail` without evidence, and the review
+  shows the cited titles.
