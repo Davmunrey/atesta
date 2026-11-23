@@ -13,7 +13,7 @@ from pathlib import Path
 
 from atesta_core.exclusions import excluded_checks
 
-ENGINE_VERSION = "5.49.0"
+ENGINE_VERSION = "5.52.0"
 _FILE = {"m365": "m365", "google_workspace": "googleworkspace"}  # Atesta -> Prowler provider
 _CHECK_ID = re.compile(r"[a-z0-9]+(_[a-z0-9]+)+")
 

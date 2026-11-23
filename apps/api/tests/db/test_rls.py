@@ -108,7 +108,7 @@ INSERT INTO score_snapshots (id, organization_id, framework_key, framework_versi
 INSERT INTO connections (id, organization_id, provider, status, display_name, created_by)
   VALUES (gen_random_uuid(), :o, 'm365', 'pending_setup', 'rls', :u);
 INSERT INTO scans (id, organization_id, connection_id, provider, trigger, status, engine,
-  engine_version) VALUES (:s, :o, gen_random_uuid(), 'm365', 'user', 'queued', 'prowler', '5.49.0');
+  engine_version) VALUES (:s, :o, gen_random_uuid(), 'm365', 'user', 'queued', 'prowler', '5.52.0');
 INSERT INTO scan_check_results (organization_id, scan_id, engine, check_id, status, reason)
   VALUES (:o, :s, 'prowler', 'entra_rls', 'not_evaluated', 'no_findings');
 INSERT INTO findings (id, organization_id, scan_id, engine, check_id, status, severity, service,

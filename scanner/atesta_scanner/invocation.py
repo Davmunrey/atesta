@@ -12,9 +12,9 @@ from collections.abc import Iterable, Mapping
 _PROWLER_PROVIDER = {"m365": "m365", "google_workspace": "googleworkspace"}
 _AUTH = {"m365": ["--certificate-auth"], "google_workspace": []}
 _CHECK_ID = re.compile(r"[a-z0-9]+(_[a-z0-9]+)+")
-# Prowler 5.49.0: certificate auth reads AZURE_CLIENT_ID, AZURE_TENANT_ID and
-# M365_CERTIFICATE_CONTENT (m365_provider.py:437); the Google provider reads only
-# GOOGLEWORKSPACE_* (googleworkspace_provider.py:246, :305-359). The M365 secret is Atesta's one
+# Prowler 5.52.0: certificate auth reads AZURE_CLIENT_ID, AZURE_TENANT_ID and
+# M365_CERTIFICATE_CONTENT (m365_provider.py:494); the Google provider reads only
+# GOOGLEWORKSPACE_* (googleworkspace_provider.py:247, :307-362). The M365 secret is Atesta's one
 # certificate for every tenant (D5), so it never names a tenant: AZURE_TENANT_ID comes from the
 # job's pin, and a scan can only reach the tenant the connection pinned.
 _CREDENTIAL = {

@@ -20,7 +20,7 @@ def test_dev_helpers_refuse_outside_dev(monkeypatch: pytest.MonkeyPatch, env: st
     else:
         monkeypatch.setenv("ATESTA_ENV", env)
     with pytest.raises(RuntimeError, match="ATESTA_ENV"):
-        load_catalog_fixture(NOTHING, {}, "prowler", "5.49.0")
+        load_catalog_fixture(NOTHING, {}, "prowler", "5.52.0")
     with pytest.raises(RuntimeError, match="ATESTA_ENV"):
         ensure_dev_organization(NOTHING, uuid.uuid4(), "x")
     with pytest.raises(RuntimeError, match="ATESTA_ENV"):

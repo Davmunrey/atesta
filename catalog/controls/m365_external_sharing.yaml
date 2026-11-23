@@ -32,11 +32,11 @@ remediation_refs:
   - https://learn.microsoft.com/en-us/sharepoint/external-sharing-overview
   - https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/permissions-reference#guest-inviter
   - https://learn.microsoft.com/en-us/entra/external-id/allow-deny-list
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/sharepoint/sharepoint_external_sharing_restricted/sharepoint_external_sharing_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/sharepoint/sharepoint_external_sharing_managed/sharepoint_external_sharing_managed.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/sharepoint/sharepoint_guest_sharing_restricted/sharepoint_guest_sharing_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_guest_invite_only_for_admin_roles/entra_policy_guest_invite_only_for_admin_roles.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_guest_invitations_restricted_to_allowed_domains/entra_policy_guest_invitations_restricted_to_allowed_domains.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_guest_users_access_restrictions/entra_policy_guest_users_access_restrictions.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_cross_tenant_access_default_outbound_restricted/entra_cross_tenant_access_default_outbound_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/admincenter/admincenter_groups_not_public_visibility/admincenter_groups_not_public_visibility.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/sharepoint/sharepoint_external_sharing_restricted/sharepoint_external_sharing_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/sharepoint/sharepoint_external_sharing_managed/sharepoint_external_sharing_managed.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/sharepoint/sharepoint_guest_sharing_restricted/sharepoint_guest_sharing_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_policy_guest_invite_only_for_admin_roles/entra_policy_guest_invite_only_for_admin_roles.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_policy_guest_invitations_restricted_to_allowed_domains/entra_policy_guest_invitations_restricted_to_allowed_domains.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_policy_guest_users_access_restrictions/entra_policy_guest_users_access_restrictions.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_cross_tenant_access_default_outbound_restricted/entra_cross_tenant_access_default_outbound_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/admincenter/admincenter_groups_not_public_visibility/admincenter_groups_not_public_visibility.py

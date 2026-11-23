@@ -48,25 +48,25 @@ remediation_refs:
   - https://learn.microsoft.com/en-us/defender-office-365/safe-links-about
   - https://learn.microsoft.com/en-us/defender-office-365/safe-attachments-about
   - https://learn.microsoft.com/en-us/exchange/security-and-compliance/mail-flow-rules/configuration-best-practices
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_antiphishing_policy_configured/defender_antiphishing_policy_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_antispam_connection_filter_policy_empty_ip_allowlist/defender_antispam_connection_filter_policy_empty_ip_allowlist.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_antispam_connection_filter_policy_safe_list_off/defender_antispam_connection_filter_policy_safe_list_off.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_antispam_outbound_policy_configured/defender_antispam_outbound_policy_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_antispam_outbound_policy_forwarding_disabled/defender_antispam_outbound_policy_forwarding_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_antispam_policy_inbound_no_allowed_domains/defender_antispam_policy_inbound_no_allowed_domains.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_atp_safe_attachments_and_docs_configured/defender_atp_safe_attachments_and_docs_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_chat_report_policy_configured/defender_chat_report_policy_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_domain_dkim_enabled/defender_domain_dkim_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_malware_policy_common_attachments_filter_enabled/defender_malware_policy_common_attachments_filter_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_malware_policy_comprehensive_attachments_filter_applied/defender_malware_policy_comprehensive_attachments_filter_applied.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_malware_policy_notifications_internal_users_malware_enabled/defender_malware_policy_notifications_internal_users_malware_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_priority_account_protection_enabled/defender_priority_account_protection_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_safe_attachments_policy_enabled/defender_safe_attachments_policy_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_safelinks_policy_enabled/defender_safelinks_policy_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_strict_preset_security_policy_enabled/defender_strict_preset_security_policy_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_zap_for_teams_enabled/defender_zap_for_teams_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_external_email_tagging_enabled/exchange_external_email_tagging_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_organization_mailtips_enabled/exchange_organization_mailtips_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_organization_reject_direct_send_enabled/exchange_organization_reject_direct_send_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_transport_rules_mail_forwarding_disabled/exchange_transport_rules_mail_forwarding_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_transport_rules_whitelist_disabled/exchange_transport_rules_whitelist_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_antiphishing_policy_configured/defender_antiphishing_policy_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_antispam_connection_filter_policy_empty_ip_allowlist/defender_antispam_connection_filter_policy_empty_ip_allowlist.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_antispam_connection_filter_policy_safe_list_off/defender_antispam_connection_filter_policy_safe_list_off.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_antispam_outbound_policy_configured/defender_antispam_outbound_policy_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_antispam_outbound_policy_forwarding_disabled/defender_antispam_outbound_policy_forwarding_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_antispam_policy_inbound_no_allowed_domains/defender_antispam_policy_inbound_no_allowed_domains.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_atp_safe_attachments_and_docs_configured/defender_atp_safe_attachments_and_docs_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_chat_report_policy_configured/defender_chat_report_policy_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_domain_dkim_enabled/defender_domain_dkim_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_malware_policy_common_attachments_filter_enabled/defender_malware_policy_common_attachments_filter_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_malware_policy_comprehensive_attachments_filter_applied/defender_malware_policy_comprehensive_attachments_filter_applied.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_malware_policy_notifications_internal_users_malware_enabled/defender_malware_policy_notifications_internal_users_malware_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_priority_account_protection_enabled/defender_priority_account_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_safe_attachments_policy_enabled/defender_safe_attachments_policy_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_safelinks_policy_enabled/defender_safelinks_policy_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_strict_preset_security_policy_enabled/defender_strict_preset_security_policy_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_zap_for_teams_enabled/defender_zap_for_teams_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_external_email_tagging_enabled/exchange_external_email_tagging_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_organization_mailtips_enabled/exchange_organization_mailtips_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_organization_reject_direct_send_enabled/exchange_organization_reject_direct_send_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_transport_rules_mail_forwarding_disabled/exchange_transport_rules_mail_forwarding_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_transport_rules_whitelist_disabled/exchange_transport_rules_whitelist_disabled.py

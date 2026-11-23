@@ -60,13 +60,13 @@ INSERT INTO controls (key, title_es, title_en, description_es, description_en, m
  ('scan.paper', 't', 't', 'd', 'd', true, NULL),
  ('scan.retired', 't', 't', 'd', 'd', false, now());
 INSERT INTO checks (engine, check_id, engine_version, retired_at) VALUES
- ('prowler', 'entra_admin_users_mfa_enabled', '5.49.0', NULL),
- ('prowler', 'entra_admin_users_cloud_only', '5.49.0', NULL),
- ('prowler', 'exchange_transport_rules_whitelist_disabled', '5.49.0', NULL),
- ('prowler', 'exchange_mailbox_audit_bypass_disabled', '5.49.0', NULL),
- ('prowler', 'exchange_external_email_tagging_enabled', '5.49.0', NULL),
- ('prowler', 'entra_admin_consent_workflow_enabled', '5.49.0', now()),
- ('prowler', 'calendar_external_sharing_primary_calendar', '5.49.0', NULL);
+ ('prowler', 'entra_admin_users_mfa_enabled', '5.52.0', NULL),
+ ('prowler', 'entra_admin_users_cloud_only', '5.52.0', NULL),
+ ('prowler', 'exchange_transport_rules_whitelist_disabled', '5.52.0', NULL),
+ ('prowler', 'exchange_mailbox_audit_bypass_disabled', '5.52.0', NULL),
+ ('prowler', 'exchange_external_email_tagging_enabled', '5.52.0', NULL),
+ ('prowler', 'entra_admin_consent_workflow_enabled', '5.52.0', now()),
+ ('prowler', 'calendar_external_sharing_primary_calendar', '5.52.0', NULL);
 INSERT INTO control_checks (control_key, engine, check_id, retired_at) VALUES
  ('scan.mfa', 'prowler', 'entra_admin_users_mfa_enabled', NULL),
  ('scan.mfa', 'prowler', 'exchange_transport_rules_whitelist_disabled', now()),
@@ -90,7 +90,7 @@ INSERT INTO mappings (framework_key, requirement_code, control_key, rationale, s
 SCAN = text(
     "INSERT INTO scans (id, organization_id, connection_id, provider, trigger, status, engine,"
     " engine_version, output_prefix, attempts) VALUES (:id, :org, :conn, :provider, 'user',"
-    " 'collected', 'prowler', '5.49.0', :prefix, 1)"
+    " 'collected', 'prowler', '5.52.0', :prefix, 1)"
 )
 M365_CONNECTION = uuid.UUID("cccccccc-0000-4000-8000-000000000365")
 GOOGLE_CONNECTION = uuid.UUID("cccccccc-0000-4000-8000-0000000000aa")

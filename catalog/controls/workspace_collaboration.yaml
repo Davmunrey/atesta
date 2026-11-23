@@ -45,24 +45,24 @@ remediation_refs:
   - https://knowledge.workspace.google.com/admin/calendar/set-google-calendar-sharing-options
   - https://knowledge.workspace.google.com/admin/chat/set-up-chat-for-your-organization
   - https://knowledge.workspace.google.com/admin/drive/manage-external-sharing-for-your-organization
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/additionalservices/additionalservices_external_groups_disabled/additionalservices_external_groups_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/calendar/calendar_external_invitations_warning/calendar_external_invitations_warning.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/calendar/calendar_external_sharing_primary_calendar/calendar_external_sharing_primary_calendar.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/calendar/calendar_external_sharing_secondary_calendar/calendar_external_sharing_secondary_calendar.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/chat/chat_external_file_sharing_disabled/chat_external_file_sharing_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/chat/chat_external_messaging_restricted/chat_external_messaging_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/chat/chat_external_spaces_restricted/chat_external_spaces_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/chat/chat_internal_file_sharing_disabled/chat_internal_file_sharing_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_access_checker_recipients_only/drive_access_checker_recipients_only.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_external_sharing_warn_users/drive_external_sharing_warn_users.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_internal_users_distribute_content/drive_internal_users_distribute_content.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_publishing_files_disabled/drive_publishing_files_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_shared_drive_creation_allowed/drive_shared_drive_creation_allowed.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_warn_sharing_with_allowlisted_domains/drive_warn_sharing_with_allowlisted_domains.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/groups/groups_creation_restricted/groups_creation_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/groups/groups_external_access_restricted/groups_external_access_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/groups/groups_view_conversations_restricted/groups_view_conversations_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/sites/sites_service_disabled/sites_service_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_mail_delegation_disabled/gmail_mail_delegation_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_per_user_outbound_gateway_disabled/gmail_per_user_outbound_gateway_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_comprehensive_mail_storage_enabled/gmail_comprehensive_mail_storage_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/additionalservices/additionalservices_external_groups_disabled/additionalservices_external_groups_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/calendar/calendar_external_invitations_warning/calendar_external_invitations_warning.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/calendar/calendar_external_sharing_primary_calendar/calendar_external_sharing_primary_calendar.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/calendar/calendar_external_sharing_secondary_calendar/calendar_external_sharing_secondary_calendar.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/chat/chat_external_file_sharing_disabled/chat_external_file_sharing_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/chat/chat_external_messaging_restricted/chat_external_messaging_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/chat/chat_external_spaces_restricted/chat_external_spaces_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/chat/chat_internal_file_sharing_disabled/chat_internal_file_sharing_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/drive/drive_access_checker_recipients_only/drive_access_checker_recipients_only.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/drive/drive_external_sharing_warn_users/drive_external_sharing_warn_users.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/drive/drive_internal_users_distribute_content/drive_internal_users_distribute_content.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/drive/drive_publishing_files_disabled/drive_publishing_files_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/drive/drive_shared_drive_creation_allowed/drive_shared_drive_creation_allowed.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/drive/drive_warn_sharing_with_allowlisted_domains/drive_warn_sharing_with_allowlisted_domains.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/groups/groups_creation_restricted/groups_creation_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/groups/groups_external_access_restricted/groups_external_access_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/groups/groups_view_conversations_restricted/groups_view_conversations_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/sites/sites_service_disabled/sites_service_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_mail_delegation_disabled/gmail_mail_delegation_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_per_user_outbound_gateway_disabled/gmail_per_user_outbound_gateway_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_comprehensive_mail_storage_enabled/gmail_comprehensive_mail_storage_enabled.py

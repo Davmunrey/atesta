@@ -42,21 +42,21 @@ remediation_refs:
   - https://learn.microsoft.com/en-us/microsoftteams/settings-policies-reference
   - https://learn.microsoft.com/en-us/microsoft-365/admin/manage/share-calendars-with-external-users
   - https://learn.microsoft.com/en-us/microsoft-365/bookings/turn-bookings-on-or-off
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/admincenter/admincenter_external_calendar_sharing_disabled/admincenter_external_calendar_sharing_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/admincenter/admincenter_shared_bookings_disabled/admincenter_shared_bookings_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_email_sending_to_channel_disabled/teams_email_sending_to_channel_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_external_access_trial_tenants_blocked/teams_external_access_trial_tenants_blocked.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_external_domains_restricted/teams_external_domains_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_external_file_sharing_restricted/teams_external_file_sharing_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_external_users_cannot_start_conversations/teams_external_users_cannot_start_conversations.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_anonymous_user_join_disabled/teams_meeting_anonymous_user_join_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_anonymous_user_start_disabled/teams_meeting_anonymous_user_start_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_chat_anonymous_users_disabled/teams_meeting_chat_anonymous_users_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_dial_in_lobby_bypass_disabled/teams_meeting_dial_in_lobby_bypass_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_external_chat_disabled/teams_meeting_external_chat_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_external_control_disabled/teams_meeting_external_control_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_external_lobby_bypass_disabled/teams_meeting_external_lobby_bypass_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_presenters_restricted/teams_meeting_presenters_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_recording_disabled/teams_meeting_recording_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_security_reporting_enabled/teams_security_reporting_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_unmanaged_communication_disabled/teams_unmanaged_communication_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/admincenter/admincenter_external_calendar_sharing_disabled/admincenter_external_calendar_sharing_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/admincenter/admincenter_shared_bookings_disabled/admincenter_shared_bookings_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_email_sending_to_channel_disabled/teams_email_sending_to_channel_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_external_access_trial_tenants_blocked/teams_external_access_trial_tenants_blocked.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_external_domains_restricted/teams_external_domains_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_external_file_sharing_restricted/teams_external_file_sharing_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_external_users_cannot_start_conversations/teams_external_users_cannot_start_conversations.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_meeting_anonymous_user_join_disabled/teams_meeting_anonymous_user_join_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_meeting_anonymous_user_start_disabled/teams_meeting_anonymous_user_start_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_meeting_chat_anonymous_users_disabled/teams_meeting_chat_anonymous_users_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_meeting_dial_in_lobby_bypass_disabled/teams_meeting_dial_in_lobby_bypass_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_meeting_external_chat_disabled/teams_meeting_external_chat_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_meeting_external_control_disabled/teams_meeting_external_control_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_meeting_external_lobby_bypass_disabled/teams_meeting_external_lobby_bypass_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_meeting_presenters_restricted/teams_meeting_presenters_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_meeting_recording_disabled/teams_meeting_recording_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_security_reporting_enabled/teams_security_reporting_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/teams/teams_unmanaged_communication_disabled/teams_unmanaged_communication_disabled.py
