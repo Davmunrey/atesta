@@ -20,6 +20,7 @@ from sqlalchemy.orm import Session
 
 from atesta_api.modules.connections.api import (
     ConnectionStateError,
+    TenantMismatchError,
     VerificationReport,
     record_verification,
     scan_target,
@@ -28,10 +29,12 @@ from atesta_api.modules.scanning.error_codes import (
     BLOCKED_CODES,
     CONNECTION_NOT_ACTIVE,
     ENGINE_FAILED,
+    TENANT_MISMATCH,
     TRANSIENT_ERRORS,
 )
 from atesta_api.modules.scanning.expected import exclusions
 from atesta_api.modules.scanning.ingest import ScanNotFoundError
+from atesta_api.modules.scanning.lifecycle import SCHEDULE_EVERY_SECONDS, defer_schedule
 from atesta_api.modules.scanning.models import Scan
 from atesta_api.modules.scanning.runners import (
     JOB_FILE,
@@ -143,21 +146,29 @@ def start_attempt(
     if scan.status not in ("queued", "running"):
         return Started(None, None)
     target = scan_target(session, organization_id, scan.connection_id)
-    if target is None or not target.active or target.external_tenant_id is None:
+    # Onboarding (#331): the activation scan verifies a `verifying` connection, pins the tenant
+    # bound at sign-in and names the consenting admin for the binding check (step 6).
+    activating = target is not None and target.verifying and scan.trigger == "activation"
+    tenant = None if target is None else target.external_tenant_id
+    if activating and target is not None and tenant is None:
+        tenant = target.ms_tenant_id
+    if target is None or not (target.active or activating) or tenant is None:
         return Started(None, _end(session, scan, "blocked", CONNECTION_NOT_ACTIVE))
     scan.status, scan.attempts, scan.error_code = "running", attempt, None
     scan.started_at = func.now()
     job = ScanJob(organization_id, scan.id, attempt, scan.provider, target.credential_ref)
     excluded = sorted(exclusions(expected_root, scan.provider))
-    data = {
+    data: dict[str, object] = {
         "organization_id": str(organization_id),
         "scan_id": str(scan.id),
         "attempt": attempt,
         "provider": scan.provider,
-        "tenant": target.external_tenant_id,
+        "tenant": tenant,
         "excluded": excluded,
         "allowlist_version": target.allowlist_version,
     }
+    if activating and target.consented_by_oid is not None:
+        data["admin_oid"] = target.consented_by_oid
     prefix = output_prefix(organization_id, scan.id, attempt).removesuffix("out/")
     _write_job_file(store, prefix + JOB_FILE, json.dumps(data, sort_keys=True).encode())
     session.flush()
@@ -213,7 +224,17 @@ def finish_attempt(
     report = _verification(store, job) if exit_code in (DONE, VERIFICATION_REFUSED) else None
     if exit_code == DONE:
         if report is not None and report.verdict == "ok":
-            _record(session, scan, report)
+            try:
+                _record(session, scan, report)
+            except TenantMismatchError:  # verified a tenant other than the one bound or pinned
+                return Outcome("blocked", False, _end(session, scan, "blocked", TENANT_MISMATCH))
+            if scan.trigger == "activation":  # the connection is active now: daily scans start
+                defer_schedule(
+                    session,
+                    scan.organization_id,
+                    scan.connection_id,
+                    in_seconds=SCHEDULE_EVERY_SECONDS,
+                )
         scan.status = "collected"
         scan.output_prefix = output_prefix(job.organization_id, scan.id, job.attempt)
         session.flush()

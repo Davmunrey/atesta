@@ -26,6 +26,7 @@ class Job:
     tenant: str
     excluded: tuple[str, ...]
     allowlist_version: str  # the verifier compares grants with this version's expected set
+    admin_oid: str | None = None  # activation only: the consenting admin to bind (step 6, #331)
 
 
 def load_job(raw: bytes) -> Job:
@@ -33,8 +34,12 @@ def load_job(raw: bytes) -> Job:
         data = json.loads(raw)
     except ValueError:
         raise JobError("job.json is not JSON") from None
-    if not isinstance(data, dict) or data.keys() != _KEYS:
+    if not isinstance(data, dict) or data.keys() not in (_KEYS, _KEYS | {"admin_oid"}):
         raise JobError("job.json has unexpected or missing keys")
+    admin_oid = data.get("admin_oid")
+    # A GUID only: it is placed in a Graph $filter, so nothing else may reach the query.
+    if admin_oid is not None and not (isinstance(admin_oid, str) and _UUID.fullmatch(admin_oid)):
+        raise JobError("job admin_oid is not a GUID")
     ids = (data["organization_id"], data["scan_id"])
     if not all(isinstance(i, str) and _UUID.fullmatch(i) for i in ids):
         raise JobError("job ids are not UUIDs")
@@ -52,4 +57,4 @@ def load_job(raw: bytes) -> Job:
     version = data["allowlist_version"]
     if version not in _VERSIONS[data["provider"]]:
         raise JobError("job allowlist version is not one of the provider's")
-    return Job(*ids, attempt, data["provider"], tenant, tuple(sorted(excluded)), version)
+    return Job(*ids, attempt, data["provider"], tenant, tuple(sorted(excluded)), version, admin_oid)

@@ -110,8 +110,8 @@ def queue_scan(
     target = scan_target(session, organization_id, connection_id)
     if target is None:
         raise ConnectionNotFoundError(str(connection_id))
-    if not target.active:
-        raise ConnectionNotActiveError(target.status)
+    if not (target.active or (trigger == "activation" and target.verifying)):
+        raise ConnectionNotActiveError(target.status)  # only activation runs while verifying
     if trigger == "user":
         _check_daily_budget(session, organization_id, connection_id)
     scan = Scan(

@@ -614,6 +614,7 @@
       "control_reviewed": "Reviewed a control",
       "evidence_statement_recorded": "Recorded evidence",
       "connection_created": "Created a connection",
+      "connection_verification_requested": "Requested a Microsoft 365 connection verification",
       "connection_consent_granted": "Granted Microsoft 365 consent",
       "connection_disconnected": "Disconnected a connection",
       "scan_requested": "Requested a scan",

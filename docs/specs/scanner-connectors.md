@@ -361,11 +361,26 @@ Scanner app stays certificate only. With `ATESTA_M365_SIGNIN_CLIENT_ID`, the sec
    service principal with `Get-MgServicePrincipal -Filter "appId eq '<scanner app id>'"` and stops
    unless exactly one object is returned. Consent does not assign roles, and Atesta cannot assign
    one with read-only access.
-6. `POST .../verify` defers `verify_connection`, which runs the scanner image in `verify` mode.
-   Besides the read-only checks it confirms that `consented_by_oid` holds Global Administrator
-   (`62e90394-69f5-4237-9190-012177145e10`) or Privileged Role Administrator
-   (`e8611ab8-c189-46e8-94e1-60213ab1f814`) in that tenant, so a non-admin of a tenant that already
-   consented for another Atesta org cannot link it. Pass: `active` and a first scan is queued.
+6. `POST .../verify` (admin+) needs an M365 connection that is still onboarding and holds
+   `ms_tenant_id` and `consented_by_oid` (else 409 `connections.state_invalid`). It sets
+   `verifying`, records `connection.verification_requested` and queues the connection's
+   **activation scan** (#331). M365 scans verify at step 0 in the same container, so the
+   verification and the first scan are one run, with no separate `verify` job.
+   - An activation scan may run on a `verifying` connection, and only an activation scan may. Its
+     `job.json` pins `ms_tenant_id` (the tenant is pinned to `external_tenant_id` only by this
+     verification) and carries `admin_oid`, the consenting admin's object id. Scheduled and user
+     scans carry no `admin_oid`.
+   - Besides the read-only checks, the wrapper confirms that `admin_oid` holds Global
+     Administrator (`62e90394-69f5-4237-9190-012177145e10`) or Privileged Role Administrator
+     (`e8611ab8-c189-46e8-94e1-60213ab1f814`) in that tenant, from the role assignments where it is
+     the principal. Otherwise the verdict is `incomplete`, missing `consenting_admin_role`. This
+     way a non-admin of a tenant that already consented for another Atesta org cannot link it. A
+     role held only through a group is a candidate limit until the live golden.
+   - Pass: `record_verification` pins the tenant (it must equal `ms_tenant_id`), sets `active`, the
+     scan goes on and the daily schedule chain starts. A refusal gives the connection its status
+     (`incomplete`, `over_privileged`, `revoked`) and ends the scan `blocked`. A verified tenant
+     other than `ms_tenant_id` ends it `blocked` with `scanning.tenant_mismatch` and activates
+     nothing.
 
 Nothing logs the query string of either callback. Revocation by the customer: Enterprise apps,
 Atesta Scanner, Properties, Delete (restorable for 30 days), or revoke its permissions, and remove
@@ -716,7 +731,8 @@ Error codes (ES and EN texts in the web i18n files): `connections.state_invalid`
    list, get and delete endpoints, dev-only guards.
 8. M365 sign-in and consent callbacks.
 9. M365 Graph-only verifier, `LocalDockerRunner`, live golden M365 (milestone: first real M365
-   scan of an Atesta test tenant scored in dev).
+   scan of an Atesta test tenant scored in dev). Onboarding verification is the activation scan
+   with step 6 (#331); the live golden needs the owner's app registrations (D12).
 10. M365 PowerShell services after D11: modules, expected set v2, Global Reader step, step 5b,
     connection upgrade.
 11. Google onboarding (two service accounts, runbook, disconnect step), verifier.

@@ -215,6 +215,16 @@ def test_a_malformed_job_is_refused(name: str) -> None:
         load_job(BAD_JOBS[name])
 
 
+def test_an_activation_job_carries_the_consenting_admin_only_as_a_guid() -> None:
+    """admin_oid: the activation scan's binding check (#331); never present otherwise."""
+    admin = "8e8e8e8e-0000-4000-8000-000000000005"
+    assert load_job(json.dumps({**JOB, "admin_oid": admin}).encode()).admin_oid == admin
+    assert load_job(json.dumps(JOB).encode()).admin_oid is None
+    for bad in ("not-a-guid", 7, ""):
+        with pytest.raises(JobError):
+            load_job(json.dumps({**JOB, "admin_oid": bad}).encode())
+
+
 def test_a_job_reads_back() -> None:
     assert load_job(json.dumps(JOB).encode()) == Job(
         organization_id=JOB["organization_id"],

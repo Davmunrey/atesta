@@ -12,6 +12,11 @@ from atesta_core.connectors.readonly import M365Grants, check_m365
 
 from atesta_scanner.graph import GraphDeniedError, GraphTransientError
 
+# Step 6 (onboarding only): the consenting admin holds one of these, tenant-wide (#331).
+GLOBAL_ADMINISTRATOR = "62e90394-69f5-4237-9190-012177145e10"
+PRIVILEGED_ROLE_ADMINISTRATOR = "e8611ab8-c189-46e8-94e1-60213ab1f814"
+BINDING_ROLES = frozenset({GLOBAL_ADMINISTRATOR, PRIVILEGED_ROLE_ADMINISTRATOR})
+
 # Verifier limits (spec): recorded in every report, shown in onboarding.
 M365_LIMITS = (
     "exchange_rbac_not_read",  # no Exchange session until PR 10 (D1)
@@ -73,11 +78,29 @@ def _grants(graph: GraphReader, app_id: str) -> tuple[M365Grants, dict[str, list
     return grants, ids
 
 
-def verify_m365(graph: GraphReader, *, app_id: str, tenant: str, version: str) -> dict[str, Any]:
+def _binds(graph: GraphReader, admin_oid: str) -> bool:
+    """The consenting admin holds Global or Privileged Role Administrator, tenant-wide.
+
+    admin_oid is a GUID (job.py checks it), so it cannot change the $filter. A role held only
+    through a group is not read here (candidate limit until the live golden).
+    """
+    roles = graph.get_all(
+        "/roleManagement/directory/roleAssignments", {"$filter": f"principalId eq '{admin_oid}'"}
+    )
+    return any(
+        r.get("roleDefinitionId") in BINDING_ROLES and r.get("directoryScopeId") == "/"
+        for r in roles
+    )
+
+
+def verify_m365(
+    graph: GraphReader, *, app_id: str, tenant: str, version: str, admin_oid: str | None = None
+) -> dict[str, Any]:
     try:
         organizations = graph.get("/organization")["value"]
         tenant_id = organizations[0]["id"] if len(organizations) == 1 else None
         grants, ids = _grants(graph, app_id)
+        bound = admin_oid is None or _binds(graph, admin_oid)
     except GraphDeniedError as denied:
         if denied.status == 404:
             return report("revoked")  # the scanner app is gone from the tenant
@@ -86,4 +109,9 @@ def verify_m365(graph: GraphReader, *, app_id: str, tenant: str, version: str) -
     except (GraphTransientError, KeyError, IndexError, TypeError):
         return report("transient")
     result = check_m365(version, grants)
-    return report(result.verdict.value, tenant_id, ids, list(result.missing), list(result.extra))
+    missing = list(result.missing)
+    verdict = result.verdict.value
+    if not bound:  # a consent the verifier cannot tie to a tenant admin never activates
+        missing.append("consenting_admin_role")
+        verdict = "incomplete" if verdict == "ok" else verdict
+    return report(verdict, tenant_id, ids, missing, list(result.extra))
