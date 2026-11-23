@@ -49,11 +49,13 @@ def as_org(session: Session, org: uuid.UUID) -> None:
 
 
 def jobs(session: Session) -> list[tuple[Any, ...]]:
+    # Only this module's orgs: HTTP tests elsewhere commit their own jobs (#331).
     query = text(
         "SELECT task_name, queue_name, lock, args FROM procrastinate_jobs"
-        " WHERE task_name = :task ORDER BY id"
+        " WHERE task_name = :task AND args->>'organization_id' IN (:a, :b) ORDER BY id"
     )
-    return [tuple(r) for r in session.execute(query, {"task": RUN_TASK})]
+    params = {"task": RUN_TASK, "a": str(ORG_A), "b": str(ORG_B)}
+    return [tuple(r) for r in session.execute(query, params)]
 
 
 def scans(session: Session) -> list[tuple[Any, ...]]:
