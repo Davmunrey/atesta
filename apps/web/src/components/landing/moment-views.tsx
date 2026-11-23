@@ -46,3 +46,26 @@ export function DossierView() {
     </div>
   </ViewFrame>;
 }
+
+/** The incident stage (A3, issue 373): its deadline with a bar that fills once (no ticking
+ *  clock, so nothing keeps moving) and a timestamped log that settles in. */
+export function IncidentView() {
+  const t = useTranslations("landing.view.incident");
+  return <ViewFrame label={t("label")}>
+    <div className="lv-body li-incident">
+      <p><strong>{t("title")}</strong><span className="lv-legend li-meta">{t("meta")}</span></p>
+      <div className="li-clock">
+        <span className="lv-legend">{t("deadline")}</span>
+        <span className="badge" data-severity="pending"><Icon name="pending" />{t("state")}</span>
+        <span className="li-due">{t("due")}</span>
+        <span className="li-bar" aria-hidden="true"><span /></span>
+      </div>
+      <ol className="li-log">
+        <li><span className="lv-code">09:40</span><span>{t("log1")}</span></li>
+        <li><span className="lv-code">09:42</span><span>{t("log2")}</span></li>
+        <li><span className="lv-code">10:05</span><span>{t("log3")}</span></li>
+      </ol>
+      <p className="li-source">{t("source")}</p>
+    </div>
+  </ViewFrame>;
+}

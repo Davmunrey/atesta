@@ -69,6 +69,10 @@
           "title": "Registra las rutinas",
           "body": "Políticas, revisiones de acceso, formación e incidentes, con sus plazos."
         },
+        "incidents": {
+          "title": "Responde a un incidente",
+          "body": "Los plazos de notificación empiezan solos al registrarlo."
+        },
         "dossier": {
           "title": "Entrega el dossier",
           "body": "Todo lo registrado, listo para que el auditor lo revise y la dirección lo firme."
@@ -160,7 +164,34 @@
         "label": "Conexión de sistemas en Atesta",
         "access": "Solo lectura"
       },
-      "stage": "Paso"
+      "stage": "Paso",
+      "incident": {
+        "label": "Un incidente en Atesta",
+        "title": "Caída del correo durante seis horas",
+        "meta": "Constancia: 23 nov, 09:40 · Significativo",
+        "deadline": "Alerta temprana (NIS2, art. 23.4.a)",
+        "due": "Vence 24 nov, 09:40",
+        "state": "En curso",
+        "log1": "Incidente registrado por el responsable de sistemas",
+        "log2": "Clasificado como significativo; empiezan tres plazos",
+        "log3": "Anotación: contraseñas restablecidas y sesiones revocadas",
+        "source": "Plazo tomado del texto oficial: Directiva (UE) 2022/2555, art. 23"
+      }
+    },
+    "tabs": {
+      "label": "Vistas del producto",
+      "overview": "Resumen",
+      "assess": "Autoevaluar",
+      "routines": "Rutinas",
+      "incident": "Incidente",
+      "dossier": "Dossier"
+    },
+    "more": "Ver cómo funciona",
+    "connects": "Se conecta con",
+    "ring": {
+      "label": "Una evidencia, muchos marcos",
+      "center": "Controles comunes",
+      "text": "Una misma evidencia, registrada una vez sobre un control común, sirve a todos los marcos que lo exigen."
     }
   },
   "locale": {
@@ -1757,7 +1788,7 @@
         "line": "en tus sistemas, siempre"
       },
       "noai": {
-        "lead": "Sin IA",
+        "lead": "Tú decides",
         "line": "ninguna IA decide si cumples"
       }
     },

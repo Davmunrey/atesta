@@ -2,10 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { DossierView, MeasureView, RecordsView } from "./moment-views";
+import { DossierView, IncidentView, MeasureView, RecordsView } from "./moment-views";
 import { ViewFrame } from "./view-frame";
 
-const STEPS = ["connect", "assess", "routines", "dossier"] as const;
+const STEPS = ["connect", "assess", "routines", "incidents", "dossier"] as const;
 type Step = (typeof STEPS)[number];
 
 /** The connect step's state: no product view until the connect flow ships (issue 221; owner, A1). */
@@ -19,7 +19,7 @@ function ConnectView() {
   </ViewFrame>;
 }
 
-const VIEWS: Record<Step, () => React.ReactNode> = { connect: ConnectView, assess: MeasureView, routines: RecordsView, dossier: DossierView };
+const VIEWS: Record<Step, () => React.ReactNode> = { connect: ConnectView, assess: MeasureView, routines: RecordsView, incidents: IncidentView, dossier: DossierView };
 
 /**
  * "Cómo funciona" (landing-legal amendment A2, issue 356). On wide screens with motion allowed, the

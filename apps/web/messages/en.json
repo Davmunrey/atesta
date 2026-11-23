@@ -69,6 +69,10 @@
           "title": "Record the routines",
           "body": "Policies, access reviews, training and incidents, with their deadlines."
         },
+        "incidents": {
+          "title": "Respond to an incident",
+          "body": "Notification deadlines start as soon as you record it."
+        },
         "dossier": {
           "title": "Hand over the dossier",
           "body": "Everything recorded, ready for the auditor to review and management to sign."
@@ -160,7 +164,34 @@
         "label": "Connecting systems in Atesta",
         "access": "Read-only"
       },
-      "stage": "Step"
+      "stage": "Step",
+      "incident": {
+        "label": "An incident in Atesta",
+        "title": "Email outage lasting six hours",
+        "meta": "Aware: 23 Nov, 09:40 · Significant",
+        "deadline": "Early warning (NIS2, art. 23.4.a)",
+        "due": "Due 24 Nov, 09:40",
+        "state": "Running",
+        "log1": "Incident recorded by the systems owner",
+        "log2": "Classified as significant; three deadlines start",
+        "log3": "Note: passwords reset and sessions revoked",
+        "source": "Deadline taken from the official text: Directive (EU) 2022/2555, art. 23"
+      }
+    },
+    "tabs": {
+      "label": "Product views",
+      "overview": "Overview",
+      "assess": "Assess",
+      "routines": "Routines",
+      "incident": "Incident",
+      "dossier": "Dossier"
+    },
+    "more": "See how it works",
+    "connects": "Connects with",
+    "ring": {
+      "label": "One piece of evidence, many frameworks",
+      "center": "Common controls",
+      "text": "One piece of evidence, recorded once on a common control, serves every framework that requires it."
     }
   },
   "locale": {
@@ -1757,7 +1788,7 @@
         "line": "in your systems, always"
       },
       "noai": {
-        "lead": "No AI",
+        "lead": "You decide",
         "line": "no AI decides your compliance"
       }
     },
