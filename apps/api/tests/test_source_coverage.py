@@ -39,6 +39,15 @@ def _articles(units: set[str]) -> set[str]:
         ("dora", {f"art{n}" for n in range(1, 65)}),
         ("nis2_ir_2024_2690", {f"art{n}" for n in range(1, 17)} | {"annex"}),
         (
+            "lopdgdd",
+            {f"art{n}" for n in range(1, 98)}
+            | {"art53bis"}
+            | {f"da{n}" for n in range(1, 24)}
+            | {f"dt{n}" for n in range(1, 7)}
+            | {"dd"}
+            | {f"df{n}" for n in range(1, 17)},
+        ),
+        (
             "ens_rd311_2022",
             {f"art{n}" for n in range(1, 42)}
             | {"da1", "da2", "da3", "dt", "dd", "df1", "df2", "df3"}
@@ -157,3 +166,20 @@ def test_the_nis2_implementing_regulation_keeps_the_official_text() -> None:
     )
     assert requirements["art2"].attributes.official_text_en is not None
     assert "‘to the extent feasible’" in requirements["art2"].attributes.official_text_en
+
+
+def test_lopdgdd_keeps_the_official_spanish_text() -> None:
+    """Quotes from the captured BOE consolidated text (SOURCES.md); there is no official English."""
+    law = pack("lopdgdd")
+    requirements = {r.id: r for r in law.requirements}
+    assert set(requirements) == {"art5", "art28", "art31", "art32", "art33", "da1"}
+    assert all(
+        r.title_en is None and r.attributes.official_text_en is None for r in law.requirements
+    )
+    assert requirements["da1"].attributes.official_text_es.startswith(
+        "1. El Esquema Nacional de Seguridad incluirá las medidas que deban implantarse"
+    )
+    assert (
+        "f) Cuando se produzca un tratamiento masivo"
+        in requirements["art28"].attributes.official_text_es
+    )

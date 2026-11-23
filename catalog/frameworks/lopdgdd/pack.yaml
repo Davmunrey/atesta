@@ -1,0 +1,54 @@
+id: lopdgdd
+name: LOPDGDD · Seguridad del tratamiento
+version: lo-3-2018.draft1
+jurisdiction: ES
+source: https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673
+license_notes: Legislative text excluded from copyright under Article 13 of RDL 1/1996. Official Spanish
+  paragraphs are reproduced from the BOE consolidated text. There is no official English text; English
+  guidance is authored, not a translation.
+status: draft
+attributes:
+  content_state: partial
+  assessment_enabled: false
+  summary_es: 'Seis preceptos de la Ley Orgánica 3/2018 sobre seguridad del tratamiento: confidencialidad,
+    obligaciones del responsable y del encargado, registro de actividades, bloqueo, encargado del tratamiento
+    y medidas del sector público. Texto consolidado del BOE. Mapeos candidatos pendientes de revisión
+    cualificada.'
+  summary_en: 'Six provisions of Organic Law 3/2018 on security of processing: confidentiality, controller
+    and processor obligations, record of processing activities, blocking, the processor, and public sector
+    measures. BOE consolidated text, in Spanish only. Candidate mappings await qualified review.'
+  scope_es: Tratamientos de datos personales sujetos a la ley española, que complementa el RGPD. La disposición
+    adicional primera se dirige a los responsables del artículo 77.1 (sector público).
+  scope_en: Processing of personal data under Spanish law, which complements the GDPR. The first additional
+    provision addresses the controllers of Article 77.1 (public sector).
+  applicability_es: Se lee junto al marco RGPD · Art. 32-34. Revisa con tu delegado de protección de datos
+    qué tratamientos están afectados y qué medidas corresponden.
+  applicability_en: Read it together with the GDPR · Art. 32-34 framework. Review with your data protection
+    officer which processing activities are affected and which measures apply.
+  limitations_es: Importados los artículos 5, 28, 31, 32 y 33 y la disposición adicional primera; los
+    demás preceptos figuran en la cobertura con su motivo. No hay texto oficial en inglés.
+  limitations_en: Articles 5, 28, 31, 32 and 33 and the first additional provision are imported; every
+    other provision is in the coverage with its reason. There is no official English text.
+  preparation_controls:
+  - ctl.information_handling
+  - ctl.people_awareness
+  - ctl.risk_analysis
+  - ctl.supplier_cloud_review
+  - ctl.security_governance
+  source_refs:
+  - https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673
+  - https://www.boe.es/datosabiertos/api/legislacion-consolidada/id/BOE-A-2018-16673/texto
+  verified_on: '2026-11-23'
+  groups_es:
+  - prefix: art5
+    title: Deber de confidencialidad
+  - prefix: art28
+    title: Obligaciones generales del responsable y encargado del tratamiento
+  - prefix: art31
+    title: Registro de las actividades de tratamiento
+  - prefix: art32
+    title: Bloqueo de los datos
+  - prefix: art33
+    title: Encargado del tratamiento
+  - prefix: da1
+    title: Medidas de seguridad en el ámbito del sector público
