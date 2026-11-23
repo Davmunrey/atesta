@@ -1,7 +1,7 @@
 # Spec: roles and access (RBAC)
 
 - Issue: #144. Builds on `identity-auth.md` and `insights.md` (owners).
-- Status: draft
+- Status: built (2026-11-23: every acceptance criterion is implemented and covered by the tests its test plan names)
 
 ## Roles
 

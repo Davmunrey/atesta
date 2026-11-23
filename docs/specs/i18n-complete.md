@@ -1,7 +1,7 @@
 # Spec: complete internationalization (ES and EN)
 
 - Issue: #146. Builds on `web-shell.md` (locale cookie) and `requirement-register.md` (export).
-- Status: draft
+- Status: built (2026-11-23: every acceptance criterion is implemented and covered by the tests its test plan names)
 
 Every word a person reads in Atesta exists in Spanish and English. The one exception is official
 framework text that exists only in Spanish (rule 10): it is never translated from memory. It is
