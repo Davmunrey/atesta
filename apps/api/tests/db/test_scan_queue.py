@@ -2,16 +2,19 @@
 
 import dataclasses
 import uuid
+from datetime import timedelta
 from typing import Any
 
 import pytest
 from atesta_api.modules.connections.api import create_connection, scan_target
 from atesta_api.modules.scanning.api import (
     ENGINE_VERSION,
+    MANUAL_SCANS_PER_DAY,
     RUN_TASK,
     AlreadyQueuedError,
     ConnectionNotActiveError,
     ConnectionNotFoundError,
+    DailyLimitError,
     queue_scan,
     scan_lock,
 )
@@ -148,3 +151,50 @@ def test_google_scans_share_one_lock_and_m365_scans_lock_their_connection() -> N
     connection_id = uuid.uuid4()
     assert scan_lock("m365", connection_id) == f"conn:{connection_id}"
     assert scan_lock("google_workspace", connection_id) == "gws-policy-api"
+
+
+MADRID_MIDNIGHT = text(
+    "SELECT date_trunc('day', now() AT TIME ZONE 'Europe/Madrid') AT TIME ZONE 'Europe/Madrid'"
+)
+NEXT_MADRID_MIDNIGHT = text(
+    "SELECT (date_trunc('day', now() AT TIME ZONE 'Europe/Madrid') + interval '1 day')"
+    " AT TIME ZONE 'Europe/Madrid'"
+)
+
+
+def finish_active(session: Session) -> None:
+    session.execute(
+        text(
+            "UPDATE scans SET status = 'failed', finished_at = now()"
+            " WHERE status IN ('queued', 'running')"
+        )
+    )
+
+
+def test_the_seventh_manual_scan_of_a_madrid_day_is_refused(db_rollback: Session) -> None:
+    """#265: 6 user scans per connection per Madrid day; schedule and activation never count."""
+    connection_id = connection(db_rollback)
+    for _ in range(MANUAL_SCANS_PER_DAY):
+        queue_scan(db_rollback, ORG_A, connection_id, trigger="user", requested_by=USER)
+        finish_active(db_rollback)
+    with pytest.raises(DailyLimitError) as refused:
+        queue_scan(db_rollback, ORG_A, connection_id, trigger="user", requested_by=USER)
+    assert refused.value.retry_at == db_rollback.scalar(NEXT_MADRID_MIDNIGHT)
+    assert len(scans(db_rollback)) == MANUAL_SCANS_PER_DAY  # nothing written for the 7th
+    assert len(requested(db_rollback)) == MANUAL_SCANS_PER_DAY
+    queue_scan(db_rollback, ORG_A, connection_id, trigger="schedule")
+    finish_active(db_rollback)
+    queue_scan(db_rollback, ORG_A, connection_id, trigger="activation")
+    other = connection(db_rollback)  # the budget is per connection
+    queue_scan(db_rollback, ORG_A, other, trigger="user", requested_by=USER)
+
+
+def test_manual_scans_before_the_last_madrid_midnight_do_not_count(db_rollback: Session) -> None:
+    connection_id = connection(db_rollback)
+    for _ in range(MANUAL_SCANS_PER_DAY):
+        queue_scan(db_rollback, ORG_A, connection_id, trigger="user", requested_by=USER)
+        finish_active(db_rollback)
+    yesterday = db_rollback.scalar(MADRID_MIDNIGHT) - timedelta(minutes=1)
+    db_rollback.execute(text("UPDATE scans SET queued_at = :at"), {"at": yesterday})
+    scan = queue_scan(db_rollback, ORG_A, connection_id, trigger="user", requested_by=USER)
+    assert scan.status == "queued"

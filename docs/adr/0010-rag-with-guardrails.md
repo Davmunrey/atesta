@@ -22,9 +22,10 @@ Golden set of 100 auditor-validated questions in CI: citation validity 100%, fai
 Auditable, citable AI. More engineering than a plain LLM call; corpus must be reindexed on each
 catalog release.
 
-## Amendment 1 (proposed 2026-11-23, #264): frame untrusted content structurally
+## Amendment 1 (accepted 2026-11-23, #264): frame untrusted content structurally
 
-Status: proposed. The owner accepts or rejects it (AGENTS.md, "Owner decisions").
+Status: accepted by the owner on 2026-11-23, in session, answering "Accept the ADR-010
+amendment?" with "Aceptar ahora" (AGENTS.md, "Owner decisions").
 
 Filtering is not a boundary: an attacker writes around a filter. Before the AI module is built:
 
