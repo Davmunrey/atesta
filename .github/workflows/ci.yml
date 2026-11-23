@@ -226,6 +226,24 @@ jobs:
       - name: Offline golden
         run: scanner/golden.sh atesta-scanner:ci
 
+  images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the API and worker images
+        run: |
+          docker build -f apps/Dockerfile --target api -t atesta-api:ci .
+          docker build -f apps/Dockerfile --target worker -t atesta-worker:ci .
+      - name: Smoke as ECS runs them (read-only root, user 10001, no capabilities)
+        run: |
+          locked="--rm --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges"
+          docker run $locked atesta-api:ci python -c "import atesta_api.main"
+          docker run $locked atesta-worker:ci python -c "import atesta_worker.__main__"
+          test "$(docker run $locked atesta-api:ci id -u)" = 10001
+
   infra:
     runs-on: ubuntu-latest
     timeout-minutes: 10

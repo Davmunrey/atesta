@@ -1,0 +1,18 @@
+# Build context for apps/Dockerfile: only what the image copies.
+*
+!pyproject.toml
+!uv.lock
+!scanner/pyproject.toml
+!apps/build-requirements.txt
+!packages/core/pyproject.toml
+!packages/core/src/**
+!apps/api/pyproject.toml
+!apps/api/alembic.ini
+!apps/api/migrations/**
+!apps/api/src/**
+!apps/worker/pyproject.toml
+!apps/worker/src/**
+!catalog/**
+!scanner/expected/**
+**/__pycache__
+**/*.pyc
