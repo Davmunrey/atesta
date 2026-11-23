@@ -19,6 +19,10 @@ APP = "0a0a0a0a-0000-4000-8000-000000000001"
 SP = "5b5b5b5b-0000-4000-8000-000000000002"
 GRAPH_SP = "6c6c6c6c-0000-4000-8000-000000000003"
 EXCHANGE_SP = "7d7d7d7d-0000-4000-8000-000000000004"
+ADMIN = "8e8e8e8e-0000-4000-8000-000000000005"  # the consenting admin's object id
+GLOBAL_ADMIN = "62e90394-69f5-4237-9190-012177145e10"
+PRIVILEGED_ROLE_ADMIN = "e8611ab8-c189-46e8-94e1-60213ab1f814"
+GLOBAL_READER = "f2ef992c-3afb-46b9-b7cf-a126ee74c451"
 GRAPH_ROLES = [{"id": r.id, "value": r.name} for r in M365_V1.app_roles] + [
     {"id": "741f803b-c850-494e-b5df-cde7c675a1ca", "value": "User.ReadWrite.All"}
 ]
@@ -40,6 +44,7 @@ class FakeGraph:
             **overrides,
         }
         self.filters: list[Mapping[str, str] | None] = []
+        self.roles_of: dict[str, list[dict[str, str]]] = {}  # principal -> its role assignments
 
     def _answer(self, path: str) -> Any:
         answer = self.answers[path]
@@ -52,6 +57,9 @@ class FakeGraph:
 
     def get_all(self, path: str, params: Mapping[str, str] | None = None) -> list[Any]:
         self.filters.append(params)
+        principal = (params or {}).get("$filter", "").removeprefix("principalId eq '")[:-1]
+        if path == "/roleManagement/directory/roleAssignments" and principal in self.roles_of:
+            return list(self.roles_of[principal])
         return list(self._answer(path))
 
 
@@ -200,3 +208,50 @@ def test_an_allowlisted_role_the_resource_does_not_name_fails_closed() -> None:
     report = verify(graph)
     assert report["verdict"] == "over_privileged"  # its name cannot pass the read-only gate
     assert report["extra"] == [f"write-named role {M365_V1.app_roles[0].id}"]
+
+
+# --- step 6, the binding: onboarding only (#331) -------------------------------------------
+
+
+def bind(graph: FakeGraph, admin_oid: str | None = ADMIN) -> dict[str, Any]:
+    return verify_m365(graph, app_id=APP, tenant=TENANT, version="m365-v1", admin_oid=admin_oid)
+
+
+@pytest.mark.parametrize("role", [GLOBAL_ADMIN, PRIVILEGED_ROLE_ADMIN])
+def test_a_consenting_global_or_privileged_role_admin_binds_the_tenant(role: str) -> None:
+    graph = FakeGraph()
+    graph.roles_of[ADMIN] = [{"roleDefinitionId": role, "directoryScopeId": "/"}]
+    assert bind(graph)["verdict"] == "ok"
+    assert {"$filter": f"principalId eq '{ADMIN}'"} in graph.filters
+
+
+@pytest.mark.parametrize(
+    "assignments",
+    [
+        [],
+        [{"roleDefinitionId": GLOBAL_READER, "directoryScopeId": "/"}],
+        # Scoped to an administrative unit: not tenant-wide, so it cannot have consented for all.
+        [{"roleDefinitionId": PRIVILEGED_ROLE_ADMIN, "directoryScopeId": "/administrativeUnits/a"}],
+    ],
+)
+def test_a_consenting_user_without_either_role_cannot_link_the_tenant(
+    assignments: list[dict[str, str]],
+) -> None:
+    graph = FakeGraph()
+    graph.roles_of[ADMIN] = assignments
+    report = bind(graph)
+    assert (report["verdict"], report["missing"]) == ("incomplete", ["consenting_admin_role"])
+
+
+def test_the_binding_is_never_read_outside_onboarding() -> None:
+    graph = FakeGraph()
+    assert bind(graph, admin_oid=None)["verdict"] == "ok"
+    assert {"$filter": f"principalId eq '{ADMIN}'"} not in graph.filters
+
+
+def test_an_unreadable_binding_is_never_ok() -> None:
+    denied = GraphDeniedError(403)
+    graph = FakeGraph()
+    graph.roles_of[ADMIN] = []
+    graph.get_all = lambda path, params=None: (_ for _ in ()).throw(denied)  # type: ignore[method-assign]
+    assert bind(graph)["verdict"] != "ok"

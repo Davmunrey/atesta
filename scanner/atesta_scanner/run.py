@@ -94,7 +94,11 @@ def verify_job(job: Job, credential: Mapping[str, str]) -> dict[str, Any]:
     with httpx.Client(timeout=30.0) as client:
         graph = Graph(token, client)
         return verify_m365(
-            graph, app_id=client_id, tenant=job.tenant, version=job.allowlist_version
+            graph,
+            app_id=client_id,
+            tenant=job.tenant,
+            version=job.allowlist_version,
+            admin_oid=job.admin_oid,
         )
 
 

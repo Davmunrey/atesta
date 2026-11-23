@@ -12,8 +12,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.connections.models import Connection
+from atesta_api.platform.audit import record
 
 ALLOWLIST_VERSION = {"m365": "m365-v1", "google_workspace": "google-v1"}
+# Still onboarding: a sign-in, a consent and a verification may (re)start here (#314, #331).
+ONBOARDING = frozenset({"pending_setup", "incomplete", "over_privileged", "revoked"})
 FIRST_STATUS = {"m365": "pending_setup", "google_workspace": "pending_provisioning"}
 
 
@@ -39,10 +42,17 @@ class ScanTarget:
     google_client_id: str | None
     google_verifier_client_id: str | None
     google_subject_email: str | None
+    ms_tenant_id: str | None = None  # the tenant bound at sign-in (#314)
+    consented_by_oid: str | None = None  # the consenting admin's object id: an id, not a secret
 
     @property
     def active(self) -> bool:
         return self.status == "active"
+
+    @property
+    def verifying(self) -> bool:
+        """Only the activation scan runs now: it verifies, then activates (#331)."""
+        return self.status == "verifying"
 
 
 def create_connection(
@@ -117,7 +127,47 @@ def scan_target(
         google_client_id=connection.google_client_id,
         google_verifier_client_id=connection.google_verifier_client_id,
         google_subject_email=connection.google_subject_email,
+        ms_tenant_id=connection.ms_tenant_id,
+        consented_by_oid=connection.consented_by_oid,
     )
+
+
+def begin_verification(
+    session: Session, organization_id: uuid.UUID, connection_id: uuid.UUID, user_id: uuid.UUID
+) -> Connection | None:
+    """Onboarding step 6: an M365 connection, consented and still onboarding, starts verifying.
+
+    None when the connection is unknown; ConnectionStateError before the sign-in and consent
+    (#314), for Google, or once it is verifying, active or disconnected. The caller then queues
+    the activation scan, which verifies at step 0 (#331).
+    """
+    connection = session.scalars(
+        select(Connection)
+        .where(Connection.id == connection_id, Connection.organization_id == organization_id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    ).one_or_none()
+    if connection is None:
+        return None
+    if (
+        connection.provider != "m365"
+        or connection.status not in ONBOARDING
+        or connection.ms_tenant_id is None
+        or connection.consented_by_oid is None
+    ):
+        raise ConnectionStateError("not an M365 connection ready to verify")
+    connection.status = "verifying"
+    record(
+        session,
+        organization_id=organization_id,
+        action="connection.verification_requested",
+        target_type="connection",
+        target_id=str(connection.id),
+        actor_user_id=user_id,
+        metadata={"provider": "m365"},
+    )
+    session.flush()
+    return connection
 
 
 ENDED_STATUSES = ("disconnected", "revoked")

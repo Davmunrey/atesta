@@ -26,6 +26,7 @@ from atesta_api.modules.connections.entra import (
     SignInError,
 )
 from atesta_api.modules.connections.models import Connection
+from atesta_api.modules.connections.service import ONBOARDING
 from atesta_api.modules.identity.api import (
     CurrentCaller,
     Member,
@@ -38,7 +39,6 @@ from atesta_api.platform.db import DbSession
 
 COOKIE = "atesta_m365"
 COOKIE_SECONDS = 600
-ONBOARDING = frozenset({"pending_setup", "incomplete", "over_privileged", "revoked"})
 
 api_router = APIRouter(prefix="/api/v1/orgs/{org_id}/connections", tags=["connections"])
 auth_router = APIRouter(prefix="/auth/m365", tags=["auth"])

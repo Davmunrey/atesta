@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy import Select, func, select
 from sqlalchemy.orm import Session
 
+from atesta_api.modules.connections.api import ConnectionStateError, begin_verification
 from atesta_api.modules.identity.api import Member, Role, require_member, require_role
 from atesta_api.modules.scanning.lifecycle import (
     AlreadyQueuedError,
@@ -123,6 +124,32 @@ def _daily_limit(retry_at: datetime) -> HTTPException:
         },
         headers={"Retry-After": str(wait)},
     )
+
+
+@router.post("/connections/{connection_id}/verify", status_code=202)
+def verify_connection(
+    connection_id: uuid.UUID,
+    member: Annotated[Member, Depends(require_role(Role.ADMIN))],
+    session: DbSession,
+) -> ScanOut:
+    """Onboarding step 6 (issue 331): the activation scan verifies, then activates."""
+    try:
+        found = begin_verification(session, member.organization_id, connection_id, member.user_id)
+    except ConnectionStateError:
+        raise _error(409, "connections.state_invalid") from None
+    if found is None:
+        raise _error(404, "connections.not_found")
+    try:
+        scan = queue_scan(
+            session,
+            member.organization_id,
+            connection_id,
+            trigger="activation",
+            requested_by=member.user_id,
+        )
+    except AlreadyQueuedError:
+        raise _error(409, "scanning.already_queued") from None
+    return ScanOut.model_validate(scan)
 
 
 @router.get("/scans")
