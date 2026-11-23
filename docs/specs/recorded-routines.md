@@ -89,6 +89,10 @@ control, so it shows wherever evidence is read.
 - [ ] **Closing** writes an evidence statement on `ctl.incident_response`: when the
   organization became aware, when the incident closed, and each clock met and on time or late.
 - [ ] **"Ahora":** each running or overdue clock of an open incident is an item, with its due
+- [ ] **Criteria next to the flags (#181):** packs may name, in `incident_criteria`, the requirement
+  that defines each flag (for example NIS2 Art. 23(3) for significant, GDPR Art. 33(1) for personal
+  data). The form shows that requirement's official text, per active framework, in the reader's
+  language when an official text exists. Atesta shows the text; the organization decides (ADR-005).
   time.
 
 ## Out of scope

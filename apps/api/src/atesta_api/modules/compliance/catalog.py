@@ -132,6 +132,11 @@ def _check_clocks(pack: Pack, codes: set[str]) -> None:
         if clock.after is not None and clock.after not in seen:
             raise ValueError(f"reporting clock {clock.key} starts from an unknown clock")
         seen.add(clock.key)
+    for criterion in pack.metadata.attributes.incident_criteria:
+        if criterion.requirement not in codes:
+            raise ValueError(
+                f"incident criterion names an unknown requirement: {criterion.requirement}"
+            )
 
 
 def _check_coverage(pack: Pack, codes: set[str]) -> None:

@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from atesta_api.modules.compliance.models import Framework, Incident, IncidentUpdate
+from atesta_api.modules.compliance.models import Framework, Incident, IncidentUpdate, Requirement
 from atesta_api.modules.compliance.scoring import active_frameworks
 from atesta_api.modules.compliance.text import filled
 from atesta_api.modules.evidence.api import record_attestation
@@ -73,6 +73,18 @@ def clock_defs(session: Session) -> list[ClockDef]:
                 )
             )
     return out
+
+
+class CriterionOut(BaseModel):
+    needs: Literal["significant", "personal_data"]
+    framework_key: str
+    framework_name: str
+    requirement: str
+    title_es: str
+    title_en: str | None
+    text_es: str
+    text_en: str | None
+    source: str
 
 
 class IncidentIn(BaseModel):
@@ -286,6 +298,47 @@ def list_incidents(
         )
         for i in incidents
     ]
+
+
+@router.get("/incidents/criteria")
+def incident_criteria(
+    member: Annotated[Member, Depends(require_member)], session: DbSession
+) -> list[CriterionOut]:
+    """The official text that explains each incident flag, from the active packs. Atesta shows the
+    text; whether an incident meets it is the organization's decision (ADR-005)."""
+    del member  # any member may read the catalog text
+    keys = [f.key for f in active_frameworks(session)]
+    rows = session.execute(
+        select(Framework.key, Framework.name, Framework.attributes)
+        .where(Framework.key.in_(keys))
+        .order_by(Framework.key)
+    )
+    out: list[CriterionOut] = []
+    for key, name, attributes in rows.tuples():
+        for criterion in attributes.get("incident_criteria", []):
+            requirement = session.scalar(
+                select(Requirement).where(
+                    Requirement.framework_key == key,
+                    Requirement.code == criterion["requirement"],
+                    Requirement.retired_at.is_(None),
+                )
+            )
+            if requirement is None:
+                continue
+            out.append(
+                CriterionOut(
+                    needs=criterion["needs"],
+                    framework_key=key,
+                    framework_name=name,
+                    requirement=requirement.code,
+                    title_es=requirement.title_es,
+                    title_en=requirement.title_en,
+                    text_es=requirement.attributes.get("official_text_es", ""),
+                    text_en=requirement.attributes.get("official_text_en"),
+                    source=requirement.source,
+                )
+            )
+    return out
 
 
 @router.get("/incidents/{incident_id}")

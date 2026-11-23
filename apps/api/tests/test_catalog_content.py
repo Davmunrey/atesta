@@ -316,3 +316,26 @@ def test_a_clock_may_start_from_an_earlier_clock(tmp_path: Path) -> None:
         ("notice", None, None),
         ("final", "notice", 1),
     ]
+
+
+def test_incident_criteria_name_requirements_of_their_own_pack(tmp_path: Path) -> None:
+    """recorded-routines spec: the text next to an incident flag is a requirement of the pack."""
+    catalog_files(tmp_path)
+    change(
+        tmp_path,
+        "frameworks/sample/pack.yaml",
+        lambda d: d["attributes"].update(
+            incident_criteria=[{"needs": "significant", "requirement": "R9"}]
+        ),
+    )
+    with pytest.raises(ValueError, match="unknown requirement"):
+        read(tmp_path)
+    change(
+        tmp_path,
+        "frameworks/sample/pack.yaml",
+        lambda d: d["attributes"].update(
+            incident_criteria=[{"needs": "personal_data", "requirement": "R1"}]
+        ),
+    )
+    criteria = read(tmp_path).packs[0].metadata.attributes.incident_criteria
+    assert [(c.needs, c.requirement) for c in criteria] == [("personal_data", "R1")]

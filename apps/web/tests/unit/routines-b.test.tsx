@@ -2,6 +2,7 @@
 import { cleanup, fireEvent, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { IncidentView } from "@/components/incident-view";
+import { IncidentsView } from "@/components/incidents-view";
 import { useAttention } from "@/components/readiness";
 import { captureTrainingToken, TrainingConfirm } from "@/components/training-confirm";
 import { TrainingView } from "@/components/training-view";
@@ -114,4 +115,21 @@ it("lists running incident deadlines and unclosed trainings in Ahora, with links
   expect(clockItem.getAttribute("href")).toBe("/app/incident?org=primary&id=i1");
   const training = screen.getByRole("link", { name: "Cerrar la formación «Phishing» y registrar la evidencia (terminaba el 20 de noviembre de 2026)" });
   expect(training.getAttribute("href")).toBe("/app/training-campaign?org=primary&id=c1");
+});
+
+it("shows the official criteria behind each incident flag, in the reader's language when official", async () => {
+  stubApi({
+    [`GET ${base}/incidents`]: [200, []],
+    [`GET ${base}/incidents/criteria`]: [200, [
+      { needs: "significant", framework_key: "nis2", framework_name: "NIS2", requirement: "art23.3", title_es: "Obligaciones de notificación · apartado 3",
+        title_en: "Reporting obligations · paragraph 3", text_es: "3. Un incidente se considerará significativo:\n\na) si ha causado…", text_en: "3. An incident shall be considered significant if:\n\n(a) it has caused…", source: "https://example.test/nis2" },
+      { needs: "personal_data", framework_key: "lopd", framework_name: "LOPD", requirement: "art1", title_es: "Artículo 1", title_en: null,
+        text_es: "Texto solo en español.", text_en: null, source: "https://example.test/lopd" },
+    ]],
+  });
+  renderWithProviders(<IncidentsView org={owner} />, "en");
+  const significant = await screen.findByText("What NIS2 says: Reporting obligations · paragraph 3");
+  expect(significant.closest("details")!.textContent).toContain("(a) it has caused…");
+  const spanishOnly = screen.getByText("What LOPD says: Artículo 1").closest("details")!;
+  expect(spanishOnly.querySelector("[lang='es']")!.textContent).toBe("Texto solo en español.");
 });

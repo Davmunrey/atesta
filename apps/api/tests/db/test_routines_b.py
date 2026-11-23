@@ -320,3 +320,62 @@ def test_part_b_grants(superuser: Engine, table: str, expected: set[str]) -> Non
             )
         )
     assert grants == expected
+
+
+def test_the_incident_form_reads_the_official_criteria_of_active_packs(
+    client: TestClient, superuser: Engine
+) -> None:
+    key = f"criteria_{uuid.uuid4().hex}"
+    with superuser.begin() as conn:
+        conn.execute(
+            text(
+                "INSERT INTO frameworks (key, name, version, jurisdiction, source, license_notes,"
+                " status, attributes, catalog_version) VALUES (:k, 'Synthetic', '1', 'EU',"
+                " 'synthetic', 'test', 'released', CAST(:a AS jsonb), 'v1')"
+            ),
+            {
+                "k": key,
+                "a": json.dumps(
+                    {"incident_criteria": [{"needs": "significant", "requirement": "r1"}]}
+                ),
+            },
+        )
+        conn.execute(
+            text(
+                "INSERT INTO requirements"
+                " (framework_key, code, title_es, title_en, source, attributes)"
+                " VALUES (:k, 'r1', 'Apartado 3', 'Paragraph 3', 'https://example.test/r1',"
+                " CAST(:a AS jsonb))"
+            ),
+            {
+                "k": key,
+                "a": json.dumps(
+                    {
+                        "official_text_es": "Significativo si…",
+                        "official_text_en": "Significant if…",
+                    }
+                ),
+            },
+        )
+    try:
+        org, subs = org_with(client, superuser)
+        found = client.get(f"/api/v1/orgs/{org}/incidents/criteria", headers=auth(subs["owner"]))
+        assert found.status_code == 200, found.text
+        mine = [c for c in found.json() if c["framework_key"] == key]
+        assert mine == [
+            {
+                "needs": "significant",
+                "framework_key": key,
+                "framework_name": "Synthetic",
+                "requirement": "r1",
+                "title_es": "Apartado 3",
+                "title_en": "Paragraph 3",
+                "text_es": "Significativo si…",
+                "text_en": "Significant if…",
+                "source": "https://example.test/r1",
+            }
+        ]
+    finally:
+        with superuser.begin() as conn:
+            conn.execute(text("DELETE FROM requirements WHERE framework_key = :k"), {"k": key})
+            conn.execute(text("DELETE FROM frameworks WHERE key = :k"), {"k": key})
