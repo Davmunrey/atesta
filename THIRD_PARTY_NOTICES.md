@@ -5,7 +5,9 @@
 | Prowler (prowler-cloud/prowler) | Apache-2.0 | Scan engine, pinned version in `scanner/Dockerfile`. LICENSE and NOTICE retained in the image. |
 | psycopg, psycopg-binary, psycopg-pool | LGPL-3.0-only | Postgres driver, used unmodified as installed libraries (ADR-006 amendment 1). |
 | certifi (via httpx) | MPL-2.0 | CA bundle, used unmodified; file-level copyleft only. |
-| obra/superpowers skills (3) | MIT | Agent skills vendored in `.claude/skills/`, not shipped in any service (ADR-013). |
+| obra/superpowers skills (9) | MIT | Agent skills vendored in `.claude/skills/`, `LICENSE.superpowers` kept beside them, not shipped in any service (ADR-013). |
+| ayghri/i-have-adhd (skill text) | MIT | Agent skill vendored in `.claude/skills/i-have-adhd/`, LICENSE kept beside it, not shipped (ADR-013). |
+| juliusbrussee/caveman (caveman, ultracave, megacave skill text) | Apache-2.0 | Agent skills vendored in `.claude/skills/`, LICENSE, NOTICE and LICENSE-MIT kept in `.claude/skills/caveman/`, not shipped (ADR-013). |
 | anthropics/skills frontend-design | Apache-2.0 | Agent skill vendored in `.claude/skills/`, LICENSE.txt kept beside it, not shipped (ADR-013). |
 | pbakaus/impeccable (text subset) | Apache-2.0 | Agent skill vendored in `.claude/skills/impeccable/`, LICENSE.txt kept beside it, not shipped (ADR-013). |
 | GoogleChrome/modern-web-guidance (text subset) | Apache-2.0 | Agent skill vendored in `.claude/skills/modern-web-guidance/`, LICENSE.txt kept beside it, not shipped (ADR-013). |
