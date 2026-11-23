@@ -8,7 +8,7 @@ import httpx
 from fastapi import FastAPI
 
 from atesta_api.modules.compliance.api import include_drafts, install_compliance
-from atesta_api.modules.connections.api import router as connections_router
+from atesta_api.modules.connections.api import install_connections, wire_connections
 from atesta_api.modules.evidence.api import install_evidence
 from atesta_api.modules.identity.api import install_identity, wire_identity
 from atesta_api.modules.scanning.api import router as scanning_router
@@ -29,6 +29,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     db.configure(engine)
     with httpx.Client() as client:
         wire_identity(app, client)
+        wire_connections(app, client)
         yield
     engine.dispose()
 
@@ -46,7 +47,7 @@ def create_app() -> FastAPI:
     install_identity(created)
     install_compliance(created)
     install_evidence(created)
-    created.include_router(connections_router)
+    install_connections(created)
     created.include_router(scanning_router)
     created.add_api_route("/health", health, methods=["GET"])
     return created
