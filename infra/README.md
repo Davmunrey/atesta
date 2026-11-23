@@ -12,6 +12,13 @@ infra/
 Accounts: management, prod, dev (log archive from month 6). Deploys from GitHub Actions via
 OIDC, no long-lived keys. Budget alerts at 150, 250 and 400 EUR/month.
 
+## Status (2026-11-23)
+
+Base modules `kms`, `network` and `s3-evidence` follow docs/specs/hosted-environment.md and are
+used by `envs/dev`. They are validated (`tofu validate`) and their security settings are tested
+(`infra/tests`). Nothing is applied. The other modules (rds, ecs, web, ses), `envs/prod`, the deploy
+workflow and the runbook follow in separate PRs.
+
 ## Status (2026-11-13)
 
 `modules/cognito`, `modules/github-oidc` and `envs/dev` follow docs/specs/infra-dev.md. Nothing
