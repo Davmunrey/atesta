@@ -41,20 +41,20 @@ remediation_refs:
   - https://learn.microsoft.com/en-us/graph/api/resources/conditionalaccesspolicy?view=graph-rest-1.0
   - https://learn.microsoft.com/en-us/graph/api/resources/conditionalaccessusers?view=graph-rest-1.0
   - https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/security-emergency-access
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_all_apps_all_users/entra_conditional_access_policy_all_apps_all_users.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_all_apps_conditional_access_coverage/entra_all_apps_conditional_access_coverage.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_no_exclusion_gaps/entra_conditional_access_policy_no_exclusion_gaps.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_no_deleted_object_references/entra_conditional_access_policy_no_deleted_object_references.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_emergency_access_exclusion/entra_emergency_access_exclusion.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_directory_sync_account_excluded/entra_conditional_access_policy_directory_sync_account_excluded.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_groups_management_restricted/entra_conditional_access_policy_groups_management_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_untrusted_locations_blocked/entra_conditional_access_policy_untrusted_locations_blocked.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_trusted_named_location_exists/entra_conditional_access_trusted_named_location_exists.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_authentication_transfer_blocked/entra_conditional_access_policy_authentication_transfer_blocked.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_require_mfa_for_management_api/entra_conditional_access_policy_require_mfa_for_management_api.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_token_protection_enforced/entra_conditional_access_policy_token_protection_enforced.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_admin_users_sign_in_frequency_enabled/entra_admin_users_sign_in_frequency_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_block_unknown_device_platforms/entra_conditional_access_policy_block_unknown_device_platforms.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_explicitly_targets_azure_devops/entra_conditional_access_policy_explicitly_targets_azure_devops.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_block_elevated_insider_risk/entra_conditional_access_policy_block_elevated_insider_risk.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_block_o365_elevated_insider_risk/entra_conditional_access_policy_block_o365_elevated_insider_risk.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_all_apps_all_users/entra_conditional_access_policy_all_apps_all_users.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_all_apps_conditional_access_coverage/entra_all_apps_conditional_access_coverage.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_no_exclusion_gaps/entra_conditional_access_policy_no_exclusion_gaps.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_no_deleted_object_references/entra_conditional_access_policy_no_deleted_object_references.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_emergency_access_exclusion/entra_emergency_access_exclusion.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_directory_sync_account_excluded/entra_conditional_access_policy_directory_sync_account_excluded.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_groups_management_restricted/entra_conditional_access_policy_groups_management_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_untrusted_locations_blocked/entra_conditional_access_policy_untrusted_locations_blocked.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_trusted_named_location_exists/entra_conditional_access_trusted_named_location_exists.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_authentication_transfer_blocked/entra_conditional_access_policy_authentication_transfer_blocked.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_require_mfa_for_management_api/entra_conditional_access_policy_require_mfa_for_management_api.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_token_protection_enforced/entra_conditional_access_policy_token_protection_enforced.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_admin_users_sign_in_frequency_enabled/entra_admin_users_sign_in_frequency_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_block_unknown_device_platforms/entra_conditional_access_policy_block_unknown_device_platforms.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_explicitly_targets_azure_devops/entra_conditional_access_policy_explicitly_targets_azure_devops.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_block_elevated_insider_risk/entra_conditional_access_policy_block_elevated_insider_risk.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_block_o365_elevated_insider_risk/entra_conditional_access_policy_block_o365_elevated_insider_risk.py

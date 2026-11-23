@@ -32,11 +32,11 @@ remediation_refs:
   - https://learn.microsoft.com/en-us/entra/fundamentals/users-default-permissions
   - https://learn.microsoft.com/en-us/entra/identity/users/groups-create-rule
   - https://learn.microsoft.com/entra/identity/users/groups-dynamic-rule-member-of
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_default_user_cannot_create_m365_groups/entra_policy_default_user_cannot_create_m365_groups.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_default_user_cannot_create_security_groups/entra_policy_default_user_cannot_create_security_groups.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_ensure_default_user_cannot_create_tenants/entra_policy_ensure_default_user_cannot_create_tenants.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_dynamic_group_for_guests_created/entra_dynamic_group_for_guests_created.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_dynamic_group_member_of_rule_not_used/entra_dynamic_group_member_of_rule_not_used.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_access_review_guest_users_configured/entra_access_review_guest_users_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_access_review_privileged_roles_configured/entra_access_review_privileged_roles_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_admin_portals_access_restriction/entra_admin_portals_access_restriction.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_policy_default_user_cannot_create_m365_groups/entra_policy_default_user_cannot_create_m365_groups.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_policy_default_user_cannot_create_security_groups/entra_policy_default_user_cannot_create_security_groups.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_policy_ensure_default_user_cannot_create_tenants/entra_policy_ensure_default_user_cannot_create_tenants.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_dynamic_group_for_guests_created/entra_dynamic_group_for_guests_created.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_dynamic_group_member_of_rule_not_used/entra_dynamic_group_member_of_rule_not_used.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_access_review_guest_users_configured/entra_access_review_guest_users_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_access_review_privileged_roles_configured/entra_access_review_privileged_roles_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_admin_portals_access_restriction/entra_admin_portals_access_restriction.py

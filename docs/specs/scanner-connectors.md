@@ -91,10 +91,10 @@ D12 (Microsoft Partner Program account and a verified domain).
 
 ### Scanner image and wrapper
 
-- [ ] `scanner/Dockerfile`: `python:3.12-slim` pinned by digest; Prowler 5.49.0 from a
+- [ ] `scanner/Dockerfile`: `python:3.12-slim` pinned by digest; Prowler 5.52.0 from a
       hash-locked requirements file; PowerShell's native runtime packages installed with apt as
-      the upstream 5.49.0 image does (`libicu76`, `libunwind8`, `libssl3`, `libcurl4`,
-      `ca-certificates`); PowerShell 7.6.10 from the tarball with the sha256 the upstream 5.49.0
+      the upstream 5.52.0 image does (`libicu76`, `libunwind8`, `libssl3`, `libcurl4`,
+      `ca-certificates`); PowerShell 7.6.10 from the tarball with the sha256 the upstream 5.52.0
       image pins; no MSAL.PS; `POWERSHELL_TELEMETRY_OPTOUT=1`; non-root uid 10001.
 - [ ] From PR 10 (D1, D11): ExchangeOnlineManagement and MicrosoftTeams at exact versions at or
       above 3.6.0 and 6.6.0, installed at build time for all users, each the newest release older
@@ -108,7 +108,7 @@ D12 (Microsoft Partner Program account and a verified domain).
       `--tenant-id`, `--init-modules` or `--log-level DEBUG`/`INFO`. A unit test asserts the exact
       argv per provider.
 - [ ] Image build fails if `prowler <provider> --list-checks-json` differs from the committed lists
-      `scanner/expected/5.49.0/m365.json` (149 checks) and `googleworkspace.json` (65 checks).
+      `scanner/expected/5.52.0/m365.json` (149 checks) and `googleworkspace.json` (65 checks).
       `m365-powershell.json` lists the 54 PowerShell-backed checks, excluded until PR 10.
 - [ ] Scanner containers reach only the per-provider egress allowlist (Runners); everything else
       is denied and logged.
@@ -205,7 +205,7 @@ D12 (Microsoft Partner Program account and a verified domain).
       `scanner/fixtures/synthetic/{m365,googleworkspace}/`, hand-built from the committed expected
       check lists, no tenant data. They cover PASS, FAIL, MANUAL, muted, a service with no
       findings, a wrong tenant id and an unexpected check id. A unit test validates every finding
-      against `py_ocsf_models` 0.10.0 `DetectionFinding`, the model Prowler 5.49.0 writes
+      against `py_ocsf_models` 0.10.0 `DetectionFinding`, the model Prowler 5.52.0 writes
       (Apache-2.0, dev dependency). Recorded anonymized fixtures from the live golden are added
       beside them later; the offline golden runs on both.
 - [ ] Offline golden in CI (no tenant): expected check lists, catalog check ids, wrapper argv,
@@ -221,7 +221,7 @@ D12 (Microsoft Partner Program account and a verified domain).
 ## Out of scope
 
 - AWS connector (v1.1).
-- Remediation, Prowler fixers and any write action on customer systems (rule 1). Prowler 5.49.0
+- Remediation, Prowler fixers and any write action on customer systems (rule 1). Prowler 5.52.0
   ships one M365 fixer that runs `Set-OrganizationConfig`; the `--fixer` flag exists only for
   the AWS provider, the wrapper never passes it, and the Global Reader role cannot write.
 - Fargate runner, S3 bucket, Secrets Manager, KMS, IAM roles, egress control and the scan
@@ -299,7 +299,7 @@ allowlist.
   a secret that carries one, so a scan reaches only the pinned tenant. It
   never writes it to disk, logs it, or puts it in the manifest. Prowler then mints its own
   short-lived tokens.
-- Prowler 5.49.0 accepts neither a pre-issued token nor a remote signer for M365 or Google, so the
+- Prowler 5.52.0 accepts neither a pre-issued token nor a remote signer for M365 or Google, so the
   long-lived private key must be inside the scan container for the task's lifetime. ADR-004's
   "short-lived tenant credentials" is amended (below).
 - Blast radius: task roles are per org and per provider (Runners), so Google tasks cannot read the
@@ -484,7 +484,7 @@ with the scan key only (D7). Output is a JSON report of ids and verdicts.
 |---|---|---|
 | Base | `python:3.12-slim@sha256:<digest>` | Prowler requires Python >=3.10,<3.14. `3.12-slim` is Debian 13 (trixie) |
 | PowerShell runtime libs | `libicu76`, `libunwind8`, `libssl3`, `libcurl4`, `ca-certificates` from the Debian 13 archive of the pinned base | Required by .NET on Debian 13 (no ICU: the app fails to start); upstream installs the same |
-| Prowler | 5.49.0, wheel sha256 `e5ed983eb3faf34a72cb0f1460e98516dd5f36ce4db443f886e0d60a205be705`, hash-locked deps | Apache-2.0 |
+| Prowler | 5.52.0, wheel sha256 `b9134bdbf4899cbb2ef36e1bb1432d97b2af19a155d7f9861086f780a3ca0a96`, hash-locked deps; resolved with the 7-day cooldown, Prowler alone exempted by its publish date (`--exclude-newer-package`) | Apache-2.0 |
 | PowerShell | 7.6.10 x64 tarball, upstream sha256 | MIT. Needed from PR 5: with certificate auth the M365 provider always starts `pwsh`; without it every M365 scan exits 1 |
 | ExchangeOnlineManagement | PR 10: exact version, >= 3.6.0, >= 7 days old | Microsoft licence terms (D11) |
 | MicrosoftTeams | PR 10: exact version, >= 6.6.0, >= 7 days old | Use tied to the customer's subscription (D11) |
@@ -775,6 +775,23 @@ Error codes (ES and EN texts in the web i18n files): `connections.state_invalid`
 | Procrastinate 3.10.0 (2026-09-23, MIT classifier; 3.11.0 is inside the 7-day cooldown); `RetryStrategy` wait = `wait + linear_wait * attempts`; `lock` blocks behind `doing` and lower-id `todo` jobs with no `scheduled_at` condition; `queueing_lock` unique among `todo` only; retry sets the same row back to `todo`; `JobContext.job`; `get_stalled_jobs`, `retry_job`; four tables, no SECURITY DEFINER | https://pypi.org/pypi/procrastinate/json; wheel sha256 `949ad25b4377c30e03a9d0e053d15dfa47ef02b3f12ae8a7f3254686183c152c`: `retry.py`, `jobs.py`, `job_context.py`, `manager.py`, `worker.py:165-189`, `sql/schema.sql:99, 209-260, 366-396` |
 | Docker bind mounts keep host ownership unless userns remapping is configured ("file ownership must be pre-arranged"); uid 10001 cannot read a 0600 file owned by another uid | https://docs.docker.com/engine/security/userns-remap/; local `setpriv --reuid=10001` test (no Docker daemon in the sandbox) |
 | Web routes live under `/api/v1`; CloudFront sends `/api/*` and `/auth/*` to the API; the BFF login keeps its pending state in a sealed cookie | `origin/main:docs/specs/web-shell.md`; identity module `routes.py`, `bff.py` (branch `claude/brave-franklin-e60jws-26`) |
+
+### Engine bump to 5.52.0 (2026-11-23, issue #243)
+
+The facts above cite Prowler 5.49.0, where they were read. Moving the pin re-checked each one that
+depends on Prowler against the 5.52.0 wheel; line numbers in the files below shift, content does
+not, unless the row says so.
+
+| Fact | Source |
+|---|---|
+| Prowler 5.52.0 published 2026-11-23T14:54:59Z; wheel sha256 `b9134bdb...a96`, sdist `054b9415...48c`, equal to the lock; Python >=3.10,<3.14. Its requirements add only `opentelemetry-api==1.45.2` (2026-10-29), already in the lock at that version. The re-lock changes no other package; the `pymongo` override still applies (`huaweicloudsdkcore` 3.1.204 still pins 4.15.1; the lock keeps 4.19.0, no OSV advisory) | https://pypi.org/pypi/prowler/5.52.0/json; `scanner/requirements.txt` diff; https://pypi.org/pypi/huaweicloudsdkcore/3.1.204/json; https://api.osv.dev/v1/query |
+| Upstream `Dockerfile` identical at 5.49.0 and 5.52.0 (base digest, PowerShell 7.6.10 and its sha256, apt packages) | https://raw.githubusercontent.com/prowler-cloud/prowler/5.52.0/Dockerfile |
+| `--list-checks-json` for M365 and Google, and `powershell_checks.py`, give byte-identical lists (149, 65, 54). No M365 or Google `*.metadata.json` changes; under `providers/m365/services` only the two Defender outbound anti-spam checks (no `KeyError` with preset policies), `entra_service.py` (Graph URL from the region) and the fixer (region argument) change | `scanner/expected/README.md`; recursive diff of the two wheels |
+| With no `--region`, M365 stays on the commercial cloud: `M365Global` keeps `login.microsoftonline.com`, `graph.microsoft.com` and `outlook.office365.com`, and adds no `-ExchangeEnvironmentName` or `-TeamsEnvironmentName`. New `--region M365Custom`, `--m365-authority-host` and `--m365-graph-endpoint`; the wrapper passes none | Prowler 5.52.0 `providers/m365/lib/regions/regions.py`, `lib/powershell/m365_powershell.py`, `lib/arguments/arguments.py` |
+| Certificate auth still reads `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `M365_CERTIFICATE_CONTENT` (`m365_provider.py:494`) into the same `CertificateCredential` (`:656-662`); the Google provider still reads only `GOOGLEWORKSPACE_*` (`googleworkspace_provider.py:247, :307-362`), `SCOPES` unchanged. Neither provider gains a token or signer input | Prowler 5.52.0 `m365_provider.py`, `googleworkspace_provider.py` |
+| The Google provider now calls `GcpProvider.validate_service_account_key` before use: the key must be `type: service_account` with `token_uri` `https://oauth2.googleapis.com/token` or `https://accounts.google.com/o/oauth2/token`. Importing the provider with sockets and DNS disabled makes no outbound call at either version (the one socket both open is urllib3's local IPv6 probe), and loads no new third-party package (new: stdlib `getpass`, `termios`) | Prowler 5.52.0 `providers/gcp/gcp_provider.py:40-45, 908-939`; import probe in the pull request |
+| `--fixer` is still defined only in `providers/aws/lib/arguments/arguments.py`; M365 still ships one fixer. `lib/cli/parser.py`, `lib/check/models.py`, `lib/outputs/finding.py` and `lib/powershell/powershell.py` are unchanged. `lib/outputs/ocsf/ocsf.py` now closes the array when the last batch is empty. 5.51.0 adds an ENS M365 compliance CSV under `out/compliance/`; the wrapper reads only `prowler.ocsf.json` | Prowler 5.52.0 source; `scanner/atesta_scanner/run.py` |
+| Not re-checked offline: the egress host list and the live behaviour of both providers. The live goldens (M365, Google) run before any customer scan uses 5.52.0 | Candidates below |
 
 ### Candidates (not verified; each closes in the named test)
 

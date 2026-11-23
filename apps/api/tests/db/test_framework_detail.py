@@ -194,7 +194,7 @@ def test_observations_use_snapshot_scan_time_and_never_another_tenant(
         conn.execute(
             text(
                 "INSERT INTO checks (engine, check_id, engine_version)"
-                " VALUES ('prowler', :check, '5.49.0')"
+                " VALUES ('prowler', :check, '5.52.0')"
             ),
             {"check": check},
         )
@@ -214,7 +214,7 @@ def test_observations_use_snapshot_scan_time_and_never_another_tenant(
                 text(
                     "INSERT INTO scans (id, organization_id, connection_id, provider, trigger,"
                     " status, engine, engine_version, ingested_at) VALUES (:id, :org, :connection,"
-                    " 'm365', 'user', 'succeeded', 'prowler', '5.49.0', :at)"
+                    " 'm365', 'user', 'succeeded', 'prowler', '5.52.0', :at)"
                 ),
                 {
                     "id": scan,

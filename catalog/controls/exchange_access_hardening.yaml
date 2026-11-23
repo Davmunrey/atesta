@@ -34,13 +34,13 @@ remediation_refs:
   - https://learn.microsoft.com/en-us/microsoft-365/admin/email/about-shared-mailboxes
   - https://learn.microsoft.com/en-us/graph/auth-limit-mailbox-access
   - https://learn.microsoft.com/en-us/azure/security/fundamentals/customer-lockbox-overview
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/admincenter/admincenter_organization_customer_lockbox_enabled/admincenter_organization_customer_lockbox_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_application_access_policy_restricts_mailbox_apps/exchange_application_access_policy_restricts_mailbox_apps.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_mailbox_policy_additional_storage_restricted/exchange_mailbox_policy_additional_storage_restricted.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_mailbox_primary_smtp_uses_custom_domain/exchange_mailbox_primary_smtp_uses_custom_domain.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_organization_delicensing_resiliency_enabled/exchange_organization_delicensing_resiliency_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_organization_modern_authentication_enabled/exchange_organization_modern_authentication_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_owa_mailbox_policy_personal_accounts_disabled/exchange_owa_mailbox_policy_personal_accounts_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_roles_assignment_policy_addins_disabled/exchange_roles_assignment_policy_addins_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_shared_mailbox_sign_in_disabled/exchange_shared_mailbox_sign_in_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_transport_config_smtp_auth_disabled/exchange_transport_config_smtp_auth_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/admincenter/admincenter_organization_customer_lockbox_enabled/admincenter_organization_customer_lockbox_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_application_access_policy_restricts_mailbox_apps/exchange_application_access_policy_restricts_mailbox_apps.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_mailbox_policy_additional_storage_restricted/exchange_mailbox_policy_additional_storage_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_mailbox_primary_smtp_uses_custom_domain/exchange_mailbox_primary_smtp_uses_custom_domain.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_organization_delicensing_resiliency_enabled/exchange_organization_delicensing_resiliency_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_organization_modern_authentication_enabled/exchange_organization_modern_authentication_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_owa_mailbox_policy_personal_accounts_disabled/exchange_owa_mailbox_policy_personal_accounts_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_roles_assignment_policy_addins_disabled/exchange_roles_assignment_policy_addins_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_shared_mailbox_sign_in_disabled/exchange_shared_mailbox_sign_in_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_transport_config_smtp_auth_disabled/exchange_transport_config_smtp_auth_disabled.py

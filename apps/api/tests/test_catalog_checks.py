@@ -39,7 +39,7 @@ def never_run() -> set[str]:
 
 @cache
 def controls() -> list[ControlContent]:
-    catalog = read_catalog(ROOT / "catalog", expected_checks=listed(), engine_version="5.49.0")
+    catalog = read_catalog(ROOT / "catalog", expected_checks=listed(), engine_version="5.52.0")
     return list(catalog.controls.values())
 
 

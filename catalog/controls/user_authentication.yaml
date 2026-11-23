@@ -33,12 +33,12 @@ remediation_refs:
   - https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-phone-options
   - https://learn.microsoft.com/en-us/entra/identity/authentication/howto-authentication-email-otp
   - https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-mfa-additional-context
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_users_mfa_enabled/entra_users_mfa_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_mfa_enforced_for_guest_users/entra_conditional_access_policy_mfa_enforced_for_guest_users.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_authentication_method_sms_voice_disabled/entra_authentication_method_sms_voice_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_authentication_method_email_otp_disabled/entra_authentication_method_email_otp_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_authentication_method_authenticator_show_context/entra_authentication_method_authenticator_show_context.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_device_code_flow_blocked/entra_conditional_access_policy_device_code_flow_blocked.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_less_secure_apps_disabled/security_less_secure_apps_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_login_challenges_configured/security_login_challenges_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_users_mfa_capable/entra_users_mfa_capable.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_users_mfa_enabled/entra_users_mfa_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_mfa_enforced_for_guest_users/entra_conditional_access_policy_mfa_enforced_for_guest_users.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_authentication_method_sms_voice_disabled/entra_authentication_method_sms_voice_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_authentication_method_email_otp_disabled/entra_authentication_method_email_otp_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_authentication_method_authenticator_show_context/entra_authentication_method_authenticator_show_context.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_device_code_flow_blocked/entra_conditional_access_policy_device_code_flow_blocked.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/security/security_less_secure_apps_disabled/security_less_secure_apps_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/security/security_login_challenges_configured/security_login_challenges_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_users_mfa_capable/entra_users_mfa_capable.py
