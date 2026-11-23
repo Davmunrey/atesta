@@ -1,6 +1,6 @@
 id: dora
 name: DORA
-version: 2022-2554.draft3
+version: 2022-2554.draft4
 jurisdiction: EU
 source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022R2554
 license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
@@ -61,6 +61,13 @@ attributes:
   - ctl.sign_in_controls
   - ctl.email_protection
   - ctl.workspace_security_alerts
+  - ctl.conditional_access_coverage
+  - ctl.device_management
+  - ctl.app_governance
+  - ctl.password_and_recovery
+  - ctl.hybrid_identity
+  - ctl.workspace_collaboration
+  - ctl.directory_governance
   source_refs:
   - https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022R2554
   - https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2554

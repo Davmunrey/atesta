@@ -1,0 +1,58 @@
+id: ctl.app_governance
+title_es: "Gobierno de aplicaciones e integraciones"
+title_en: "App and integration governance"
+description_es: |
+  Preparar: lista las aplicaciones registradas, las de terceros y quién puede autorizarlas.
+  1. Impide que las personas usuarias consientan aplicaciones o registren las suyas; limita el acceso de apps de terceros y del Marketplace.
+  2. Revisa credenciales de aplicaciones y principales de servicio: sin secretos de cliente, sin permisos privilegiados sin usar, sin propietarios en roles críticos.
+  3. Retira accesos heredados (módulo MSOnline, autenticación no moderna, POP/IMAP) y los webhooks entrantes de Chat.
+  Evidencia: inventario de aplicaciones, configuración de consentimiento y resultado del escaneo.
+  Límite: un PASS no revisa qué hace cada aplicación con los datos; esa evaluación es manual.
+description_en: |
+  Prepare: list the registered apps, the third-party ones, and who may authorise them.
+  1. Stop users from consenting to apps or registering their own; limit access for third-party and Marketplace apps.
+  2. Review credentials of apps and service principals: no client secrets, no unused privileged permissions, no owners on critical roles.
+  3. Remove legacy access (MSOnline module, non-modern authentication, POP/IMAP) and incoming Chat webhooks.
+  Evidence: the app inventory, consent settings and the scan result.
+  Limit: a PASS does not review what each app does with data; that assessment is manual.
+manual: false
+prowler_checks:
+  - entra_app_registration_client_secret_unused
+  - entra_app_registration_no_unused_privileged_permissions
+  - entra_app_registration_redirect_uris_secure
+  - entra_default_app_management_policy_enabled
+  - entra_service_principal_no_secrets_for_permanent_tier0_roles
+  - entra_service_principal_privileged_role_no_owners
+  - entra_thirdparty_integrated_apps_not_allowed
+  - entra_policy_restricts_user_consent_for_apps
+  - entra_policy_msol_powershell_blocked
+  - sharepoint_modern_authentication_required
+  - marketplace_apps_access_restricted
+  - security_app_access_restricted
+  - security_internal_apps_trusted
+  - chat_apps_installation_disabled
+  - chat_incoming_webhooks_disabled
+  - gmail_pop_imap_access_disabled
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/entra/identity-platform/certificate-credentials
+  - https://learn.microsoft.com/en-us/defender-cloud-apps/app-governance-visibility-insights-overview
+  - https://learn.microsoft.com/entra/identity-platform/reply-url
+  - https://learn.microsoft.com/en-us/graph/api/resources/tenantappmanagementpolicy
+  - https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/security-planning#prefer-certificate-credentials
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_app_registration_client_secret_unused/entra_app_registration_client_secret_unused.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_app_registration_no_unused_privileged_permissions/entra_app_registration_no_unused_privileged_permissions.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_app_registration_redirect_uris_secure/entra_app_registration_redirect_uris_secure.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_default_app_management_policy_enabled/entra_default_app_management_policy_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_service_principal_no_secrets_for_permanent_tier0_roles/entra_service_principal_no_secrets_for_permanent_tier0_roles.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_service_principal_privileged_role_no_owners/entra_service_principal_privileged_role_no_owners.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_thirdparty_integrated_apps_not_allowed/entra_thirdparty_integrated_apps_not_allowed.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_restricts_user_consent_for_apps/entra_policy_restricts_user_consent_for_apps.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_msol_powershell_blocked/entra_policy_msol_powershell_blocked.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/sharepoint/sharepoint_modern_authentication_required/sharepoint_modern_authentication_required.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/marketplace/marketplace_apps_access_restricted/marketplace_apps_access_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_app_access_restricted/security_app_access_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_internal_apps_trusted/security_internal_apps_trusted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/chat/chat_apps_installation_disabled/chat_apps_installation_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/chat/chat_incoming_webhooks_disabled/chat_incoming_webhooks_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_pop_imap_access_disabled/gmail_pop_imap_access_disabled.py

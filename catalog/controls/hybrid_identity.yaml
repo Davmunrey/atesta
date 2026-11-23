@@ -1,0 +1,36 @@
+id: ctl.hybrid_identity
+title_es: "Identidad híbrida con Active Directory"
+title_en: "Hybrid identity with Active Directory"
+description_es: |
+  Preparar: confirma si hay Active Directory local sincronizado con Entra; si no lo hay, documenta que no aplica.
+  1. Activa la sincronización de hash de contraseñas y la protección de contraseñas en el directorio local.
+  2. Bloquea la toma de objetos por coincidencia y retira el inicio de sesión único de conexión directa si no se usa.
+  3. Resuelve los problemas de salud abiertos de Defender for Identity.
+  Evidencia: configuración de Entra Connect, estado de Defender for Identity y resultado del escaneo.
+  Límite: los checks no revisan el directorio local en sí (cuentas, GPO, controladores de dominio).
+description_en: |
+  Prepare: confirm whether an on-premises Active Directory syncs with Entra; if not, document that this does not apply.
+  1. Turn on password hash sync and password protection for the on-premises directory.
+  2. Block object takeover by matching, and remove seamless single sign-on if it is not used.
+  3. Resolve open Defender for Identity health issues.
+  Evidence: Entra Connect settings, Defender for Identity status and the scan result.
+  Limit: the checks do not review the on-premises directory itself (accounts, GPOs, domain controllers).
+manual: false
+prowler_checks:
+  - entra_password_protection_on_premises_enforced
+  - entra_password_hash_sync_enabled
+  - entra_seamless_sso_disabled
+  - entra_directory_sync_object_takeover_blocked
+  - defenderidentity_health_issues_no_open
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/entra/identity/authentication/concept-password-ban-bad-on-premises
+  - https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/whatis-phs
+  - https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/how-to-connect-sso
+  - https://learn.microsoft.com/en-us/graph/api/resources/onpremisesdirectorysynchronization?view=graph-rest-1.0
+  - https://learn.microsoft.com/en-us/defender-for-identity/health-alerts
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_password_protection_on_premises_enforced/entra_password_protection_on_premises_enforced.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_password_hash_sync_enabled/entra_password_hash_sync_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_seamless_sso_disabled/entra_seamless_sso_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_directory_sync_object_takeover_blocked/entra_directory_sync_object_takeover_blocked.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defenderidentity/defenderidentity_health_issues_no_open/defenderidentity_health_issues_no_open.py

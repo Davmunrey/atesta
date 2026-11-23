@@ -1,0 +1,62 @@
+id: ctl.device_management
+title_es: "Gestión de dispositivos"
+title_en: "Device management"
+description_es: |
+  Preparar: decide qué dispositivos pueden acceder (corporativos, gestionados, personales) y cómo se inscriben.
+  1. Marca como no conformes los dispositivos sin política de cumplimiento y exige dispositivo gestionado o conforme para acceder.
+  2. Restringe quién une dispositivos, limita cuántos por persona, activa LAPS y evita que quien los registra sea administrador local.
+  3. Limita la sincronización y el acceso de escritorio desde equipos no gestionados.
+  Evidencia: políticas de cumplimiento y de acceso, configuración de registro y resultado del escaneo.
+  Límite: los checks no inventarían los equipos ni comprueban su cifrado o parches; eso sigue siendo manual.
+description_en: |
+  Prepare: decide which devices may connect (corporate, managed, personal) and how they enrol.
+  1. Mark devices without a compliance policy as not compliant, and require a managed or compliant device for access.
+  2. Restrict who can join devices, limit how many per person, turn on LAPS, and keep the registering user from becoming local administrator.
+  3. Limit sync and desktop access from unmanaged devices.
+  Evidence: compliance and access policies, registration settings and the scan result.
+  Limit: the checks do not inventory the devices or check their encryption or patches; that stays manual.
+manual: false
+prowler_checks:
+  - intune_device_compliance_policy_unassigned_devices_not_compliant_by_default
+  - entra_device_registration_global_admins_not_local_admins
+  - entra_device_registration_join_restricted
+  - entra_device_registration_laps_enabled
+  - entra_device_registration_max_devices_per_user_limited
+  - entra_device_registration_registering_user_not_local_admin
+  - entra_managed_device_required_for_authentication
+  - entra_managed_device_required_for_mfa_registration
+  - entra_conditional_access_policy_mdm_compliant_device_required
+  - entra_conditional_access_policy_compliant_device_hybrid_joined_device_mfa_required
+  - entra_conditional_access_policy_approved_client_app_required_for_mobile
+  - entra_conditional_access_policy_app_enforced_restrictions
+  - entra_conditional_access_policy_corporate_device_sign_in_frequency_enforced
+  - entra_conditional_access_policy_device_registration_mfa_required
+  - entra_intune_enrollment_sign_in_frequency_every_time
+  - sharepoint_onedrive_sync_restricted_unmanaged_devices
+  - entra_policy_default_user_cannot_read_bitlocker_keys
+  - drive_desktop_access_disabled
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/graph/api/resources/intune-deviceconfig-devicemanagementsettings?view=graph-rest-1.0
+  - https://learn.microsoft.com/en-us/entra/identity/devices/assign-local-admin
+  - https://learn.microsoft.com/en-us/entra/identity/devices/device-join-plan
+  - https://learn.microsoft.com/en-us/entra/identity/devices/howto-manage-local-admin-passwords
+  - https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/intune/intune_device_compliance_policy_unassigned_devices_not_compliant_by_default/intune_device_compliance_policy_unassigned_devices_not_compliant_by_default.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_device_registration_global_admins_not_local_admins/entra_device_registration_global_admins_not_local_admins.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_device_registration_join_restricted/entra_device_registration_join_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_device_registration_laps_enabled/entra_device_registration_laps_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_device_registration_max_devices_per_user_limited/entra_device_registration_max_devices_per_user_limited.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_device_registration_registering_user_not_local_admin/entra_device_registration_registering_user_not_local_admin.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_managed_device_required_for_authentication/entra_managed_device_required_for_authentication.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_managed_device_required_for_mfa_registration/entra_managed_device_required_for_mfa_registration.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_mdm_compliant_device_required/entra_conditional_access_policy_mdm_compliant_device_required.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_compliant_device_hybrid_joined_device_mfa_required/entra_conditional_access_policy_compliant_device_hybrid_joined_device_mfa_required.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_approved_client_app_required_for_mobile/entra_conditional_access_policy_approved_client_app_required_for_mobile.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_app_enforced_restrictions/entra_conditional_access_policy_app_enforced_restrictions.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_corporate_device_sign_in_frequency_enforced/entra_conditional_access_policy_corporate_device_sign_in_frequency_enforced.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_device_registration_mfa_required/entra_conditional_access_policy_device_registration_mfa_required.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_intune_enrollment_sign_in_frequency_every_time/entra_intune_enrollment_sign_in_frequency_every_time.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/sharepoint/sharepoint_onedrive_sync_restricted_unmanaged_devices/sharepoint_onedrive_sync_restricted_unmanaged_devices.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_default_user_cannot_read_bitlocker_keys/entra_policy_default_user_cannot_read_bitlocker_keys.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_desktop_access_disabled/drive_desktop_access_disabled.py

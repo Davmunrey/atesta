@@ -1,0 +1,44 @@
+id: ctl.directory_governance
+title_es: "Gobierno del directorio en Microsoft Entra"
+title_en: "Directory governance in Microsoft Entra"
+description_es: |
+  Preparar: decide quién crea grupos e inquilinos y cómo se revisan los invitados y los roles privilegiados.
+  1. Limita la creación de grupos de Microsoft 365, grupos de seguridad e inquilinos a administradores.
+  2. Programa revisiones de acceso para invitados y roles privilegiados; usa grupos dinámicos para invitados sin la regla memberOf.
+  3. Restringe los portales de administración y aprueba la clasificación de activos críticos en Defender XDR.
+  Evidencia: configuración del directorio, revisiones programadas y resultado del escaneo.
+  Límite: que exista una revisión de acceso programada no prueba que se haga; regístralas en Revisiones de acceso.
+description_en: |
+  Prepare: decide who creates groups and tenants and how guests and privileged roles are reviewed.
+  1. Limit creation of Microsoft 365 groups, security groups and tenants to administrators.
+  2. Schedule access reviews for guests and privileged roles; use dynamic groups for guests without the memberOf rule.
+  3. Restrict the admin portals and approve critical asset classification in Defender XDR.
+  Evidence: directory settings, scheduled reviews and the scan result.
+  Limit: a scheduled access review does not show it is done; record them in Access reviews.
+manual: false
+prowler_checks:
+  - entra_policy_default_user_cannot_create_m365_groups
+  - entra_policy_default_user_cannot_create_security_groups
+  - entra_policy_ensure_default_user_cannot_create_tenants
+  - entra_dynamic_group_for_guests_created
+  - entra_dynamic_group_member_of_rule_not_used
+  - entra_access_review_guest_users_configured
+  - entra_access_review_privileged_roles_configured
+  - entra_admin_portals_access_restriction
+  - defenderxdr_critical_asset_management_pending_approvals
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/microsoft-365/solutions/manage-creation-of-groups
+  - https://learn.microsoft.com/en-us/entra/identity/users/groups-self-service-management
+  - https://learn.microsoft.com/en-us/entra/fundamentals/users-default-permissions
+  - https://learn.microsoft.com/en-us/entra/identity/users/groups-create-rule
+  - https://learn.microsoft.com/entra/identity/users/groups-dynamic-rule-member-of
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_default_user_cannot_create_m365_groups/entra_policy_default_user_cannot_create_m365_groups.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_default_user_cannot_create_security_groups/entra_policy_default_user_cannot_create_security_groups.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_ensure_default_user_cannot_create_tenants/entra_policy_ensure_default_user_cannot_create_tenants.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_dynamic_group_for_guests_created/entra_dynamic_group_for_guests_created.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_dynamic_group_member_of_rule_not_used/entra_dynamic_group_member_of_rule_not_used.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_access_review_guest_users_configured/entra_access_review_guest_users_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_access_review_privileged_roles_configured/entra_access_review_privileged_roles_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_admin_portals_access_restriction/entra_admin_portals_access_restriction.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defenderxdr/defenderxdr_critical_asset_management_pending_approvals/defenderxdr_critical_asset_management_pending_approvals.py
