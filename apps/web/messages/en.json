@@ -1012,5 +1012,41 @@
     "failed": "Could not load",
     "loading": "Loading…",
     "notStartedCell": "Not started"
+  },
+  "gettingStarted": {
+    "title": "Getting started",
+    "progress": "{done} of {total, plural, one {# step} other {# steps}} done. Each step is marked by itself when you record it.",
+    "hide": "Hide",
+    "done": "Done",
+    "steps": {
+      "scope": {
+        "title": "Define the scope of {framework}",
+        "help": "System category and levels; with them Atesta proposes which measures apply."
+      },
+      "assess": {
+        "title": "Assess your first measures ({count} of {total, plural, one {#} other {#}})",
+        "help": "Say whether each measure applies and how it is implemented."
+      },
+      "team": {
+        "title": "Invite your team",
+        "help": "Share measures among their owners; management can join as a read-only auditor."
+      },
+      "policy": {
+        "title": "Record and approve your security policy",
+        "help": "Link the document and record who approved it and when."
+      },
+      "routine": {
+        "title": "Run an access review or a training",
+        "help": "Each closed routine leaves dated evidence."
+      },
+      "tool": {
+        "title": "Connect a tool that records evidence by itself",
+        "help": "Backups, deployments or scans send the evidence with a token."
+      },
+      "dossier": {
+        "title": "Record the review and open the {framework} dossier",
+        "help": "The security officer reviews; management reads the summary and signs."
+      }
+    }
   }
 }

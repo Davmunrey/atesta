@@ -1012,5 +1012,41 @@
     "failed": "No se ha podido cargar",
     "loading": "Cargando…",
     "notStartedCell": "Sin empezar"
+  },
+  "gettingStarted": {
+    "title": "Puesta en marcha",
+    "progress": "{done} de {total, plural, one {# paso} other {# pasos}} hechos. Cada paso se marca solo cuando lo registras.",
+    "hide": "Ocultar",
+    "done": "Hecho",
+    "steps": {
+      "scope": {
+        "title": "Define el alcance de {framework}",
+        "help": "Categoría del sistema y niveles; con eso Atesta propone qué medidas aplican."
+      },
+      "assess": {
+        "title": "Evalúa tus primeras medidas ({count} de {total, plural, one {#} other {#}})",
+        "help": "Indica si cada medida aplica y cómo la tienes implantada."
+      },
+      "team": {
+        "title": "Invita a tu equipo",
+        "help": "Reparte medidas entre quienes las llevan; la dirección puede entrar como auditor de solo lectura."
+      },
+      "policy": {
+        "title": "Registra y aprueba tu política de seguridad",
+        "help": "Enlaza el documento y registra quién lo aprobó y cuándo."
+      },
+      "routine": {
+        "title": "Haz una revisión de accesos o una formación",
+        "help": "Cada rutina cerrada deja una evidencia fechada."
+      },
+      "tool": {
+        "title": "Conecta una herramienta para registrar evidencias solas",
+        "help": "Copias de seguridad, despliegues o análisis envían la evidencia con un token."
+      },
+      "dossier": {
+        "title": "Registra la revisión y abre el dossier de {framework}",
+        "help": "El responsable de seguridad revisa; la dirección lee el resumen y firma."
+      }
+    }
   }
 }

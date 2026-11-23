@@ -8,8 +8,8 @@ export type ApiToken = components["schemas"]["TokenOut"];
 const org = (orgId: string) => ({ params: { path: { org_id: orgId } } });
 
 /** API tokens (evidence-ingestion-api spec); admins only. */
-export function useApiTokens(orgId: string) {
-  return useQuery({ queryKey: ["api-tokens", orgId], queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/api-tokens", org(orgId))) });
+export function useApiTokens(orgId: string, enabled = true) {
+  return useQuery({ queryKey: ["api-tokens", orgId], enabled, queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/api-tokens", org(orgId))) });
 }
 
 export function useCreateApiToken(orgId: string) {
