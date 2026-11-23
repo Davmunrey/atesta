@@ -15,7 +15,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from atesta_api.modules.billing.api import entitlements, has_framework, require_framework
+from atesta_api.modules.billing.api import entitlements, has_framework
 from atesta_api.modules.compliance.catalog_schema import ExpectedEvidenceItem, RequirementContext
 from atesta_api.modules.compliance.detail_context import public_context
 from atesta_api.modules.compliance.incidents import (
@@ -26,14 +26,15 @@ from atesta_api.modules.compliance.incidents import (
     clock_defs,
     open_incidents,
 )
-from atesta_api.modules.compliance.models import Framework, Mapping
+from atesta_api.modules.compliance.models import Mapping
+from atesta_api.modules.compliance.proposal_view import pending_proposals
+from atesta_api.modules.compliance.proposals import framework_for_key
 from atesta_api.modules.compliance.readiness import FrameworkReadiness, framework_readiness
 from atesta_api.modules.compliance.register import (
     AssessmentOut,
     ProposalOut,
     _assessments,
     _assignments,
-    _framework,
     _profile_levels,
     _proposal,
     _requirements,
@@ -58,6 +59,7 @@ class MeasureOut(BaseModel):
     proposal: ProposalOut
     assessment: AssessmentOut | None
     due_on: date | None
+    pending_proposal_id: uuid.UUID | None  # an API key's proposal awaiting a person
 
 
 class Citation(BaseModel):
@@ -103,13 +105,6 @@ def _granted(session: Session, org: uuid.UUID) -> list[FrameworkInfo]:
     ]
 
 
-def _in_plan(session: Session, org: uuid.UUID, framework_key: str) -> Framework:
-    """404 for an unknown framework, then 403 billing.plan_limit, as framework_in_plan does."""
-    framework = _framework(session, framework_key)
-    require_framework(session, org, framework_key)
-    return framework
-
-
 @router.get("/frameworks")
 def list_frameworks(caller: ComplianceReader, session: DbSession) -> list[FrameworkReadiness]:
     org, today = caller.organization_id, _today()
@@ -124,11 +119,12 @@ def list_measures(
     framework_key: str, caller: ComplianceReader, session: DbSession
 ) -> list[MeasureOut]:
     org = caller.organization_id
-    framework = _in_plan(session, org, framework_key)
+    framework = framework_for_key(session, org, framework_key)
     scope = _scope(session, org, framework_key)
     profile = _profile_levels(framework, scope)
     assessed = _assessments(session, org, framework_key)
     assigned = _assignments(session, org, framework_key)
+    pending = pending_proposals(session, org, framework_key)
     return [
         MeasureOut(
             code=r.code,
@@ -137,6 +133,7 @@ def list_measures(
             proposal=_proposal(r, scope, profile),
             assessment=assessed.get(r.code),
             due_on=assigned[r.code].due_on if r.code in assigned else None,
+            pending_proposal_id=pending[r.code].id if r.code in pending else None,
         )
         for r in _requirements(session, framework_key)
     ]
@@ -147,7 +144,7 @@ def read_measure(
     framework_key: str, code: str, caller: ComplianceReader, session: DbSession
 ) -> MeasureDetail:
     org = caller.organization_id
-    framework = _in_plan(session, org, framework_key)
+    framework = framework_for_key(session, org, framework_key)
     requirement = next((r for r in _requirements(session, framework_key) if r.code == code), None)
     if requirement is None:
         raise HTTPException(404, detail={"code": "compliance.requirement_not_found"})

@@ -4127,6 +4127,18 @@
             ],
             "title": "Due On"
           },
+          "pending_proposal_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pending Proposal Id"
+          },
           "proposal": {
             "$ref": "#/components/schemas/ProposalOut"
           },
@@ -4152,7 +4164,8 @@
           "title_en",
           "proposal",
           "assessment",
-          "due_on"
+          "due_on",
+          "pending_proposal_id"
         ],
         "title": "MeasureOut",
         "type": "object"
@@ -4568,6 +4581,102 @@
         "title": "PageReference",
         "type": "object"
       },
+      "PendingProposal": {
+        "properties": {
+          "applicability": {
+            "enum": [
+              "applies",
+              "not_applicable"
+            ],
+            "title": "Applicability",
+            "type": "string"
+          },
+          "evidence_statement_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Evidence Statement Ids",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "implementation": {
+            "enum": [
+              "not_implemented",
+              "partially_implemented",
+              "implemented"
+            ],
+            "title": "Implementation",
+            "type": "string"
+          },
+          "justification": {
+            "title": "Justification",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "performed_by": {
+            "title": "Performed By",
+            "type": "string"
+          },
+          "performed_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performed On"
+          },
+          "proposed_at": {
+            "format": "date-time",
+            "title": "Proposed At",
+            "type": "string"
+          },
+          "rationale": {
+            "title": "Rationale",
+            "type": "string"
+          },
+          "regularly_reviewed": {
+            "title": "Regularly Reviewed",
+            "type": "boolean"
+          },
+          "token_name": {
+            "title": "Token Name",
+            "type": "string"
+          },
+          "token_prefix": {
+            "title": "Token Prefix",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "applicability",
+          "implementation",
+          "regularly_reviewed",
+          "justification",
+          "performed_by",
+          "performed_on",
+          "evidence_statement_ids",
+          "notes",
+          "rationale",
+          "proposed_at",
+          "token_name",
+          "token_prefix"
+        ],
+        "title": "PendingProposal",
+        "type": "object"
+      },
       "PolicyIn": {
         "properties": {
           "location_url": {
@@ -4778,6 +4887,68 @@
         "title": "ProfileOut",
         "type": "object"
       },
+      "ProposalIn": {
+        "properties": {
+          "applicability": {
+            "$ref": "#/components/schemas/Applicability"
+          },
+          "evidence_statement_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 50,
+            "title": "Evidence Statement Ids",
+            "type": "array"
+          },
+          "implementation": {
+            "$ref": "#/components/schemas/Implementation"
+          },
+          "justification": {
+            "default": "",
+            "title": "Justification",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "title": "Notes",
+            "type": "string"
+          },
+          "performed_by": {
+            "default": "",
+            "title": "Performed By",
+            "type": "string"
+          },
+          "performed_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performed On"
+          },
+          "rationale": {
+            "title": "Rationale",
+            "type": "string"
+          },
+          "regularly_reviewed": {
+            "title": "Regularly Reviewed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "applicability",
+          "implementation",
+          "regularly_reviewed",
+          "rationale"
+        ],
+        "title": "ProposalIn",
+        "type": "object"
+      },
       "ProposalOut": {
         "properties": {
           "criterion": {
@@ -4838,6 +5009,59 @@
           "level"
         ],
         "title": "ProposalOut",
+        "type": "object"
+      },
+      "ProposalRecord": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "framework_key": {
+            "title": "Framework Key",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "proposed_at": {
+            "format": "date-time",
+            "title": "Proposed At",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "confirmed",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "framework_key",
+          "code",
+          "status",
+          "proposed_at",
+          "decided_at"
+        ],
+        "title": "ProposalRecord",
         "type": "object"
       },
       "PublicCampaign": {
@@ -5007,6 +5231,16 @@
           "code": {
             "title": "Code",
             "type": "string"
+          },
+          "pending_proposal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PendingProposal"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "proposal": {
             "$ref": "#/components/schemas/ProposalOut"
@@ -6857,6 +7091,67 @@
           }
         },
         "summary": "Read Measure",
+        "tags": [
+          "api-keys"
+        ]
+      }
+    },
+    "/api/v1/frameworks/{framework_key}/measures/{code}/proposals": {
+      "post": {
+        "operationId": "propose_api_v1_frameworks__framework_key__measures__code__proposals_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposalIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposalRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Propose",
         "tags": [
           "api-keys"
         ]
@@ -8870,6 +9165,141 @@
           }
         ],
         "summary": "Dossier",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/proposals/{proposal_id}/confirm": {
+      "post": {
+        "description": "The person's assessment, exactly as proposed; checked again against today's rules.",
+        "operationId": "confirm_api_v1_orgs__org_id__frameworks__framework_key__proposals__proposal_id__confirm_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssessmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Confirm",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/proposals/{proposal_id}/reject": {
+      "post": {
+        "operationId": "reject_api_v1_orgs__org_id__frameworks__framework_key__proposals__proposal_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposalRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Reject",
         "tags": [
           "compliance"
         ]

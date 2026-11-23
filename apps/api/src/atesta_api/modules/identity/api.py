@@ -12,6 +12,7 @@ from atesta_api.modules.identity.api_tokens import (
     ApiTokenCaller,
     key_router,
     require_scope,
+    token_labels,
 )
 from atesta_api.modules.identity.bff import SessionCrypto, SessionEndedError, session_ended_handler
 from atesta_api.modules.identity.bff import router as auth_router
@@ -78,5 +79,6 @@ __all__ = [
     "person",
     "router",
     "token_hash",
+    "token_labels",
     "wire_identity",
 ]

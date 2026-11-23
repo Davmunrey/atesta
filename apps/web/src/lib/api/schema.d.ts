@@ -69,6 +69,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/frameworks/{framework_key}/measures/{code}/proposals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Propose */
+        post: operations["propose_api_v1_frameworks__framework_key__measures__code__proposals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/gaps": {
         parameters: {
             query?: never;
@@ -590,6 +607,43 @@ export interface paths {
         get: operations["dossier_api_v1_orgs__org_id__frameworks__framework_key__dossier_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/proposals/{proposal_id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm
+         * @description The person's assessment, exactly as proposed; checked again against today's rules.
+         */
+        post: operations["confirm_api_v1_orgs__org_id__frameworks__framework_key__proposals__proposal_id__confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/proposals/{proposal_id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject */
+        post: operations["reject_api_v1_orgs__org_id__frameworks__framework_key__proposals__proposal_id__reject_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2701,6 +2755,8 @@ export interface components {
             code: string;
             /** Due On */
             due_on: string | null;
+            /** Pending Proposal Id */
+            pending_proposal_id: string | null;
             proposal: components["schemas"]["ProposalOut"];
             /** Title En */
             title_en: string | null;
@@ -2841,6 +2897,47 @@ export interface components {
             /** Section */
             section: string;
         };
+        /** PendingProposal */
+        PendingProposal: {
+            /**
+             * Applicability
+             * @enum {string}
+             */
+            applicability: "applies" | "not_applicable";
+            /** Evidence Statement Ids */
+            evidence_statement_ids: string[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Implementation
+             * @enum {string}
+             */
+            implementation: "not_implemented" | "partially_implemented" | "implemented";
+            /** Justification */
+            justification: string;
+            /** Notes */
+            notes: string;
+            /** Performed By */
+            performed_by: string;
+            /** Performed On */
+            performed_on: string | null;
+            /**
+             * Proposed At
+             * Format: date-time
+             */
+            proposed_at: string;
+            /** Rationale */
+            rationale: string;
+            /** Regularly Reviewed */
+            regularly_reviewed: boolean;
+            /** Token Name */
+            token_name: string;
+            /** Token Prefix */
+            token_prefix: string;
+        };
         /** PolicyIn */
         PolicyIn: {
             /** Location Url */
@@ -2913,6 +3010,34 @@ export interface components {
             /** Title Es */
             title_es: string;
         };
+        /** ProposalIn */
+        ProposalIn: {
+            applicability: components["schemas"]["Applicability"];
+            /** Evidence Statement Ids */
+            evidence_statement_ids?: string[];
+            implementation: components["schemas"]["Implementation"];
+            /**
+             * Justification
+             * @default
+             */
+            justification: string;
+            /**
+             * Notes
+             * @default
+             */
+            notes: string;
+            /**
+             * Performed By
+             * @default
+             */
+            performed_by: string;
+            /** Performed On */
+            performed_on?: string | null;
+            /** Rationale */
+            rationale: string;
+            /** Regularly Reviewed */
+            regularly_reviewed: boolean;
+        };
         /** ProposalOut */
         ProposalOut: {
             criterion?: components["schemas"]["GuideRef"] | null;
@@ -2926,6 +3051,30 @@ export interface components {
             /** Rule */
             rule: string | null;
             source?: components["schemas"]["GuideRef"] | null;
+        };
+        /** ProposalRecord */
+        ProposalRecord: {
+            /** Code */
+            code: string;
+            /** Decided At */
+            decided_at: string | null;
+            /** Framework Key */
+            framework_key: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Proposed At
+             * Format: date-time
+             */
+            proposed_at: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "confirmed" | "rejected";
         };
         /** PublicCampaign */
         PublicCampaign: {
@@ -2973,6 +3122,7 @@ export interface components {
             assignment: components["schemas"]["AssignmentOut"] | null;
             /** Code */
             code: string;
+            pending_proposal?: components["schemas"]["PendingProposal"] | null;
             proposal: components["schemas"]["ProposalOut"];
             /** Selection Basis */
             selection_basis: string | null;
@@ -3692,6 +3842,42 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeasureDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    propose_api_v1_frameworks__framework_key__measures__code__proposals_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProposalIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposalRecord"];
                 };
             };
             /** @description Validation Error */
@@ -4885,6 +5071,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Dossier"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_api_v1_orgs__org_id__frameworks__framework_key__proposals__proposal_id__confirm_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                proposal_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reject_api_v1_orgs__org_id__frameworks__framework_key__proposals__proposal_id__reject_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                framework_key: string;
+                proposal_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposalRecord"];
                 };
             };
             /** @description Validation Error */

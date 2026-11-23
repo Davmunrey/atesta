@@ -308,6 +308,78 @@ class RequirementAssessment(TenantMixin, Base):
     )
 
 
+class AssessmentProposal(TenantMixin, Base):
+    """An API key's proposed assessment of one measure (mcp-server spec, ADR-005).
+
+    Pending until a person decides; only a confirmation writes requirement_assessments, as that
+    person's. Updated only to record the decision. Free text is customer content (rule 2).
+    """
+
+    __tablename__ = "assessment_proposals"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        ForeignKeyConstraint(
+            ["organization_id", "assessment_id"],
+            ["requirement_assessments.organization_id", "requirement_assessments.id"],
+            ondelete="RESTRICT",
+        ),
+        CheckConstraint("applicability IN ('applies', 'not_applicable')", name="applicability"),
+        CheckConstraint(
+            "implementation IN ('not_implemented', 'partially_implemented', 'implemented')",
+            name="implementation",
+        ),
+        CheckConstraint("char_length(justification) <= 2000", name="justification_length"),
+        CheckConstraint("char_length(performed_by) <= 200", name="performed_by_length"),
+        CheckConstraint("char_length(notes) <= 2000", name="notes_length"),
+        CheckConstraint(
+            "char_length(btrim(rationale)) BETWEEN 1 AND 2000", name="rationale_length"
+        ),
+        CheckConstraint("cardinality(evidence_statement_ids) <= 50", name="evidence_count"),
+        CheckConstraint("status IN ('pending', 'confirmed', 'rejected')", name="status"),
+        CheckConstraint(
+            "(status = 'pending') = (decided_by IS NULL)"
+            " AND (status = 'pending') = (decided_at IS NULL)",
+            name="decided_together",
+        ),
+        CheckConstraint(
+            "(status = 'confirmed') = (assessment_id IS NOT NULL)",
+            name="confirmed_names_assessment",
+        ),
+        Index(
+            "uq_assessment_proposals_one_pending",
+            "organization_id",
+            "framework_key",
+            "requirement_code",
+            unique=True,
+            postgresql_where=text("status = 'pending'"),
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    framework_key: Mapped[str] = mapped_column(Text)
+    requirement_code: Mapped[str] = mapped_column(Text)
+    applicability: Mapped[str] = mapped_column(Text)
+    implementation: Mapped[str] = mapped_column(Text)
+    regularly_reviewed: Mapped[bool] = mapped_column(Boolean)
+    justification: Mapped[str] = mapped_column(Text, server_default="")
+    performed_by: Mapped[str] = mapped_column(Text, server_default="")
+    performed_on: Mapped[date | None] = mapped_column(Date)
+    evidence_statement_ids: Mapped[list[uuid.UUID]] = mapped_column(
+        ARRAY(Uuid), server_default=text("'{}'::uuid[]")
+    )
+    notes: Mapped[str] = mapped_column(Text, server_default="")
+    rationale: Mapped[str] = mapped_column(Text)
+    token_id: Mapped[uuid.UUID]
+    proposed_by: Mapped[uuid.UUID]
+    proposed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    status: Mapped[str] = mapped_column(Text, server_default="pending")
+    decided_by: Mapped[uuid.UUID | None]
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    assessment_id: Mapped[uuid.UUID | None]
+
+
 class AssessmentReview(TenantMixin, Base):
     """The organization's own reviewer's analysis of its self-assessment (requirement-register
     spec). Atesta records it; the customer's own reviewer is the reviewer, never Atesta."""

@@ -17,6 +17,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import func, select, update
+from sqlalchemy.orm import Session
 
 from atesta_api.modules.identity.context import (
     ContextReason,
@@ -325,6 +326,20 @@ def require_scope(scope: str | None) -> Callable[..., ApiCaller]:
 
 
 ApiTokenCaller = Annotated[ApiCaller, Depends(require_api_token)]
+
+
+def token_labels(
+    session: Session, organization_id: uuid.UUID, ids: set[uuid.UUID]
+) -> dict[uuid.UUID, tuple[str, str]]:
+    """Name and prefix of the organization's keys, for showing who proposed or wrote what."""
+    if not ids:
+        return {}
+    rows = session.execute(
+        select(ApiToken.id, ApiToken.name, ApiToken.prefix).where(
+            ApiToken.organization_id == organization_id, ApiToken.id.in_(ids)
+        )
+    )
+    return {row.id: (row.name, row.prefix) for row in rows}
 
 
 class KeyOut(BaseModel):
