@@ -74,3 +74,19 @@ other than `<name>_id: str`.
 - **Allowed only after a closure request:** an owner must have requested closure through the API,
   and 30 days must have passed.
 - **The receipt** holds row counts per table and the operator's note; no names or content.
+
+## Amendment 4 (proposed 2026-11-23, recorded-routines spec; the owner accepts it)
+
+- **New named read policy:** `training_campaigns` gets `training_token_read`, `FOR SELECT` on
+  `token_sha256 = app_setting_text('app.training_token_sha256')`. It works like
+  `invitation_token_read`: someone with a secret training link reads that one campaign, and
+  nothing else, before the organization is known.
+- **New setting:** `app.training_token_sha256`, set only by
+  `identity.api.enter_training_link_context()`. The token itself travels in the URL fragment and
+  the request body, never in a query string (400), and is never stored.
+- **Fifth reason to enter an organization's context:** `training_link`, after a campaign was
+  read through a valid link that is open and not past its closing date. Writes then pass
+  `tenant_isolation` as usual. The only write is one acknowledgement row (a name and an email),
+  with at most 1000 per campaign.
+- **Why not a user context:** the people who confirm training are often not Atesta users, and
+  making them sign up would stop the routine from being used.

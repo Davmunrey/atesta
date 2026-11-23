@@ -27,6 +27,12 @@ export const orgAccessReview = (orgId: string, id: string): string =>
   `/app/access-review?org=${encodeURIComponent(orgId)}&id=${encodeURIComponent(id)}`;
 
 export const orgPolicies = (orgId: string): string => `/app/policies?org=${encodeURIComponent(orgId)}`;
+export const orgTraining = (orgId: string): string => `/app/training-campaigns?org=${encodeURIComponent(orgId)}`;
+export const orgTrainingCampaign = (orgId: string, id: string): string =>
+  `/app/training-campaign?org=${encodeURIComponent(orgId)}&id=${encodeURIComponent(id)}`;
+export const orgIncidents = (orgId: string): string => `/app/incidents?org=${encodeURIComponent(orgId)}`;
+export const orgIncident = (orgId: string, id: string): string =>
+  `/app/incident?org=${encodeURIComponent(orgId)}&id=${encodeURIComponent(id)}`;
 
 export const orgMyWork = (orgId: string): string => `/app/my-work?org=${encodeURIComponent(orgId)}`;
 

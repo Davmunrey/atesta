@@ -16,6 +16,7 @@ from sqlalchemy import select, update
 from sqlalchemy.dialects.postgresql import distinct_on
 from sqlalchemy.orm import Session
 
+from atesta_api.modules.compliance.incidents import open_incidents
 from atesta_api.modules.compliance.models import (
     AccessReview,
     AccessReviewDecision,
@@ -23,6 +24,8 @@ from atesta_api.modules.compliance.models import (
     Policy,
     PolicyApproval,
 )
+from atesta_api.modules.compliance.text import collapse, filled
+from atesta_api.modules.compliance.training import unclosed_campaigns
 from atesta_api.modules.evidence.api import record_attestation
 from atesta_api.modules.identity.api import Member, Role, person, require_member, require_role
 from atesta_api.platform.audit import record
@@ -38,12 +41,8 @@ DUE_SOON_DAYS = 30
 type Decision = Literal["keep", "revoke"]
 
 
-def _not_found(what: str) -> HTTPException:
-    return HTTPException(404, detail={"code": f"compliance.{what}_not_found"})
-
-
-def _clean(value: str) -> str:
-    return " ".join(value.split())
+def _error(status: int, code: str) -> HTTPException:
+    return HTTPException(status, detail={"code": code})
 
 
 def _say(locale: str, key: str, **values: object) -> str:
@@ -58,10 +57,15 @@ class AccountIn(BaseModel):
     account: str = Field(min_length=1, max_length=320)
     detail: str = Field(default="", max_length=200)
 
-    @field_validator("account", "detail")
+    @field_validator("account")
     @classmethod
     def tidy(cls, value: str) -> str:
-        return _clean(value)
+        return filled(value)
+
+    @field_validator("detail")
+    @classmethod
+    def tidy_detail(cls, value: str) -> str:
+        return collapse(value)
 
 
 class AccessReviewIn(BaseModel):
@@ -73,7 +77,7 @@ class AccessReviewIn(BaseModel):
     @field_validator("title", "system")
     @classmethod
     def tidy(cls, value: str) -> str:
-        return _clean(value)
+        return filled(value)
 
 
 class AccessReviewSummary(BaseModel):
@@ -115,7 +119,7 @@ def _review(session: Session, org: uuid.UUID, review_id: uuid.UUID) -> AccessRev
         )
     )
     if row is None:
-        raise _not_found("access_review")
+        raise _error(404, "compliance.access_review_not_found")
     return row
 
 
@@ -240,12 +244,12 @@ def decide(
         )
     )
     if entry is None:
-        raise _not_found("access_review_entry")
+        raise _error(404, "compliance.access_review_entry_not_found")
     row = AccessReviewDecision(
         organization_id=org,
         entry_id=entry.id,
         decision=body.decision,
-        note=_clean(body.note),
+        note=collapse(body.note),
         decided_by=member.user_id,
     )
     session.add(row)
@@ -337,7 +341,7 @@ class PolicyIn(BaseModel):
     @field_validator("title")
     @classmethod
     def tidy(cls, value: str) -> str:
-        return _clean(value)
+        return filled(value)
 
 
 class ApprovalIn(BaseModel):
@@ -349,7 +353,7 @@ class ApprovalIn(BaseModel):
     @field_validator("version", "approver_name")
     @classmethod
     def tidy(cls, value: str) -> str:
-        return _clean(value)
+        return filled(value)
 
 
 class ApprovalOut(BaseModel):
@@ -443,7 +447,7 @@ def approve_policy(
         select(Policy).where(Policy.organization_id == org, Policy.id == policy_id)
     )
     if policy is None:
-        raise _not_found("policy")
+        raise _error(404, "compliance.policy_not_found")
     approval = PolicyApproval(
         organization_id=org,
         policy_id=policy.id,
@@ -492,12 +496,26 @@ def approve_policy(
 # --- what falls due ------------------------------------------------------------------------
 
 
+class ClockLabel(BaseModel):
+    es: str
+    en: str
+    framework: str
+
+
 class DueItem(BaseModel):
-    kind: Literal["policy_review", "policy_unapproved", "access_review_overdue"]
+    kind: Literal[
+        "policy_review",
+        "policy_unapproved",
+        "access_review_overdue",
+        "training_unclosed",
+        "incident_clock",
+    ]
     id: uuid.UUID
     title: str
     due_on: date | None
     overdue: bool
+    due_at: datetime | None = None  # incident clocks run to the minute
+    clock: ClockLabel | None = None
 
 
 @router.get("/routines/due")
@@ -547,4 +565,31 @@ def routines_due(
         DueItem(kind="access_review_overdue", id=r.id, title=r.title, due_on=r.due_on, overdue=True)
         for r in overdue_reviews
     ]
-    return sorted(items, key=lambda i: (not i.overdue, i.due_on or date.max))
+    items += [
+        DueItem(kind="training_unclosed", id=c.id, title=c.title, due_on=c.closes_on, overdue=True)
+        for c in unclosed_campaigns(session, org)
+    ]
+    for incident in open_incidents(session, org):
+        for clock in incident.clocks:
+            if clock.state not in ("running", "overdue") or clock.due_at is None:
+                continue
+            items.append(
+                DueItem(
+                    kind="incident_clock",
+                    id=incident.id,
+                    title=incident.title,
+                    due_on=clock.due_at.date(),
+                    due_at=clock.due_at,
+                    overdue=clock.state == "overdue",
+                    clock=ClockLabel(
+                        es=clock.title_es, en=clock.title_en, framework=clock.framework_name
+                    ),
+                )
+            )
+    return sorted(
+        items,
+        key=lambda i: (
+            not i.overdue,
+            i.due_at or datetime.combine(i.due_on or date.max, datetime.min.time(), UTC),
+        ),
+    )

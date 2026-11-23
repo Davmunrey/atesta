@@ -19,7 +19,7 @@ function securityHeaders(path) {
     "content-security-policy": policy,
     "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
     "x-content-type-options": "nosniff",
-    "referrer-policy": path.startsWith("/invite") ? "no-referrer" : "same-origin",
+    "referrer-policy": path.startsWith("/invite") || path.startsWith("/training") ? "no-referrer" : "same-origin",
   };
 }
 

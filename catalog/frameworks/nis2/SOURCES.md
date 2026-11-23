@@ -64,3 +64,21 @@ Annex II is covered by the 73 imported measures. Every other unit is excluded wi
 - **English:** only `R(04)` (OJ L, 2023/90206, 22.12.2023) covers English.
   - It corrects Article 19(1) alone ("on 17 January 2025" becomes "by 17 January 2025"); captured text SHA-256 `fa8913a509771efdab0418a38f7381f1d01b8340d9638ff004b7d2f418172c75`.
   - Article 19 is not imported, so the imported text is unaffected.
+
+## Reporting clocks (draft2, recorded-routines spec)
+
+- `early_warning`: 24 hours, from Article 23(4)(a) ("en el plazo de veinticuatro horas desde que se
+  haya tenido constancia del incidente significativo" / "within 24 hours of becoming aware of the
+  significant incident").
+- `notification`: 72 hours, from Article 23(4)(b) ("en el plazo de setenta y dos horas" / "within
+  72 hours of becoming aware").
+- `final_report`: one month after the notification under (b), from Article 23(4)(d) ("a más
+  tardar un mes después de presentar la notificación del incidente contemplada en la letra b)" /
+  "not later than one month after the submission of the incident notification under point (b)").
+- All three need the significant-incident flag. The quoted texts are the imported
+  `official_text_es` and `official_text_en` of `art23.4a`, `art23.4b` and `art23.4d`.
+- Not modelled:
+  - the intermediate report (23(4)(c)), which is due only on request;
+  - the case of an incident still ongoing at the final report (23(4)(e)): a progress report then,
+    and a final report within one month of handling the incident. That month starts from an
+    event Atesta does not record. Notes cover it for now.

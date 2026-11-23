@@ -41,3 +41,12 @@ This pack cannot be scored, including when development draft visibility is enabl
 
 The Publications Office SPARQL endpoint lists three corrigenda, `32016R0679R(01)` to `R(03)`.
 The consolidated version above incorporates the ones in Spanish and English.
+
+## Reporting clock (draft2, recorded-routines spec)
+
+- `breach_notification`: 72 hours, from Article 33(1) ("a más tardar 72 horas después de que haya
+  tenido constancia de ella" / "not later than 72 hours after having become aware of it"). It
+  needs the personal-data flag. The quoted texts are the imported `official_text_es` and
+  `official_text_en` of `art33.1`.
+- Article 33(1) applies "where feasible" and not when the breach is unlikely to result in a risk;
+  Atesta shows the clock and leaves that judgement to the organization (ADR-005).

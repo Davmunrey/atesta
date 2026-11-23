@@ -95,6 +95,26 @@ class TermLabel(Content):
     en: Text
 
 
+class ReportingClock(Content):
+    """A reporting deadline copied from the official text (recorded-routines spec). It starts when
+    the organization became aware of the incident, or when the clock named in `after` was met."""
+
+    key: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{0,39}$")]
+    title_es: Text
+    title_en: Text
+    hours: Annotated[int, Field(ge=1, le=8760)] | None = None
+    months: Annotated[int, Field(ge=1, le=36)] | None = None
+    after: Text | None = None
+    needs: Literal["significant", "personal_data"]
+    requirement: Text
+
+    @model_validator(mode="after")
+    def one_duration(self) -> Self:
+        if (self.hours is None) == (self.months is None):
+            raise ValueError("a reporting clock lasts hours or months, not both")
+        return self
+
+
 class PackContext(Content):
     content_state: Literal["template", "partial", "complete"]
     assessment_enabled: Literal[False]
@@ -113,6 +133,7 @@ class PackContext(Content):
     # because JSONB does not keep object key order.
     groups_es: list[GroupHeading] = Field(default_factory=list)
     term_labels: list[TermLabel] = Field(default_factory=list)
+    reporting_clocks: list[ReportingClock] = Field(default_factory=list)
 
 
 class PackMetadata(Content):

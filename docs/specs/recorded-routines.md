@@ -49,27 +49,47 @@ control, so it shows wherever evidence is read.
 
 **Training acknowledgements**
 - [ ] **Create (admins):** a title, an HTTPS link to the material and a closing date. The secret
-  link is shown once; the API keeps only its SHA-256, as with invitations.
-- [ ] **Confirm (anyone with the link, no account):** the confirmation page asks for a full name
-  and an email, and records the acknowledgement once per email.
-  - **Refused:** a closed campaign (410), an unknown link (404), more than 1000 confirmations
-    (409) and a repeated email (200, unchanged).
-  - **Database access:** the public endpoint reads the campaign through a named read policy keyed
-    on the token's SHA-256, then writes in the organization's context. This is ADR-012 amendment
-    4, proposed.
+  link is shown once and carries the token in the URL fragment; the API keeps only its SHA-256,
+  as with invitations.
+- [ ] **Confirm (anyone with the link, no account):** the public page shows the title and the
+  material, then asks for a full name and an email. One acknowledgement per email.
+  - **Refused:** a closed campaign or one past its closing date (410), an unknown link (404),
+    more than 1000 acknowledgements (409). A repeated email returns 200 and changes nothing.
+  - **The token never travels in a query string** (400), as with invitations.
+  - **Database access:** the public endpoint reads the campaign through a named read policy,
+    `training_token_read`, keyed on the token's SHA-256. It then enters the organization's
+    context for a fifth reason, `training_link`, and writes under `tenant_isolation`. This is
+    ADR-012 amendment 4, proposed.
+- [ ] **Read (members):** campaigns with their counts; a campaign with its acknowledgements.
 - [ ] **Close (admins):** writes an evidence statement on `ctl.people_awareness` with the count.
+  A closed campaign takes no more acknowledgements.
+- [ ] **Due:** an open campaign past its closing date appears in "Ahora", as a reminder to close it.
 
 **Incidents**
-- [ ] **Record (contributors and admins):** a title, when the incident was detected, and two
-  flags: significant, and affects personal data.
+- [ ] **Record (contributors and admins):** a title, when the organization became aware of the
+  incident, and two flags: significant, and affects personal data. Incidents are append-only;
+  their history is their updates.
 - [ ] **Reporting clocks:** they come from framework packs as content (rule 9), in
-  `reporting_clocks`. Each clock has a title in ES and EN, a duration in hours, what it starts
-  from (detection, or another clock), the condition (significant or personal data) and the
-  requirement it serves. Durations are copied from the official text:
-  - NIS2 Art. 23(4)(a), (b) and (d): 24 h, 72 h, and one month after the notification;
-  - GDPR Art. 33(1): 72 h.
-- [ ] **Updates (append-only):** an update for a clock stops it. Notes and closing are updates too.
-- [ ] **Overdue:** a clock past due appears in "Ahora".
+  `reporting_clocks`. Each clock has:
+  - a key, unique in its pack, and a title in ES and EN;
+  - a duration in hours or in months;
+  - what it starts from: becoming aware, or another clock of the same pack being met;
+  - the flag it needs (significant, or personal data);
+  - the requirement it serves, which must exist in the pack.
+
+  Durations are copied from the official text:
+  - NIS2 Art. 23(4)(a) and (b): 24 h and 72 h from becoming aware of the significant incident;
+    (d): one month after the notification under (b);
+  - GDPR Art. 33(1): 72 h after becoming aware of the breach.
+- [ ] **Updates (append-only, contributors and admins):** a note, a clock met (once per clock),
+  or closing. A closed incident takes no more updates (409).
+- [ ] **Clock states**, computed from pack content and updates: met (with the time), running
+  (with the due time), overdue, or waiting for the clock it starts from. A clock is computed
+  only from packs that are active in the catalog.
+- [ ] **Closing** writes an evidence statement on `ctl.incident_response`: when the
+  organization became aware, when the incident closed, and each clock met and on time or late.
+- [ ] **"Ahora":** each running or overdue clock of an open incident is an item, with its due
+  time.
 
 ## Out of scope
 

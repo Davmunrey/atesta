@@ -8,6 +8,9 @@ export type AccessReview = components["schemas"]["AccessReviewOut"];
 export type AccountInput = components["schemas"]["AccountIn"];
 export type Policy = components["schemas"]["PolicyOut"];
 export type DueItem = components["schemas"]["DueItem"];
+export type TrainingCampaign = components["schemas"]["CampaignOut"];
+export type Incident = components["schemas"]["IncidentOut"];
+export type IncidentClock = components["schemas"]["ClockOut"];
 
 const org = (orgId: string) => ({ params: { path: { org_id: orgId } } });
 
@@ -53,6 +56,8 @@ function useRoutineMutation<I, O>(orgId: string, fn: (input: I) => Promise<O>) {
       client.invalidateQueries({ queryKey: ["access-reviews", orgId] }),
       client.invalidateQueries({ queryKey: ["policies", orgId] }),
       client.invalidateQueries({ queryKey: ["routines-due", orgId] }),
+      client.invalidateQueries({ queryKey: ["training", orgId] }),
+      client.invalidateQueries({ queryKey: ["incidents", orgId] }),
     ]),
   });
 }
@@ -88,6 +93,62 @@ export function useApprovePolicy(orgId: string) {
 
 export function useRoutinesDue(orgId: string) {
   return useQuery({ queryKey: ["routines-due", orgId], retry: false, queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/routines/due", org(orgId))) });
+}
+
+export function useTrainingCampaigns(orgId: string) {
+  return useQuery({ queryKey: ["training", orgId], queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/training-campaigns", org(orgId))) });
+}
+
+export function useTrainingCampaign(orgId: string, campaignId: string) {
+  return useQuery({
+    queryKey: ["training", orgId, campaignId], retry: false,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/training-campaigns/{campaign_id}", { params: { path: { org_id: orgId, campaign_id: campaignId } } })),
+  });
+}
+
+export function useCreateTraining(orgId: string) {
+  return useRoutineMutation(orgId, (body: components["schemas"]["CampaignIn"]) =>
+    unwrap(api.POST("/api/v1/orgs/{org_id}/training-campaigns", { ...org(orgId), body })));
+}
+
+export function useCloseTraining(orgId: string, campaignId: string) {
+  return useRoutineMutation(orgId, () =>
+    unwrap(api.POST("/api/v1/orgs/{org_id}/training-campaigns/{campaign_id}/close", { params: { path: { org_id: orgId, campaign_id: campaignId } } })));
+}
+
+/** The public training link (no account): the token goes in the body, never in a URL. */
+export function useTrainingLink(token: string | null) {
+  return useQuery({
+    queryKey: ["training-link", token], retry: false, enabled: token !== null,
+    queryFn: () => unwrap(api.POST("/api/v1/training/link", { body: { token: token ?? "" } })),
+  });
+}
+
+export function useAcknowledge() {
+  return useMutation({
+    mutationFn: (body: components["schemas"]["AcknowledgeIn"]) => unwrap(api.POST("/api/v1/training/acknowledge", { body })),
+  });
+}
+
+export function useIncidents(orgId: string) {
+  return useQuery({ queryKey: ["incidents", orgId], queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/incidents", org(orgId))) });
+}
+
+export function useIncident(orgId: string, incidentId: string) {
+  return useQuery({
+    queryKey: ["incidents", orgId, incidentId], retry: false,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/incidents/{incident_id}", { params: { path: { org_id: orgId, incident_id: incidentId } } })),
+  });
+}
+
+export function useCreateIncident(orgId: string) {
+  return useRoutineMutation(orgId, (body: components["schemas"]["IncidentIn"]) =>
+    unwrap(api.POST("/api/v1/orgs/{org_id}/incidents", { ...org(orgId), body })));
+}
+
+export function useIncidentUpdate(orgId: string, incidentId: string) {
+  return useRoutineMutation(orgId, (body: components["schemas"]["UpdateIn"]) =>
+    unwrap(api.POST("/api/v1/orgs/{org_id}/incidents/{incident_id}/updates", { params: { path: { org_id: orgId, incident_id: incidentId } }, body })));
 }
 
 /** SHA-256 of a file, computed in the browser; the file never leaves the device. */

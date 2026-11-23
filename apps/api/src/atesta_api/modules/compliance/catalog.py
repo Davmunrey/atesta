@@ -113,11 +113,25 @@ def read_catalog(root: Path, *, expected_checks: set[str], engine_version: str) 
         _unique([t.term for t in metadata.attributes.term_labels], "term label")
         if terms - {t.term for t in metadata.attributes.term_labels}:
             raise ValueError(f"scope terms without readable labels in {metadata.id}")
+        _check_clocks(pack, codes)
         if any(not any(c.manual for c in group) for group in mapped.values()):
             raise ValueError("candidate mappings must retain documentary review")
         catalog.packs.append(pack)
     _unique([p.metadata.id for p in catalog.packs], "framework")
     return catalog
+
+
+def _check_clocks(pack: Pack, codes: set[str]) -> None:
+    """A clock serves a requirement of its pack and starts from awareness or an earlier clock."""
+    seen: set[str] = set()
+    for clock in pack.metadata.attributes.reporting_clocks:
+        if clock.requirement not in codes:
+            raise ValueError(f"reporting clock {clock.key} names an unknown requirement")
+        if clock.key in seen:
+            raise ValueError(f"duplicate reporting clock {clock.key}")
+        if clock.after is not None and clock.after not in seen:
+            raise ValueError(f"reporting clock {clock.key} starts from an unknown clock")
+        seen.add(clock.key)
 
 
 def _check_coverage(pack: Pack, codes: set[str]) -> None:

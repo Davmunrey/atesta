@@ -27,6 +27,10 @@ TENANT = frozenset(
         "access_review_decisions",
         "policies",
         "policy_approvals",
+        "training_campaigns",
+        "training_acknowledgements",
+        "incidents",
+        "incident_updates",
     }
 )
 APPEND_ONLY = frozenset(
@@ -47,6 +51,9 @@ APPEND_ONLY = frozenset(
         "access_review_decisions",
         "policies",
         "policy_approvals",
+        "training_acknowledgements",
+        "incidents",
+        "incident_updates",
     }
 )
 GLOBAL_IDENTITY = frozenset({"users"})

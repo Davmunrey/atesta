@@ -7,14 +7,21 @@ import { type ReactNode, useDeferredValue, useEffect, useId, useRef, useState, u
 import { useOverview } from "@/lib/api/hooks";
 import { useSearch } from "@/lib/api/register-hooks";
 import { LOGOUT_URL } from "@/lib/auth";
-import { type Membership, orgAccessReviews, orgActivity, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgMyWork, orgPolicies, orgSettings, selectOrg } from "@/lib/org";
+import { type Membership, orgAccessReviews, orgActivity, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgIncidents, orgMyWork, orgPolicies, orgSettings, orgTraining, selectOrg } from "@/lib/org";
 import { canInvite, canReviewControls, isContributor } from "@/lib/permissions";
 import { useMe } from "./auth-gate";
 import { Icon, type IconName } from "./icons";
 import { LocaleSwitcher } from "./locale-switcher";
 import { SiteFooter } from "./site-footer";
 
-const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings", "/app/access-reviews", "/app/access-review", "/app/policies"];
+// A detail page lights up its list in the menu.
+const DETAIL_PAGES: Record<string, string> = {
+  "/app/framework": "/app/frameworks",
+  "/app/access-review": "/app/access-reviews",
+  "/app/training-campaign": "/app/training-campaigns",
+  "/app/incident": "/app/incidents",
+};
+const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings", "/app/access-reviews", "/app/access-review", "/app/policies", "/app/training-campaigns", "/app/training-campaign", "/app/incidents", "/app/incident"];
 const DESKTOP = "(min-width: 64rem)";
 
 // The collapsed rail is a remembered preference; media and storage are read as external stores.
@@ -49,6 +56,8 @@ export function useSections(org: Membership | null): { group: string; items: Sec
     { group: c("groups.records"), items: [
       { key: "/app/access-reviews", label: c("accessReviews"), href: orgAccessReviews(id), icon: "reviews" as const },
       { key: "/app/policies", label: c("policies"), href: orgPolicies(id), icon: "policies" as const },
+      { key: "/app/training-campaigns", label: c("training"), href: orgTraining(id), icon: "training" as const },
+      { key: "/app/incidents", label: c("incidents"), href: orgIncidents(id), icon: "incidents" as const },
     ] },
     { group: c("groups.team"), items: [
       ...(isContributor(org.role) ? [{ key: "/app/members", label: t("members"), href: orgMembers(id), icon: "members" as const }] : []),
@@ -104,7 +113,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
 function SideNav({ id, org, pathname, collapsed, onNavigate, onEscape }: { id: string; org: Membership; pathname: string; collapsed: boolean; onNavigate: () => void; onEscape: () => void }) {
   const t = useTranslations("org");
   const groups = useSections(org);
-  const current = pathname === "/app/framework" ? "/app/frameworks" : pathname === "/app/access-review" ? "/app/access-reviews" : pathname;
+  const current = DETAIL_PAGES[pathname] ?? pathname;
   return <nav id={id} aria-label={t("sections")} className="sidenav" data-collapsed={collapsed ? "true" : "false"}
     onKeyDown={(e) => { if (e.key === "Escape") onEscape(); }}>
     {groups.map(({ group, items }) => <div key={group} className="sidenav-group">

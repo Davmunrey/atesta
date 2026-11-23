@@ -154,3 +154,14 @@
   @media (max-width: 40rem) { .policy-row { grid-template-columns: minmax(0, 1fr); } }
   .policy-list .routine-form { margin-top: 1rem; padding: 1rem; border-radius: var(--radius-md); background: var(--color-surface); }
 }
+
+/* Recorded routines, part B: the one-time link, checkboxes in forms, the incident timeline. */
+.link-once { display: grid; gap: 0.5rem; margin-top: 1rem; }
+.link-once-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.link-once-row input { flex: 1 1 16rem; min-width: 0; font-family: var(--font-mono, ui-monospace, monospace); }
+.checkbox-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.checkbox-row > .text-sm { flex-basis: 100%; }
+.clock-action { margin-top: 0.375rem; display: block; }
+.update-list { display: grid; gap: 0.75rem; margin-bottom: 1rem; }
+.update-list li { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: 0.75rem; overflow-wrap: anywhere; }
+@media (max-width: 40rem) { .update-list li { grid-template-columns: minmax(0, 1fr); gap: 0.125rem; } }

@@ -9,6 +9,7 @@ SETTING_NAMES = (
     ("user_id", "app.user_id"),
     ("organization_id", "app.organization_id"),
     ("invitation_token_sha256", "app.invitation_token_sha256"),
+    ("training_token_sha256", "app.training_token_sha256"),
 )
 
 
@@ -18,3 +19,4 @@ class TenantContext:
     user_id: uuid.UUID | None = None
     organization_id: uuid.UUID | None = None
     invitation_token_sha256: str | None = None
+    training_token_sha256: str | None = None
