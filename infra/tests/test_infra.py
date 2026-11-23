@@ -387,6 +387,9 @@ def test_the_api_service_runs_privately_behind_its_load_balancer() -> None:
 def test_the_load_balancer_takes_only_cloudfront_over_tls_1_3() -> None:
     alb = EDGE["aws_lb.api"]
     assert alb["drop_invalid_header_fields"] is True
+    assert alb["access_logs"] == [{"bucket": "${aws_s3_bucket.alb_logs.id}", "enabled": True}]
+    sse = EDGE["aws_s3_bucket_server_side_encryption_configuration.alb_logs"]["rule"][0]
+    assert sse["apply_server_side_encryption_by_default"][0]["sse_algorithm"] == "AES256"
     listeners = [k for k in EDGE if k.startswith("aws_lb_listener.")]
     assert listeners == ["aws_lb_listener.https"]
     assert (
