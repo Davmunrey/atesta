@@ -215,8 +215,8 @@ Controls and navigation use the small radius; shared primary actions and the col
 
 ## Brand system
 
-Introduced with the landing (#323, landing-legal amendment A1, accepted by the owner on 2026-11-23). The console adopts it
-later; until then it keeps its own wordmark treatment.
+Introduced with the landing (#323, landing-legal amendment A1, accepted by the owner on 2026-11-23) and adopted by the
+console (#330).
 
 **Mark.** A double seal ring around three ledger lines, with the middle line on the highlighter: a
 record that has been attested. Original work, geometry only, in `apps/web/public/brand/atesta-mark.svg`
@@ -268,6 +268,11 @@ The floor stays 13px.
 | Muted text on ink | `--color-on-ink-muted` | #c0baae |
 
 Every pair is checked by `tests/unit/contrast.test.ts`.
+
+**In the console (#330).** The motif is used sparingly:
+- **Top bar:** the lockup on ink (mark at 1.5rem, wordmark Newsreader 600).
+- **Page titles:** the highlighter tab under every page title.
+- **Key figure:** one per page, the overview's measures assessed. In light mode it gets the band behind ink. In dark mode it is set in the accent yellow with no band, because light text on yellow fails contrast. In print it is plain.
 
 **Product frames.** Every product view on public pages sits in a frame: an ink bar carrying the mark,
 the context and a "Datos de ejemplo" label while the fixture is illustrative.
