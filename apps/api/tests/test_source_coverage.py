@@ -230,3 +230,14 @@ def test_dora_shows_the_major_incident_criteria_of_2024_1772_verbatim() -> None:
     assert (major.official_text_en or "").startswith(
         "1. An incident shall be considered a major incident for the purposes of Article 19(1)"
     )
+
+
+def test_dora_reporting_clocks_follow_delegated_regulation_2025_301() -> None:
+    """Article 5(1) of 2025/301 (dora SOURCES.md): 24 h, then 72 h, then one month."""
+    clocks = pack("dora").metadata.attributes.reporting_clocks
+    assert [(c.key, c.hours, c.months, c.after) for c in clocks] == [
+        ("initial_notification", 24, None, None),
+        ("intermediate_report", 72, None, "initial_notification"),
+        ("final_report", None, 1, "intermediate_report"),
+    ]
+    assert all(c.needs == "significant" and c.requirement == "c3.art19" for c in clocks)

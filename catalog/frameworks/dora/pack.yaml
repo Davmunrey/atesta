@@ -1,6 +1,6 @@
 id: dora
 name: DORA
-version: 2022-2554.draft5
+version: 2022-2554.draft6
 jurisdiction: EU
 source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022R2554
 license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
@@ -727,3 +727,27 @@ attributes:
         euro.'
       source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1772#art_9
       source_sha256: 3a6e0f8e124c10f6791b0d76bad55851bc830ca1bfeff13fa9b58623c97cc7f6
+  # Article 5(1)(a)-(c) of Delegated Regulation (EU) 2025/301 (time limits). The 4-hour limit from
+  # classification is not modelled (the register does not record the classification time): the
+  # initial clock shows the 24-hour outer limit, and its title says so. See SOURCES.md.
+  reporting_clocks:
+  - key: initial_notification
+    title_es: Notificación inicial (como tarde 24 h; 4 h desde que se clasifica como grave)
+    title_en: Initial notification (24 h at the latest; 4 h from classification as major)
+    hours: 24
+    needs: significant
+    requirement: c3.art19
+  - key: intermediate_report
+    title_es: Informe intermedio
+    title_en: Intermediate report
+    hours: 72
+    after: initial_notification
+    needs: significant
+    requirement: c3.art19
+  - key: final_report
+    title_es: Informe final
+    title_en: Final report
+    months: 1
+    after: intermediate_report
+    needs: significant
+    requirement: c3.art19
