@@ -14,6 +14,7 @@ Start with the question you have.
 ## How to change it
 
 - [AGENTS.md](../AGENTS.md): the rules for every change (imported by `CLAUDE.md`).
+- [GOVERNANCE.md](../GOVERNANCE.md): who decides what, where it is recorded, how releases work.
 - [CONTRIBUTING.md](../CONTRIBUTING.md): set up, checks, issue to merge, review.
 - [specs/_template.md](specs/_template.md): start of every feature.
 
@@ -34,7 +35,8 @@ Start with the question you have.
 | [ADR-011: Framework-agnostic control model; frameworks are content packs](adr/0011-framework-agnostic-control-model.md) | accepted (2026-11-12) |
 | [ADR-012: Tenant isolation with Postgres row-level security](adr/0012-tenant-isolation-rls.md) | accepted (2026-11-12) |
 | [ADR-013: Third-party agent tooling is vendored, pinned and reviewed](adr/0013-agent-tooling.md) | accepted (2026-11-12) |
-| [ADR-014: A read-only device agent that reports posture and never acts](adr/0014-device-agent.md) | accepted for design (2026-11-23) |
+| [ADR-014: A read-only device agent that reports posture and never acts](adr/0014-device-agent.md) | proposed (2026-11-23) |
+| [ADR-015: The repository is public](adr/0015-public-repository.md) | proposed (2026-11-23) |
 
 ## Feature specs
 
@@ -88,6 +90,7 @@ The deploy, rollback and restore runbooks come with the production infrastructur
 - [SECURITY.md](../SECURITY.md): reporting, controls and the tests that hold them.
 - [security/device-agent-threat-model.md](security/device-agent-threat-model.md): STRIDE threat
   model of the device agent (design only).
+- [legal/subprocessors.md](legal/subprocessors.md): draft sub-processor list for the DPA.
 - [LICENSE](../LICENSE) and [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
 
 ## Components

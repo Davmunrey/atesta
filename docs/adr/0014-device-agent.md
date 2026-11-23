@@ -1,7 +1,7 @@
 # ADR-014: A read-only device agent that reports posture and never acts
 
-- Status: accepted for design (2026-11-23). Building it waits for design partners to ask (owner
-  decision, 2026-11-22).
+- Status: proposed (2026-11-23); the owner accepts it (AGENTS.md, "Owner decisions"). Building
+  waits for design partners to ask (owner decision, 2026-11-22: spec and ADR now).
 - Spec: `docs/specs/device-agent.md`. Threat model: `docs/security/device-agent-threat-model.md`.
 
 ## Context

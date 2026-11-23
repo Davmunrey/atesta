@@ -16,6 +16,12 @@ using or auditing Atesta, then `(#<issue>)`, then at most a few sentences more.
 **Connections are verified read-only before every scan.** (#91) A grant beyond the allowlist stops the scan.
 ```
 
+## Cut a release
+
+`uv run python -m apps.api.devtools.changes release --version vYYYY.MM.N` checks every fragment,
+writes them into `CHANGELOG.md` under the version, grouped by kind, and deletes them. The owner
+chooses the version and merges the release pull request (GOVERNANCE.md).
+
 ## Why a folder
 
 Every pull request editing one `## Unreleased` section conflicts with every other open pull
