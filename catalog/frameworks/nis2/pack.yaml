@@ -1,6 +1,6 @@
 id: nis2
 name: NIS2
-version: 2022-2555.draft2
+version: 2022-2555.draft3
 jurisdiction: EU; national implementation must be reviewed
 source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022L2555
 license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
@@ -51,6 +51,11 @@ attributes:
   - ctl.workspace_mfa
   - ctl.application_consent
   - ctl.mailbox_audit_bypass
+  - ctl.privileged_accounts
+  - ctl.m365_external_sharing
+  - ctl.sign_in_controls
+  - ctl.user_authentication
+  - ctl.workspace_security_alerts
   source_refs:
   - https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022L2555
   - https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022L2555

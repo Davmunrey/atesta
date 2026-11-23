@@ -1,0 +1,54 @@
+id: ctl.email_protection
+title_es: "Protección del correo electrónico"
+title_en: "Email protection"
+description_es: |
+  Preparar: identifica los dominios de correo y quién administra su DNS.
+  1. Publica DMARC con una política de aplicación (quarantine o reject) para cada dominio de Exchange Online.
+  2. En Gmail, activa las protecciones contra suplantación, adjuntos anómalos, cifrados o con scripts, enlaces acortados e imágenes enlazadas, y el análisis previo a la entrega.
+  3. Desactiva el reenvío automático a direcciones externas salvo excepción aprobada.
+  Evidencia: registros DMARC, configuración de seguridad de Gmail y resultado del escaneo.
+  Límite: los checks de Microsoft 365 que leen Defender por PowerShell aún no se ejecutan; antispam, antimalware y vínculos seguros requieren revisión manual por ahora.
+description_en: |
+  Prepare: identify the mail domains and who manages their DNS.
+  1. Publish DMARC with an enforcement policy (quarantine or reject) for each Exchange Online domain.
+  2. In Gmail, turn on the protections against spoofing, anomalous, encrypted or script attachments, shortened links and linked images, and enhanced pre-delivery scanning.
+  3. Turn off automatic forwarding to external addresses unless an exception is approved.
+  Evidence: DMARC records, Gmail security settings and the scan result.
+  Limit: Microsoft 365 checks that read Defender through PowerShell do not run yet; anti-spam, anti-malware and safe links need manual review for now.
+manual: false
+prowler_checks:
+  - defender_domain_dmarc_records_published
+  - gmail_anomalous_attachment_protection_enabled
+  - gmail_domain_spoofing_protection_enabled
+  - gmail_employee_name_spoofing_protection_enabled
+  - gmail_encrypted_attachment_protection_enabled
+  - gmail_enhanced_pre_delivery_scanning_enabled
+  - gmail_external_image_scanning_enabled
+  - gmail_groups_spoofing_protection_enabled
+  - gmail_inbound_domain_spoofing_protection_enabled
+  - gmail_script_attachment_protection_enabled
+  - gmail_shortener_scanning_enabled
+  - gmail_unauthenticated_email_protection_enabled
+  - gmail_untrusted_link_warnings_enabled
+  - gmail_auto_forwarding_disabled
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/email-authentication-dmarc-configure?view=o365-worldwide
+  - https://knowledge.workspace.google.com/admin/gmail/advanced/set-up-rules-to-detect-harmful-attachments
+  - https://knowledge.workspace.google.com/admin/gmail/advanced/advanced-phishing-and-malware-protection
+  - https://knowledge.workspace.google.com/admin/security/help-prevent-phishing-with-pre-delivery-message-scanning
+  - https://knowledge.workspace.google.com/admin/gmail/let-users-automatically-forward-their-own-gmail-emails
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_domain_dmarc_records_published/defender_domain_dmarc_records_published.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_anomalous_attachment_protection_enabled/gmail_anomalous_attachment_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_domain_spoofing_protection_enabled/gmail_domain_spoofing_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_employee_name_spoofing_protection_enabled/gmail_employee_name_spoofing_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_encrypted_attachment_protection_enabled/gmail_encrypted_attachment_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_enhanced_pre_delivery_scanning_enabled/gmail_enhanced_pre_delivery_scanning_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_external_image_scanning_enabled/gmail_external_image_scanning_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_groups_spoofing_protection_enabled/gmail_groups_spoofing_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_inbound_domain_spoofing_protection_enabled/gmail_inbound_domain_spoofing_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_script_attachment_protection_enabled/gmail_script_attachment_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_shortener_scanning_enabled/gmail_shortener_scanning_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_unauthenticated_email_protection_enabled/gmail_unauthenticated_email_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_untrusted_link_warnings_enabled/gmail_untrusted_link_warnings_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_auto_forwarding_disabled/gmail_auto_forwarding_disabled.py

@@ -1,0 +1,50 @@
+id: ctl.privileged_accounts
+title_es: "Cuentas privilegiadas en Microsoft 365 y Google Workspace"
+title_en: "Privileged accounts in Microsoft 365 and Google Workspace"
+description_es: |
+  Preparar: inventaria las cuentas con roles de administración global o superadministración, quién las usa y para qué.
+  1. Mantén entre dos y cuatro administradores globales o superadministradores, dedicados a esa función y sin uso diario.
+  2. Exige autenticación resistente al phishing (llaves FIDO2) a las cuentas privilegiadas y a las de emergencia, y desactiva la recuperación de contraseña por autoservicio para ellas.
+  3. En Microsoft Entra, activa la aprobación en PIM para los roles más críticos; revisa que las cuentas de administración sean solo de nube.
+  Evidencia: lista de cuentas privilegiadas con su responsable, configuración de PIM o equivalente y resultado del escaneo.
+  Límite: los checks miran la configuración del inquilino, no si cada administrador la usa bien. La revisión periódica de quién tiene el rol sigue siendo manual.
+description_en: |
+  Prepare: list the accounts with global administrator or super administrator roles, who uses them and why.
+  1. Keep between two and four global or super administrators, dedicated to that role and not used for daily work.
+  2. Require phishing-resistant authentication (FIDO2 keys) for privileged and emergency accounts, and turn off self-service password reset for them.
+  3. In Microsoft Entra, require approval in PIM for the most critical roles; check that administrator accounts are cloud-only.
+  Evidence: list of privileged accounts with their owner, the PIM or equivalent settings, and the scan result.
+  Limit: the checks read tenant settings, not whether each administrator uses them well. Reviewing who holds each role stays manual.
+manual: false
+prowler_checks:
+  - admincenter_users_between_two_and_four_global_admins
+  - admincenter_users_admins_reduced_license_footprint
+  - entra_admin_users_cloud_only
+  - entra_admin_users_phishing_resistant_mfa_enabled
+  - entra_pim_global_administrator_approval_required
+  - entra_pim_privileged_role_administrator_approval_required
+  - entra_policy_admin_self_service_password_reset_disabled
+  - entra_break_glass_account_fido2_security_key_registered
+  - directory_super_admin_count
+  - directory_super_admin_only_admin_roles
+  - security_super_admin_recovery_disabled
+  - security_2sv_hardware_keys_admins
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/best-practices#5-limit-the-number-of-global-administrators-to-less-than-5
+  - https://learn.microsoft.com/en-us/microsoft-365/enterprise/protect-your-global-administrator-accounts?view=o365-worldwide
+  - https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/best-practices#9-use-cloud-native-accounts-for-microsoft-entra-roles
+  - https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-admin-phish-resistant-mfa#create-a-conditional-access-policy
+  - https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-how-to-change-default-settings
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/admincenter/admincenter_users_between_two_and_four_global_admins/admincenter_users_between_two_and_four_global_admins.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/admincenter/admincenter_users_admins_reduced_license_footprint/admincenter_users_admins_reduced_license_footprint.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_admin_users_cloud_only/entra_admin_users_cloud_only.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_admin_users_phishing_resistant_mfa_enabled/entra_admin_users_phishing_resistant_mfa_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_pim_global_administrator_approval_required/entra_pim_global_administrator_approval_required.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_pim_privileged_role_administrator_approval_required/entra_pim_privileged_role_administrator_approval_required.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_policy_admin_self_service_password_reset_disabled/entra_policy_admin_self_service_password_reset_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_break_glass_account_fido2_security_key_registered/entra_break_glass_account_fido2_security_key_registered.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/directory/directory_super_admin_count/directory_super_admin_count.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/directory/directory_super_admin_only_admin_roles/directory_super_admin_only_admin_roles.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_super_admin_recovery_disabled/security_super_admin_recovery_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_2sv_hardware_keys_admins/security_2sv_hardware_keys_admins.py

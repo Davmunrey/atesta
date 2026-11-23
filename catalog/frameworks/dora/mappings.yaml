@@ -324,3 +324,28 @@ mappings:
     is not an equivalence or approval.
   source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_30
   reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.privileged_accounts
+  rationale: "Candidate: tenant settings for privileged accounts (count, dedication, phishing-resistant MFA, PIM approval, recovery). Who holds each role and why needs documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.user_authentication
+  rationale: "Candidate: tenant-wide MFA and authentication method settings. Exclusions, service accounts and the credential lifecycle need documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.sign_in_controls
+  rationale: "Candidate: sign-in risk and session duration policies. Licence-dependent coverage and exceptions need documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.email_protection
+  rationale: "Candidate: DMARC enforcement and Gmail anti-spoofing and attachment protections. Defender checks that need PowerShell do not run yet; they need documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art10
+  control_id: ctl.workspace_security_alerts
+  rationale: "Candidate: Google Workspace alert rules are configured. Whether alerts are handled is shown by the incident register and needs documentary review."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_10
+  reviewed_by: null

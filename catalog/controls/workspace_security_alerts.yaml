@@ -1,0 +1,36 @@
+id: ctl.workspace_security_alerts
+title_es: "Alertas de seguridad en Google Workspace"
+title_en: "Security alerts in Google Workspace"
+description_es: |
+  Preparar: decide quién recibe las alertas y cómo se atienden.
+  1. En la consola de administración, revisa las reglas de alerta del sistema: privilegios concedidos, suplantación de empleados, ataques respaldados por gobiernos, contraseñas filtradas o cambiadas, suspensiones e inicios de sesión sospechosos.
+  2. Envía cada alerta a un destinatario que la atienda y regístrala como posible incidente cuando proceda.
+  Evidencia: reglas activas con sus destinatarios y resultado del escaneo.
+  Límite: tener la regla activa no prueba que alguien atienda la alerta; el registro de incidentes lo demuestra.
+description_en: |
+  Prepare: decide who receives the alerts and how they are handled.
+  1. In the Admin console, review the system alert rules: privilege granted, employee spoofing, government-backed attacks, leaked or changed passwords, suspensions and suspicious logins.
+  2. Send each alert to someone who handles it, and record it as a possible incident when it applies.
+  Evidence: active rules with their recipients and the scan result.
+  Limit: an active rule does not show that anyone handles the alert; the incident register does.
+manual: false
+prowler_checks:
+  - rules_admin_privilege_granted_alert_configured
+  - rules_gmail_employee_spoofing_alert_configured
+  - rules_government_backed_attacks_alert_configured
+  - rules_leaked_password_alert_configured
+  - rules_password_changed_alert_configured
+  - rules_suspicious_activity_suspension_alert_configured
+  - rules_suspicious_login_alert_configured
+  - rules_suspicious_programmatic_login_alert_configured
+atesta_checks: []
+remediation_refs:
+  - https://support.google.com/a/answer/3230421
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_admin_privilege_granted_alert_configured/rules_admin_privilege_granted_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_gmail_employee_spoofing_alert_configured/rules_gmail_employee_spoofing_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_government_backed_attacks_alert_configured/rules_government_backed_attacks_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_leaked_password_alert_configured/rules_leaked_password_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_password_changed_alert_configured/rules_password_changed_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_suspicious_activity_suspension_alert_configured/rules_suspicious_activity_suspension_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_suspicious_login_alert_configured/rules_suspicious_login_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_suspicious_programmatic_login_alert_configured/rules_suspicious_programmatic_login_alert_configured.py

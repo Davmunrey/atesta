@@ -1,6 +1,6 @@
 id: gdpr_art32
 name: RGPD · Art. 32-34
-version: 2016-679.art32-34.draft2
+version: 2016-679.art32-34.draft3
 jurisdiction: EU
 source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32016R0679
 license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
@@ -48,6 +48,11 @@ attributes:
   - ctl.workspace_mfa
   - ctl.workspace_sharing
   - ctl.mailbox_audit_bypass
+  - ctl.privileged_accounts
+  - ctl.user_authentication
+  - ctl.sign_in_controls
+  - ctl.m365_external_sharing
+  - ctl.email_protection
   source_refs:
   - https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32016R0679
   - https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679
