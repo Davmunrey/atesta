@@ -208,3 +208,62 @@ def test_ingestion_grants(superuser: Engine, table: str, expected: set[str]) -> 
             )
         )
     assert grants == expected
+
+
+def test_a_retired_control_is_refused_like_an_unknown_one(
+    client: TestClient, superuser: Engine, control: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    token = _token(client, org, subs["owner"])["token"]
+    with superuser.begin() as conn:
+        conn.execute(text("UPDATE controls SET retired_at = now() WHERE key = :k"), {"k": control})
+    response = client.post(INGEST, json=_body(control), headers=_bearer(token))
+    assert (response.status_code, response.json()["detail"]["code"]) == (
+        422,
+        "evidence.control_not_found",
+    )
+
+
+@pytest.mark.parametrize(
+    ("field", "longest"),
+    [
+        ("title", "t" * 200),
+        ("statement", "s" * 4000),
+        ("source", "s" * 50),
+        ("reference_url", "https://example.com/" + "p" * 1980),
+        ("external_id", "e" * 200),
+    ],
+)
+def test_each_field_takes_its_longest_value_and_refuses_one_more(
+    client: TestClient, superuser: Engine, control: str, field: str, longest: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    token = _token(client, org, subs["owner"])["token"]
+    assert len(longest) in (50, 200, 2000, 4000)
+    fits = client.post(INGEST, json=_body(control, **{field: longest}), headers=_bearer(token))
+    assert fits.status_code == 201, fits.text
+    over = client.post(
+        INGEST, json=_body(control, **{field: longest + "x"}), headers=_bearer(token)
+    )
+    assert over.status_code == 422
+
+
+def test_a_token_name_has_one_to_one_hundred_characters(
+    client: TestClient, superuser: Engine
+) -> None:
+    org, subs = org_with(client, superuser)
+    url = f"/api/v1/orgs/{org}/api-tokens"
+    for name, status in (("n" * 100, 201), ("n" * 101, 422), ("", 422)):
+        response = client.post(
+            url, json={"name": name, "expires_in_days": 30}, headers=auth(subs["owner"])
+        )
+        assert response.status_code == status, name
+
+
+@pytest.mark.parametrize("path", ["/api/v1/me", "/api/v1/orgs/{org}/overview"])
+def test_an_api_token_reads_nothing(client: TestClient, superuser: Engine, path: str) -> None:
+    """One scope only, evidence:write: the token is not a session on any other route."""
+    org, subs = org_with(client, superuser)
+    token = _token(client, org, subs["owner"])["token"]
+    response = client.get(path.format(org=org), headers=_bearer(token))
+    assert response.status_code == 401
