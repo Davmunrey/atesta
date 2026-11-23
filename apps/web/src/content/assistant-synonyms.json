@@ -1,0 +1,153 @@
+{
+  "_note": "Curated synonym groups for the assistant's search (assistant spec). Each group is a set of phrases that mean the same thing for a search; ES and EN. Words are matched after normalisation (accents, plurals).",
+  "groups": [
+    [
+      "copias de seguridad",
+      "copia de seguridad",
+      "backup",
+      "respaldo"
+    ],
+    [
+      "autenticación",
+      "autenticacion multifactor",
+      "mfa",
+      "2fa",
+      "doble factor",
+      "multifactor",
+      "authentication"
+    ],
+    [
+      "contraseña",
+      "password",
+      "credencial",
+      "credential"
+    ],
+    [
+      "administradores",
+      "privilegios",
+      "cuentas privilegiadas",
+      "admin",
+      "administrators",
+      "privileged accounts"
+    ],
+    [
+      "incidente",
+      "incident",
+      "brecha",
+      "breach",
+      "violación de la seguridad",
+      "ciberataque",
+      "cyberattack"
+    ],
+    [
+      "plazo",
+      "deadline",
+      "tiempo",
+      "time limit"
+    ],
+    [
+      "notificar",
+      "notificación",
+      "notify",
+      "notification",
+      "comunicar",
+      "report"
+    ],
+    [
+      "registro de actividad",
+      "logs",
+      "log",
+      "trazas",
+      "auditoría de eventos",
+      "activity logging"
+    ],
+    [
+      "cifrado",
+      "encryption",
+      "criptografía",
+      "cryptography"
+    ],
+    [
+      "proveedor",
+      "supplier",
+      "tercero",
+      "third party",
+      "vendor",
+      "externo"
+    ],
+    [
+      "formación",
+      "training",
+      "concienciación",
+      "awareness"
+    ],
+    [
+      "inventario de activos",
+      "asset inventory",
+      "inventario",
+      "inventory"
+    ],
+    [
+      "vulnerabilidad",
+      "vulnerability",
+      "parche",
+      "patch",
+      "actualización",
+      "update"
+    ],
+    [
+      "evidencias",
+      "evidence",
+      "pruebas",
+      "proof"
+    ],
+    [
+      "nube",
+      "cloud"
+    ],
+    [
+      "continuidad",
+      "continuity",
+      "recuperación",
+      "recovery"
+    ],
+    [
+      "antivirus",
+      "malware",
+      "código dañino",
+      "harmful code"
+    ],
+    [
+      "teletrabajo",
+      "remote work",
+      "acceso remoto",
+      "remote access"
+    ],
+    [
+      "perfil esencial",
+      "perfil de cumplimiento específico",
+      "pce",
+      "890c"
+    ],
+    [
+      "categoría",
+      "category"
+    ],
+    [
+      "medida",
+      "measure",
+      "control"
+    ],
+    [
+      "nis2",
+      "nis 2",
+      "directiva 2022/2555"
+    ],
+    [
+      "rgpd",
+      "gdpr",
+      "protección de datos",
+      "data protection"
+    ]
+  ]
+}

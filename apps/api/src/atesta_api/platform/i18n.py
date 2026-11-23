@@ -30,3 +30,22 @@ def message(locale: Locale, key: str) -> str:
     if not isinstance(node, str):
         raise KeyError(key)
     return node
+
+
+def accepted_locale(header: str | None) -> Locale:
+    """The caller's preferred locale from an Accept-Language header; Spanish when none fits."""
+    ranked: list[tuple[float, int, Locale]] = []
+    for position, part in enumerate((header or "").split(",")):
+        tag, _, params = part.strip().partition(";")
+        primary = tag.strip().lower().split("-")[0]
+        if primary not in LOCALES:
+            continue
+        weight = 1.0
+        if params.strip().startswith("q="):
+            try:
+                weight = float(params.strip()[2:])
+            except ValueError:
+                continue
+        if weight > 0:
+            ranked.append((-weight, position, "en" if primary == "en" else "es"))
+    return min(ranked)[2] if ranked else "es"

@@ -4,7 +4,9 @@
   },
   "footer": {
     "label": "Site information",
-    "readiness": "Audit readiness. It does not certify compliance."
+    "readiness": "Audit readiness. It does not certify compliance.",
+    "notice": "Legal notice",
+    "privacy": "Privacy"
   },
   "cookies": {
     "title": "Cookies and storage",
@@ -43,8 +45,90 @@
     }
   },
   "landing": {
-    "summary": "Continuous audit readiness for ENS and NIS2. Sign in to manage your organization.",
-    "signIn": "Sign in"
+    "headline": "Get <hl>ENS</hl>-ready without a full-time consultant",
+    "sub": "Atesta gathers the measures, the evidence and the records your auditor asks for, for SMEs that sell to the public sector.",
+    "requestAccess": "Request access",
+    "signIn": "Sign in",
+    "soon": "Coming soon",
+    "problem": {
+      "title": "The ENS does not fit in a spreadsheet",
+      "body": "Seventy-three measures, each with its official text, its evidence and its reviews. Spread across emails and folders, nobody knows what is missing until the audit arrives."
+    },
+    "how": {
+      "title": "How it works",
+      "steps": {
+        "connect": {
+          "title": "Connect your systems",
+          "body": "Microsoft 365 or Google Workspace, with read-only permissions."
+        },
+        "assess": {
+          "title": "Assess every measure",
+          "body": "With its official text and the applicability proposal for your category."
+        },
+        "routines": {
+          "title": "Record the routines",
+          "body": "Policies, access reviews, training and incidents, with their deadlines."
+        },
+        "dossier": {
+          "title": "Hand over the dossier",
+          "body": "Everything recorded, ready for the auditor to review and management to sign."
+        }
+      }
+    },
+    "moments": {
+      "measure": "The official text of every measure",
+      "records": "The records your auditor asks for",
+      "dossier": "A dossier ready to sign"
+    },
+    "frameworks": {
+      "title": "The ENS first, more by plan",
+      "body": "Also covers NIS2, GDPR, LOPDGDD and DORA. One piece of evidence serves several frameworks.",
+      "byPlan": "By plan"
+    },
+    "consultancies": "For consultancies: all your clients in one account, each in its own space.",
+    "close": "Your next audit, prepared.",
+    "sample": "Sample data",
+    "view": {
+      "label": "An organization's overview in Atesta",
+      "category": "Category {category}",
+      "bar": "{implemented, plural, one {# implemented} other {# implemented}} · {partial, plural, one {# partly} other {# partly}} · {missing, plural, one {# not implemented} other {# not implemented}} · {na, plural, one {# not applicable} other {# not applicable}}",
+      "now": "Now",
+      "state": {
+        "overdue": "Review overdue",
+        "missing": "No evidence",
+        "pending": "No owner"
+      },
+      "measure": {
+        "label": "An ENS measure in Atesta",
+        "official": "Official text (RD 311/2022, annex II)",
+        "assessment": "Your self-assessment",
+        "decision": "Applies (category {level})",
+        "implementation": "Partly implemented",
+        "owner": "Owner: systems team"
+      },
+      "records": {
+        "label": "An organization's records in Atesta",
+        "policies": "Policies",
+        "policiesLine": "One policy is overdue for review.",
+        "access": "Access reviews",
+        "accessLine": "Quarterly review closed; every account decided.",
+        "training": "Training",
+        "trainingLine": "Annual awareness: 18 confirmations recorded.",
+        "incidents": "Incidents",
+        "incidentsLine": "One open incident, no overdue notices.",
+        "act": "Needs action",
+        "clear": "Up to date"
+      },
+      "dossier": {
+        "label": "An Atesta dossier",
+        "kicker": "Audit readiness dossier",
+        "statement": "It gathers what the organization recorded. It is not a certification or a conformity assessment; the decision is the auditor's.",
+        "name": "Name",
+        "role": "Role",
+        "date": "Date",
+        "signature": "Signature"
+      }
+    }
   },
   "locale": {
     "label": "Language",
@@ -117,7 +201,9 @@
       "period_invalid": "The period must be 30 or 90 days.",
       "access_expired": "Your auditor access to this organization has ended. Ask an administrator to extend it.",
       "closure_name_mismatch": "The name does not match. Type it exactly as shown.",
-      "api_token_invalid": "The API token is not valid, revoked or expired."
+      "api_token_invalid": "The API token is not valid, revoked or expired.",
+      "api_token_scope": "This token does not have the permission needed.",
+      "api_token_rate_limited": "This token has gone over its limit of requests per minute. Wait a moment."
     },
     "request": {
       "error": "The request could not be completed. Try again.",
@@ -949,7 +1035,7 @@
   },
   "integrations": {
     "title": "Integrations",
-    "intro": "Tokens that let your tools (CI, backups, scanners) record evidence in Atesta. They can only write evidence; they read nothing.",
+    "intro": "Tokens that let your tools (CI, backups, scanners) and your AI agents work with Atesta. Each token has only the permissions you choose and a limit of requests per minute.",
     "loading": "Loading…",
     "list": "Tokens",
     "empty": "No tokens yet.",
@@ -976,6 +1062,35 @@
     "revokedOn": "Revoked on {date}",
     "revoke": "Revoke",
     "revokeNamed": "Revoke the token {name}",
+    "rateLimit": "Request limit",
+    "perMinute": "{count, plural, one {# per minute} other {# per minute}}",
+    "scopes": "Permissions",
+    "scopesHelp": "Tick only what the tool needs. Reading does not allow writing. No permission starts a scan or touches your systems.",
+    "scopeGroup": {
+      "read": "Read",
+      "write": "Write"
+    },
+    "scope": {
+      "compliance:read": "Read the compliance status: frameworks, measures and their official text, gaps and due items",
+      "incidents:read": "Read incidents and their reporting deadlines",
+      "evidence:write": "Record evidence",
+      "assessment:propose": "Propose self-assessments (a person confirms or rejects them)",
+      "routines:write": "Record routines: incidents, training and access reviews"
+    },
+    "scopeShort": {
+      "compliance:read": "Read compliance",
+      "incidents:read": "Read incidents",
+      "evidence:write": "Record evidence",
+      "assessment:propose": "Propose self-assessments",
+      "routines:write": "Record routines"
+    },
+    "readOnlyPreset": "Tick read-only",
+    "readOnly": "Read-only",
+    "scopesRequired": "Choose at least one permission.",
+    "usageOf": "Show the usage of {name}",
+    "usageCount": "{count, plural, =0 {No requests in the last 24 hours} one {# request in the last 24 hours} other {# requests in the last 24 hours}}",
+    "usageEmpty": "Not used yet.",
+    "noScope": "None",
     "templates": {
       "title": "Automatic evidence templates",
       "help": "Choose what to record and where it runs, then copy the script to that machine or your repository. Each run records evidence; a repeat on the same day or for the same run is not duplicated.",
@@ -1244,5 +1359,96 @@
     "reviewed": "A list Atesta wrote from the cited guide, reviewed by {name} on {date}. It does not assess your organization.",
     "reference": "{guide} ({edition}), section {section}, p. {page}",
     "shared": "Reference: {reference}"
+  },
+  "legal": {
+    "draft": "Draft pending legal review. This text is not final.",
+    "clause": "Draft",
+    "binding": "The Spanish version of this page is the binding one.",
+    "index": "On this page",
+    "pending": "[PENDIENTE]",
+    "fields": {
+      "name": "Name or company name",
+      "address": "Address",
+      "email": "Email",
+      "contact": "Another direct contact channel",
+      "registry": "Registry details",
+      "nif": "Tax ID (NIF)"
+    },
+    "notice": {
+      "title": "Legal notice",
+      "intro": "General information about the site, under article 10 of Spanish Law 34/2002 (LSSI-CE).",
+      "holder": {
+        "title": "Site owner",
+        "body": "Who owns the site and how to contact them directly."
+      },
+      "registry": {
+        "title": "Registry details",
+        "body": "Registration in the Commercial Registry or another public registry, if any."
+      },
+      "nif": {
+        "title": "Tax identification number",
+        "body": "The owner's NIF."
+      },
+      "conduct": {
+        "title": "Codes of conduct",
+        "body": "[PENDIENTE] State the codes of conduct the owner adheres to, or that it adheres to none."
+      },
+      "prices": {
+        "title": "Prices",
+        "body": "The site shows no prices. If it did, this section would say whether they include taxes and delivery costs."
+      }
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "intro": "How personal data is processed on the site and in the app, under article 13 of the GDPR.",
+      "controller": {
+        "title": "Controller",
+        "body": "The controller's identity and contact details."
+      },
+      "dpo": {
+        "title": "Data protection officer",
+        "body": "[PENDIENTE] State whether an officer has been appointed and how to contact them; otherwise remove this section."
+      },
+      "purposes": {
+        "title": "Purposes and legal basis",
+        "body": "Running the account and session of people who use the app, and answering access requests received by email. [PENDIENTE] The legal basis of each processing."
+      },
+      "interests": {
+        "title": "Legitimate interests",
+        "body": "[PENDIENTE] Only if a processing relies on article 6(1)(f) of the GDPR."
+      },
+      "recipients": {
+        "title": "Recipients",
+        "body": "Processors that provide the infrastructure, such as Amazon Web Services in its Spain region (eu-south-2). [PENDIENTE] Full list of processors."
+      },
+      "transfers": {
+        "title": "International transfers",
+        "body": "No transfers outside the European Economic Area are planned. [PENDIENTE] Safeguards if a processor's contract allowed one."
+      },
+      "retention": {
+        "title": "Retention",
+        "body": "[PENDIENTE] Retention period or criteria for each processing."
+      },
+      "rights": {
+        "title": "Rights",
+        "body": "Access, rectification, erasure, restriction, portability and objection (articles 15 to 22 of the GDPR), in writing to the controller's contact address."
+      },
+      "complaint": {
+        "title": "Complaints",
+        "body": "The right to lodge a complaint with the Spanish Data Protection Agency (AEPD)."
+      },
+      "required": {
+        "title": "Whether data must be provided",
+        "body": "[PENDIENTE] Which data are needed to use the service and what happens if they are not provided."
+      },
+      "automated": {
+        "title": "Automated decisions",
+        "body": "[PENDIENTE] Confirm that no decision is based solely on automated processing and no profiling takes place."
+      },
+      "cookies": {
+        "title": "Cookies",
+        "body": "Cookies and browser storage are described on their own page."
+      }
+    }
   }
 }

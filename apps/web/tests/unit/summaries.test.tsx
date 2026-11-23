@@ -34,7 +34,7 @@ it("counts open incidents and overdue notices of open incidents only", () => {
 });
 
 it("counts active tokens, revoked or expired ones, and the latest use", () => {
-  const token = (id: string, revoked: boolean, expires: string, used: string | null) => ({ id, name: id, prefix: "atesta_x", scope: "evidence:write", created_at: "2026-11-01T00:00:00Z", created_by_email: "a@example.test", expires_at: expires, revoked_at: revoked ? "2026-11-10T00:00:00Z" : null, last_used_at: used });
+  const token = (id: string, revoked: boolean, expires: string, used: string | null) => ({ id, name: id, prefix: "atesta_x", scopes: ["evidence:write"], rate_limit_per_minute: 60, read_only: false, created_at: "2026-11-01T00:00:00Z", created_by_email: "a@example.test", expires_at: expires, revoked_at: revoked ? "2026-11-10T00:00:00Z" : null, last_used_at: used });
   expect(tokenSummary([token("a", false, "2027-01-01T00:00:00Z", "2026-11-20T10:00:00Z"), token("b", true, "2027-01-01T00:00:00Z", "2026-11-22T10:00:00Z"), token("c", false, "2026-11-01T00:00:00Z", null)], new Date(`${today}T12:00:00Z`)))
     .toEqual({ active: 1, inactive: 2, lastUsed: "2026-11-22T10:00:00Z" });
 });

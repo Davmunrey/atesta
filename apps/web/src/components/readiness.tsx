@@ -206,7 +206,7 @@ export function Kpis({ readiness }: { readiness: Readiness[] }) {
     <Icon name={n > 0 ? "overdue" : "done"} width={16} height={16} />{c(n > 0 ? "act" : "clear")}</dd>;
   return <dl className="kpis" aria-label={label("kpis")}>
     <div className="kpi"><dt>{c("inProgress")}</dt><dd>{format.number(active.length)}</dd><dd className="kpi-meta">{c("ofTotal", { total: readiness.length })}</dd></div>
-    <div className="kpi"><dt>{c("assessed")}</dt><dd>{format.number(sum((r) => r.assessed))}</dd><dd className="kpi-meta">{c("ofTotal", { total: sum((r) => r.total) })}</dd></div>
+    <div className="kpi"><dt>{c("assessed")}</dt><dd><span className="key-figure">{format.number(sum((r) => r.assessed))}</span></dd><dd className="kpi-meta">{c("ofTotal", { total: sum((r) => r.total) })}</dd></div>
     <div className="kpi"><dt>{c("implemented")}</dt><dd>{format.number(sum((r) => r.implemented))}</dd><dd className="kpi-meta">{c("ofTotal", { total: sum((r) => r.total) })}</dd></div>
     <div className="kpi"><dt>{c("overdue")}</dt><dd>{format.number(overdue)}</dd>{state(overdue)}</div>
     <div className="kpi"><dt>{c("unowned")}</dt><dd>{format.number(unowned)}</dd>{state(unowned)}</div>

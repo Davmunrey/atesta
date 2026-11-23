@@ -1,20 +1,22 @@
-"""Evidence ingestion through an API token (evidence-ingestion-api spec).
+"""Evidence ingestion through an API key (evidence-ingestion-api and api-keys-v2 specs).
 
-A customer's own tool records an evidence statement on a common control. The token is
-write-only, resolved by identity.api; the statement's author is the admin who created the token,
-its source is "api" and it names the token. Retries with the same external id write nothing.
+A customer's own tool records an evidence statement on a common control. The key needs the
+scope evidence:write, checked by identity.api. The statement's author is the admin who created
+the key, its source is "api" and it names the key. Retries with the same external id write
+nothing.
 """
 
 import uuid
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import select
 
 from atesta_api.modules.compliance.api import control_is_active
 from atesta_api.modules.evidence.api import record_attestation, refuse_credential_link
 from atesta_api.modules.evidence.models import ApiIngestion
-from atesta_api.modules.identity.api import ApiTokenCaller, QueryFreeRoute
+from atesta_api.modules.identity.api import ApiCaller, QueryFreeRoute, require_scope
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 
@@ -59,7 +61,10 @@ class Ingested(BaseModel):
 
 @router.post("/evidence", status_code=201)
 def ingest_evidence(
-    body: IngestIn, caller: ApiTokenCaller, response: Response, session: DbSession
+    body: IngestIn,
+    caller: Annotated[ApiCaller, Depends(require_scope("evidence:write"))],
+    response: Response,
+    session: DbSession,
 ) -> Ingested:
     org = caller.organization_id
     if body.external_id is not None:
@@ -102,6 +107,13 @@ def ingest_evidence(
         action="evidence.ingested",
         target_type="evidence",
         target_id=str(evidence_id),
-        metadata={"token": caller.prefix, "source": body.source, "control": body.control},
+        actor_user_id=caller.created_by,
+        metadata={
+            "via": "api_token",
+            "token": caller.prefix,
+            "token_id": str(caller.token_id),
+            "source": body.source,
+            "control": body.control,
+        },
     )
     return Ingested(evidence_id=evidence_id, duplicate=False)

@@ -16,6 +16,8 @@ ROOT = Path(__file__).resolve().parents[3]
 MESSAGES = ROOT / "apps" / "web" / "messages"
 API_MESSAGES = ROOT / "apps" / "api" / "src" / "atesta_api" / "messages"
 DOCS = [ROOT / "README.md", ROOT / "PRODUCT.md"]
+# The assistant's product FAQ (docs/specs/assistant.md): our own words, so the same rules apply.
+FAQ = ROOT / "apps" / "web" / "src" / "content" / "assistant-faq.json"
 
 FORBIDDEN = [
     re.compile(r"\bcumpl(?:e|en|ís|imos)\b", re.I),
@@ -31,6 +33,9 @@ def _values(node: Any, path: str = "") -> Iterator[tuple[str, str]]:
     if isinstance(node, dict):
         for key, value in node.items():
             yield from _values(value, f"{path}.{key}" if path else key)
+    elif isinstance(node, list):
+        for n, value in enumerate(node):
+            yield from _values(value, f"{path}.{n}")
     elif isinstance(node, str):
         yield path, node
 
@@ -51,12 +56,15 @@ def _repository_texts() -> dict[str, str]:
         for key, value in _values(json.loads(path.read_text()))
     }
     texts.update({path.name: path.read_text() for path in DOCS})
+    faq = json.loads(FAQ.read_text())
+    texts.update({f"{FAQ.name}:{key}": value for key, value in _values(faq)})
     return texts
 
 
 def test_no_copy_claims_compliance() -> None:
     texts = _repository_texts()
     assert len(texts) > 300  # every message value was read, not an empty glob
+    assert any(key.startswith("assistant-faq.json:entries") for key in texts)
     assert claims(texts) == []
 
 

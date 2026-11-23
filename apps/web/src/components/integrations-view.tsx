@@ -2,7 +2,7 @@
 
 import { useFormatter, useTranslations } from "next-intl";
 import { type FormEvent, useId, useState } from "react";
-import { type ApiToken, curlExample, useApiTokens, useCreateApiToken, useRevokeApiToken } from "@/lib/api/tokens";
+import { type ApiToken, curlExample, RATE_LIMITS, type Scope, SCOPES, useApiTokens, useApiTokenUsage, useCreateApiToken, useRevokeApiToken } from "@/lib/api/tokens";
 import { evidenceTemplate, type TemplateFormat, USE_CASES, type UseCase } from "@/lib/evidence-templates";
 import { type Membership, orgHome } from "@/lib/org";
 import { ErrorMessage } from "./error-message";
@@ -13,7 +13,7 @@ import { tokenSummary } from "@/lib/summaries";
 
 const EXPIRIES = [30, 90, 180, 365] as const;
 
-/** Integrations (evidence-ingestion-api spec): write-only tokens for the organization's tools. */
+/** Integrations (evidence-ingestion-api, api-keys-v2 specs): scoped keys for tools and agents. */
 export function IntegrationsView({ org }: { org: Membership }) {
   const t = useTranslations("integrations");
   const list = useApiTokens(org.organization_id);
@@ -46,7 +46,10 @@ function TokenRow({ token, orgId }: { token: ApiToken; orgId: string }) {
   const day = (value: string) => format.dateTime(new Date(value), { dateStyle: "medium" });
   const expired = new Date(token.expires_at).getTime() <= new Date().getTime();
   return <tr>
-    <td data-label={t("name")}>{token.name}<span className="block text-sm text-muted"><span className="font-mono">{token.prefix}…</span> · {t("createdBy", { email: token.created_by_email, date: day(token.created_at) })}</span></td>
+    <td data-label={t("name")}>{token.name}{token.read_only ? <> <span className="badge">{t("readOnly")}</span></> : null}
+      <span className="block text-sm text-muted"><span className="font-mono">{token.prefix}…</span> · {t("createdBy", { email: token.created_by_email, date: day(token.created_at) })}</span>
+      <span className="block text-sm text-muted">{[...token.scopes.map((s) => t(`scopeShort.${s as Scope}`)), t("perMinute", { count: token.rate_limit_per_minute })].join(" · ")}</span>
+      <Usage token={token} orgId={orgId} /></td>
     <td data-label={t("lastUsed")} className="tabular-nums">{token.last_used_at ? format.dateTime(new Date(token.last_used_at), { dateStyle: "medium", timeStyle: "short" }) : <span className="text-muted">{t("never")}</span>}</td>
     <td data-label={t("state")}>{token.revoked_at ? <span className="badge" data-severity="missing"><Icon name="missing" />{t("revokedOn", { date: day(token.revoked_at) })}</span>
       : expired ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("expiredOn", { date: day(token.expires_at) })}</span>
@@ -57,18 +60,43 @@ function TokenRow({ token, orgId }: { token: ApiToken; orgId: string }) {
   </tr>;
 }
 
+/** The usage log of one key, fetched when the admin opens it (api-keys-v2 spec). */
+function Usage({ token, orgId }: { token: ApiToken; orgId: string }) {
+  const t = useTranslations("integrations");
+  const format = useFormatter();
+  const [open, setOpen] = useState(false);
+  const usage = useApiTokenUsage(orgId, token.id, open);
+  return <details className="technical-details" onToggle={(e) => setOpen(e.currentTarget.open)}>
+    <summary>{t("usageOf", { name: token.name })}</summary>
+    {!open ? null : usage.isPending ? <Loading label={t("loading")} /> : usage.isError ? <LoadError error={usage.error} onRetry={() => void usage.refetch()} />
+      : <><p>{t("usageCount", { count: usage.data.last_24h })}</p>
+        {usage.data.recent.length === 0 ? <p>{t("usageEmpty")}</p> : <ol className="text-sm">{usage.data.recent.map((r, i) =>
+          <li key={i}><span className="tabular-nums">{format.dateTime(new Date(r.at), { dateStyle: "medium", timeStyle: "short" })}</span> · <span className="font-mono">{`${r.method} ${r.route}`}</span> · {r.scope ? t(`scopeShort.${r.scope as Scope}`) : t("noScope")}</li>)}</ol>}</>}
+  </details>;
+}
+
 function CreateToken({ orgId }: { orgId: string }) {
   const t = useTranslations("integrations");
   const create = useCreateApiToken(orgId);
-  const ids = { name: useId(), expiry: useId(), token: useId(), example: useId() };
+  const ids = { name: useId(), expiry: useId(), limit: useId(), token: useId(), example: useId(), scopesHelp: useId() };
   const [token, setToken] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [scopes, setScopes] = useState<ReadonlySet<Scope>>(new Set());
+  const [noScope, setNoScope] = useState(false);
+  function toggle(scope: Scope) {
+    const next = new Set(scopes);
+    if (next.has(scope)) next.delete(scope); else next.add(scope);
+    setScopes(next);
+    setNoScope(false);
+  }
   function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (scopes.size === 0) { setNoScope(true); return; }
     const form = e.currentTarget;
     const data = new FormData(form);
-    create.mutate({ name: String(data.get("name") ?? ""), expires_in_days: Number(data.get("expires_in_days") ?? 90) },
-      { onSuccess: (created) => { form.reset(); setCopied(false); setToken(created.token); } });
+    const chosen = [...SCOPES.read, ...SCOPES.write].filter((s) => scopes.has(s));
+    create.mutate({ name: String(data.get("name") ?? ""), expires_in_days: Number(data.get("expires_in_days") ?? 90), scopes: chosen, rate_limit_per_minute: Number(data.get("rate_limit_per_minute") ?? 60) },
+      { onSuccess: (created) => { form.reset(); setScopes(new Set()); setCopied(false); setToken(created.token); } });
   }
   async function copy(value: string) {
     try {
@@ -83,6 +111,16 @@ function CreateToken({ orgId }: { orgId: string }) {
       <span><label htmlFor={ids.name}>{t("name")}</label><input id={ids.name} name="name" required maxLength={100} placeholder={t("namePlaceholder")} /></span>
       <span><label htmlFor={ids.expiry}>{t("expiry")}</label>
         <select id={ids.expiry} name="expires_in_days" defaultValue={90}>{EXPIRIES.map((d) => <option key={d} value={d}>{t("days", { count: d })}</option>)}</select></span>
+      <span><label htmlFor={ids.limit}>{t("rateLimit")}</label>
+        <select id={ids.limit} name="rate_limit_per_minute" defaultValue={60}>{RATE_LIMITS.map((n) => <option key={n} value={n}>{t("perMinute", { count: n })}</option>)}</select></span>
+      <fieldset className="routine-form-wide" aria-describedby={ids.scopesHelp}><legend>{t("scopes")}</legend>
+        <p id={ids.scopesHelp} className="text-sm text-muted">{t("scopesHelp")}</p>
+        {(["read", "write"] as const).map((group) => <fieldset key={group}><legend>{t(`scopeGroup.${group}`)}</legend>
+          {SCOPES[group].map((scope) => <span key={scope} className="checkbox-row"><input id={`${ids.scopesHelp}-${scope}`} type="checkbox" checked={scopes.has(scope)} onChange={() => toggle(scope)} />
+            <label htmlFor={`${ids.scopesHelp}-${scope}`}>{t(`scope.${scope}`)}</label></span>)}</fieldset>)}
+        <button type="button" className="dashboard-button" onClick={() => { setScopes(new Set(SCOPES.read)); setNoScope(false); }}>{t("readOnlyPreset")}</button>
+      </fieldset>
+      {noScope ? <p role="alert" className="routine-form-wide rounded-md border border-danger px-3 py-2 text-danger"><Icon name="overdue" />{t("scopesRequired")}</p> : null}
       <div className="form-actions"><button type="submit" className="button-primary" disabled={create.isPending}>{t("add")}</button></div>
       {create.isError ? <ErrorMessage error={create.error} /> : null}
     </form>

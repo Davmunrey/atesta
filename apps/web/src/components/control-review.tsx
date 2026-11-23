@@ -38,7 +38,7 @@ export function ControlReview(props: { orgId: string; frameworkKey: string; cont
         </ul>
       </> : <p className="text-muted">{t("citesNone")}</p>}
     </> : <p className="text-muted">{t("none")}</p>}
-    {saved ? <p role="status">{t("saved")}</p> : null}
+    {saved ? <p role="status" className="notice"><Icon name="done" />{t("saved")}</p> : null}
     {props.canReview && !editing ? <button type="button" className="dashboard-button" onClick={() => { setEditing(true); setSaved(false); }}>{t(review ? "update" : "record")}</button> : null}
     {props.canReview && editing ? <ReviewForm {...props} onDone={(ok) => { setEditing(false); setSaved(ok); }} /> : null}
   </div>;

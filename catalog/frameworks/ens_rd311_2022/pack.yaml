@@ -98,7 +98,8 @@ attributes:
     - es: "Atesta no guarda esta hoja. Documentad las valoraciones y sus razones, y que las aprueben los responsables de la información y de los servicios."
       en: "Atesta does not keep this worksheet. Document the valuations and their reasons, and have the information and service owners approve them."
       ref: {guide: CCN-STIC 803, edition: 2025-06, section: '4.5', page: 15}
-    reviewed_by: null
+    reviewed_by: David Muñoz
+    reviewed_on: 2026-11-23
   # Scope profiles (requirement-register spec, issue 227): CCN-STIC 890C (November 2026),
   # section 4 statement of applicability, pages 8 to 10. Each value is the column's category or
   # level, or n.a. (N/A and N/A (*) in the guide). Criteria cite section 5; never copied.
@@ -202,7 +203,8 @@ attributes:
       mp.if.2: {section: '5.11', page: 14}
       mp.com.1: {section: '5.12', page: 15}
       mp.info.6: {section: '5.13', page: 15}
-    reviewed_by: null
+    reviewed_by: David Muñoz
+    reviewed_on: 2026-11-23
   - key: pce_rfs_small_it_ot_iot
     title_es: "PCE de requisitos fundamentales (CCN-STIC 890C), entidades de menor tamaño, alcance IT/OT/IoT"
     title_en: "Essential security requirements profile (CCN-STIC 890C), smaller entities, IT/OT/IoT scope"
@@ -301,7 +303,8 @@ attributes:
       mp.if.2: {section: '5.11', page: 14}
       mp.com.1: {section: '5.12', page: 15}
       mp.info.6: {section: '5.13', page: 15}
-    reviewed_by: null
+    reviewed_by: David Muñoz
+    reviewed_on: 2026-11-23
   term_labels:
     - term: categoría
       es: Categoría del sistema

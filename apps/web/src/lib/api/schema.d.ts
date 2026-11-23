@@ -35,6 +35,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/key": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Key */
+        get: operations["read_key_api_v1_key_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -185,6 +202,23 @@ export interface paths {
         post?: never;
         /** Revoke Token */
         delete: operations["revoke_token_api_v1_orgs__org_id__api_tokens__token_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/api-tokens/{token_id}/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Token Usage */
+        get: operations["token_usage_api_v1_orgs__org_id__api_tokens__token_id__usage_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1763,10 +1797,14 @@ export interface components {
             name: string;
             /** Prefix */
             prefix: string;
+            /** Rate Limit Per Minute */
+            rate_limit_per_minute: number;
+            /** Read Only */
+            read_only: boolean;
             /** Revoked At */
             revoked_at: string | null;
-            /** Scope */
-            scope: string;
+            /** Scopes */
+            scopes: string[];
             /** Token */
             token: string;
         };
@@ -2431,6 +2469,22 @@ export interface components {
             id: string;
             role: components["schemas"]["Role"];
         };
+        /** KeyOut */
+        KeyOut: {
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Name */
+            name: string;
+            /** Prefix */
+            prefix: string;
+            /** Rate Limit Per Minute */
+            rate_limit_per_minute: number;
+            /** Scopes */
+            scopes: string[];
+        };
         /**
          * LastVerification
          * @description What the last verification found missing or extra, and what it cannot read.
@@ -3007,6 +3061,8 @@ export interface components {
              */
             status: "queued" | "running" | "collected" | "succeeded" | "partial" | "failed" | "blocked";
         };
+        /** @enum {string} */
+        Scope: "compliance:read" | "incidents:read" | "evidence:write" | "assessment:propose" | "routines:write";
         /**
          * ScopeGuide
          * @description How to value the system before recording the scope (requirement-register spec, issue 225):
@@ -3230,6 +3286,13 @@ export interface components {
             expires_in_days: number;
             /** Name */
             name: string;
+            /**
+             * Rate Limit Per Minute
+             * @default 60
+             */
+            rate_limit_per_minute: number;
+            /** Scopes */
+            scopes: components["schemas"]["Scope"][];
         };
         /** TokenOut */
         TokenOut: {
@@ -3256,10 +3319,14 @@ export interface components {
             name: string;
             /** Prefix */
             prefix: string;
+            /** Rate Limit Per Minute */
+            rate_limit_per_minute: number;
+            /** Read Only */
+            read_only: boolean;
             /** Revoked At */
             revoked_at: string | null;
-            /** Scope */
-            scope: string;
+            /** Scopes */
+            scopes: string[];
         };
         /** TrendPoint */
         TrendPoint: {
@@ -3302,6 +3369,27 @@ export interface components {
              * Format: date-time
              */
             recorded_at: string;
+        };
+        /** UsageOut */
+        UsageOut: {
+            /** Last 24H */
+            last_24h: number;
+            /** Recent */
+            recent: components["schemas"]["UsageRow"][];
+        };
+        /** UsageRow */
+        UsageRow: {
+            /**
+             * At
+             * Format: date-time
+             */
+            at: string;
+            /** Method */
+            method: string;
+            /** Route */
+            route: string;
+            /** Scope */
+            scope: string | null;
         };
         /** ValidationError */
         ValidationError: {
@@ -3387,6 +3475,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_key_api_v1_key_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KeyOut"];
                 };
             };
         };
@@ -3727,6 +3835,38 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    token_usage_api_v1_orgs__org_id__api_tokens__token_id__usage_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsageOut"];
+                };
             };
             /** @description Validation Error */
             422: {

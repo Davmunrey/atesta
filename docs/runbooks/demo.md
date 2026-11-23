@@ -14,7 +14,7 @@ For sales demos and pilot sessions on the local stack, never on a hosted environ
    - a closed access review;
    - a closed training with three confirmations;
    - an incident with a note;
-   - an API token that has sent one evidence statement.
+   - an API token with the scope `evidence:write` that has sent one evidence statement.
 3. The script prints the link. The content lives in `scripts/demo/es.json`: change names there, not
    in the script.
 
