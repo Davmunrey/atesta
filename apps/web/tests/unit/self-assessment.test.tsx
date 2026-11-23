@@ -127,8 +127,24 @@ it("orders assessed frameworks, then those with requirements, then empty templat
   const content = { ...overview.frameworks[3]!, key: "content", name: "Content", requirements: 9, snapshot: null };
   renderWithProviders(<FrameworkLedger orgId="primary" frameworks={[empty, content, overview.frameworks[0]!]} />);
   const names = Array.from(document.querySelectorAll(".framework-row strong")).map((n) => n.textContent);
-  expect(names).toEqual(["Synthetic Alpha", "Content", "Empty"]);
-  expect(screen.getByText(/En preparación: aún sin requisitos/)).toBeTruthy();
+  expect(names).toEqual(["Synthetic Alpha", "Content"]);
+  // Templates without requirements fold away under one disclosure (readiness-cockpit spec).
+  const fold = screen.getByText("1 marco en preparación, aún sin requisitos").closest("details")!;
+  expect(within(fold).getByRole("link", { name: "Empty" }).getAttribute("href")).toContain("framework=empty");
+});
+
+it("orders frameworks in progress by their self-assessment, most advanced first", () => {
+  const ledger = (key: string, name: string) => ({ ...overview.frameworks[3]!, key, name, requirements: 10, snapshot: null });
+  const ready = (key: string, assessed: number) => ({
+    key, name: key, total: 10, assessed, implemented: assessed, partial: 0, not_implemented: 0, not_applicable: 0,
+    has_axes: false, scope_defined: false, review_on: null, overdue: 0, unowned_open: 0, open_by_owner: {}, last_assessed_at: null,
+  });
+  renderWithProviders(<FrameworkLedger orgId="primary" frameworks={[ledger("a", "Untouched"), ledger("b", "Started"), ledger("c", "Advanced")]}
+    readiness={[ready("a", 0), ready("b", 2), ready("c", 7)]} />);
+  const names = Array.from(document.querySelectorAll(".framework-row strong")).map((n) => n.textContent);
+  expect(names).toEqual(["Advanced", "Started", "Untouched"]);
+  expect(screen.getByText("7 / 10")).toBeTruthy();
+  expect(screen.queryAllByText("Sin evaluar")).toHaveLength(1); // only the untouched one
 });
 
 it("points first steps at the framework with the most requirements", async () => {

@@ -50,7 +50,7 @@ test("recorded-result design supports filters, keyboard disclosure, both locales
   await page.getByRole("button", { name: "Limpiar búsqueda" }).click();
   for (const locale of ["es", "en"] as const) {
     if (locale === "en") await page.getByRole("button", { name: "English" }).click();
-    await expect(page.getByRole("heading", { name: locale === "es" ? "Resultados por marco" : "Results by framework" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: locale === "es" ? "Marcos" : "Frameworks", exact: true })).toBeVisible();
     for (const colorScheme of ["light", "dark"] as const) {
       await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
       for (const width of [375, 768, 1280]) {
@@ -69,6 +69,6 @@ test("recorded-result design supports filters, keyboard disclosure, both locales
     }
   }
   await page.reload();
-  await expect(page.getByRole("heading", { name: "Results by framework" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Frameworks", exact: true })).toBeVisible();
   expect(csp).toEqual([]);
 });

@@ -24,7 +24,7 @@ function OrgHome() {
   return (
     <section className="overview-page flex flex-col gap-2">
       <h1 className="page-title">{org.organization_name}</h1>
-      <OverviewDashboard key={org.organization_id} orgId={org.organization_id} />
+      <OverviewDashboard key={org.organization_id} orgId={org.organization_id} org={org} />
     </section>
   );
 }

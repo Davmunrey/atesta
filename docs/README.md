@@ -59,6 +59,7 @@ Start with the question you have.
 - [organization-closure](specs/organization-closure.md)
 - [organization-shell-design](specs/organization-shell-design.md)
 - [rbac](specs/rbac.md)
+- [readiness-cockpit](specs/readiness-cockpit.md)
 - [requirement-register](specs/requirement-register.md)
 - [scanner-connectors](specs/scanner-connectors.md)
 - [tenant-data-layer](specs/tenant-data-layer.md)

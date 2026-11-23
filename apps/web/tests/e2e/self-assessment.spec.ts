@@ -1,6 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
 import { framework } from "../fixtures/framework";
+import { overview } from "../fixtures/overview";
 
 /** Synthetic register (workspace-ux spec), never a real normative pack. */
 const register = {
@@ -109,5 +110,27 @@ test("an admin reads the organization's real activity, accessibly", async ({ pag
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}`).toBe(true);
     await expectAccessible(page, `activity ${width}`);
+  }
+});
+
+test("the dashboard cockpit says where we stand, what needs attention and who does what, accessibly", async ({ page }) => {
+  const org = await createOrganization(page);
+  const readiness = [{
+    key: "synthetic_alpha", name: "Synthetic Alpha", total: 10, assessed: 6, implemented: 4, partial: 1, not_implemented: 1,
+    not_applicable: 0, has_axes: true, scope_defined: true, review_on: null, overdue: 2, unowned_open: 3,
+    open_by_owner: {}, last_assessed_at: "2026-11-20T10:00:00Z",
+  }];
+  await page.route("**/api/v1/orgs/*/overview", (route) => route.fulfill({ json: overview }));
+  await page.route("**/api/v1/orgs/*/readiness", (route) => route.fulfill({ json: readiness }));
+  await page.reload();
+  await expect(page.getByText(/Synthetic Alpha: 6 de 10 medidas evaluadas, 4 implantadas\./)).toBeVisible();
+  const now = page.getByRole("region", { name: "Ahora" });
+  await expect(now.getByRole("link", { name: "2 medidas con fecha límite vencida en Synthetic Alpha" })).toHaveAttribute("href", `/app/framework?org=${org}&framework=synthetic_alpha`);
+  await expect(page.getByText("6 de 10 evaluadas · 4 implantadas · 1 en parte · 1 sin implantar · 0 no aplican")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Tu trabajo" })).toBeVisible();
+  for (const width of [375, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}`).toBe(true);
+    await expectAccessible(page, `cockpit ${width}`);
   }
 });

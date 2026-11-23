@@ -1378,6 +1378,111 @@
         "title": "FrameworkDetail",
         "type": "object"
       },
+      "FrameworkReadiness": {
+        "properties": {
+          "assessed": {
+            "title": "Assessed",
+            "type": "integer"
+          },
+          "has_axes": {
+            "title": "Has Axes",
+            "type": "boolean"
+          },
+          "implemented": {
+            "title": "Implemented",
+            "type": "integer"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "last_assessed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Assessed At"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "not_applicable": {
+            "title": "Not Applicable",
+            "type": "integer"
+          },
+          "not_implemented": {
+            "title": "Not Implemented",
+            "type": "integer"
+          },
+          "open_by_owner": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "format": "uuid"
+            },
+            "title": "Open By Owner",
+            "type": "object"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "integer"
+          },
+          "partial": {
+            "title": "Partial",
+            "type": "integer"
+          },
+          "review_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review On"
+          },
+          "scope_defined": {
+            "title": "Scope Defined",
+            "type": "boolean"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "unowned_open": {
+            "title": "Unowned Open",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "total",
+          "assessed",
+          "implemented",
+          "partial",
+          "not_implemented",
+          "not_applicable",
+          "has_axes",
+          "scope_defined",
+          "review_on",
+          "overdue",
+          "unowned_open",
+          "open_by_owner",
+          "last_assessed_at"
+        ],
+        "title": "FrameworkReadiness",
+        "type": "object"
+      },
       "FrameworkSummary": {
         "properties": {
           "key": {
@@ -5158,6 +5263,58 @@
           }
         ],
         "summary": "Overview",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/readiness": {
+      "get": {
+        "operationId": "readiness_api_v1_orgs__org_id__readiness_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FrameworkReadiness"
+                  },
+                  "title": "Response Readiness Api V1 Orgs  Org Id  Readiness Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Readiness",
         "tags": [
           "compliance"
         ]

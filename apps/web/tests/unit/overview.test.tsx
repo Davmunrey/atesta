@@ -32,7 +32,7 @@ it("distinguishes zero, unscored and missing snapshots, retaining recorded prove
   const alpha = (await screen.findByText("Synthetic Alpha")).closest("details")!;
   expect(screen.getByText("0 %")).toBeTruthy();
   expect(screen.getByText("Sin puntuación")).toBeTruthy();
-  expect(screen.getByText("Sin evaluar")).toBeTruthy();
+  expect(screen.getByText("1 marco en preparación, aún sin requisitos")).toBeTruthy();
   fireEvent.click(within(alpha).getByText("Synthetic Alpha"));
   expect(within(alpha).getByText("synthetic-1")).toBeTruthy();
   expect(within(alpha).getByText("Organización completa")).toBeTruthy();
