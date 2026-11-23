@@ -315,3 +315,13 @@ mappings:
   rationale: "Candidate: password, lockout and recovery settings. They complement MFA; the credential lifecycle needs documentary review."
   source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
   reviewed_by: null
+- requirement_id: art21.2j
+  control_id: ctl.exchange_access_hardening
+  rationale: "Candidate: modern authentication, SMTP AUTH and shared-mailbox sign-in in Exchange Online. Mirrors ctl.legacy_authentication. Needs PowerShell; no result until it is granted."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2i
+  control_id: ctl.teams_external_access
+  rationale: "Candidate: Teams external access and meeting policies. Mirrors ctl.m365_external_sharing. Needs PowerShell; no result until it is granted."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null

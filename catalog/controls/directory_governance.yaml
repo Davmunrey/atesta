@@ -7,14 +7,14 @@ description_es: |
   2. Programa revisiones de acceso para invitados y roles privilegiados; usa grupos dinámicos para invitados sin la regla memberOf.
   3. Restringe los portales de administración y aprueba la clasificación de activos críticos en Defender XDR.
   Evidencia: configuración del directorio, revisiones programadas y resultado del escaneo.
-  Límite: que exista una revisión de acceso programada no prueba que se haga; regístralas en Revisiones de acceso.
+  Límite: que exista una revisión de acceso programada no prueba que se haga; regístralas en Revisiones de acceso. No se escanea la clasificación de activos críticos en Defender XDR: el check necesita un permiso que Atesta no solicita. Aporta evidencia documental.
 description_en: |
   Prepare: decide who creates groups and tenants and how guests and privileged roles are reviewed.
   1. Limit creation of Microsoft 365 groups, security groups and tenants to administrators.
   2. Schedule access reviews for guests and privileged roles; use dynamic groups for guests without the memberOf rule.
   3. Restrict the admin portals and approve critical asset classification in Defender XDR.
   Evidence: directory settings, scheduled reviews and the scan result.
-  Limit: a scheduled access review does not show it is done; record them in Access reviews.
+  Limit: a scheduled access review does not show it is done; record them in Access reviews. Critical asset classification in Defender XDR is not scanned: the check needs a permission Atesta never requests. Provide documentary evidence.
 manual: false
 prowler_checks:
   - entra_policy_default_user_cannot_create_m365_groups
@@ -25,7 +25,6 @@ prowler_checks:
   - entra_access_review_guest_users_configured
   - entra_access_review_privileged_roles_configured
   - entra_admin_portals_access_restriction
-  - defenderxdr_critical_asset_management_pending_approvals
 atesta_checks: []
 remediation_refs:
   - https://learn.microsoft.com/en-us/microsoft-365/solutions/manage-creation-of-groups
@@ -41,4 +40,3 @@ remediation_refs:
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_access_review_guest_users_configured/entra_access_review_guest_users_configured.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_access_review_privileged_roles_configured/entra_access_review_privileged_roles_configured.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_admin_portals_access_restriction/entra_admin_portals_access_restriction.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defenderxdr/defenderxdr_critical_asset_management_pending_approvals/defenderxdr_critical_asset_management_pending_approvals.py

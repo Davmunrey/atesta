@@ -384,3 +384,18 @@ mappings:
   rationale: "Candidate: directory settings for group and tenant creation, scheduled access reviews and admin portals. Whether reviews are done needs documentary review."
   source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
   reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.m365_mail_threat_policies
+  rationale: "Candidate: Defender for Office 365 and Exchange mail-flow policies. Mirrors ctl.email_protection. Needs PowerShell; no result until it is granted."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art10
+  control_id: ctl.m365_audit_logging
+  rationale: "Candidate: audit log search and mailbox auditing. Mirrors ctl.mailbox_audit_bypass. Needs PowerShell; no result until it is granted."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_10
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.exchange_access_hardening
+  rationale: "Candidate: Exchange Online authentication and access settings. Mirrors ctl.legacy_authentication. Needs PowerShell; no result until it is granted."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null

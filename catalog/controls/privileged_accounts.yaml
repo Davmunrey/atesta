@@ -8,7 +8,7 @@ description_es: |
   3. En Microsoft Entra, activa la aprobación en PIM para los roles más críticos; revisa que las cuentas de administración sean solo de nube.
   4. En Defender XDR, comprueba que no haya credenciales de cuentas privilegiadas expuestas en equipos vulnerables.
   Evidencia: lista de cuentas privilegiadas con su responsable, configuración de PIM o equivalente y resultado del escaneo.
-  Límite: los checks miran la configuración del inquilino, no si cada administrador la usa bien. La revisión periódica de quién tiene el rol sigue siendo manual.
+  Límite: los checks miran la configuración del inquilino, no si cada administrador la usa bien. La revisión periódica de quién tiene el rol sigue siendo manual. El paso 4 no se escanea: el check necesita un permiso que Atesta no solicita. Aporta evidencia documental.
 description_en: |
   Prepare: list the accounts with global administrator or super administrator roles, who uses them and why.
   1. Keep between two and four global or super administrators, dedicated to that role and not used for daily work.
@@ -16,7 +16,7 @@ description_en: |
   3. In Microsoft Entra, require approval in PIM for the most critical roles; check that administrator accounts are cloud-only.
   4. In Defender XDR, check that no privileged account credentials are exposed on vulnerable endpoints.
   Evidence: list of privileged accounts with their owner, the PIM or equivalent settings, and the scan result.
-  Limit: the checks read tenant settings, not whether each administrator uses them well. Reviewing who holds each role stays manual.
+  Limit: the checks read tenant settings, not whether each administrator uses them well. Reviewing who holds each role stays manual. Step 4 is not scanned: the check needs a permission Atesta never requests. Provide documentary evidence.
 manual: false
 prowler_checks:
   - admincenter_users_between_two_and_four_global_admins
@@ -31,7 +31,6 @@ prowler_checks:
   - directory_super_admin_only_admin_roles
   - security_super_admin_recovery_disabled
   - security_2sv_hardware_keys_admins
-  - defenderxdr_endpoint_privileged_user_exposed_credentials
 atesta_checks: []
 remediation_refs:
   - https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/best-practices#5-limit-the-number-of-global-administrators-to-less-than-5
@@ -51,4 +50,3 @@ remediation_refs:
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/directory/directory_super_admin_only_admin_roles/directory_super_admin_only_admin_roles.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_super_admin_recovery_disabled/security_super_admin_recovery_disabled.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_2sv_hardware_keys_admins/security_2sv_hardware_keys_admins.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defenderxdr/defenderxdr_endpoint_privileged_user_exposed_credentials/defenderxdr_endpoint_privileged_user_exposed_credentials.py

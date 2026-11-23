@@ -7,14 +7,14 @@ description_es: |
   2. Limita la frecuencia de inicio de sesión y cierra las sesiones inactivas.
   3. En Google Workspace, limita la duración de la sesión a 12 horas o menos.
   Evidencia: políticas efectivas, licencias y resultado del escaneo.
-  Límite: sin la licencia adecuada algunos checks fallan aunque la intención sea correcta; documenta la alternativa adoptada.
+  Límite: sin la licencia adecuada algunos checks fallan aunque la intención sea correcta; documenta la alternativa adoptada. La duración de sesión de Google Workspace no se escanea: el check pide un token de licencias sin variante de solo lectura. Aporta evidencia documental.
 description_en: |
   Prepare: check in the linked documentation which licences identity protection needs, and define acceptable session times.
   1. Create Conditional Access policies that block or require MFA for high and medium sign-in risk and for high-risk users.
   2. Limit sign-in frequency and end idle sessions.
   3. In Google Workspace, limit session duration to 12 hours or less.
   Evidence: effective policies, licences and the scan result.
-  Limit: without the right licence some checks fail even when the intent is right; document the alternative you adopted.
+  Limit: without the right licence some checks fail even when the intent is right; document the alternative you adopted. Google Workspace session duration is not scanned: the check asks for a licensing token with no read-only variant. Provide documentary evidence.
 manual: false
 prowler_checks:
   - entra_identity_protection_sign_in_risk_enabled
@@ -22,7 +22,6 @@ prowler_checks:
   - entra_conditional_access_policy_block_high_medium_sign_in_risk
   - entra_idle_session_timeout_configured
   - entra_conditional_access_policy_sign_in_frequency_all_users
-  - security_session_duration_limited
 atesta_checks: []
 remediation_refs:
   - https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview
@@ -35,4 +34,3 @@ remediation_refs:
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_block_high_medium_sign_in_risk/entra_conditional_access_policy_block_high_medium_sign_in_risk.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_idle_session_timeout_configured/entra_idle_session_timeout_configured.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_sign_in_frequency_all_users/entra_conditional_access_policy_sign_in_frequency_all_users.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_session_duration_limited/security_session_duration_limited.py

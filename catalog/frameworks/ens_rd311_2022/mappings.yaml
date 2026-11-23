@@ -635,3 +635,48 @@ mappings:
   rationale: "Candidate: directory settings for group and tenant creation, scheduled access reviews and admin portals. Whether reviews are done needs documentary review."
   source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
   reviewed_by: null
+- requirement_id: mp.s.1
+  control_id: ctl.m365_mail_threat_policies
+  rationale: "Candidate: Defender for Office 365 and Exchange mail-flow policies. CCN-STIC-885C §3.2.3.1 (pp. 44-81) configures them for this measure, which CCN-STIC-808 verifies at pp. 100-101. Prowler 5.51.0 ens_rd2022_m365 maps 10 of these checks to mp.s.1 (a hint). Needs PowerShell; no result until it is granted."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.6
+  control_id: ctl.m365_mail_threat_policies
+  rationale: "Candidate: anti-malware and Safe Attachments policies for mail, SharePoint, OneDrive and Teams. CCN-STIC-885C §3.1.2.1 (pp. 30-31) places Exchange Online Protection here; CCN-STIC-808 (pp. 50-51) also asks for protection on every endpoint and server, which needs documentary review. Needs PowerShell; no result until it is granted."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.8
+  control_id: ctl.m365_audit_logging
+  rationale: "Candidate: audit log search and mailbox auditing. CCN-STIC-885A §3.1.2.3 (pp. 46-47) and CCN-STIC-885C §3.1.2.3 (pp. 32-35); CCN-STIC-808 op.exp.8 (pp. 53-55). Retention, protection and review need documentary review. Needs PowerShell; no result until it is granted."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.6
+  control_id: ctl.exchange_access_hardening
+  rationale: "Candidate: modern authentication and SMTP AUTH in Exchange Online. CCN-STIC-885C §3.1.1.5 (pp. 29-30); CCN-STIC-808 op.acc.6 (p. 40). The other checks of this control do not bear on authentication. Needs PowerShell; no result until it is granted."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.1
+  control_id: ctl.exchange_access_hardening
+  rationale: "Candidate: shared mailboxes with sign-in blocked, so no shared credential exists. CCN-STIC-885A §3.1.1.1 (p. 22); CCN-STIC-808 op.acc.1 (p. 32). Only that check bears on identification. Needs PowerShell; no result until it is granted."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.2
+  control_id: ctl.exchange_access_hardening
+  rationale: "Candidate: Exchange Online organization and Outlook on the web settings (add-ins, personal accounts, extra storage, app mailbox scope). CCN-STIC-885A §4.1 (p. 87) restricts services and add-ins; CCN-STIC-808 op.exp.2 (p. 44). Needs PowerShell; no result until it is granted."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.4
+  control_id: ctl.teams_external_access
+  rationale: "Candidate: Teams external access and meeting policies. CCN-STIC-885D §2.1 (pp. 8-9) and §4.6 (pp. 40-41); CCN-STIC-808 op.acc.4 (p. 36). Mirrors ctl.m365_external_sharing. Policies assigned to groups need documentary review. Needs PowerShell; no result until it is granted."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.exp.2
+  control_id: ctl.teams_external_access
+  rationale: "Candidate: Teams organization-wide settings. CCN-STIC-885D §2.1 (pp. 7-16); CCN-STIC-808 op.exp.2 (p. 44). Prowler 5.51.0 ens_rd2022_m365 maps two of these checks to op.exp.2 (a hint). Needs PowerShell; no result until it is granted."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null
+- requirement_id: op.acc.6
+  control_id: ctl.app_governance
+  rationale: "Candidate: only the legacy-access checks of this control (non-modern authentication in SharePoint, MSOnline, POP/IMAP) bear on op.acc.6. CCN-STIC-885B §3.1.1.5 (p. 26) blocks apps without modern authentication; Prowler 5.51.0 ens_rd2022_m365 maps sharepoint_modern_authentication_required here (a hint)."
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai-2
+  reviewed_by: null

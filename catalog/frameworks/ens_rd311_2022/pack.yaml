@@ -1,6 +1,6 @@
 id: ens_rd311_2022
 name: ENS · RD 311/2022
-version: 2024-11-06.draft6
+version: 2024-11-06.draft7
 jurisdiction: ES
 source: https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191
 license_notes: Legislative text excluded from copyright under Article 13 of RDL 1/1996. Official Spanish paragraphs and tables are reproduced from BOE; no CCN guide or third-party diagram is reproduced. English guidance is authored, not an official translation.
@@ -36,6 +36,10 @@ attributes:
     - ctl.hybrid_identity
     - ctl.workspace_collaboration
     - ctl.directory_governance
+    - ctl.exchange_access_hardening
+    - ctl.m365_audit_logging
+    - ctl.m365_mail_threat_policies
+    - ctl.teams_external_access
   source_refs:
     - https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-7191
     - https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#ai
