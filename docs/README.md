@@ -41,6 +41,7 @@ Start with the question you have.
 ## Feature specs
 
 - [claims-honesty](specs/claims-honesty.md)
+- [console-shell](specs/console-shell.md)
 - [content-model-v2](specs/content-model-v2.md)
 - [control-evidence-statements](specs/control-evidence-statements.md)
 - [control-model-schema](specs/control-model-schema.md)

@@ -1,6 +1,8 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
+import { PageHeader, Panel } from "./page-frame";
+import { orgHome as homeOf } from "@/lib/org";
 import { useState } from "react";
 import { useChangeRole, useMembers, useRemoveMember } from "@/lib/api/hooks";
 import type { Membership } from "@/lib/org";
@@ -24,9 +26,11 @@ export function MembersView({ org }: { org: Membership }) {
   const failure = changeRole.error ?? remove.error;
 
   return (
-    <section className="flex flex-col gap-4">
-      <h1 className="page-title">{t("members.title", { org: org.organization_name })}</h1>
+    <>
+      <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("org.members") }]}
+        title={t("members.title", { org: org.organization_name })} description={t("org.membersHelp")} />
       {failure ? <ErrorMessage error={failure} /> : null}
+      <Panel>
       <div className="table-region" role="region" aria-label={t("members.title", { org: org.organization_name })} tabIndex={0}>
       <table className="w-full text-left">
         <thead className="text-sm text-muted">
@@ -111,6 +115,7 @@ export function MembersView({ org }: { org: Membership }) {
         </tbody>
       </table>
       </div>
-    </section>
+      </Panel>
+    </>
   );
 }

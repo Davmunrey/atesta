@@ -7,6 +7,8 @@ import { isMyWorkOverdue, type Readiness, useMyWork } from "@/lib/api/register-h
 import { type Membership, orgActivity, orgFramework, orgMembers, orgMyWork } from "@/lib/org";
 import { canReviewControls, isContributor } from "@/lib/permissions";
 import { RankedBars } from "./charts";
+import { Icon } from "./icons";
+import { Panel } from "./page-frame";
 
 export type Step = { kind: "scope" | "assess" | "review" | "export"; count: number };
 export type Attention = { key: string; severity: "overdue" | "missing" | "pending"; text: string; href: string };
@@ -70,18 +72,17 @@ export function ReadinessSummary({ readiness, attention }: { readiness: Readines
 export function AttentionList({ items, readiness, orgId }: { items: Attention[]; readiness: Readiness[]; orgId: string }) {
   const t = useTranslations("cockpit");
   const next = readiness.filter(started).concat(readiness).find((r) => nextStep(r).kind !== "export");
-  return <section aria-labelledby="attention-heading" className="attention">
-    <h2 id="attention-heading">{t("now")}</h2>
+  return <Panel title={t("now")} className="attention">
     {items.length === 0 ? <p className="text-muted">
       {t("calm")}{" "}
       {next ? <Link href={orgFramework(orgId, next.key)} className="text-link underline">{t(`step.${nextStep(next).kind}`, { count: nextStep(next).count, framework: next.name })}</Link> : null}
     </p> : <ul className="attention-list">
       {items.map((item) => <li key={item.key} data-severity={item.severity}>
-        <span className="attention-tag">{t(`severity.${item.severity}`)}</span>
+        <span className="badge attention-tag" data-severity={item.severity}><Icon name={item.severity} />{t(`severity.${item.severity}`)}</span>
         <Link href={item.href}>{item.text}</Link>
       </li>)}
     </ul>}
-  </section>;
+  </Panel>;
 }
 
 const SEGMENTS = ["implemented", "partial", "not_implemented", "not_applicable"] as const;
@@ -120,8 +121,7 @@ export function YourWork({ org }: { org: Membership }) {
   if (!isContributor(org.role) || !query.data) return null;
   const today = now.toISOString().slice(0, 10);
   const items = query.data.filter((i) => !(i.applicability === "not_applicable" || i.implementation === "implemented")).slice(0, 3);
-  return <section aria-labelledby="your-work-heading" className="cockpit-panel">
-    <h2 id="your-work-heading">{t("yourWork")}</h2>
+  return <Panel title={t("yourWork")} actions={<Link href={orgMyWork(org.organization_id)} className="text-link underline text-sm">{t("allMyWork")}</Link>}>
     {items.length === 0 ? <p className="text-sm text-muted">{t("yourWorkEmpty")}</p> : <ul className="cockpit-list">
       {items.map((i) => <li key={`${i.framework_key}:${i.code}`}>
         <Link href={`${orgFramework(org.organization_id, i.framework_key)}#req-${encodeURIComponent(i.code)}`}>
@@ -129,12 +129,11 @@ export function YourWork({ org }: { org: Membership }) {
         </Link>
         <span className="text-sm text-muted">
           {i.due_on ? format.dateTime(new Date(`${i.due_on}T00:00:00Z`), { dateStyle: "medium", timeZone: "UTC" }) : t("noDue")}
-          {isMyWorkOverdue(i, today) ? <> · <span data-severity="overdue">{t("severity.overdue")}</span></> : null}
+          {isMyWorkOverdue(i, today) ? <> · <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("severity.overdue")}</span></> : null}
         </span>
       </li>)}
     </ul>}
-    <Link href={orgMyWork(org.organization_id)} className="text-link underline text-sm">{t("allMyWork")}</Link>
-  </section>;
+  </Panel>;
 }
 
 /** Open measures per person across frameworks. Not for auditors, who do not see people. */
@@ -147,10 +146,9 @@ export function TeamLoad({ org, readiness }: { org: Membership; readiness: Readi
   for (const r of readiness) for (const [user, n] of Object.entries(r.open_by_owner)) totals.set(user, (totals.get(user) ?? 0) + n);
   const emails = new Map(members.data.map((m) => [m.user_id, m.email]));
   const rows = [...totals.entries()].map(([id, value]) => ({ id, label: emails.get(id) ?? t("formerMember"), value }));
-  return <section aria-labelledby="team-heading" className="cockpit-panel">
-    <h2 id="team-heading">{t("team")}</h2>
+  return <Panel title={t("team")}>
     <RankedBars title={t("teamChart")} rows={rows} empty={t("teamEmpty")} />
-  </section>;
+  </Panel>;
 }
 
 /** The latest events, for admins and owners (insights spec). */
@@ -164,14 +162,32 @@ export function RecentActivity({ org }: { org: Membership }) {
   if (!admin || !query.data) return null;
   const action = (name: string) => { const key = `actions.${name.replaceAll(".", "_")}`; return activity.has(key) ? activity(key) : name; };
   const events = query.data.events.slice(0, 5);
-  return <section aria-labelledby="recent-heading" className="cockpit-panel">
-    <h2 id="recent-heading">{t("recent")}</h2>
+  return <Panel title={t("recent")} actions={<Link href={orgActivity(org.organization_id)} className="text-link underline text-sm">{t("allActivity")}</Link>}>
     {events.length === 0 ? <p className="text-sm text-muted">{t("recentEmpty")}</p> : <ul className="cockpit-list">
       {events.map((e, i) => <li key={`${e.occurred_at}:${i}`}>
         <span>{action(e.action)}</span>
         <span className="text-sm text-muted">{e.actor_email ?? t("system")} · {format.relativeTime(new Date(e.occurred_at), now)}</span>
       </li>)}
     </ul>}
-    <Link href={orgActivity(org.organization_id)} className="text-link underline text-sm">{t("allActivity")}</Link>
-  </section>;
+  </Panel>;
+}
+
+/** Key figures across frameworks in progress (console-shell spec); state is written, not only coloured. */
+export function Kpis({ readiness }: { readiness: Readiness[] }) {
+  const c = useTranslations("console.kpi");
+  const label = useTranslations("console");
+  const format = useFormatter();
+  const active = readiness.filter(started);
+  const sum = (pick: (r: Readiness) => number) => active.reduce((n, r) => n + pick(r), 0);
+  const overdue = sum((r) => r.overdue);
+  const unowned = sum((r) => r.unowned_open);
+  const state = (n: number) => <dd className="kpi-state" data-severity={n > 0 ? "overdue" : "done"}>
+    <Icon name={n > 0 ? "overdue" : "done"} width={16} height={16} />{c(n > 0 ? "act" : "clear")}</dd>;
+  return <dl className="kpis" aria-label={label("kpis")}>
+    <div className="kpi"><dt>{c("inProgress")}</dt><dd>{format.number(active.length)}</dd><dd className="kpi-meta">{c("ofTotal", { total: readiness.length })}</dd></div>
+    <div className="kpi"><dt>{c("assessed")}</dt><dd>{format.number(sum((r) => r.assessed))}</dd><dd className="kpi-meta">{c("ofTotal", { total: sum((r) => r.total) })}</dd></div>
+    <div className="kpi"><dt>{c("implemented")}</dt><dd>{format.number(sum((r) => r.implemented))}</dd><dd className="kpi-meta">{c("ofTotal", { total: sum((r) => r.total) })}</dd></div>
+    <div className="kpi"><dt>{c("overdue")}</dt><dd>{format.number(overdue)}</dd>{state(overdue)}</div>
+    <div className="kpi"><dt>{c("unowned")}</dt><dd>{format.number(unowned)}</dd>{state(unowned)}</div>
+  </dl>;
 }

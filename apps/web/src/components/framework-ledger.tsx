@@ -7,6 +7,7 @@ import Link from "next/link";
 import { percent } from "@/lib/format";
 import type { Readiness } from "@/lib/api/register-hooks";
 import { orgFramework } from "@/lib/org";
+import { Panel } from "./page-frame";
 import { ReadinessBar, ReadinessCounts, StepLink } from "./readiness";
 
 type Framework = components["schemas"]["FrameworkSummary"];
@@ -33,12 +34,8 @@ export function FrameworkLedger({ frameworks, orgId, readiness = [] }: { framewo
   const visible = matching.filter((f) => f.requirements > 0);
   const templates = matching.filter((f) => f.requirements === 0);
   return (
-    <section aria-labelledby="framework-heading" className="framework-section">
-      <div className="dashboard-section-heading">
-        <h2 id="framework-heading">{t("frameworks")}</h2>
-        <span className="dashboard-count">{format.number(frameworks.length)}</span>
-      </div>
-      <p className="text-sm text-muted">{t("frameworksHelp")}</p>
+    <Panel title={t("frameworks")} description={t("frameworksHelp")} className="framework-section"
+      actions={<span className="dashboard-count" aria-label={t("frameworkCount", { count: frameworks.length })}>{format.number(frameworks.length)}</span>}>
       {frameworks.length === 0 ? <div className="dashboard-empty">
         <h3>{t("emptyFrameworks")}</h3><p>{t("emptyFrameworksHelp")}</p>
       </div> : <>
@@ -91,6 +88,6 @@ export function FrameworkLedger({ frameworks, orgId, readiness = [] }: { framewo
         </details> : null}
         {matching.length === 0 ? <div className="dashboard-empty"><p>{t("noMatches")}</p><button className="dashboard-button" onClick={() => setSearch("")}>{t("clearSearch")}</button></div> : null}
       </>}
-    </section>
+    </Panel>
   );
 }

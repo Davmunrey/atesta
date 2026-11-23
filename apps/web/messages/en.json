@@ -349,7 +349,8 @@
     "continue": "Continue with {framework}",
     "start": "Start with {framework}",
     "templates": "{count, plural, one {# framework in preparation, no requirements yet} other {# frameworks in preparation, no requirements yet}}",
-    "supporting": "Work and activity"
+    "supporting": "Work and activity",
+    "frameworkCount": "{count, plural, one {# framework} other {# frameworks}}"
   },
   "preparation": {
     "states": {
@@ -578,7 +579,8 @@
     "confirmLabel": "Type “{org}” to confirm",
     "closeAction": "Close the organization",
     "closing": "Closure requested: the data will be erased on {date}.",
-    "cancelAction": "Cancel the closure"
+    "cancelAction": "Cancel the closure",
+    "crumb": "Settings"
   },
   "cockpit": {
     "summary": "{framework}: {assessed} of {total, plural, one {# measure assessed} other {# measures assessed}}, {implemented} implemented.",
@@ -617,5 +619,39 @@
     "recentEmpty": "No activity in the last 30 days.",
     "system": "System",
     "allActivity": "See all activity"
+  },
+  "console": {
+    "skip": "Skip to content",
+    "menuShow": "Show the menu",
+    "menuHide": "Hide the menu",
+    "frameworks": "Frameworks",
+    "groups": {
+      "general": "General",
+      "team": "Team",
+      "oversight": "Oversight",
+      "organization": "Organization"
+    },
+    "searchLabel": "Search Atesta",
+    "searchPlaceholder": "Search measures, frameworks and pages",
+    "searching": "Searching…",
+    "noResults": "No results",
+    "results": {
+      "pages": "Page",
+      "frameworks": "Framework",
+      "measures": "Measure"
+    },
+    "breadcrumbs": "Breadcrumbs",
+    "kpis": "Key figures",
+    "kpi": {
+      "inProgress": "Frameworks in progress",
+      "assessed": "Measures assessed",
+      "ofTotal": "of {total, plural, one {#} other {#}}",
+      "implemented": "Implemented",
+      "overdue": "Overdue",
+      "unowned": "Without an owner",
+      "act": "Needs action",
+      "clear": "Up to date"
+    },
+    "frameworksPage": "Self-assessment progress and recorded results for each framework."
   }
 }

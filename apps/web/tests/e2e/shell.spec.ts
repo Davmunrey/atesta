@@ -165,7 +165,10 @@ test("organization navigation, local fonts and long content work across sizes an
       await page.setViewportSize({ width, height: 850 });
       for (const name of ["Resumen", "Miembros", "Invitaciones"]) {
         const nav = page.getByRole("navigation", { name: "Secciones de la organización" });
+        // Below 64rem the navigation is a drawer behind the menu button (console-shell spec).
+        if (width < 1024) await page.getByRole("button", { name: "Mostrar el menú" }).click();
         await nav.getByRole("link", { name, exact: true }).click();
+        if (width < 1024) await page.getByRole("button", { name: "Mostrar el menú" }).click();
         await expect(nav.getByRole("link", { name, exact: true })).toHaveAttribute("aria-current", "page");
         const title = name === "Resumen" ? longName : `${name} de ${longName}`;
         await expect(page.getByRole("heading", { level: 1 })).toHaveText(title);
@@ -175,6 +178,7 @@ test("organization navigation, local fonts and long content work across sizes an
         await expect(active).toHaveCSS("background-color", "rgb(255, 229, 138)");
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), `${name} ${width} ${colorScheme}`).toBe(true);
         await expectAccessible(page, `${name} ${width} ${colorScheme}`);
+        if (width < 1024) await page.getByRole("button", { name: "Ocultar el menú" }).click();
         if (name === "Miembros") {
           const table = page.getByRole("region", { name: `Miembros de ${longName}` });
           await expect(table).toHaveAttribute("tabindex", "0");

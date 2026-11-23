@@ -1,6 +1,8 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
+import { PageHeader, Panel } from "./page-frame";
+import { orgHome as homeOf } from "@/lib/org";
 import { useId, useState } from "react";
 import { useCreateInvitation, useInvitations, useRevokeInvitation } from "@/lib/api/hooks";
 import type { Membership } from "@/lib/org";
@@ -33,8 +35,10 @@ export function InvitationsView({ org }: { org: Membership }) {
   }
 
   return (
-    <section className="flex flex-col gap-6">
-      <h1 className="page-title">{t("invitations.title", { org: org.organization_name })}</h1>
+    <div className="panel-grid">
+      <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("org.invitations") }]}
+        title={t("invitations.title", { org: org.organization_name })} description={t("org.invitationsHelp")} />
+      <Panel title={t("invitations.invite")}>
       <form onSubmit={onSubmit} className="flex flex-wrap items-end gap-3">
         <span className="flex flex-col gap-1">
           <label htmlFor={`${id}-email`}>{t("invitations.email")}</label>
@@ -62,8 +66,9 @@ export function InvitationsView({ org }: { org: Membership }) {
       {role === "auditor" ? <p id={`${id}-until-help`} className="text-sm text-muted">{t("invitations.accessHelp")}</p> : null}
       {create.isError ? <ErrorMessage error={create.error} /> : null}
       {create.data ? <CreatedLink email={create.data.email} link={create.data.accept_link} /> : null}
+      </Panel>
 
-      <h2 className="text-lg font-semibold">{t("invitations.pending")}</h2>
+      <Panel title={t("invitations.pending")}>
       {revoke.isError ? <ErrorMessage error={revoke.error} /> : null}
       {list.isPending ? (
         <p role="status">{t("app.loading")}</p>
@@ -101,7 +106,8 @@ export function InvitationsView({ org }: { org: Membership }) {
           ))}
         </ul>
       )}
-    </section>
+      </Panel>
+    </div>
   );
 }
 

@@ -115,6 +115,13 @@ components:
 
 # Design System: Atesta
 
+> **Owner decision, 2026-11-23 (#163):** the authenticated app adopts a console structure, "estilo Microsoft, AWS",
+> with Atesta's brand: an ink top bar with global search, grouped side navigation with drawn icons,
+> breadcrumbs and page headers, content in panels, a KPI strip and status badges. Panels replace the
+> earlier "ruled ledger, no cards" rule *inside the app only*; panels never nest, rows inside them stay
+> ruled. Colours and type are unchanged; new tokens: `page`, `panel`, `border-subtle` and `topbar-*`
+> (tokens.css). The public pages keep the paper-and-ink composition below. Spec: `docs/specs/console-shell.md`.
+
 ## Overview
 
 **Creative North Star: "Paper and ink"**
@@ -199,7 +206,7 @@ Controls and navigation use the small radius; shared primary actions and the col
 - **Do** let long names wrap and stack supporting dashboard content below the ledger on smaller screens.
 
 ### Don't:
-- **Don't** turn each framework result into a separate elevated card; the shipped dashboard uses a ruled ledger.
+- **Don't** nest panels, or turn each row inside a panel into its own card; rows inside a panel stay ruled (console-shell spec).
 - **Don't** use status color alone to convey an outcome or replace recorded results with decorative scores.
 - **Don't** promote future landing-only colors, entrance animations or product views into implemented tokens.
 
