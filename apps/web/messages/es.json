@@ -88,6 +88,9 @@
       "invalid_token": "Tu sesión ha terminado. Vuelve a iniciar sesión.",
       "provider_unavailable": "No podemos verificar tu sesión ahora mismo. Vuelve a intentarlo en unos segundos."
     },
+    "billing": {
+      "plan_limit": "Tu plan no incluye esto. Para ampliarlo, escribe a tu contacto en Atesta."
+    },
     "connections": {
       "incomplete_permissions": "El escaneo se detuvo: a la conexión le faltan permisos de lectura. Revisa los permisos concedidos y vuelve a verificarla.",
       "not_found": "No encontramos esa conexión, o no tienes acceso.",

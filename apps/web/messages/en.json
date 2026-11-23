@@ -88,6 +88,9 @@
       "invalid_token": "Your session has ended. Sign in again.",
       "provider_unavailable": "We cannot verify your session right now. Try again in a few seconds."
     },
+    "billing": {
+      "plan_limit": "Your plan does not include this. To extend it, write to your Atesta contact."
+    },
     "connections": {
       "incomplete_permissions": "The scan stopped: the connection is missing read permissions. Check the permissions granted and verify it again.",
       "not_found": "We couldn't find that connection, or you don't have access.",

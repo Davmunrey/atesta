@@ -1,7 +1,7 @@
 # Spec: Manual control review
 
 - Requirement ids: FR-07, ADR-005, NFR-05
-- Status: draft
+- Status: built (2026-11-23: every acceptance criterion is implemented and covered by the tests its test plan names)
 
 ## Problem
 

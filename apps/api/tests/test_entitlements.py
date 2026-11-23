@@ -63,3 +63,39 @@ def test_repository_plans_file_is_valid() -> None:
     api._grants.cache_clear()
     plans, _ = api._grants()
     assert set(plans) == {p.value for p in Plan}
+
+
+def test_a_plan_may_grant_every_framework(monkeypatch: pytest.MonkeyPatch) -> None:
+    from atesta_api.modules.billing import api
+
+    raw = {"plans": {**RAW["plans"], "business": "all"}}
+    monkeypatch.setattr(api, "_grants", lambda: parse_grants(raw, KNOWN))
+    assert has_framework(Plan.BUSINESS, "fw_b")
+    assert has_framework(Plan.BUSINESS, "a_pack_added_later")
+    assert not has_framework(Plan.STARTER, "fw_b")
+
+
+def test_pilot_organizations_default_to_business() -> None:
+    from atesta_api.modules.billing.api import DEFAULT_PLAN
+
+    assert DEFAULT_PLAN is Plan.BUSINESS
+
+
+def test_feature_addons_are_the_feature_values_only() -> None:
+    from atesta_api.modules.billing.api import Entitlements
+
+    granted = Entitlements(Plan.STARTER, frozenset({"evidence_export", "second_pack"}))
+    assert granted.feature_addons == frozenset({Feature.EVIDENCE_EXPORT})
+
+
+def test_repository_grants_follow_the_accepted_hypothesis() -> None:
+    """business opens every pack, drafts and synthetic ones too; starter and pro the ENS pack."""
+    from atesta_api.modules.billing import api
+
+    api._grants.cache_clear()
+    packs = api.known_frameworks(api._catalog())
+    assert "ens_rd311_2022" in packs
+    assert all(has_framework(Plan.BUSINESS, p) for p in packs | {"synthetic_alpha"})
+    assert has_framework(Plan.PRO, "ens_rd311_2022")
+    assert has_framework(Plan.STARTER, "ens_rd311_2022")
+    assert not has_framework(Plan.STARTER, "nis2") and not has_framework(Plan.PRO, "nis2")

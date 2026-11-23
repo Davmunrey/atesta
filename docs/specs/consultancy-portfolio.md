@@ -1,7 +1,7 @@
 # Spec: portfolio view
 
 - Issue: #192. Builds on `readiness-cockpit.md` and `recorded-routines.md`.
-- Status: draft
+- Status: built (2026-11-23: every acceptance criterion is implemented and covered by the tests its test plan names)
 
 ## Problem
 

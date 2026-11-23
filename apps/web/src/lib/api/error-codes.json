@@ -4,6 +4,7 @@
   "auth.bad_state",
   "auth.invalid_token",
   "auth.provider_unavailable",
+  "billing.plan_limit",
   "compliance.access_review_closed",
   "compliance.access_review_entry_not_found",
   "compliance.access_review_not_found",
