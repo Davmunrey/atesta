@@ -3150,6 +3150,56 @@
         "title": "GroupTitle",
         "type": "object"
       },
+      "GuideNoteOut": {
+        "properties": {
+          "en": {
+            "title": "En",
+            "type": "string"
+          },
+          "es": {
+            "title": "Es",
+            "type": "string"
+          },
+          "ref": {
+            "$ref": "#/components/schemas/GuideRef"
+          }
+        },
+        "required": [
+          "es",
+          "en",
+          "ref"
+        ],
+        "title": "GuideNoteOut",
+        "type": "object"
+      },
+      "GuideRef": {
+        "properties": {
+          "edition": {
+            "title": "Edition",
+            "type": "string"
+          },
+          "guide": {
+            "title": "Guide",
+            "type": "string"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "section": {
+            "title": "Section",
+            "type": "string"
+          }
+        },
+        "required": [
+          "guide",
+          "edition",
+          "section",
+          "page"
+        ],
+        "title": "GuideRef",
+        "type": "object"
+      },
       "GuideReference": {
         "additionalProperties": false,
         "description": "Where a guide says it: cited, never copied (requirement-register spec, issue 226).",
@@ -3182,6 +3232,42 @@
           "page"
         ],
         "title": "GuideReference",
+        "type": "object"
+      },
+      "GuideStepOut": {
+        "properties": {
+          "asset": {
+            "enum": [
+              "information",
+              "service"
+            ],
+            "title": "Asset",
+            "type": "string"
+          },
+          "en": {
+            "title": "En",
+            "type": "string"
+          },
+          "es": {
+            "title": "Es",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "ref": {
+            "$ref": "#/components/schemas/GuideRef"
+          }
+        },
+        "required": [
+          "asset",
+          "key",
+          "es",
+          "en",
+          "ref"
+        ],
+        "title": "GuideStepOut",
         "type": "object"
       },
       "HTTPValidationError": {
@@ -4064,6 +4150,23 @@
             "title": "Scope Es",
             "type": "string"
           },
+          "scope_guide": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScopeGuide"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scope_profiles": {
+            "items": {
+              "$ref": "#/components/schemas/ScopeProfile"
+            },
+            "title": "Scope Profiles",
+            "type": "array"
+          },
           "source_refs": {
             "items": {
               "minLength": 1,
@@ -4112,6 +4215,28 @@
           "verified_on"
         ],
         "title": "PackContext",
+        "type": "object"
+      },
+      "PageReference": {
+        "additionalProperties": false,
+        "description": "A section and page of the profile's own guide (its first reference).",
+        "properties": {
+          "page": {
+            "minimum": 1.0,
+            "title": "Page",
+            "type": "integer"
+          },
+          "section": {
+            "minLength": 1,
+            "title": "Section",
+            "type": "string"
+          }
+        },
+        "required": [
+          "section",
+          "page"
+        ],
+        "title": "PageReference",
         "type": "object"
       },
       "PolicyIn": {
@@ -4257,8 +4382,85 @@
         "title": "PreparationControl",
         "type": "object"
       },
+      "ProfileOut": {
+        "description": "A pack's scope profile as the scope step offers it (requirement-register spec).",
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "refs": {
+            "items": {
+              "$ref": "#/components/schemas/GuideRef"
+            },
+            "title": "Refs",
+            "type": "array"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "reviewed_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed On"
+          },
+          "summary_en": {
+            "title": "Summary En",
+            "type": "string"
+          },
+          "summary_es": {
+            "title": "Summary Es",
+            "type": "string"
+          },
+          "title_en": {
+            "title": "Title En",
+            "type": "string"
+          },
+          "title_es": {
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "title_es",
+          "title_en",
+          "summary_es",
+          "summary_en",
+          "refs",
+          "reviewed_by",
+          "reviewed_on"
+        ],
+        "title": "ProfileOut",
+        "type": "object"
+      },
       "ProposalOut": {
         "properties": {
+          "criterion": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GuideRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "decision": {
             "enum": [
               "applies",
@@ -4289,6 +4491,16 @@
               }
             ],
             "title": "Rule"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GuideRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -4380,6 +4592,13 @@
             "title": "Items",
             "type": "array"
           },
+          "profiles": {
+            "items": {
+              "$ref": "#/components/schemas/ProfileOut"
+            },
+            "title": "Profiles",
+            "type": "array"
+          },
           "review": {
             "anyOf": [
               {
@@ -4400,6 +4619,16 @@
               }
             ]
           },
+          "scope_guide": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScopeGuideOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "term_labels": {
             "items": {
               "$ref": "#/components/schemas/TermLabelOut"
@@ -4413,6 +4642,8 @@
           "framework_version",
           "catalog_version",
           "axes",
+          "profiles",
+          "scope_guide",
           "groups_es",
           "term_labels",
           "scope",
@@ -5202,6 +5433,219 @@
         "title": "ScanSummary",
         "type": "object"
       },
+      "ScopeGuide": {
+        "additionalProperties": false,
+        "description": "How to value the system before recording the scope (requirement-register spec, issue 225):\nordered steps on the pack's dimension axis, and the category each level leads to.",
+        "properties": {
+          "axis": {
+            "minLength": 1,
+            "title": "Axis",
+            "type": "string"
+          },
+          "category_axis": {
+            "minLength": 1,
+            "title": "Category Axis",
+            "type": "string"
+          },
+          "category_by_level": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minProperties": 1,
+            "title": "Category By Level",
+            "type": "object"
+          },
+          "notes": {
+            "items": {
+              "$ref": "#/components/schemas/ScopeGuideNote"
+            },
+            "maxItems": 10,
+            "title": "Notes",
+            "type": "array"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "reviewed_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed On"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/ScopeGuideStep"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Steps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "axis",
+          "category_axis",
+          "category_by_level",
+          "steps",
+          "reviewed_by"
+        ],
+        "title": "ScopeGuide",
+        "type": "object"
+      },
+      "ScopeGuideNote": {
+        "additionalProperties": false,
+        "properties": {
+          "en": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "En",
+            "type": "string"
+          },
+          "es": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Es",
+            "type": "string"
+          },
+          "ref": {
+            "$ref": "#/components/schemas/GuideReference"
+          }
+        },
+        "required": [
+          "es",
+          "en",
+          "ref"
+        ],
+        "title": "ScopeGuideNote",
+        "type": "object"
+      },
+      "ScopeGuideOut": {
+        "description": "How to value the system, from the pack (requirement-register spec, issue 225).",
+        "properties": {
+          "axis": {
+            "title": "Axis",
+            "type": "string"
+          },
+          "category_axis": {
+            "title": "Category Axis",
+            "type": "string"
+          },
+          "category_by_level": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Category By Level",
+            "type": "object"
+          },
+          "notes": {
+            "items": {
+              "$ref": "#/components/schemas/GuideNoteOut"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "reviewed_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed On"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/GuideStepOut"
+            },
+            "title": "Steps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "axis",
+          "category_axis",
+          "category_by_level",
+          "steps",
+          "notes",
+          "reviewed_by",
+          "reviewed_on"
+        ],
+        "title": "ScopeGuideOut",
+        "type": "object"
+      },
+      "ScopeGuideStep": {
+        "additionalProperties": false,
+        "description": "One valuation question: an asset type and one dimension key, in Atesta's own words.",
+        "properties": {
+          "asset": {
+            "enum": [
+              "information",
+              "service"
+            ],
+            "title": "Asset",
+            "type": "string"
+          },
+          "en": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "En",
+            "type": "string"
+          },
+          "es": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Es",
+            "type": "string"
+          },
+          "key": {
+            "minLength": 1,
+            "title": "Key",
+            "type": "string"
+          },
+          "ref": {
+            "$ref": "#/components/schemas/GuideReference"
+          }
+        },
+        "required": [
+          "asset",
+          "key",
+          "es",
+          "en",
+          "ref"
+        ],
+        "title": "ScopeGuideStep",
+        "type": "object"
+      },
       "ScopeIn": {
         "properties": {
           "axis_values": {
@@ -5252,6 +5696,99 @@
           "decided_at"
         ],
         "title": "ScopeOut",
+        "type": "object"
+      },
+      "ScopeProfile": {
+        "additionalProperties": false,
+        "description": "A published compliance profile as a scope option (requirement-register spec, issue 227):\none value per requirement of the pack, a level or `n.a.`. The guide is cited, never copied.\nA candidate until the owner signs it, like expected evidence.",
+        "properties": {
+          "criteria": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PageReference"
+            },
+            "title": "Criteria",
+            "type": "object"
+          },
+          "key": {
+            "pattern": "^[a-z][a-z0-9_]{0,39}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "levels": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Levels",
+            "type": "object"
+          },
+          "refs": {
+            "items": {
+              "$ref": "#/components/schemas/GuideReference"
+            },
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Refs",
+            "type": "array"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "reviewed_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed On"
+          },
+          "summary_en": {
+            "maxLength": 600,
+            "minLength": 1,
+            "title": "Summary En",
+            "type": "string"
+          },
+          "summary_es": {
+            "maxLength": 600,
+            "minLength": 1,
+            "title": "Summary Es",
+            "type": "string"
+          },
+          "title_en": {
+            "minLength": 1,
+            "title": "Title En",
+            "type": "string"
+          },
+          "title_es": {
+            "minLength": 1,
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "title_es",
+          "title_en",
+          "summary_es",
+          "summary_en",
+          "refs",
+          "levels",
+          "reviewed_by"
+        ],
+        "title": "ScopeProfile",
         "type": "object"
       },
       "SearchResult": {

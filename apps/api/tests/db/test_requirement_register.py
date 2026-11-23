@@ -85,9 +85,15 @@ def test_scope_proposals_follow_the_pack_rules(
     org, subs = _scoped(client, superuser, pack)
     register = client.get(base(org, pack) + "/register", headers=auth(subs["ana"])).json()
     proposals = {item["code"]: item["proposal"] for item in register["items"]}
-    assert proposals["m.cat"] == {"decision": "applies", "rule": "aplica", "level": "MEDIA"}
+    plain = {"source": None, "criterion": None}  # no profile in the scope
+    assert proposals["m.cat"] == {
+        "decision": "applies",
+        "rule": "aplica",
+        "level": "MEDIA",
+        **plain,
+    }
     # C is BAJO and T is MEDIO: the highest listed dimension decides.
-    assert proposals["m.dim"] == {"decision": "applies", "rule": "+ R1", "level": "MEDIO"}
+    assert proposals["m.dim"] == {"decision": "applies", "rule": "+ R1", "level": "MEDIO", **plain}
     assert proposals["m.none"]["decision"] == "undecided"
     assert register["axes"]["categoría"]["levels"] == ["BÁSICA", "MEDIA", "ALTA"]
     assert events(superuser, org, "framework.scope_recorded") == 1
@@ -392,3 +398,112 @@ def test_activity_is_for_admins_and_carries_no_metadata(
     assert ninety.status_code == 200 and len(ninety.json()["daily"]) == 91  # a real query string
     assert client.get(url + "?days=30", headers=auth(subs["owner"])).status_code == 200
     assert client.get(url + "?days=7", headers=auth(subs["owner"])).status_code == 422
+
+
+# --- scope profiles (issue 227) -------------------------------------------------------------
+
+PROFILE = {
+    "key": "small_it",
+    "title_es": "Perfil sintético",
+    "title_en": "Synthetic profile",
+    "summary_es": "Resumen propio.",
+    "summary_en": "Own summary.",
+    "refs": [{"guide": "Guía sintética", "edition": "2026-11", "section": "4", "page": 8}],
+    "levels": {"m.cat": "BÁSICA", "m.dim": "n.a.", "m.none": "BAJO"},
+    "criteria": {"m.dim": {"section": "5.8", "page": 13}},
+    "reviewed_by": None,
+    "reviewed_on": None,
+}
+
+
+@pytest.fixture
+def profiled(superuser: Engine, pack: str) -> str:
+    with superuser.begin() as conn:
+        conn.execute(
+            text("UPDATE frameworks SET attributes = CAST(:a AS jsonb) WHERE key = :k"),
+            {"k": pack, "a": json.dumps({"scope_profiles": [PROFILE]})},
+        )
+    return pack
+
+
+def test_a_profile_in_the_scope_proposes_every_requirement_with_its_reference(
+    client: TestClient, superuser: Engine, profiled: str
+) -> None:
+    org, subs = org_with(client, superuser, ana="member")
+    scope = {**SCOPE, "profile": "small_it"}
+    recorded = client.post(
+        base(org, profiled) + "/scope", json={"axis_values": scope}, headers=auth(subs["owner"])
+    )
+    assert recorded.status_code == 201, recorded.text
+    register = client.get(base(org, profiled) + "/register", headers=auth(subs["ana"])).json()
+    assert [p["key"] for p in register["profiles"]] == ["small_it"]
+    assert register["profiles"][0]["refs"][0]["page"] == 8
+    proposals = {item["code"]: item["proposal"] for item in register["items"]}
+    source = {"guide": "Guía sintética", "edition": "2026-11", "section": "4", "page": 8}
+    assert proposals["m.cat"] == {
+        "decision": "applies",
+        "rule": "BÁSICA",
+        "level": "small_it",
+        "source": source,
+        "criterion": None,
+    }
+    assert proposals["m.dim"]["decision"] == "not_applicable"  # the rules would say applies
+    assert proposals["m.dim"]["criterion"] == {**source, "section": "5.8", "page": 13}
+    assert proposals["m.none"]["decision"] == "applies"  # no selection rule, but the profile
+    statement = client.get(base(org, profiled) + "/applicability", headers=auth(subs["ana"]))
+    assert statement.json()["scope"]["profile"] == "small_it"
+
+
+def test_an_unknown_profile_is_refused(
+    client: TestClient, superuser: Engine, profiled: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    for bad in ({"profile": "other"}, {"profile": {"small_it": "x"}}):
+        response = client.post(
+            base(org, profiled) + "/scope", json={"axis_values": bad}, headers=auth(subs["owner"])
+        )
+        assert (response.status_code, response.json()["detail"]["code"]) == (
+            422,
+            "compliance.scope_invalid",
+        )
+
+
+def test_a_decision_against_the_profile_needs_a_justification(
+    client: TestClient, superuser: Engine, profiled: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    client.post(
+        base(org, profiled) + "/scope",
+        json={"axis_values": {"profile": "small_it"}},
+        headers=auth(subs["owner"]),
+    )
+    url = base(org, profiled) + "/register/m.dim"  # the profile says n.a.
+    refused = client.post(url, json=assessment(), headers=auth(subs["owner"]))
+    assert refused.json()["detail"]["code"] == "compliance.justification_required"
+    justified = assessment(justification="Prestamos un servicio del anexo I de NIS2.")
+    assert client.post(url, json=justified, headers=auth(subs["owner"])).status_code == 201
+
+
+def test_the_register_returns_the_packs_scope_guide(
+    client: TestClient, superuser: Engine, pack: str
+) -> None:
+    guide = {
+        "axis": "nivel",
+        "category_axis": "categoría",
+        "category_by_level": {"BAJO": "BÁSICA"},
+        "steps": [{"asset": "information", "key": "C", "es": "¿Qué daño?", "en": "What harm?",
+                   "ref": PROFILE["refs"][0]}],
+        "notes": [],
+        "reviewed_by": None,
+        "reviewed_on": None,
+    }  # fmt: skip
+    with superuser.begin() as conn:
+        conn.execute(
+            text("UPDATE frameworks SET attributes = CAST(:a AS jsonb) WHERE key = :k"),
+            {"k": pack, "a": json.dumps({"scope_guide": guide})},
+        )
+    org, subs = org_with(client, superuser)
+    register = client.get(base(org, pack) + "/register", headers=auth(subs["owner"])).json()
+    assert register["scope_guide"]["steps"][0]["key"] == "C"
+    assert register["scope_guide"]["category_by_level"] == {"BAJO": "BÁSICA"}
+    assert register["profiles"] == []

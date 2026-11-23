@@ -114,11 +114,40 @@ def read_catalog(root: Path, *, expected_checks: set[str], engine_version: str) 
         if terms - {t.term for t in metadata.attributes.term_labels}:
             raise ValueError(f"scope terms without readable labels in {metadata.id}")
         _check_clocks(pack, codes)
+        _check_profiles(pack, codes)
+        _check_guide(pack, axes)
         if any(not any(c.manual for c in group) for group in mapped.values()):
             raise ValueError("candidate mappings must retain documentary review")
         catalog.packs.append(pack)
     _unique([p.metadata.id for p in catalog.packs], "framework")
     return catalog
+
+
+def _check_guide(pack: Pack, axes: dict[str, dict[str, list[str]]]) -> None:
+    """A scope guide values keys of a dimension axis and maps its levels to declared categories."""
+    guide = pack.metadata.attributes.scope_guide
+    if guide is None:
+        return
+    keys = axes.get(guide.axis, {}).get("keys", [])
+    if any(step.key not in keys for step in guide.steps) or not keys:
+        raise ValueError(f"scope guide step names what is not a key of {guide.axis}")
+    levels = axes[guide.axis]["levels"]
+    categories = axes.get(guide.category_axis, {}).get("levels", [])
+    if set(guide.category_by_level) - set(levels) or set(guide.category_by_level.values()) - set(
+        categories
+    ):
+        raise ValueError("scope guide category mapping uses undeclared levels or categories")
+
+
+def _check_profiles(pack: Pack, codes: set[str]) -> None:
+    """A scope profile gives a value to every requirement of its pack, and to no other."""
+    profiles = pack.metadata.attributes.scope_profiles
+    _unique([p.key for p in profiles], "scope profile")
+    for profile in profiles:
+        if set(profile.levels) != codes:
+            raise ValueError(f"scope profile {profile.key} must cover every requirement")
+        if set(profile.criteria) - codes:
+            raise ValueError(f"scope profile {profile.key} has criteria for unknown requirements")
 
 
 def _check_clocks(pack: Pack, codes: set[str]) -> None:

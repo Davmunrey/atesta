@@ -531,7 +531,36 @@
     "overdue": "Overdue",
     "formerMember": "Former member",
     "assignedOwner": "Assigned",
-    "exportDossier": "Open the auditor dossier"
+    "exportDossier": "Open the auditor dossier",
+    "profile": "Compliance profile",
+    "profileNone": "None: propose from category and levels",
+    "profileHelp": "If you adopt a published profile, Atesta proposes each measure from its statement of applicability instead of the category tables.",
+    "profileSources": "Sources: {refs}.",
+    "profileCandidate": "Selection Atesta extracted from the cited guide, pending qualified review.",
+    "profileAdopted": "Adopted profile: {title}.",
+    "proposalProfile": "Proposed from the adopted profile: {decision} (<official>{rule}</official>; {reference}). Confirm it or justify another decision.",
+    "proposalCriterion": "The guide gives specific criteria for this measure: {reference}.",
+    "guide": {
+      "title": "Value the system step by step",
+      "candidate": "Steps Atesta wrote from the cited guide, pending qualified review. The valuation is yours.",
+      "reviewed": "Steps Atesta wrote from the cited guide and reviewed by {name}. The valuation is yours.",
+      "addInformation": "Add an information type",
+      "addService": "Add a service",
+      "name": {
+        "information": "Information type name",
+        "service": "Service name"
+      },
+      "unnamed": {
+        "information": "Information {number}",
+        "service": "Service {number}"
+      },
+      "notAssigned": "No level (N/A)",
+      "remove": "Remove “{name}”",
+      "empty": "Add the system's information and services and value them to see the result.",
+      "result": "Result: {levels}. Category: {category}.",
+      "apply": "Use these levels",
+      "applied": "Levels copied to the scope. Check them and save the scope."
+    }
   },
   "insights": {
     "title": "Progress",

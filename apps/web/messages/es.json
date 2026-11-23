@@ -531,7 +531,36 @@
     "overdue": "Vencida",
     "formerMember": "Antiguo miembro",
     "assignedOwner": "Asignada",
-    "exportDossier": "Abrir el dossier para el auditor"
+    "exportDossier": "Abrir el dossier para el auditor",
+    "profile": "Perfil de cumplimiento",
+    "profileNone": "Ninguno: proponer según la categoría y los niveles",
+    "profileHelp": "Si adoptáis un perfil publicado, Atesta propone cada medida según su declaración de aplicabilidad en lugar de las tablas por categoría.",
+    "profileSources": "Fuentes: {refs}.",
+    "profileCandidate": "Selección extraída por Atesta de la guía citada, pendiente de revisión cualificada.",
+    "profileAdopted": "Perfil adoptado: {title}.",
+    "proposalProfile": "Propuesta según el perfil adoptado: {decision} (<official>{rule}</official>; {reference}). Confírmala o justifica otra decisión.",
+    "proposalCriterion": "La guía da criterios propios para esta medida: {reference}.",
+    "guide": {
+      "title": "Valorar el sistema paso a paso",
+      "candidate": "Pasos redactados por Atesta a partir de la guía citada, pendientes de revisión cualificada. La valoración es vuestra.",
+      "reviewed": "Pasos redactados por Atesta a partir de la guía citada y revisados por {name}. La valoración es vuestra.",
+      "addInformation": "Añadir un tipo de información",
+      "addService": "Añadir un servicio",
+      "name": {
+        "information": "Nombre del tipo de información",
+        "service": "Nombre del servicio"
+      },
+      "unnamed": {
+        "information": "Información {number}",
+        "service": "Servicio {number}"
+      },
+      "notAssigned": "Sin nivel (N/A)",
+      "remove": "Quitar «{name}»",
+      "empty": "Añade la información y los servicios del sistema y valóralos para ver el resultado.",
+      "result": "Resultado: {levels}. Categoría: {category}.",
+      "apply": "Usar estos niveles",
+      "applied": "Niveles copiados al alcance. Revísalos y guarda el alcance."
+    }
   },
   "insights": {
     "title": "Evolución",

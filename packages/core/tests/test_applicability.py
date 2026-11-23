@@ -1,7 +1,13 @@
 """Applicability proposals from a pack's selection rules (requirement-register spec)."""
 
 import pytest
-from atesta_core.applicability import Proposal, axis_levels, propose
+from atesta_core.applicability import (
+    Proposal,
+    axis_levels,
+    profile_proposal,
+    propose,
+    valid_scope,
+)
 
 CATEGORY_RULES = [
     {"level": "BÁSICA", "rule": "n.a."},
@@ -72,3 +78,26 @@ def test_a_scope_is_valid_only_with_declared_levels() -> None:
     assert not valid_scope({"nivel": {"Z": "ALTO"}}, axes)
     assert not valid_scope({"nivel": {"C": "HIGH"}}, axes)
     assert not valid_scope({"unknown": "x"}, axes)
+
+
+# --- scope profiles (#227) ------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("value", "decision"),
+    [("BÁSICA", "applies"), ("BAJO", "applies"), ("n.a.", "not_applicable"), (None, "undecided")],
+)
+def test_a_profile_proposes_from_its_value(value: str | None, decision: str) -> None:
+    proposal = profile_proposal(value, "pce_it")
+    assert proposal.decision == decision
+    if value is not None:
+        assert (proposal.rule, proposal.level) == (value, "pce_it")
+
+
+def test_a_scope_may_name_one_of_the_packs_profiles() -> None:
+    axes = {"categoría": {"keys": [], "levels": ["BÁSICA", "MEDIA"]}}
+    assert valid_scope({"profile": "pce_it", "categoría": "BÁSICA"}, axes, {"pce_it"})
+    assert valid_scope({"profile": "pce_it"}, axes, {"pce_it"})
+    assert not valid_scope({"profile": "other"}, axes, {"pce_it"})
+    assert not valid_scope({"profile": "pce_it"}, axes)
+    assert not valid_scope({"profile": {"x": "y"}}, axes, {"pce_it"})
