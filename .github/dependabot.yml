@@ -68,3 +68,30 @@ updates:
     groups:
       opentofu-providers:
         patterns: ["*"]
+
+  # Base images are pinned by tag and digest (ADR-013); without these entries the digests never
+  # move and base-image security fixes are missed (#259). Dependabot reads each directory's
+  # `Dockerfile`; the CI Postgres service image is not covered and follows compose.yaml
+  # (apps/api/tests/test_ci_workflow.py). The scanner's PowerShell tarball (version and sha256 in
+  # scanner/Dockerfile) is not an image: it stays a manual bump.
+  - package-ecosystem: "docker"
+    directories:
+      - "/apps"
+      - "/scanner"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Madrid"
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: "docker-compose"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Madrid"
+    cooldown:
+      default-days: 7
