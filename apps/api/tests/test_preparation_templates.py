@@ -11,9 +11,9 @@ ROOT = Path(__file__).resolve().parents[3]
 def test_planned_templates_have_guides_but_no_assessable_requirements() -> None:
     expected = set()
     for provider in ("m365", "googleworkspace"):
-        path = ROOT / "scanner/expected/5.49.0" / f"{provider}.json"
+        path = ROOT / "scanner/expected/5.52.0" / f"{provider}.json"
         expected.update(json.loads(path.read_text())[provider])
-    catalog = read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.49.0")
+    catalog = read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.52.0")
     packs = {p.metadata.id: p for p in catalog.packs}
     for key in ("iso27001_2022", "soc2"):
         pack = packs[key]

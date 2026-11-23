@@ -97,7 +97,7 @@ def test_another_orgs_connection_and_scans_are_not_found(
 SCAN = text(
     "INSERT INTO scans (id, organization_id, connection_id, provider, trigger, status, engine,"
     " engine_version, queued_at) VALUES (:id, :org, :conn, 'm365', 'schedule', 'succeeded',"
-    " 'prowler', '5.49.0', now() - make_interval(mins => :age))"
+    " 'prowler', '5.52.0', now() - make_interval(mins => :age))"
 )
 FINDING = text(
     "INSERT INTO findings (id, organization_id, scan_id, engine, check_id, status, severity,"

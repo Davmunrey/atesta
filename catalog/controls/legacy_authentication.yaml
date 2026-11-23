@@ -20,4 +20,4 @@ prowler_checks: [entra_legacy_authentication_blocked]
 atesta_checks: []
 remediation_refs:
   - https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-block-legacy-authentication
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_legacy_authentication_blocked/entra_legacy_authentication_blocked.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_legacy_authentication_blocked/entra_legacy_authentication_blocked.py

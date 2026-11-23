@@ -271,6 +271,15 @@
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
+   "subscriptions",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
    "training_acknowledgements",
    "tenant_isolation",
    "ALL",
@@ -565,6 +574,12 @@
    "",
    "atesta_app",
    "INSERT,SELECT"
+  ],
+  [
+   "subscriptions",
+   "",
+   "atesta_app",
+   "SELECT"
   ],
   [
    "training_acknowledgements",

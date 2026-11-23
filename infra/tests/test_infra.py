@@ -510,3 +510,14 @@ def test_the_bootstrap_task_gets_the_master_password_only_as_a_secret() -> None:
     assert bootstrap["ATESTA_MASTER_PASSWORD"] == "${module.database.master_secret_arn}:password::"
     assert platform["ecs"]["decrypt_key_arns"] == ["${module.kms.database_key_arn}"]
     assert "db_bootstrap" in CONTAINERS["bootstrap"]
+
+
+def _alerts(env: str) -> tuple[str, list[str]]:
+    budget = resources(f"envs/{env}/budgets.tf")["aws_budgets_budget.monthly"]
+    thresholds = budget["dynamic"][0]["notification"]["for_each"]
+    return budget["limit_amount"], thresholds
+
+
+def test_budget_alerts_are_150_250_400_in_dev_and_250_350_450_in_prod() -> None:
+    assert _alerts("dev") == ("400", '${toset(["150", "250", "400"])}')
+    assert _alerts("prod") == ("450", '${toset(["250", "350", "450"])}')

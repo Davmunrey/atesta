@@ -33,6 +33,7 @@ TENANT = frozenset(
         "incident_updates",
         "api_tokens",
         "api_ingestions",
+        "subscriptions",  # billing: read-only for atesta_app, set by the operator
     }
 )
 APPEND_ONLY = frozenset(

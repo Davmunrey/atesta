@@ -1,7 +1,7 @@
 # Spec: auditor dossier
 
 - Issues: #185, #226 (expected evidence). Builds on `requirement-register.md`, `control-evidence-statements.md`, `recorded-routines.md`, `claims-honesty.md`.
-- Status: draft
+- Status: built (2026-11-23: every acceptance criterion is implemented and covered by the tests its test plan names)
 
 ## Problem
 

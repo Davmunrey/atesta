@@ -85,6 +85,12 @@ updates:
       timezone: "Europe/Madrid"
     cooldown:
       default-days: 7
+    ignore:
+      # Python stays on 3.12 everywhere (requires-python, mypy, CI, Prowler's own base image); a
+      # minor or major move is a planned upgrade of every image and toolchain together, so only
+      # 3.12.x patches come through. The weekly newest-Python run gives the early warning.
+      - dependency-name: "python"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
   - package-ecosystem: "docker-compose"
     directory: "/"
@@ -95,3 +101,8 @@ updates:
       timezone: "Europe/Madrid"
     cooldown:
       default-days: 7
+    ignore:
+      # PostgreSQL stays on 16 (RDS engine_version and the postgres16 parameter group); a major
+      # upgrade is planned with its own ADR and migration test. 16.x patches come through.
+      - dependency-name: "postgres"
+        update-types: ["version-update:semver-major"]
