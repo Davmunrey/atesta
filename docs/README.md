@@ -53,6 +53,7 @@ Start with the question you have.
 - [evidence-ingestion-api](specs/evidence-ingestion-api.md)
 - [framework-catalog-preview](specs/framework-catalog-preview.md)
 - [framework-detail](specs/framework-detail.md)
+- [hosted-environment](specs/hosted-environment.md)
 - [i18n-complete](specs/i18n-complete.md)
 - [identity-auth](specs/identity-auth.md)
 - [infra-dev](specs/infra-dev.md)
