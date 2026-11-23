@@ -17,11 +17,12 @@ import { SiteFooter } from "./site-footer";
 // A detail page lights up its list in the menu.
 const DETAIL_PAGES: Record<string, string> = {
   "/app/framework": "/app/frameworks",
+  "/app/dossier": "/app/frameworks",
   "/app/access-review": "/app/access-reviews",
   "/app/training-campaign": "/app/training-campaigns",
   "/app/incident": "/app/incidents",
 };
-const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings", "/app/access-reviews", "/app/access-review", "/app/policies", "/app/training-campaigns", "/app/training-campaign", "/app/incidents", "/app/incident", "/app/integrations"];
+const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings", "/app/access-reviews", "/app/access-review", "/app/policies", "/app/training-campaigns", "/app/training-campaign", "/app/incidents", "/app/incident", "/app/integrations", "/app/dossier"];
 const DESKTOP = "(min-width: 64rem)";
 
 // The collapsed rail is a remembered preference; media and storage are read as external stores.

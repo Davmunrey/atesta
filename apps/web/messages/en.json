@@ -500,7 +500,8 @@
     "saveOwner": "Save owner",
     "overdue": "Overdue",
     "formerMember": "Former member",
-    "assignedOwner": "Assigned"
+    "assignedOwner": "Assigned",
+    "exportDossier": "Open the auditor dossier"
   },
   "insights": {
     "title": "Progress",
@@ -869,5 +870,83 @@
     "revokedOn": "Revoked on {date}",
     "revoke": "Revoke",
     "revokeNamed": "Revoke the token {name}"
+  },
+  "dossier": {
+    "title": "Auditor dossier",
+    "frameworks": "Frameworks",
+    "loading": "Preparing the dossier…",
+    "intro": "Everything the auditor asks for in one document: management summary, applicability, evidence by requirement and routines. Print it or save it as PDF from the browser.",
+    "print": "Print or save as PDF",
+    "coverKicker": "Audit preparation dossier",
+    "organization": "Organization",
+    "version": "Framework version",
+    "catalog": "Catalog version",
+    "generated": "Generated",
+    "notCertification": "This dossier gathers what the organization recorded in Atesta. It is not a certification or a conformity assessment; the decision is the auditor's.",
+    "signature": "Management signature",
+    "signer": {
+      "name": "Name",
+      "role": "Role",
+      "date": "Date",
+      "sign": "Signature"
+    },
+    "summary": "Management summary",
+    "summaryHelp": "Recorded counts and dates; not a compliance score.",
+    "counts": {
+      "total": "Measures",
+      "assessed": "Assessed",
+      "implemented": "Implemented",
+      "partial": "Partly implemented",
+      "notImplemented": "Not implemented",
+      "notApplicable": "Not applicable",
+      "overdue": "Overdue"
+    },
+    "noRequirements": "This framework has no imported measures yet.",
+    "review": "Security officer review",
+    "reviewBy": "{name} ({role}), {date}.",
+    "noReview": "No review recorded.",
+    "routinesState": "Pending routines",
+    "routinesClear": "No routines are pending.",
+    "pending": {
+      "policiesDue": "{count, plural, one {# policy to review} other {# policies to review}}",
+      "policiesUnapproved": "{count, plural, one {# policy not approved} other {# policies not approved}}",
+      "accessReviewsOverdue": "{count, plural, one {# overdue access review} other {# overdue access reviews}}",
+      "trainingsUnclosed": "{count, plural, one {# training to close} other {# trainings to close}}",
+      "incidentClocksOverdue": "{count, plural, one {# missed reporting deadline} other {# missed reporting deadlines}}"
+    },
+    "applicability": "Statement of applicability",
+    "code": "Code",
+    "measure": "Measure",
+    "decision": "Applicability",
+    "implementation": "Implementation",
+    "justification": "Justification",
+    "decisions": {
+      "applies": "Applies",
+      "not_applicable": "Not applicable",
+      "undecided": "Undecided"
+    },
+    "evidence": "Evidence by requirement",
+    "evidenceHelp": "For each requirement, its common measures with the latest scan observation, the current review and the recorded evidence.",
+    "reviewed": "Reviewed on {date}",
+    "notReviewed": "No current review",
+    "noEvidence": "No evidence recorded.",
+    "sources": {
+      "user": "Recorded in Atesta",
+      "api": "Sent by a tool",
+      "scan": "Scan",
+      "upload": "Document"
+    },
+    "routines": "Recorded routines (last 12 months)",
+    "policies": "Policies",
+    "accessReviews": "Closed access reviews",
+    "trainings": "Closed trainings",
+    "incidents": "Closed incidents",
+    "none": "None.",
+    "policyApproved": "version {version}, approved by {approver} on {date}",
+    "policyUnapproved": "not approved",
+    "nextReview": "next review: {date}",
+    "accessReviewClosed": "{total, plural, one {# account reviewed} other {# accounts reviewed}} (keep: {keep}; revoke: {revoke}); closed on {date}",
+    "trainingClosed": "{count, plural, one {# confirmation} other {# confirmations}}; closed on {date}",
+    "incidentClosed": "became aware on {aware}; closed on {date}"
   }
 }

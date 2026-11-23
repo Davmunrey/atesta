@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { orgDossier } from "@/lib/org";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useId, useState, type FormEvent } from "react";
 import { useMembers } from "@/lib/api/hooks";
@@ -32,6 +34,7 @@ export function SelfAssessmentPanel({ register, ...ctx }: Ctx & { register: Regi
         <h3>{t("stepExport")}</h3>
         <p className="text-sm text-muted">{t("exportHelp")}</p>
         <p className="export-links">
+          <Link className="button-primary" href={orgDossier(ctx.orgId, ctx.frameworkKey)}>{t("exportDossier")}</Link>
           <a className="dashboard-button" href={applicabilityUrl(ctx.orgId, ctx.frameworkKey, "csv", locale)} download>{t("exportCsv")}</a>
           <a className="text-link underline" href={applicabilityUrl(ctx.orgId, ctx.frameworkKey, "json")} target="_blank" rel="noopener">{t("exportJson")}</a>
         </p>

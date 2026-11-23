@@ -622,10 +622,30 @@ def list_reviews(
 
 
 def _statement(session: Session, member: Member, framework_key: str) -> ApplicabilityStatement:
+    statement = applicability_statement(session, member.organization_id, framework_key)
+    record(
+        session,
+        organization_id=member.organization_id,
+        action="framework.applicability_exported",
+        target_type="framework",
+        target_id=framework_key,
+        actor_user_id=member.user_id,
+        metadata={
+            "rows": len(statement.rows),
+            "decided": sum(r.decided_by_person for r in statement.rows),
+        },
+    )
+    return statement
+
+
+def applicability_statement(
+    session: Session, organization_id: uuid.UUID, framework_key: str
+) -> ApplicabilityStatement:
+    """The statement of applicability, with no side effect (the dossier reuses it)."""
     framework = _framework(session, framework_key)
     requirements = _requirements(session, framework_key)
-    scope = _scope(session, member.organization_id, framework_key)
-    assessments = _assessments(session, member.organization_id, framework_key)
+    scope = _scope(session, organization_id, framework_key)
+    assessments = _assessments(session, organization_id, framework_key)
     rows = []
     for requirement in requirements:
         proposal = _proposal(requirement, scope)
@@ -642,15 +662,6 @@ def _statement(session: Session, member: Member, framework_key: str) -> Applicab
                 implementation=assessment.implementation if assessment else None,
             )
         )
-    record(
-        session,
-        organization_id=member.organization_id,
-        action="framework.applicability_exported",
-        target_type="framework",
-        target_id=framework_key,
-        actor_user_id=member.user_id,
-        metadata={"rows": len(rows), "decided": sum(r.decided_by_person for r in rows)},
-    )
     return ApplicabilityStatement(
         framework_key=framework.key,
         framework_name=framework.name,

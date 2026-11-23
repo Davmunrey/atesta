@@ -11,6 +11,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from atesta_api.modules.compliance.register import (
     _assessments,
@@ -53,51 +54,52 @@ def readiness(
     org = member.organization_id
     out: list[FrameworkReadiness] = []
     for framework in active_frameworks(session):
-        requirements = _requirements(session, framework.key)
-        if not requirements:
-            continue
-        codes = {r.code for r in requirements}
-        assessed = {
-            c: a for c, a in _assessments(session, org, framework.key).items() if c in codes
-        }
-        assigned = {
-            c: a for c, a in _assignments(session, org, framework.key).items() if c in codes
-        }
-        states = Counter(
-            "not_applicable" if a.applicability == "not_applicable" else a.implementation
-            for a in assessed.values()
-        )
-        done = {
-            c
-            for c, a in assessed.items()
-            if a.applicability == "not_applicable" or a.implementation == "implemented"
-        }
-        open_codes = codes - done
-        owners = Counter(
-            assigned[c].owner_user_id
-            for c in open_codes
-            if c in assigned and assigned[c].owner_user_id
-        )
-        review = _review(session, org, framework.key)
-        dues = [assigned[c].due_on for c in open_codes if c in assigned]
-        owned = {c for c, a in assigned.items() if a.owner_user_id is not None}
-        out.append(
-            FrameworkReadiness(
-                key=framework.key,
-                name=framework.name,
-                total=len(codes),
-                assessed=len(assessed),
-                implemented=states["implemented"],
-                partial=states["partially_implemented"],
-                not_implemented=states["not_implemented"],
-                not_applicable=states["not_applicable"],
-                has_axes=bool(_axes(requirements)),
-                scope_defined=_scope(session, org, framework.key) is not None,
-                review_on=review.reviewed_on if review else None,
-                overdue=len([d for d in dues if d is not None and d < today]),
-                unowned_open=len([c for c in open_codes if c not in owned]),
-                open_by_owner={u: n for u, n in owners.items() if u is not None},
-                last_assessed_at=max((a.recorded_at for a in assessed.values()), default=None),
-            )
-        )
+        found = framework_readiness(session, org, framework.key, framework.name, today)
+        if found is not None:
+            out.append(found)
     return out
+
+
+def framework_readiness(
+    session: Session, org: uuid.UUID, key: str, name: str, today: date
+) -> FrameworkReadiness | None:
+    """Counts for one framework; None when it has no requirements (the dossier reuses it)."""
+    requirements = _requirements(session, key)
+    if not requirements:
+        return None
+    codes = {r.code for r in requirements}
+    assessed = {c: a for c, a in _assessments(session, org, key).items() if c in codes}
+    assigned = {c: a for c, a in _assignments(session, org, key).items() if c in codes}
+    states = Counter(
+        "not_applicable" if a.applicability == "not_applicable" else a.implementation
+        for a in assessed.values()
+    )
+    done = {
+        c
+        for c, a in assessed.items()
+        if a.applicability == "not_applicable" or a.implementation == "implemented"
+    }
+    open_codes = codes - done
+    owners = Counter(
+        assigned[c].owner_user_id for c in open_codes if c in assigned and assigned[c].owner_user_id
+    )
+    review = _review(session, org, key)
+    dues = [assigned[c].due_on for c in open_codes if c in assigned]
+    owned = {c for c, a in assigned.items() if a.owner_user_id is not None}
+    return FrameworkReadiness(
+        key=key,
+        name=name,
+        total=len(codes),
+        assessed=len(assessed),
+        implemented=states["implemented"],
+        partial=states["partially_implemented"],
+        not_implemented=states["not_implemented"],
+        not_applicable=states["not_applicable"],
+        has_axes=bool(_axes(requirements)),
+        scope_defined=_scope(session, org, key) is not None,
+        review_on=review.reviewed_on if review else None,
+        overdue=len([d for d in dues if d is not None and d < today]),
+        unowned_open=len([c for c in open_codes if c not in owned]),
+        open_by_owner={u: n for u, n in owners.items() if u is not None},
+        last_assessed_at=max((a.recorded_at for a in assessed.values()), default=None),
+    )

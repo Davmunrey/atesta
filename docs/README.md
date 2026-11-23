@@ -40,6 +40,7 @@ Start with the question you have.
 
 ## Feature specs
 
+- [auditor-dossier](specs/auditor-dossier.md)
 - [claims-honesty](specs/claims-honesty.md)
 - [console-shell](specs/console-shell.md)
 - [content-model-v2](specs/content-model-v2.md)
