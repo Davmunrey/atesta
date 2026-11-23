@@ -323,7 +323,7 @@ export interface paths {
         put?: never;
         /**
          * Verify Connection
-         * @description Onboarding step 6 (issue 331): the activation scan verifies, then activates the connection.
+         * @description Onboarding step 6 (issue 331): the activation scan verifies, then activates.
          */
         post: operations["verify_connection_api_v1_orgs__org_id__connections__connection_id__verify_post"];
         delete?: never;
