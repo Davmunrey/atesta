@@ -351,7 +351,7 @@ def test_the_incident_form_reads_the_official_criteria_of_active_packs(
                 "k": key,
                 "a": json.dumps(
                     {
-                        "official_text_es": "Se considerará significativo…",
+                        "official_text_es": "Significativo si…",
                         "official_text_en": "Significant if…",
                     }
                 ),
