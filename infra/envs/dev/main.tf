@@ -107,10 +107,23 @@ module "ecr" {
   kms_key_arn = module.kms.secrets_key_arn
 }
 
-# Services come up once images are pushed (pinned by digest); until then images stays null and
-# only the base layer is planned.
+# Services come up once images are pushed (pinned by digest) and the edge certificates exist;
+# until then images and edge stay null and only the base layer is planned.
 variable "images" {
   type    = object({ api = string, worker = string, scan = string })
+  default = null
+}
+
+# Public edge: hostnames and certificates the owner creates (docs/runbooks/deploy.md). The API
+# certificate is in eu-south-2 for the load balancer; the web one is in us-east-1 for CloudFront.
+variable "edge" {
+  type = object({
+    aliases                 = list(string)
+    web_certificate_arn     = string
+    api_origin_domain       = string
+    api_certificate_arn     = string
+    content_security_policy = string
+  })
   default = null
 }
 
@@ -128,7 +141,7 @@ resource "aws_secretsmanager_secret" "session_key" {
 
 module "ecs" {
   source                = "../../modules/ecs"
-  count                 = var.images == null ? 0 : 1
+  count                 = var.images == null || var.edge == null ? 0 : 1
   name                  = "atesta-dev"
   vpc_id                = module.network.vpc_id
   public_subnet_ids     = module.network.public_subnet_ids
@@ -138,6 +151,7 @@ module "ecs" {
   logs_key_arn          = module.kms.logs_key_arn
   secrets_key_arn       = module.kms.secrets_key_arn
   evidence_bucket_arn   = module.evidence.bucket_arn
+  certificate_arn       = var.edge.api_certificate_arn
   images                = var.images
   environment           = var.app_environment
   secrets = {
@@ -148,6 +162,24 @@ module "ecs" {
     worker  = { ATESTA_DATABASE_URL = module.database.app_url_secret_arn }
     migrate = { ATESTA_MIGRATION_DATABASE_URL = module.database.migration_url_secret_arn }
   }
+}
+
+module "web" {
+  source                  = "../../modules/web"
+  count                   = var.edge == null ? 0 : 1
+  name                    = "atesta-dev"
+  aliases                 = var.edge.aliases
+  certificate_arn         = var.edge.web_certificate_arn
+  api_origin_domain       = var.edge.api_origin_domain
+  content_security_policy = var.edge.content_security_policy
+}
+
+output "api_load_balancer" {
+  value = try(module.ecs[0].alb_dns_name, null)
+}
+
+output "web" {
+  value = try({ bucket = module.web[0].bucket_name, distribution = module.web[0].distribution_id, domain = module.web[0].domain_name }, null)
 }
 
 output "ecr_repositories" {

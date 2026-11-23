@@ -365,3 +365,89 @@ def test_every_log_group_is_encrypted_and_expires() -> None:
     group = ECS["aws_cloudwatch_log_group.this"]
     assert group["kms_key_id"] == "${var.logs_key_arn}"
     assert group["retention_in_days"] == "${var.log_retention_days}"
+
+
+EDGE = resources("modules/ecs/api.tf")
+WEB_FILE = load("modules/web/main.tf")
+WEB = resources("modules/web/main.tf")
+WEB_VARS = {k: v for b in WEB_FILE["variable"] for k, v in b.items()}
+
+
+def test_the_api_service_runs_privately_behind_its_load_balancer() -> None:
+    service = EDGE["aws_ecs_service.api"]
+    assert service["launch_type"] == "FARGATE"
+    network = service["network_configuration"][0]
+    assert network["assign_public_ip"] is False
+    assert network["subnets"] == "${var.private_subnet_ids}"
+    assert service["deployment_circuit_breaker"][0] == {"enable": True, "rollback": True}
+    assert service["load_balancer"][0]["container_port"] == 8000
+    assert EDGE["aws_lb_target_group.api"]["health_check"][0]["path"] == "/health"
+
+
+def test_the_load_balancer_takes_only_cloudfront_over_tls_1_3() -> None:
+    alb = EDGE["aws_lb.api"]
+    assert alb["drop_invalid_header_fields"] is True
+    listeners = [k for k in EDGE if k.startswith("aws_lb_listener.")]
+    assert listeners == ["aws_lb_listener.https"]
+    assert (
+        EDGE["aws_lb_listener.https"]["ssl_policy"] == "ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09"
+    )
+    ingress = {
+        k: v for k, v in EDGE.items() if k.startswith("aws_vpc_security_group_ingress_rule.")
+    }
+    alb_in = ingress["aws_vpc_security_group_ingress_rule.alb_from_cloudfront"]
+    assert alb_in["prefix_list_id"] == "${data.aws_ec2_managed_prefix_list.cloudfront.id}"
+    assert all("cidr_ipv4" not in rule for rule in ingress.values())
+
+
+def test_the_site_bucket_is_private_and_read_only_through_this_distribution() -> None:
+    block = WEB["aws_s3_bucket_public_access_block.site"]
+    assert all(block[k] is True for k in ("block_public_acls", "block_public_policy"))
+    assert all(block[k] is True for k in ("ignore_public_acls", "restrict_public_buckets"))
+    oac = WEB["aws_cloudfront_origin_access_control.site"]
+    assert (oac["signing_behavior"], oac["signing_protocol"]) == ("always", "sigv4")
+    policy = next(
+        b["aws_iam_policy_document"]["site"]
+        for b in WEB_FILE["data"]
+        if "aws_iam_policy_document" in b
+    )
+    read = next(s for s in policy["statement"] if s["sid"] == "CloudFrontReads")
+    assert read["actions"] == ["s3:GetObject"]
+    assert read["condition"][0]["values"] == ["${aws_cloudfront_distribution.this.arn}"]
+
+
+def test_security_headers_follow_the_web_shell_spec() -> None:
+    for name, referrer in (("default", "same-origin"), ("no_referrer", "no-referrer")):
+        headers = WEB[f"aws_cloudfront_response_headers_policy.{name}"]["security_headers_config"][
+            0
+        ]
+        csp = headers["content_security_policy"][0]
+        assert csp["content_security_policy"] == "${var.content_security_policy}", name
+        hsts = headers["strict_transport_security"][0]
+        assert hsts["access_control_max_age_sec"] >= 31536000 and hsts["include_subdomains"] is True
+        assert headers["content_type_options"][0]["override"] is True, name
+        assert headers["frame_options"][0]["frame_option"] == "DENY", name
+        assert headers["referrer_policy"][0]["referrer_policy"] == referrer, name
+    limit = WEB_VARS["content_security_policy"]["validation"][0]["condition"]
+    assert "length(var.content_security_policy) <= 1783" in limit  # scripts/csp.ts limit
+
+
+def test_the_distribution_routes_api_and_private_pages_and_forces_https() -> None:
+    dist = WEB["aws_cloudfront_distribution.this"]
+    default = dist["default_cache_behavior"][0]
+    assert default["viewer_protocol_policy"] == "redirect-to-https"
+    behaviors = {b["path_pattern"]: b for b in dist["ordered_cache_behavior"]}
+    assert set(behaviors) == {"/api/*", "/auth/*", "/invite*", "/training*"}
+    assert "custom_error_response" not in dist  # would rewrite the API's own error responses
+    for path in ("/api/*", "/auth/*"):
+        assert behaviors[path]["target_origin_id"] == "api", path
+        assert behaviors[path]["viewer_protocol_policy"] == "https-only", path
+    for path in ("/invite*", "/training*"):
+        policy = behaviors[path]["response_headers_policy_id"]
+        assert policy == "${aws_cloudfront_response_headers_policy.no_referrer.id}", path
+    assert dist["viewer_certificate"][0]["minimum_protocol_version"] == "TLSv1.2_2021"
+    assert dist["viewer_certificate"][0]["ssl_support_method"] == "sni-only"
+    api = next(o for o in dist["origin"] if o["origin_id"] == "api")
+    origin = api["custom_origin_config"][0]
+    assert origin["origin_protocol_policy"] == "https-only"
+    assert origin["origin_ssl_protocols"] == ["TLSv1.2"]
