@@ -28,6 +28,9 @@ self-assessment and keep it current.
    `security@` and `/.well-known/security.txt`, from the real legal entity.
 7. **Operations.** Restore drill with measured RTO and RPO; runbooks in ES and EN (onboarding,
    incident, deploy and rollback, offboarding); alarms and an external status page.
+   Status (2026-11-23):
+   - Onboarding, offboarding and security-incident runbooks exist (#156), and so do organization export, closure and operator erasure.
+   - Deploy, rollback, restore and alarms wait for AWS.
 8. **Independent penetration test** of web, API, sessions and cross-tenant RLS, with critical
    and high findings fixed and retested.
 

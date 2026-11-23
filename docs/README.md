@@ -54,6 +54,7 @@ Start with the question you have.
 - [landing-legal](specs/landing-legal.md)
 - [local-dev-auth](specs/local-dev-auth.md)
 - [manual-control-review](specs/manual-control-review.md)
+- [organization-closure](specs/organization-closure.md)
 - [organization-shell-design](specs/organization-shell-design.md)
 - [rbac](specs/rbac.md)
 - [requirement-register](specs/requirement-register.md)
@@ -61,6 +62,14 @@ Start with the question you have.
 - [tenant-data-layer](specs/tenant-data-layer.md)
 - [web-shell](specs/web-shell.md)
 - [workspace-ux](specs/workspace-ux.md)
+
+## Runbooks
+
+- [onboarding](runbooks/onboarding.md): a new customer, from contract to first review.
+- [offboarding](runbooks/offboarding.md): export, closure and erasure at the end of a contract.
+- [security-incident](runbooks/security-incident.md): triage, containment, fix and notification.
+
+The deploy, rollback and restore runbooks come with the production infrastructure (ROADMAP Gate A).
 
 ## Catalog
 

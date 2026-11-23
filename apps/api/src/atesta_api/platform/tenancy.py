@@ -22,6 +22,9 @@ class Organization(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
+    # Organization-closure spec: erasure becomes possible 30 days after the request.
+    closure_requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    closure_requested_by: Mapped[uuid.UUID | None]  # users.id; no FK, the user may be erased
 
 
 def set_tenant_context(session: Session, ctx: TenantContext) -> None:

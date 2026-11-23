@@ -161,3 +161,21 @@ export function useActivity(orgId: string, days: 30 | 90) {
     queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/activity", { params: { path: { org_id: orgId }, query: { days } } })),
   });
 }
+
+/** Closure (organization-closure spec): the erase date reaches every member through /me. */
+export function useRequestClosure(orgId: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (confirmName: string) =>
+      unwrap(api.POST("/api/v1/orgs/{org_id}/closure", { params: { path: { org_id: orgId } }, body: { confirm_name: confirmName } })),
+    onSuccess: () => client.invalidateQueries({ queryKey: ME }),
+  });
+}
+
+export function useCancelClosure(orgId: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: () => expectOk(api.DELETE("/api/v1/orgs/{org_id}/closure", { params: { path: { org_id: orgId } } })),
+    onSuccess: () => client.invalidateQueries({ queryKey: ME }),
+  });
+}

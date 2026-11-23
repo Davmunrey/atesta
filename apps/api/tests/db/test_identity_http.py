@@ -86,6 +86,7 @@ def test_create_org_makes_caller_owner_and_audits(client: TestClient, superuser:
             "organization_name": "Acme",
             "role": "owner",
             "access_expires_on": None,
+            "closure_erase_after": None,
         }
     ]
     assert client.get(f"/test/orgs/{org_id}/admin", headers=auth(sub)).json() == {"role": "owner"}
