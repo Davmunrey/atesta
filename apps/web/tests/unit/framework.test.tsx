@@ -31,7 +31,7 @@ it("shows official selection rules separately from recorded status", async () =>
 
 it("prioritizes failures and open work before passed requirements", async () => {
   stubApi({ [path]: [200, { ...framework, requirements: [...framework.requirements].reverse() }] }); render();
-  await screen.findByRole("heading", { level: 1 });
+  await screen.findByRole("heading", { level: 1, name: framework.name });
   const rows = Array.from(document.querySelectorAll("details.requirement-row"));
   expect(rows.map((row) => row.querySelector("summary .requirement-code")?.textContent)).toEqual(["R1", "R2", "R3", "R4", "OLD"]);
   expect(rows[0]?.getAttribute("open")).toBe("");

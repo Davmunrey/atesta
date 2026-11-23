@@ -7,7 +7,7 @@ import { type Membership, orgHome, orgIncidents } from "@/lib/org";
 import { isContributor } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
-import { PageHeader, Panel } from "./page-frame";
+import { LoadError, Loading, PageHeader, Panel } from "./page-frame";
 
 /** One incident: its reporting deadlines from pack content, its entries, and closing it. */
 export function IncidentView({ org, incidentId }: { org: Membership; incidentId: string }) {
@@ -18,8 +18,8 @@ export function IncidentView({ org, incidentId }: { org: Membership; incidentId:
   const update = useIncidentUpdate(org.organization_id, incidentId);
   const noteId = useId();
   const crumbs = [{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title"), href: orgIncidents(org.organization_id) }];
-  if (query.isPending) return <><PageHeader crumbs={crumbs} title={t("title")} /><p role="status">{t("loading")}</p></>;
-  if (query.isError) return <><PageHeader crumbs={crumbs} title={t("title")} /><ErrorMessage error={query.error} /></>;
+  if (query.isPending) return <><PageHeader crumbs={crumbs} title={t("title")} /><Loading label={t("loading")} /></>;
+  if (query.isError) return <><PageHeader crumbs={crumbs} title={t("title")} /><LoadError error={query.error} onRetry={() => void query.refetch()} /></>;
   const incident = query.data;
   const open = incident.closed_at === null;
   const canAct = open && isContributor(org.role);

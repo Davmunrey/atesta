@@ -6,7 +6,7 @@ import { type Membership, orgHome, orgTraining } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
-import { PageHeader, Panel } from "./page-frame";
+import { LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { CampaignState } from "./training-view";
 
 /** One training: who confirmed, and closing it into evidence (recorded-routines spec). */
@@ -16,8 +16,8 @@ export function TrainingCampaignView({ org, campaignId }: { org: Membership; cam
   const query = useTrainingCampaign(org.organization_id, campaignId);
   const close = useCloseTraining(org.organization_id, campaignId);
   const crumbs = [{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title"), href: orgTraining(org.organization_id) }];
-  if (query.isPending) return <><PageHeader crumbs={crumbs} title={t("title")} /><p role="status">{t("loading")}</p></>;
-  if (query.isError) return <><PageHeader crumbs={crumbs} title={t("title")} /><ErrorMessage error={query.error} /></>;
+  if (query.isPending) return <><PageHeader crumbs={crumbs} title={t("title")} /><Loading label={t("loading")} /></>;
+  if (query.isError) return <><PageHeader crumbs={crumbs} title={t("title")} /><LoadError error={query.error} onRetry={() => void query.refetch()} /></>;
   const campaign = query.data;
   const open = campaign.closed_at === null;
   return <div className="panel-grid">

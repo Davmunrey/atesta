@@ -7,7 +7,7 @@ import { evidenceTemplate, type TemplateFormat, USE_CASES, type UseCase } from "
 import { type Membership, orgHome } from "@/lib/org";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
-import { PageHeader, Panel } from "./page-frame";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { RecordSummary } from "./record-summary";
 import { tokenSummary } from "@/lib/summaries";
 
@@ -27,8 +27,8 @@ export function IntegrationsView({ org }: { org: Membership }) {
       { label: s("tokens.inactive"), value: format.number(sum.inactive) },
       { label: s("tokens.lastUsed"), value: sum.lastUsed ? format.dateTime(new Date(sum.lastUsed), { dateStyle: "medium" }) : s("never") }]} /> : null}
     <Panel title={t("list")}>
-      {list.isPending ? <p role="status">{t("loading")}</p> : list.isError ? <ErrorMessage error={list.error} />
-        : list.data.length === 0 ? <p className="text-muted">{t("empty")}</p>
+      {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
+        : list.data.length === 0 ? <Empty>{t("empty")}</Empty>
         : <div className="table-region" role="region" aria-label={t("list")} tabIndex={0}><table className="w-full text-left">
           <thead><tr><th scope="col">{t("name")}</th><th scope="col">{t("lastUsed")}</th><th scope="col">{t("state")}</th><th scope="col"><span className="sr-only">{t("actions")}</span></th></tr></thead>
           <tbody>{list.data.map((token) => <TokenRow key={token.id} token={token} orgId={org.organization_id} />)}</tbody>

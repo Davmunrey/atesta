@@ -9,7 +9,7 @@ import { type Membership, orgHome, orgIncident } from "@/lib/org";
 import { isContributor } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
-import { PageHeader, Panel } from "./page-frame";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { RecordSummary } from "./record-summary";
 import { incidentSummary } from "@/lib/summaries";
 
@@ -32,8 +32,8 @@ export function IncidentsView({ org }: { org: Membership }) {
       { label: s("open"), value: format.number(sum.open) }, { label: s("closed"), value: format.number(sum.closed) },
       { label: s("overdue"), value: format.number(sum.overdue), attention: sum.overdue > 0 }]} /> : null}
     <Panel title={t("list")}>
-      {list.isPending ? <p role="status">{t("loading")}</p> : list.isError ? <ErrorMessage error={list.error} />
-        : list.data.length === 0 ? <p className="text-muted">{t("empty")}</p>
+      {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
+        : list.data.length === 0 ? <Empty>{t("empty")}</Empty>
         : <div className="table-region" role="region" aria-label={t("list")} tabIndex={0}><table className="w-full text-left">
           <thead><tr><th scope="col">{t("incident")}</th><th scope="col">{t("aware")}</th><th scope="col">{t("state")}</th></tr></thead>
           <tbody>{list.data.map((i) => <tr key={i.id}>

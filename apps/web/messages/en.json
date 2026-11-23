@@ -134,6 +134,7 @@
   "app": {
     "skipContent": "Skip to content",
     "loading": "Loading…",
+    "retry": "Try again",
     "signOut": "Sign out",
     "signedInAs": "Signed in as {email}",
     "account": "Account",

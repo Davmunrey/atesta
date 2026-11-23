@@ -207,7 +207,7 @@ Controls and navigation use the small radius; shared primary actions and the col
 
 **Activity.** Audit actions read as sentences in ES and EN; an action without a label reads "Otra acción", database ids are never shown, readable targets (framework keys, requirement codes) stay in mono.
 
-**Loading, empty and error states.** Loading uses static surface-colored placeholders and status text. Empty states explain the absence; search can be cleared. Errors expose retry. Refresh temporarily disables its control and changes its label. Development data stays visibly labeled and synthetic framework results are not presented as ENS/NIS2 assessments.
+**Loading, empty and error states.** Every page load and records list uses the shared `Loading`, `LoadError` and `Empty` components. Loading is muted status text, never an empty status region; the overview alone adds static surface-coloured placeholders. A failed load shows the error and "Reintentar", which refetches. The page header and breadcrumbs stay in place while a page loads or fails. A 4xx answer is not retried, and a server or network failure is retried once, so errors show within seconds. Empty states explain the absence; search can be cleared. Refresh temporarily disables its control and changes its label. Development data stays visibly labeled and synthetic framework results are not presented as ENS/NIS2 assessments.
 
 ## Do's and Don'ts
 

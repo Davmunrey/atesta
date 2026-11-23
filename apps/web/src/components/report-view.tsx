@@ -4,8 +4,7 @@ import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { type Report, useReport } from "@/lib/api/report";
 import { type Membership, orgHome } from "@/lib/org";
-import { ErrorMessage } from "./error-message";
-import { PageHeader } from "./page-frame";
+import { LoadError, Loading, PageHeader } from "./page-frame";
 
 const DONE = ["measures_assessed", "assessments_reviewed", "evidence_by_people", "evidence_by_tools", "policies_approved",
   "access_reviews_closed", "trainings_closed", "incidents_recorded", "incidents_closed", "deadlines_met", "people_joined"] as const;
@@ -24,7 +23,7 @@ export function ReportView({ org, initialMonth }: { org: Membership; initialMont
       <p className="routine-form"><span><label htmlFor={monthId}>{t("month")}</label>
         <input id={monthId} type="month" value={month} max={initialMonth} onChange={(e) => e.target.value && setMonth(e.target.value)} /></span></p>
     </div>
-    {query.isPending ? <p role="status">{t("loading")}</p> : query.isError ? <ErrorMessage error={query.error} /> : <Body report={query.data} orgName={org.organization_name} />}
+    {query.isPending ? <Loading label={t("loading")} /> : query.isError ? <LoadError error={query.error} onRetry={() => void query.refetch()} /> : <Body report={query.data} orgName={org.organization_name} />}
   </div>;
 }
 

@@ -3,9 +3,8 @@
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { type Dossier, useDossier } from "@/lib/api/dossier";
 import { type Membership, orgFramework, orgFrameworks, orgHome } from "@/lib/org";
-import { ErrorMessage } from "./error-message";
 import { ExpectedEvidence } from "./expected-evidence";
-import { PageHeader } from "./page-frame";
+import { LoadError, Loading, PageHeader } from "./page-frame";
 
 type Requirement = Dossier["requirements"][number];
 
@@ -17,8 +16,8 @@ export function DossierView({ org, frameworkKey }: { org: Membership; frameworkK
     { label: org.organization_name, href: orgHome(org.organization_id) },
     { label: t("frameworks"), href: orgFrameworks(org.organization_id) },
   ];
-  if (query.isPending) return <><PageHeader crumbs={crumbs} title={t("title")} /><p role="status">{t("loading")}</p></>;
-  if (query.isError) return <><PageHeader crumbs={crumbs} title={t("title")} /><ErrorMessage error={query.error} /></>;
+  if (query.isPending) return <><PageHeader crumbs={crumbs} title={t("title")} /><Loading label={t("loading")} /></>;
+  if (query.isError) return <><PageHeader crumbs={crumbs} title={t("title")} /><LoadError error={query.error} onRetry={() => void query.refetch()} /></>;
   const d = query.data;
   return <div className="dossier">
     <div className="dossier-toolbar">

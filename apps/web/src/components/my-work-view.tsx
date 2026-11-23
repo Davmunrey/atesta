@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { PageHeader, Panel } from "./page-frame";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { orgHome as homeOf } from "@/lib/org";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { isMyWorkOverdue, useMyWork } from "@/lib/api/register-hooks";
 import { type Membership, orgFramework } from "@/lib/org";
-import { ErrorMessage } from "./error-message";
 
 /** Mi trabajo (rbac spec): what the signed-in person has to do, soonest first. */
 export function MyWorkView({ org }: { org: Membership }) {
@@ -19,9 +18,9 @@ export function MyWorkView({ org }: { org: Membership }) {
   return <>
     <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
     <Panel>
-    {query.isPending ? <p role="status">{t("loading")}</p>
-      : query.isError ? <ErrorMessage error={query.error} />
-      : query.data.length === 0 ? <p className="text-muted">{t("empty")}</p>
+    {query.isPending ? <Loading label={t("loading")} />
+      : query.isError ? <LoadError error={query.error} onRetry={() => void query.refetch()} />
+      : query.data.length === 0 ? <Empty>{t("empty")}</Empty>
       : <div className="table-region" role="region" aria-label={t("title")} tabIndex={0}>
         <table className="w-full text-left">
           <thead className="text-sm text-muted"><tr>

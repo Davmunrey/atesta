@@ -134,6 +134,7 @@
   "app": {
     "skipContent": "Saltar al contenido",
     "loading": "Cargando…",
+    "retry": "Reintentar",
     "signOut": "Cerrar sesión",
     "signedInAs": "Sesión iniciada como {email}",
     "account": "Cuenta",

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useId } from "react";
+import { ErrorMessage } from "./error-message";
 
 export type Crumb = { label: string; href?: string };
 
@@ -39,4 +40,22 @@ export function Panel({ title, description, actions, children, className }: { ti
     </header> : null}
     <div className="panel-body">{children}</div>
   </section>;
+}
+
+/** A load in progress: visible text in a polite status region, never an empty one (ui-polish spec). */
+export function Loading({ label }: { label?: string }) {
+  const t = useTranslations("app");
+  return <p className="state-loading" role="status" aria-busy="true">{label ?? t("loading")}</p>;
+}
+
+/** A failed load: what went wrong and a way to try again (ui-polish spec). */
+export function LoadError({ error, onRetry }: { error: unknown; onRetry: () => void }) {
+  const t = useTranslations("app");
+  return <div className="state-error"><ErrorMessage error={error} />
+    <button type="button" className="dashboard-button" onClick={onRetry}>{t("retry")}</button></div>;
+}
+
+/** Nothing recorded yet (ui-polish spec). */
+export function Empty({ children }: { children: ReactNode }) {
+  return <p className="state-empty">{children}</p>;
 }

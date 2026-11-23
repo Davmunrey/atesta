@@ -163,6 +163,10 @@
   .policy-list .routine-form { margin-top: 1rem; padding: 1rem; border-radius: var(--radius-md); background: var(--color-surface); }
 }
 
+/* Loading, error and empty states (ui-polish spec): one look on every page. */
+.state-loading, .state-empty { color: var(--color-muted); }
+.state-error { display: grid; gap: 0.75rem; justify-items: start; }
+
 /* Recorded routines, part B: the one-time link, checkboxes in forms, the incident timeline. */
 .link-once { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; margin-top: 1rem; min-width: 0; }
 .link-once-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
