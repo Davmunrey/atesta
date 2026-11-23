@@ -82,19 +82,31 @@ function CreateIncident({ orgId }: { orgId: string }) {
   </Panel>;
 }
 
-/** The official text behind a flag, one disclosure per framework; never a verdict (ADR-005). */
+/** The official text behind a flag, grouped by framework; never a verdict (ADR-005). */
 function Criteria({ items }: { items: IncidentCriterion[] }) {
   const t = useTranslations("routines.incidents");
   const english = useLocale() === "en";
   if (items.length === 0) return null;
-  return <span className="criteria">{items.map((c) => {
-    const text = english && c.text_en ? c.text_en : c.text_es;
-    const title = english && c.title_en ? c.title_en : c.title_es;
-    const lang = english && c.text_en ? undefined : "es";
-    return <details key={`${c.framework_key}:${c.requirement}`}>
-      <summary>{t("criteria", { framework: c.framework_name, title })}</summary>
-      <div lang={lang} className="criteria-text">{text.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>
-      <a href={c.source} className="text-link underline text-sm" rel="noopener noreferrer" target="_blank">{t("criteriaSource")}</a>
-    </details>;
-  })}</span>;
+  const groups = new Map<string, [IncidentCriterion, ...IncidentCriterion[]]>();
+  for (const c of items) {
+    const group = groups.get(c.framework_key);
+    if (group) group.push(c); else groups.set(c.framework_key, [c]);
+  }
+  const titleOf = (c: IncidentCriterion) => (english && c.title_en ? c.title_en : c.title_es);
+  return <span className="criteria">{[...groups.entries()].map(([key, [first, ...rest]]) => rest.length === 0
+    ? <Criterion key={key} item={first} summary={t("criteria", { framework: first.framework_name, title: titleOf(first) })} />
+    : <details key={key}>
+      <summary>{t("criteriaGroup", { framework: first.framework_name, count: rest.length + 1 })}</summary>
+      <div className="criteria-group">{[first, ...rest].map((c) => <Criterion key={c.requirement} item={c} summary={titleOf(c)} />)}</div>
+    </details>)}</span>;
+}
+
+function Criterion({ item, summary }: { item: IncidentCriterion; summary: string }) {
+  const t = useTranslations("routines.incidents");
+  const official = useLocale() === "en" && item.text_en ? item.text_en : null;
+  return <details>
+    <summary>{summary}</summary>
+    <div lang={official ? undefined : "es"} className="criteria-text">{(official ?? item.text_es).split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>
+    <a href={item.source} className="text-link underline text-sm" rel="noopener noreferrer" target="_blank">{t("criteriaSource")}</a>
+  </details>;
 }

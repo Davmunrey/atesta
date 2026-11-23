@@ -864,6 +864,7 @@
       "flags": "Características",
       "noFlags": "Ni significativo ni con datos personales",
       "criteria": "Qué dice {framework}: {title}",
+      "criteriaGroup": "Qué dice {framework} ({count, plural, one {# criterio} other {# criterios}})",
       "criteriaSource": "Ver en la fuente oficial",
       "sentWhich": ": «{clock}»"
     }

@@ -864,6 +864,7 @@
       "flags": "Characteristics",
       "noFlags": "Neither significant nor involving personal data",
       "criteria": "What {framework} says: {title}",
+      "criteriaGroup": "What {framework} says ({count, plural, one {# criterion} other {# criteria}})",
       "criteriaSource": "View in the official source",
       "sentWhich": ": “{clock}”"
     }

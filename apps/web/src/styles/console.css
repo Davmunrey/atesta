@@ -176,6 +176,7 @@
 .code-example { width: 100%; min-width: 0; max-width: 100%; font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.8125rem; white-space: pre; overflow-x: auto; }
 .criteria { flex-basis: 100%; display: grid; gap: 0.25rem; }
 .criteria summary { cursor: pointer; font-size: 0.875rem; }
+.criteria-group { display: grid; gap: 0.25rem; margin: 0.25rem 0 0.5rem; padding-left: 1rem; border-left: 1px solid var(--color-border-subtle); }
 .criteria-text { display: grid; gap: 0.5rem; margin: 0.5rem 0; font-size: 0.875rem; overflow-wrap: anywhere; }
 
 /* Auditor dossier (auditor-dossier spec): readable on screen, clean on paper. */
@@ -234,6 +235,8 @@ html { scroll-padding-top: 4.5rem; }
   /* 44px targets for controls outside running text. */
   button, select, input:not([type="checkbox"], [type="radio"]), summary, .topbar-icon, .topbar-locale button, .topbar .account-trigger { min-height: 2.75rem; }
   .topbar-icon, .topbar .account-trigger { min-width: 2.75rem; }
+  /* Checkboxes and radios: 24px boxes (WCAG 2.5.8); their labels widen the target. */
+  input:is([type="checkbox"], [type="radio"]) { width: 1.5rem; height: 1.5rem; min-height: 0; }
   summary { padding-block: 0.5rem; }
   .breadcrumbs li { display: flex; align-items: center; }
   .breadcrumbs a { display: inline-flex; align-items: center; min-height: 2.75rem; }

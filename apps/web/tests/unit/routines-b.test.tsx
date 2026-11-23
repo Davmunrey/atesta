@@ -136,3 +136,24 @@ it("shows the official criteria behind each incident flag, in the reader's langu
   const spanishOnly = screen.getByText("What LOPD says: Artículo 1").closest("details")!;
   expect(spanishOnly.querySelector("[lang='es']")!.textContent).toBe("Texto solo en español.");
 });
+
+it("groups a framework's incident criteria under one disclosure, in the API's order", async () => {
+  const item = (framework_key: string, framework_name: string, requirement: string) => ({
+    needs: "significant", framework_key, framework_name, requirement, title_es: `Artículo ${requirement}`, title_en: null,
+    text_es: `Texto ${requirement}.`, text_en: null, source: `https://example.test/${requirement}`,
+  });
+  stubApi({
+    [`GET ${base}/incidents`]: [200, []],
+    [`GET ${base}/incidents/criteria`]: [200, [
+      item("dora", "DORA", "1"), item("dora", "DORA", "2"), item("nis2", "NIS2", "23"), item("dora", "DORA", "3"),
+    ]],
+  });
+  renderWithProviders(<IncidentsView org={owner} />);
+  const dora = (await screen.findByText("Qué dice DORA (3 criterios)")).closest("details")!;
+  const inner = [...dora.querySelectorAll(".criteria-group > details > summary")].map((s) => s.textContent);
+  expect(inner).toEqual(["Artículo 1", "Artículo 2", "Artículo 3"]);
+  expect(dora.querySelectorAll("a[href^='https://example.test/']")).toHaveLength(3);
+  expect(screen.getByText("Qué dice NIS2: Artículo 23")).toBeTruthy();
+  const order = [...document.querySelectorAll(".criteria > details > summary")].map((s) => s.textContent);
+  expect(order).toEqual(["Qué dice DORA (3 criterios)", "Qué dice NIS2: Artículo 23"]);
+});
