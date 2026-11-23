@@ -8,6 +8,10 @@
 - Revised 2026-11-13: CSP is one header with every page's script hashes; `pnpm build` fails if it
   exceeds CloudFront's 1,783-character limit (AWS CloudFront quotas, checked 2026-11-13). e2e
   serves the export through a CloudFront stand-in (`tests/e2e/serve.mjs`) that adds the headers.
+- Revised 2026-11-23 (#212): one hash per page grew the header towards the limit (1,652 of 1,783).
+  The build now moves every inline script into a same-origin file named by its SHA-256
+  (`/_next/static/inline/<hash>.js`) and loads it with `<script src>` in the same place, so
+  `script-src 'self'` covers it and the header carries no hashes. New pages no longer grow it.
 
 ## Problem
 
@@ -60,10 +64,10 @@ later screen (connections, scores, evidence) plugs into.
       choice stored in a cookie. Every API error code maps to an ES and EN message; an unknown
       code shows a generic message, never the raw code.
 - [ ] Security headers on every response, from a CloudFront response headers policy: CSP
-      with script hashes computed at build time (static export has no per-request nonce) and no
-      `unsafe-inline` scripts, `frame-ancestors 'none'`, HSTS, `X-Content-Type-Options:
+      with `script-src 'self'` and no `unsafe-inline` scripts: the build moves each inline script
+      into a same-origin file named by its hash (static export has no per-request nonce), `frame-ancestors 'none'`, HSTS, `X-Content-Type-Options:
       nosniff`, `Referrer-Policy: same-origin` (no-referrer on `/invite` and `/training`). A
-      build step writes the hashes; the infra spec applies them.
+      build step writes the policy; the infra spec applies it.
 - [ ] The API sets `Cache-Control: no-store` and `X-Content-Type-Options: nosniff` on every
       response of its own, errors and redirects included, so `/api/*` and `/auth/*` are never
       cached or MIME-sniffed whatever the CDN behaviour in front of them.
@@ -145,5 +149,5 @@ Next.js rules) are adopted in a separate PR before the first screen.
 | i18n | every error code in the backend specs has an ES and EN message (test reads the code list) |
 | Contract | generated API types equal a fresh OpenAPI export |
 | e2e (Playwright, fake OIDC, real API and Postgres) | sign in, create org, invite, accept as a second user, change role, remove; Spanish by default, English after switching; axe finds no serious violations |
-| Headers | the build writes CSP script hashes for every inline script; e2e checks the policy blocks an injected inline script |
+| Headers | the build leaves no inline script in the export and the policy carries no hashes; e2e checks pages run with no CSP report and the policy blocks an injected inline script |
 | Manual | sign-up with TOTP in the dev Cognito pool end to end |
