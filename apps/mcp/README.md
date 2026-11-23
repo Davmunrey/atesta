@@ -4,6 +4,9 @@ The MCP server that lets AI agents work with Atesta (ADR-016, `docs/specs/mcp-se
 is a thin client of the Atesta API: every tool is one call to a documented route, made with the
 caller's API key. Scopes, rate limits, the usage log, tenancy and audit all stay in the API.
 
+**Not publicly distributed yet** (owner decision, 2026-11-23). The package is internal: it is
+not on PyPI, it declares no licence, and only pilot customers install it, from Atesta.
+
 ## Local (stdio)
 
 An admin creates a key in Integraciones with only the scopes the agent needs. Then, from the
