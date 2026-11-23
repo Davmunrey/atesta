@@ -1131,6 +1131,15 @@
   "summary": {
     "label": "Summary",
     "never": "Never",
+    "glance": {
+      "title": "Records",
+      "help": "What an audit asks for, at a glance. Each row links to its record.",
+      "record": "Record",
+      "state": "State",
+      "summary": "Summary",
+      "none": "No records",
+      "failed": "Could not load."
+    },
     "policies": {
       "lead": "{attention, plural, =0 {Every policy is approved and up to date.} one {# policy needs attention.} other {# policies need attention.}}",
       "total": "Policies",

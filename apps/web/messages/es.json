@@ -1131,6 +1131,15 @@
   "summary": {
     "label": "Resumen",
     "never": "Nunca",
+    "glance": {
+      "title": "Registros",
+      "help": "Lo que pide una auditoría, de un vistazo. Cada fila enlaza a su registro.",
+      "record": "Registro",
+      "state": "Estado",
+      "summary": "Resumen",
+      "none": "Sin registros",
+      "failed": "No se pudo cargar."
+    },
     "policies": {
       "lead": "{attention, plural, =0 {Todas las políticas están aprobadas y al día.} one {# política necesita atención.} other {# políticas necesitan atención.}}",
       "total": "Políticas",

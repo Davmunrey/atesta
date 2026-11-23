@@ -34,3 +34,7 @@ export function tokenSummary(tokens: ApiToken[], now: Date) {
   const used = tokens.map((t) => t.last_used_at).filter((d): d is string => Boolean(d)).sort();
   return { active, inactive: tokens.length - active, lastUsed: used.at(-1) ?? null };
 }
+
+export function overdueTrainings(campaigns: Pick<TrainingCampaign, "closed_at" | "closes_on">[], today: string) {
+  return campaigns.filter((c) => !c.closed_at && c.closes_on < today).length;
+}

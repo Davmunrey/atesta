@@ -8,6 +8,7 @@ import { FirstSteps } from "./first-steps";
 import { FrameworkLedger } from "./framework-ledger";
 import { GettingStarted } from "./getting-started";
 import { LoadError, PageHeader } from "./page-frame";
+import { RecordsGlance } from "./records-glance";
 import { AttentionList, Kpis, ReadinessSummary, RecentActivity, TeamLoad, YourWork, started, useAttention } from "./readiness";
 import { ScanHistory } from "./scan-history";
 
@@ -41,6 +42,7 @@ export function OverviewDashboard({ orgId, org }: { orgId: string; org?: Members
         <AttentionList items={attention} readiness={readiness} orgId={orgId} />
         <YourWork org={membership} />
       </div>
+      <RecordsGlance org={membership} />
       {ledger}
       <div className="panel-grid panel-grid-halves">
         <TeamLoad org={membership} readiness={readiness} />
