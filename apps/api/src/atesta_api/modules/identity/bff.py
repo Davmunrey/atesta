@@ -9,6 +9,7 @@ import binascii
 import hashlib
 import hmac
 import json
+import logging
 import os
 import secrets
 from typing import Protocol
@@ -18,13 +19,19 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse, Response
 
-from atesta_api.modules.identity.cognito import InvalidTokenError, TokenSet, TokenVerifier
+from atesta_api.modules.identity.cognito import (
+    InvalidTokenError,
+    ProviderUnavailableError,
+    TokenSet,
+    TokenVerifier,
+)
 
 AUTH_COOKIE = "atesta_auth"  # pending sign-in: state, nonce, PKCE verifier, return path
 ACCESS_COOKIE = "atesta_at"
 REFRESH_COOKIE = "atesta_rt"
 SESSION_SECONDS = 12 * 3600  # refresh token lifetime (identity spec)
 LOGIN_SECONDS = 600
+_log = logging.getLogger(__name__)
 
 __all__ = ["ACCESS_COOKIE", "AUTH_COOKIE", "REFRESH_COOKIE", "SessionCrypto", "TokenSet"]
 
@@ -34,6 +41,7 @@ class OAuthClient(Protocol):
     def exchange_code(self, code: str, verifier: str) -> TokenSet: ...
     def id_token_nonce(self, id_token: str) -> str: ...
     def refresh(self, refresh_token: str) -> TokenSet: ...
+    def revoke(self, refresh_token: str) -> None: ...
     def logout_url(self) -> str: ...
 
 
@@ -92,8 +100,19 @@ def store_tokens(response: Response, crypto: SessionCrypto, tokens: TokenSet) ->
 
 
 def _safe_return(target: str | None) -> str:
-    """Only same-site absolute paths: no scheme, no '//' host, no backslash tricks."""
-    if target and target.startswith("/") and not target.startswith("//") and "\\" not in target:
+    """Only same-site absolute paths: no scheme, no '//' host, no backslash tricks.
+
+    Whitespace and control characters are refused here, not left to the framework's encoding of
+    the Location header: a browser strips tab, LF and CR, so "/<TAB>/evil" would read "//evil"
+    (#325).
+    """
+    if (
+        target
+        and target.startswith("/")
+        and not target.startswith("//")
+        and "\\" not in target
+        and not any(ord(c) <= 0x20 or ord(c) == 0x7F for c in target)
+    ):
         return target
     return "/app"
 
@@ -149,9 +168,26 @@ def callback(request: Request, code: str, state: str) -> RedirectResponse:
     return response
 
 
+def _revoke_session(request: Request, oauth: OAuthClient) -> None:
+    """Revoke the refresh token, so a copied session cookie stops working (#324).
+
+    Cognito's /logout revokes no token. Best effort: sign-out never waits on Cognito, and only the
+    error's type is logged, never the token.
+    """
+    sealed = request.cookies.get(REFRESH_COOKIE)
+    if not sealed:
+        return
+    crypto: SessionCrypto = request.app.state.session_crypto
+    try:
+        oauth.revoke(crypto.open(REFRESH_COOKIE, sealed))
+    except (InvalidTokenError, ProviderUnavailableError) as exc:
+        _log.warning("sign-out: refresh token not revoked (%s)", type(exc).__name__)
+
+
 @router.get("/logout")
 def logout(request: Request) -> RedirectResponse:
     oauth: OAuthClient = request.app.state.oauth
+    _revoke_session(request, oauth)
     response = RedirectResponse(oauth.logout_url(), status_code=302)
     clear_session(response)
     return response

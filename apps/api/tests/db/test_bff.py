@@ -56,6 +56,28 @@ def test_login_refuses_open_redirects(client: TestClient, target: str) -> None:
     assert state["return_to"] == "/app"
 
 
+@pytest.mark.parametrize(
+    "target",
+    [
+        "/\t/evil.example",  # a browser strips tab, LF and CR: //evil.example (#325)
+        "/\n/evil.example",
+        "/\r/evil.example",
+        "\t//evil.example",
+        "/ /evil.example",
+        "/\x00/evil.example",
+        "/\x7f/evil.example",
+        "/app\t",
+    ],
+)
+def test_login_refuses_control_characters_and_whitespace_in_the_return_path(
+    client: TestClient, target: str
+) -> None:
+    """Safe by our own check, not only by the framework percent-encoding the Location header."""
+    response = client.get("/auth/login", params={"return_to": target}, follow_redirects=False)
+    state = json.loads(CRYPTO.open(AUTH_COOKIE, response.cookies[AUTH_COOKIE]))
+    assert state["return_to"] == "/app"
+
+
 def test_login_defaults_to_spanish(client: TestClient) -> None:
     params, _ = login(client)
     assert params["lang"] == "es"
@@ -152,6 +174,41 @@ def test_logout_clears_cookies_and_ends_the_cognito_session(client: TestClient) 
     raw = "\n".join(response.headers.get_list("set-cookie"))
     assert f'{ACCESS_COOKIE}=""' in raw and f'{REFRESH_COOKIE}=""' in raw
     assert response.headers["location"].startswith("https://auth.example.com/logout?client_id=")
+
+
+def test_logout_revokes_the_refresh_token_so_a_copied_session_ends(
+    client: TestClient, oauth: FakeOAuth
+) -> None:
+    """Cognito's /logout revokes no token; /oauth2/revoke does (#324)."""
+    sub = new_sub()
+    signed_in(client, sub)
+    copied = client.cookies.get(REFRESH_COOKIE)  # e.g. lifted from a shared machine
+    response = client.get("/auth/logout", follow_redirects=False)
+    assert response.status_code == 302
+    assert oauth.revoked == [f"rt-{sub}"]
+    client.cookies.clear()
+    client.cookies.set(ACCESS_COOKIE, CRYPTO.seal(ACCESS_COOKIE, f"expired-{sub}"))
+    client.cookies.set(REFRESH_COOKIE, copied or "")
+    assert client.get("/api/v1/me").status_code == 401  # the copy no longer refreshes
+
+
+def test_logout_still_signs_out_when_revocation_fails(
+    client: TestClient, oauth: FakeOAuth, caplog: pytest.LogCaptureFixture
+) -> None:
+    caplog.set_level(logging.DEBUG)
+    sub = new_sub()
+    signed_in(client, sub)
+    oauth.revoke_fails = True
+    response = client.get("/auth/logout", follow_redirects=False)
+    raw = "\n".join(response.headers.get_list("set-cookie"))
+    assert response.status_code == 302 and f'{REFRESH_COOKIE}=""' in raw
+    assert f"rt-{sub}" not in caplog.text
+
+
+def test_logout_without_a_session_revokes_nothing(client: TestClient, oauth: FakeOAuth) -> None:
+    client.cookies.set(REFRESH_COOKIE, "not-a-sealed-value")
+    response = client.get("/auth/logout", follow_redirects=False)
+    assert response.status_code == 302 and oauth.revoked == []
 
 
 def test_tokens_never_reach_logs(client: TestClient, caplog: pytest.LogCaptureFixture) -> None:

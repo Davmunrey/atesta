@@ -285,6 +285,25 @@ class CognitoOAuth:
     def id_token_nonce(self, id_token: str) -> str:
         return str(self._verifier.verify_id_token(id_token).get("nonce", ""))
 
+    def revoke(self, refresh_token: str) -> None:
+        """POST /oauth2/revoke: ends the refresh token and every access token issued with it.
+
+        A token that is already revoked or not valid gets 200 (Cognito docs, token revocation
+        endpoint); a 400 means the request itself was refused.
+        """
+        try:
+            response = self._client.post(
+                f"{self._base}/oauth2/revoke",
+                data={"token": refresh_token, "client_id": self._client_id},
+                timeout=5,
+            )
+        except httpx.HTTPError as exc:
+            raise ProviderUnavailableError from exc
+        if response.status_code >= 500:
+            raise ProviderUnavailableError
+        if response.status_code != 200:
+            raise InvalidTokenError
+
     def logout_url(self) -> str:
         query = urlencode({"client_id": self._client_id, "logout_uri": self._logout_uri})
         return f"{self._base}/logout?{query}"
