@@ -90,6 +90,7 @@
   /* Landing (landing-legal L4): the closing band on ink with the yellow CTA. */
   --color-ink: #141414;
   --color-on-ink: #f4f1ea;
+  --color-on-ink-muted: #c0baae;
   --color-cta: #ffd23f;
   /* Landing motion (landing-legal spec): ease-out, 200 ms hover, 700-1400 ms entrances, 24 px. */
   --ease-entrance: cubic-bezier(0.215, 0.61, 0.355, 1);

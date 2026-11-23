@@ -67,7 +67,7 @@ describe("print", () => {
 // Landing (landing-legal L4): the closing band is ink, with paper text and the yellow CTA.
 describe("landing ink band", () => {
   const colors = palette(publicLight);
-  it.each([["on-ink", "ink"], ["ink", "cta"]])("%s on %s is at least 4.5:1", (fg, bg) => {
+  it.each([["on-ink", "ink"], ["on-ink-muted", "ink"], ["ink", "cta"]])("%s on %s is at least 4.5:1", (fg, bg) => {
     expect(ratio(colors.get(fg)!, colors.get(bg)!)).toBeGreaterThanOrEqual(4.5);
   });
 });

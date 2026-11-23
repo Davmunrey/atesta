@@ -45,13 +45,49 @@
     }
   },
   "landing": {
-    "headline": "Get ENS-ready without a full-time consultant",
-    "sub": "For SMEs that sell to the public sector.",
-    "covers": "Also covers, depending on the plan: NIS2, GDPR, LOPDGDD and DORA.",
-    "consultancies": "For consultancies: many clients, one account.",
-    "close": "Your next audit, prepared.",
+    "headline": "Get <hl>ENS</hl>-ready without a full-time consultant",
+    "sub": "Atesta gathers the measures, the evidence and the records your auditor asks for, for SMEs that sell to the public sector.",
     "requestAccess": "Request access",
     "signIn": "Sign in",
+    "soon": "Coming soon",
+    "problem": {
+      "title": "The ENS does not fit in a spreadsheet",
+      "body": "Seventy-three measures, each with its official text, its evidence and its reviews. Spread across emails and folders, nobody knows what is missing until the audit arrives."
+    },
+    "how": {
+      "title": "How it works",
+      "steps": {
+        "connect": {
+          "title": "Connect your systems",
+          "body": "Microsoft 365 or Google Workspace, with read-only permissions."
+        },
+        "assess": {
+          "title": "Assess every measure",
+          "body": "With its official text and the applicability proposal for your category."
+        },
+        "routines": {
+          "title": "Record the routines",
+          "body": "Policies, access reviews, training and incidents, with their deadlines."
+        },
+        "dossier": {
+          "title": "Hand over the dossier",
+          "body": "Everything recorded, ready for the auditor to review and management to sign."
+        }
+      }
+    },
+    "moments": {
+      "measure": "The official text of every measure",
+      "records": "The records your auditor asks for",
+      "dossier": "A dossier ready to sign"
+    },
+    "frameworks": {
+      "title": "The ENS first, more by plan",
+      "body": "Also covers NIS2, GDPR, LOPDGDD and DORA. One piece of evidence serves several frameworks.",
+      "byPlan": "By plan"
+    },
+    "consultancies": "For consultancies: all your clients in one account, each in its own space.",
+    "close": "Your next audit, prepared.",
+    "sample": "Sample data",
     "view": {
       "label": "An organization's overview in Atesta",
       "category": "Category {category}",
@@ -92,11 +128,6 @@
         "date": "Date",
         "signature": "Signature"
       }
-    },
-    "moments": {
-      "measure": "The official text of every measure",
-      "records": "The records your auditor asks for",
-      "dossier": "A dossier ready to sign"
     }
   },
   "locale": {
