@@ -181,7 +181,7 @@
   .chart svg { display: block; inline-size: 100%; block-size: auto; overflow: visible; }
   .chart svg:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
   .chart-grid { stroke: var(--color-border); stroke-width: 1; opacity: 0.5; }
-  .chart-tick, .chart-end-label { fill: var(--color-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .chart-tick, .chart-end-label { fill: var(--color-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
   .chart-end-label { fill: var(--color-fg); font-weight: 600; }
   .chart-line { fill: none; stroke: var(--color-chart); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
   .chart-area { fill: var(--color-chart); opacity: 0.1; }
@@ -209,6 +209,6 @@
   .owner-edit { min-height: 2.75rem; padding-inline: 0.25rem; }
   .owner-form { margin-bottom: 1rem; }
   .assessment-badges { display: inline-flex; align-items: center; gap: 0.5rem; }
-  .overdue-flag { font-size: 0.75rem; font-weight: 600; color: var(--color-danger); border: 1px solid currentColor; border-radius: 0.25rem; padding: 0 0.375rem; }
-  .activity-target { display: block; font-family: var(--font-mono, monospace); font-size: 0.75rem; color: var(--color-muted); overflow-wrap: anywhere; }
+  .overdue-flag { font-size: 0.8125rem; font-weight: 600; color: var(--color-danger); border: 1px solid currentColor; border-radius: 0.25rem; padding: 0 0.375rem; }
+  .activity-target { display: block; font-family: var(--font-mono, monospace); font-size: 0.8125rem; color: var(--color-muted); overflow-wrap: anywhere; }
 }

@@ -88,10 +88,10 @@ function Applicability({ d }: { d: Dossier }) {
     <div className="table-region" role="region" aria-label={t("applicability")} tabIndex={0}><table className="w-full text-left">
       <thead><tr><th scope="col">{t("code")}</th><th scope="col">{t("measure")}</th><th scope="col">{t("decision")}</th><th scope="col">{t("implementation")}</th><th scope="col">{t("justification")}</th></tr></thead>
       <tbody>{d.applicability.map((row) => <tr key={row.code}>
-        <td className="font-mono">{row.code}</td><td lang="es">{row.title_es}</td>
-        <td>{t(`decisions.${row.decision}`)}</td>
-        <td>{row.decision === "not_applicable" ? s("not_applicable") : row.implementation ? s(row.implementation) : s("pending")}</td>
-        <td>{row.justification}</td>
+        <td data-label={t("code")} className="font-mono">{row.code}</td><td data-label={t("measure")} lang="es">{row.title_es}</td>
+        <td data-label={t("decision")}>{t(`decisions.${row.decision}`)}</td>
+        <td data-label={t("implementation")}>{row.decision === "not_applicable" ? s("not_applicable") : row.implementation ? s(row.implementation) : s("pending")}</td>
+        <td data-label={t("justification")}>{row.justification}</td>
       </tr>)}</tbody>
     </table></div>
   </section>;

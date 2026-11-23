@@ -195,6 +195,10 @@ Controls and navigation use the small radius; shared primary actions and the col
 
 **Collection summary.** A single tinted container groups recent collections and evidence totals. Ruled rows preserve visible status labels, dates and coverage; native progress elements appear only when the expected count is known. Collection coverage and framework result distribution retain different meanings.
 
+**Data tables.** Tables sit in a scroll region that is also a size container. Below 36rem of their own width they stack: one ruled block per row, the first cell as its title, every other cell preceded by its column name (`data-label`) in muted 13px text. The markup stays a semantic table and nothing scrolls sideways on a phone (ui-polish spec).
+
+**Touch and text floors.** No interface text under 13px (0.8125rem), chart ticks included: charts draw at their measured width so SVG text never scales down. Below 40rem or on coarse pointers, buttons, fields, disclosure summaries, breadcrumbs and standalone action links (`.action-link`) are at least 44px tall, and fields use 16px text so phones do not zoom. The document scroll padding clears the sticky top bar so focus and anchors are never hidden.
+
 **Loading, empty and error states.** Loading uses static surface-colored placeholders and status text. Empty states explain the absence; search can be cleared. Errors expose retry. Refresh temporarily disables its control and changes its label. Development data stays visibly labeled and synthetic framework results are not presented as ENS/NIS2 assessments.
 
 ## Do's and Don'ts

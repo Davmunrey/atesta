@@ -520,7 +520,8 @@
     "overdue": "Vencidas",
     "openByOwner": "Medidas abiertas por responsable",
     "noOwners": "Todavía no hay medidas asignadas. Asigna un responsable desde cada medida.",
-    "formerMember": "Antiguo miembro"
+    "formerMember": "Antiguo miembro",
+    "day": "Día"
   },
   "activity": {
     "title": "Actividad",
@@ -555,7 +556,8 @@
       "connection_created": "Creó una conexión",
       "connection_disconnected": "Desconectó una conexión",
       "scan_requested": "Solicitó un análisis"
-    }
+    },
+    "day": "Día"
   },
   "myWork": {
     "title": "Mi trabajo",
@@ -685,7 +687,8 @@
     "training": "Formación",
     "incidents": "Incidentes",
     "integrations": "Integraciones",
-    "report": "Informe mensual"
+    "report": "Informe mensual",
+    "searchShort": "Buscar"
   },
   "routines": {
     "access": {
@@ -810,7 +813,6 @@
       "running": "En curso",
       "late": "Vencido",
       "waiting": "Empieza con el aviso anterior",
-      "markSent": "Marcar «{clock}» como enviado",
       "sent": "Marcar como enviado",
       "updates": "Anotaciones",
       "noUpdates": "Sin anotaciones.",
@@ -826,7 +828,8 @@
       "flags": "Características",
       "noFlags": "Ni significativo ni con datos personales",
       "criteria": "Qué dice {framework}: {title}",
-      "criteriaSource": "Ver en la fuente oficial"
+      "criteriaSource": "Ver en la fuente oficial",
+      "sentWhich": ": «{clock}»"
     }
   },
   "trainingLink": {

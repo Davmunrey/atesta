@@ -25,10 +25,10 @@ export function AccessReviewsView({ org }: { org: Membership }) {
         : <div className="table-region" role="region" aria-label={t("list")} tabIndex={0}><table className="w-full text-left">
           <thead><tr><th scope="col">{t("review")}</th><th scope="col">{t("progress")}</th><th scope="col">{t("state")}</th></tr></thead>
           <tbody>{list.data.map((r) => <tr key={r.id}>
-            <td><Link href={orgAccessReview(org.organization_id, r.id)} className="text-link underline">{r.title}</Link>
+            <td data-label={t("review")}><Link href={orgAccessReview(org.organization_id, r.id)} className="text-link underline">{r.title}</Link>
               <span className="block text-sm text-muted">{r.system}</span></td>
-            <td className="tabular-nums">{t("decided", { decided: r.total - r.pending, total: r.total })}</td>
-            <td>{r.closed_at ? <span className="badge" data-severity="done"><Icon name="done" />{t("closedOn", { date: format.dateTime(new Date(r.closed_at), { dateStyle: "medium" }) })}</span>
+            <td data-label={t("progress")} className="tabular-nums">{t("decided", { decided: r.total - r.pending, total: r.total })}</td>
+            <td data-label={t("state")}>{r.closed_at ? <span className="badge" data-severity="done"><Icon name="done" />{t("closedOn", { date: format.dateTime(new Date(r.closed_at), { dateStyle: "medium" }) })}</span>
               : r.due_on ? <span className="badge" data-severity="pending"><Icon name="pending" />{t("dueOn", { date: format.dateTime(new Date(`${r.due_on}T00:00:00Z`), { dateStyle: "medium", timeZone: "UTC" }) })}</span>
               : <span className="badge" data-severity="pending"><Icon name="pending" />{t("open")}</span>}</td>
           </tr>)}</tbody>

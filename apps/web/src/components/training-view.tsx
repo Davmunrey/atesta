@@ -25,9 +25,9 @@ export function TrainingView({ org }: { org: Membership }) {
         : <div className="table-region" role="region" aria-label={t("list")} tabIndex={0}><table className="w-full text-left">
           <thead><tr><th scope="col">{t("campaign")}</th><th scope="col">{t("people")}</th><th scope="col">{t("state")}</th></tr></thead>
           <tbody>{list.data.map((c) => <tr key={c.id}>
-            <td><Link href={orgTrainingCampaign(org.organization_id, c.id)} className="text-link underline">{c.title}</Link></td>
-            <td className="tabular-nums">{t("count", { count: c.acknowledged })}</td>
-            <td><CampaignState campaign={c} /></td>
+            <td data-label={t("campaign")}><Link href={orgTrainingCampaign(org.organization_id, c.id)} className="text-link underline">{c.title}</Link></td>
+            <td data-label={t("people")} className="tabular-nums">{t("count", { count: c.acknowledged })}</td>
+            <td data-label={t("state")}><CampaignState campaign={c} /></td>
           </tr>)}</tbody>
         </table></div>}
     </Panel>

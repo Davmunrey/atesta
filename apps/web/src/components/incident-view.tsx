@@ -45,12 +45,12 @@ export function IncidentView({ org, incidentId }: { org: Membership; incidentId:
         : <div className="table-region" role="region" aria-label={t("clocks")} tabIndex={0}><table className="w-full text-left">
           <thead><tr><th scope="col">{t("clock")}</th><th scope="col">{t("due")}</th><th scope="col">{t("status")}</th></tr></thead>
           <tbody>{incident.clocks.map((c) => <tr key={c.ref}>
-            <td>{title(c)}<span className="block text-sm text-muted">{c.framework_name} · {c.requirement}</span></td>
-            <td className="tabular-nums">{c.due_at ? time(c.due_at) : "—"}</td>
-            <td><ClockStatus clock={c} time={time} />
+            <td data-label={t("clock")}>{title(c)}<span className="block text-sm text-muted">{c.framework_name} · {c.requirement}</span></td>
+            <td data-label={t("due")} className="tabular-nums">{c.due_at ? time(c.due_at) : "—"}</td>
+            <td data-label={t("status")}><ClockStatus clock={c} time={time} />
               {canAct && (c.state === "running" || c.state === "overdue")
-                ? <button type="button" className="dashboard-button clock-action" aria-label={t("markSent", { clock: title(c) })} disabled={update.isPending}
-                  onClick={() => update.mutate({ kind: "clock", clock: c.ref, note: "" })}>{t("sent")}</button> : null}</td>
+                ? <button type="button" className="dashboard-button clock-action" disabled={update.isPending}
+                  onClick={() => update.mutate({ kind: "clock", clock: c.ref, note: "" })}>{t("sent")}<span className="sr-only">{t("sentWhich", { clock: title(c) })}</span></button> : null}</td>
           </tr>)}</tbody>
         </table></div>}
     </Panel>

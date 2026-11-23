@@ -142,7 +142,7 @@ export function YourWork({ org }: { org: Membership }) {
   if (!isContributor(org.role) || !query.data) return null;
   const today = now.toISOString().slice(0, 10);
   const items = query.data.filter((i) => !(i.applicability === "not_applicable" || i.implementation === "implemented")).slice(0, 3);
-  return <Panel title={t("yourWork")} actions={<Link href={orgMyWork(org.organization_id)} className="text-link underline text-sm">{t("allMyWork")}</Link>}>
+  return <Panel title={t("yourWork")} actions={<Link href={orgMyWork(org.organization_id)} className="text-link underline text-sm action-link">{t("allMyWork")}</Link>}>
     {items.length === 0 ? <p className="text-sm text-muted">{t("yourWorkEmpty")}</p> : <ul className="cockpit-list">
       {items.map((i) => <li key={`${i.framework_key}:${i.code}`}>
         <Link href={`${orgFramework(org.organization_id, i.framework_key)}#req-${encodeURIComponent(i.code)}`}>
@@ -183,7 +183,7 @@ export function RecentActivity({ org }: { org: Membership }) {
   if (!admin || !query.data) return null;
   const action = (name: string) => { const key = `actions.${name.replaceAll(".", "_")}`; return activity.has(key) ? activity(key) : name; };
   const events = query.data.events.slice(0, 5);
-  return <Panel title={t("recent")} actions={<Link href={orgActivity(org.organization_id)} className="text-link underline text-sm">{t("allActivity")}</Link>}>
+  return <Panel title={t("recent")} actions={<Link href={orgActivity(org.organization_id)} className="text-link underline text-sm action-link">{t("allActivity")}</Link>}>
     {events.length === 0 ? <p className="text-sm text-muted">{t("recentEmpty")}</p> : <ul className="cockpit-list">
       {events.map((e, i) => <li key={`${e.occurred_at}:${i}`}>
         <span>{action(e.action)}</span>

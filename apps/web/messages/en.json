@@ -520,7 +520,8 @@
     "overdue": "Overdue",
     "openByOwner": "Open measures by owner",
     "noOwners": "No measure has an owner yet. Assign one from each measure.",
-    "formerMember": "Former member"
+    "formerMember": "Former member",
+    "day": "Day"
   },
   "activity": {
     "title": "Activity",
@@ -555,7 +556,8 @@
       "connection_created": "Created a connection",
       "connection_disconnected": "Disconnected a connection",
       "scan_requested": "Requested a scan"
-    }
+    },
+    "day": "Day"
   },
   "myWork": {
     "title": "My work",
@@ -685,7 +687,8 @@
     "training": "Training",
     "incidents": "Incidents",
     "integrations": "Integrations",
-    "report": "Monthly report"
+    "report": "Monthly report",
+    "searchShort": "Search"
   },
   "routines": {
     "access": {
@@ -810,7 +813,6 @@
       "running": "Running",
       "late": "Overdue",
       "waiting": "Starts with the previous notice",
-      "markSent": "Mark “{clock}” as sent",
       "sent": "Mark as sent",
       "updates": "Entries",
       "noUpdates": "No entries.",
@@ -826,7 +828,8 @@
       "flags": "Characteristics",
       "noFlags": "Neither significant nor involving personal data",
       "criteria": "What {framework} says: {title}",
-      "criteriaSource": "View in the official source"
+      "criteriaSource": "View in the official source",
+      "sentWhich": ": “{clock}”"
     }
   },
   "trainingLink": {
