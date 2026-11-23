@@ -15,7 +15,7 @@ def test_planned_templates_have_guides_but_no_assessable_requirements() -> None:
         expected.update(json.loads(path.read_text())[provider])
     catalog = read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.49.0")
     packs = {p.metadata.id: p for p in catalog.packs}
-    for key in ("nis2", "iso27001_2022", "gdpr_art32", "dora", "soc2"):
+    for key in ("iso27001_2022", "gdpr_art32", "dora", "soc2"):
         pack = packs[key]
         assert pack.metadata.attributes.content_state == "template"
         assert pack.metadata.attributes.assessment_enabled is False

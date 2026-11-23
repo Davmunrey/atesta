@@ -12,6 +12,7 @@ from atesta_core.applicability import axis_levels
 
 from atesta_api.modules.compliance.catalog_schema import (
     ControlContent,
+    Coverage,
     Mappings,
     Pack,
     PackMetadata,
@@ -83,7 +84,14 @@ def read_catalog(root: Path, *, expected_checks: set[str], engine_version: str) 
         metadata = PackMetadata.model_validate(_yaml(directory / "pack.yaml"))
         requirements = Requirements.model_validate(_yaml(directory / "requirements.yaml"))
         mappings = Mappings.model_validate(_yaml(directory / "mappings.yaml"))
-        pack = Pack(metadata=metadata, **requirements.model_dump(), **mappings.model_dump())
+        coverage_file = directory / "coverage.yaml"
+        coverage = Coverage.model_validate(_yaml(coverage_file)) if coverage_file.exists() else None
+        pack = Pack(
+            metadata=metadata,
+            **requirements.model_dump(),
+            **mappings.model_dump(),
+            coverage=coverage,
+        )
         if metadata.id != directory.name:
             raise ValueError("pack id must match its directory")
         _unique([r.id for r in pack.requirements], "requirement")
@@ -92,6 +100,7 @@ def read_catalog(root: Path, *, expected_checks: set[str], engine_version: str) 
         if (metadata.attributes.content_state == "template") != (not pack.requirements):
             raise ValueError("only empty packs are templates")
         codes = {r.id for r in pack.requirements}
+        _check_coverage(pack, codes)
         mapped: dict[str, list[ControlContent]] = defaultdict(list)
         for mapping in pack.mappings:
             if mapping.requirement_id not in codes or mapping.control_id not in catalog.controls:
@@ -109,3 +118,17 @@ def read_catalog(root: Path, *, expected_checks: set[str], engine_version: str) 
         catalog.packs.append(pack)
     _unique([p.metadata.id for p in catalog.packs], "framework")
     return catalog
+
+
+def _check_coverage(pack: Pack, codes: set[str]) -> None:
+    """Content model v2: a pack with requirements accounts for every unit of its source."""
+    if pack.coverage is None:
+        if pack.requirements:
+            raise ValueError(f"{pack.metadata.id} has requirements but no coverage.yaml")
+        return
+    _unique([u for e in pack.coverage.entries for u in e.units], "coverage unit")
+    named = {r for e in pack.coverage.entries for r in e.requirements}
+    if named - codes:
+        raise ValueError(f"coverage names unknown requirements in {pack.metadata.id}")
+    if codes - named:
+        raise ValueError(f"requirements outside any covered unit in {pack.metadata.id}")

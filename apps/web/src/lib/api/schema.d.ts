@@ -881,6 +881,33 @@ export interface components {
             /** Title Es */
             title_es: string;
         };
+        /** Coverage */
+        Coverage: {
+            /** Entries */
+            entries: components["schemas"]["CoverageEntry"][];
+            /** Source */
+            source: string;
+        };
+        /**
+         * CoverageEntry
+         * @description Units of the official source (articles, provisions, annexes) and what the pack does with
+         *     them: covered by named requirements, or excluded with a reason in ES and EN.
+         */
+        CoverageEntry: {
+            /** Reason En */
+            reason_en?: string | null;
+            /** Reason Es */
+            reason_es?: string | null;
+            /** Requirements */
+            requirements?: string[];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "covered" | "excluded";
+            /** Units */
+            units: string[];
+        };
         /** CreatedInvitation */
         CreatedInvitation: {
             /** Accept Link */
@@ -1012,6 +1039,7 @@ export interface components {
             catalog_matches_snapshot: boolean;
             /** Catalog Version */
             catalog_version: string | null;
+            coverage?: components["schemas"]["Coverage"] | null;
             /** Development */
             development: boolean;
             /** Key */
@@ -1050,6 +1078,8 @@ export interface components {
             prefix: string;
             /** Title */
             title: string;
+            /** Title En */
+            title_en?: string | null;
         };
         /** GroupTitle */
         GroupTitle: {
@@ -1057,6 +1087,8 @@ export interface components {
             prefix: string;
             /** Title */
             title: string;
+            /** Title En */
+            title_en?: string | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -1318,18 +1350,24 @@ export interface components {
             /** Title Es */
             title_es: string;
         };
-        /** RequirementContext */
+        /**
+         * RequirementContext
+         * @description Official text of one requirement (content model v2). Selection tables by category or
+         *     dimension are optional; an act also published in English carries its official English text.
+         */
         RequirementContext: {
             /** Applicability Es */
-            applicability_es: string;
+            applicability_es?: string | null;
+            /** Official Text En */
+            official_text_en?: string | null;
             /** Official Text Es */
             official_text_es: string;
             /** Section */
             section: string;
             /** Selection Basis */
-            selection_basis: string;
+            selection_basis?: string | null;
             /** Selection Rules */
-            selection_rules: components["schemas"]["SelectionRule"][];
+            selection_rules?: components["schemas"]["SelectionRule"][];
             /** Source Sha256 */
             source_sha256: string;
         };

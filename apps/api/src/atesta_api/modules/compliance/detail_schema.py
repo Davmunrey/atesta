@@ -4,7 +4,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from atesta_api.modules.compliance.catalog_schema import PackContext, RequirementContext
+from atesta_api.modules.compliance.catalog_schema import Coverage, PackContext, RequirementContext
 from atesta_api.modules.compliance.overview import SnapshotSummary
 from atesta_api.modules.compliance.reviews import ReviewOut
 
@@ -67,4 +67,5 @@ class FrameworkDetail(BaseModel):
     requirements: list[RequirementDetail]
     development: bool
     catalog_context: PackContext | None = None
+    coverage: Coverage | None = None  # every unit of the official source, covered or excluded
     preparation_controls: list[PreparationControl] = Field(default_factory=list)

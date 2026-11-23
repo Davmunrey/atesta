@@ -1,1 +1,257 @@
-mappings: []
+mappings:
+- requirement_id: art20.1
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for art20.1; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_20
+  reviewed_by: null
+- requirement_id: art20.2
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for art20.2; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_20
+  reviewed_by: null
+- requirement_id: art20.2
+  control_id: ctl.people_awareness
+  rationale: Candidate documentary review for art20.2; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_20
+  reviewed_by: null
+- requirement_id: art21.1
+  control_id: ctl.risk_analysis
+  rationale: Candidate documentary review for art21.1; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.1
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for art21.1; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2a
+  control_id: ctl.risk_analysis
+  rationale: Candidate documentary review for art21.2a; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2a
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for art21.2a; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2b
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art21.2b; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2b
+  control_id: ctl.threat_monitoring
+  rationale: Candidate documentary review for art21.2b; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2c
+  control_id: ctl.continuity_restore
+  rationale: Candidate documentary review for art21.2c; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2c
+  control_id: ctl.capacity_resilience
+  rationale: Candidate documentary review for art21.2c; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2d
+  control_id: ctl.supplier_cloud_review
+  rationale: Candidate documentary review for art21.2d; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2d
+  control_id: ctl.secure_procurement
+  rationale: Candidate documentary review for art21.2d; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2e
+  control_id: ctl.secure_procurement
+  rationale: Candidate documentary review for art21.2e; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2e
+  control_id: ctl.change_vulnerability_review
+  rationale: Candidate documentary review for art21.2e; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2f
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for art21.2f; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2g
+  control_id: ctl.people_awareness
+  rationale: Candidate documentary review for art21.2g; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2g
+  control_id: ctl.secure_configuration
+  rationale: Candidate documentary review for art21.2g; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2h
+  control_id: ctl.cryptography_review
+  rationale: Candidate documentary review for art21.2h; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2i
+  control_id: ctl.people_awareness
+  rationale: Candidate documentary review for art21.2i; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2i
+  control_id: ctl.access_review
+  rationale: Candidate documentary review for art21.2i; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2i
+  control_id: ctl.asset_inventory
+  rationale: Candidate documentary review for art21.2i; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2j
+  control_id: ctl.authentication_review
+  rationale: Candidate documentary review for art21.2j; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2j
+  control_id: ctl.admin_mfa
+  rationale: Candidate technical observation for art21.2j; it covers only part of the requirement and
+    never replaces the documentary review.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2j
+  control_id: ctl.workspace_mfa
+  rationale: Candidate technical observation for art21.2j; it covers only part of the requirement and
+    never replaces the documentary review.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.2j
+  control_id: ctl.legacy_authentication
+  rationale: Candidate technical observation for art21.2j; it covers only part of the requirement and
+    never replaces the documentary review.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.3
+  control_id: ctl.supplier_cloud_review
+  rationale: Candidate documentary review for art21.3; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.4
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for art21.4; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art21.4
+  control_id: ctl.change_vulnerability_review
+  rationale: Candidate documentary review for art21.4; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
+  reviewed_by: null
+- requirement_id: art23.1
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art23.1; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_23
+  reviewed_by: null
+- requirement_id: art23.2
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art23.2; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_23
+  reviewed_by: null
+- requirement_id: art23.3
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art23.3; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_23
+  reviewed_by: null
+- requirement_id: art23.4a
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art23.4a; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_23
+  reviewed_by: null
+- requirement_id: art23.4b
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art23.4b; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_23
+  reviewed_by: null
+- requirement_id: art23.4c
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art23.4c; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_23
+  reviewed_by: null
+- requirement_id: art23.4d
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art23.4d; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_23
+  reviewed_by: null
+- requirement_id: art23.4e
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art23.4e; the evidence must be checked against the complete
+    text, the entity's scope and the Spanish transposition. This shared control is not an equivalence
+    or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_23
+  reviewed_by: null

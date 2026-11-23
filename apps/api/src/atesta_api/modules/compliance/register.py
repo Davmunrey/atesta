@@ -173,6 +173,7 @@ class AssessmentReviewOut(AssessmentReviewIn):
 class GroupTitle(BaseModel):
     prefix: str
     title: str
+    title_en: str | None = None  # the official English heading, when the act has one
 
 
 class TermLabelOut(BaseModel):
@@ -313,7 +314,11 @@ def _groups(framework: Framework) -> list[GroupTitle]:
     if not isinstance(groups, list):
         return []
     return [
-        GroupTitle(prefix=str(g["prefix"]), title=str(g["title"]))
+        GroupTitle(
+            prefix=str(g["prefix"]),
+            title=str(g["title"]),
+            title_en=str(g["title_en"]) if g.get("title_en") else None,
+        )
         for g in groups
         if isinstance(g, dict)
     ]

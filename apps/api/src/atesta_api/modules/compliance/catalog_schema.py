@@ -1,10 +1,17 @@
 """Typed preview content; publishing a reviewed pack needs a separate release workflow."""
 
 from datetime import date
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Self
 from urllib.parse import urlsplit
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    model_validator,
+)
 
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
@@ -29,17 +36,54 @@ class SelectionRule(Content):
 
 
 class RequirementContext(Content):
+    """Official text of one requirement (content model v2). Selection tables by category or
+    dimension are optional; an act also published in English carries its official English text."""
+
     official_text_es: Text
-    applicability_es: Text
-    selection_basis: Text
-    selection_rules: list[SelectionRule] = Field(min_length=1)
+    official_text_en: Text | None = None
+    applicability_es: Text | None = None
+    selection_basis: Text | None = None
+    selection_rules: list[SelectionRule] = Field(default_factory=list)
     section: Text
     source_sha256: Annotated[str, StringConstraints(pattern=r"^[a-f0-9]{64}$")]
+
+    @model_validator(mode="after")
+    def rules_need_a_basis(self) -> Self:
+        if bool(self.selection_basis) != bool(self.selection_rules):
+            raise ValueError("selection rules and their basis come together")
+        return self
 
 
 class GroupHeading(Content):
     prefix: Text
     title: Text
+    title_en: Text | None = None  # the official English heading, when the act has one
+
+
+class CoverageEntry(Content):
+    """Units of the official source (articles, provisions, annexes) and what the pack does with
+    them: covered by named requirements, or excluded with a reason in ES and EN."""
+
+    units: list[Text] = Field(min_length=1)
+    status: Literal["covered", "excluded"]
+    requirements: list[Text] = Field(default_factory=list)
+    reason_es: Text | None = None
+    reason_en: Text | None = None
+
+    @model_validator(mode="after")
+    def covered_or_explained(self) -> Self:
+        if self.status == "covered" and (not self.requirements or self.reason_es or self.reason_en):
+            raise ValueError("a covered unit names its requirements and needs no reason")
+        if self.status == "excluded" and (
+            self.requirements or not (self.reason_es and self.reason_en)
+        ):
+            raise ValueError("an excluded unit gives its reason in ES and EN")
+        return self
+
+
+class Coverage(Content):
+    source: Text
+    entries: list[CoverageEntry] = Field(min_length=1)
 
 
 class TermLabel(Content):
@@ -123,3 +167,4 @@ class Pack(Content):
     metadata: PackMetadata
     requirements: list[RequirementContent]
     mappings: list[MappingContent]
+    coverage: Coverage | None = None

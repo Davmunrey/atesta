@@ -1,18 +1,22 @@
 id: nis2
 name: NIS2
-version: 2022-2555.template1
+version: 2022-2555.draft1
 jurisdiction: EU; national implementation must be reviewed
-source: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32022L2555
-license_notes: Preparation metadata only. No directive requirements or national transposition text have
-  been imported.
+source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022L2555
+license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
+  EU documents is authorised under Commission Decision 2011/833/EU, © European Union. Only Articles 20,
+  21(1)-(4) and 23(1)-(4) are imported; coverage.yaml accounts for every other unit. Spanish transposition
+  not reviewed.
 status: draft
 attributes:
-  content_state: template
+  content_state: partial
   assessment_enabled: false
-  summary_es: Plantilla para preparar el análisis de NIS2. Directiva europea, no certificación genérica.
-    Controles sugeridos sin equivalencia normativa.
-  summary_en: Template for preparing a NIS2 analysis. An EU directive, not a generic certification. Suggested
-    controls have no established normative equivalence.
+  summary_es: 23 requisitos oficiales de la Directiva NIS2 (gobernanza, las diez medidas mínimas de gestión
+    de riesgos y la notificación de incidentes), en español e inglés. Mapeos candidatos pendientes de
+    revisión cualificada. No es una evaluación.
+  summary_en: 23 official requirements of the NIS2 Directive (governance, the ten minimum risk-management
+    measures and incident reporting), in Spanish and English. Candidate mappings await qualified review.
+    Not an assessment.
   scope_es: Identifica entidad, actividad, tamaño, servicios y Estados miembros relevantes. Confirma ámbito
     y categoría con la normativa nacional aplicable.
   scope_en: Identify the entity, activity, size, services and relevant Member States. Confirm scope and
@@ -22,12 +26,12 @@ attributes:
     España.
   applicability_en: Review scope, exemptions, sector and risk-management/reporting duties. This template
     does not determine essential/important status or the state of Spanish transposition.
-  limitations_es: Faltan requisitos oficiales importados, análisis nacional, mapeos revisados y evaluación
-    real. Empieza por gobierno, riesgos, incidentes, continuidad y proveedores; confirma después configuración
-    y evidencia.
-  limitations_en: Official requirements, national analysis, reviewed mappings and real assessment are
-    missing. Start with governance, risks, incidents, continuity and suppliers; then confirm configuration
-    and evidence.
+  limitations_es: Importados los artículos 20, 21 (apartados 1 a 4) y 23 (apartados 1 a 4); el resto de
+    la Directiva figura en la cobertura con su motivo. Falta el Reglamento de Ejecución (UE) 2024/2690
+    y la ley española de transposición; confirma ambos con tu revisor.
+  limitations_en: Articles 20, 21(1)-(4) and 23(1)-(4) are imported; the rest of the Directive is listed
+    in the coverage with its reason. Implementing Regulation (EU) 2024/2690 and the Spanish transposing
+    law are missing; confirm both with your reviewer.
   preparation_controls:
   - ctl.security_governance
   - ctl.risk_analysis
@@ -48,5 +52,17 @@ attributes:
   - ctl.application_consent
   - ctl.mailbox_audit_bypass
   source_refs:
-  - https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32022L2555
-  verified_on: '2026-11-13'
+  - https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022L2555
+  - https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022L2555
+  - https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32024R2690
+  verified_on: '2026-11-23'
+  groups_es:
+  - prefix: art20
+    title: Gobernanza
+    title_en: Governance
+  - prefix: art21
+    title: Medidas para la gestión de riesgos de ciberseguridad
+    title_en: Cybersecurity risk-management measures
+  - prefix: art23
+    title: Obligaciones de notificación
+    title_en: Reporting obligations

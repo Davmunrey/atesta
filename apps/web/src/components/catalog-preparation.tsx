@@ -8,8 +8,9 @@ import { ControlEvidence } from "./control-evidence";
 type Context = components["schemas"]["PackContext"];
 type Guidance = components["schemas"]["RequirementContext"];
 type Control = components["schemas"]["PreparationControl"];
+type Coverage = components["schemas"]["Coverage"];
 
-export function CatalogPreparation({ context, requirements, controls }: { context: Context; requirements: number; controls: number }) {
+export function CatalogPreparation({ context, requirements, controls, coverage = null }: { context: Context; requirements: number; controls: number; coverage?: Coverage | null }) {
   const t = useTranslations("preparation");
   const english = useLocale() === "en";
   return <section className="catalog-preparation" aria-labelledby="preparation-title">
@@ -30,21 +31,65 @@ export function CatalogPreparation({ context, requirements, controls }: { contex
         <p>{t("verified", { date: context.verified_on })}</p>
         <ul>{context.source_refs.map((value) => <li key={value}><CatalogReference value={value} /></li>)}</ul>
       </details>
+      {coverage ? <SourceCoverage coverage={coverage} /> : null}
     </div>
   </section>;
 }
 
+/** Official text of a requirement; English only when the act itself is official in English. */
 export function RequirementGuidance({ guidance }: { guidance: Guidance }) {
   const t = useTranslations("preparation");
+  const english = useLocale() === "en";
+  const rules = guidance.selection_rules ?? [];
+  const ownLanguage = english ? guidance.official_text_en : guidance.official_text_es;
   return <div className="requirement-guidance">
-    <h3>{t("selection")}</h3><p lang="es">{guidance.selection_basis}</p>
-    <table className="selection-table"><caption>{t("selectionHelp")}</caption>
-      <thead><tr><th scope="col">{t("level")}</th><th scope="col">{t("rule")}</th></tr></thead>
-      <tbody>{guidance.selection_rules.map((row) => <tr key={row.level}><th scope="row" lang="es">{row.level}</th><td lang="es">{row.rule}</td></tr>)}</tbody>
-    </table>
-    <p className="official-text" lang="es">{guidance.applicability_es}</p>
-    <details className="catalog-disclosure"><summary>{t("officialText")}</summary><p className="official-text" lang="es">{guidance.official_text_es}</p></details>
+    {guidance.selection_basis && rules.length ? <>
+      <h3>{t("selection")}</h3><p lang="es">{guidance.selection_basis}</p>
+      <table className="selection-table"><caption>{t("selectionHelp")}</caption>
+        <thead><tr><th scope="col">{t("level")}</th><th scope="col">{t("rule")}</th></tr></thead>
+        <tbody>{rules.map((row) => <tr key={row.level}><th scope="row" lang="es">{row.level}</th><td lang="es">{row.rule}</td></tr>)}</tbody>
+      </table>
+    </> : null}
+    {guidance.applicability_es ? <p className="official-text" lang="es">{guidance.applicability_es}</p> : null}
+    <details className="catalog-disclosure">
+      {ownLanguage ? <><summary>{t("officialTextOwn")}</summary><p className="official-text" lang={english ? "en" : "es"}>{ownLanguage}</p></>
+        : <><summary>{t("officialText")}</summary><p className="official-text" lang="es">{guidance.official_text_es}</p></>}
+    </details>
   </div>;
+}
+
+/** Every unit of the official source, imported as requirements or excluded with its reason. */
+export function SourceCoverage({ coverage }: { coverage: Coverage }) {
+  const t = useTranslations("coverage");
+  const english = useLocale() === "en";
+  const count = (status: "covered" | "excluded") =>
+    coverage.entries.filter((e) => e.status === status).reduce((n, e) => n + e.units.length, 0);
+  const unit = (id: string) => {
+    const [, kind = "", number = ""] = /^([a-z]+)(.*)$/.exec(id) ?? [];
+    if (kind === "art") return t("units.art", { n: number });
+    if (kind === "annex") return t("units.annex", { n: roman(Number(number)) });
+    if (kind === "da" || kind === "df") return t(`units.${kind}`, { n: number });
+    if (kind === "dt" || kind === "dd") return t(`units.${kind}`);
+    return id;
+  };
+  return <details className="catalog-disclosure source-coverage"><summary>{t("title")}</summary>
+    <p>{t("summary", { covered: count("covered"), excluded: count("excluded") })}</p>
+    <p className="text-sm text-muted">{t("help")}</p>
+    <ul className="coverage-list">{coverage.entries.map((entry) => <li key={entry.units.join(",")}>
+      <strong>{entry.units.map(unit).join(", ")}</strong>
+      {" · "}<span>{entry.status === "covered"
+        ? t("covered", { count: entry.requirements?.length ?? 0 })
+        : english ? entry.reason_en : entry.reason_es}</span>
+    </li>)}</ul>
+  </details>;
+}
+
+function roman(value: number): string {
+  const numerals: [number, string][] = [[10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]];
+  let rest = value;
+  let out = "";
+  for (const [n, symbol] of numerals) while (rest >= n) { out += symbol; rest -= n; }
+  return out || String(value);
 }
 
 export function PreparationGuides({ orgId, controls }: { orgId: string; controls: Control[] }) {

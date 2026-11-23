@@ -13,6 +13,8 @@ catalog/
     pack.yaml               Framework metadata and version
     requirements.yaml       Requirements copied from the official text
     mappings.yaml           Requirement -> control mappings
+    coverage.yaml           Every unit of the source: covered by requirements or excluded with a reason
+    SOURCES.md              Provenance: captures, hashes, normalization and limits
 ```
 
 Pack order: ENS (wedge) -> NIS2 -> ISO 27001 -> RGPD art. 32 -> DORA -> SOC 2 and others on demand.
@@ -28,9 +30,12 @@ Pack order: ENS (wedge) -> NIS2 -> ISO 27001 -> RGPD art. 32 -> DORA -> SOC 2 an
 
 ## Preparation content
 
-See [the preparation inventory](PREPARATION.md) for the six planned frameworks. NIS2,
+See [the preparation inventory](PREPARATION.md) for the six planned frameworks.
 ISO/IEC 27001, GDPR Article 32, DORA and SOC 2 currently contain scope/source templates and
 candidate preparation controls, with no imported normative requirements or mappings.
+`nis2` contains 23 requirements from Articles 20, 21 and 23 of Directive (EU) 2022/2555 in
+Spanish and English (read its `SOURCES.md`). Official EU text is captured with
+`apps/api/devtools/eu_act.py`.
 
 `ens_rd311_2022` contains the 73 Annex II measures from the official BOE publication, with
 category/dimension tables and application clauses. Its 78 mappings and 26 common-control

@@ -7,10 +7,11 @@ from typing import Annotated, cast
 
 from atesta_core.controls import control_status
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from atesta_api.modules.compliance.catalog_schema import PackContext, RequirementContext
+from atesta_api.modules.compliance.catalog_schema import Coverage, PackContext, RequirementContext
 from atesta_api.modules.compliance.detail_context import preparation_controls, public_context
 from atesta_api.modules.compliance.detail_schema import (
     CheckDetail,
@@ -179,5 +180,16 @@ def framework_detail(
         requirements=details,
         development=os.environ.get("ATESTA_ENV") in DEV_ENVS,
         catalog_context=context,
+        coverage=_coverage(framework.attributes.get("coverage")),
         preparation_controls=preparation_controls(session, context),
     )
+
+
+def _coverage(raw: object) -> Coverage | None:
+    """The pack's source ledger; a malformed or legacy value is never exposed."""
+    if not isinstance(raw, dict):
+        return None
+    try:
+        return Coverage.model_validate(raw)
+    except ValidationError:
+        return None

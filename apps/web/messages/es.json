@@ -370,7 +370,8 @@
     "controlsHelp": "Guías compartidas para revisar configuración y reunir evidencias. No representan requisitos cubiertos, hallazgos ni mapeos aprobados. Revisa alcance e impacto antes de cambiar configuraciones.",
     "manual": "Revisión documental",
     "technical": "Configuración técnica",
-    "candidateChecks": "Comprobaciones candidatas, sin observación"
+    "candidateChecks": "Comprobaciones candidatas, sin observación",
+    "officialTextOwn": "Leer texto oficial completo"
   },
   "evidence": {
     "show": "Ver evidencias",
@@ -546,5 +547,19 @@
     "pending": "Sin evaluar",
     "loading": "Cargando…",
     "open": "Abrir {code}"
+  },
+  "coverage": {
+    "title": "Cobertura de la fuente oficial",
+    "summary": "{covered, plural, one {# parte importada como requisitos} other {# partes importadas como requisitos}} y {excluded, plural, one {# excluida con su motivo} other {# excluidas con su motivo}}.",
+    "help": "Cada artículo, disposición y anexo de la fuente aparece aquí: o se ha importado como requisitos, o se explica por qué no.",
+    "covered": "importado: {count, plural, one {# requisito} other {# requisitos}}",
+    "units": {
+      "art": "Art. {n}",
+      "annex": "Anexo {n}",
+      "da": "Disposición adicional {n}",
+      "df": "Disposición final {n}",
+      "dt": "Disposición transitoria",
+      "dd": "Disposición derogatoria"
+    }
   }
 }

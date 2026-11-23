@@ -1,0 +1,153 @@
+source: Directive (EU) 2022/2555, OJ L 333, 27.12.2022, p. 80 (CELEX 32022L2555)
+entries:
+- units:
+  - art1
+  - art2
+  - art3
+  - art4
+  - art5
+  - art6
+  - art26
+  status: excluded
+  reason_es: 'Objeto, ámbito, entidades, definiciones y jurisdicción: sirven para decidir si la entidad
+    está sujeta y cómo; no son medidas que se evalúen. El artículo 3, apartado 4, pide facilitar datos
+    al registro nacional: depende de la transposición española.'
+  reason_en: 'Subject matter, scope, entities, definitions and jurisdiction: they decide whether and how
+    the entity is in scope; they are not measures to assess. Article 3(4) asks for data for the national
+    registry, which depends on the Spanish transposition.'
+- units:
+  - art7
+  - art8
+  - art9
+  - art10
+  - art11
+  - art12
+  - art13
+  - art14
+  - art15
+  - art16
+  - art17
+  - art18
+  - art19
+  status: excluded
+  reason_es: 'Estrategia nacional, autoridades, CSIRT y cooperación: obligaciones de los Estados miembros
+    y de la Unión, no de la entidad.'
+  reason_en: 'National strategy, authorities, CSIRTs and cooperation: duties of the Member States and
+    the Union, not of the entity.'
+- units:
+  - art20
+  status: covered
+  requirements:
+  - art20.1
+  - art20.2
+- units:
+  - art21.1-4
+  status: covered
+  requirements:
+  - art21.1
+  - art21.2a
+  - art21.2b
+  - art21.2c
+  - art21.2d
+  - art21.2e
+  - art21.2f
+  - art21.2g
+  - art21.2h
+  - art21.2i
+  - art21.2j
+  - art21.3
+  - art21.4
+- units:
+  - art21.5
+  status: excluded
+  reason_es: Actos de ejecución de la Comisión. El Reglamento de Ejecución (UE) 2024/2690 concreta requisitos
+    para ciertas entidades digitales; se importará en una versión posterior.
+  reason_en: Commission implementing acts. Implementing Regulation (EU) 2024/2690 details requirements
+    for certain digital entities; a later version will import it.
+- units:
+  - art22
+  status: excluded
+  reason_es: 'Evaluaciones coordinadas de riesgos de la cadena de suministro a escala de la Unión: tarea
+    del Grupo de Cooperación.'
+  reason_en: 'Union-level coordinated supply-chain risk assessments: a task of the Cooperation Group.'
+- units:
+  - art23.1-4
+  status: covered
+  requirements:
+  - art23.1
+  - art23.2
+  - art23.3
+  - art23.4a
+  - art23.4b
+  - art23.4c
+  - art23.4d
+  - art23.4e
+- units:
+  - art23.5-11
+  status: excluded
+  reason_es: 'Respuesta del CSIRT, información al público y a otros Estados, informes a ENISA y actos
+    de ejecución: obligaciones de autoridades y de la Comisión.'
+  reason_en: 'CSIRT response, informing the public and other States, reports to ENISA and implementing
+    acts: duties of authorities and the Commission.'
+- units:
+  - art24
+  - art25
+  status: excluded
+  reason_es: 'Certificación y normalización: el Estado miembro puede exigir productos certificados; depende
+    de la transposición española.'
+  reason_en: 'Certification and standardisation: a Member State may require certified products; this depends
+    on the Spanish transposition.'
+- units:
+  - art27
+  - art28
+  status: excluded
+  reason_es: 'Registro de entidades y datos de registro de dominios: afectan a tipos concretos de entidades
+    digitales (DNS, dominios, nube, centros de datos, proveedores de servicios gestionados y otros). Pendiente
+    para una versión posterior.'
+  reason_en: 'Registry of entities and domain registration data: they apply to specific digital entity
+    types (DNS, domains, cloud, data centres, managed service providers and others). Planned for a later
+    version.'
+- units:
+  - art29
+  - art30
+  status: excluded
+  reason_es: 'Intercambio de información y notificación voluntaria: no son obligaciones.'
+  reason_en: 'Information sharing and voluntary notification: not obligations.'
+- units:
+  - art31
+  - art32
+  - art33
+  - art34
+  - art35
+  - art36
+  - art37
+  status: excluded
+  reason_es: 'Supervisión, ejecución, multas, sanciones y asistencia mutua: actuaciones de las autoridades.'
+  reason_en: 'Supervision, enforcement, fines, penalties and mutual assistance: actions of the authorities.'
+- units:
+  - art38
+  - art39
+  - art40
+  - art41
+  - art42
+  - art43
+  - art44
+  - art45
+  - art46
+  status: excluded
+  reason_es: Delegación, comité, revisión, transposición, modificaciones de otras normas y disposiciones
+    finales.
+  reason_en: Delegation, committee, review, transposition, amendments to other acts and final provisions.
+- units:
+  - annex1
+  - annex2
+  status: excluded
+  reason_es: 'Sectores de alta criticidad y otros sectores críticos: sirven para decidir el ámbito, no
+    son medidas.'
+  reason_en: 'Sectors of high criticality and other critical sectors: they decide scope; they are not
+    measures.'
+- units:
+  - annex3
+  status: excluded
+  reason_es: Tabla de correspondencias con la Directiva (UE) 2016/1148.
+  reason_en: Correlation table with Directive (EU) 2016/1148.
