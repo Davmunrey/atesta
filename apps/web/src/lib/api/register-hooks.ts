@@ -38,6 +38,16 @@ export function useRecordAssessment(orgId: string, frameworkKey: string) {
     })));
 }
 
+/** A person confirms or rejects an API key's proposal (mcp-server spec, ADR-005). */
+export function useDecideProposal(orgId: string, frameworkKey: string) {
+  return useRegisterMutation(orgId, frameworkKey, ({ id, verb }: { id: string; verb: "confirm" | "reject" }) => {
+    const params = { path: { org_id: orgId, framework_key: frameworkKey, proposal_id: id } };
+    return verb === "confirm"
+      ? unwrap(api.POST("/api/v1/orgs/{org_id}/frameworks/{framework_key}/proposals/{proposal_id}/confirm", { params }))
+      : unwrap(api.POST("/api/v1/orgs/{org_id}/frameworks/{framework_key}/proposals/{proposal_id}/reject", { params }));
+  });
+}
+
 export function useRecordAssessmentReview(orgId: string, frameworkKey: string) {
   return useRegisterMutation(orgId, frameworkKey, (body: AssessmentReviewInput) =>
     unwrap(api.POST("/api/v1/orgs/{org_id}/frameworks/{framework_key}/assessment-reviews", { params: path(orgId, frameworkKey), body })));

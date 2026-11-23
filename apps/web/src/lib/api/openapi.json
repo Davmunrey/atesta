@@ -1111,6 +1111,60 @@
         "title": "CheckReference",
         "type": "object"
       },
+      "Citation": {
+        "properties": {
+          "catalog_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Version"
+          },
+          "framework_version": {
+            "title": "Framework Version",
+            "type": "string"
+          },
+          "section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Section"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "source_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Sha256"
+          }
+        },
+        "required": [
+          "source",
+          "section",
+          "source_sha256",
+          "catalog_version",
+          "framework_version"
+        ],
+        "title": "Citation",
+        "type": "object"
+      },
       "CitedEvidenceOut": {
         "properties": {
           "collected_at": {
@@ -3135,6 +3189,71 @@
         "title": "FrameworkSummary",
         "type": "object"
       },
+      "Gap": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "framework_key": {
+            "title": "Framework Key",
+            "type": "string"
+          },
+          "framework_name": {
+            "title": "Framework Name",
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/GapState"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_es": {
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "framework_key",
+          "framework_name",
+          "code",
+          "title_es",
+          "title_en",
+          "state",
+          "due_on"
+        ],
+        "title": "Gap",
+        "type": "object"
+      },
+      "GapState": {
+        "enum": [
+          "not_assessed",
+          "not_implemented",
+          "partially_implemented"
+        ],
+        "type": "string"
+      },
       "GroupHeading": {
         "additionalProperties": false,
         "properties": {
@@ -3925,6 +4044,179 @@
         "title": "MeOut",
         "type": "object"
       },
+      "MeasureDetail": {
+        "properties": {
+          "applicability_es": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicability Es"
+          },
+          "assessment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AssessmentOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "citation": {
+            "$ref": "#/components/schemas/Citation"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "controls": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Controls",
+            "type": "array"
+          },
+          "expected_evidence": {
+            "items": {
+              "$ref": "#/components/schemas/ExpectedEvidenceItem"
+            },
+            "title": "Expected Evidence",
+            "type": "array"
+          },
+          "framework_key": {
+            "title": "Framework Key",
+            "type": "string"
+          },
+          "official_text_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Text En"
+          },
+          "official_text_es": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Text Es"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_es": {
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "framework_key",
+          "code",
+          "title_es",
+          "title_en",
+          "official_text_es",
+          "official_text_en",
+          "applicability_es",
+          "citation",
+          "expected_evidence",
+          "controls",
+          "assessment"
+        ],
+        "title": "MeasureDetail",
+        "type": "object"
+      },
+      "MeasureOut": {
+        "properties": {
+          "assessment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AssessmentOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "pending_proposal_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pending Proposal Id"
+          },
+          "proposal": {
+            "$ref": "#/components/schemas/ProposalOut"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_es": {
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "title_es",
+          "title_en",
+          "proposal",
+          "assessment",
+          "due_on",
+          "pending_proposal_id"
+        ],
+        "title": "MeasureOut",
+        "type": "object"
+      },
       "MemberOut": {
         "properties": {
           "access_expires_on": {
@@ -4336,6 +4628,102 @@
         "title": "PageReference",
         "type": "object"
       },
+      "PendingProposal": {
+        "properties": {
+          "applicability": {
+            "enum": [
+              "applies",
+              "not_applicable"
+            ],
+            "title": "Applicability",
+            "type": "string"
+          },
+          "evidence_statement_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Evidence Statement Ids",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "implementation": {
+            "enum": [
+              "not_implemented",
+              "partially_implemented",
+              "implemented"
+            ],
+            "title": "Implementation",
+            "type": "string"
+          },
+          "justification": {
+            "title": "Justification",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "performed_by": {
+            "title": "Performed By",
+            "type": "string"
+          },
+          "performed_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performed On"
+          },
+          "proposed_at": {
+            "format": "date-time",
+            "title": "Proposed At",
+            "type": "string"
+          },
+          "rationale": {
+            "title": "Rationale",
+            "type": "string"
+          },
+          "regularly_reviewed": {
+            "title": "Regularly Reviewed",
+            "type": "boolean"
+          },
+          "token_name": {
+            "title": "Token Name",
+            "type": "string"
+          },
+          "token_prefix": {
+            "title": "Token Prefix",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "applicability",
+          "implementation",
+          "regularly_reviewed",
+          "justification",
+          "performed_by",
+          "performed_on",
+          "evidence_statement_ids",
+          "notes",
+          "rationale",
+          "proposed_at",
+          "token_name",
+          "token_prefix"
+        ],
+        "title": "PendingProposal",
+        "type": "object"
+      },
       "PolicyIn": {
         "properties": {
           "location_url": {
@@ -4546,6 +4934,68 @@
         "title": "ProfileOut",
         "type": "object"
       },
+      "ProposalIn": {
+        "properties": {
+          "applicability": {
+            "$ref": "#/components/schemas/Applicability"
+          },
+          "evidence_statement_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 50,
+            "title": "Evidence Statement Ids",
+            "type": "array"
+          },
+          "implementation": {
+            "$ref": "#/components/schemas/Implementation"
+          },
+          "justification": {
+            "default": "",
+            "title": "Justification",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "title": "Notes",
+            "type": "string"
+          },
+          "performed_by": {
+            "default": "",
+            "title": "Performed By",
+            "type": "string"
+          },
+          "performed_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performed On"
+          },
+          "rationale": {
+            "title": "Rationale",
+            "type": "string"
+          },
+          "regularly_reviewed": {
+            "title": "Regularly Reviewed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "applicability",
+          "implementation",
+          "regularly_reviewed",
+          "rationale"
+        ],
+        "title": "ProposalIn",
+        "type": "object"
+      },
       "ProposalOut": {
         "properties": {
           "criterion": {
@@ -4606,6 +5056,59 @@
           "level"
         ],
         "title": "ProposalOut",
+        "type": "object"
+      },
+      "ProposalRecord": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "framework_key": {
+            "title": "Framework Key",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "proposed_at": {
+            "format": "date-time",
+            "title": "Proposed At",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "confirmed",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "framework_key",
+          "code",
+          "status",
+          "proposed_at",
+          "decided_at"
+        ],
+        "title": "ProposalRecord",
         "type": "object"
       },
       "PublicCampaign": {
@@ -4775,6 +5278,16 @@
           "code": {
             "title": "Code",
             "type": "string"
+          },
+          "pending_proposal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PendingProposal"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "proposal": {
             "$ref": "#/components/schemas/ProposalOut"
@@ -6483,6 +6996,452 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/access-reviews": {
+      "post": {
+        "operationId": "create_access_review_api_v1_access_reviews_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccessReviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Access Review",
+        "tags": [
+          "api-keys"
+        ],
+        "x-atesta-scope": "routines:write"
+      }
+    },
+    "/api/v1/due": {
+      "get": {
+        "operationId": "list_due_api_v1_due_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DueItem"
+                  },
+                  "title": "Response List Due Api V1 Due Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Due",
+        "tags": [
+          "api-keys"
+        ],
+        "x-atesta-scope": "compliance:read"
+      }
+    },
+    "/api/v1/frameworks": {
+      "get": {
+        "operationId": "list_frameworks_api_v1_frameworks_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FrameworkReadiness"
+                  },
+                  "title": "Response List Frameworks Api V1 Frameworks Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Frameworks",
+        "tags": [
+          "api-keys"
+        ],
+        "x-atesta-scope": "compliance:read"
+      }
+    },
+    "/api/v1/frameworks/{framework_key}/measures": {
+      "get": {
+        "operationId": "list_measures_api_v1_frameworks__framework_key__measures_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MeasureOut"
+                  },
+                  "title": "Response List Measures Api V1 Frameworks  Framework Key  Measures Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Measures",
+        "tags": [
+          "api-keys"
+        ],
+        "x-atesta-scope": "compliance:read"
+      }
+    },
+    "/api/v1/frameworks/{framework_key}/measures/{code}": {
+      "get": {
+        "operationId": "read_measure_api_v1_frameworks__framework_key__measures__code__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasureDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Measure",
+        "tags": [
+          "api-keys"
+        ],
+        "x-atesta-scope": "compliance:read"
+      }
+    },
+    "/api/v1/frameworks/{framework_key}/measures/{code}/proposals": {
+      "post": {
+        "operationId": "propose_api_v1_frameworks__framework_key__measures__code__proposals_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposalIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposalRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Propose",
+        "tags": [
+          "api-keys"
+        ],
+        "x-atesta-scope": "assessment:propose"
+      }
+    },
+    "/api/v1/gaps": {
+      "get": {
+        "description": "Measures not assessed, not implemented or partially implemented, per granted framework.",
+        "operationId": "list_gaps_api_v1_gaps_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Gap"
+                  },
+                  "title": "Response List Gaps Api V1 Gaps Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Gaps",
+        "tags": [
+          "api-keys"
+        ],
+        "x-atesta-scope": "compliance:read"
+      }
+    },
+    "/api/v1/incidents": {
+      "get": {
+        "operationId": "list_incidents_api_v1_incidents_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IncidentOut"
+                  },
+                  "title": "Response List Incidents Api V1 Incidents Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Incidents",
+        "tags": [
+          "api-keys"
+        ],
+        "x-atesta-scope": "incidents:read"
+      },
+      "post": {
+        "operationId": "create_incident_api_v1_incidents_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Incident",
+        "tags": [
+          "api-keys"
+        ],
+        "x-atesta-scope": "routines:write"
+      }
+    },
+    "/api/v1/incidents/{incident_id}": {
+      "get": {
+        "operationId": "read_incident_api_v1_incidents__incident_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Incident",
+        "tags": [
+          "api-keys"
+        ],
+        "x-atesta-scope": "incidents:read"
+      }
+    },
+    "/api/v1/incidents/{incident_id}/updates": {
+      "post": {
+        "operationId": "update_incident_api_v1_incidents__incident_id__updates_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Incident",
+        "tags": [
+          "api-keys"
+        ],
+        "x-atesta-scope": "routines:write"
+      }
+    },
     "/api/v1/ingest/evidence": {
       "post": {
         "operationId": "ingest_evidence_api_v1_ingest_evidence_post",
@@ -6520,8 +7479,9 @@
         },
         "summary": "Ingest Evidence",
         "tags": [
-          "evidence"
-        ]
+          "api-keys"
+        ],
+        "x-atesta-scope": "evidence:write"
       }
     },
     "/api/v1/invitations/accept": {
@@ -8399,6 +9359,141 @@
           }
         ],
         "summary": "Dossier",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/proposals/{proposal_id}/confirm": {
+      "post": {
+        "description": "The person's assessment, exactly as proposed; checked again against today's rules.",
+        "operationId": "confirm_api_v1_orgs__org_id__frameworks__framework_key__proposals__proposal_id__confirm_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssessmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Confirm",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/frameworks/{framework_key}/proposals/{proposal_id}/reject": {
+      "post": {
+        "operationId": "reject_api_v1_orgs__org_id__frameworks__framework_key__proposals__proposal_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposalRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Reject",
         "tags": [
           "compliance"
         ]
@@ -10455,6 +11550,48 @@
         "tags": [
           "compliance"
         ]
+      }
+    },
+    "/api/v1/training-campaigns": {
+      "post": {
+        "operationId": "create_campaign_api_v1_training_campaigns_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampaignIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedCampaign"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Campaign",
+        "tags": [
+          "api-keys"
+        ],
+        "x-atesta-scope": "routines:write"
       }
     },
     "/api/v1/training/acknowledge": {

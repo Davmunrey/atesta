@@ -15,8 +15,11 @@ from datetime import UTC, datetime, timedelta
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.dependencies.models import Dependant
+from fastapi.routing import APIRoute
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import func, select, update
+from sqlalchemy.orm import Session
 
 from atesta_api.modules.identity.context import (
     ContextReason,
@@ -295,6 +298,9 @@ def _within_limit(request: Request, session: DbSession, caller: ApiCaller) -> No
         )
 
 
+_SCOPED: dict[Callable[..., ApiCaller], str | None] = {}  # each check, and the scope it needs
+
+
 def require_scope(scope: str | None) -> Callable[..., ApiCaller]:
     """The key, checked for `scope` (None: any key), counted against its limit, then logged."""
     if scope is not None and scope not in SCOPES:
@@ -321,10 +327,47 @@ def require_scope(scope: str | None) -> Callable[..., ApiCaller]:
         session.flush()
         return caller
 
+    _SCOPED[check] = scope
     return check
 
 
+def _scope_of(dependant: Dependant) -> tuple[bool, str | None]:
+    for dependency in dependant.dependencies:
+        if dependency.call in _SCOPED:
+            return True, _SCOPED[dependency.call]
+        found = _scope_of(dependency)
+        if found[0]:
+            return found
+    return False, None
+
+
+def annotate_scopes(router: APIRouter) -> None:
+    """Name each key route's permission in OpenAPI (x-atesta-scope), for the public API
+    reference (#334). Call it on a router once its routes are defined, before it is included.
+    Routes that take no key, and GET /api/v1/key, carry none."""
+    for route in router.routes:
+        if not isinstance(route, APIRoute):
+            continue
+        keyed, scope = _scope_of(route.dependant)
+        if keyed and scope is not None:
+            route.openapi_extra = {**(route.openapi_extra or {}), "x-atesta-scope": scope}
+
+
 ApiTokenCaller = Annotated[ApiCaller, Depends(require_api_token)]
+
+
+def token_labels(
+    session: Session, organization_id: uuid.UUID, ids: set[uuid.UUID]
+) -> dict[uuid.UUID, tuple[str, str]]:
+    """Name and prefix of the organization's keys, for showing who proposed or wrote what."""
+    if not ids:
+        return {}
+    rows = session.execute(
+        select(ApiToken.id, ApiToken.name, ApiToken.prefix).where(
+            ApiToken.organization_id == organization_id, ApiToken.id.in_(ids)
+        )
+    )
+    return {row.id: (row.name, row.prefix) for row in rows}
 
 
 class KeyOut(BaseModel):
@@ -350,3 +393,6 @@ def read_key(
     if row is None:  # resolved in this transaction: unreachable
         raise error(404, "identity.not_found")
     return KeyOut.model_validate(row, from_attributes=True)
+
+
+annotate_scopes(key_router)

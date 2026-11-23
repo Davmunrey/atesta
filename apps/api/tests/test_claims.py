@@ -99,3 +99,30 @@ def test_a_planted_claim_is_caught(text: str) -> None:
 )
 def test_honest_copy_passes(text: str) -> None:
     assert claims({"honest": text}) == []
+
+
+# Customer logos and testimonials (landing-legal A3, owner 23/11/2026): never without written
+# permission. The data file starts empty; every entry must name the permission it rests on.
+CUSTOMERS = ROOT / "apps" / "web" / "src" / "content" / "customers.json"
+
+
+def customer_problems(entries: list[dict[str, Any]]) -> list[str]:
+    problems = []
+    for n, entry in enumerate(entries):
+        for field in ("name", "permission_ref", "permission_date"):
+            if not str(entry.get(field, "")).strip():
+                problems.append(f"customers[{n}].{field}")
+    return problems
+
+
+def test_customer_proof_rests_on_written_permission() -> None:
+    entries = json.loads(CUSTOMERS.read_text(encoding="utf-8"))
+    assert isinstance(entries, list)
+    assert customer_problems(entries) == []
+
+
+def test_a_customer_without_permission_is_caught() -> None:
+    assert customer_problems([{"name": "Ejemplo S.L.", "logo": "x.svg"}]) == [
+        "customers[0].permission_ref",
+        "customers[0].permission_date",
+    ]

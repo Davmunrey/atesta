@@ -110,6 +110,84 @@ list above; every other criterion stays.
 - [ ] Every product view is labelled "Datos de ejemplo" / "Sample data" while the fixture's
       origin is `illustrative`.
 
+Amendment A2: scrollytelling (#356). Status: **accepted** (owner direction, 23/11/2026; the
+constraints below were agreed with the coordinator the same day). It refines A1's sections 3 and 4.
+
+**Pinned "how it works"**
+- [ ] **Desktop (64rem and up, motion allowed):** the four steps scroll on the left while one
+      sticky product frame on the right shows the state of the step in view, with an index
+      counter ("02 / 04") and a thin progress bar. States crossfade.
+- [ ] **Stages:** the stages are the product moments (L7), so the moments no longer have sections
+      of their own. Connect has no product view, only its "Próximamente" state.
+- [ ] **Phones and reduced motion:** the section is not pinned; each step is followed by its own
+      static frame. The sticky frame is hidden from assistive technology, because the steps carry
+      the meaning.
+
+**Year of ENS and reveals**
+- [ ] **Timeline:** "Un año de ENS" walks through a year of sample data (scope, assessment,
+      quarterly access review, an incident with its notification clock, training, the auditor's
+      dossier), labelled "Datos de ejemplo".
+- [ ] **Reveals:** headlines and figures reveal with CSS scroll-driven animations (`animation-timeline:
+      view()`) inside `@supports`; without support the page is complete and static.
+- [ ] **Count-up:** the hero figures count up once and settle on the fixture's numbers; the
+      document holds the final numbers.
+
+**Marquee**
+- [ ] **Controls:** the frameworks strip may run as a slow marquee only with a visible pause/play
+      button (WCAG 2.2.2). It pauses on hover and focus and is stopped under reduced motion.
+- [ ] **The one exception:** it is the single documented exception to "nothing moves for more than
+      five seconds".
+
+**Limits and checks**
+- [ ] **Limits:** no scroll-jacking, no smooth-scroll or animation library, and no inline script or
+      style (0 CSP hashes); bundled component JS (IntersectionObserver) is allowed.
+- [ ] **Motion e2e:** the no-motion-after-5-seconds check excludes scroll timelines and the
+      marquee, and each pinned stage is verified at fixed scroll positions.
+- [ ] **Accessibility and performance e2e:** axe runs at 375, 1280 and 1440 px; CLS stays under
+      0.1 and LCP is measured.
+Amendment A3: the public site (#371 and following). Status: **accepted** (owner, 23/11/2026,
+relayed by the coordinator). Research and direction: phase 1 and 2 notes kept outside the
+repository (four reference sites rendered and measured; techniques mapped to original uses).
+
+**Pages and chrome**
+- [ ] **Pages:** the public site has the landing plus `/producto`, `/ens`, `/seguridad` and
+      `/consultoras`, alongside the existing docs, legal, invitation, training and 404 pages.
+- [ ] **Header:** every public page shares one header with menus (Producto, Docs; links for ENS,
+      Seguridad and Consultoras once those pages exist).
+- [ ] **Footer and transitions:** one full-map footer, and cross-document View Transitions with a
+      plain-load fallback.
+
+**Word budgets** (product views, official citations and legal texts excluded)
+- [ ] `/`: 260 words.
+- [ ] `/producto`: 450 words.
+- [ ] `/ens`: 500 words.
+- [ ] `/seguridad`: 400 words.
+- [ ] `/consultoras`: 250 words.
+
+**Honest proof** (owner, 23/11/2026)
+- [ ] **No invented proof:** no famous-company logos, testimonials or invented figures.
+- [ ] **Example data:** fictitious example companies are labelled "Datos de ejemplo".
+- [ ] **Integrations:** Microsoft 365 and Google Workspace appear as "se conecta con", tagged
+      "Próximamente", as names unless the vendor's logo guidelines are read and cited.
+- [ ] **Proof strip:** it states only facts true at publish time:
+      - 73 medidas con el texto oficial del BOE;
+      - evidencias revisadas por el equipo de Atesta;
+      - diseñado para alojarse en España (eu-south-2) until hosting is live;
+      - solo lectura en tus sistemas;
+      - ninguna IA decide si cumples.
+- [ ] **No person's name on public pages:** the in-app reviewer display is unchanged.
+- [ ] **Customer logos:** the section renders only from a data file whose every entry carries a
+      written-permission reference. It starts empty, and `test_claims` enforces the reference.
+
+**Motion and budgets**
+- [ ] **CSS first:** CSS scroll-driven animations and View Transitions come before any library.
+- [ ] **Libraries:** at most one motion library (Motion, MIT), pinned and older than 7 days.
+      Budget: 90 KB gzip of extra JS on the landing, 30 KB on other public pages.
+- [ ] **No smooth scroll:** no smooth-scroll library.
+- [ ] **Unchanged:** every A1/A2 rule (light only, 0 CSP hashes, WCAG 2.2 AA with axe at 375, 1280
+      and 1440 px, pause controls, CLS 0, LCP regression at most 10%, e2e at fixed scroll positions,
+      the bottom-right corner free for the assistant).
+
 Legal pages (Spanish is the binding version)
 
 - [ ] Until the owner supplies the identity and a lawyer reviews the texts, both pages open with a

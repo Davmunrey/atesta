@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { PublicHeader } from "@/components/public-header";
-import { SiteFooter } from "@/components/site-footer";
+import { PublicFooter } from "@/components/public/public-footer";
 
 /** Replaces Next's default 404, whose inline styles the CSP (style-src 'self') would block. */
 export default function NotFound() {
@@ -17,7 +17,7 @@ export default function NotFound() {
         {t("home")}
       </Link>
     </main>
-    <SiteFooter />
+    <PublicFooter />
     </div>
   );
 }

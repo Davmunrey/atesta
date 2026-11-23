@@ -29,6 +29,13 @@ def login(client: TestClient, query: str = "") -> tuple[dict[str, str], dict[str
     return params, state
 
 
+def put_cookie(client: TestClient, name: str, value: str) -> None:
+    """Replace a cookie, whatever domain the server set it for: Starlette's TestClient uses
+    httpx2 when it is installed (the MCP SDK needs it), whose jar keeps both copies otherwise."""
+    client.cookies.delete(name)
+    client.cookies.set(name, value, domain="testserver.local")
+
+
 def signed_in(client: TestClient, sub: str) -> TestClient:
     params, _ = login(client)
     response = client.get(
@@ -126,7 +133,7 @@ def test_tampered_or_swapped_cookie_is_rejected(client: TestClient) -> None:
     sub = new_sub()
     signed_in(client, sub)
     refresh_value = client.cookies[REFRESH_COOKIE]
-    client.cookies.set(ACCESS_COOKIE, refresh_value)  # sealed for another cookie name
+    put_cookie(client, ACCESS_COOKIE, refresh_value)  # sealed for another cookie name
     client.cookies.delete(REFRESH_COOKIE)
     assert client.get("/api/v1/me").status_code == 401
 
@@ -134,7 +141,7 @@ def test_tampered_or_swapped_cookie_is_rejected(client: TestClient) -> None:
 def test_expired_access_token_is_refreshed_once(client: TestClient, oauth: FakeOAuth) -> None:
     sub = new_sub()
     signed_in(client, sub)
-    client.cookies.set(ACCESS_COOKIE, CRYPTO.seal(ACCESS_COOKIE, f"expired-{sub}"))
+    put_cookie(client, ACCESS_COOKIE, CRYPTO.seal(ACCESS_COOKIE, f"expired-{sub}"))
     response = client.get("/api/v1/me")
     assert response.status_code == 200
     assert oauth.refreshed == [f"rt-{sub}"]
@@ -144,8 +151,8 @@ def test_expired_access_token_is_refreshed_once(client: TestClient, oauth: FakeO
 def test_failed_refresh_clears_the_session(client: TestClient) -> None:
     sub = new_sub()
     signed_in(client, sub)
-    client.cookies.set(ACCESS_COOKIE, CRYPTO.seal(ACCESS_COOKIE, f"expired-{sub}"))
-    client.cookies.set(REFRESH_COOKIE, CRYPTO.seal(REFRESH_COOKIE, "revoked"))
+    put_cookie(client, ACCESS_COOKIE, CRYPTO.seal(ACCESS_COOKIE, f"expired-{sub}"))
+    put_cookie(client, REFRESH_COOKIE, CRYPTO.seal(REFRESH_COOKIE, "revoked"))
     response = client.get("/api/v1/me")
     assert response.status_code == 401
     assert f'{ACCESS_COOKIE}=""' in "\n".join(response.headers.get_list("set-cookie"))
@@ -187,8 +194,8 @@ def test_logout_revokes_the_refresh_token_so_a_copied_session_ends(
     assert response.status_code == 302
     assert oauth.revoked == [f"rt-{sub}"]
     client.cookies.clear()
-    client.cookies.set(ACCESS_COOKIE, CRYPTO.seal(ACCESS_COOKIE, f"expired-{sub}"))
-    client.cookies.set(REFRESH_COOKIE, copied or "")
+    put_cookie(client, ACCESS_COOKIE, CRYPTO.seal(ACCESS_COOKIE, f"expired-{sub}"))
+    put_cookie(client, REFRESH_COOKIE, copied or "")
     assert client.get("/api/v1/me").status_code == 401  # the copy no longer refreshes
 
 
@@ -206,7 +213,7 @@ def test_logout_still_signs_out_when_revocation_fails(
 
 
 def test_logout_without_a_session_revokes_nothing(client: TestClient, oauth: FakeOAuth) -> None:
-    client.cookies.set(REFRESH_COOKIE, "not-a-sealed-value")
+    put_cookie(client, REFRESH_COOKIE, "not-a-sealed-value")
     response = client.get("/auth/logout", follow_redirects=False)
     assert response.status_code == 302 and oauth.revoked == []
 
@@ -215,7 +222,7 @@ def test_tokens_never_reach_logs(client: TestClient, caplog: pytest.LogCaptureFi
     caplog.set_level(logging.DEBUG)
     sub = new_sub()
     signed_in(client, sub)
-    client.cookies.set(ACCESS_COOKIE, CRYPTO.seal(ACCESS_COOKIE, f"expired-{sub}"))
+    put_cookie(client, ACCESS_COOKIE, CRYPTO.seal(ACCESS_COOKIE, f"expired-{sub}"))
     client.get("/api/v1/me")
     assert f"tok-{sub}" not in caplog.text and f"rt-{sub}" not in caplog.text
 

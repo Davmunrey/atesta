@@ -10,7 +10,7 @@ import sys
 from collections.abc import Iterable
 from importlib import metadata
 
-WORKSPACE = {"atesta-api", "atesta-core", "atesta-scanner", "atesta-worker"}
+WORKSPACE = {"atesta-api", "atesta-core", "atesta-mcp", "atesta-scanner", "atesta-worker"}
 # Unmodified LGPL libraries allowed by ADR-006 amendment 1, as listed in THIRD_PARTY_NOTICES.md.
 LGPL_ALLOWED = {"psycopg", "psycopg-binary", "psycopg-pool"}
 # Distributions whose metadata declares no licence: name -> licence read at the source, and where.

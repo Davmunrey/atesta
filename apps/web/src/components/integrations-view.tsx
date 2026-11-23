@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { type FormEvent, useId, useState } from "react";
 import { type ApiToken, curlExample, RATE_LIMITS, type Scope, SCOPES, useApiTokens, useApiTokenUsage, useCreateApiToken, useRevokeApiToken } from "@/lib/api/tokens";
@@ -26,6 +27,7 @@ export function IntegrationsView({ org }: { org: Membership }) {
       { label: s("tokens.active"), value: format.number(sum.active), attention: sum.active === 0 },
       { label: s("tokens.inactive"), value: format.number(sum.inactive) },
       { label: s("tokens.lastUsed"), value: sum.lastUsed ? format.dateTime(new Date(sum.lastUsed), { dateStyle: "medium" }) : s("never") }]} /> : null}
+    <p className="text-sm">{t.rich("docs", { api: (c) => <Link href="/docs/api" className="underline">{c}</Link>, mcp: (c) => <Link href="/docs/mcp" className="underline">{c}</Link> })}</p>
     <Panel title={t("list")}>
       {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
         : list.data.length === 0 ? <Empty>{t("empty")}</Empty>
@@ -46,7 +48,7 @@ function TokenRow({ token, orgId }: { token: ApiToken; orgId: string }) {
   const day = (value: string) => format.dateTime(new Date(value), { dateStyle: "medium" });
   const expired = new Date(token.expires_at).getTime() <= new Date().getTime();
   return <tr>
-    <td data-label={t("name")}>{token.name}{token.read_only ? <> <span className="badge">{t("readOnly")}</span></> : null}
+    <td data-label={t("name")}>{token.name}{token.read_only ? <span className="tag">{t("readOnly")}</span> : null}
       <span className="block text-sm text-muted"><span className="font-mono">{token.prefix}…</span> · {t("createdBy", { email: token.created_by_email, date: day(token.created_at) })}</span>
       <span className="block text-sm text-muted">{[...token.scopes.map((s) => t(`scopeShort.${s as Scope}`)), t("perMinute", { count: token.rate_limit_per_minute })].join(" · ")}</span>
       <Usage token={token} orgId={orgId} /></td>

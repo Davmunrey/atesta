@@ -161,6 +161,12 @@
   .assessment-summary div { display: grid; grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr); gap: 1rem; }
   .assessment-summary dt { font-size: 0.875rem; color: var(--color-muted); }
   .assessment-summary dd { white-space: pre-wrap; overflow-wrap: anywhere; }
+  /* An agent's pending proposal (mcp-server spec): a block, not the one-line .notice row. */
+  .notice.proposal-notice { display: grid; gap: 0.75rem; align-items: start; margin-block: 0.75rem; font-size: inherit; }
+  .proposal-notice > * { min-width: 0; margin: 0; }
+  .proposal-notice h4 { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; }
+  .proposal-notice h4 svg { flex: none; }
+  .proposal-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
   .requirement-state[data-assessment="implemented"] { color: var(--color-success); }
   .requirement-state[data-assessment="partially_implemented"], .requirement-state[data-assessment="not_implemented"] { color: var(--color-warning); }
   .requirement-state[data-assessment="not_applicable"], .requirement-state[data-assessment="pending"] { color: var(--color-muted); }
@@ -176,6 +182,10 @@
   .expected-evidence > p + p { margin-top: 0.25rem; }
   .technical-details { margin-top: 1rem; font-size: 0.8125rem; color: var(--color-muted); overflow-wrap: anywhere; }
   .technical-details > summary { min-height: 2.75rem; display: flex; align-items: center; cursor: pointer; }
+  /* A visible disclosure cue (issue 374): the flex summary drops the native marker. */
+  .technical-details > summary::before { content: ""; flex: none; width: 0.4rem; height: 0.4rem; margin-right: 0.6rem; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); transition: transform 180ms ease-out; }
+  .technical-details[open] > summary::before { transform: rotate(45deg); }
+  .technical-details > summary:hover { color: var(--color-fg); text-decoration: underline; text-underline-offset: 0.2em; }
   .catalog-about { margin-top: 1.5rem; border-block: 1px solid var(--color-border); }
   .catalog-about > summary { min-height: 2.75rem; display: flex; align-items: center; cursor: pointer; font-size: 0.875rem; font-weight: 500; color: var(--color-muted); }
   .catalog-about[open] > summary { color: var(--color-fg); }

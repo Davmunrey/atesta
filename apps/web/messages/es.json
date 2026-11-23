@@ -75,15 +75,16 @@
         }
       }
     },
-    "moments": {
-      "measure": "El texto oficial de cada medida",
-      "records": "Los registros que pide el auditor",
-      "dossier": "Un dossier listo para firmar"
+    "year": {
+      "title": "Un año de ENS"
     },
     "frameworks": {
       "title": "ENS primero, y más según tu plan",
       "body": "También cubre NIS2, RGPD, LOPDGDD y DORA. Una misma evidencia sirve a varios marcos.",
       "byPlan": "Según el plan"
+    },
+    "marquee": {
+      "pause": "Pausar la animación"
     },
     "consultancies": "Para consultoras: todos tus clientes en una cuenta, cada uno con su propio espacio.",
     "close": "Tu próxima auditoría, preparada.",
@@ -127,7 +128,39 @@
         "role": "Cargo",
         "date": "Fecha",
         "signature": "Firma"
-      }
+      },
+      "year": {
+        "label": "Un año de ENS en Atesta",
+        "m0": {
+          "month": "Enero",
+          "text": "Alcance definido: categoría MEDIA."
+        },
+        "m1": {
+          "month": "Febrero",
+          "text": "Autoevaluación de las 73 medidas."
+        },
+        "m2": {
+          "month": "Abril",
+          "text": "Revisión trimestral de accesos cerrada."
+        },
+        "m3": {
+          "month": "Junio",
+          "text": "Incidente registrado; alerta temprana enviada en 24 h."
+        },
+        "m4": {
+          "month": "Septiembre",
+          "text": "Formación anual: 18 confirmaciones."
+        },
+        "m5": {
+          "month": "Noviembre",
+          "text": "Dossier entregado al auditor."
+        }
+      },
+      "connect": {
+        "label": "Conexión de sistemas en Atesta",
+        "access": "Solo lectura"
+      },
+      "stage": "Paso"
     }
   },
   "locale": {
@@ -164,7 +197,10 @@
       "clock_waiting": "Ese plazo empieza cuando se registre el anterior.",
       "report_month_invalid": "El mes no es válido o todavía no ha empezado.",
       "incident_classified": "Este incidente ya tiene registrada su clasificación como significativo.",
-      "classified_before_aware": "La clasificación no puede ser anterior a la constancia del incidente."
+      "classified_before_aware": "La clasificación no puede ser anterior a la constancia del incidente.",
+      "proposal_pending": "Esta medida ya tiene una propuesta pendiente. Confírmala o recházala antes de enviar otra.",
+      "proposal_decided": "Esta propuesta ya se confirmó o se rechazó.",
+      "proposal_not_found": "No encontramos esa propuesta."
     },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
@@ -648,7 +684,13 @@
       "result": "Resultado: {levels}. Categoría: {category}.",
       "apply": "Usar estos niveles",
       "applied": "Niveles copiados al alcance. Revísalos y guarda el alcance."
-    }
+    },
+    "agentProposal": "Propuesta de un agente",
+    "agentProposalFrom": "Propuesta con el token «{name}» el {date}.",
+    "agentRationale": "Motivo que da el agente",
+    "agentProposalHelp": "Es solo una propuesta: no cambia la medida hasta que una persona la confirma. Al confirmarla, la evaluación queda registrada a tu nombre.",
+    "confirmProposal": "Confirmar la propuesta",
+    "rejectProposal": "Rechazar la propuesta"
   },
   "insights": {
     "title": "Evolución",
@@ -731,7 +773,10 @@
       "scan_blocked": "Análisis bloqueado",
       "training_created": "Abrió una formación",
       "training_acknowledged": "Una persona confirmó una formación",
-      "training_closed": "Cerró una formación"
+      "training_closed": "Cerró una formación",
+      "assessment_proposal_created": "Un agente propuso una autoevaluación",
+      "assessment_proposal_confirmed": "Confirmó la propuesta de un agente",
+      "assessment_proposal_rejected": "Rechazó la propuesta de un agente"
     },
     "day": "Día",
     "unknown": "Otra acción"
@@ -1092,6 +1137,7 @@
     "usageCount": "{count, plural, =0 {Ninguna petición en las últimas 24 horas} one {# petición en las últimas 24 horas} other {# peticiones en las últimas 24 horas}}",
     "usageEmpty": "Aún no se ha usado.",
     "noScope": "Ninguno",
+    "docs": "Cómo usar la API: <api>referencia de la API</api> y <mcp>guía para agentes de IA</mcp>.",
     "templates": {
       "title": "Plantillas de evidencias automáticas",
       "help": "Elige qué registrar y dónde se ejecuta, y copia el script en esa máquina o en tu repositorio. Cada ejecución deja una evidencia; si se repite el mismo día o el mismo flujo, no se duplica.",
@@ -1450,6 +1496,274 @@
         "title": "Cookies",
         "body": "Las cookies y el almacenamiento del navegador se describen en su propia página."
       }
+    }
+  },
+  "assistant": {
+    "open": "Asistente",
+    "title": "Asistente del catálogo",
+    "close": "Cerrar",
+    "intro": "Responde con el texto del catálogo tal cual, con su fuente. Sin IA.",
+    "search": {
+      "label": "Busca en el catálogo",
+      "placeholder": "op.acc.6, copias de seguridad…",
+      "submit": "Buscar"
+    },
+    "loading": "Cargando el catálogo…",
+    "loadError": "No se pudo cargar el catálogo.",
+    "retry": "Reintentar",
+    "results": "{count, plural, one {# respuesta} other {# respuestas}}",
+    "noAnswer": "Sin respuesta en el catálogo para esta búsqueda.",
+    "contact": "Escríbenos a <link>{email}</link> y te respondemos.",
+    "flowsTitle": "Preguntas guiadas",
+    "back": "Volver",
+    "kind": {
+      "requirement": "Texto oficial",
+      "evidence": "Evidencias esperadas",
+      "profile": "Perfil de cumplimiento específico",
+      "valuation": "Valoración del sistema",
+      "clock": "Plazo de notificación",
+      "faq": "Preguntas frecuentes"
+    },
+    "cite": {
+      "label": "Fuente:",
+      "section": "apartado {section}",
+      "guide": "{guide} ({edition}), apartado {section}, pág. {page}",
+      "official": "Texto oficial",
+      "faq": "Preguntas frecuentes de Atesta",
+      "pending": "Pendiente de revisión"
+    },
+    "fullText": "Texto completo",
+    "inOrg": "Ver en tu organización",
+    "flows": {
+      "category": {
+        "title": "¿Qué categoría ENS tengo?",
+        "intro": "Elige el nivel de cada dimensión según el daño que causaría un fallo.",
+        "result": "Categoría orientativa: {category}",
+        "waiting": "Responde las cinco preguntas para ver la categoría.",
+        "basis": "La categoría es orientativa y no se guarda."
+      },
+      "evidence": {
+        "title": "¿Qué evidencias pide una medida?",
+        "pick": "Medida",
+        "choose": "Elige una medida"
+      },
+      "profile": {
+        "title": "¿Me aplica el perfil esencial (890C)?",
+        "low": "¿Todas las dimensiones de tu sistema son de nivel BAJO?",
+        "scope": "¿Qué abarca tu sistema?",
+        "it": "Solo tecnologías de la información (IT)",
+        "ot": "IT junto con tecnología de operación (OT) o IoT",
+        "yes": "Sí",
+        "no": "No",
+        "notFit": "El perfil esencial es para sistemas con todas las dimensiones de nivel BAJO.",
+        "levels": "Valor de cada medida en el perfil",
+        "measure": "Medida",
+        "value": "Valor",
+        "criterion": "Criterio: apartado {section}, pág. {page}"
+      },
+      "clocks": {
+        "title": "¿Qué plazos tengo ante un incidente?",
+        "pick": "¿Qué ha pasado?",
+        "needs": {
+          "significant": "Incidente significativo ({framework})",
+          "personal_data": "Violación de seguridad de datos personales ({framework})"
+        },
+        "hours": "{count, plural, one {# hora} other {# horas}}",
+        "months": "{count, plural, one {# mes} other {# meses}}",
+        "after": "Desde: {step}",
+        "criteria": "Cuándo hay que notificar"
+      },
+      "faq": {
+        "title": "¿Qué cubre Atesta?"
+      }
+    }
+  },
+  "apiDocs": {
+    "title": "Referencia de la API",
+    "intro": "Las rutas que pueden llamar vuestras herramientas y agentes de IA con un token de Integraciones. Cada token llega solo a lo que permiten sus permisos y solo a vuestra organización.",
+    "mcpLink": "Guía para agentes de IA (MCP)",
+    "index": "En esta página",
+    "noScope": "Sin permiso específico",
+    "noScopeHelp": "Cualquier token válido puede llamar a estas rutas.",
+    "fieldsOf": "Campos de {operation}",
+    "field": "Campo",
+    "type": "Tipo",
+    "required": "Obligatorio",
+    "limits": "Límites",
+    "yes": "Sí",
+    "no": "No",
+    "basics": {
+      "title": "Lo básico",
+      "key": "Envía el token en la cabecera Authorization, en cada petición, a la dirección de vuestro Atesta:",
+      "query": "Nunca lo pongas en la URL: una petición con parámetros de consulta se rechaza.",
+      "limit": "Cada token tiene un límite de peticiones por minuto. Al superarlo, la respuesta es 429 con la cabecera Retry-After, que dice cuántos segundos esperar.",
+      "language": "Los mensajes de error llegan en español, o en inglés si la cabecera Accept-Language lo pide.",
+      "records": "Atesta guarda la hora, la ruta y el permiso de cada petición aceptada, nunca su contenido. Los administradores lo ven en Integraciones."
+    },
+    "errors": {
+      "title": "Errores",
+      "intro": "Un error devuelve un código estable en detail.code y, en las rutas de tokens, un mensaje en detail.message.",
+      "code": "Código",
+      "status": "HTTP",
+      "meaning": "Qué significa",
+      "codes": {
+        "identity_api_token_invalid": "Falta el token, no existe, se revocó o caducó.",
+        "identity_token_in_query": "La petición lleva parámetros de consulta.",
+        "identity_api_token_scope": "El token no tiene el permiso que pide la ruta; detail.scope lo nombra.",
+        "identity_api_token_rate_limited": "El token superó su límite por minuto; espera lo que indique Retry-After.",
+        "request_invalid": "Algún campo no es válido; detail.fields los nombra.",
+        "billing_plan_limit": "El marco no está incluido en el plan de la organización."
+      }
+    },
+    "operations": {
+      "read_key_api_v1_key_get": "Describe el token: nombre, permisos, límite por minuto y caducidad.",
+      "ingest_evidence_api_v1_ingest_evidence_post": "Registra una declaración de evidencia en un control común. Un external_id repetido no escribe nada y devuelve la primera evidencia.",
+      "list_frameworks_api_v1_frameworks_get": "Los marcos que incluye el plan de la organización, con sus recuentos de preparación.",
+      "list_measures_api_v1_frameworks__framework_key__measures_get": "Las medidas de un marco: código, títulos, la propuesta de aplicabilidad de Atesta, la última autoevaluación, la fecha límite y la propuesta pendiente, si la hay.",
+      "read_measure_api_v1_frameworks__framework_key__measures__code__get": "Una medida con su texto oficial y su cita (fuente, sección, SHA-256 de la fuente y versión del catálogo), la evidencia que se suele pedir y los controles comunes a los que se vincula.",
+      "list_gaps_api_v1_gaps_get": "Las medidas sin evaluar, no implantadas o implantadas en parte, por marco.",
+      "list_due_api_v1_due_get": "Lo que vence: revisiones de políticas, revisiones de acceso vencidas, formaciones sin cerrar y plazos de notificación de incidentes.",
+      "list_incidents_api_v1_incidents_get": "Los incidentes abiertos con sus plazos de notificación.",
+      "read_incident_api_v1_incidents__incident_id__get": "Un incidente con sus anotaciones y sus plazos de notificación.",
+      "propose_api_v1_frameworks__framework_key__measures__code__proposals_post": "Propone una autoevaluación de una medida, con su motivo. Queda pendiente y no cambia nada hasta que una persona la confirma en la aplicación.",
+      "create_incident_api_v1_incidents_post": "Registra un incidente.",
+      "update_incident_api_v1_incidents__incident_id__updates_post": "Añade una anotación a un incidente, marca un aviso como enviado, registra cuándo se clasificó como significativo o lo cierra.",
+      "create_campaign_api_v1_training_campaigns_post": "Abre una campaña de formación. La respuesta incluye una sola vez el enlace para que las personas confirmen la lectura.",
+      "create_access_review_api_v1_access_reviews_post": "Abre una revisión de acceso con sus cuentas. Decidir y cerrar la revisión se hace en la aplicación."
+    }
+  },
+  "mcpGuide": {
+    "title": "Guía para agentes de IA (MCP)",
+    "intro": "Conecta un agente de IA compatible con MCP (Model Context Protocol) a Atesta para que lea vuestro estado y registre el trabajo de cada día, con los permisos que elijáis.",
+    "apiLink": "Referencia de la API",
+    "index": "En esta página",
+    "what": {
+      "title": "Qué puede hacer un agente",
+      "body": "Con el servidor MCP de Atesta, un agente puede responder qué falta en un marco y qué vence este mes, leer el texto oficial de una medida con su cita, registrar evidencias, proponer autoevaluaciones y registrar incidentes, formaciones y revisiones de acceso. Cada acción es una llamada a la API con vuestro token."
+    },
+    "safety": {
+      "title": "Qué no puede hacer",
+      "scopes": "Solo lo que permite su token. Un token de solo lectura no escribe nada, y ningún token llega a otra organización.",
+      "proposals": "No decide si una medida está implantada. Una autoevaluación de un agente es una propuesta: queda pendiente hasta que una persona la confirma en la aplicación, y entonces se registra a su nombre.",
+      "data": "Lo que lee de Atesta le llega marcado como datos. El texto que escribieron personas (títulos, notas, evidencias) nunca se le presenta como instrucciones.",
+      "systems": "No toca vuestros sistemas: no lanza escaneos ni cambia conexiones. Cada escritura queda en la actividad con el token y el administrador que lo creó."
+    },
+    "setup": {
+      "title": "Conectar un agente en tu equipo",
+      "key": "Un administrador crea un token en <link>Integraciones</link> con solo los permisos que el agente necesita.",
+      "install": "Instala el servidor atesta-mcp en el equipo donde corre el agente. Todavía no se distribuye públicamente: de momento Atesta lo facilita solo a los clientes piloto.",
+      "config": "Añádelo a la configuración de tu cliente MCP con el token en env, como explica la <link>documentación oficial de MCP</link>. Por ejemplo:",
+      "configLabel": "Configuración del cliente",
+      "secret": "El token es un secreto: guárdalo solo en esa configuración y revócalo en Integraciones si deja de hacer falta."
+    },
+    "hosted": {
+      "title": "Servidor alojado",
+      "body": "El servidor alojado aún no está disponible. Cuando lo esté, atenderá en la dirección de vuestro Atesta seguida de /mcp y pedirá el token en la cabecera Authorization: Bearer. Los clientes que solo se conectan con OAuth todavía no podrán usarlo."
+    },
+    "tools": {
+      "title": "Herramientas",
+      "read": "Leer",
+      "write": "Escribir",
+      "name": "Herramienta",
+      "does": "Qué hace",
+      "scope": "Permiso",
+      "list": {
+        "get_key": "Describe el token: nombre, permisos y límite.",
+        "list_frameworks": "Los marcos del plan con su preparación.",
+        "list_measures": "Las medidas de un marco y su autoevaluación.",
+        "get_measure": "El texto oficial de una medida, con su cita.",
+        "list_gaps": "Lo que falta por evaluar o implantar.",
+        "list_due_items": "Lo que vence y los plazos en curso.",
+        "list_incidents": "Los incidentes abiertos y sus plazos.",
+        "get_incident": "Un incidente con sus anotaciones.",
+        "record_evidence": "Registra una evidencia en un control común.",
+        "propose_assessment": "Propone una autoevaluación; una persona la confirma.",
+        "record_incident": "Registra un incidente.",
+        "add_incident_update": "Anota, marca un aviso como enviado o cierra un incidente.",
+        "start_training_campaign": "Abre una campaña de formación.",
+        "start_access_review": "Abre una revisión de acceso."
+      }
+    }
+  },
+  "public": {
+    "nav": {
+      "label": "Navegación principal",
+      "menu": "Menú",
+      "product": "Producto",
+      "docs": "Docs",
+      "ens": "ENS",
+      "security": "Seguridad",
+      "consultancies": "Consultoras",
+      "groups": {
+        "prepare": "Preparar el ENS",
+        "respond": "Responder y demostrar",
+        "integrate": "Integrar"
+      },
+      "items": {
+        "assess": {
+          "title": "Autoevaluación",
+          "desc": "73 medidas con su texto oficial"
+        },
+        "routines": {
+          "title": "Rutinas",
+          "desc": "Políticas, accesos y formación"
+        },
+        "incidents": {
+          "title": "Incidentes",
+          "desc": "Plazos de notificación en marcha"
+        },
+        "dossier": {
+          "title": "Dossier",
+          "desc": "Listo para el auditor y la firma"
+        },
+        "api": {
+          "title": "API y MCP",
+          "desc": "Claves con permisos y límites"
+        },
+        "apiRef": {
+          "title": "Referencia de la API",
+          "desc": "Rutas, permisos y errores"
+        },
+        "mcp": {
+          "title": "Guía MCP",
+          "desc": "Conecta un agente con permisos de lectura"
+        }
+      },
+      "feature": "Una evidencia sirve a varios marcos: ENS, NIS2, RGPD."
+    },
+    "footer": {
+      "tagline": "Preparación de auditorías. No certifica cumplimiento.",
+      "product": "Producto",
+      "resources": "Recursos",
+      "legal": "Legal",
+      "contact": "Contacto",
+      "how": "Cómo funciona"
+    },
+    "proof": {
+      "label": "Lo que es verdad hoy",
+      "boe": {
+        "lead": "73 medidas",
+        "line": "con el texto oficial del BOE"
+      },
+      "team": {
+        "lead": "Revisado",
+        "line": "evidencias revisadas por el equipo de Atesta"
+      },
+      "spain": {
+        "lead": "España",
+        "line": "Diseñado para alojarse en España (eu-south-2)"
+      },
+      "readonly": {
+        "lead": "Solo lectura",
+        "line": "en tus sistemas, siempre"
+      },
+      "noai": {
+        "lead": "Sin IA",
+        "line": "ninguna IA decide si cumples"
+      }
+    },
+    "customers": {
+      "title": "Organizaciones que usan Atesta"
     }
   },
   "connections": {

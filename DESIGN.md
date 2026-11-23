@@ -274,8 +274,45 @@ Every pair is checked by `tests/unit/contrast.test.ts`.
 - **Page titles:** the highlighter tab under every page title.
 - **Key figure:** one per page, the overview's measures assessed. In light mode it gets the band behind ink. In dark mode it is set in the accent yellow with no band, because light text on yellow fails contrast. In print it is plain.
 
+**Scrollytelling (#356, landing-legal amendment A2).** On wide screens with motion allowed:
+- **Pinned steps:** "Cómo funciona" pins one product frame beside the steps. The frame shows the stage of the step in view (IntersectionObserver, no scroll-jacking), with a mono "02 / 04" counter and a 3px highlighter progress bar. Stages crossfade. Inactive step titles dim by colour, never by opacity, so contrast holds.
+- **Reveals:** headlines and the year timeline reveal with CSS view timelines, using only clip-path and transform. Without view timelines, the page rests complete.
+- **Count-up:** the hero figures count up once; the document holds the final numbers.
+- **Marquee:** the frameworks strip is a 40 s marquee with a visible pause button. It is the one exception to the five-second rule.
+- **Phones and reduced motion:** a static page; each step carries its own frame.
+- **Free corner:** the bottom-right corner stays free for the assistant launcher.
+
 **Product frames.** Every product view on public pages sits in a frame: an ink bar carrying the mark,
 the context and a "Datos de ejemplo" label while the fixture is illustrative.
+
+## Public site (#371, landing-legal amendment A3, accepted 2026-11-23)
+
+The product is the proof. Every public page shows Atesta at work in paper, ink and the
+highlighter, with one motion language. Honest facts replace logos and testimonials.
+
+**Chrome**
+- **Header:** the lockup, then the menus. Producto and Docs open panels of links with a one-line
+  description each; ENS, Seguridad and Consultoras are plain links once their pages exist. Then
+  the language switcher, Entrar and Solicitar acceso.
+  - It is sticky on paper with a hairline. It hides on scroll down and returns on scroll up,
+    never under reduced motion.
+  - Panels are disclosure buttons with `aria-expanded`; Esc and an outside click close them.
+- **Footer:** an ink band with the lockup, "Preparación de auditorías. No certifica
+  cumplimiento.", four columns (Producto, Recursos, Empresa, Legal) and the proof strip.
+- **Links:** public pages link with plain anchors, so each navigation is a document load. That
+  lets cross-document View Transitions morph the lockup and the page title. Reduced motion or no
+  support: a normal load.
+
+**Honest proof**
+- **Proof strip:** five true facts, each a short serif lead with one plain line. No person's name
+  appears on a public page; the reviewer is "el equipo de Atesta".
+- **Customer logos:** a data file (`content/customers.json`) whose entries need a written-permission
+  reference. The section does not render while the file is empty.
+
+**Motion tokens**
+- **Easings:** `--ease-decisive` (in-out) for entrances and stage changes, `--ease-soft` (out) for
+  hovers, `--spring` (slight overshoot) for figures and bars.
+- **Durations:** 180 ms hover, 600 ms stage, 900–1400 ms entrances.
 
 ## Do's and Don'ts
 

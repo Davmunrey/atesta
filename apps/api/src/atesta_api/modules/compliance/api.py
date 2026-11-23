@@ -27,12 +27,15 @@ def install_compliance(app: FastAPI) -> None:
     from atesta_api.modules.compliance.incidents import router as incidents_router
     from atesta_api.modules.compliance.my_work import router as my_work_router
     from atesta_api.modules.compliance.overview import router
+    from atesta_api.modules.compliance.proposals import router as proposals_router
+    from atesta_api.modules.compliance.proposals import token_router as proposals_token_router
     from atesta_api.modules.compliance.readiness import router as readiness_router
     from atesta_api.modules.compliance.register import router as register_router
     from atesta_api.modules.compliance.report import router as report_router
     from atesta_api.modules.compliance.reviews import router as reviews_router
     from atesta_api.modules.compliance.routines import router as routines_router
     from atesta_api.modules.compliance.search import router as search_router
+    from atesta_api.modules.compliance.token_routes import router as token_router
     from atesta_api.modules.compliance.training import public_router as training_link_router
     from atesta_api.modules.compliance.training import router as training_router
 
@@ -49,6 +52,9 @@ def install_compliance(app: FastAPI) -> None:
     app.include_router(incidents_router)
     app.include_router(dossier_router)
     app.include_router(report_router)
+    app.include_router(token_router)
+    app.include_router(proposals_router)
+    app.include_router(proposals_token_router)
 
 
 __all__ = [

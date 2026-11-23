@@ -3,7 +3,7 @@
 - Issues: #238 (phones), #239 (readable activity, consistent panels), #240 (executive summaries),
   #276 (incident criteria on phones), #283 (loading, error and empty states),
   #287 (records at a glance on the overview), #295 (expected evidence polish),
-  #301 (public pages), #330 (the brand in the console), #345 (polish from the #305 and #315 reviews).
+  #301 (public pages), #330 (the brand in the console), #345 (polish from the #305 and #315 reviews), #374 (polish from the #342, #349 and #361 reviews).
 - Builds on `console-shell.md`, `insights.md`, `recorded-routines.md` and DESIGN.md. Operate mode:
   refinement of the console, not a new visual world.
 - Status: draft

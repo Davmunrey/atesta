@@ -6,7 +6,7 @@ import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useId, useState, type FormEvent } from "react";
 import { useMembers } from "@/lib/api/hooks";
 import {
-  applicabilityUrl, isOverdue, registerProgress, useRecordAssessment, useRecordAssessmentReview, useRecordAssignment,
+  applicabilityUrl, isOverdue, registerProgress, useDecideProposal, useRecordAssessment, useRecordAssessmentReview, useRecordAssignment,
   useRecordScope, type AssessmentInput, type AxisValues, type Register, type RegisterItem,
 } from "@/lib/api/register-hooks";
 import { ErrorMessage } from "./error-message";
@@ -211,6 +211,7 @@ export function AssessmentForm({ item, orgId, frameworkKey, canEdit, canAssess =
       official: (chunks) => <span lang="es">{chunks}</span> });
   return <div className="assessment-card">
     <OwnerField item={item} orgId={orgId} frameworkKey={frameworkKey} canEdit={canEdit} />
+    <AgentProposal item={item} orgId={orgId} frameworkKey={frameworkKey} canAssess={canAssess} />
     <h3>{t("yourAssessment")}</h3>
     <p className="text-sm text-muted">{proposal}{criterion ? <> {t("proposalCriterion", { reference: cite(criterion) })}</> : null}</p>
     {a && !editing ? <>
@@ -249,6 +250,35 @@ export function AssessmentForm({ item, orgId, frameworkKey, canEdit, canAssess =
           <button type="button" className="dashboard-button" onClick={() => setEditing(false)}>{t("cancel")}</button></div>
       </form>}
   </div>;
+}
+
+/** An API key's pending proposal (mcp-server spec, ADR-005). The agent's words are shown as text;
+ * nothing changes until a person who may assess the measure confirms it. */
+function AgentProposal({ item, orgId, frameworkKey, canAssess }: { item: RegisterItem; orgId: string; frameworkKey: string; canAssess: boolean }) {
+  const t = useTranslations("register");
+  const format = useFormatter();
+  const decide = useDecideProposal(orgId, frameworkKey);
+  const heading = useId();
+  const p = item.pending_proposal;
+  if (!p) return null;
+  return <section className="notice proposal-notice" aria-labelledby={heading}>
+    <h4 id={heading}><Icon name="integrations" size={16} />{t("agentProposal")}</h4>
+    <p className="text-sm text-muted">{t("agentProposalFrom", { name: p.token_name, date: format.dateTime(new Date(p.proposed_at), { dateStyle: "medium", timeStyle: "short" }) })} <span className="font-mono">{p.token_prefix}…</span></p>
+    <dl className="assessment-summary">
+      <div><dt>{t("applicability")}</dt><dd>{t(`proposal.${p.applicability}`)}</dd></div>
+      {p.applicability === "applies" ? <div><dt>{t("implementation")}</dt><dd>{t(`states.${p.implementation}`)}{p.regularly_reviewed ? ` · ${t("regularlyReviewed")}` : ""}</dd></div> : null}
+      {p.performed_by ? <div><dt>{t("performedBy")}</dt><dd>{p.performed_by}</dd></div> : null}
+      {p.justification ? <div><dt>{t("justification")}</dt><dd>{p.justification}</dd></div> : null}
+      {p.notes ? <div><dt>{t("notes")}</dt><dd>{p.notes}</dd></div> : null}
+      <div><dt>{t("agentRationale")}</dt><dd>{p.rationale}</dd></div>
+    </dl>
+    <p className="text-sm text-muted">{t("agentProposalHelp")}</p>
+    {canAssess ? <div className="proposal-actions">
+      <button type="button" className="button-primary" disabled={decide.isPending} onClick={() => decide.mutate({ id: p.id, verb: "confirm" })}>{t("confirmProposal")}</button>
+      <button type="button" className="dashboard-button" disabled={decide.isPending} onClick={() => decide.mutate({ id: p.id, verb: "reject" })}>{t("rejectProposal")}</button>
+    </div> : null}
+    {decide.isError ? <ErrorMessage error={decide.error} /> : null}
+  </section>;
 }
 
 /** Who owns the measure and by when (insights spec); the owner is a member, the API checks it. */

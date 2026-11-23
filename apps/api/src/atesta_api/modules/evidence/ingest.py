@@ -16,11 +16,16 @@ from sqlalchemy import select
 from atesta_api.modules.compliance.api import control_is_active
 from atesta_api.modules.evidence.api import record_attestation, refuse_credential_link
 from atesta_api.modules.evidence.models import ApiIngestion
-from atesta_api.modules.identity.api import ApiCaller, QueryFreeRoute, require_scope
+from atesta_api.modules.identity.api import (
+    ApiCaller,
+    QueryFreeRoute,
+    annotate_scopes,
+    require_scope,
+)
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 
-router = APIRouter(prefix="/api/v1/ingest", tags=["evidence"], route_class=QueryFreeRoute)
+router = APIRouter(prefix="/api/v1/ingest", tags=["api-keys"], route_class=QueryFreeRoute)
 
 
 def _error(status: int, code: str) -> HTTPException:
@@ -117,3 +122,6 @@ def ingest_evidence(
         },
     )
     return Ingested(evidence_id=evidence_id, duplicate=False)
+
+
+annotate_scopes(router)

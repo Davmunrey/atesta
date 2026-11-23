@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { cleanup, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, screen, within } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import Landing from "@/app/(public)/page";
 import { PublicHeader } from "@/components/public-header";
@@ -31,15 +31,41 @@ it.each([["es", es], ["en", en]])("keeps the %s marketing copy within 200 words,
 it("runs the amended sections in order, with the scan step marked as coming soon", () => {
   renderWithProviders(<Landing />);
   expect(screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toEqual([
-    "El ENS no cabe en una hoja de cálculo", "Cómo funciona",
-    "El texto oficial de cada medida", "Los registros que pide el auditor", "Un dossier listo para firmar",
+    "El ENS no cabe en una hoja de cálculo", "Cómo funciona", "Un año de ENS",
     "ENS primero, y más según tu plan", "Tu próxima auditoría, preparada.",
   ]);
-  const steps = screen.getAllByRole("listitem").filter((li) => li.closest(".landing-steps"));
+  const steps = [...document.querySelectorAll(".landing-steps > li")] as HTMLElement[];
   expect(steps).toHaveLength(4);
-  expect(within(steps[0]!).getByText("Próximamente")).toBeTruthy();
+  expect(within(steps[0]!.querySelector(".landing-step-title") as HTMLElement).getByText("Próximamente")).toBeTruthy();
   for (const step of steps.slice(1)) expect(within(step).queryByText("Próximamente")).toBeNull();
   expect(screen.getByRole("heading", { level: 1 }).querySelector("mark")!.textContent).toBe("ENS");
+});
+
+// Amendment A2 (issue 356): pinned steps, a year of ENS, a pausable marquee.
+it("pins one product frame beside the steps, with a counter, hidden from assistive technology", () => {
+  renderWithProviders(<Landing />);
+  const pinned = document.querySelector(".landing-pinned")!;
+  expect(pinned.getAttribute("data-stage")).toBe("1");
+  const frame = pinned.querySelector(".landing-stage-frame")!;
+  expect(frame.getAttribute("aria-hidden")).toBe("true");
+  expect(frame.querySelectorAll("[data-stage-view]")).toHaveLength(4);
+  expect(frame.querySelector(".landing-stage-counter")!.textContent).toBe("01 / 04");
+});
+
+it("walks a year of ENS in six dated steps of sample data", () => {
+  renderWithProviders(<Landing />);
+  const year = screen.getByRole("heading", { level: 2, name: "Un año de ENS" }).closest("section")!;
+  expect(within(year).getAllByRole("listitem")).toHaveLength(6);
+  expect(within(year).getByText("Datos de ejemplo")).toBeTruthy();
+});
+
+it("lets the frameworks strip be paused with a visible button", () => {
+  renderWithProviders(<Landing />);
+  const button = screen.getByRole("button", { name: "Pausar la animación" });
+  expect(button.getAttribute("aria-pressed")).toBe("false");
+  fireEvent.click(button);
+  expect(button.getAttribute("aria-pressed")).toBe("true");
+  expect(button.closest(".landing-marquee")!.getAttribute("data-paused")).toBe("true");
 });
 
 it("labels every product view as sample data", () => {
@@ -64,13 +90,12 @@ it("quotes the measure's official text exactly as the catalog holds it", () => {
   expect(block).toContain(fixture.measure.excerpt_es);
 });
 
-it("shows three product moments the console ships, each under a short headline", () => {
+it("stages the product moments the console ships inside the pinned steps", () => {
   renderWithProviders(<Landing />);
-  const moments = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
-  expect(moments.slice(2, 5)).toEqual(["El texto oficial de cada medida", "Los registros que pide el auditor", "Un dossier listo para firmar"]);
-  for (const title of moments.slice(2, 5)) expect(title!.split(" ").length).toBeLessThanOrEqual(6);
-  expect(screen.getByText(fixture.measure.excerpt_es).closest("[lang]")!.getAttribute("lang")).toBe("es");
-  expect(screen.getAllByRole("figure")).toHaveLength(4);
+  const stages = [...document.querySelectorAll(".landing-stage-frame [data-stage-view]")].map((el) => el.getAttribute("data-stage-view"));
+  expect(stages).toEqual(["connect", "assess", "routines", "dossier"]);
+  expect(screen.getAllByText(fixture.measure.excerpt_es)[0]!.closest("[lang]")!.getAttribute("lang")).toBe("es");
+  expect(screen.getAllByRole("figure").length).toBeGreaterThanOrEqual(4);
 });
 
 it("leads with the ENS, says what else it covers, and asks for access by email", () => {

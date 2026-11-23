@@ -42,9 +42,12 @@ read nothing, and nothing stops an agent from marking a measure as implemented.
   `assessment_proposal.rejected`.
 - [ ] **Decided once:** a decided proposal cannot be decided again (409
   `compliance.proposal_decided`).
-- [ ] **Reading proposals:** the measures list for keys shows the pending proposal. The member
-  route `GET /api/v1/orgs/{org_id}/frameworks/{framework_key}/proposals` lists pending
-  proposals for the app.
+- [ ] **Reading proposals:**
+  - the measures list for keys gives each measure's pending proposal id;
+  - the app's register (`GET /api/v1/orgs/{org_id}/frameworks/{framework_key}/register`) gives
+    each measure its pending proposal, with the key's name and prefix.
+- [ ] **Deciding:** `POST /api/v1/orgs/{org_id}/frameworks/{framework_key}/proposals/{id}/confirm`
+  or `/reject`.
 
 **MCP server** (`apps/mcp`, package `atesta_mcp`, SDK `mcp==2.3.0`)
 - [ ] **Read tools,** each annotated read-only:

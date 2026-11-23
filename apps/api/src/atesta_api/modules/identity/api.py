@@ -10,8 +10,10 @@ from atesta_api.modules.identity.activity import is_member, person
 from atesta_api.modules.identity.api_tokens import (
     ApiCaller,
     ApiTokenCaller,
+    annotate_scopes,
     key_router,
     require_scope,
+    token_labels,
 )
 from atesta_api.modules.identity.bff import SessionCrypto, SessionEndedError, session_ended_handler
 from atesta_api.modules.identity.bff import router as auth_router
@@ -58,6 +60,7 @@ def install_identity(app: FastAPI) -> None:
 
 __all__ = [
     "ApiCaller",
+    "annotate_scopes",
     "ApiTokenCaller",
     "ContextReason",
     "CurrentCaller",
@@ -78,5 +81,6 @@ __all__ = [
     "person",
     "router",
     "token_hash",
+    "token_labels",
     "wire_identity",
 ]

@@ -67,6 +67,7 @@ Start with the question you have.
 - [mcp-server](specs/mcp-server.md)
 - [organization-closure](specs/organization-closure.md)
 - [organization-shell-design](specs/organization-shell-design.md)
+- [public-api-docs](specs/public-api-docs.md)
 - [rbac](specs/rbac.md)
 - [readiness-cockpit](specs/readiness-cockpit.md)
 - [recorded-routines](specs/recorded-routines.md)
