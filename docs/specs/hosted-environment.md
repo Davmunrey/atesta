@@ -51,16 +51,38 @@ happen now, at no cost. Applying it is the owner's decision.
 - [ ] **Cost estimate:** a monthly estimate for dev and prod in the runbook, from the AWS Pricing
   Calculator for eu-south-2, checked against the budget alerts (150, 250 and 400 EUR).
 
-## To verify before building (candidates, not facts)
+## Verified on 2026-11-23
 
-Each is checked against official AWS documentation, and the source URL is recorded in the module or
-runbook:
+**Available in eu-south-2.** Source: the AWS public regional services table,
+\`https://api.regional-table.region-services.aws.a2z.com/index.json\`, which lists the following
+in eu-south-2:
+- Amazon ECS, Amazon RDS for PostgreSQL (and Aurora PostgreSQL), KMS, S3 and CloudFront;
+- Secrets Manager, CloudWatch and CloudWatch Logs, Elastic Load Balancing, SES and ECR;
+- Cognito, WAF, ACM, VPC, NAT Gateway, PrivateLink and AWS Backup.
 
-- every service used is available in eu-south-2: ECS Fargate, RDS for PostgreSQL 16, Secrets
-  Manager, CloudWatch Logs, Application Load Balancer, KMS, S3, and the VPC endpoints needed;
-- CloudFront, which is global, and where it processes data with respect to ADR-007 amendment 1;
-- which of these services are within AWS's ENS High certification scope (ADR-007);
-- the NAT gateway versus VPC endpoints cost for this traffic.
+**AWS Fargate.** The ECS guide's Fargate Regions page lists Europe (Spain) eu-south-2 for Linux and
+Windows containers:
+\`https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate-Regions.html\`.
+
+**ENS High scope.** Source: \`https://aws.amazon.com/compliance/services-in-scope/ENS-High/\`,
+last updated 6 November 2025, read in the services table only.
+- **Marked in scope:** Amazon ECS, ECR, RDS, KMS, S3, Secrets Manager, CloudWatch, CloudWatch Logs,
+  Elastic Load Balancing, SES, Cognito, WAF, ACM and VPC.
+- **CloudFront:** in scope with one exclusion, "content delivery through Amazon CloudFront Embedded
+  Point of Presence". Atesta does not use that feature.
+
+## Still open
+
+- **Fargate and ENS High:** Fargate is not named separately in the ENS High table, though ECS is.
+  The owner should confirm in the ENS High certificate (AWS Artifact, which needs an account)
+  whether ECS on Fargate is covered. If it is not, the containers run on ECS with EC2 capacity
+  instead.
+- **CloudFront and ADR-007 amendment 1:** CloudFront serves from global edge locations. It carries
+  the static web app and proxies API traffic. Whether that counts as processing customer data
+  outside the EU needs a decision. A web-only distribution with the API served directly from
+  eu-south-2 avoids the question.
+- **Cost:** compare NAT Gateway with VPC endpoints for this traffic using the AWS Pricing
+  Calculator in eu-south-2, at build time.
 
 ## Out of scope
 
