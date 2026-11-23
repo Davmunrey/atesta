@@ -869,7 +869,50 @@
     "expiredOn": "Expired on {date}",
     "revokedOn": "Revoked on {date}",
     "revoke": "Revoke",
-    "revokeNamed": "Revoke the token {name}"
+    "revokeNamed": "Revoke the token {name}",
+    "templates": {
+      "title": "Automatic evidence templates",
+      "help": "Choose what to record and where it runs, then copy the script to that machine or your repository. Each run records evidence; a repeat on the same day or for the same run is not duplicated.",
+      "useCase": "What to record",
+      "format": "Where it runs",
+      "script": "Script",
+      "copy": "Copy the script",
+      "copied": "Script copied",
+      "formats": {
+        "powershell": "Windows: scheduled task (PowerShell)",
+        "bash": "Linux or macOS: cron (bash)",
+        "github": "GitHub Actions: workflow step"
+      },
+      "secret": "Keep the token in the ATESTA_TOKEN environment variable or secret, never in this file.",
+      "cases": {
+        "backup": {
+          "label": "Verified backup",
+          "title": "Verified backup",
+          "statement": "The scheduled backup and its restore test finished without errors."
+        },
+        "deployment": {
+          "label": "Approved deployment",
+          "title": "Approved deployment",
+          "statement": "The deployment was approved and run under the change procedure."
+        },
+        "vulnerability_scan": {
+          "label": "Vulnerability scan",
+          "title": "Vulnerability scan",
+          "statement": "The scheduled vulnerability scan finished; the findings are in the linked report."
+        },
+        "log_review": {
+          "label": "Activity log review",
+          "title": "Activity log review",
+          "statement": "The scheduled review of the activity logs was completed."
+        }
+      },
+      "when": {
+        "backup": "Run it only when the backup and its restore test succeed.",
+        "deployment": "Run it at the end of the job that deploys.",
+        "vulnerability_scan": "Run it when the scan finishes.",
+        "log_review": "Run it when the review finishes."
+      }
+    }
   },
   "dossier": {
     "title": "Auditor dossier",

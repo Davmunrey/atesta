@@ -869,7 +869,50 @@
     "expiredOn": "Caducó el {date}",
     "revokedOn": "Revocado el {date}",
     "revoke": "Revocar",
-    "revokeNamed": "Revocar el token {name}"
+    "revokeNamed": "Revocar el token {name}",
+    "templates": {
+      "title": "Plantillas de evidencias automáticas",
+      "help": "Elige qué registrar y dónde se ejecuta, y copia el script en esa máquina o en tu repositorio. Cada ejecución deja una evidencia; si se repite el mismo día o el mismo flujo, no se duplica.",
+      "useCase": "Qué registrar",
+      "format": "Dónde se ejecuta",
+      "script": "Script",
+      "copy": "Copiar el script",
+      "copied": "Script copiado",
+      "formats": {
+        "powershell": "Windows: tarea programada (PowerShell)",
+        "bash": "Linux o macOS: cron (bash)",
+        "github": "GitHub Actions: paso de un flujo"
+      },
+      "secret": "Guarda el token en la variable de entorno o secreto ATESTA_TOKEN, nunca en este fichero.",
+      "cases": {
+        "backup": {
+          "label": "Copia de seguridad verificada",
+          "title": "Copia de seguridad verificada",
+          "statement": "La copia de seguridad programada y su prueba de restauración terminaron sin errores."
+        },
+        "deployment": {
+          "label": "Despliegue aprobado",
+          "title": "Despliegue aprobado",
+          "statement": "El despliegue se aprobó y se ejecutó siguiendo el procedimiento de cambios."
+        },
+        "vulnerability_scan": {
+          "label": "Análisis de vulnerabilidades",
+          "title": "Análisis de vulnerabilidades",
+          "statement": "El análisis de vulnerabilidades programado terminó; los hallazgos constan en el informe enlazado."
+        },
+        "log_review": {
+          "label": "Revisión de registros de actividad",
+          "title": "Revisión de registros de actividad",
+          "statement": "La revisión programada de los registros de actividad se completó."
+        }
+      },
+      "when": {
+        "backup": "Ejecútalo solo cuando la copia y su prueba de restauración terminen bien.",
+        "deployment": "Ejecútalo al final del trabajo que despliega.",
+        "vulnerability_scan": "Ejecútalo cuando termine el análisis.",
+        "log_review": "Ejecútalo cuando termine la revisión."
+      }
+    }
   },
   "dossier": {
     "title": "Dossier para el auditor",

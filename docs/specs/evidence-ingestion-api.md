@@ -41,6 +41,20 @@ the tool record it directly, with its own timestamp and reference.
 - [ ] **Web:** an "Integraciones" page for admins: create (the token shown once, with a copy button
   and a curl example), list and revoke. Strings in ES and EN.
 
+**Templates (#187)**
+- [ ] **Use cases:** for admins, in Integraciones, each with its common control:
+  - verified backup (`ctl.continuity_restore`);
+  - approved deployment (`ctl.change_vulnerability_review`);
+  - vulnerability scan (`ctl.change_vulnerability_review`);
+  - log review (`ctl.activity_logging_review`).
+- [ ] **Formats:** PowerShell (Windows scheduled task), bash (cron) and GitHub Actions.
+- [ ] **Every template:**
+  - reads the token from an environment variable or secret, never from the script;
+  - sends an `external_id` that makes retries safe;
+  - uses the Atesta address of the page that shows it;
+  - writes the statement in the reader's language.
+- [ ] **Tests:** the templates are checked by unit tests, by `bash -n` and a YAML parser, and by running the bash template against a local API.
+
 ## Out of scope
 
 - Files: evidence storage needs AWS.
