@@ -79,7 +79,7 @@ const inc = demo.incident;
 const incident = await call(api, "POST", `${o}/incidents`, { title: inc.title, aware_at: new Date(Date.now() - inc.hours_ago * 3_600_000).toISOString(), significant: false, personal_data: true });
 await call(api, "POST", `${o}/incidents/${incident.id}/updates`, { kind: "note", note: inc.note });
 
-const apiToken = await call(api, "POST", `${o}/api-tokens`, { name: "Copias nocturnas", expires_in_days: 90 });
+const apiToken = await call(api, "POST", `${o}/api-tokens`, demo.api_token); // a unit test checks it against TokenIn
 const ingest = await api.fetch(`${base}/api/v1/ingest/evidence`, { method: "POST", headers: { Authorization: `Bearer ${apiToken.token}` }, data: { ...demo.evidence, external_id: `demo-${today}` } });
 if (![200, 201, 422].includes(ingest.status())) throw new Error(`ingest -> ${ingest.status()}`);
 

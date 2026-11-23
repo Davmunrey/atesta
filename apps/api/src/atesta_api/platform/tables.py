@@ -33,6 +33,7 @@ TENANT = frozenset(
         "incident_updates",
         "api_tokens",
         "api_ingestions",
+        "api_token_usage",
         "subscriptions",  # billing: read-only for atesta_app, set by the operator
     }
 )
@@ -58,6 +59,7 @@ APPEND_ONLY = frozenset(
         "incidents",
         "incident_updates",
         "api_ingestions",
+        "api_token_usage",
     }
 )
 GLOBAL_IDENTITY = frozenset({"users"})

@@ -38,7 +38,7 @@ def control(superuser: Engine) -> Iterator[str]:
 def _token(client: TestClient, org: str, sub: str, days: int = 90) -> dict:  # type: ignore[type-arg]  # JSON body
     response = client.post(
         f"/api/v1/orgs/{org}/api-tokens",
-        json={"name": "GitHub Actions", "expires_in_days": days},
+        json={"name": "GitHub Actions", "expires_in_days": days, "scopes": ["evidence:write"]},
         headers=auth(sub),
     )
     assert response.status_code == 201, response.text
@@ -156,7 +156,7 @@ def test_only_admins_manage_tokens(client: TestClient, superuser: Engine) -> Non
     org, subs = org_with(client, superuser, ana="member")
     auditor = _add(superuser, client, org, "auditor", _future())
     url = f"/api/v1/orgs/{org}/api-tokens"
-    body = {"name": "CI", "expires_in_days": 30}
+    body = {"name": "CI", "expires_in_days": 30, "scopes": ["evidence:write"]}
     for who in (subs["ana"], auditor):
         assert client.post(url, json=body, headers=auth(who)).status_code == 403
         assert client.get(url, headers=auth(who)).status_code == 403
@@ -255,7 +255,9 @@ def test_a_token_name_has_one_to_one_hundred_characters(
     url = f"/api/v1/orgs/{org}/api-tokens"
     for name, status in (("n" * 100, 201), ("n" * 101, 422), ("", 422)):
         response = client.post(
-            url, json={"name": name, "expires_in_days": 30}, headers=auth(subs["owner"])
+            url,
+            json={"name": name, "expires_in_days": 30, "scopes": ["evidence:write"]},
+            headers=auth(subs["owner"]),
         )
         assert response.status_code == status, name
 

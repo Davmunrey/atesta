@@ -43,5 +43,10 @@
     "incident_clock_open": "{clock} ({framework}): not recorded.",
     "incident_on_time": "on time",
     "incident_late": "late"
+  },
+  "api_token": {
+    "invalid": "The API key is not valid, has been revoked or has expired.",
+    "scope": "This API key does not have the {scope} permission. Create a key with that permission in Integrations.",
+    "rate_limited": "This API key has gone over its limit of requests per minute. Try again in {seconds} s."
   }
 }

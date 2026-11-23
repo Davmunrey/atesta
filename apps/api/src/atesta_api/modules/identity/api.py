@@ -7,7 +7,12 @@ import httpx
 from fastapi import FastAPI
 
 from atesta_api.modules.identity.activity import is_member, person
-from atesta_api.modules.identity.api_tokens import ApiCaller, ApiTokenCaller
+from atesta_api.modules.identity.api_tokens import (
+    ApiCaller,
+    ApiTokenCaller,
+    key_router,
+    require_scope,
+)
 from atesta_api.modules.identity.bff import SessionCrypto, SessionEndedError, session_ended_handler
 from atesta_api.modules.identity.bff import router as auth_router
 from atesta_api.modules.identity.cognito import (
@@ -46,6 +51,7 @@ def wire_identity(app: FastAPI, client: httpx.Client) -> None:
 def install_identity(app: FastAPI) -> None:
     """Routers and the handler that clears cookies when a session ends."""
     app.include_router(router)
+    app.include_router(key_router)
     app.include_router(auth_router)
     app.add_exception_handler(SessionEndedError, session_ended_handler)
 
@@ -65,6 +71,7 @@ __all__ = [
     "enter_user_context",
     "require_member",
     "require_role",
+    "require_scope",
     "install_identity",
     "is_member",
     "normalize_email",

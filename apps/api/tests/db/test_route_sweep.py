@@ -19,8 +19,13 @@ from .conftest import auth
 from .test_members import org_with
 from .test_rbac import _add
 
+# Routes that authenticate with an API key (api-keys-v2 spec). Adding one is a reviewed change.
+TOKEN_ROUTES = {
+    ("GET", "/api/v1/key"),
+    ("POST", "/api/v1/ingest/evidence"),
+}
 # Reached without a session: sign-in, the health check, and the routes that authenticate with
-# their own secret (training link, API token). Adding one is a reviewed change to this list.
+# their own secret (training link, API key). Adding one is a reviewed change to this list.
 PUBLIC = {
     ("GET", "/health"),
     ("GET", "/auth/login"),
@@ -28,7 +33,7 @@ PUBLIC = {
     ("GET", "/auth/logout"),
     ("POST", "/api/v1/training/link"),
     ("POST", "/api/v1/training/acknowledge"),
-    ("POST", "/api/v1/ingest/evidence"),
+    *TOKEN_ROUTES,
 }
 WRITES = {"POST", "PUT", "PATCH", "DELETE"}
 
@@ -84,6 +89,22 @@ def test_every_other_route_refuses_a_caller_without_credentials(
 ) -> None:
     status, code = _call(client, method, _url(path, str(uuid.uuid4())), {})
     assert (status, code) == (401, "auth.invalid_token")
+
+
+@pytest.mark.parametrize(("method", "path"), sorted(TOKEN_ROUTES))
+def test_every_token_route_refuses_a_caller_without_a_key(
+    client: TestClient, superuser: Engine, method: str, path: str
+) -> None:
+    """A person's session is not a key, and no key is no access (api-keys-v2 spec)."""
+    _, subs = org_with(client, superuser)
+    for headers in ({}, auth(subs["owner"]), {"Authorization": "Bearer atesta_" + "x" * 43}):
+        status, code = _call(client, method, _url(path, str(uuid.uuid4())), headers)
+        assert (status, code) == (401, "identity.api_token_invalid"), headers
+
+
+def test_token_routes_name_no_organization() -> None:
+    """A key reaches only its own organization: no token route can even name another one."""
+    assert all("{org_id}" not in path for _, path in TOKEN_ROUTES)
 
 
 def test_every_org_route_answers_404_to_a_member_of_another_organization(

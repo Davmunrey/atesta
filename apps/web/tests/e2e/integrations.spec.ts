@@ -14,6 +14,9 @@ test("an API token authenticates ingestion until it is revoked", async ({ page, 
   await page.getByRole("link", { name: "Integraciones" }).first().click();
   await page.getByLabel("Nombre").fill("GitHub Actions");
   await page.getByRole("button", { name: "Crear el token" }).click();
+  await expect(page.getByText("Elige al menos un permiso.")).toBeVisible(); // no scope by default
+  await page.getByRole("checkbox", { name: "Registrar evidencias" }).check();
+  await page.getByRole("button", { name: "Crear el token" }).click();
   const token = await page.getByLabel("Token de API").inputValue();
   expect(token).toMatch(/^atesta_[\w-]{40,}$/);
   for (const width of [375, 1280]) {

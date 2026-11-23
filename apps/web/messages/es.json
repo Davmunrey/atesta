@@ -201,7 +201,9 @@
       "period_invalid": "El periodo debe ser de 30 o 90 días.",
       "access_expired": "Tu acceso de auditor a esta organización ha terminado. Pide a un administrador que lo amplíe.",
       "closure_name_mismatch": "El nombre no coincide. Escríbelo exactamente como aparece.",
-      "api_token_invalid": "Token de API no válido, revocado o caducado."
+      "api_token_invalid": "Token de API no válido, revocado o caducado.",
+      "api_token_scope": "Este token no tiene el permiso que hace falta.",
+      "api_token_rate_limited": "Este token ha superado su límite de peticiones por minuto. Espera un momento."
     },
     "request": {
       "error": "No se ha podido completar la solicitud. Vuelve a intentarlo.",
@@ -1032,7 +1034,7 @@
   },
   "integrations": {
     "title": "Integraciones",
-    "intro": "Tokens para que vuestras herramientas (CI, copias, escáneres) registren evidencias en Atesta. Solo pueden escribir evidencias; no leen nada.",
+    "intro": "Tokens para que vuestras herramientas (CI, copias, escáneres) y vuestros agentes de IA trabajen con Atesta. Cada token tiene solo los permisos que elijáis y un límite de peticiones por minuto.",
     "loading": "Cargando…",
     "list": "Tokens",
     "empty": "Aún no hay tokens.",
@@ -1059,6 +1061,35 @@
     "revokedOn": "Revocado el {date}",
     "revoke": "Revocar",
     "revokeNamed": "Revocar el token {name}",
+    "rateLimit": "Límite de peticiones",
+    "perMinute": "{count, plural, one {# por minuto} other {# por minuto}}",
+    "scopes": "Permisos",
+    "scopesHelp": "Marca solo lo que la herramienta necesita. Leer no permite escribir. Ningún permiso lanza escaneos ni toca vuestros sistemas.",
+    "scopeGroup": {
+      "read": "Leer",
+      "write": "Escribir"
+    },
+    "scope": {
+      "compliance:read": "Leer el estado del cumplimiento: marcos, medidas y su texto oficial, brechas y vencimientos",
+      "incidents:read": "Leer los incidentes y sus plazos de notificación",
+      "evidence:write": "Registrar evidencias",
+      "assessment:propose": "Proponer autoevaluaciones (una persona las confirma o las rechaza)",
+      "routines:write": "Registrar rutinas: incidentes, formaciones y revisiones de acceso"
+    },
+    "scopeShort": {
+      "compliance:read": "Leer el cumplimiento",
+      "incidents:read": "Leer los incidentes",
+      "evidence:write": "Registrar evidencias",
+      "assessment:propose": "Proponer autoevaluaciones",
+      "routines:write": "Registrar rutinas"
+    },
+    "readOnlyPreset": "Marcar solo lectura",
+    "readOnly": "Solo lectura",
+    "scopesRequired": "Elige al menos un permiso.",
+    "usageOf": "Ver el uso de {name}",
+    "usageCount": "{count, plural, =0 {Ninguna petición en las últimas 24 horas} one {# petición en las últimas 24 horas} other {# peticiones en las últimas 24 horas}}",
+    "usageEmpty": "Aún no se ha usado.",
+    "noScope": "Ninguno",
     "templates": {
       "title": "Plantillas de evidencias automáticas",
       "help": "Elige qué registrar y dónde se ejecuta, y copia el script en esa máquina o en tu repositorio. Cada ejecución deja una evidencia; si se repite el mismo día o el mismo flujo, no se duplica.",
