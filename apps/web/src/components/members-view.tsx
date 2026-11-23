@@ -43,12 +43,12 @@ export function MembersView({ org }: { org: Membership }) {
         <tbody>
           {list.data.map((m) => (
             <tr key={m.user_id} className="border-t border-border">
-              <td className="py-2 pr-4">
+              <td data-label={t("members.member")} className="py-2 pr-4">
                 <span>{m.email}</span>
                 {m.display_name ? <span className="ml-2 text-muted">{m.display_name}</span> : null}
                 {m.user_id === me.id ? <span className="ml-2 text-sm text-muted">{t("members.you")}</span> : null}
               </td>
-              <td className="py-2 pr-4">
+              <td data-label={t("members.role")} className="py-2 pr-4">
                 {canChangeRoles(org.role) ? (
                   <select
                     aria-label={t("members.roleOf", { email: m.email })}
@@ -89,7 +89,7 @@ export function MembersView({ org }: { org: Membership }) {
                   </span>
                 ) : null}
               </td>
-              <td className="py-2">
+              <td data-label={t("members.actions")} className="py-2">
                 {!canRemove(org.role, m.role) ? null : confirming === m.user_id ? (
                   <span className="flex flex-wrap items-center gap-2">
                     <span>{t("members.confirmRemove", { email: m.email })}</span>

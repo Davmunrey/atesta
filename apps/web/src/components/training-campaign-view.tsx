@@ -33,8 +33,8 @@ export function TrainingCampaignView({ org, campaignId }: { org: Membership; cam
         : <div className="table-region" role="region" aria-label={t("people")} tabIndex={0}><table className="w-full text-left">
           <thead><tr><th scope="col">{t("name")}</th><th scope="col">{t("email")}</th><th scope="col">{t("when")}</th></tr></thead>
           <tbody>{campaign.acknowledgements.map((a) => <tr key={a.email}>
-            <td>{a.full_name}</td><td className="break-all">{a.email}</td>
-            <td className="tabular-nums">{format.dateTime(new Date(a.acknowledged_at), { dateStyle: "medium", timeStyle: "short" })}</td>
+            <td data-label={t("name")}>{a.full_name}</td><td data-label={t("email")} className="break-all">{a.email}</td>
+            <td data-label={t("when")} className="tabular-nums">{format.dateTime(new Date(a.acknowledged_at), { dateStyle: "medium", timeStyle: "short" })}</td>
           </tr>)}</tbody>
         </table></div>}
     </Panel>

@@ -31,9 +31,9 @@ export function IncidentsView({ org }: { org: Membership }) {
         : <div className="table-region" role="region" aria-label={t("list")} tabIndex={0}><table className="w-full text-left">
           <thead><tr><th scope="col">{t("incident")}</th><th scope="col">{t("aware")}</th><th scope="col">{t("state")}</th></tr></thead>
           <tbody>{list.data.map((i) => <tr key={i.id}>
-            <td><Link href={orgIncident(org.organization_id, i.id)} className="text-link underline">{i.title}</Link></td>
-            <td className="tabular-nums">{time(i.aware_at)}</td>
-            <td>{i.closed_at ? <span className="badge" data-severity="done"><Icon name="done" />{t("closed")}</span>
+            <td data-label={t("incident")}><Link href={orgIncident(org.organization_id, i.id)} className="text-link underline">{i.title}</Link></td>
+            <td data-label={t("aware")} className="tabular-nums">{time(i.aware_at)}</td>
+            <td data-label={t("state")}>{i.closed_at ? <span className="badge" data-severity="done"><Icon name="done" />{t("closed")}</span>
               : i.overdue > 0 ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("overdue", { count: i.overdue })}</span>
               : i.next_due_at ? <span className="badge" data-severity="pending"><Icon name="pending" />{t("next", { time: time(i.next_due_at) })}</span>
               : <span className="text-muted">{t("noClocks")}</span>}</td>

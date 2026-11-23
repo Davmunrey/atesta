@@ -520,7 +520,8 @@
     "overdue": "Vencidas",
     "openByOwner": "Medidas abiertas por responsable",
     "noOwners": "Todavía no hay medidas asignadas. Asigna un responsable desde cada medida.",
-    "formerMember": "Antiguo miembro"
+    "formerMember": "Antiguo miembro",
+    "day": "Día"
   },
   "activity": {
     "title": "Actividad",
@@ -554,8 +555,38 @@
       "evidence_statement_recorded": "Registró una evidencia",
       "connection_created": "Creó una conexión",
       "connection_disconnected": "Desconectó una conexión",
-      "scan_requested": "Solicitó un análisis"
-    }
+      "scan_requested": "Solicitó un análisis",
+      "access_review_created": "Abrió una revisión de accesos",
+      "access_review_decided": "Decidió sobre una cuenta en una revisión de accesos",
+      "access_review_closed": "Cerró una revisión de accesos",
+      "api_token_created": "Creó un token de integración",
+      "api_token_revoked": "Revocó un token de integración",
+      "connection_verified": "Conexión verificada como de solo lectura",
+      "connection_incomplete": "Conexión con permisos incompletos",
+      "connection_over_privileged": "Conexión con más permisos de los necesarios",
+      "connection_revoked": "Conexión revocada en el proveedor",
+      "evidence_ingested": "Una herramienta registró una evidencia",
+      "framework_dossier_viewed": "Abrió el dossier para el auditor",
+      "incident_created": "Registró un incidente",
+      "incident_note": "Añadió una anotación a un incidente",
+      "incident_clock_met": "Marcó como enviado un aviso de incidente",
+      "incident_closed": "Cerró un incidente",
+      "organization_exported": "Exportó los datos de la organización",
+      "organization_report_viewed": "Abrió el informe mensual",
+      "organization_closure_requested": "Pidió cerrar la organización",
+      "organization_closure_cancelled": "Canceló el cierre de la organización",
+      "policy_created": "Añadió una política",
+      "policy_approved": "Registró la aprobación de una política",
+      "scan_succeeded": "Análisis completado",
+      "scan_partial": "Análisis completado en parte",
+      "scan_failed": "Análisis fallido",
+      "scan_blocked": "Análisis bloqueado",
+      "training_created": "Abrió una formación",
+      "training_acknowledged": "Una persona confirmó una formación",
+      "training_closed": "Cerró una formación"
+    },
+    "day": "Día",
+    "unknown": "Otra acción"
   },
   "myWork": {
     "title": "Mi trabajo",
@@ -685,7 +716,8 @@
     "training": "Formación",
     "incidents": "Incidentes",
     "integrations": "Integraciones",
-    "report": "Informe mensual"
+    "report": "Informe mensual",
+    "searchShort": "Buscar"
   },
   "routines": {
     "access": {
@@ -810,7 +842,6 @@
       "running": "En curso",
       "late": "Vencido",
       "waiting": "Empieza con el aviso anterior",
-      "markSent": "Marcar «{clock}» como enviado",
       "sent": "Marcar como enviado",
       "updates": "Anotaciones",
       "noUpdates": "Sin anotaciones.",
@@ -826,7 +857,8 @@
       "flags": "Características",
       "noFlags": "Ni significativo ni con datos personales",
       "criteria": "Qué dice {framework}: {title}",
-      "criteriaSource": "Ver en la fuente oficial"
+      "criteriaSource": "Ver en la fuente oficial",
+      "sentWhich": ": «{clock}»"
     }
   },
   "trainingLink": {

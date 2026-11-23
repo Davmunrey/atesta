@@ -58,9 +58,9 @@ function Body({ report, orgName }: { report: Report; orgName: string }) {
         : <div className="table-region" role="region" aria-label={t("status")} tabIndex={0}><table className="w-full text-left">
           <thead><tr><th scope="col">{t("framework")}</th><th scope="col">{t("assessed")}</th><th scope="col">{t("implemented")}</th><th scope="col">{t("overdue")}</th><th scope="col">{t("review")}</th></tr></thead>
           <tbody>{report.frameworks.map((f) => <tr key={f.key}>
-            <td>{f.name}</td><td className="tabular-nums">{t("ofTotal", { done: f.assessed, total: f.total })}</td>
-            <td className="tabular-nums">{format.number(f.implemented)}</td><td className="tabular-nums">{format.number(f.overdue)}</td>
-            <td>{f.review_on ? format.dateTime(new Date(`${f.review_on}T00:00:00Z`), { dateStyle: "medium", timeZone: "UTC" }) : t("noReview")}</td>
+            <td data-label={t("framework")}>{f.name}</td><td data-label={t("assessed")} className="tabular-nums">{t("ofTotal", { done: f.assessed, total: f.total })}</td>
+            <td data-label={t("implemented")} className="tabular-nums">{format.number(f.implemented)}</td><td data-label={t("overdue")} className="tabular-nums">{format.number(f.overdue)}</td>
+            <td data-label={t("review")}>{f.review_on ? format.dateTime(new Date(`${f.review_on}T00:00:00Z`), { dateStyle: "medium", timeZone: "UTC" }) : t("noReview")}</td>
           </tr>)}</tbody>
         </table></div>}
     </section>

@@ -22,6 +22,8 @@ const PATHS: Record<string, ReactNode> = {
   missing: <><path d="M12 4 21 19.5H3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></>,
   pending: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>,
   done: <><circle cx="12" cy="12" r="8.5" /><path d="m8 12.5 2.75 2.75L16 9.5" /></>,
+  partial: <><circle cx="12" cy="12" r="8.5" /><path d="M12 3.5v17" /><path d="M12 7.5h3.5M12 12h4.5M12 16.5h3.5" /></>,
+  notApplicable: <><circle cx="12" cy="12" r="8.5" /><path d="m6 18 12-12" /></>,
 };
 
 export type IconName = keyof typeof PATHS;

@@ -85,15 +85,15 @@ export function Portfolio({ memberships }: { memberships: Membership[] }) {
         <th scope="col">{t("routines")}</th><th scope="col">{t("lastAssessed")}</th>
       </tr></thead>
       <tbody>{rows.map((x) => <tr key={x.org.organization_id}>
-        <td><Link href={orgHome(x.org.organization_id)} className="text-link underline">{x.org.organization_name}</Link>
+        <td data-label={t("organization")}><Link href={orgHome(x.org.organization_id)} className="text-link underline">{x.org.organization_name}</Link>
           <span className="block text-sm text-muted">{r(x.org.role)} · {t("frameworks", { count: x.started })}</span></td>
-        {x.failed ? <td colSpan={4} className="text-muted">{t("failed")}</td>
-          : !x.ready ? <td colSpan={4} className="text-muted">{t("loading")}</td>
+        {x.failed ? <td colSpan={4} data-label={t("assessed")} className="text-muted">{t("failed")}</td>
+          : !x.ready ? <td colSpan={4} data-label={t("assessed")} className="text-muted">{t("loading")}</td>
           : <>
-            <td className="tabular-nums">{x.started === 0 ? t("notStartedCell") : t("ofTotal", { assessed: x.assessed, total: x.total })}</td>
-            <td className="tabular-nums">{x.overdue > 0 ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{format.number(x.overdue)}</span> : format.number(0)}</td>
-            <td className="tabular-nums">{x.pending === 0 ? t("noRoutines") : x.pendingOverdue > 0 ? t("pendingWithOverdue", { count: x.pending, overdue: x.pendingOverdue }) : t("pending", { count: x.pending })}</td>
-            <td className="tabular-nums">{x.last ? format.dateTime(new Date(x.last), { dateStyle: "medium" }) : t("never")}</td>
+            <td data-label={t("assessed")} className="tabular-nums">{x.started === 0 ? t("notStartedCell") : t("ofTotal", { assessed: x.assessed, total: x.total })}</td>
+            <td data-label={t("overdue")} className="tabular-nums">{x.overdue > 0 ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{format.number(x.overdue)}</span> : format.number(0)}</td>
+            <td data-label={t("routines")} className="tabular-nums">{x.pending === 0 ? t("noRoutines") : x.pendingOverdue > 0 ? t("pendingWithOverdue", { count: x.pending, overdue: x.pendingOverdue }) : t("pending", { count: x.pending })}</td>
+            <td data-label={t("lastAssessed")} className="tabular-nums">{x.last ? format.dateTime(new Date(x.last), { dateStyle: "medium" }) : t("never")}</td>
           </>}
       </tr>)}</tbody>
     </table></div>

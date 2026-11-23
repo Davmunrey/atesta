@@ -58,7 +58,7 @@
   .evidence-count { margin-block: 0.75rem 0.5rem; font-size: 2rem; font-variant-numeric: tabular-nums; line-height: 1.2; }
   .evidence-count span { font-size: 0.875rem; }
   .dashboard-empty { padding-block: 2rem; }
-  .dashboard-empty h3 { font-weight: 500; margin-bottom: 0.5rem; }
+  .dashboard-empty :is(h2, h3) { font-weight: 500; margin-bottom: 0.5rem; }
   .dashboard-empty p { font-size: 0.875rem; color: var(--color-muted); max-width: 60ch; }
   .dashboard-empty button { margin-top: 1rem; }
   .dashboard-note { margin-top: 2rem; font-size: 0.8125rem; color: var(--color-muted); max-width: 72ch; }

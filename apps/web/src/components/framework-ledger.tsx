@@ -15,7 +15,8 @@ const states = ["passed", "failed", "manual", "not_applicable"] as const;
 /** A handful of frameworks is scanned faster than searched (workspace-ux spec). */
 const SEARCH_FROM = 8;
 
-export function FrameworkLedger({ frameworks, orgId, readiness = [] }: { frameworks: Framework[]; orgId: string; readiness?: Readiness[] }) {
+/** `headless` on the frameworks page, whose page header already names the list (ui-polish spec). */
+export function FrameworkLedger({ frameworks, orgId, readiness = [], headless = false }: { frameworks: Framework[]; orgId: string; readiness?: Readiness[]; headless?: boolean }) {
   const t = useTranslations("dashboard");
   const format = useFormatter();
   const locale = useLocale();
@@ -34,10 +35,10 @@ export function FrameworkLedger({ frameworks, orgId, readiness = [] }: { framewo
   const visible = matching.filter((f) => f.requirements > 0);
   const templates = matching.filter((f) => f.requirements === 0);
   return (
-    <Panel title={t("frameworks")} description={t("frameworksHelp")} className="framework-section"
+    <Panel title={headless ? undefined : t("frameworks")} description={t("frameworksHelp")} className="framework-section"
       actions={<span className="dashboard-count" aria-label={t("frameworkCount", { count: frameworks.length })}>{format.number(frameworks.length)}</span>}>
       {frameworks.length === 0 ? <div className="dashboard-empty">
-        <h3>{t("emptyFrameworks")}</h3><p>{t("emptyFrameworksHelp")}</p>
+        {headless ? <h2>{t("emptyFrameworks")}</h2> : <h3>{t("emptyFrameworks")}</h3>}<p>{t("emptyFrameworksHelp")}</p>
       </div> : <>
         {frameworks.length > SEARCH_FROM ? <>
           <label htmlFor={searchId} className="dashboard-search-label">{t("search")}</label>

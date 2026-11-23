@@ -9,6 +9,7 @@ import type { Membership } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
 import { ColumnChart } from "./charts";
 import { ErrorMessage } from "./error-message";
+import { activityLabel, activityTarget } from "@/lib/activity";
 
 const PERIODS = [30, 90] as const;
 
@@ -19,8 +20,6 @@ export function ActivityView({ org }: { org: Membership }) {
   const [days, setDays] = useState<30 | 90>(30);
   const query = useActivity(org.organization_id, days);
   if (!canReviewControls(org.role)) return <p className="text-muted">{t("adminsOnly")}</p>;
-  // Message keys cannot hold dots, so "requirement.assessed" is stored as "requirement_assessed".
-  const action = (name: string) => { const key = `actions.${name.replaceAll(".", "_")}`; return t.has(key) ? t(key) : name; };
   return <div className="activity-page panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")}
       actions={<div role="group" aria-label={t("period")} className="requirement-filters">
@@ -29,15 +28,15 @@ export function ActivityView({ org }: { org: Membership }) {
     {query.isPending ? <div className="dashboard-loading" role="status" aria-busy="true"><p>{t("loading")}</p></div>
       : query.isError ? <ErrorMessage error={query.error} />
       : <div className={`panel-grid${query.isFetching ? " is-refetching" : ""}`}>
-        <Panel><ColumnChart title={t("perDay")} valueLabel={t("events")} tableLabel={t("showTable")}
+        <Panel><ColumnChart title={t("perDay")} periodLabel={t("day")} valueLabel={t("events")} tableLabel={t("showTable")}
           points={query.data.daily.map((d) => ({ label: format.dateTime(new Date(`${d.day}T00:00:00`), { day: "numeric", month: "short" }), value: d.count }))} /></Panel>
         <Panel title={t("latest")}>
         {query.data.events.length === 0 ? <p className="text-muted">{t("empty")}</p> : <div className="table-region" role="region" aria-label={t("latest")} tabIndex={0}><table className="activity-table">
           <thead><tr><th scope="col">{t("when")}</th><th scope="col">{t("who")}</th><th scope="col">{t("what")}</th></tr></thead>
           <tbody>{query.data.events.map((e, i) => <tr key={`${e.occurred_at}-${i}`}>
-            <td><time dateTime={e.occurred_at}>{format.dateTime(new Date(e.occurred_at), { dateStyle: "medium", timeStyle: "short" })}</time></td>
-            <td>{e.actor_email ?? t("system")}</td>
-            <td>{action(e.action)}<span className="activity-target">{e.target_id}</span></td>
+            <td data-label={t("when")}><time dateTime={e.occurred_at}>{format.dateTime(new Date(e.occurred_at), { dateStyle: "medium", timeStyle: "short" })}</time></td>
+            <td data-label={t("who")}>{e.actor_email ?? t("system")}</td>
+            <td data-label={t("what")}>{activityLabel(t, e.action)}{activityTarget(e.target_id) ? <span className="activity-target">{activityTarget(e.target_id)}</span> : null}</td>
           </tr>)}</tbody>
         </table></div>}
         </Panel>

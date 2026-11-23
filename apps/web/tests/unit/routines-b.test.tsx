@@ -88,7 +88,10 @@ it("shows each reporting deadline from pack content and marks one as sent", asyn
   expect(screen.getByText("Empieza con el aviso anterior")).toBeTruthy();
   expect(screen.getByText("Aviso enviado: Notificación del incidente")).toBeTruthy();
   expect(screen.getAllByRole("button", { name: /^Marcar/ })).toHaveLength(1);
-  fireEvent.click(screen.getByRole("button", { name: "Marcar «Alerta temprana» como enviado" }));
+  // WCAG 2.5.3 (ui-polish spec): the accessible name starts with the visible text.
+  const send = screen.getByRole("button", { name: "Marcar como enviado: «Alerta temprana»" });
+  expect(send.textContent!.startsWith("Marcar como enviado")).toBe(true);
+  fireEvent.click(send);
   expect(await posted(requests, "/updates")).toEqual({ kind: "clock", clock: "nis2:early_warning", note: "" });
 });
 

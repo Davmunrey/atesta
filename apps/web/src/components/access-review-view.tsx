@@ -36,8 +36,8 @@ export function AccessReviewView({ org, reviewId }: { org: Membership; reviewId:
       <div className="table-region" role="region" aria-label={t("accounts")} tabIndex={0}><table className="w-full text-left">
         <thead><tr><th scope="col">{t("account")}</th><th scope="col">{t("decision")}</th></tr></thead>
         <tbody>{review.entries.map((e) => <tr key={e.id}>
-          <td>{e.account}{e.detail ? <span className="block text-sm text-muted">{e.detail}</span> : null}</td>
-          <td>{canDecide
+          <td data-label={t("account")}>{e.account}{e.detail ? <span className="block text-sm text-muted">{e.detail}</span> : null}</td>
+          <td data-label={t("decision")}>{canDecide
             ? <div role="group" aria-label={t("decisionFor", { account: e.account })} className="decision-group">
               {(["keep", "revoke"] as const).map((d) => <button key={d} type="button" className="dashboard-button" aria-pressed={e.decision === d}
                 disabled={decide.isPending} onClick={() => decide.mutate({ entry_id: e.id, decision: d, note: "" })}>{t(d)}</button>)}

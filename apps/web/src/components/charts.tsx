@@ -8,12 +8,27 @@
  * and values use text tokens, never the series colour. Text goes in as React text (never HTML).
  */
 
-import { useId, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 
 export type Point = { label: string; value: number };
 
-const W = 640;
+const W = 640; // until the frame is measured (and in engines without ResizeObserver)
 const H = 220;
+const MIN_W = 280;
+
+/** The frame's width in CSS pixels, so one SVG unit is one pixel and 13px text stays 13px on a
+ *  phone instead of shrinking with the drawing (ui-polish spec, phones). */
+function useFrameWidth() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(W);
+  useEffect(() => {
+    if (!ref.current || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(([entry]) => { if (entry) setWidth(Math.max(MIN_W, Math.round(entry.contentRect.width))); });
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+  return [ref, width] as const;
+}
 const PAD = { top: 16, right: 56, bottom: 28, left: 40 };
 
 /** Clean, round upper bound and ticks (0 / step / 2*step …), at most five. Counts never get a
@@ -27,18 +42,19 @@ export function ticks(max: number, integer = false): number[] {
   return Array.from({ length: Math.round(top / step) + 1 }, (_, i) => Math.round(i * step * 1000) / 1000);
 }
 
-function Table({ caption, points, valueLabel, id }: { caption: string; points: Point[]; valueLabel: string; id: string }) {
+function Table({ caption, points, periodLabel, valueLabel, id }: { caption: string; points: Point[]; periodLabel: string; valueLabel: string; id: string }) {
   return <details className="chart-table"><summary>{caption}</summary>
-    <table id={id}><thead><tr><th scope="col">{valueLabel === "" ? "" : ""}</th><th scope="col">{valueLabel}</th></tr></thead>
+    <table id={id}><thead><tr><th scope="col">{periodLabel}</th><th scope="col">{valueLabel}</th></tr></thead>
       <tbody>{points.map((p) => <tr key={p.label}><th scope="row">{p.label}</th><td>{p.value}</td></tr>)}</tbody></table>
   </details>;
 }
 
 /** Trend over time: one line, area wash, crosshair readout, end label. */
-export function LineChart({ title, points, valueLabel, tableLabel, format = String, integer = false }: {
-  title: string; points: Point[]; valueLabel: string; tableLabel: string; format?: (v: number) => string; integer?: boolean;
+export function LineChart({ title, points, periodLabel, valueLabel, tableLabel, format = String, integer = false }: {
+  title: string; points: Point[]; periodLabel: string; valueLabel: string; tableLabel: string; format?: (v: number) => string; integer?: boolean;
 }) {
   const id = useId();
+  const [frame, W] = useFrameWidth();
   const [active, setActive] = useState<number | null>(null);
   const yTicks = ticks(Math.max(...points.map((p) => p.value)), integer);
   const yMax = yTicks.at(-1) ?? 1;
@@ -63,7 +79,7 @@ export function LineChart({ title, points, valueLabel, tableLabel, format = Stri
   const shown = active ?? null;
   return <figure className="chart">
     <figcaption className="chart-title">{title}</figcaption>
-    <div className="chart-frame">
+    <div className="chart-frame" ref={frame}>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${title}. ${points[0]?.label ?? ""} – ${points[last]?.label ?? ""}: ${format(points[last]?.value ?? 0)}`}
         tabIndex={0} onPointerMove={nearest} onPointerLeave={() => setActive(null)} onKeyDown={keys} onBlur={() => setActive(null)}
         aria-describedby={`${id}-table`}>
@@ -84,13 +100,14 @@ export function LineChart({ title, points, valueLabel, tableLabel, format = Stri
         <strong>{format(points[shown]!.value)}</strong><span>{points[shown]!.label}</span>
       </div> : null}
     </div>
-    <Table caption={tableLabel} points={points} valueLabel={valueLabel} id={`${id}-table`} />
+    <Table caption={tableLabel} points={points} periodLabel={periodLabel} valueLabel={valueLabel} id={`${id}-table`} />
   </figure>;
 }
 
 /** Counts per period: columns <= 24px, 4px rounded tops, 2px surface gap; each column is a hit target. */
-export function ColumnChart({ title, points, valueLabel, tableLabel }: { title: string; points: Point[]; valueLabel: string; tableLabel: string }) {
+export function ColumnChart({ title, points, periodLabel, valueLabel, tableLabel }: { title: string; points: Point[]; periodLabel: string; valueLabel: string; tableLabel: string }) {
   const id = useId();
+  const [frame, W] = useFrameWidth();
   const [active, setActive] = useState<number | null>(null);
   const yTicks = ticks(Math.max(...points.map((p) => p.value)), true);
   const yMax = yTicks.at(-1) ?? 1;
@@ -101,7 +118,7 @@ export function ColumnChart({ title, points, valueLabel, tableLabel }: { title: 
   const y = (v: number) => PAD.top + plotH - (v / yMax) * plotH;
   return <figure className="chart">
     <figcaption className="chart-title">{title}</figcaption>
-    <div className="chart-frame">
+    <div className="chart-frame" ref={frame}>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={title} aria-describedby={`${id}-table`} onPointerLeave={() => setActive(null)}>
         {yTicks.map((t) => <g key={t}><line className="chart-grid" x1={PAD.left} x2={W - 16} y1={y(t)} y2={y(t)} />
           <text className="chart-tick" x={PAD.left - 8} y={y(t)} textAnchor="end" dominantBaseline="middle">{t}</text></g>)}
@@ -124,7 +141,7 @@ export function ColumnChart({ title, points, valueLabel, tableLabel }: { title: 
         <strong>{points[active]!.value}</strong><span>{points[active]!.label}</span>
       </div> : null}
     </div>
-    <Table caption={tableLabel} points={points} valueLabel={valueLabel} id={`${id}-table`} />
+    <Table caption={tableLabel} points={points} periodLabel={periodLabel} valueLabel={valueLabel} id={`${id}-table`} />
   </figure>;
 }
 
