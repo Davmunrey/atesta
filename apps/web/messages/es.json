@@ -280,9 +280,11 @@
       "evidenceLoading": "Cargando las evidencias…",
       "evidenceNone": "Registra primero una evidencia de este control (en «Ver evidencias») para poder marcarlo como implantado.",
       "evidenceRequired": "Marca al menos una evidencia para registrarlo como implantado.",
-      "evidenceNewest": "{count, plural, one {Se muestra la evidencia más reciente.} other {Se muestran las # más recientes.}}",
       "cited": "Evidencias citadas",
-      "citesNone": "No cita ninguna evidencia."
+      "citesNone": "No cita ninguna evidencia.",
+      "evidencePage": "Evidencias {from}–{to} de {total}. {cited, plural, =0 {Ninguna citada.} one {# citada.} other {# citadas.}}",
+      "evidenceNewer": "Más recientes",
+      "evidenceOlder": "Anteriores"
     },
     "observationHelp": "Observación técnica a la fecha del análisis, agregada entre conexiones. Es distinta del resultado registrado del requisito.",
     "mappingUnreviewed": "La relación entre este requisito y el control aún no tiene revisión registrada.",
@@ -1093,7 +1095,9 @@
     "nextReview": "próxima revisión: {date}",
     "accessReviewClosed": "{total, plural, one {# cuenta revisada} other {# cuentas revisadas}} (mantener: {keep}; retirar: {revoke}); cerrada el {date}",
     "trainingClosed": "{count, plural, one {# confirmación} other {# confirmaciones}}; cerrada el {date}",
-    "incidentClosed": "constancia el {aware}; cerrado el {date}"
+    "incidentClosed": "constancia el {aware}; cerrado el {date}",
+    "reviewCites": "{count, plural, one {Cita una evidencia: {titles}.} other {Cita # evidencias: {titles}.}}",
+    "reviewCitesNone": "La revisión no cita evidencias."
   },
   "portfolio": {
     "title": "Tus organizaciones",
