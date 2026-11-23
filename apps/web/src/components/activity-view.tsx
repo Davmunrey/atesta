@@ -31,14 +31,14 @@ export function ActivityView({ org }: { org: Membership }) {
         <ColumnChart title={t("perDay")} valueLabel={t("events")} tableLabel={t("showTable")}
           points={query.data.daily.map((d) => ({ label: format.dateTime(new Date(`${d.day}T00:00:00`), { day: "numeric", month: "short" }), value: d.count }))} />
         <h2 className="activity-subtitle">{t("latest")}</h2>
-        {query.data.events.length === 0 ? <p className="text-muted">{t("empty")}</p> : <table className="activity-table">
+        {query.data.events.length === 0 ? <p className="text-muted">{t("empty")}</p> : <div className="table-region" role="region" aria-label={t("latest")} tabIndex={0}><table className="activity-table">
           <thead><tr><th scope="col">{t("when")}</th><th scope="col">{t("who")}</th><th scope="col">{t("what")}</th></tr></thead>
           <tbody>{query.data.events.map((e, i) => <tr key={`${e.occurred_at}-${i}`}>
             <td><time dateTime={e.occurred_at}>{format.dateTime(new Date(e.occurred_at), { dateStyle: "medium", timeStyle: "short" })}</time></td>
             <td>{e.actor_email ?? t("system")}</td>
             <td>{action(e.action)}<span className="activity-target">{e.target_id}</span></td>
           </tr>)}</tbody>
-        </table>}
+        </table></div>}
       </div>}
   </section>;
 }

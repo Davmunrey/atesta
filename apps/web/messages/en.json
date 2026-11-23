@@ -284,8 +284,8 @@
   },
   "dashboard": {
     "viewRequirements": "View requirements and configuration",
-    "frameworks": "Results by framework",
-    "frameworksHelp": "One piece of evidence can support several frameworks. Each result retains its version.",
+    "frameworks": "Frameworks",
+    "frameworksHelp": "Self-assessment progress and recorded results for each framework. The same evidence can serve several.",
     "emptyFrameworks": "No published frameworks yet",
     "emptyFrameworksHelp": "Reviewed frameworks will appear here when they are published in the catalog.",
     "search": "Search frameworks",
@@ -347,7 +347,9 @@
     "stepReview": "Security officer review",
     "stepExport": "Export the statement of applicability",
     "continue": "Continue with {framework}",
-    "start": "Start with {framework}"
+    "start": "Start with {framework}",
+    "templates": "{count, plural, one {# framework in preparation, no requirements yet} other {# frameworks in preparation, no requirements yet}}",
+    "supporting": "Work and activity"
   },
   "preparation": {
     "states": {
@@ -577,5 +579,43 @@
     "closeAction": "Close the organization",
     "closing": "Closure requested: the data will be erased on {date}.",
     "cancelAction": "Cancel the closure"
+  },
+  "cockpit": {
+    "summary": "{framework}: {assessed} of {total, plural, one {# measure assessed} other {# measures assessed}}, {implemented} implemented.",
+    "summaryAttention": "{count, plural, one {# item needs attention.} other {# items need attention.}}",
+    "summaryCalm": "Nothing urgent.",
+    "now": "Now",
+    "calm": "Nothing urgent. Next step:",
+    "severity": {
+      "overdue": "Overdue",
+      "missing": "Missing",
+      "pending": "Pending"
+    },
+    "attention": {
+      "overdue": "{count, plural, one {# measure past its due date} other {# measures past their due date}} in {framework}",
+      "review": "Security officer's review of {framework}: the whole self-assessment is complete",
+      "unowned": "{count, plural, one {# open measure without an owner} other {# open measures without an owner}} in {framework}",
+      "scope": "Scope of {framework}",
+      "auditor": "{email}'s auditor access ends on {date}"
+    },
+    "step": {
+      "scope": "Define the scope of {framework}",
+      "assess": "Assess {count, plural, one {# pending measure} other {# pending measures}} of {framework}",
+      "review": "Record the review of {framework}",
+      "export": "Export the statement of applicability of {framework}"
+    },
+    "counts": "{assessed} of {total} assessed · {implemented} implemented · {partial} partially · {notImplemented} not implemented · {notApplicable, plural, one {# does not apply} other {# do not apply}}",
+    "yourWork": "Your work",
+    "yourWorkEmpty": "You have no open measures assigned.",
+    "noDue": "No date",
+    "allMyWork": "See everything in My work",
+    "team": "Team",
+    "teamChart": "Open measures per person",
+    "teamEmpty": "No measures are assigned yet.",
+    "formerMember": "Former member",
+    "recent": "Recent activity",
+    "recentEmpty": "No activity in the last 30 days.",
+    "system": "System",
+    "allActivity": "See all activity"
   }
 }

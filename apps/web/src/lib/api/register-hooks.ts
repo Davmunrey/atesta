@@ -134,3 +134,13 @@ export function isMyWorkOverdue(item: MyWorkItem, today: string): boolean {
   const done = item.applicability === "not_applicable" || item.implementation === "implemented";
   return Boolean(item.due_on && item.due_on < today && !done);
 }
+
+export type Readiness = components["schemas"]["FrameworkReadiness"];
+
+/** Self-assessment counts per framework for the dashboard cockpit (readiness-cockpit spec). */
+export function useReadiness(orgId: string) {
+  return useQuery({
+    queryKey: ["readiness", orgId], retry: false,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/readiness", { params: { path: { org_id: orgId } } })),
+  });
+}

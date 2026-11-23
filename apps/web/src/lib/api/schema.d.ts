@@ -478,6 +478,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Readiness */
+        get: operations["readiness_api_v1_orgs__org_id__readiness_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/scans": {
         parameters: {
             query?: never;
@@ -1110,6 +1127,41 @@ export interface components {
             status: string;
             /** Version */
             version: string;
+        };
+        /** FrameworkReadiness */
+        FrameworkReadiness: {
+            /** Assessed */
+            assessed: number;
+            /** Has Axes */
+            has_axes: boolean;
+            /** Implemented */
+            implemented: number;
+            /** Key */
+            key: string;
+            /** Last Assessed At */
+            last_assessed_at: string | null;
+            /** Name */
+            name: string;
+            /** Not Applicable */
+            not_applicable: number;
+            /** Not Implemented */
+            not_implemented: number;
+            /** Open By Owner */
+            open_by_owner: {
+                [key: string]: number;
+            };
+            /** Overdue */
+            overdue: number;
+            /** Partial */
+            partial: number;
+            /** Review On */
+            review_on: string | null;
+            /** Scope Defined */
+            scope_defined: boolean;
+            /** Total */
+            total: number;
+            /** Unowned Open */
+            unowned_open: number;
         };
         /** FrameworkSummary */
         FrameworkSummary: {
@@ -2881,6 +2933,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OverviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readiness_api_v1_orgs__org_id__readiness_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FrameworkReadiness"][];
                 };
             };
             /** @description Validation Error */
