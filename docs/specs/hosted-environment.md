@@ -27,6 +27,9 @@ happen now, at no cost. Applying it is the owner's decision.
       ADR-004, with a task role scoped to that tenant's prefix.
     - Secrets come from Secrets Manager, never from environment files.
     - Logs go to CloudWatch with a retention period; no secrets or customer content (rule 2).
+    - The API runs with uvicorn's access log off and the load balancer's access logs stay off:
+      both would record the sign-in callback's query string, which holds the OAuth code and
+      state (#257; `apps/api/tests/test_app_image.py`).
   - **`web`:**
     - The static export lives in a private S3 bucket behind CloudFront with origin access control.
     - `/api/*` and `/auth/*` go to the API's load balancer.
