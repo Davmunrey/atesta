@@ -17,9 +17,9 @@ ROOT = Path(__file__).resolve().parents[3]
 def catalog() -> Catalog:
     expected: set[str] = set()
     for provider in ("m365", "googleworkspace"):
-        path = ROOT / "scanner/expected/5.49.0" / f"{provider}.json"
+        path = ROOT / "scanner/expected/5.52.0" / f"{provider}.json"
         expected.update(json.loads(path.read_text())[provider])
-    return read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.49.0")
+    return read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.52.0")
 
 
 def pack(key: str) -> Pack:

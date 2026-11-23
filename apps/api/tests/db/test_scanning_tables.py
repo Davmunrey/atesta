@@ -15,7 +15,7 @@ CONNECTION = uuid.UUID("cccccccc-0000-4000-8000-000000000001")
 SCAN = text(
     "INSERT INTO scans (id, organization_id, connection_id, provider, trigger, status, engine,"
     " engine_version, output_prefix, manifest_sha256, expected_checks, evaluated_checks)"
-    " VALUES (:id, :org, :conn, :provider, :trigger, :status, 'prowler', '5.49.0', :prefix,"
+    " VALUES (:id, :org, :conn, :provider, :trigger, :status, 'prowler', '5.52.0', :prefix,"
     " :sha, :expected, :evaluated)"
 )
 RESULT = text(

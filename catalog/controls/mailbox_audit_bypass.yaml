@@ -20,4 +20,4 @@ prowler_checks: [exchange_mailbox_audit_bypass_disabled]
 atesta_checks: []
 remediation_refs:
   - https://learn.microsoft.com/en-us/purview/audit-mailboxes
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_mailbox_audit_bypass_disabled/exchange_mailbox_audit_bypass_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_mailbox_audit_bypass_disabled/exchange_mailbox_audit_bypass_disabled.py

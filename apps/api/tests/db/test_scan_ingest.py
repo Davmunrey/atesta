@@ -49,7 +49,7 @@ EXCLUDED = {"m365": {"teams_external_users_cannot_start_conversations": "not_gra
 SCAN = text(
     "INSERT INTO scans (id, organization_id, connection_id, provider, trigger, status, engine,"
     " engine_version, output_prefix, attempts) VALUES (:id, :org, gen_random_uuid(), :provider,"
-    " 'user', :status, 'prowler', '5.49.0', :prefix, 1)"
+    " 'user', :status, 'prowler', '5.52.0', :prefix, 1)"
 )
 
 

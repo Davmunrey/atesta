@@ -29,8 +29,8 @@ remediation_refs:
   - https://learn.microsoft.com/en-us/entra/id-protection/concept-identity-protection-policies
   - https://learn.microsoft.com/en-us/microsoft-365/admin/manage/idle-session-timeout-web-apps
   - https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-session-lifetime
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_identity_protection_sign_in_risk_enabled/entra_identity_protection_sign_in_risk_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_identity_protection_user_risk_enabled/entra_identity_protection_user_risk_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_block_high_medium_sign_in_risk/entra_conditional_access_policy_block_high_medium_sign_in_risk.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_idle_session_timeout_configured/entra_idle_session_timeout_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_sign_in_frequency_all_users/entra_conditional_access_policy_sign_in_frequency_all_users.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_identity_protection_sign_in_risk_enabled/entra_identity_protection_sign_in_risk_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_identity_protection_user_risk_enabled/entra_identity_protection_user_risk_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_block_high_medium_sign_in_risk/entra_conditional_access_policy_block_high_medium_sign_in_risk.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_idle_session_timeout_configured/entra_idle_session_timeout_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_sign_in_frequency_all_users/entra_conditional_access_policy_sign_in_frequency_all_users.py

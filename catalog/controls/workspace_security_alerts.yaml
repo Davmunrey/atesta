@@ -26,11 +26,11 @@ prowler_checks:
 atesta_checks: []
 remediation_refs:
   - https://support.google.com/a/answer/3230421
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_admin_privilege_granted_alert_configured/rules_admin_privilege_granted_alert_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_gmail_employee_spoofing_alert_configured/rules_gmail_employee_spoofing_alert_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_government_backed_attacks_alert_configured/rules_government_backed_attacks_alert_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_leaked_password_alert_configured/rules_leaked_password_alert_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_password_changed_alert_configured/rules_password_changed_alert_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_suspicious_activity_suspension_alert_configured/rules_suspicious_activity_suspension_alert_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_suspicious_login_alert_configured/rules_suspicious_login_alert_configured.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/rules/rules_suspicious_programmatic_login_alert_configured/rules_suspicious_programmatic_login_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/rules/rules_admin_privilege_granted_alert_configured/rules_admin_privilege_granted_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/rules/rules_gmail_employee_spoofing_alert_configured/rules_gmail_employee_spoofing_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/rules/rules_government_backed_attacks_alert_configured/rules_government_backed_attacks_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/rules/rules_leaked_password_alert_configured/rules_leaked_password_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/rules/rules_password_changed_alert_configured/rules_password_changed_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/rules/rules_suspicious_activity_suspension_alert_configured/rules_suspicious_activity_suspension_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/rules/rules_suspicious_login_alert_configured/rules_suspicious_login_alert_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/rules/rules_suspicious_programmatic_login_alert_configured/rules_suspicious_programmatic_login_alert_configured.py

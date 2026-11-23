@@ -20,4 +20,4 @@ prowler_checks: [drive_sharing_allowlisted_domains]
 atesta_checks: []
 remediation_refs:
   - https://knowledge.workspace.google.com/admin/domains/allow-external-sharing-with-only-trusted-domains
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_sharing_allowlisted_domains/drive_sharing_allowlisted_domains.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/drive/drive_sharing_allowlisted_domains/drive_sharing_allowlisted_domains.py

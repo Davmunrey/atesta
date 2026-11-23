@@ -20,4 +20,4 @@ prowler_checks: [security_2sv_enforced]
 atesta_checks: []
 remediation_refs:
   - https://knowledge.workspace.google.com/admin/security/deploy-2-step-verification
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_2sv_enforced/security_2sv_enforced.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/security/security_2sv_enforced/security_2sv_enforced.py
