@@ -37,6 +37,7 @@ def _articles(units: set[str]) -> set[str]:
         ("nis2", {f"art{n}" for n in range(1, 47)} | {"annex1", "annex2", "annex3"}),
         ("gdpr_art32", {f"art{n}" for n in range(1, 100)}),
         ("dora", {f"art{n}" for n in range(1, 65)}),
+        ("nis2_ir_2024_2690", {f"art{n}" for n in range(1, 17)} | {"annex"}),
         (
             "ens_rd311_2022",
             {f"art{n}" for n in range(1, 42)}
@@ -133,3 +134,26 @@ def test_dora_imports_whole_articles_verbatim_in_both_languages() -> None:
     for requirement in dora.requirements:
         controls = {m.control_id for m in dora.mappings if m.requirement_id == requirement.id}
         assert controls & manual, requirement.id
+
+
+def test_the_nis2_implementing_regulation_keeps_the_official_text() -> None:
+    """Quotes from the captured Journal texts (SOURCES.md), Spanish and English."""
+    act = pack("nis2_ir_2024_2690")
+    requirements = {r.id: r for r in act.requirements}
+    assert len(requirements) == 162
+    assert {"art2", "1.1.1", "5.2", "7.1", "12.5", "13.3.3"} <= requirements.keys()
+    first = requirements["1.1.1"].attributes
+    assert first.official_text_es.startswith(
+        "A efectos del artículo 21, apartado 2, letra a), de la Directiva (UE) 2022/2555, la"
+    )
+    assert "\n\nk) indicará la fecha de la aprobación formal" in first.official_text_es
+    assert first.official_text_en is not None
+    assert first.official_text_en.startswith(
+        "For the purpose of Article 21(2), point (a) of Directive (EU) 2022/2555, the policy"
+    )
+    registry = requirements["5.2"].attributes.official_text_en or ""
+    assert registry.startswith(
+        "The relevant entities shall maintain and keep up to date a registry"
+    )
+    assert requirements["art2"].attributes.official_text_en is not None
+    assert "‘to the extent feasible’" in requirements["art2"].attributes.official_text_en

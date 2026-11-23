@@ -34,7 +34,7 @@ This pack cannot be scored, including when development draft visibility is enabl
 - **Source spelling is preserved.** The Spanish title of Article 33 is printed as "edidas de supervisión…" in the captured Journal text. It is only in the coverage ledger, not in a requirement, and is left as published.
 - **Coverage:** `coverage.yaml` lists all 46 articles and the three annexes. Each unit is either covered by named requirements or excluded with its reason in Spanish and English.
 - **Out of scope for now:**
-  - Implementing Regulation (EU) 2024/2690 (CELEX `32024R2690`, title verified in the same repository);
+  - Implementing Regulation (EU) 2024/2690 (CELEX `32024R2690`): imported as its own pack, `nis2_ir_2024_2690`, with its own record;
   - Article 27 (registry of entities);
   - the Spanish transposing law.
 
