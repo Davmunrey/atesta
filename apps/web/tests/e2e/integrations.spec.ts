@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { settled } from "./polish";
 
 test("an API token authenticates ingestion until it is revoked", async ({ page, request }) => {
   await page.goto("/app");
@@ -18,6 +19,7 @@ test("an API token authenticates ingestion until it is revoked", async ({ page, 
   for (const width of [375, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `integrations ${width}`).toBe(true);
+    await settled(page);
     const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
     expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id), `integrations ${width}`).toEqual([]);
   }

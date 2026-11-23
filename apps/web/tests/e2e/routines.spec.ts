@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
+import { settled } from "./polish";
 
 async function createOrganization(page: Page) {
   await page.goto("/app");
@@ -17,6 +18,7 @@ async function expectSound(page: Page, where: string) {
   for (const width of [375, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${where} ${width}`).toBe(true);
+    await settled(page);
     const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
     expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id), `${where} ${width}`).toEqual([]);
   }

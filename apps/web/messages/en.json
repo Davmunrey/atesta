@@ -215,6 +215,7 @@
     "accessOn": "Access until {date}"
   },
   "invite": {
+    "unavailable": "Invitation unavailable",
     "title": "Join the organization",
     "signedInAs": "You are accepting the invitation as {email}.",
     "accept": "Accept invitation",
@@ -890,6 +891,7 @@
     }
   },
   "trainingLink": {
+    "unavailable": "Training unavailable",
     "loading": "Loading…",
     "missing": "The training link is missing. Open it exactly as you received it.",
     "heading": "Confirm you read it",
