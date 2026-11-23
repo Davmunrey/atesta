@@ -109,7 +109,8 @@
     .workspace:has(.framework-page) .organization-context { padding-block: 1.25rem; }
     .framework-title .page-title { font-size: 2rem; }
     .requirement-row > summary { grid-template-columns: minmax(0, 1fr) 1rem; gap: 0.5rem; }
-    .requirement-row > summary > .requirement-state { grid-column: 1; grid-row: 2; }
+    .requirement-row > summary > :is(.requirement-state, .assessment-badges) { grid-column: 1; grid-row: 2; }
+    .requirement-row > summary > .assessment-badges + .requirement-state { grid-row: 3; }
     .requirement-row > summary > svg { grid-column: 2; grid-row: 1 / 3; }
   }
 
@@ -178,7 +179,7 @@
   /* Charts keep their drawn proportions: never scaled past ~1.2x, so ticks stay at 12px-ish. */
   .chart { margin-top: 1rem; min-width: 0; max-inline-size: 48rem; }
   .chart-title { font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; }
-  .chart-frame { position: relative; }
+  .chart-frame { position: relative; overflow: clip; overflow-clip-margin: 0.5rem; }
   .chart svg { display: block; inline-size: 100%; block-size: auto; overflow: visible; }
   .chart svg:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
   .chart-grid { stroke: var(--color-border); stroke-width: 1; opacity: 0.5; }
@@ -209,7 +210,7 @@
   .owner-line { margin-bottom: 0.75rem; }
   .owner-edit { min-height: 2.75rem; padding-inline: 0.25rem; }
   .owner-form { margin-bottom: 1rem; }
-  .assessment-badges { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .assessment-badges { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.375rem 0.5rem; min-width: 0; }
   .overdue-flag { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.8125rem; font-weight: 600; color: var(--color-danger); border: 1px solid currentColor; border-radius: 0.25rem; padding: 0 0.375rem; }
   .activity-target { display: block; font-family: var(--font-mono, monospace); font-size: 0.8125rem; color: var(--color-muted); overflow-wrap: anywhere; }
 }

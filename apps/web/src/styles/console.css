@@ -1,9 +1,9 @@
 /* Console workspace (console-shell spec, owner decision 2026-11-23). Values come from tokens.css. */
 @layer components {
-  .console { min-height: 100dvh; display: grid; grid-template-rows: 3.5rem minmax(0, 1fr); background: var(--color-page); }
+  .console { min-height: 100dvh; display: grid; grid-template-rows: 3.5rem minmax(0, 1fr); grid-template-columns: minmax(0, 1fr); background: var(--color-page); }
 
   /* Top bar: ink, full width, fixed. Focus switches to the highlighter so it shows on ink. */
-  .topbar { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 0.75rem; padding-inline: 0.75rem 1rem; background: var(--color-topbar); color: var(--color-topbar-fg); --color-focus: var(--color-accent); }
+  .topbar { position: sticky; top: 0; z-index: 30; min-width: 0; overflow-x: clip; display: flex; align-items: center; gap: 0.75rem; padding-inline: 0.75rem 1rem; background: var(--color-topbar); color: var(--color-topbar-fg); --color-focus: var(--color-accent); }
   .topbar-icon { display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: var(--radius-sm); color: var(--color-topbar-fg); cursor: pointer; }
   .topbar-icon:hover { background: var(--color-topbar-field); }
   .topbar-brand { font-family: var(--font-display); font-size: 1.375rem; font-weight: 500; letter-spacing: -0.02em; padding-inline: 0.25rem; border-bottom: 3px solid var(--color-accent); line-height: 1.3; }
