@@ -2,7 +2,7 @@
 # Build from the repository root: docker build -f scanner/Dockerfile -t atesta-scanner .
 # The base image and PowerShell pins are the ones Prowler 5.49.0's own image uses:
 # https://raw.githubusercontent.com/prowler-cloud/prowler/5.49.0/Dockerfile
-FROM python:3.12.16-slim-trixie@sha256:8523d6abeb48ceae0b7240d30c5808fc26cb79c1a635bacdf19cf3baecfbec07
+FROM python:3.14.10-slim-trixie@sha256:9aaa474097d094040649f2162a627c0049b408f52138d980916788d80f04802f
 
 ARG POWERSHELL_VERSION=7.6.10
 ARG POWERSHELL_SHA256=e261cabc91c78a9afe8d1e5f24731ab0d38204735ab2ec94b0af55102652e10d
