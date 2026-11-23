@@ -96,6 +96,17 @@ describe("search", () => {
     expect(screen.queryByRole("link", { name: "Ver en tu organización" })).toBeNull();
   });
 
+  it("Esc in the search field closes the panel instead of only clearing the text", async () => {
+    renderWithProviders(<div popover="auto"><AssistantPanel surface="landing" focusTick={0} /></div>);
+    const host = document.querySelector("[popover]") as HTMLElement & { hidePopover: () => void };
+    host.hidePopover = vi.fn();
+    const field = await screen.findByRole("searchbox", { hidden: true }); // jsdom hides a closed popover
+    fireEvent.change(field, { target: { value: "op.acc.6" } });
+    expect(fireEvent.keyDown(field, { key: "Escape" })).toBe(false); // default (clearing) prevented
+    expect(host.hidePopover).toHaveBeenCalledOnce();
+    expect((field as HTMLInputElement).value).toBe("op.acc.6");
+  });
+
   it("offers a retry when the index cannot load", async () => {
     fetchMock.mockResolvedValueOnce(new Response("", { status: 503 }));
     panel();

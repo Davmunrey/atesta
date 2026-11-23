@@ -61,7 +61,8 @@ export default function AssistantPanel({ surface, orgId, focusTick }: Props) {
           <form role="search" className="assistant-search" onSubmit={submit}>
             <label htmlFor={field} className="assistant-label">{t("search.label")}</label>
             <div className="assistant-search-row">
-              <input ref={first} id={field} type="search" className="assistant-field" value={query} placeholder={t("search.placeholder")} onChange={(event) => setQuery(event.target.value)} autoComplete="off" />
+              <input ref={first} id={field} type="search" className="assistant-field" value={query} placeholder={t("search.placeholder")} onChange={(event) => setQuery(event.target.value)} autoComplete="off"
+                onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); event.currentTarget.closest<HTMLElement>("[popover]")?.hidePopover?.(); } }} />
               <button type="submit" className="assistant-button assistant-button-primary">{t("search.submit")}</button>
             </div>
           </form>

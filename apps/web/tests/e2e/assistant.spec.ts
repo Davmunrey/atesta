@@ -48,6 +48,14 @@ test("landing assistant: lazy index, cited answers, no answer, Esc returns focus
   expect(new Set(indexRequests.map((url) => new URL(url).origin))).toEqual(new Set([new URL(page.url()).origin]));
   await expectAccessible(page, "landing assistant, 1280");
 
+  // Esc closes the panel even from a filled search field (where it would only clear the text) and
+  // keeps the query for the next open.
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(page.getByRole("button", { name: "Asistente" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(dialog.getByRole("searchbox")).toHaveValue("op.acc.6");
+
   await ask(page, "receta de paella valenciana");
   await expect(dialog.getByRole("status")).toHaveText("Sin respuesta en el catálogo para esta búsqueda.");
   await expect(dialog.getByRole("link", { name: /@/ })).toHaveAttribute("href", /^mailto:/);
