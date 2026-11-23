@@ -99,7 +99,9 @@ def import_preview(conn: Connection, catalog: Catalog) -> list[str]:
                     {
                         "framework_key": metadata.id,
                         "code": r.id,
-                        **r.model_dump(exclude={"id"}),
+                        # JSON mode: attributes is JSONB and may hold dates (signed reviewed_on),
+                        # and the conflict check compares with what Postgres returns.
+                        **r.model_dump(mode="json", exclude={"id"}),
                     }
                     for r in pack.requirements
                 ],
