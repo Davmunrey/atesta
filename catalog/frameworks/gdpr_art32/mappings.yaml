@@ -1,1 +1,157 @@
-mappings: []
+mappings:
+- requirement_id: art32.1a
+  control_id: ctl.cryptography_review
+  rationale: Candidate documentary review for art32.1a; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1a
+  control_id: ctl.information_handling
+  rationale: Candidate documentary review for art32.1a; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.security_architecture
+  rationale: Candidate documentary review for art32.1b; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.access_review
+  rationale: Candidate documentary review for art32.1b; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.authentication_review
+  rationale: Candidate documentary review for art32.1b; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.admin_mfa
+  rationale: Candidate technical observation for art32.1b; it covers only part of the requirement and
+    never replaces the documentary review.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.workspace_mfa
+  rationale: Candidate technical observation for art32.1b; it covers only part of the requirement and
+    never replaces the documentary review.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.workspace_sharing
+  rationale: Candidate technical observation for art32.1b; it covers only part of the requirement and
+    never replaces the documentary review.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1c
+  control_id: ctl.continuity_restore
+  rationale: Candidate documentary review for art32.1c; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1c
+  control_id: ctl.capacity_resilience
+  rationale: Candidate documentary review for art32.1c; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1d
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for art32.1d; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1d
+  control_id: ctl.change_vulnerability_review
+  rationale: Candidate documentary review for art32.1d; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.2
+  control_id: ctl.risk_analysis
+  rationale: Candidate documentary review for art32.2; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.4
+  control_id: ctl.people_awareness
+  rationale: Candidate documentary review for art32.4; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.4
+  control_id: ctl.access_review
+  rationale: Candidate documentary review for art32.4; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art33.1
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art33.1; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_33
+  reviewed_by: null
+- requirement_id: art33.2
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art33.2; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_33
+  reviewed_by: null
+- requirement_id: art33.2
+  control_id: ctl.supplier_cloud_review
+  rationale: Candidate documentary review for art33.2; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_33
+  reviewed_by: null
+- requirement_id: art33.3
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art33.3; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_33
+  reviewed_by: null
+- requirement_id: art33.4
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art33.4; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_33
+  reviewed_by: null
+- requirement_id: art33.5
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art33.5; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_33
+  reviewed_by: null
+- requirement_id: art33.5
+  control_id: ctl.activity_logging_review
+  rationale: Candidate documentary review for art33.5; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_33
+  reviewed_by: null
+- requirement_id: art34.1
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art34.1; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_34
+  reviewed_by: null
+- requirement_id: art34.2
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art34.2; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_34
+  reviewed_by: null
+- requirement_id: art34.3
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for art34.3; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_34
+  reviewed_by: null
+- requirement_id: art34.3
+  control_id: ctl.cryptography_review
+  rationale: Candidate documentary review for art34.3; the evidence must be checked against the complete
+    text, the processing concerned and its risks. This shared control is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_34
+  reviewed_by: null

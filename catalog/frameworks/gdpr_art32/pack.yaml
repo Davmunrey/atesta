@@ -1,18 +1,22 @@
 id: gdpr_art32
-name: RGPD · Artículo 32
-version: 2016-679.art32.template1
+name: RGPD · Art. 32-34
+version: 2016-679.art32-34.draft1
 jurisdiction: EU
-source: https://eur-lex.europa.eu/legal-content/ES-EN/ALL/?uri=CELEX%3A32016R0679
-license_notes: Preparation metadata only. No official requirement text has been imported; this is not
-  a complete GDPR pack.
+source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32016R0679
+license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
+  EU documents is authorised under Commission Decision 2011/833/EU, © European Union. Only Articles 32
+  (except paragraph 3), 33 and 34(1)-(3) are imported; coverage.yaml accounts for every other article.
+  Not a complete GDPR pack; the LOPDGDD is not imported.
 status: draft
 attributes:
-  content_state: template
+  content_state: partial
   assessment_enabled: false
-  summary_es: Plantilla para seguridad del tratamiento de datos personales. Obligación legal, no certificación
-    del RGPD ni evaluación completa de protección de datos.
-  summary_en: Template for security of personal-data processing. A legal obligation, not GDPR certification
-    or a complete data-protection assessment.
+  summary_es: 14 requisitos oficiales del RGPD sobre seguridad del tratamiento y violaciones de la seguridad
+    de los datos personales (artículos 32 a 34), en español e inglés. Mapeos candidatos pendientes de
+    revisión cualificada. No es una evaluación de protección de datos completa.
+  summary_en: 14 official GDPR requirements on security of processing and personal data breaches (Articles
+    32 to 34), in Spanish and English. Candidate mappings await qualified review. Not a complete data
+    protection assessment.
   scope_es: Identifica tratamientos, datos, responsables, encargados, sistemas y proveedores dentro del
     ámbito aplicable del RGPD.
   scope_en: Identify processing activities, data, controllers, processors, systems and providers within
@@ -23,12 +27,12 @@ attributes:
   applicability_en: Assess risks to individuals and processing context to select technical and organizational
     measures. Review confidentiality, integrity, availability, recovery and regular testing; no universal
     configuration is sufficient.
-  limitations_es: Faltan texto oficial, mapeos revisados y evaluación contextual. No cubre bases jurídicas,
-    derechos, transferencias, contratos ni otras obligaciones del RGPD. Revisar con el responsable de
-    protección de datos cuando corresponda.
-  limitations_en: Official text, reviewed mappings and contextual assessment are missing. Legal bases,
-    rights, transfers, contracts and other GDPR duties are not covered. Involve the data-protection owner
-    where appropriate.
+  limitations_es: Importados los artículos 32 (salvo el apartado 3), 33 y 34 (apartados 1 a 3); el resto
+    del Reglamento figura en la cobertura con su motivo. No cubre bases jurídicas, derechos, transferencias,
+    evaluaciones de impacto ni la LOPDGDD. Revisa con tu delegado de protección de datos cuando corresponda.
+  limitations_en: Articles 32 (except paragraph 3), 33 and 34(1)-(3) are imported; the rest of the Regulation
+    is listed in the coverage with its reason. Legal bases, rights, transfers, impact assessments and
+    the Spanish LOPDGDD are not covered. Review with your data protection officer where applicable.
   preparation_controls:
   - ctl.information_handling
   - ctl.risk_analysis
@@ -45,5 +49,16 @@ attributes:
   - ctl.workspace_sharing
   - ctl.mailbox_audit_bypass
   source_refs:
-  - https://eur-lex.europa.eu/legal-content/ES-EN/ALL/?uri=CELEX%3A32016R0679
-  verified_on: '2026-11-13'
+  - https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32016R0679
+  - https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679
+  verified_on: '2026-11-23'
+  groups_es:
+  - prefix: art32
+    title: Seguridad del tratamiento
+    title_en: Security of processing
+  - prefix: art33
+    title: Notificación de una violación de la seguridad de los datos personales a la autoridad de control
+    title_en: Notification of a personal data breach to the supervisory authority
+  - prefix: art34
+    title: Comunicación de una violación de la seguridad de los datos personales al interesado
+    title_en: Communication of a personal data breach to the data subject

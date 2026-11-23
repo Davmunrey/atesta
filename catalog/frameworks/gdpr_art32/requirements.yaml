@@ -1,1 +1,322 @@
-requirements: []
+requirements:
+- id: art32.1a
+  title_es: La seudonimización y el cifrado de datos personales
+  title_en: The pseudonymisation and encryption of personal data
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  attributes:
+    official_text_es: '1. Teniendo en cuenta el estado de la técnica, los costes de aplicación, y la naturaleza,
+      el alcance, el contexto y los fines del tratamiento, así como riesgos de probabilidad y gravedad
+      variables para los derechos y libertades de las personas físicas, el responsable y el encargado
+      del tratamiento aplicarán medidas técnicas y organizativas apropiadas para garantizar un nivel de
+      seguridad adecuado al riesgo, que en su caso incluya, entre otros:
+
+
+      a) la seudonimización y el cifrado de datos personales;'
+    official_text_en: '1. Taking into account the state of the art, the costs of implementation and the
+      nature, scope, context and purposes of processing as well as the risk of varying likelihood and
+      severity for the rights and freedoms of natural persons, the controller and the processor shall
+      implement appropriate technical and organisational measures to ensure a level of security appropriate
+      to the risk, including inter alia as appropriate:
+
+
+      (a) the pseudonymisation and encryption of personal data;'
+    section: Artículo 32, apartado 1, letra a)
+    source_sha256: 8e8378d62e162d467a423bc1e2a5b267c8b658f79ab5f80c49c803cee541196f
+- id: art32.1b
+  title_es: La capacidad de garantizar la confidencialidad, integridad, disponibilidad y resiliencia permanentes
+    de los sistemas y servicios de tratamiento
+  title_en: The ability to ensure the ongoing confidentiality, integrity, availability and resilience
+    of processing systems and services
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  attributes:
+    official_text_es: '1. Teniendo en cuenta el estado de la técnica, los costes de aplicación, y la naturaleza,
+      el alcance, el contexto y los fines del tratamiento, así como riesgos de probabilidad y gravedad
+      variables para los derechos y libertades de las personas físicas, el responsable y el encargado
+      del tratamiento aplicarán medidas técnicas y organizativas apropiadas para garantizar un nivel de
+      seguridad adecuado al riesgo, que en su caso incluya, entre otros:
+
+
+      b) la capacidad de garantizar la confidencialidad, integridad, disponibilidad y resiliencia permanentes
+      de los sistemas y servicios de tratamiento;'
+    official_text_en: '1. Taking into account the state of the art, the costs of implementation and the
+      nature, scope, context and purposes of processing as well as the risk of varying likelihood and
+      severity for the rights and freedoms of natural persons, the controller and the processor shall
+      implement appropriate technical and organisational measures to ensure a level of security appropriate
+      to the risk, including inter alia as appropriate:
+
+
+      (b) the ability to ensure the ongoing confidentiality, integrity, availability and resilience of
+      processing systems and services;'
+    section: Artículo 32, apartado 1, letra b)
+    source_sha256: 85c7566719ded17a2ce91729fc785ea331f3c072bd0c092b0444311b7c0ebfa6
+- id: art32.1c
+  title_es: La capacidad de restaurar la disponibilidad y el acceso a los datos personales de forma rápida
+    en caso de incidente físico o técnico
+  title_en: The ability to restore the availability and access to personal data in a timely manner in
+    the event of a physical or technical incident
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  attributes:
+    official_text_es: '1. Teniendo en cuenta el estado de la técnica, los costes de aplicación, y la naturaleza,
+      el alcance, el contexto y los fines del tratamiento, así como riesgos de probabilidad y gravedad
+      variables para los derechos y libertades de las personas físicas, el responsable y el encargado
+      del tratamiento aplicarán medidas técnicas y organizativas apropiadas para garantizar un nivel de
+      seguridad adecuado al riesgo, que en su caso incluya, entre otros:
+
+
+      c) la capacidad de restaurar la disponibilidad y el acceso a los datos personales de forma rápida
+      en caso de incidente físico o técnico;'
+    official_text_en: '1. Taking into account the state of the art, the costs of implementation and the
+      nature, scope, context and purposes of processing as well as the risk of varying likelihood and
+      severity for the rights and freedoms of natural persons, the controller and the processor shall
+      implement appropriate technical and organisational measures to ensure a level of security appropriate
+      to the risk, including inter alia as appropriate:
+
+
+      (c) the ability to restore the availability and access to personal data in a timely manner in the
+      event of a physical or technical incident;'
+    section: Artículo 32, apartado 1, letra c)
+    source_sha256: bddf4215ffa390f50a40b640bd6c9f924cbc08ce08ec1bb1b5f7f59381aa259e
+- id: art32.1d
+  title_es: Un proceso de verificación, evaluación y valoración regulares de la eficacia de las medidas
+    técnicas y organizativas para garantizar la seguridad del tratamiento
+  title_en: A process for regularly testing, assessing and evaluating the effectiveness of technical and
+    organisational measures for ensuring the security of the processing
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  attributes:
+    official_text_es: '1. Teniendo en cuenta el estado de la técnica, los costes de aplicación, y la naturaleza,
+      el alcance, el contexto y los fines del tratamiento, así como riesgos de probabilidad y gravedad
+      variables para los derechos y libertades de las personas físicas, el responsable y el encargado
+      del tratamiento aplicarán medidas técnicas y organizativas apropiadas para garantizar un nivel de
+      seguridad adecuado al riesgo, que en su caso incluya, entre otros:
+
+
+      d) un proceso de verificación, evaluación y valoración regulares de la eficacia de las medidas técnicas
+      y organizativas para garantizar la seguridad del tratamiento.'
+    official_text_en: '1. Taking into account the state of the art, the costs of implementation and the
+      nature, scope, context and purposes of processing as well as the risk of varying likelihood and
+      severity for the rights and freedoms of natural persons, the controller and the processor shall
+      implement appropriate technical and organisational measures to ensure a level of security appropriate
+      to the risk, including inter alia as appropriate:
+
+
+      (d) a process for regularly testing, assessing and evaluating the effectiveness of technical and
+      organisational measures for ensuring the security of the processing.'
+    section: Artículo 32, apartado 1, letra d)
+    source_sha256: 7880237f4269d4feeb74531a2314342cad9ba93676222cf16608e50a883157c7
+- id: art32.2
+  title_es: Seguridad del tratamiento · apartado 2
+  title_en: Security of processing · paragraph 2
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  attributes:
+    official_text_es: 2. Al evaluar la adecuación del nivel de seguridad se tendrán particularmente en
+      cuenta los riesgos que presente el tratamiento de datos, en particular como consecuencia de la destrucción,
+      pérdida o alteración accidental o ilícita de datos personales transmitidos, conservados o tratados
+      de otra forma, o la comunicación o acceso no autorizados a dichos datos.
+    official_text_en: 2. In assessing the appropriate level of security account shall be taken in particular
+      of the risks that are presented by processing, in particular from accidental or unlawful destruction,
+      loss, alteration, unauthorised disclosure of, or access to personal data transmitted, stored or
+      otherwise processed.
+    section: Artículo 32, apartado 2
+    source_sha256: f7256f421669d118d1b1b2ed04fdfd2fb1ccd2dd1711792e1ae26866220ed24a
+- id: art32.4
+  title_es: Seguridad del tratamiento · apartado 4
+  title_en: Security of processing · paragraph 4
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  attributes:
+    official_text_es: 4. El responsable y el encargado del tratamiento tomarán medidas para garantizar
+      que cualquier persona que actúe bajo la autoridad del responsable o del encargado y tenga acceso
+      a datos personales solo pueda tratar dichos datos siguiendo instrucciones del responsable, salvo
+      que esté obligada a ello en virtud del Derecho de la Unión o de los Estados miembros.
+    official_text_en: 4. The controller and processor shall take steps to ensure that any natural person
+      acting under the authority of the controller or the processor who has access to personal data does
+      not process them except on instructions from the controller, unless he or she is required to do
+      so by Union or Member State law.
+    section: Artículo 32, apartado 4
+    source_sha256: 6c91f6ee68750244203cdc0c7defcc0a99f75b67633e34689c5012d14ecb9806
+- id: art33.1
+  title_es: Notificación de una violación de la seguridad de los datos personales a la autoridad de control
+    · apartado 1
+  title_en: Notification of a personal data breach to the supervisory authority · paragraph 1
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_33
+  attributes:
+    official_text_es: 1. En caso de violación de la seguridad de los datos personales, el responsable
+      del tratamiento la notificará a la autoridad de control competente de conformidad con el artículo
+      55 sin dilación indebida y, de ser posible, a más tardar 72 horas después de que haya tenido constancia
+      de ella, a menos que sea improbable que dicha violación de la seguridad constituya un riesgo para
+      los derechos y las libertades de las personas físicas. Si la notificación a la autoridad de control
+      no tiene lugar en el plazo de 72 horas, deberá ir acompañada de indicación de los motivos de la
+      dilación.
+    official_text_en: 1. In the case of a personal data breach, the controller shall without undue delay
+      and, where feasible, not later than 72 hours after having become aware of it, notify the personal
+      data breach to the supervisory authority competent in accordance with Article 55, unless the personal
+      data breach is unlikely to result in a risk to the rights and freedoms of natural persons. Where
+      the notification to the supervisory authority is not made within 72 hours, it shall be accompanied
+      by reasons for the delay.
+    section: Artículo 33, apartado 1
+    source_sha256: 7526375657d774010931744b26a23c8c2b0e4a5ee46cee426ecc42a260bbf7b4
+- id: art33.2
+  title_es: Notificación de una violación de la seguridad de los datos personales a la autoridad de control
+    · apartado 2
+  title_en: Notification of a personal data breach to the supervisory authority · paragraph 2
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_33
+  attributes:
+    official_text_es: 2. El encargado del tratamiento notificará sin dilación indebida al responsable
+      del tratamiento las violaciones de la seguridad de los datos personales de las que tenga conocimiento.
+    official_text_en: 2. The processor shall notify the controller without undue delay after becoming
+      aware of a personal data breach.
+    section: Artículo 33, apartado 2
+    source_sha256: e9afc3756bfcff38f4026f5c662868f1445aa1aa64e206df5e262b4b261d8a36
+- id: art33.3
+  title_es: Notificación de una violación de la seguridad de los datos personales a la autoridad de control
+    · apartado 3
+  title_en: Notification of a personal data breach to the supervisory authority · paragraph 3
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_33
+  attributes:
+    official_text_es: '3. La notificación contemplada en el apartado 1 deberá, como mínimo:
+
+
+      a) describir la naturaleza de la violación de la seguridad de los datos personales, inclusive, cuando
+      sea posible, las categorías y el número aproximado de interesados afectados, y las categorías y
+      el número aproximado de registros de datos personales afectados;
+
+
+      b) comunicar el nombre y los datos de contacto del delegado de protección de datos o de otro punto
+      de contacto en el que pueda obtenerse más información;
+
+
+      c) describir las posibles consecuencias de la violación de la seguridad de los datos personales;
+
+
+      d) describir las medidas adoptadas o propuestas por el responsable del tratamiento para poner remedio
+      a la violación de la seguridad de los datos personales, incluyendo, si procede, las medidas adoptadas
+      para mitigar los posibles efectos negativos.'
+    official_text_en: '3. The notification referred to in paragraph 1 shall at least:
+
+
+      (a) describe the nature of the personal data breach including where possible, the categories and
+      approximate number of data subjects concerned and the categories and approximate number of personal
+      data records concerned;
+
+
+      (b) communicate the name and contact details of the data protection officer or other contact point
+      where more information can be obtained;
+
+
+      (c) describe the likely consequences of the personal data breach;
+
+
+      (d) describe the measures taken or proposed to be taken by the controller to address the personal
+      data breach, including, where appropriate, measures to mitigate its possible adverse effects.'
+    section: Artículo 33, apartado 3
+    source_sha256: d54f6561ebc9cb91a54e67822f145c4bf3a5fd7ba4bc0b0ca9684a3cb6ba6a06
+- id: art33.4
+  title_es: Notificación de una violación de la seguridad de los datos personales a la autoridad de control
+    · apartado 4
+  title_en: Notification of a personal data breach to the supervisory authority · paragraph 4
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_33
+  attributes:
+    official_text_es: 4. Si no fuera posible facilitar la información simultáneamente, y en la medida
+      en que no lo sea, la información se facilitará de manera gradual sin dilación indebida.
+    official_text_en: 4. Where, and in so far as, it is not possible to provide the information at the
+      same time, the information may be provided in phases without undue further delay.
+    section: Artículo 33, apartado 4
+    source_sha256: 75566bb9b8b277b4b894528185c2c58f919de3cfa560689562de954f4d48870d
+- id: art33.5
+  title_es: Notificación de una violación de la seguridad de los datos personales a la autoridad de control
+    · apartado 5
+  title_en: Notification of a personal data breach to the supervisory authority · paragraph 5
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_33
+  attributes:
+    official_text_es: 5. El responsable del tratamiento documentará cualquier violación de la seguridad
+      de los datos personales, incluidos los hechos relacionados con ella, sus efectos y las medidas correctivas
+      adoptadas. Dicha documentación permitirá a la autoridad de control verificar el cumplimiento de
+      lo dispuesto en el presente artículo.
+    official_text_en: 5. The controller shall document any personal data breaches, comprising the facts
+      relating to the personal data breach, its effects and the remedial action taken. That documentation
+      shall enable the supervisory authority to verify compliance with this Article.
+    section: Artículo 33, apartado 5
+    source_sha256: ac344ea7ac08da46c12b3c501a6c11365a294b83bd9bfaa6753122e68ddd1b8a
+- id: art34.1
+  title_es: Comunicación de una violación de la seguridad de los datos personales al interesado · apartado
+    1
+  title_en: Communication of a personal data breach to the data subject · paragraph 1
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_34
+  attributes:
+    official_text_es: 1. Cuando sea probable que la violación de la seguridad de los datos personales
+      entrañe un alto riesgo para los derechos y libertades de las personas físicas, el responsable del
+      tratamiento la comunicará al interesado sin dilación indebida.
+    official_text_en: 1. When the personal data breach is likely to result in a high risk to the rights
+      and freedoms of natural persons, the controller shall communicate the personal data breach to the
+      data subject without undue delay.
+    section: Artículo 34, apartado 1
+    source_sha256: 315717e3f6aafae655d90bbc9d8416ba810a28999b9c13f28b17e6e9f5161b14
+- id: art34.2
+  title_es: Comunicación de una violación de la seguridad de los datos personales al interesado · apartado
+    2
+  title_en: Communication of a personal data breach to the data subject · paragraph 2
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_34
+  attributes:
+    official_text_es: 2. La comunicación al interesado contemplada en el apartado 1 del presente artículo
+      describirá en un lenguaje claro y sencillo la naturaleza de la violación de la seguridad de los
+      datos personales y contendrá como mínimo la información y las medidas a que se refiere el artículo
+      33, apartado 3, letras b), c) y d).
+    official_text_en: 2. The communication to the data subject referred to in paragraph 1 of this Article
+      shall describe in clear and plain language the nature of the personal data breach and contain at
+      least the information and measures referred to in points (b), (c) and (d) of Article 33(3).
+    section: Artículo 34, apartado 2
+    source_sha256: 801b9f25041f68fb2502f39ff2a3bab5b66963edd98edc6645a40f9c822f41f6
+- id: art34.3
+  title_es: Comunicación de una violación de la seguridad de los datos personales al interesado · apartado
+    3
+  title_en: Communication of a personal data breach to the data subject · paragraph 3
+  applies_to: []
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_34
+  attributes:
+    official_text_es: '3. La comunicación al interesado a que se refiere el apartado 1 no será necesaria
+      si se cumple alguna de las condiciones siguientes:
+
+
+      a) el responsable del tratamiento ha adoptado medidas de protección técnicas y organizativas apropiadas
+      y estas medidas se han aplicado a los datos personales afectados por la violación de la seguridad
+      de los datos personales, en particular aquellas que hagan ininteligibles los datos personales para
+      cualquier persona que no esté autorizada a acceder a ellos, como el cifrado;
+
+
+      b) el responsable del tratamiento ha tomado medidas ulteriores que garanticen que ya no exista la
+      probabilidad de que se concretice el alto riesgo para los derechos y libertades del interesado a
+      que se refiere el apartado 1;
+
+
+      c) suponga un esfuerzo desproporcionado. En este caso, se optará en su lugar por una comunicación
+      pública o una medida semejante por la que se informe de manera igualmente efectiva a los interesados.'
+    official_text_en: '3. The communication to the data subject referred to in paragraph 1 shall not be
+      required if any of the following conditions are met:
+
+
+      (a) the controller has implemented appropriate technical and organisational protection measures,
+      and those measures were applied to the personal data affected by the personal data breach, in particular
+      those that render the personal data unintelligible to any person who is not authorised to access
+      it, such as encryption;
+
+
+      (b) the controller has taken subsequent measures which ensure that the high risk to the rights and
+      freedoms of data subjects referred to in paragraph 1 is no longer likely to materialise;
+
+
+      (c) it would involve disproportionate effort. In such a case, there shall instead be a public communication
+      or similar measure whereby the data subjects are informed in an equally effective manner.'
+    section: Artículo 34, apartado 3
+    source_sha256: 514675694f95af75893a4a046dad5133aa296de669578f22c10889d1ca128d8e
