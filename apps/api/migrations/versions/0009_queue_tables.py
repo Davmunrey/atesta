@@ -1,8 +1,9 @@
 """Procrastinate 3.10.0 queue tables (ADR-003, ADR-012 amendment 2, scanner-connectors spec).
 
-The schema SQL ships in the pinned procrastinate wheel. Its sha256 is checked first, so this
-migration can never apply another version's schema; upgrading procrastinate needs a new
-migration with that release's migration scripts.
+The 3.10.0 schema SQL is copied verbatim from that release's wheel into
+migrations/sql/procrastinate-3.10.0-schema.sql (issue #123: the installed package moves on, this
+migration must not). Its sha256 is checked first, so this migration can never apply another
+version's schema; later versions arrive through their own migrations (0018 for 3.11.0).
 
 atesta_app gets table privileges on the four queue tables and EXECUTE on Procrastinate's
 functions, which are revoked from PUBLIC. Procrastinate defines no SECURITY DEFINER function
@@ -15,7 +16,6 @@ Revises: 0008
 import hashlib
 from pathlib import Path
 
-import procrastinate
 import queue_v1
 import rls_v1
 from alembic import op
@@ -25,7 +25,7 @@ down_revision = "0008"
 branch_labels = None
 depends_on = None
 
-SCHEMA = Path(procrastinate.__file__).with_name("sql") / "schema.sql"
+SCHEMA = Path(__file__).resolve().parent.parent / "sql" / "procrastinate-3.10.0-schema.sql"
 SCHEMA_SHA256 = "c70ec4b400a60ad9592787653aae5ae77ae41bf801d56b5bd2712751a07f2009"
 
 
