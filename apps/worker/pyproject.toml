@@ -2,7 +2,7 @@
 name = "atesta-worker"
 version = "0.0.0"
 description = "Atesta background jobs on Procrastinate (ADR-003)"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
     "atesta-api",
     "procrastinate==3.11.0",

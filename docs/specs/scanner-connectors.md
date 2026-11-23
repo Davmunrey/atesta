@@ -91,7 +91,8 @@ D12 (Microsoft Partner Program account and a verified domain).
 
 ### Scanner image and wrapper
 
-- [ ] `scanner/Dockerfile`: `python:3.12-slim` pinned by digest; Prowler 5.52.0 from a
+- [ ] `scanner/Dockerfile`: `python:3.13-slim` (trixie) pinned by digest, the same digest as
+      `apps/Dockerfile` (#298); Prowler 5.52.0 from a
       hash-locked requirements file; PowerShell's native runtime packages installed with apt as
       the upstream 5.52.0 image does (`libicu76`, `libunwind8`, `libssl3`, `libcurl4`,
       `ca-certificates`); PowerShell 7.6.10 from the tarball with the sha256 the upstream 5.52.0
@@ -509,7 +510,7 @@ with the scan key only (D7). Output is a JSON report of ids and verdicts.
 
 | Layer | Pin | Note |
 |---|---|---|
-| Base | `python:3.12-slim@sha256:<digest>` | Prowler requires Python >=3.10,<3.14. `3.12-slim` is Debian 13 (trixie) |
+| Base | `python:3.13.x-slim-trixie@sha256:<digest>`, the same digest as `apps/Dockerfile` | Prowler requires Python >=3.10,<3.14, so 3.13 is the newest it allows (#298). Prowler's own image stays on 3.12; only the base differs from it, the PowerShell and apt pins do not. Debian 13 (trixie) |
 | PowerShell runtime libs | `libicu76`, `libunwind8`, `libssl3`, `libcurl4`, `ca-certificates` from the Debian 13 archive of the pinned base | Required by .NET on Debian 13 (no ICU: the app fails to start); upstream installs the same |
 | Prowler | 5.52.0, wheel sha256 `b9134bdbf4899cbb2ef36e1bb1432d97b2af19a155d7f9861086f780a3ca0a96`, hash-locked deps; resolved with the 7-day cooldown, Prowler alone exempted by its publish date (`--exclude-newer-package`) | Apache-2.0 |
 | PowerShell | 7.6.10 x64 tarball, upstream sha256 | MIT. Needed from PR 5: with certificate auth the M365 provider always starts `pwsh`; without it every M365 scan exits 1 |
@@ -821,6 +822,15 @@ not, unless the row says so.
 | The Google provider now calls `GcpProvider.validate_service_account_key` before use: the key must be `type: service_account` with `token_uri` `https://oauth2.googleapis.com/token` or `https://accounts.google.com/o/oauth2/token`. Importing the provider with sockets and DNS disabled makes no outbound call at either version (the one socket both open is urllib3's local IPv6 probe), and loads no new third-party package (new: stdlib `getpass`, `termios`) | Prowler 5.52.0 `providers/gcp/gcp_provider.py:40-45, 908-939`; import probe in the pull request |
 | `--fixer` is still defined only in `providers/aws/lib/arguments/arguments.py`; M365 still ships one fixer. `lib/cli/parser.py`, `lib/check/models.py`, `lib/outputs/finding.py` and `lib/powershell/powershell.py` are unchanged. `lib/outputs/ocsf/ocsf.py` now closes the array when the last batch is empty. 5.51.0 adds an ENS M365 compliance CSV under `out/compliance/`; the wrapper reads only `prowler.ocsf.json` | Prowler 5.52.0 source; `scanner/atesta_scanner/run.py` |
 | Not re-checked offline: the egress host list and the live behaviour of both providers. The live goldens (M365, Google) run before any customer scan uses 5.52.0 | Candidates below |
+
+### Python 3.13 (2026-11-23, issue #298)
+
+| Fact | Source |
+|---|---|
+| Prowler 5.52.0 requires Python `>=3.10,<3.14`, so 3.13 is the newest it allows | https://pypi.org/pypi/prowler/5.52.0/json |
+| `python:3.13.18-slim-trixie` is the newest 3.13 patch tag; index digest `e48f59cd...ed90`, last pushed 2026-11-08 (more than 7 days before the change). The same tag and digest are in `apps/Dockerfile` and `scanner/Dockerfile` | https://hub.docker.com/v2/repositories/library/python/tags?name=3.13. |
+| Re-locking `requirements.txt` and both `build-requirements.txt` for 3.13 with the header flags changes no version or hash; `typing-extensions` loses four `via` lines (for 3.13 uv no longer lists aiohttp, aiosignal, pyopenssl or referencing as needing it). `uv lock` drops only the cp312 wheel entries | `scanner/requirements.txt`, `uv.lock` diffs |
+| The 3.13 image builds every sdist-only dependency with the hash-locked setuptools, and the offline golden gives the committed lists (149, 65, 54) | `scanner/golden.sh` on the built image |
 
 ### Candidates (not verified; each closes in the named test)
 
