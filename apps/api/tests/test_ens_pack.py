@@ -46,7 +46,9 @@ def test_ens_preserves_dimension_levels_and_alternative_reinforcements() -> None
     assert "Nivel ALTO" in requirements["mp.info.6"].attributes.applicability_es
     assert "op.exp.4" in requirements["op.exp.4"].attributes.applicability_es
     assert pack.metadata.attributes.assessment_enabled is False
-    assert all(m.reviewed_by is None for m in pack.mappings)
+    assert all(
+        m.reviewed_by in (None, "David Muñoz") for m in pack.mappings
+    )  # signed: test_mapping_signoffs
     mappings = [Mapping(pack.metadata.id, m.requirement_id, m.control_id) for m in pack.mappings]
     passing_checks = [
         ControlResult(c.id, Status.PASS) for c in catalog.controls.values() if not c.manual

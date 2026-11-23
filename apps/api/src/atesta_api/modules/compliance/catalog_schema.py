@@ -232,11 +232,21 @@ class ControlContent(Content):
 
 
 class MappingContent(Content):
+    """A candidate until the owner signs it in session: the reviewer's name and the date, both or
+    neither (control-model-schema spec, #210). The database keeps the name; git keeps the date."""
+
     requirement_id: Text
     control_id: Text
     rationale: Text
     source: Link
-    reviewed_by: None
+    reviewed_by: Text | None = None
+    reviewed_on: date | None = None
+
+    @model_validator(mode="after")
+    def signed_in_full(self) -> Self:
+        if (self.reviewed_by is None) != (self.reviewed_on is None):
+            raise ValueError("a signed mapping names its reviewer and the review date")
+        return self
 
 
 class Requirements(Content):
