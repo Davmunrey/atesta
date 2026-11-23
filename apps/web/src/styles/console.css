@@ -202,6 +202,8 @@
   .console-body, .console-main, .console-page { display: block !important; margin: 0 !important; padding: 0 !important; }
   .dossier-section + .dossier-section { break-before: page; }
   .table-region { overflow: visible !important; }
+  /* Forms record; paper reads (issue 345): the incident page prints its record, not its forms. */
+  .classify-block, .routine-form { display: none !important; }
   .dossier a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8125rem; }
 }
 .dossier th, .dossier td { padding: 0.375rem 0.5rem; vertical-align: top; }

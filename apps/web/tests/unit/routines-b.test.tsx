@@ -2,7 +2,7 @@
 import { cleanup, fireEvent, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { IncidentView } from "@/components/incident-view";
-import { IncidentsView } from "@/components/incidents-view";
+import { IncidentsView, localInput } from "@/components/incidents-view";
 import { useAttention } from "@/components/readiness";
 import { captureTrainingToken, TrainingConfirm } from "@/components/training-confirm";
 import { TrainingView } from "@/components/training-view";
@@ -187,4 +187,13 @@ it("groups a framework's incident criteria under one disclosure, in the API's or
   expect(screen.getByText("Qué dice NIS2: Artículo 23")).toBeTruthy();
   const order = [...document.querySelectorAll(".criteria > details > summary")].map((s) => s.textContent);
   expect(order).toEqual(["Qué dice DORA (3 criterios)", "Qué dice NIS2: Artículo 23"]);
+});
+
+it("bounds the classification time by the awareness time and names its help (#345)", async () => {
+  stubApi({ [`GET ${base}/incidents/i1`]: [200, incident] });
+  renderWithProviders(<IncidentView org={owner} incidentId="i1" />);
+  const input = await screen.findByLabelText("Clasificado como significativo");
+  expect(input.getAttribute("min")).toBe(localInput(new Date(incident.aware_at)));
+  const help = document.getElementById(input.getAttribute("aria-describedby")!);
+  expect(help?.textContent).toContain("Algunos plazos cuentan desde ese momento");
 });
