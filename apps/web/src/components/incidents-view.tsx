@@ -10,6 +10,8 @@ import { isContributor } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { PageHeader, Panel } from "./page-frame";
+import { RecordSummary } from "./record-summary";
+import { incidentSummary } from "@/lib/summaries";
 
 /** The value of a datetime-local input for a moment, in the browser's time zone. */
 export function localInput(at: Date): string {
@@ -22,9 +24,13 @@ export function IncidentsView({ org }: { org: Membership }) {
   const format = useFormatter();
   const list = useIncidents(org.organization_id);
   const time = (value: string) => format.dateTime(new Date(value), { dateStyle: "medium", timeStyle: "short" });
+  const s = useTranslations("summary.incidents");
+  const sum = list.data?.length ? incidentSummary(list.data) : null;
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
-    {isContributor(org.role) ? <CreateIncident orgId={org.organization_id} /> : null}
+    {sum ? <RecordSummary lead={s("lead", { open: sum.open, overdue: sum.overdue })} figures={[
+      { label: s("open"), value: format.number(sum.open) }, { label: s("closed"), value: format.number(sum.closed) },
+      { label: s("overdue"), value: format.number(sum.overdue), attention: sum.overdue > 0 }]} /> : null}
     <Panel title={t("list")}>
       {list.isPending ? <p role="status">{t("loading")}</p> : list.isError ? <ErrorMessage error={list.error} />
         : list.data.length === 0 ? <p className="text-muted">{t("empty")}</p>
@@ -40,6 +46,7 @@ export function IncidentsView({ org }: { org: Membership }) {
           </tr>)}</tbody>
         </table></div>}
     </Panel>
+    {isContributor(org.role) ? <CreateIncident orgId={org.organization_id} /> : null}
   </div>;
 }
 

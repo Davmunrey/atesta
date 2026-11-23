@@ -1118,5 +1118,41 @@
     "due": "Lo que vence",
     "nothingDue": "No hay nada pendiente de vencer.",
     "notCertification": "Este informe reúne lo registrado por la organización en Atesta. No es una certificación ni una evaluación de conformidad."
+  },
+  "summary": {
+    "label": "Resumen",
+    "never": "Nunca",
+    "policies": {
+      "lead": "{attention, plural, =0 {Todas las políticas están aprobadas y al día.} one {# política necesita atención.} other {# políticas necesitan atención.}}",
+      "total": "Políticas",
+      "current": "Aprobadas y al día",
+      "overdue": "Revisión vencida",
+      "unapproved": "Sin aprobar"
+    },
+    "access": {
+      "lead": "{open, plural, =0 {No hay revisiones abiertas.} one {# revisión abierta} other {# revisiones abiertas}}{open, plural, =0 {} other {{pending, plural, =0 {, con todas las cuentas decididas.} one {, con # cuenta por decidir.} other {, con # cuentas por decidir.}}}}",
+      "total": "Revisiones",
+      "open": "Abiertas",
+      "closed": "Cerradas",
+      "pending": "Cuentas por decidir"
+    },
+    "training": {
+      "lead": "{open, plural, =0 {No hay formaciones abiertas.} one {# formación abierta.} other {# formaciones abiertas.}} {acknowledged, plural, =0 {Aún no hay confirmaciones.} one {# confirmación registrada.} other {# confirmaciones registradas.}}",
+      "total": "Formaciones",
+      "open": "Abiertas",
+      "acknowledged": "Confirmaciones"
+    },
+    "incidents": {
+      "lead": "{open, plural, =0 {No hay incidentes abiertos.} one {# incidente abierto} other {# incidentes abiertos}}{open, plural, =0 {} other {{overdue, plural, =0 {, sin avisos vencidos.} one {, # con avisos vencidos.} other {, # con avisos vencidos.}}}}",
+      "open": "Abiertos",
+      "closed": "Cerrados",
+      "overdue": "Con avisos vencidos"
+    },
+    "tokens": {
+      "lead": "{active, plural, =0 {Ningún token activo: ninguna herramienta puede registrar evidencias.} one {# token activo.} other {# tokens activos.}}",
+      "active": "Tokens activos",
+      "inactive": "Revocados o caducados",
+      "lastUsed": "Último uso"
+    }
   }
 }

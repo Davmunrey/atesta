@@ -203,6 +203,8 @@ Controls and navigation use the small radius; shared primary actions and the col
 
 **State badges.** Every recorded state shows a drawn icon beside its label: done (circle check), partial (half-ruled circle), missing (triangle), not applicable (slashed circle), pending (clock). Colour reinforces, never carries, the state.
 
+**Record summary.** Records pages (policies, access reviews, training, incidents, integrations) open with an executive summary for management: one medium-weight sentence, then the KPI strip with as many figures as fit (`.kpis-fit`). Figures that can need action carry their state as icon plus "Requiere acción" / "Al día". The register follows; the creation form comes last. No figures while the list loads or fails.
+
 **Activity.** Audit actions read as sentences in ES and EN; an action without a label reads "Otra acción", database ids are never shown, readable targets (framework keys, requirement codes) stay in mono.
 
 **Loading, empty and error states.** Loading uses static surface-colored placeholders and status text. Empty states explain the absence; search can be cleared. Errors expose retry. Refresh temporarily disables its control and changes its label. Development data stays visibly labeled and synthetic framework results are not presented as ENS/NIS2 assessments.

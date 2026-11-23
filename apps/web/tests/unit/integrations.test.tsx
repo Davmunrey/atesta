@@ -51,5 +51,6 @@ it("reads in English", async () => {
   stubApi({ [`GET ${base}`]: [200, [row({})]] });
   renderWithProviders(<IntegrationsView org={owner} />, "en");
   expect(await screen.findByText("Active until Jan 30, 2099")).toBeTruthy();
-  expect(screen.getByText("Never")).toBeTruthy();
+  // Once in the token's row and once as the summary's last use (ui-polish spec).
+  expect(screen.getAllByText("Never")).toHaveLength(2);
 });

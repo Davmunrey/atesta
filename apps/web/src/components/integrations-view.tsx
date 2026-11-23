@@ -8,6 +8,8 @@ import { type Membership, orgHome } from "@/lib/org";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { PageHeader, Panel } from "./page-frame";
+import { RecordSummary } from "./record-summary";
+import { tokenSummary } from "@/lib/summaries";
 
 const EXPIRIES = [30, 90, 180, 365] as const;
 
@@ -15,10 +17,15 @@ const EXPIRIES = [30, 90, 180, 365] as const;
 export function IntegrationsView({ org }: { org: Membership }) {
   const t = useTranslations("integrations");
   const list = useApiTokens(org.organization_id);
+  const s = useTranslations("summary");
+  const format = useFormatter();
+  const sum = list.data?.length ? tokenSummary(list.data, new Date()) : null;
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
-    <CreateToken orgId={org.organization_id} />
-    <Templates />
+    {sum ? <RecordSummary lead={s("tokens.lead", { active: sum.active })} figures={[
+      { label: s("tokens.active"), value: format.number(sum.active), attention: sum.active === 0 },
+      { label: s("tokens.inactive"), value: format.number(sum.inactive) },
+      { label: s("tokens.lastUsed"), value: sum.lastUsed ? format.dateTime(new Date(sum.lastUsed), { dateStyle: "medium" }) : s("never") }]} /> : null}
     <Panel title={t("list")}>
       {list.isPending ? <p role="status">{t("loading")}</p> : list.isError ? <ErrorMessage error={list.error} />
         : list.data.length === 0 ? <p className="text-muted">{t("empty")}</p>
@@ -27,6 +34,8 @@ export function IntegrationsView({ org }: { org: Membership }) {
           <tbody>{list.data.map((token) => <TokenRow key={token.id} token={token} orgId={org.organization_id} />)}</tbody>
         </table></div>}
     </Panel>
+    <CreateToken orgId={org.organization_id} />
+    <Templates />
   </div>;
 }
 

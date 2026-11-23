@@ -9,6 +9,8 @@ import { canReviewControls } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { PageHeader, Panel } from "./page-frame";
+import { RecordSummary } from "./record-summary";
+import { trainingSummary } from "@/lib/summaries";
 
 const utcDay = (day: string) => new Date(`${day}T00:00:00Z`);
 
@@ -16,9 +18,14 @@ const utcDay = (day: string) => new Date(`${day}T00:00:00Z`);
 export function TrainingView({ org }: { org: Membership }) {
   const t = useTranslations("routines.training");
   const list = useTrainingCampaigns(org.organization_id);
+  const s = useTranslations("summary.training");
+  const format = useFormatter();
+  const sum = list.data?.length ? trainingSummary(list.data) : null;
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
-    {canReviewControls(org.role) ? <CreateCampaign orgId={org.organization_id} /> : null}
+    {sum ? <RecordSummary lead={s("lead", { open: sum.open, acknowledged: sum.acknowledged })} figures={[
+      { label: s("total"), value: format.number(sum.total) }, { label: s("open"), value: format.number(sum.open) },
+      { label: s("acknowledged"), value: format.number(sum.acknowledged) }]} /> : null}
     <Panel title={t("list")}>
       {list.isPending ? <p role="status">{t("loading")}</p> : list.isError ? <ErrorMessage error={list.error} />
         : list.data.length === 0 ? <p className="text-muted">{t("empty")}</p>
@@ -31,6 +38,7 @@ export function TrainingView({ org }: { org: Membership }) {
           </tr>)}</tbody>
         </table></div>}
     </Panel>
+    {canReviewControls(org.role) ? <CreateCampaign orgId={org.organization_id} /> : null}
   </div>;
 }
 

@@ -103,7 +103,7 @@
 
   /* KPI strip: figures with labels and state as text. */
   .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; overflow: hidden; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-border-subtle); }
-  .kpi { display: grid; gap: 0.25rem; padding: 1rem 1.25rem; background: var(--color-panel); min-width: 0; }
+  .kpi { display: grid; align-content: start; gap: 0.25rem; padding: 1rem 1.25rem; background: var(--color-panel); min-width: 0; }
   .kpi:last-child:nth-child(odd) { grid-column: 1 / -1; }
   @media (min-width: 64rem) { .kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); } .kpi:last-child:nth-child(odd) { grid-column: auto; } }
   .kpi dt { font-size: 0.8125rem; color: var(--color-muted); }
@@ -113,6 +113,10 @@
   .kpi-state[data-severity="overdue"] { color: var(--color-danger); }
   .kpi-state[data-severity="pending"] { color: var(--color-warning); }
   .kpi-state[data-severity="done"] { color: var(--color-success); }
+  /* Records pages (ui-polish spec): a sentence for management, then as many figures as fit. */
+  .record-summary { display: grid; gap: 0.75rem; }
+  .record-summary-lead { font-weight: 500; }
+  .kpis.kpis-fit { grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); }
 
   /* Status badges: icon plus text, never colour alone. */
   .badge { display: inline-flex; align-items: center; gap: 0.3125rem; font-size: 0.8125rem; font-weight: 500; white-space: nowrap; }

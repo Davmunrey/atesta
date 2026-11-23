@@ -9,6 +9,8 @@ import { canReviewControls } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { PageHeader, Panel } from "./page-frame";
+import { RecordSummary } from "./record-summary";
+import { reviewSummary } from "@/lib/summaries";
 
 /** Access reviews (recorded-routines spec): who keeps access, decided and recorded per account. */
 export function AccessReviewsView({ org }: { org: Membership }) {
@@ -16,9 +18,13 @@ export function AccessReviewsView({ org }: { org: Membership }) {
   const format = useFormatter();
   const list = useAccessReviews(org.organization_id);
   const admin = canReviewControls(org.role);
+  const s = useTranslations("summary.access");
+  const sum = list.data?.length ? reviewSummary(list.data, new Date().toISOString().slice(0, 10)) : null;
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
-    {admin ? <CreateReview org={org} /> : null}
+    {sum ? <RecordSummary lead={s("lead", { open: sum.open, pending: sum.pending })} figures={[
+      { label: s("total"), value: format.number(sum.total) }, { label: s("open"), value: format.number(sum.open), attention: sum.late > 0 },
+      { label: s("closed"), value: format.number(sum.closed) }, { label: s("pending"), value: format.number(sum.pending) }]} /> : null}
     <Panel title={t("list")}>
       {list.isPending ? <p role="status">{t("loading")}</p> : list.isError ? <ErrorMessage error={list.error} />
         : list.data.length === 0 ? <p className="text-muted">{t("empty")}</p>
@@ -34,6 +40,7 @@ export function AccessReviewsView({ org }: { org: Membership }) {
           </tr>)}</tbody>
         </table></div>}
     </Panel>
+    {admin ? <CreateReview org={org} /> : null}
   </div>;
 }
 
