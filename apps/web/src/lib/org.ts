@@ -34,6 +34,8 @@ export const orgIncidents = (orgId: string): string => `/app/incidents?org=${enc
 export const orgIncident = (orgId: string, id: string): string =>
   `/app/incident?org=${encodeURIComponent(orgId)}&id=${encodeURIComponent(id)}`;
 
+export const orgIntegrations = (orgId: string): string => `/app/integrations?org=${encodeURIComponent(orgId)}`;
+
 export const orgMyWork = (orgId: string): string => `/app/my-work?org=${encodeURIComponent(orgId)}`;
 
 export const orgActivity = (orgId: string): string => `/app/activity?org=${encodeURIComponent(orgId)}`;

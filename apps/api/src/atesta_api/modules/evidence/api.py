@@ -17,9 +17,11 @@ _UNSAFE = re.compile(r"[^A-Za-z0-9_.-]+")
 
 
 def install_evidence(app: FastAPI) -> None:
+    from atesta_api.modules.evidence.ingest import router as ingest_router
     from atesta_api.modules.evidence.routes import router
 
     app.include_router(router)
+    app.include_router(ingest_router)
 
 
 def statements_in_org(
@@ -78,9 +80,12 @@ def record_attestation(
     title: str,
     statement: str,
     reference_url: str | None = None,
+    source_type: str = "user",
+    source_id: uuid.UUID | None = None,
 ) -> uuid.UUID:
-    """A statement written by a recorded routine (recorded-routines spec). It is linked to the
-    control when the control is active in the catalog; the statement itself is always kept."""
+    """A statement written by a recorded routine (recorded-routines spec) or an API token
+    (evidence-ingestion-api spec, source "api" naming the token). It is linked to the control
+    when the control is active in the catalog; the statement itself is always kept."""
     import hashlib
     import json
 
@@ -93,7 +98,8 @@ def record_attestation(
             organization_id=organization_id,
             kind="attestation",
             title=title[:200],
-            source_type="user",
+            source_type=source_type,
+            source_id=source_id,
             created_by=author,
             collected_at=datetime.now().astimezone(),
         )

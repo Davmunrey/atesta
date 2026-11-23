@@ -15,6 +15,7 @@ const PATHS: Record<string, ReactNode> = {
   policies: <><path d="M7 3.5h7.5L19 8v12.5H7Z" /><path d="M14.5 3.5V8H19" /><path d="M10 12.5h6M10 16h6" /></>,
   training: <><path d="M3.5 9 12 5l8.5 4-8.5 4Z" /><path d="M7 11v4.5c1.4 1.3 3.1 2 5 2s3.6-.7 5-2V11" /><path d="M20.5 9v5" /></>,
   incidents: <><path d="M12 3.5 20.5 19H3.5Z" /><path d="M12 9.5V14" /><circle cx="12" cy="16.75" r=".5" /></>,
+  integrations: <><path d="M9 7.5 4.5 12 9 16.5" /><path d="M15 7.5 19.5 12 15 16.5" /><path d="m13.25 5.5-2.5 13" /></>,
   chevron: <><path d="m9.5 6 6 6-6 6" /></>,
   overdue: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5v5" /><path d="M12 16h.01" /></>,
   missing: <><path d="M12 4 21 19.5H3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></>,

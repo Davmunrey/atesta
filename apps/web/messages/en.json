@@ -101,7 +101,8 @@
       "token_in_query": "This invitation link is not valid. Open it again from the message you received.",
       "period_invalid": "The period must be 30 or 90 days.",
       "access_expired": "Your auditor access to this organization has ended. Ask an administrator to extend it.",
-      "closure_name_mismatch": "The name does not match. Type it exactly as shown."
+      "closure_name_mismatch": "The name does not match. Type it exactly as shown.",
+      "api_token_invalid": "The API token is not valid, revoked or expired."
     },
     "request": {
       "error": "The request could not be completed. Try again.",
@@ -680,7 +681,8 @@
     "accessReviews": "Access reviews",
     "policies": "Policies",
     "training": "Training",
-    "incidents": "Incidents"
+    "incidents": "Incidents",
+    "integrations": "Integrations"
   },
   "routines": {
     "access": {
@@ -835,5 +837,35 @@
     "confirm": "Confirm",
     "done": "Thank you. Your confirmation is recorded.",
     "already": "You had already confirmed this training with this email."
+  },
+  "integrations": {
+    "title": "Integrations",
+    "intro": "Tokens that let your tools (CI, backups, scanners) record evidence in Atesta. They can only write evidence; they read nothing.",
+    "loading": "Loading…",
+    "list": "Tokens",
+    "empty": "No tokens yet.",
+    "name": "Name",
+    "namePlaceholder": "For example, GitHub Actions",
+    "expiry": "Expires in",
+    "days": "{count, plural, one {# day} other {# days}}",
+    "add": "Create the token",
+    "create": "New token",
+    "createHelp": "The token is shown only once. Store it as a secret in your tool; Atesta keeps only its fingerprint.",
+    "tokenTitle": "Token created",
+    "tokenHelp": "Copy it now: it will not be shown again.",
+    "tokenLabel": "API token",
+    "copy": "Copy the token",
+    "copied": "Token copied",
+    "example": "Example",
+    "lastUsed": "Last used",
+    "never": "Never",
+    "state": "Status",
+    "actions": "Actions",
+    "createdBy": "Created by {email} on {date}",
+    "activeUntil": "Active until {date}",
+    "expiredOn": "Expired on {date}",
+    "revokedOn": "Revoked on {date}",
+    "revoke": "Revoke",
+    "revokeNamed": "Revoke the token {name}"
   }
 }

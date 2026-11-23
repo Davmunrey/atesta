@@ -7,6 +7,7 @@ import httpx
 from fastapi import FastAPI
 
 from atesta_api.modules.identity.activity import is_member, person
+from atesta_api.modules.identity.api_tokens import ApiCaller, ApiTokenCaller
 from atesta_api.modules.identity.bff import SessionCrypto, SessionEndedError, session_ended_handler
 from atesta_api.modules.identity.bff import router as auth_router
 from atesta_api.modules.identity.cognito import (
@@ -50,6 +51,8 @@ def install_identity(app: FastAPI) -> None:
 
 
 __all__ = [
+    "ApiCaller",
+    "ApiTokenCaller",
     "ContextReason",
     "CurrentCaller",
     "Member",

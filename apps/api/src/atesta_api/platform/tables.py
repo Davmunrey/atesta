@@ -31,6 +31,8 @@ TENANT = frozenset(
         "training_acknowledgements",
         "incidents",
         "incident_updates",
+        "api_tokens",
+        "api_ingestions",
     }
 )
 APPEND_ONLY = frozenset(
@@ -54,6 +56,7 @@ APPEND_ONLY = frozenset(
         "training_acknowledgements",
         "incidents",
         "incident_updates",
+        "api_ingestions",
     }
 )
 GLOBAL_IDENTITY = frozenset({"users"})

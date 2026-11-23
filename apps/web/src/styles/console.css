@@ -156,7 +156,7 @@
 }
 
 /* Recorded routines, part B: the one-time link, checkboxes in forms, the incident timeline. */
-.link-once { display: grid; gap: 0.5rem; margin-top: 1rem; }
+.link-once { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; margin-top: 1rem; min-width: 0; }
 .link-once-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .link-once-row input { flex: 1 1 16rem; min-width: 0; font-family: var(--font-mono, ui-monospace, monospace); }
 .checkbox-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
@@ -165,3 +165,4 @@
 .update-list { display: grid; gap: 0.75rem; margin-bottom: 1rem; }
 .update-list li { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: 0.75rem; overflow-wrap: anywhere; }
 @media (max-width: 40rem) { .update-list li { grid-template-columns: minmax(0, 1fr); gap: 0.125rem; } }
+.code-example { width: 100%; min-width: 0; max-width: 100%; font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.8125rem; white-space: pre; overflow-x: auto; }

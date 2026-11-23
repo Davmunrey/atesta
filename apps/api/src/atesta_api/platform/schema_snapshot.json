@@ -28,6 +28,33 @@
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
+   "api_ingestions",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "api_tokens",
+   "api_token_read",
+   "SELECT",
+   "PERMISSIVE",
+   "public",
+   "(token_sha256 = app_setting_text('app.api_token_sha256'::text))",
+   ""
+  ],
+  [
+   "api_tokens",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
    "assessment_reviews",
    "tenant_isolation",
    "ALL",
@@ -313,6 +340,18 @@
   ],
   [
    "access_reviews",
+   "",
+   "atesta_app",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "api_ingestions",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
+   "api_tokens",
    "",
    "atesta_app",
    "INSERT,SELECT,UPDATE"

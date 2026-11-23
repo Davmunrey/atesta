@@ -101,7 +101,8 @@
       "token_in_query": "El enlace de invitación no es válido. Ábrelo de nuevo desde el mensaje recibido.",
       "period_invalid": "El periodo debe ser de 30 o 90 días.",
       "access_expired": "Tu acceso de auditor a esta organización ha terminado. Pide a un administrador que lo amplíe.",
-      "closure_name_mismatch": "El nombre no coincide. Escríbelo exactamente como aparece."
+      "closure_name_mismatch": "El nombre no coincide. Escríbelo exactamente como aparece.",
+      "api_token_invalid": "Token de API no válido, revocado o caducado."
     },
     "request": {
       "error": "No se ha podido completar la solicitud. Vuelve a intentarlo.",
@@ -680,7 +681,8 @@
     "accessReviews": "Revisiones de acceso",
     "policies": "Políticas",
     "training": "Formación",
-    "incidents": "Incidentes"
+    "incidents": "Incidentes",
+    "integrations": "Integraciones"
   },
   "routines": {
     "access": {
@@ -835,5 +837,35 @@
     "confirm": "Confirmar",
     "done": "Gracias. Tu confirmación ha quedado registrada.",
     "already": "Ya habías confirmado esta formación con este correo."
+  },
+  "integrations": {
+    "title": "Integraciones",
+    "intro": "Tokens para que vuestras herramientas (CI, copias, escáneres) registren evidencias en Atesta. Solo pueden escribir evidencias; no leen nada.",
+    "loading": "Cargando…",
+    "list": "Tokens",
+    "empty": "Aún no hay tokens.",
+    "name": "Nombre",
+    "namePlaceholder": "Por ejemplo, GitHub Actions",
+    "expiry": "Caducidad",
+    "days": "{count, plural, one {# día} other {# días}}",
+    "add": "Crear el token",
+    "create": "Nuevo token",
+    "createHelp": "El token se muestra una sola vez. Guárdalo como secreto en vuestra herramienta; Atesta solo conserva su huella.",
+    "tokenTitle": "Token creado",
+    "tokenHelp": "Cópialo ahora: no se volverá a mostrar.",
+    "tokenLabel": "Token de API",
+    "copy": "Copiar el token",
+    "copied": "Token copiado",
+    "example": "Ejemplo de uso",
+    "lastUsed": "Último uso",
+    "never": "Nunca",
+    "state": "Estado",
+    "actions": "Acciones",
+    "createdBy": "Creado por {email} el {date}",
+    "activeUntil": "Activo hasta el {date}",
+    "expiredOn": "Caducó el {date}",
+    "revokedOn": "Revocado el {date}",
+    "revoke": "Revocar",
+    "revokeNamed": "Revocar el token {name}"
   }
 }

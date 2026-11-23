@@ -32,9 +32,9 @@ function render() {
 it("groups the navigation with drawn icons and marks the current page", async () => {
   render();
   const nav = await screen.findByRole("navigation", { name: "Secciones de la organización" });
-  expect(within(nav).getAllByRole("link").map((l) => l.textContent)).toEqual(["Resumen", "Mi trabajo", "Marcos", "Revisiones de acceso", "Políticas", "Formación", "Incidentes", "Miembros", "Invitaciones", "Actividad", "Ajustes"]);
+  expect(within(nav).getAllByRole("link").map((l) => l.textContent)).toEqual(["Resumen", "Mi trabajo", "Marcos", "Revisiones de acceso", "Políticas", "Formación", "Incidentes", "Miembros", "Invitaciones", "Actividad", "Integraciones", "Ajustes"]);
   expect(within(nav).getByRole("link", { name: "Resumen" }).getAttribute("aria-current")).toBe("page");
-  expect(nav.querySelectorAll("svg[aria-hidden='true']")).toHaveLength(11);
+  expect(nav.querySelectorAll("svg[aria-hidden='true']")).toHaveLength(12);
 });
 
 it("collapses the navigation to icons and remembers it", async () => {
