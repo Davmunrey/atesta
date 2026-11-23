@@ -4,7 +4,9 @@
   },
   "footer": {
     "label": "Site information",
-    "readiness": "Audit readiness. It does not certify compliance."
+    "readiness": "Audit readiness. It does not certify compliance.",
+    "notice": "Legal notice",
+    "privacy": "Privacy"
   },
   "cookies": {
     "title": "Cookies and storage",
@@ -1294,5 +1296,96 @@
     "reviewed": "A list Atesta wrote from the cited guide, reviewed by {name} on {date}. It does not assess your organization.",
     "reference": "{guide} ({edition}), section {section}, p. {page}",
     "shared": "Reference: {reference}"
+  },
+  "legal": {
+    "draft": "Draft pending legal review. This text is not final.",
+    "clause": "Draft",
+    "binding": "The Spanish version of this page is the binding one.",
+    "index": "On this page",
+    "pending": "[PENDIENTE]",
+    "fields": {
+      "name": "Name or company name",
+      "address": "Address",
+      "email": "Email",
+      "contact": "Another direct contact channel",
+      "registry": "Registry details",
+      "nif": "Tax ID (NIF)"
+    },
+    "notice": {
+      "title": "Legal notice",
+      "intro": "General information about the site, under article 10 of Spanish Law 34/2002 (LSSI-CE).",
+      "holder": {
+        "title": "Site owner",
+        "body": "Who owns the site and how to contact them directly."
+      },
+      "registry": {
+        "title": "Registry details",
+        "body": "Registration in the Commercial Registry or another public registry, if any."
+      },
+      "nif": {
+        "title": "Tax identification number",
+        "body": "The owner's NIF."
+      },
+      "conduct": {
+        "title": "Codes of conduct",
+        "body": "[PENDIENTE] State the codes of conduct the owner adheres to, or that it adheres to none."
+      },
+      "prices": {
+        "title": "Prices",
+        "body": "The site shows no prices. If it did, this section would say whether they include taxes and delivery costs."
+      }
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "intro": "How personal data is processed on the site and in the app, under article 13 of the GDPR.",
+      "controller": {
+        "title": "Controller",
+        "body": "The controller's identity and contact details."
+      },
+      "dpo": {
+        "title": "Data protection officer",
+        "body": "[PENDIENTE] State whether an officer has been appointed and how to contact them; otherwise remove this section."
+      },
+      "purposes": {
+        "title": "Purposes and legal basis",
+        "body": "Running the account and session of people who use the app, and answering access requests received by email. [PENDIENTE] The legal basis of each processing."
+      },
+      "interests": {
+        "title": "Legitimate interests",
+        "body": "[PENDIENTE] Only if a processing relies on article 6(1)(f) of the GDPR."
+      },
+      "recipients": {
+        "title": "Recipients",
+        "body": "Processors that provide the infrastructure, such as Amazon Web Services in its Spain region (eu-south-2). [PENDIENTE] Full list of processors."
+      },
+      "transfers": {
+        "title": "International transfers",
+        "body": "No transfers outside the European Economic Area are planned. [PENDIENTE] Safeguards if a processor's contract allowed one."
+      },
+      "retention": {
+        "title": "Retention",
+        "body": "[PENDIENTE] Retention period or criteria for each processing."
+      },
+      "rights": {
+        "title": "Rights",
+        "body": "Access, rectification, erasure, restriction, portability and objection (articles 15 to 22 of the GDPR), in writing to the controller's contact address."
+      },
+      "complaint": {
+        "title": "Complaints",
+        "body": "The right to lodge a complaint with the Spanish Data Protection Agency (AEPD)."
+      },
+      "required": {
+        "title": "Whether data must be provided",
+        "body": "[PENDIENTE] Which data are needed to use the service and what happens if they are not provided."
+      },
+      "automated": {
+        "title": "Automated decisions",
+        "body": "[PENDIENTE] Confirm that no decision is based solely on automated processing and no profiling takes place."
+      },
+      "cookies": {
+        "title": "Cookies",
+        "body": "Cookies and browser storage are described on their own page."
+      }
+    }
   }
 }
