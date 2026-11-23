@@ -76,6 +76,18 @@ def test_full_sign_in_refresh_and_userinfo(fake: TestClient) -> None:
         oauth.exchange_code(code, "v" * 50)  # codes are single use
 
 
+def test_a_revoked_refresh_token_no_longer_refreshes(fake: TestClient) -> None:
+    """The fake revokes like Cognito, so e2e sign-out exercises revocation (#324)."""
+    settings = CognitoSettings.from_env()
+    oauth = CognitoOAuth(settings, fake, TokenVerifier(settings, jwks_fetcher(settings, fake)), WEB)
+    tokens = oauth.exchange_code(sign_in(fake, oauth, "ana@example.com", "v" * 50), "v" * 50)
+    refresh_token = tokens.refresh_token or ""
+    oauth.revoke(refresh_token)
+    oauth.revoke(refresh_token)  # already revoked: still 200, like Cognito
+    with pytest.raises(InvalidTokenError):
+        oauth.refresh(refresh_token)
+
+
 def test_pkce_mismatch_is_refused(fake: TestClient) -> None:
     settings = CognitoSettings.from_env()
     oauth = CognitoOAuth(settings, fake, TokenVerifier(settings, jwks_fetcher(settings, fake)), WEB)

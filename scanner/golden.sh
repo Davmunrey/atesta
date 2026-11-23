@@ -22,7 +22,7 @@ for provider in m365 googleworkspace; do
 done
 
 run -v "$PWD/scanner/tools:/tools:ro" --entrypoint python "$image" -I /tools/powershell_checks.py \
-  /usr/local/lib/python3.12/site-packages/prowler/providers/m365/services \
+  /usr/local/lib/python3.13/site-packages/prowler/providers/m365/services \
   "/opt/atesta/expected/$version/m365.json" >"$out/m365-powershell.json"
 cmp "$expected/m365-powershell.json" "$out/m365-powershell.json"
 

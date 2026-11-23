@@ -129,7 +129,9 @@
       "clock_unknown": "Ese plazo no se aplica a este incidente.",
       "clock_met": "Ese plazo ya está registrado.",
       "clock_waiting": "Ese plazo empieza cuando se registre el anterior.",
-      "report_month_invalid": "El mes no es válido o todavía no ha empezado."
+      "report_month_invalid": "El mes no es válido o todavía no ha empezado.",
+      "incident_classified": "Este incidente ya tiene registrada su clasificación como significativo.",
+      "classified_before_aware": "La clasificación no puede ser anterior a la constancia del incidente."
     },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
@@ -329,9 +331,11 @@
       "evidenceLoading": "Cargando las evidencias…",
       "evidenceNone": "Registra primero una evidencia de este control (en «Ver evidencias») para poder marcarlo como implantado.",
       "evidenceRequired": "Marca al menos una evidencia para registrarlo como implantado.",
-      "evidenceNewest": "{count, plural, one {Se muestra la evidencia más reciente.} other {Se muestran las # más recientes.}}",
       "cited": "Evidencias citadas",
-      "citesNone": "No cita ninguna evidencia."
+      "citesNone": "No cita ninguna evidencia.",
+      "evidencePage": "Evidencias {from}–{to} de {total}. {cited, plural, =0 {Ninguna citada.} one {# citada.} other {# citadas.}}",
+      "evidenceNewer": "Más recientes",
+      "evidenceOlder": "Anteriores"
     },
     "observationHelp": "Observación técnica a la fecha del análisis, agregada entre conexiones. Es distinta del resultado registrado del requisito.",
     "mappingUnreviewed": "La relación entre este requisito y el control aún no tiene revisión registrada.",
@@ -580,7 +584,36 @@
     "overdue": "Vencida",
     "formerMember": "Antiguo miembro",
     "assignedOwner": "Asignada",
-    "exportDossier": "Abrir el dossier para el auditor"
+    "exportDossier": "Abrir el dossier para el auditor",
+    "profile": "Perfil de cumplimiento",
+    "profileNone": "Ninguno: proponer según la categoría y los niveles",
+    "profileHelp": "Si adoptáis un perfil publicado, Atesta propone cada medida según su declaración de aplicabilidad en lugar de las tablas por categoría.",
+    "profileSources": "Fuentes: {refs}.",
+    "profileCandidate": "Selección extraída por Atesta de la guía citada, pendiente de revisión cualificada.",
+    "profileAdopted": "Perfil adoptado: {title}.",
+    "proposalProfile": "Propuesta según el perfil adoptado: {decision} (<official>{rule}</official>; {reference}). Confírmala o justifica otra decisión.",
+    "proposalCriterion": "La guía da criterios propios para esta medida: {reference}.",
+    "guide": {
+      "title": "Valorar el sistema paso a paso",
+      "candidate": "Pasos redactados por Atesta a partir de la guía citada, pendientes de revisión cualificada. La valoración es vuestra.",
+      "reviewed": "Pasos redactados por Atesta a partir de la guía citada y revisados por {name}. La valoración es vuestra.",
+      "addInformation": "Añadir un tipo de información",
+      "addService": "Añadir un servicio",
+      "name": {
+        "information": "Nombre del tipo de información",
+        "service": "Nombre del servicio"
+      },
+      "unnamed": {
+        "information": "Información {number}",
+        "service": "Servicio {number}"
+      },
+      "notAssigned": "Sin nivel (N/A)",
+      "remove": "Quitar «{name}»",
+      "empty": "Añade la información y los servicios del sistema y valóralos para ver el resultado.",
+      "result": "Resultado: {levels}. Categoría: {category}.",
+      "apply": "Usar estos niveles",
+      "applied": "Niveles copiados al alcance. Revísalos y guarda el alcance."
+    }
   },
   "insights": {
     "title": "Evolución",
@@ -931,14 +964,22 @@
       "kind": {
         "note": "Anotación",
         "clock": "Aviso enviado: {clock}",
-        "closed": "Incidente cerrado"
+        "closed": "Incidente cerrado",
+        "classified": "Clasificado como significativo el {time}"
       },
       "flags": "Características",
       "noFlags": "Ni significativo ni con datos personales",
       "criteria": "Qué dice {framework}: {title}",
       "criteriaGroup": "Qué dice {framework} ({count, plural, one {# criterio} other {# criterios}})",
       "criteriaSource": "Ver en la fuente oficial",
-      "sentWhich": ": «{clock}»"
+      "sentWhich": ": «{clock}»",
+      "classifiedAt": "Clasificado como significativo",
+      "classifiedHelp": "Cuándo lo clasificasteis como significativo (grave). Algunos plazos cuentan desde ese momento, como la notificación inicial de DORA.",
+      "classified": "clasificado como significativo el {time}",
+      "classificationMissing": "falta cuándo se clasificó como significativo",
+      "classify": "Registrar la clasificación",
+      "classifyTitle": "Clasificación como significativo",
+      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registréis."
     }
   },
   "trainingLink": {
@@ -1105,7 +1146,9 @@
     "nextReview": "próxima revisión: {date}",
     "accessReviewClosed": "{total, plural, one {# cuenta revisada} other {# cuentas revisadas}} (mantener: {keep}; retirar: {revoke}); cerrada el {date}",
     "trainingClosed": "{count, plural, one {# confirmación} other {# confirmaciones}}; cerrada el {date}",
-    "incidentClosed": "constancia el {aware}; cerrado el {date}"
+    "incidentClosed": "constancia el {aware}; cerrado el {date}",
+    "reviewCites": "{count, plural, one {Cita una evidencia: {titles}.} other {Cita # evidencias: {titles}.}}",
+    "reviewCitesNone": "La revisión no cita evidencias."
   },
   "portfolio": {
     "title": "Tus organizaciones",

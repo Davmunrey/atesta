@@ -66,3 +66,71 @@ def test_a_clock_met_after_its_due_time_is_late() -> None:
 
 def test_met_times_for_clocks_that_do_not_apply_are_ignored() -> None:
     assert _states(AWARE, {"gdpr:breach": AWARE}, significant=True).get("gdpr:breach") is None
+
+
+# --- classification (#224): Delegated Regulation (EU) 2025/301, Art. 5(1)(a) and 5(2) ------
+
+INITIAL = ClockRule(
+    ref="dora:initial_notification",
+    hours=4,
+    months=None,
+    after=None,
+    needs="significant",
+    starts="classified",
+    outer_limit_hours=24,
+)
+INTERMEDIATE = ClockRule(
+    ref="dora:intermediate_report",
+    hours=72,
+    months=None,
+    after="dora:initial_notification",
+    needs="significant",
+)
+
+
+def _initial(classified_at: datetime | None, now: datetime | None = None) -> object:
+    found = clock_states(
+        [INITIAL, INTERMEDIATE],
+        aware_at=AWARE,
+        significant=True,
+        personal_data=False,
+        met={},
+        now=now or AWARE,
+        classified_at=classified_at,
+    )
+    return found[0]
+
+
+def test_the_clock_runs_four_hours_from_classification() -> None:
+    state = _initial(AWARE + timedelta(hours=2))
+    assert (state.state, state.due_at) == ("running", AWARE + timedelta(hours=6))
+
+
+def test_the_outer_limit_from_awareness_caps_it() -> None:
+    state = _initial(AWARE + timedelta(hours=22))
+    assert state.due_at == AWARE + timedelta(hours=24)
+
+
+def test_a_classification_after_the_outer_limit_runs_from_classification_alone() -> None:
+    state = _initial(AWARE + timedelta(hours=30), now=AWARE + timedelta(hours=31))
+    assert (state.state, state.due_at) == ("running", AWARE + timedelta(hours=34))
+
+
+def test_without_a_classification_time_only_the_outer_limit_runs() -> None:
+    state = _initial(None, now=AWARE + timedelta(hours=25))
+    assert (state.state, state.due_at) == ("overdue", AWARE + timedelta(hours=24))
+
+
+def test_a_classified_clock_without_outer_limit_waits_for_the_classification() -> None:
+    rule = ClockRule(
+        ref="x:after_classification",
+        hours=4,
+        months=None,
+        after=None,
+        needs="significant",
+        starts="classified",
+    )
+    [state] = clock_states(
+        [rule], aware_at=AWARE, significant=True, personal_data=False, met={}, now=AWARE
+    )
+    assert (state.state, state.due_at) == ("waiting", None)

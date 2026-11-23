@@ -56,7 +56,7 @@ This pack cannot be scored, including when development draft visibility is enabl
   - Article 13 is entry into force.
 - **What the user sees:** the incident form shows the criteria next to the "significant" flag. Atesta shows the text; whether an incident is major is the financial entity's decision (ADR-005).
 
-## Reporting clocks (draft6)
+## Reporting clocks (draft6, classification in draft8)
 
 - **Act:** Commission Delegated Regulation (EU) 2025/301 (RTS on the content and time limits of major ICT-related incident reports), CELEX `32025R0301`.
 - **Captured** on 2026-11-23 from the Publications Office:
@@ -64,12 +64,18 @@ This pack cannot be scored, including when development draft visibility is enabl
   - EN `…0006.03`, SHA-256 `052c6f97988fc7e0753c2fc64d7b9aa985b3aab309e4e6d7bfc54f11c4b83554`.
 - **Corrigenda:** the only one, `32025R0301R(01)`, is French.
 - **Clocks,** from Article 5(1), copied from the official text:
-  - initial notification "no later than 24 hours from the moment the financial entity has become aware" / "a más tardar veinticuatro horas después del momento en que la entidad financiera haya tenido conocimiento";
+  - initial notification "within four hours from the classification of the ICT-related incident as a major ICT-related incident and no later than 24 hours from the moment the financial entity has become aware of the ICT-related incident" / "en un plazo de cuatro horas a partir de la clasificación del incidente relacionado con las TIC como grave y a más tardar veinticuatro horas después del momento en que la entidad financiera haya tenido conocimiento de dicho incidente";
   - intermediate report "within 72 hours from the submission of the initial notification";
   - final report "no later than one month after … the submission of the intermediate report".
   - All three need the significant (major) flag and serve `c3.art19`.
-- **Not modelled,** stated here and in the initial clock's title:
-  - the 4-hour limit from classification as major, because the register does not record the classification time;
-  - Article 5(2), late classification;
+- **Classification (draft8, #224):** the initial clock has `starts: classified`, 4 hours, and
+  `outer_limit_hours: 24` from awareness. Article 5(2): where the entity "has not classified an
+  ICT-related incident as major within 24 hours from the moment the financial entity has become
+  aware … but classifies that ICT-related incident as major at a later stage", it submits the
+  initial notification "within four hours from the classification" / "en un plazo de cuatro horas
+  a partir de la clasificación del incidente relacionado con las TIC como incidente grave". So
+  the outer limit lapses when classification comes after it. Re-read on 2026-11-23 from the same
+  manifestations; both SHA-256 values above matched.
+- **Not modelled,** stated here:
   - the "latest updated intermediate report" in 5(1)(c);
   - the weekend and bank holiday rule of 5(4) to 5(6).

@@ -145,6 +145,14 @@ def create_app(issuer: str, client_id: str) -> FastAPI:
             return invalid
         return JSONResponse(tokens_for(grant.email, grant.nonce))
 
+    @app.post("/oauth2/revoke")
+    def revoke(token: Annotated[str, Form()], client_id: Annotated[str, Form()]) -> JSONResponse:
+        """Like Cognito: an unknown or already revoked token still gets 200."""
+        if client_id != app.state.client_id:
+            return JSONResponse({"error": "invalid_client"}, status_code=401)
+        refresh_tokens.pop(token, None)
+        return JSONResponse({})
+
     @app.get("/oauth2/userInfo")
     def userinfo(authorization: Annotated[str, Header()]) -> dict[str, str]:
         try:

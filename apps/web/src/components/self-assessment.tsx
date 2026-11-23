@@ -10,6 +10,7 @@ import {
   useRecordScope, type AssessmentInput, type AxisValues, type Register, type RegisterItem,
 } from "@/lib/api/register-hooks";
 import { ErrorMessage } from "./error-message";
+import { ScopeGuide } from "./scope-guide";
 import { Icon } from "./icons";
 
 type Ctx = { orgId: string; frameworkKey: string; canEdit: boolean };
@@ -55,9 +56,11 @@ function ScopeStep({ register, orgId, frameworkKey, canEdit }: Ctx & { register:
   const t = useTranslations("register");
   const format = useFormatter();
   const term = useTermLabel(register);
+  const english = useLocale() === "en";
   const save = useRecordScope(orgId, frameworkKey);
   const axes = Object.entries(register.axes).map(([axis, def]) => [axis, { keys: def.keys ?? [], levels: def.levels ?? [] }] as const);
   const current = (register.scope?.axis_values ?? {}) as Record<string, unknown>;
+  const [profile, setProfile] = useState(typeof current.profile === "string" ? current.profile : "");
   const [editing, setEditing] = useState(!register.scope);
   const [values, setValues] = useState<Record<string, string | Record<string, string>>>(() => Object.fromEntries(axes.map(([axis, def]) => {
     const value = current[axis];
@@ -66,7 +69,9 @@ function ScopeStep({ register, orgId, frameworkKey, canEdit }: Ctx & { register:
     return [axis, Object.fromEntries(def.keys.map((k) => [k, known[k] ?? def.levels[0] ?? ""]))];
   })));
   if (axes.length === 0) return <><h3>{t("stepScope")}</h3><p className="text-sm text-muted">{t("noAxes")}</p></>;
-  const submit = (e: FormEvent) => { e.preventDefault(); save.mutate(values as AxisValues, { onSuccess: () => setEditing(false) }); };
+  const submit = (e: FormEvent) => { e.preventDefault(); save.mutate((profile ? { ...values, profile } : values) as AxisValues, { onSuccess: () => setEditing(false) }); };
+  const adopted = register.profiles.find((p) => p.key === current.profile);
+  const guide = register.scope_guide;
   const show = (value: unknown) => (typeof value === "string" ? term(value).text : "—");
   const summary = axes.map(([axis, def]) => def.keys.length === 0 ? `${term(axis).text}: ${show(current[axis])}`
     : `${term(axis).text}: ${def.keys.map((k) => `${term(k).text} ${show(((current[axis] ?? {}) as Record<string, string>)[k])}`).join(" · ")}`).join(" — ");
@@ -74,15 +79,19 @@ function ScopeStep({ register, orgId, frameworkKey, canEdit }: Ctx & { register:
     <h3>{t("stepScope")}</h3>
     {register.scope && !editing ? <>
       <p lang={register.term_labels.length ? undefined : "es"}>{summary}</p>
+      {adopted ? <p>{t("profileAdopted", { title: english ? adopted.title_en : adopted.title_es })}</p> : null}
       <p className="text-sm text-muted">{t("scopeRecorded", { date: format.dateTime(new Date(register.scope.decided_at), { dateStyle: "medium" }) })}</p>
       {canEdit ? <button className="dashboard-button" onClick={() => setEditing(true)}>{t("changeScope")}</button> : null}
     </> : canEdit ? <form onSubmit={submit} className="scope-form">
       <p className="text-sm text-muted">{t("scopeHelp")}</p>
+      {guide && register.axes[guide.axis] ? <ScopeGuide guide={guide} levels={register.axes[guide.axis]!.levels ?? []} term={term}
+        onApply={(dims, category) => setValues({ ...values, [guide.axis]: { ...(values[guide.axis] as Record<string, string>), ...dims }, ...(category ? { [guide.category_axis]: category } : {}) })} /> : null}
       {axes.map(([axis, def]) => def.keys.length === 0
         ? <AxisSelect key={axis} label={axis} term={term} levels={def.levels} value={values[axis] as string} onChange={(v) => setValues({ ...values, [axis]: v })} />
         : <fieldset key={axis}><legend lang={term(axis).lang}>{term(axis).text}</legend><div className="scope-dimensions">{def.keys.map((k) =>
           <AxisSelect key={k} label={k} term={term} levels={def.levels} value={(values[axis] as Record<string, string>)[k] ?? ""}
             onChange={(v) => setValues({ ...values, [axis]: { ...(values[axis] as Record<string, string>), [k]: v } })} />)}</div></fieldset>)}
+      {register.profiles.length ? <ProfileChoice profiles={register.profiles} value={profile} onChange={setProfile} /> : null}
       {save.isError ? <ErrorMessage error={save.error} /> : null}
       <div className="form-actions"><button type="submit" className="button-primary" disabled={save.isPending}>{t("saveScope")}</button>
         {register.scope ? <button type="button" className="dashboard-button" onClick={() => setEditing(false)}>{t("cancel")}</button> : null}</div>
@@ -91,6 +100,34 @@ function ScopeStep({ register, orgId, frameworkKey, canEdit }: Ctx & { register:
 }
 
 type TermLabel = (term: string) => { text: string; lang: string | undefined };
+type Profile = Register["profiles"][number];
+type GuideRef = Profile["refs"][number];
+
+/** Formats a guide reference the way expected evidence does: cited, never copied. */
+function useGuideRef() {
+  const t = useTranslations("expectedEvidence");
+  const format = useFormatter();
+  return (ref: GuideRef) => t("reference", { guide: ref.guide, section: ref.section, page: ref.page,
+    edition: format.dateTime(new Date(`${ref.edition}-01T00:00:00Z`), { month: "long", year: "numeric", timeZone: "UTC" }) });
+}
+
+/** A published compliance profile as a scope option (issue 227); proposals then come from it. */
+function ProfileChoice({ profiles, value, onChange }: { profiles: Profile[]; value: string; onChange: (v: string) => void }) {
+  const t = useTranslations("register");
+  const english = useLocale() === "en";
+  const cite = useGuideRef();
+  const id = useId();
+  const chosen = profiles.find((p) => p.key === value);
+  return <div className="scope-profile">
+    <span className="axis-select"><label htmlFor={id}>{t("profile")}</label>
+      <select id={id} value={value} aria-describedby={`${id}-help`} onChange={(e) => onChange(e.target.value)}>
+        <option value="">{t("profileNone")}</option>
+        {profiles.map((p) => <option key={p.key} value={p.key}>{english ? p.title_en : p.title_es}</option>)}
+      </select></span>
+    <p id={`${id}-help`} className="text-sm text-muted">{chosen ? english ? chosen.summary_en : chosen.summary_es : t("profileHelp")}</p>
+    {chosen ? <p className="text-sm text-muted">{t("profileSources", { refs: chosen.refs.map(cite).join("; ") })} {chosen.reviewed_by ? null : t("profileCandidate")}</p> : null}
+  </div>;
+}
 
 /** Shows readable labels; the value sent stays the pack's official term. */
 function AxisSelect({ label, term, levels, value, onChange }: { label: string; term: TermLabel; levels: string[]; value: string; onChange: (v: string) => void }) {
@@ -165,13 +202,17 @@ export function AssessmentForm({ item, orgId, frameworkKey, canEdit, canAssess =
   const differs = item.proposal.decision !== "undecided" && item.proposal.decision !== form.applicability;
   const needsJustification = form.applicability === "not_applicable" || differs;
   const submit = (e: FormEvent) => { e.preventDefault(); save.mutate({ code: item.code, body: form }, { onSuccess: () => setEditing(false) }); };
+  const cite = useGuideRef();
+  const { source, criterion } = item.proposal;
   const proposal = item.proposal.decision === "undecided" ? t("proposalUndecided")
+    : source ? t.rich("proposalProfile", { decision: t(`proposal.${item.proposal.decision}`), rule: item.proposal.rule ?? "", reference: cite(source),
+      official: (chunks) => <span lang="es">{chunks}</span> })
     : t.rich("proposalText", { decision: t(`proposal.${item.proposal.decision}`), rule: item.proposal.rule ?? "", level: item.proposal.level ?? "",
       official: (chunks) => <span lang="es">{chunks}</span> });
   return <div className="assessment-card">
     <OwnerField item={item} orgId={orgId} frameworkKey={frameworkKey} canEdit={canEdit} />
     <h3>{t("yourAssessment")}</h3>
-    <p className="text-sm text-muted">{proposal}</p>
+    <p className="text-sm text-muted">{proposal}{criterion ? <> {t("proposalCriterion", { reference: cite(criterion) })}</> : null}</p>
     {a && !editing ? <>
       <dl className="assessment-summary">
         <div><dt>{t("applicability")}</dt><dd>{t(`proposal.${a.applicability}`)}</dd></div>
