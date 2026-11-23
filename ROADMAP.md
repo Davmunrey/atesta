@@ -44,6 +44,10 @@ score, and is released only after a qualified reviewer signs it off and the owne
 - **NIS2** (Directive (EU) 2022/2555; Spanish transposition tracked with its date), **GDPR**
   security of processing (Art. 32 and linked duties, with LOPDGDD), **DORA**
   (Reg. (EU) 2022/2554 with its RTS and ITS): official ES and EN text from EUR-Lex and BOE.
+- **Status (2026-11-23):**
+  - Content model v2 and coverage ledgers are in (#148).
+  - NIS2 Art. 20, 21 and 23 are in (#148), as are GDPR Art. 32 to 34 (#150) and DORA Chapters II to V (#152), in official ES and EN.
+  - Qualified review, the Spanish NIS2 transposition, Implementing Regulation (EU) 2024/2690, the LOPDGDD and the DORA technical standards are still to come.
 - **ISO/IEC 27001:2022 and SOC 2:** clause and control identifiers with Atesta-authored guides
   only; no ISO or AICPA text is stored.
 - **ISO 27001 to ENS crosswalk** for organizations that already hold ISO 27001.

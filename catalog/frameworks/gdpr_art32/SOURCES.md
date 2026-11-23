@@ -38,3 +38,6 @@ This pack cannot be scored, including when development draft visibility is enabl
 - Technical observations (administrator MFA, Workspace 2-step verification, Workspace sharing) support Article 32(1)(b) only partially.
 - Every `reviewed_by` is null.
 - Mappings are preparation aids, not equivalence claims.
+
+The Publications Office SPARQL endpoint lists three corrigenda, `32016R0679R(01)` to `R(03)`.
+The consolidated version above incorporates the ones in Spanish and English.
