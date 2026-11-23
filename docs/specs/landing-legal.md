@@ -145,6 +145,48 @@ constraints below were agreed with the coordinator the same day). It refines A1'
       marquee, and each pinned stage is verified at fixed scroll positions.
 - [ ] **Accessibility and performance e2e:** axe runs at 375, 1280 and 1440 px; CLS stays under
       0.1 and LCP is measured.
+Amendment A3: the public site (#371 and following). Status: **accepted** (owner, 23/11/2026,
+relayed by the coordinator). Research and direction: phase 1 and 2 notes kept outside the
+repository (four reference sites rendered and measured; techniques mapped to original uses).
+
+**Pages and chrome**
+- [ ] **Pages:** the public site has the landing plus `/producto`, `/ens`, `/seguridad` and
+      `/consultoras`, alongside the existing docs, legal, invitation, training and 404 pages.
+- [ ] **Header:** every public page shares one header with menus (Producto, Docs; links for ENS,
+      Seguridad and Consultoras once those pages exist).
+- [ ] **Footer and transitions:** one full-map footer, and cross-document View Transitions with a
+      plain-load fallback.
+
+**Word budgets** (product views, official citations and legal texts excluded)
+- [ ] `/`: 260 words.
+- [ ] `/producto`: 450 words.
+- [ ] `/ens`: 500 words.
+- [ ] `/seguridad`: 400 words.
+- [ ] `/consultoras`: 250 words.
+
+**Honest proof** (owner, 23/11/2026)
+- [ ] **No invented proof:** no famous-company logos, testimonials or invented figures.
+- [ ] **Example data:** fictitious example companies are labelled "Datos de ejemplo".
+- [ ] **Integrations:** Microsoft 365 and Google Workspace appear as "se conecta con", tagged
+      "Próximamente", as names unless the vendor's logo guidelines are read and cited.
+- [ ] **Proof strip:** it states only facts true at publish time:
+      - 73 medidas con el texto oficial del BOE;
+      - evidencias revisadas por el equipo de Atesta;
+      - diseñado para alojarse en España (eu-south-2) until hosting is live;
+      - solo lectura en tus sistemas;
+      - ninguna IA decide si cumples.
+- [ ] **No person's name on public pages:** the in-app reviewer display is unchanged.
+- [ ] **Customer logos:** the section renders only from a data file whose every entry carries a
+      written-permission reference. It starts empty, and `test_claims` enforces the reference.
+
+**Motion and budgets**
+- [ ] **CSS first:** CSS scroll-driven animations and View Transitions come before any library.
+- [ ] **Libraries:** at most one motion library (Motion, MIT), pinned and older than 7 days.
+      Budget: 90 KB gzip of extra JS on the landing, 30 KB on other public pages.
+- [ ] **No smooth scroll:** no smooth-scroll library.
+- [ ] **Unchanged:** every A1/A2 rule (light only, 0 CSP hashes, WCAG 2.2 AA with axe at 375, 1280
+      and 1440 px, pause controls, CLS 0, LCP regression at most 10%, e2e at fixed scroll positions,
+      the bottom-right corner free for the assistant).
 
 Legal pages (Spanish is the binding version)
 

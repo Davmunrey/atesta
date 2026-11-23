@@ -1683,5 +1683,86 @@
         "start_access_review": "Starts an access review."
       }
     }
+  },
+  "public": {
+    "nav": {
+      "label": "Main navigation",
+      "menu": "Menu",
+      "product": "Product",
+      "docs": "Docs",
+      "ens": "ENS",
+      "security": "Security",
+      "consultancies": "Consultancies",
+      "groups": {
+        "prepare": "Prepare for the ENS",
+        "respond": "Respond and prove",
+        "integrate": "Integrate"
+      },
+      "items": {
+        "assess": {
+          "title": "Self-assessment",
+          "desc": "73 measures with their official text"
+        },
+        "routines": {
+          "title": "Routines",
+          "desc": "Policies, access and training"
+        },
+        "incidents": {
+          "title": "Incidents",
+          "desc": "Notification deadlines running"
+        },
+        "dossier": {
+          "title": "Dossier",
+          "desc": "Ready for the auditor and signature"
+        },
+        "api": {
+          "title": "API and MCP",
+          "desc": "Keys with scopes and limits"
+        },
+        "apiRef": {
+          "title": "API reference",
+          "desc": "Routes, scopes and errors"
+        },
+        "mcp": {
+          "title": "MCP guide",
+          "desc": "Connect an agent with read access"
+        }
+      },
+      "feature": "One piece of evidence serves several frameworks: ENS, NIS2, GDPR."
+    },
+    "footer": {
+      "tagline": "Audit readiness. It does not certify compliance.",
+      "product": "Product",
+      "resources": "Resources",
+      "legal": "Legal",
+      "contact": "Contact",
+      "how": "How it works"
+    },
+    "proof": {
+      "label": "What is true today",
+      "boe": {
+        "lead": "73 measures",
+        "line": "with the official BOE text"
+      },
+      "team": {
+        "lead": "Reviewed",
+        "line": "evidence reviewed by the Atesta team"
+      },
+      "spain": {
+        "lead": "Spain",
+        "line": "Designed to be hosted in Spain (eu-south-2)"
+      },
+      "readonly": {
+        "lead": "Read-only",
+        "line": "in your systems, always"
+      },
+      "noai": {
+        "lead": "No AI",
+        "line": "no AI decides your compliance"
+      }
+    },
+    "customers": {
+      "title": "Organizations using Atesta"
+    }
   }
 }

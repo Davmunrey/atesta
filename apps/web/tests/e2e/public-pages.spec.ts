@@ -10,12 +10,12 @@ import { expectPolished } from "./polish";
 const PAGES = ["/", "/cookies", "/aviso-legal", "/privacidad", "/invite", "/training", "/training#token=not-a-real-token", "/no-such-page"];
 
 test("every public page shares one frame and is polished at 375 and 1280 px, light and dark", async ({ page }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(300_000);
   const csp: string[] = [];
   page.on("console", (m) => { if (m.text().includes("Content Security Policy")) csp.push(m.text()); });
   for (const colorScheme of ["light", "dark"] as const) {
     await page.emulateMedia({ colorScheme });
-    for (const width of [375, 1280]) {
+    for (const width of [375, 1280, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       for (const path of PAGES) {
         const where = `${path} ${width} ${colorScheme}`;
@@ -60,4 +60,31 @@ test("the dossier print view is polished at 375 and 1280 px", async ({ page }) =
     await page.setViewportSize({ width, height: 900 });
     await expectPolished(page, `dossier print ${width}`);
   }
+});
+
+test("the header menus work by keyboard and Escape returns focus (A3)", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/docs/api");
+  const producto = page.getByRole("button", { name: "Producto" });
+  await producto.focus();
+  await page.keyboard.press("Enter");
+  await expect(producto).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("link", { name: /Autoevaluación/ })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(producto).toHaveAttribute("aria-expanded", "false");
+  await expect(producto).toBeFocused();
+});
+
+test("the header steps aside on scroll down and returns on scroll up, never under reduced motion (A3)", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  const header = page.locator(".public-site-header");
+  // Scroll in steps until the listener (attached after hydration) has seen the direction.
+  await expect.poll(async () => { await page.mouse.wheel(0, 400); await page.waitForTimeout(150); return header.getAttribute("data-hidden"); }, { timeout: 10_000 }).toBe("true");
+  await expect.poll(async () => { await page.mouse.wheel(0, -200); await page.waitForTimeout(150); return header.getAttribute("data-hidden"); }, { timeout: 10_000 }).toBe("false");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  for (let i = 0; i < 4; i++) { await page.mouse.wheel(0, 400); await page.waitForTimeout(150); }
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(800);
+  await expect(header).toHaveAttribute("data-hidden", "false");
 });
