@@ -7,18 +7,17 @@ description_es: |
   2. Revisa credenciales de aplicaciones y principales de servicio: sin secretos de cliente, sin permisos privilegiados sin usar, sin propietarios en roles críticos.
   3. Retira accesos heredados (módulo MSOnline, autenticación no moderna, POP/IMAP) y los webhooks entrantes de Chat.
   Evidencia: inventario de aplicaciones, configuración de consentimiento y resultado del escaneo.
-  Límite: un PASS no revisa qué hace cada aplicación con los datos; esa evaluación es manual.
+  Límite: un PASS no revisa qué hace cada aplicación con los datos; esa evaluación es manual. No se escanean los permisos privilegiados sin usar: el check necesita un permiso que Atesta no solicita. Revísalos con evidencia documental.
 description_en: |
   Prepare: list the registered apps, the third-party ones, and who may authorise them.
   1. Stop users from consenting to apps or registering their own; limit access for third-party and Marketplace apps.
   2. Review credentials of apps and service principals: no client secrets, no unused privileged permissions, no owners on critical roles.
   3. Remove legacy access (MSOnline module, non-modern authentication, POP/IMAP) and incoming Chat webhooks.
   Evidence: the app inventory, consent settings and the scan result.
-  Limit: a PASS does not review what each app does with data; that assessment is manual.
+  Limit: a PASS does not review what each app does with data; that assessment is manual. Unused privileged permissions are not scanned: the check needs a permission Atesta never requests. Review them with documentary evidence.
 manual: false
 prowler_checks:
   - entra_app_registration_client_secret_unused
-  - entra_app_registration_no_unused_privileged_permissions
   - entra_app_registration_redirect_uris_secure
   - entra_default_app_management_policy_enabled
   - entra_service_principal_no_secrets_for_permanent_tier0_roles
@@ -41,7 +40,6 @@ remediation_refs:
   - https://learn.microsoft.com/en-us/graph/api/resources/tenantappmanagementpolicy
   - https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/security-planning#prefer-certificate-credentials
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_app_registration_client_secret_unused/entra_app_registration_client_secret_unused.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_app_registration_no_unused_privileged_permissions/entra_app_registration_no_unused_privileged_permissions.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_app_registration_redirect_uris_secure/entra_app_registration_redirect_uris_secure.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_default_app_management_policy_enabled/entra_default_app_management_policy_enabled.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_service_principal_no_secrets_for_permanent_tier0_roles/entra_service_principal_no_secrets_for_permanent_tier0_roles.py

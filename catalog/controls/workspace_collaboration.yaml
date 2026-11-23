@@ -7,14 +7,14 @@ description_es: |
   2. Restringe Chat, Calendar y Grupos externos; desactiva Sites si no se usa.
   3. Configura reglas DLP para Drive, desactiva la delegación de correo y las pasarelas de salida por usuario, y conserva el correo de forma completa.
   Evidencia: configuración de uso compartido por servicio, reglas DLP y resultado del escaneo.
-  Límite: los checks miran la configuración, no los archivos ya compartidos; revisa esos enlaces aparte.
+  Límite: los checks miran la configuración, no los archivos ya compartidos; revisa esos enlaces aparte. No se escanean los ajustes por unidad compartida ni las reglas DLP de Drive: esos checks piden un token de licencias sin variante de solo lectura. Aporta evidencia documental.
 description_en: |
   Prepare: decide what is shared outside (Drive, Calendar, Chat, Groups, Sites) and with which domains.
   1. Warn when sharing outside, stop publishing to the web, and limit who distributes content and creates shared drives.
   2. Restrict external Chat, Calendar and Groups; turn off Sites if unused.
   3. Configure DLP rules for Drive, turn off mail delegation and per-user outbound gateways, and keep comprehensive mail storage.
   Evidence: sharing settings per service, DLP rules and the scan result.
-  Limit: the checks read settings, not files already shared; review those links separately.
+  Limit: the checks read settings, not files already shared; review those links separately. Per-shared-drive settings and Drive DLP rules are not scanned: those checks ask for a licensing token with no read-only variant. Provide documentary evidence.
 manual: false
 prowler_checks:
   - additionalservices_external_groups_disabled
@@ -30,15 +30,11 @@ prowler_checks:
   - drive_internal_users_distribute_content
   - drive_publishing_files_disabled
   - drive_shared_drive_creation_allowed
-  - drive_shared_drive_disable_download_print_copy
-  - drive_shared_drive_managers_cannot_override
-  - drive_shared_drive_members_only_access
   - drive_warn_sharing_with_allowlisted_domains
   - groups_creation_restricted
   - groups_external_access_restricted
   - groups_view_conversations_restricted
   - sites_service_disabled
-  - security_dlp_drive_rules_configured
   - gmail_mail_delegation_disabled
   - gmail_per_user_outbound_gateway_disabled
   - gmail_comprehensive_mail_storage_enabled
@@ -62,15 +58,11 @@ remediation_refs:
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_internal_users_distribute_content/drive_internal_users_distribute_content.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_publishing_files_disabled/drive_publishing_files_disabled.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_shared_drive_creation_allowed/drive_shared_drive_creation_allowed.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_shared_drive_disable_download_print_copy/drive_shared_drive_disable_download_print_copy.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_shared_drive_managers_cannot_override/drive_shared_drive_managers_cannot_override.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_shared_drive_members_only_access/drive_shared_drive_members_only_access.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/drive/drive_warn_sharing_with_allowlisted_domains/drive_warn_sharing_with_allowlisted_domains.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/groups/groups_creation_restricted/groups_creation_restricted.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/groups/groups_external_access_restricted/groups_external_access_restricted.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/groups/groups_view_conversations_restricted/groups_view_conversations_restricted.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/sites/sites_service_disabled/sites_service_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_dlp_drive_rules_configured/security_dlp_drive_rules_configured.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_mail_delegation_disabled/gmail_mail_delegation_disabled.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_per_user_outbound_gateway_disabled/gmail_per_user_outbound_gateway_disabled.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_comprehensive_mail_storage_enabled/gmail_comprehensive_mail_storage_enabled.py
