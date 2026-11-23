@@ -1,0 +1,14 @@
+{
+  "origin": "illustrative",
+  "scan_id": null,
+  "scan_date": null,
+  "organization": "Ingeniería Ejemplo S.L.",
+  "framework": "ENS · RD 311/2022",
+  "category": "MEDIA",
+  "counts": { "total": 73, "assessed": 58, "implemented": 41, "partial": 9, "not_implemented": 4, "not_applicable": 4, "overdue": 2, "unowned": 3 },
+  "attention": [
+    { "code": "op.acc.6", "title_es": "Mecanismo de autenticación (usuarios de la organización)", "state": "overdue" },
+    { "code": "mp.info.6", "title_es": "Copias de seguridad", "state": "missing" },
+    { "code": "mp.per.3", "title_es": "Concienciación", "state": "pending" }
+  ]
+}

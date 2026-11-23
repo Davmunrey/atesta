@@ -43,8 +43,24 @@
     }
   },
   "landing": {
-    "summary": "Preparación continua para auditorías ENS y NIS2. Inicia sesión para gestionar tu organización.",
-    "signIn": "Iniciar sesión"
+    "headline": "Prepara el ENS sin un consultor a tiempo completo",
+    "sub": "Para pymes que venden al sector público.",
+    "covers": "También cubre, según el plan: NIS2, RGPD, LOPDGDD y DORA.",
+    "consultancies": "Para consultoras: todos tus clientes en una cuenta.",
+    "close": "Llega a tu auditoría con el dossier preparado.",
+    "requestAccess": "Solicitar acceso",
+    "signIn": "Entrar",
+    "view": {
+      "label": "Resumen de una organización en Atesta",
+      "category": "Categoría {category}",
+      "bar": "{implemented, plural, one {# implantada} other {# implantadas}} · {partial, plural, one {# en parte} other {# en parte}} · {missing, plural, one {# sin implantar} other {# sin implantar}} · {na, plural, one {# no aplica} other {# no aplican}}",
+      "now": "Ahora",
+      "state": {
+        "overdue": "Revisión vencida",
+        "missing": "Sin evidencias",
+        "pending": "Sin responsable"
+      }
+    }
   },
   "locale": {
     "label": "Idioma",
