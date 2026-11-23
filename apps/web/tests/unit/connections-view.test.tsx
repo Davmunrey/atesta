@@ -17,10 +17,6 @@ const conn = (over: object) => ({
 });
 const LOGIN = "https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?client_id=x";
 
-function row(name: string): HTMLElement {
-  return screen.getByRole("row", { name: new RegExp(name) });
-}
-
 it.each([
   ["pending_setup", false, "Pendiente de conectar", ["Conectar Contoso M365 con Microsoft", "Desconectar Contoso M365"]],
   ["pending_setup", true, "Pendiente de verificar", ["Verificar Contoso M365", "Conectar de nuevo Contoso M365", "Desconectar Contoso M365"]],
@@ -132,7 +128,7 @@ it("after consent, marks the connection and names the next step", async () => {
   stubApi({ [`GET ${base}`]: [200, [conn({ consented: true, tenant_id: TENANT })]] });
   renderWithProviders(<ConnectionsView org={membership("admin")} focus="c1" />);
   expect(await screen.findByText("Permisos concedidos para Contoso M365. Verifica la conexión para empezar a escanear.")).toBeTruthy();
-  expect(row("Contoso M365").getAttribute("aria-current")).toBe("true");
+  expect(screen.getByRole("row", { name: /Contoso M365/ }).getAttribute("aria-current")).toBe("true");
 });
 
 it("shows a returned error code's message, and the generic one for an unknown code", async () => {
