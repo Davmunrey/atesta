@@ -1854,6 +1854,70 @@
         "title": "CriterionOut",
         "type": "object"
       },
+      "CriterionText": {
+        "additionalProperties": false,
+        "description": "An official text shown next to an incident flag, copied from the act (rule 10). For\ncriteria that are not measures, so they stay out of the self-assessment register.",
+        "properties": {
+          "official_text_en": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Text En"
+          },
+          "official_text_es": {
+            "minLength": 1,
+            "title": "Official Text Es",
+            "type": "string"
+          },
+          "section": {
+            "minLength": 1,
+            "title": "Section",
+            "type": "string"
+          },
+          "source": {
+            "minLength": 1,
+            "title": "Source",
+            "type": "string"
+          },
+          "source_sha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Source Sha256",
+            "type": "string"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_es": {
+            "minLength": 1,
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "section",
+          "title_es",
+          "official_text_es",
+          "source",
+          "source_sha256"
+        ],
+        "title": "CriterionText",
+        "type": "object"
+      },
       "DayCount": {
         "properties": {
           "count": {
@@ -2625,7 +2689,7 @@
       },
       "IncidentCriterion": {
         "additionalProperties": false,
-        "description": "The requirement whose official text explains an incident flag (recorded-routines spec).",
+        "description": "What explains an incident flag (recorded-routines spec): a requirement of the pack, or an\nofficial text given inline.",
         "properties": {
           "needs": {
             "enum": [
@@ -2636,14 +2700,30 @@
             "type": "string"
           },
           "requirement": {
-            "minLength": 1,
-            "title": "Requirement",
-            "type": "string"
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requirement"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CriterionText"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
-          "needs",
-          "requirement"
+          "needs"
         ],
         "title": "IncidentCriterion",
         "type": "object"

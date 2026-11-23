@@ -201,3 +201,16 @@ def test_dora_rts_keeps_the_official_text_with_its_corrigendum() -> None:
     assert "in accordance with Article 8(2) of Commission Delegated Regulation (EU) 2024/1772" in (
         article.official_text_en or ""
     )
+
+
+def test_the_implementing_regulation_shows_its_incident_criteria_verbatim() -> None:
+    """Articles 3 to 14 of 2024/2690 are incident criteria, not measures (SOURCES.md)."""
+    act = pack("nis2_ir_2024_2690")
+    criteria = act.metadata.attributes.incident_criteria
+    assert [c.text.section for c in criteria if c.text] == [f"Artículo {n}" for n in range(3, 15)]
+    assert all(c.needs == "significant" and c.requirement is None for c in criteria)
+    assert not {f"art{n}" for n in range(3, 15)} & {r.id for r in act.requirements}
+    first = criteria[0].text
+    assert first is not None
+    assert first.official_text_es.startswith("1. Un incidente se considerará significativo")
+    assert (first.official_text_en or "").startswith("1. An incident shall be considered")

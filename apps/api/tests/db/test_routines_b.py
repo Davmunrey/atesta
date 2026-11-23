@@ -379,3 +379,38 @@ def test_the_incident_form_reads_the_official_criteria_of_active_packs(
         with superuser.begin() as conn:
             conn.execute(text("DELETE FROM requirements WHERE framework_key = :k"), {"k": key})
             conn.execute(text("DELETE FROM frameworks WHERE key = :k"), {"k": key})
+
+
+def test_inline_official_criteria_are_served_as_written(
+    client: TestClient, superuser: Engine
+) -> None:
+    key = f"inline_{uuid.uuid4().hex}"
+    text_block = {
+        "section": "Artículo 3",
+        "title_es": "Incidentes significativos",
+        "title_en": "Significant incidents",
+        "official_text_es": "1. Texto oficial.",
+        "official_text_en": "1. Official text.",
+        "source": "https://example.test/act#art_3",
+        "source_sha256": "b" * 64,
+    }
+    criteria = [{"needs": "significant", "text": text_block}]
+    with superuser.begin() as conn:
+        conn.execute(
+            text(
+                "INSERT INTO frameworks (key, name, version, jurisdiction, source, license_notes,"
+                " status, attributes, catalog_version) VALUES (:k, 'Synthetic', '1', 'EU',"
+                " 'synthetic', 'test', 'released', CAST(:a AS jsonb), 'v1')"
+            ),
+            {"k": key, "a": json.dumps({"incident_criteria": criteria})},
+        )
+    try:
+        org, subs = org_with(client, superuser)
+        found = client.get(f"/api/v1/orgs/{org}/incidents/criteria", headers=auth(subs["owner"]))
+        mine = [c for c in found.json() if c["framework_key"] == key]
+        assert [(c["requirement"], c["text_en"], c["source"]) for c in mine] == [
+            ("Artículo 3", "1. Official text.", "https://example.test/act#art_3")
+        ]
+    finally:
+        with superuser.begin() as conn:
+            conn.execute(text("DELETE FROM frameworks WHERE key = :k"), {"k": key})

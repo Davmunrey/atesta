@@ -316,6 +316,22 @@ def incident_criteria(
     out: list[CriterionOut] = []
     for key, name, attributes in rows.tuples():
         for criterion in attributes.get("incident_criteria", []):
+            if criterion.get("text"):
+                inline = criterion["text"]
+                out.append(
+                    CriterionOut(
+                        needs=criterion["needs"],
+                        framework_key=key,
+                        framework_name=name,
+                        requirement=inline["section"],
+                        title_es=inline["title_es"],
+                        title_en=inline.get("title_en"),
+                        text_es=inline["official_text_es"],
+                        text_en=inline.get("official_text_en"),
+                        source=inline["source"],
+                    )
+                )
+                continue
             requirement = session.scalar(
                 select(Requirement).where(
                     Requirement.framework_key == key,
