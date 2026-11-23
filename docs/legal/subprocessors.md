@@ -3,7 +3,7 @@
 - **Status:** draft, 2026-11-23. Nothing runs in production yet (the owner postponed AWS). Legal
   review and the owner's sign-off are required before this list is published or attached to a DPA
   (ROADMAP, "Only a human can do").
-- **Source of truth:** ADR-007 and its amendment 1 (EU residency), and the infrastructure in
+- **Source of truth:** ADR-007 and its amendments 1 (EU residency) and 2 (CloudFront), and the infrastructure in
   `infra/`. Any change to either must update this file in the same pull request.
 
 ## Sub-processors that will process customer personal data
@@ -13,6 +13,7 @@
 | Amazon Web Services (entity to confirm) | RDS for PostgreSQL, ECS (Fargate), S3, KMS, Secrets Manager, CloudWatch | eu-south-2 (Spain) | Members' names and email addresses, the organization's records (assessments, evidence statements, reviews, audit events), connection metadata | Hosting, storage, encryption and operation of the service |
 | Amazon Web Services (entity to confirm) | Amazon Cognito | eu-south-2 (Spain) | Members' email addresses and sign-in credentials | Sign-in and multi-factor authentication |
 | Amazon Web Services (entity to confirm) | Amazon SES, used by Cognito for its emails | eu-west-3 (Paris) | Members' email addresses, verification and reset codes | Account emails; the eu-south-2 user pool cannot use SES in its own region (ADR-007 amendment 1) |
+| Amazon Web Services (entity to confirm) | Amazon CloudFront | Global edge locations (Europe and North America), transit only | Requests and responses of signed-in members in transit, including session cookies; nothing cached or stored for the API | Serves the web app and carries its API traffic to eu-south-2 over TLS (ADR-007 amendment 2) |
 
 The contracting AWS entity and its transfer terms must be confirmed against the AWS customer
 agreement and the AWS GDPR DPA when the account exists.
