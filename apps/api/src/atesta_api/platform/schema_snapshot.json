@@ -109,6 +109,24 @@
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
   ],
   [
+   "incident_updates",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "incidents",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
    "invitations",
    "invitation_token_read",
    "SELECT",
@@ -224,6 +242,33 @@
    "public",
    "(organization_id = app_setting_uuid('app.organization_id'::text))",
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "training_acknowledgements",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "training_campaigns",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "training_campaigns",
+   "training_token_read",
+   "SELECT",
+   "PERMISSIVE",
+   "public",
+   "((token_sha256)::text = app_setting_text('app.training_token_sha256'::text))",
+   ""
   ],
   [
    "users",
@@ -351,6 +396,18 @@
    "SELECT"
   ],
   [
+   "incident_updates",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
+   "incidents",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
    "invitations",
    "",
    "atesta_app",
@@ -469,6 +526,18 @@
    "",
    "atesta_app",
    "INSERT,SELECT"
+  ],
+  [
+   "training_acknowledgements",
+   "",
+   "atesta_app",
+   "INSERT,SELECT"
+  ],
+  [
+   "training_campaigns",
+   "",
+   "atesta_app",
+   "INSERT,SELECT,UPDATE"
   ],
   [
    "users",

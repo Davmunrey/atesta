@@ -62,8 +62,8 @@ later screen (connections, scores, evidence) plugs into.
 - [ ] Security headers on every response, from a CloudFront response headers policy: CSP
       with script hashes computed at build time (static export has no per-request nonce) and no
       `unsafe-inline` scripts, `frame-ancestors 'none'`, HSTS, `X-Content-Type-Options:
-      nosniff`, `Referrer-Policy: same-origin` (no-referrer on `/invite`). A build step writes
-      the hashes; the infra spec applies them.
+      nosniff`, `Referrer-Policy: same-origin` (no-referrer on `/invite` and `/training`). A
+      build step writes the hashes; the infra spec applies them.
 - [ ] The API sets `Cache-Control: no-store` and `X-Content-Type-Options: nosniff` on every
       response of its own, errors and redirects included, so `/api/*` and `/auth/*` are never
       cached or MIME-sniffed whatever the CDN behaviour in front of them.

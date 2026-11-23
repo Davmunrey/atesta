@@ -1,6 +1,6 @@
 id: nis2
 name: NIS2
-version: 2022-2555.draft1
+version: 2022-2555.draft2
 jurisdiction: EU; national implementation must be reviewed
 source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022L2555
 license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
@@ -66,3 +66,24 @@ attributes:
   - prefix: art23
     title: Obligaciones de notificación
     title_en: Reporting obligations
+  # Durations copied from Article 23(4)(a), (b) and (d) of the official text (requirements.yaml).
+  reporting_clocks:
+  - key: early_warning
+    title_es: Alerta temprana
+    title_en: Early warning
+    hours: 24
+    needs: significant
+    requirement: art23.4a
+  - key: notification
+    title_es: Notificación del incidente
+    title_en: Incident notification
+    hours: 72
+    needs: significant
+    requirement: art23.4b
+  - key: final_report
+    title_es: Informe final
+    title_en: Final report
+    months: 1
+    after: notification
+    needs: significant
+    requirement: art23.4d

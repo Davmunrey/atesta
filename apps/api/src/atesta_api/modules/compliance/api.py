@@ -23,6 +23,7 @@ from atesta_api.modules.compliance.scoring import (
 def install_compliance(app: FastAPI) -> None:
     # Read routes compose module APIs; import after those interfaces are initialized.
     from atesta_api.modules.compliance.detail import router as detail_router
+    from atesta_api.modules.compliance.incidents import router as incidents_router
     from atesta_api.modules.compliance.my_work import router as my_work_router
     from atesta_api.modules.compliance.overview import router
     from atesta_api.modules.compliance.readiness import router as readiness_router
@@ -30,6 +31,8 @@ def install_compliance(app: FastAPI) -> None:
     from atesta_api.modules.compliance.reviews import router as reviews_router
     from atesta_api.modules.compliance.routines import router as routines_router
     from atesta_api.modules.compliance.search import router as search_router
+    from atesta_api.modules.compliance.training import public_router as training_link_router
+    from atesta_api.modules.compliance.training import router as training_router
 
     app.include_router(router)
     app.include_router(detail_router)
@@ -39,6 +42,9 @@ def install_compliance(app: FastAPI) -> None:
     app.include_router(readiness_router)
     app.include_router(search_router)
     app.include_router(routines_router)
+    app.include_router(training_router)
+    app.include_router(training_link_router)
+    app.include_router(incidents_router)
 
 
 __all__ = [

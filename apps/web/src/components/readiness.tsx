@@ -5,7 +5,7 @@ import { useFormatter, useLocale, useNow, useTranslations } from "next-intl";
 import { useActivity, useMembers } from "@/lib/api/hooks";
 import { isMyWorkOverdue, type Readiness, useMyWork } from "@/lib/api/register-hooks";
 import { useRoutinesDue } from "@/lib/api/routines";
-import { type Membership, orgAccessReview, orgActivity, orgFramework, orgMembers, orgMyWork, orgPolicies } from "@/lib/org";
+import { type Membership, orgAccessReview, orgActivity, orgFramework, orgIncident, orgMembers, orgMyWork, orgPolicies, orgTrainingCampaign } from "@/lib/org";
 import { canReviewControls, isContributor } from "@/lib/permissions";
 import { RankedBars } from "./charts";
 import { Icon } from "./icons";
@@ -48,11 +48,24 @@ export function useAttention(org: Membership, readiness: Readiness[]): Attention
     items.push({ key: `scope:${r.key}`, severity: "missing", text: t("scope", { framework: r.name }), href: at(r) });
   }
   const due = useRoutinesDue(org.organization_id);
+  const english = useLocale() === "en";
+  const id = org.organization_id;
+  const hrefs = {
+    policy_review: () => orgPolicies(id), policy_unapproved: () => orgPolicies(id),
+    access_review_overdue: (d: string) => orgAccessReview(id, d), training_unclosed: (d: string) => orgTrainingCampaign(id, d),
+    incident_clock: (d: string) => orgIncident(id, d),
+  } as const;
   for (const d of due.data ?? []) {
     const date = d.due_on ? format.dateTime(new Date(`${d.due_on}T00:00:00Z`), { dateStyle: "long", timeZone: "UTC" }) : "";
-    const href = d.kind === "access_review_overdue" ? orgAccessReview(org.organization_id, d.id) : orgPolicies(org.organization_id);
-    items.push({ key: `due:${d.kind}:${d.id}`, severity: d.overdue ? "overdue" : d.kind === "policy_unapproved" ? "missing" : "pending",
-      text: t(`due.${d.kind}`, { title: d.title, date }), href });
+    const severity = d.overdue ? "overdue" : d.kind === "policy_unapproved" ? "missing" : "pending";
+    const href = hrefs[d.kind](d.id);
+    if (d.kind === "incident_clock" && d.clock && d.due_at) {
+      const when = t(d.overdue ? "due.clockOverdue" : "due.clockRunning", { time: format.dateTime(new Date(d.due_at), { dateStyle: "medium", timeStyle: "short" }) });
+      items.push({ key: `due:${d.kind}:${d.id}:${d.clock.en}:${d.clock.framework}`, severity, href,
+        text: t("due.incident_clock", { clock: english ? d.clock.en : d.clock.es, framework: d.clock.framework, title: d.title, when }) });
+      continue;
+    }
+    items.push({ key: `due:${d.kind}:${d.id}`, severity, text: t(`due.${d.kind}`, { title: d.title, date }), href });
   }
   const soon = now.getTime() + AUDITOR_WARNING_DAYS * 86_400_000;
   for (const m of members.data ?? []) {

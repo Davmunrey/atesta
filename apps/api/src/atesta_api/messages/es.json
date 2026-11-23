@@ -34,6 +34,14 @@
     "access_review_closed": "Revisión de accesos «{title}» ({system}). Cuentas revisadas: {total}; mantener: {keep}; retirar: {revoke}. Cerrada el {date} por {email}.",
     "policy_title": "Aprobación de política: {title}",
     "policy_approved": "Política «{title}», versión {version}, aprobada por {approver} el {date}. Registrada por {email}.",
-    "policy_hash": " Huella SHA-256 del documento: {sha256}."
+    "policy_hash": " Huella SHA-256 del documento: {sha256}.",
+    "training_title": "Formación: {title}",
+    "training_closed": "Formación «{title}». Confirmaciones de lectura: {count}. Cerrada el {date} por {email}.",
+    "incident_title": "Incidente: {title}",
+    "incident_closed": "Incidente «{title}». Conocimiento: {aware}. Cerrado el {date} por {email}.",
+    "incident_clock_met": "{clock} ({framework}): registrado el {at}, {timing}.",
+    "incident_clock_open": "{clock} ({framework}): sin registrar.",
+    "incident_on_time": "dentro de plazo",
+    "incident_late": "fuera de plazo"
   }
 }

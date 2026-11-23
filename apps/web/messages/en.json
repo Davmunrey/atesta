@@ -66,7 +66,16 @@
       "access_review_entry_not_found": "This account is not part of the review.",
       "access_review_closed": "The review is closed and takes no more decisions.",
       "access_review_pending": "Some accounts have no decision yet; decide them all before closing.",
-      "policy_not_found": "This policy does not exist."
+      "policy_not_found": "This policy does not exist.",
+      "training_not_found": "We could not find that training.",
+      "training_link_invalid": "This training link is not valid. Ask whoever sent it for a new one.",
+      "training_closed": "This training is closed and takes no more confirmations.",
+      "training_full": "This training has reached the limit of 1000 confirmations.",
+      "incident_not_found": "We could not find that incident.",
+      "incident_closed": "The incident is closed and takes no more entries.",
+      "clock_unknown": "That deadline does not apply to this incident.",
+      "clock_met": "That deadline is already recorded.",
+      "clock_waiting": "That deadline starts once the previous one is recorded."
     },
     "unknown": "Something went wrong. Try again, and contact support if it keeps happening.",
     "auth": {
@@ -607,7 +616,11 @@
       "due": {
         "policy_review": "Review the policy “{title}” by {date}",
         "policy_unapproved": "Record the approval of the policy “{title}”",
-        "access_review_overdue": "Finish the access review “{title}” (due {date})"
+        "access_review_overdue": "Finish the access review “{title}” (due {date})",
+        "training_unclosed": "Close the training “{title}” and record the evidence (it ended on {date})",
+        "incident_clock": "{clock} ({framework}) for the incident “{title}”: {when}",
+        "clockOverdue": "was due on {time}",
+        "clockRunning": "due on {time}"
       }
     },
     "step": {
@@ -665,7 +678,9 @@
     },
     "frameworksPage": "Self-assessment progress and recorded results for each framework.",
     "accessReviews": "Access reviews",
-    "policies": "Policies"
+    "policies": "Policies",
+    "training": "Training",
+    "incidents": "Incidents"
   },
   "routines": {
     "access": {
@@ -725,6 +740,100 @@
       "location": "Link to the document (https)",
       "reviewMonths": "Review every (months)",
       "add": "Add policy"
+    },
+    "training": {
+      "title": "Training",
+      "intro": "Share a link to the material; each person confirms they read it, without an Atesta account. Closing records evidence with the number of confirmations.",
+      "loading": "Loading…",
+      "list": "Trainings",
+      "empty": "No trainings yet.",
+      "campaign": "Training",
+      "count": "{count, plural, =0 {No confirmations} one {# confirmation} other {# confirmations}}",
+      "state": "Status",
+      "closedOn": "Closed on {date}",
+      "closesOn": "Ends on {date}",
+      "ended": "Ended on {date}; close it",
+      "create": "New training",
+      "createHelp": "The link is shown only once. Share it yourself, by email or in your chat; Atesta sends no email.",
+      "campaignTitle": "Training name",
+      "material": "Link to the material (https)",
+      "closes": "Closing date",
+      "add": "Create and get the link",
+      "linkTitle": "Link to share",
+      "linkHelp": "Copy it now: it will not be shown again. Anyone with it can confirm they read the material.",
+      "linkLabel": "Training link",
+      "copy": "Copy the link",
+      "copied": "Link copied",
+      "openMaterial": "Open the material",
+      "close": "Close and record",
+      "closedEvidence": "Training closed. The evidence is recorded on the awareness control.",
+      "people": "Confirmations",
+      "name": "Name",
+      "email": "Email",
+      "when": "Date",
+      "nobody": "Nobody has confirmed yet."
+    },
+    "incidents": {
+      "title": "Incidents",
+      "intro": "Record each incident and when you became aware of it. Atesta works out the reporting deadlines of the active frameworks; deciding whether to notify is yours.",
+      "loading": "Loading…",
+      "list": "Incidents",
+      "empty": "No incidents recorded.",
+      "incident": "Incident",
+      "aware": "Became aware",
+      "state": "Status",
+      "closed": "Closed",
+      "overdue": "{count, plural, one {# deadline missed} other {# deadlines missed}}",
+      "next": "Next deadline: {time}",
+      "noClocks": "No deadlines",
+      "create": "Record an incident",
+      "createHelp": "Give the time you became aware of the incident: deadlines run from then.",
+      "incidentTitle": "Short description",
+      "awareAt": "Became aware of the incident",
+      "significant": "Significant incident",
+      "significantHelp": "As defined by the framework that applies to you.",
+      "personalData": "Affects personal data",
+      "record": "Record",
+      "clocks": "Reporting deadlines",
+      "clocksHelp": "Deadlines taken from the active frameworks. Mark each notice once you have sent it.",
+      "clock": "Deadline",
+      "source": "Source",
+      "due": "Due",
+      "status": "Status",
+      "met": "Sent on {time}",
+      "metLate": "Sent on {time}, late",
+      "running": "Running",
+      "late": "Overdue",
+      "waiting": "Starts with the previous notice",
+      "markSent": "Mark “{clock}” as sent",
+      "sent": "Mark as sent",
+      "updates": "Entries",
+      "noUpdates": "No entries.",
+      "note": "New entry",
+      "addNote": "Add the entry",
+      "close": "Close the incident",
+      "closedEvidence": "Incident closed. The evidence is recorded on the incident handling control.",
+      "kind": {
+        "note": "Entry",
+        "clock": "Notice sent: {clock}",
+        "closed": "Incident closed"
+      },
+      "flags": "Characteristics",
+      "noFlags": "Neither significant nor involving personal data"
     }
+  },
+  "trainingLink": {
+    "loading": "Loading…",
+    "missing": "The training link is missing. Open it exactly as you received it.",
+    "heading": "Confirm you read it",
+    "intro": "Read the material and confirm with your name and email. You do not need an account.",
+    "closes": "You can confirm until {date}.",
+    "material": "Open the material",
+    "name": "Full name",
+    "email": "Email",
+    "read": "I have read the material",
+    "confirm": "Confirm",
+    "done": "Thank you. Your confirmation is recorded.",
+    "already": "You had already confirmed this training with this email."
   }
 }

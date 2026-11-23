@@ -66,7 +66,16 @@
       "access_review_entry_not_found": "Esta cuenta no forma parte de la revisión.",
       "access_review_closed": "La revisión ya está cerrada; no admite más decisiones.",
       "access_review_pending": "Quedan cuentas sin decidir; decide todas antes de cerrar.",
-      "policy_not_found": "Esta política no existe."
+      "policy_not_found": "Esta política no existe.",
+      "training_not_found": "No encontramos esa formación.",
+      "training_link_invalid": "Este enlace de formación no es válido. Pide uno nuevo a quien te lo envió.",
+      "training_closed": "Esta formación ya está cerrada y no admite más confirmaciones.",
+      "training_full": "Esta formación ha alcanzado el máximo de 1000 confirmaciones.",
+      "incident_not_found": "No encontramos ese incidente.",
+      "incident_closed": "El incidente está cerrado y no admite más anotaciones.",
+      "clock_unknown": "Ese plazo no se aplica a este incidente.",
+      "clock_met": "Ese plazo ya está registrado.",
+      "clock_waiting": "Ese plazo empieza cuando se registre el anterior."
     },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
@@ -607,7 +616,11 @@
       "due": {
         "policy_review": "Revisar la política «{title}» antes del {date}",
         "policy_unapproved": "Registrar la aprobación de la política «{title}»",
-        "access_review_overdue": "Terminar la revisión de accesos «{title}» (vencía el {date})"
+        "access_review_overdue": "Terminar la revisión de accesos «{title}» (vencía el {date})",
+        "training_unclosed": "Cerrar la formación «{title}» y registrar la evidencia (terminaba el {date})",
+        "incident_clock": "{clock} ({framework}) del incidente «{title}»: {when}",
+        "clockOverdue": "venció el {time}",
+        "clockRunning": "vence el {time}"
       }
     },
     "step": {
@@ -665,7 +678,9 @@
     },
     "frameworksPage": "Progreso de la autoevaluación y resultados registrados de cada marco.",
     "accessReviews": "Revisiones de acceso",
-    "policies": "Políticas"
+    "policies": "Políticas",
+    "training": "Formación",
+    "incidents": "Incidentes"
   },
   "routines": {
     "access": {
@@ -725,6 +740,100 @@
       "location": "Enlace al documento (https)",
       "reviewMonths": "Revisar cada (meses)",
       "add": "Añadir política"
+    },
+    "training": {
+      "title": "Formación",
+      "intro": "Comparte un enlace con el material; cada persona confirma que lo ha leído, sin cuenta en Atesta. Al cerrar, queda una evidencia con el número de confirmaciones.",
+      "loading": "Cargando…",
+      "list": "Formaciones",
+      "empty": "Aún no hay formaciones.",
+      "campaign": "Formación",
+      "count": "{count, plural, =0 {Sin confirmaciones} one {# confirmación} other {# confirmaciones}}",
+      "state": "Estado",
+      "closedOn": "Cerrada el {date}",
+      "closesOn": "Termina el {date}",
+      "ended": "Terminó el {date}; ciérrala",
+      "create": "Nueva formación",
+      "createHelp": "El enlace se muestra una sola vez. Compártelo tú, por correo o en vuestro chat; Atesta no envía correos.",
+      "campaignTitle": "Nombre de la formación",
+      "material": "Enlace al material (https)",
+      "closes": "Fecha de cierre",
+      "add": "Crear y obtener el enlace",
+      "linkTitle": "Enlace para compartir",
+      "linkHelp": "Cópialo ahora: no se volverá a mostrar. Quien lo tenga puede confirmar la lectura.",
+      "linkLabel": "Enlace de la formación",
+      "copy": "Copiar el enlace",
+      "copied": "Enlace copiado",
+      "openMaterial": "Abrir el material",
+      "close": "Cerrar y registrar",
+      "closedEvidence": "Formación cerrada. La evidencia se ha registrado en el control de concienciación.",
+      "people": "Confirmaciones",
+      "name": "Nombre",
+      "email": "Correo",
+      "when": "Fecha",
+      "nobody": "Nadie ha confirmado todavía."
+    },
+    "incidents": {
+      "title": "Incidentes",
+      "intro": "Registra cada incidente y cuándo tuvisteis constancia. Atesta calcula los plazos de notificación de los marcos activos; decidir si hay que notificar es cosa vuestra.",
+      "loading": "Cargando…",
+      "list": "Incidentes",
+      "empty": "No hay incidentes registrados.",
+      "incident": "Incidente",
+      "aware": "Constancia",
+      "state": "Estado",
+      "closed": "Cerrado",
+      "overdue": "{count, plural, one {# plazo vencido} other {# plazos vencidos}}",
+      "next": "Próximo plazo: {time}",
+      "noClocks": "Sin plazos",
+      "create": "Registrar un incidente",
+      "createHelp": "Indica cuándo tuvisteis constancia del incidente: los plazos cuentan desde ese momento.",
+      "incidentTitle": "Descripción breve",
+      "awareAt": "Constancia del incidente",
+      "significant": "Incidente significativo",
+      "significantHelp": "Según la definición del marco que os aplique.",
+      "personalData": "Afecta a datos personales",
+      "record": "Registrar",
+      "clocks": "Plazos de notificación",
+      "clocksHelp": "Plazos tomados de los marcos activos. Marca cada aviso cuando lo hayáis enviado.",
+      "clock": "Plazo",
+      "source": "Fuente",
+      "due": "Vencimiento",
+      "status": "Estado",
+      "met": "Enviado el {time}",
+      "metLate": "Enviado el {time}, fuera de plazo",
+      "running": "En curso",
+      "late": "Vencido",
+      "waiting": "Empieza con el aviso anterior",
+      "markSent": "Marcar «{clock}» como enviado",
+      "sent": "Marcar como enviado",
+      "updates": "Anotaciones",
+      "noUpdates": "Sin anotaciones.",
+      "note": "Nueva anotación",
+      "addNote": "Añadir la anotación",
+      "close": "Cerrar el incidente",
+      "closedEvidence": "Incidente cerrado. La evidencia se ha registrado en el control de gestión de incidentes.",
+      "kind": {
+        "note": "Anotación",
+        "clock": "Aviso enviado: {clock}",
+        "closed": "Incidente cerrado"
+      },
+      "flags": "Características",
+      "noFlags": "Ni significativo ni con datos personales"
     }
+  },
+  "trainingLink": {
+    "loading": "Cargando…",
+    "missing": "Falta el enlace de la formación. Ábrelo tal como te lo enviaron.",
+    "heading": "Confirmar la lectura",
+    "intro": "Lee el material y confirma con tu nombre y tu correo. No necesitas cuenta.",
+    "closes": "Puedes confirmar hasta el {date}.",
+    "material": "Abrir el material",
+    "name": "Nombre y apellidos",
+    "email": "Correo electrónico",
+    "read": "He leído el material",
+    "confirm": "Confirmar",
+    "done": "Gracias. Tu confirmación ha quedado registrada.",
+    "already": "Ya habías confirmado esta formación con este correo."
   }
 }

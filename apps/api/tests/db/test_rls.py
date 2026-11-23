@@ -11,7 +11,13 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from .conftest import ORG_A, ORG_B
 
-SETTINGS = ("app.subject", "app.user_id", "app.organization_id", "app.invitation_token_sha256")
+SETTINGS = (
+    "app.subject",
+    "app.user_id",
+    "app.organization_id",
+    "app.invitation_token_sha256",
+    "app.training_token_sha256",
+)
 
 
 def rls_tables(session: Session) -> list[str]:
@@ -130,6 +136,17 @@ WITH p AS (INSERT INTO policies (id, organization_id, title, location_url, revie
   VALUES (gen_random_uuid(), :o, 't', 'https://example.com/p', 12, :u) RETURNING id)
 INSERT INTO policy_approvals (id, organization_id, policy_id, version, approver_name, approved_on,
   recorded_by) SELECT gen_random_uuid(), :o, id, '1', 'n', current_date, :u FROM p;
+WITH c AS (INSERT INTO training_campaigns (id, organization_id, title, material_url, closes_on,
+  token_sha256, created_by)
+  VALUES (gen_random_uuid(), :o, 't', 'https://example.com/t', current_date, :tok, :u)
+  RETURNING id)
+INSERT INTO training_acknowledgements (id, organization_id, campaign_id, full_name, email)
+  SELECT gen_random_uuid(), :o, id, 'n', 'n@example.com' FROM c;
+WITH i AS (INSERT INTO incidents (id, organization_id, title, aware_at, significant,
+  personal_data, created_by) VALUES (gen_random_uuid(), :o, 't', now(), true, false, :u)
+  RETURNING id)
+INSERT INTO incident_updates (id, organization_id, incident_id, kind, note, recorded_by)
+  SELECT gen_random_uuid(), :o, id, 'note', 'n', :u FROM i;
 INSERT INTO probe_child VALUES (:o, :p);
 """
 

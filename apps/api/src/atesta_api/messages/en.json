@@ -34,6 +34,14 @@
     "access_review_closed": "Access review “{title}” ({system}). Accounts reviewed: {total}; keep: {keep}; revoke: {revoke}. Closed on {date} by {email}.",
     "policy_title": "Policy approval: {title}",
     "policy_approved": "Policy “{title}”, version {version}, approved by {approver} on {date}. Recorded by {email}.",
-    "policy_hash": " Document SHA-256: {sha256}."
+    "policy_hash": " Document SHA-256: {sha256}.",
+    "training_title": "Training: {title}",
+    "training_closed": "Training “{title}”. Read confirmations: {count}. Closed on {date} by {email}.",
+    "incident_title": "Incident: {title}",
+    "incident_closed": "Incident “{title}”. Became aware: {aware}. Closed on {date} by {email}.",
+    "incident_clock_met": "{clock} ({framework}): recorded on {at}, {timing}.",
+    "incident_clock_open": "{clock} ({framework}): not recorded.",
+    "incident_on_time": "on time",
+    "incident_late": "late"
   }
 }

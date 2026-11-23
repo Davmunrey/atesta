@@ -266,3 +266,53 @@ def test_every_requirement_sits_in_a_unit_of_the_source(
         )
     with pytest.raises(ValueError, match=message):
         read(tmp_path)
+
+
+CLOCK = {
+    "key": "notice",
+    "title_es": "Notificación",
+    "title_en": "Notification",
+    "hours": 72,
+    "needs": "personal_data",
+    "requirement": "R1",
+}
+
+
+@pytest.mark.parametrize(
+    ("clocks", "message"),
+    [
+        ([{**CLOCK, "requirement": "R9"}], "unknown requirement"),
+        ([CLOCK, CLOCK], "duplicate"),
+        ([{**CLOCK, "after": "missing"}], "starts from an unknown clock"),
+        ([{**CLOCK, "after": "notice"}], "starts from an unknown clock"),
+        ([{**CLOCK, "months": 1}], "hours or months"),
+        ([{k: v for k, v in CLOCK.items() if k != "hours"}], "hours or months"),
+    ],
+)
+def test_reporting_clocks_are_checked_against_the_pack(
+    tmp_path: Path, clocks: list[dict[str, object]], message: str
+) -> None:
+    """recorded-routines spec: clocks are pack content, tied to the pack's own requirements."""
+    catalog_files(tmp_path)
+    change(
+        tmp_path,
+        "frameworks/sample/pack.yaml",
+        lambda d: d["attributes"].update(reporting_clocks=clocks),
+    )
+    with pytest.raises(ValueError, match=message):
+        read(tmp_path)
+
+
+def test_a_clock_may_start_from_an_earlier_clock(tmp_path: Path) -> None:
+    catalog_files(tmp_path)
+    final = {**CLOCK, "key": "final", "hours": None, "months": 1, "after": "notice"}
+    change(
+        tmp_path,
+        "frameworks/sample/pack.yaml",
+        lambda d: d["attributes"].update(reporting_clocks=[CLOCK, final]),
+    )
+    clocks = read(tmp_path).packs[0].metadata.attributes.reporting_clocks
+    assert [(c.key, c.after, c.months) for c in clocks] == [
+        ("notice", None, None),
+        ("final", "notice", 1),
+    ]

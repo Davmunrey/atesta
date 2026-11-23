@@ -468,3 +468,117 @@ class PolicyApproval(TenantMixin, Base):
     recorded_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+# --- Recorded routines, part B: training acknowledgements and incidents.
+
+
+class TrainingCampaign(TenantMixin, Base):
+    """Material people confirm they read through a secret link. The API keeps only the token's
+    SHA-256; it is indexed, not unique, because tenant unique keys lead with organization_id."""
+
+    __tablename__ = "training_campaigns"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        CheckConstraint("length(btrim(title)) BETWEEN 1 AND 200", name="title_length"),
+        CheckConstraint(
+            "left(material_url, 8) = 'https://' AND length(material_url) <= 2000",
+            name="material_https",
+        ),
+        CheckConstraint("token_sha256 ~ '^[0-9a-f]{64}$'", name="token_format"),
+        CheckConstraint("(closed_at IS NULL) = (closed_by IS NULL)", name="closed_together"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    title: Mapped[str] = mapped_column(Text)
+    material_url: Mapped[str] = mapped_column(Text)
+    closes_on: Mapped[date] = mapped_column(Date)
+    token_sha256: Mapped[str] = mapped_column(CHAR(64), index=True)
+    created_by: Mapped[uuid.UUID]
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    closed_by: Mapped[uuid.UUID | None]
+
+
+class TrainingAcknowledgement(TenantMixin, Base):
+    __tablename__ = "training_acknowledgements"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        UniqueConstraint("organization_id", "campaign_id", "email"),
+        ForeignKeyConstraint(
+            ["organization_id", "campaign_id"],
+            ["training_campaigns.organization_id", "training_campaigns.id"],
+            ondelete="RESTRICT",
+        ),
+        CheckConstraint("length(btrim(full_name)) BETWEEN 1 AND 200", name="name_length"),
+        CheckConstraint("length(email) BETWEEN 3 AND 320", name="email_length"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    campaign_id: Mapped[uuid.UUID]
+    full_name: Mapped[str] = mapped_column(Text)
+    email: Mapped[str] = mapped_column(Text)
+    acknowledged_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class Incident(TenantMixin, Base):
+    """An incident and when the organization became aware of it. Never changed: its history is
+    its updates, and its reporting clocks come from framework packs (rule 9)."""
+
+    __tablename__ = "incidents"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        CheckConstraint("length(btrim(title)) BETWEEN 1 AND 200", name="title_length"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    title: Mapped[str] = mapped_column(Text)
+    aware_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    significant: Mapped[bool] = mapped_column(Boolean)
+    personal_data: Mapped[bool] = mapped_column(Boolean)
+    created_by: Mapped[uuid.UUID]
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class IncidentUpdate(TenantMixin, Base):
+    """A note, a reporting clock met (once per clock) or the closing (once)."""
+
+    __tablename__ = "incident_updates"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        ForeignKeyConstraint(
+            ["organization_id", "incident_id"],
+            ["incidents.organization_id", "incidents.id"],
+            ondelete="RESTRICT",
+        ),
+        CheckConstraint("kind IN ('note', 'clock', 'closed')", name="kind"),
+        CheckConstraint("(kind = 'clock') = (clock_ref IS NOT NULL)", name="clock_ref_for_clocks"),
+        CheckConstraint("length(note) <= 2000", name="note_length"),
+        Index(
+            "uq_incident_updates_clock",
+            "organization_id",
+            "incident_id",
+            "clock_ref",
+            unique=True,
+            postgresql_where=text("clock_ref IS NOT NULL"),
+        ),
+        Index(
+            "uq_incident_updates_closed",
+            "organization_id",
+            "incident_id",
+            unique=True,
+            postgresql_where=text("kind = 'closed'"),
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    incident_id: Mapped[uuid.UUID]
+    kind: Mapped[str] = mapped_column(Text)
+    clock_ref: Mapped[str | None] = mapped_column(Text)
+    note: Mapped[str] = mapped_column(Text, server_default="")
+    recorded_by: Mapped[uuid.UUID]
+    recorded_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )

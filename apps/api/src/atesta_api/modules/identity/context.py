@@ -17,6 +17,7 @@ class ContextReason(StrEnum):
     INVITATION = "invitation"
     ORG_CREATION = "org_creation"
     JOB = "job"
+    TRAINING_LINK = "training_link"  # ADR-012 amendment 4: a valid training link, no account
 
 
 def enter_user_context(session: Session, subject: str, user_id: uuid.UUID | None = None) -> None:
@@ -25,6 +26,12 @@ def enter_user_context(session: Session, subject: str, user_id: uuid.UUID | None
 
 def enter_invitation_context(session: Session, token_sha256: str) -> None:
     set_tenant_context(session, TenantContext(invitation_token_sha256=token_sha256))
+
+
+def enter_training_link_context(session: Session, token_sha256: str) -> None:
+    """Read one training campaign by its token's SHA-256 (policy training_token_read), before
+    the organization is known. Writes still need enter_org_context(TRAINING_LINK)."""
+    set_tenant_context(session, TenantContext(training_token_sha256=token_sha256))
 
 
 def ensure_dev_organization(session: Session, org_id: uuid.UUID, name: str) -> None:

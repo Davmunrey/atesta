@@ -440,6 +440,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/incidents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Incidents */
+        get: operations["list_incidents_api_v1_orgs__org_id__incidents_get"];
+        put?: never;
+        /** Create Incident */
+        post: operations["create_incident_api_v1_orgs__org_id__incidents_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/incidents/{incident_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Incident */
+        get: operations["read_incident_api_v1_orgs__org_id__incidents__incident_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/incidents/{incident_id}/updates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Update */
+        post: operations["add_update_api_v1_orgs__org_id__incidents__incident_id__updates_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/invitations": {
         parameters: {
             query?: never;
@@ -684,6 +736,92 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/training-campaigns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Campaigns */
+        get: operations["list_campaigns_api_v1_orgs__org_id__training_campaigns_get"];
+        put?: never;
+        /** Create Campaign */
+        post: operations["create_campaign_api_v1_orgs__org_id__training_campaigns_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/training-campaigns/{campaign_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Campaign */
+        get: operations["read_campaign_api_v1_orgs__org_id__training_campaigns__campaign_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/training-campaigns/{campaign_id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Close Campaign */
+        post: operations["close_campaign_api_v1_orgs__org_id__training_campaigns__campaign_id__close_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/training/acknowledge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Acknowledge */
+        post: operations["acknowledge_api_v1_training_acknowledge_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/training/link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Read Link */
+        post: operations["read_link_api_v1_training_link_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/callback": {
         parameters: {
             query?: never;
@@ -850,6 +988,32 @@ export interface components {
              * @default
              */
             detail: string;
+        };
+        /** AcknowledgeIn */
+        AcknowledgeIn: {
+            /** Email */
+            email: string;
+            /** Full Name */
+            full_name: string;
+            /** Token */
+            token: string;
+        };
+        /** Acknowledged */
+        Acknowledged: {
+            /** Recorded */
+            recorded: boolean;
+        };
+        /** AcknowledgementOut */
+        AcknowledgementOut: {
+            /**
+             * Acknowledged At
+             * Format: date-time
+             */
+            acknowledged_at: string;
+            /** Email */
+            email: string;
+            /** Full Name */
+            full_name: string;
         };
         /** Activity */
         Activity: {
@@ -1083,6 +1247,72 @@ export interface components {
             /** Owner User Id */
             owner_user_id: string | null;
         };
+        /** CampaignDetail */
+        CampaignDetail: {
+            /** Acknowledged */
+            acknowledged: number;
+            /** Acknowledgements */
+            acknowledgements: components["schemas"]["AcknowledgementOut"][];
+            /** Closed At */
+            closed_at: string | null;
+            /**
+             * Closes On
+             * Format: date
+             */
+            closes_on: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Material Url */
+            material_url: string;
+            /** Title */
+            title: string;
+        };
+        /** CampaignIn */
+        CampaignIn: {
+            /**
+             * Closes On
+             * Format: date
+             */
+            closes_on: string;
+            /** Material Url */
+            material_url: string;
+            /** Title */
+            title: string;
+        };
+        /** CampaignOut */
+        CampaignOut: {
+            /** Acknowledged */
+            acknowledged: number;
+            /** Closed At */
+            closed_at: string | null;
+            /**
+             * Closes On
+             * Format: date
+             */
+            closes_on: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Material Url */
+            material_url: string;
+            /** Title */
+            title: string;
+        };
         /** CheckDetail */
         CheckDetail: {
             /** Check Id */
@@ -1097,6 +1327,41 @@ export interface components {
             check_id: string;
             /** Engine */
             engine: string;
+        };
+        /** ClockLabel */
+        ClockLabel: {
+            /** En */
+            en: string;
+            /** Es */
+            es: string;
+            /** Framework */
+            framework: string;
+        };
+        /** ClockOut */
+        ClockOut: {
+            /** Due At */
+            due_at: string | null;
+            /** Framework Key */
+            framework_key: string;
+            /** Framework Name */
+            framework_name: string;
+            /** Late */
+            late: boolean;
+            /** Met At */
+            met_at: string | null;
+            /** Ref */
+            ref: string;
+            /** Requirement */
+            requirement: string;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "met" | "running" | "overdue" | "waiting";
+            /** Title En */
+            title_en: string;
+            /** Title Es */
+            title_es: string;
         };
         /** ClosureIn */
         ClosureIn: {
@@ -1230,6 +1495,34 @@ export interface components {
             /** Units */
             units: string[];
         };
+        /** CreatedCampaign */
+        CreatedCampaign: {
+            /** Acknowledged */
+            acknowledged: number;
+            /** Closed At */
+            closed_at: string | null;
+            /**
+             * Closes On
+             * Format: date
+             */
+            closes_on: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Link */
+            link: string;
+            /** Material Url */
+            material_url: string;
+            /** Title */
+            title: string;
+        };
         /** CreatedInvitation */
         CreatedInvitation: {
             /** Accept Link */
@@ -1278,6 +1571,9 @@ export interface components {
         };
         /** DueItem */
         DueItem: {
+            clock?: components["schemas"]["ClockLabel"] | null;
+            /** Due At */
+            due_at?: string | null;
             /** Due On */
             due_on: string | null;
             /**
@@ -1289,7 +1585,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "policy_review" | "policy_unapproved" | "access_review_overdue";
+            kind: "policy_review" | "policy_unapproved" | "access_review_overdue" | "training_unclosed" | "incident_clock";
             /** Overdue */
             overdue: boolean;
             /** Title */
@@ -1520,6 +1816,84 @@ export interface components {
         };
         /** @enum {string} */
         Implementation: "not_implemented" | "partially_implemented" | "implemented";
+        /** IncidentIn */
+        IncidentIn: {
+            /**
+             * Aware At
+             * Format: date-time
+             */
+            aware_at: string;
+            /** Personal Data */
+            personal_data: boolean;
+            /** Significant */
+            significant: boolean;
+            /** Title */
+            title: string;
+        };
+        /** IncidentOut */
+        IncidentOut: {
+            /**
+             * Aware At
+             * Format: date-time
+             */
+            aware_at: string;
+            /** Clocks */
+            clocks: components["schemas"]["ClockOut"][];
+            /** Closed At */
+            closed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Next Due At */
+            next_due_at: string | null;
+            /** Overdue */
+            overdue: number;
+            /** Personal Data */
+            personal_data: boolean;
+            /** Significant */
+            significant: boolean;
+            /** Title */
+            title: string;
+            /** Updates */
+            updates: components["schemas"]["UpdateOut"][];
+        };
+        /** IncidentSummary */
+        IncidentSummary: {
+            /**
+             * Aware At
+             * Format: date-time
+             */
+            aware_at: string;
+            /** Closed At */
+            closed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Next Due At */
+            next_due_at: string | null;
+            /** Overdue */
+            overdue: number;
+            /** Personal Data */
+            personal_data: boolean;
+            /** Significant */
+            significant: boolean;
+            /** Title */
+            title: string;
+        };
         /** InvitationIn */
         InvitationIn: {
             /** Access Expires On */
@@ -1557,6 +1931,11 @@ export interface components {
             limits: string[];
             /** Missing */
             missing: string[];
+        };
+        /** LinkIn */
+        LinkIn: {
+            /** Token */
+            token: string;
         };
         /** MeOut */
         MeOut: {
@@ -1673,6 +2052,8 @@ export interface components {
             limitations_es: string;
             /** Preparation Controls */
             preparation_controls: string[];
+            /** Reporting Clocks */
+            reporting_clocks?: components["schemas"]["ReportingClock"][];
             /** Scope En */
             scope_en: string;
             /** Scope Es */
@@ -1753,6 +2134,18 @@ export interface components {
             /** Rule */
             rule: string | null;
         };
+        /** PublicCampaign */
+        PublicCampaign: {
+            /**
+             * Closes On
+             * Format: date
+             */
+            closes_on: string;
+            /** Material Url */
+            material_url: string;
+            /** Title */
+            title: string;
+        };
         /** @enum {string} */
         RecordedStatus: "pass" | "fail" | "manual" | "not_applicable";
         /** Register */
@@ -1789,6 +2182,32 @@ export interface components {
             selection_basis: string | null;
             /** Title En */
             title_en: string | null;
+            /** Title Es */
+            title_es: string;
+        };
+        /**
+         * ReportingClock
+         * @description A reporting deadline copied from the official text (recorded-routines spec). It starts when
+         *     the organization became aware of the incident, or when the clock named in `after` was met.
+         */
+        ReportingClock: {
+            /** After */
+            after?: string | null;
+            /** Hours */
+            hours?: number | null;
+            /** Key */
+            key: string;
+            /** Months */
+            months?: number | null;
+            /**
+             * Needs
+             * @enum {string}
+             */
+            needs: "significant" | "personal_data";
+            /** Requirement */
+            requirement: string;
+            /** Title En */
+            title_en: string;
             /** Title Es */
             title_es: string;
         };
@@ -2097,6 +2516,32 @@ export interface components {
             framework_version: string;
             /** Score */
             score: number | null;
+        };
+        /** UpdateIn */
+        UpdateIn: {
+            /** Clock */
+            clock?: string | null;
+            kind: components["schemas"]["UpdateKind"];
+            /**
+             * Note
+             * @default
+             */
+            note: string;
+        };
+        /** @enum {string} */
+        UpdateKind: "note" | "clock" | "closed";
+        /** UpdateOut */
+        UpdateOut: {
+            /** Clock */
+            clock: string | null;
+            kind: components["schemas"]["UpdateKind"];
+            /** Note */
+            note: string;
+            /**
+             * Recorded At
+             * Format: date-time
+             */
+            recorded_at: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -3205,6 +3650,140 @@ export interface operations {
             };
         };
     };
+    list_incidents_api_v1_orgs__org_id__incidents_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncidentSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_incident_api_v1_orgs__org_id__incidents_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IncidentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncidentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_incident_api_v1_orgs__org_id__incidents__incident_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                incident_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncidentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_update_api_v1_orgs__org_id__incidents__incident_id__updates_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                incident_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncidentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_invitations_api_v1_orgs__org_id__invitations_get: {
         parameters: {
             query?: never;
@@ -3747,6 +4326,202 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SearchResult"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_campaigns_api_v1_orgs__org_id__training_campaigns_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CampaignOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_campaign_api_v1_orgs__org_id__training_campaigns_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CampaignIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreatedCampaign"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_campaign_api_v1_orgs__org_id__training_campaigns__campaign_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                campaign_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CampaignDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    close_campaign_api_v1_orgs__org_id__training_campaigns__campaign_id__close_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                campaign_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CampaignDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    acknowledge_api_v1_training_acknowledge_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AcknowledgeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Acknowledged"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_link_api_v1_training_link_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LinkIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicCampaign"];
                 };
             };
             /** @description Validation Error */

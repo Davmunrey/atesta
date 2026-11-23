@@ -103,6 +103,13 @@ def test_access_reviews_check_roles_and_input(client: TestClient, superuser: Eng
         ).status_code
         == 422
     )
+    for blank in ({"title": "   "}, {"accounts": [{"account": " \t "}]}):
+        response = client.post(
+            f"/api/v1/orgs/{org}/access-reviews",
+            json={**body, **blank},
+            headers=auth(subs["owner"]),
+        )
+        assert response.status_code == 422  # never a database check error
     review = _review(client, org, subs["owner"])
     auditor = _add(superuser, client, org, "auditor", _future())
     assert (
