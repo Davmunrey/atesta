@@ -44,7 +44,7 @@
   :root {
     color-scheme: dark;
     --color-bg: #171715;
-    --color-surface: #22221f;
+    --color-surface: #2d2c28;
     --color-fg: #f4f1ea;
     --color-muted: #c0baae;
     --color-border: #817b70;
@@ -84,4 +84,24 @@
   --color-warning: #76520d;
   --color-danger-fg: #f4f1ea;
   --color-focus: #23389a;
+}
+
+/* Paper (ui-polish spec): reports and dossiers print in the light palette on white, whatever the
+   screen's colour scheme. */
+@media print {
+  :root {
+    color-scheme: light;
+    --color-bg: #ffffff;
+    --color-page: #ffffff;
+    --color-panel: #ffffff;
+    --color-surface: #f4f1ea;
+    --color-fg: #141414;
+    --color-muted: #55514a;
+    --color-border: #888276;
+    --color-border-subtle: #d6d1c6;
+    --color-link: #23389a;
+    --color-danger: #a3241c;
+    --color-success: #236044;
+    --color-warning: #76520d;
+  }
 }

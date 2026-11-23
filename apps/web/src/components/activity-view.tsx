@@ -9,6 +9,7 @@ import type { Membership } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
 import { ColumnChart } from "./charts";
 import { ErrorMessage } from "./error-message";
+import { activityLabel, activityTarget } from "@/lib/activity";
 
 const PERIODS = [30, 90] as const;
 
@@ -19,8 +20,6 @@ export function ActivityView({ org }: { org: Membership }) {
   const [days, setDays] = useState<30 | 90>(30);
   const query = useActivity(org.organization_id, days);
   if (!canReviewControls(org.role)) return <p className="text-muted">{t("adminsOnly")}</p>;
-  // Message keys cannot hold dots, so "requirement.assessed" is stored as "requirement_assessed".
-  const action = (name: string) => { const key = `actions.${name.replaceAll(".", "_")}`; return t.has(key) ? t(key) : name; };
   return <div className="activity-page panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")}
       actions={<div role="group" aria-label={t("period")} className="requirement-filters">
@@ -37,7 +36,7 @@ export function ActivityView({ org }: { org: Membership }) {
           <tbody>{query.data.events.map((e, i) => <tr key={`${e.occurred_at}-${i}`}>
             <td data-label={t("when")}><time dateTime={e.occurred_at}>{format.dateTime(new Date(e.occurred_at), { dateStyle: "medium", timeStyle: "short" })}</time></td>
             <td data-label={t("who")}>{e.actor_email ?? t("system")}</td>
-            <td data-label={t("what")}>{action(e.action)}<span className="activity-target">{e.target_id}</span></td>
+            <td data-label={t("what")}>{activityLabel(t, e.action)}{activityTarget(e.target_id) ? <span className="activity-target">{activityTarget(e.target_id)}</span> : null}</td>
           </tr>)}</tbody>
         </table></div>}
         </Panel>

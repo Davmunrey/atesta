@@ -1,5 +1,6 @@
 "use client";
 
+import { activityLabel } from "@/lib/activity";
 import Link from "next/link";
 import { useFormatter, useLocale, useNow, useTranslations } from "next-intl";
 import { useActivity, useMembers } from "@/lib/api/hooks";
@@ -181,12 +182,11 @@ export function RecentActivity({ org }: { org: Membership }) {
   const admin = canReviewControls(org.role);
   const query = useActivity(org.organization_id, 30, admin);
   if (!admin || !query.data) return null;
-  const action = (name: string) => { const key = `actions.${name.replaceAll(".", "_")}`; return activity.has(key) ? activity(key) : name; };
   const events = query.data.events.slice(0, 5);
   return <Panel title={t("recent")} actions={<Link href={orgActivity(org.organization_id)} className="text-link underline text-sm action-link">{t("allActivity")}</Link>}>
     {events.length === 0 ? <p className="text-sm text-muted">{t("recentEmpty")}</p> : <ul className="cockpit-list">
       {events.map((e, i) => <li key={`${e.occurred_at}:${i}`}>
-        <span>{action(e.action)}</span>
+        <span>{activityLabel(activity, e.action)}</span>
         <span className="text-sm text-muted">{e.actor_email ?? t("system")} · {format.relativeTime(new Date(e.occurred_at), now)}</span>
       </li>)}
     </ul>}

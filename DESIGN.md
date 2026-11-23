@@ -17,7 +17,7 @@ colors:
   focus: "#23389a"
   chart: "#3a55c9"
   dark-bg: "#171715"
-  dark-surface: "#22221f"
+  dark-surface: "#2d2c28"
   dark-fg: "#f4f1ea"
   dark-muted: "#c0baae"
   dark-border: "#817b70"
@@ -155,6 +155,8 @@ single-series; counts that compete for colour become figures instead (insights s
 
 `bg` is the page; `surface` groups supporting content; `fg` carries primary text; `muted` carries explanations and metadata; `border` separates rows and defines controls. `success`, `danger` and `warning` encode recorded outcomes. Neutral borders represent not-applicable distribution segments. Danger actions pair `danger` with `danger-fg`.
 
+Inside console panels, `surface` is the second level (table header rows, row hover, inline forms) and `panel` the first; they must differ in both themes. Dark `surface` is `#2d2c28` (ui-polish spec, 2026-11-23), one step above the dark panel `#22221f`; muted text keeps 7.2:1 on it. Print forces the light palette on white paper whatever the screen's scheme.
+
 Frontmatter `dark-*` entries record the existing dark-mode overrides of the corresponding CSS tokens, not additional application tokens. The authenticated workspace follows the operating system. Public surfaces explicitly retain the light palette. Accent and accent foreground remain unchanged in dark mode; focus changes from blue to the highlighter.
 
 **The Paired State Rule.** Change foreground and background together; state changes must retain readable contrast.
@@ -198,6 +200,10 @@ Controls and navigation use the small radius; shared primary actions and the col
 **Data tables.** Tables sit in a scroll region that is also a size container. Below 36rem of their own width they stack: one ruled block per row, the first cell as its title, every other cell preceded by its column name (`data-label`) in muted 13px text. The markup stays a semantic table and nothing scrolls sideways on a phone (ui-polish spec).
 
 **Touch and text floors.** No interface text under 13px (0.8125rem), chart ticks included: charts draw at their measured width so SVG text never scales down. Below 40rem or on coarse pointers, buttons, fields, disclosure summaries, breadcrumbs and standalone action links (`.action-link`) are at least 44px tall, and fields use 16px text so phones do not zoom. The document scroll padding clears the sticky top bar so focus and anchors are never hidden.
+
+**State badges.** Every recorded state shows a drawn icon beside its label: done (circle check), partial (half-ruled circle), missing (triangle), not applicable (slashed circle), pending (clock). Colour reinforces, never carries, the state.
+
+**Activity.** Audit actions read as sentences in ES and EN; an action without a label reads "Otra acción", database ids are never shown, readable targets (framework keys, requirement codes) stay in mono.
 
 **Loading, empty and error states.** Loading uses static surface-colored placeholders and status text. Empty states explain the absence; search can be cleared. Errors expose retry. Refresh temporarily disables its control and changes its label. Development data stays visibly labeled and synthetic framework results are not presented as ENS/NIS2 assessments.
 

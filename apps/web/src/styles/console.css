@@ -93,6 +93,8 @@
   .panel-description { margin-top: 0.125rem; font-size: 0.8125rem; color: var(--color-muted); }
   .panel-body { padding: 1rem 1.25rem 1.25rem; min-width: 0; }
   .panel-actions { display: flex; gap: 0.5rem; }
+  /* Prose panels (settings): paragraphs, forms and actions keep a steady gap. */
+  .panel-flow .panel-body > * + * { margin-top: 0.75rem; }
   .panel-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
   @media (min-width: 75rem) {
     .panel-grid-main { grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr); align-items: start; }
@@ -132,10 +134,12 @@
 
   /* Existing sections read as panels inside the console, without changing their markup. */
   .console .framework-page { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
-  .console :is(.self-assessment, .insights, .requirement-register, .preparation-guides, .framework-catalog, .first-steps, .collection-summary, .evidence-summary, .framework-record) {
+  .console :is(.self-assessment, .insights, .requirement-register, .preparation-guides, .framework-catalog, .first-steps, .collection-summary, .framework-record) {
     margin: 0; padding: 1.25rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-panel);
   }
   .console .insights-grid { gap: 1.25rem; }
+  /* Evidence totals sit inside the collections panel as a ruled row: panels never nest. */
+  .console .evidence-summary { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--color-border-subtle); }
   .console .framework-page > .page-header { margin-bottom: 0; }
   .console .catalog-about { padding: 0.75rem 1.25rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-panel); }
 

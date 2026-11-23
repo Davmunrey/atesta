@@ -47,7 +47,8 @@
   .requirement-heading { display: grid; gap: 0.25rem; }
   .requirement-heading strong { font-weight: 500; }
   .requirement-code { font-family: var(--font-mono); font-size: 0.8125rem; overflow-wrap: anywhere; }
-  .requirement-state { font-size: 0.8125rem; font-weight: 500; white-space: nowrap; }
+  .requirement-state { display: inline-flex; align-items: center; gap: 0.3125rem; font-size: 0.8125rem; font-weight: 500; white-space: nowrap; }
+  .requirement-state svg, .overdue-flag svg { flex: none; }
   .requirement-state[data-state="fail"] { color: var(--color-danger); }
   .requirement-state[data-state="pass"] { color: var(--color-success); }
   .requirement-state[data-state="manual"] { color: var(--color-warning); }
@@ -209,6 +210,6 @@
   .owner-edit { min-height: 2.75rem; padding-inline: 0.25rem; }
   .owner-form { margin-bottom: 1rem; }
   .assessment-badges { display: inline-flex; align-items: center; gap: 0.5rem; }
-  .overdue-flag { font-size: 0.8125rem; font-weight: 600; color: var(--color-danger); border: 1px solid currentColor; border-radius: 0.25rem; padding: 0 0.375rem; }
+  .overdue-flag { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.8125rem; font-weight: 600; color: var(--color-danger); border: 1px solid currentColor; border-radius: 0.25rem; padding: 0 0.375rem; }
   .activity-target { display: block; font-family: var(--font-mono, monospace); font-size: 0.8125rem; color: var(--color-muted); overflow-wrap: anywhere; }
 }

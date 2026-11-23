@@ -25,7 +25,7 @@ function Frameworks() {
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: c("frameworks") }]}
       title={c("frameworks")} description={c("frameworksPage")} />
     {overview.isError ? <ErrorMessage error={overview.error} />
-      : overview.data ? <FrameworkLedger frameworks={overview.data.frameworks} orgId={org.organization_id} readiness={readiness.data ?? []} />
+      : overview.data ? <FrameworkLedger frameworks={overview.data.frameworks} orgId={org.organization_id} readiness={readiness.data ?? []} headless />
       : <div className="dashboard-loading" role="status" aria-busy="true"><div className="dashboard-skeleton" aria-hidden="true" /></div>}
   </>;
 }
