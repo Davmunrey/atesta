@@ -23,6 +23,7 @@ from sqlalchemy.orm import Session
 from atesta_api.modules.compliance.api import active_control_checks
 from atesta_api.modules.connections.api import scan_target
 from atesta_api.modules.evidence.api import ScanOutputFile, register_scan_output
+from atesta_api.modules.scanning.error_codes import OUTPUT_INVALID, TENANT_MISMATCH
 from atesta_api.modules.scanning.expected import exclusions, expected_checks
 from atesta_api.modules.scanning.models import Finding, Scan, ScanCheckResult
 from atesta_api.modules.scanning.runners import MANIFEST_FILE, OCSF_FILE, ScanStore
@@ -124,9 +125,9 @@ def ingest_scan(
         pin_tenant(findings, scan.provider, tenant)
         results = coverage(findings, listed, excluded)
     except TenantMismatchError:
-        return _reject(session, scan, "scanning.tenant_mismatch")
+        return _reject(session, scan, TENANT_MISMATCH)
     except (FileNotFoundError, ManifestError, OcsfError, UnexpectedCheckError):
-        return _reject(session, scan, "scanning.output_invalid")
+        return _reject(session, scan, OUTPUT_INVALID)
 
     org, engine = scan.organization_id, ENGINE
     _insert(

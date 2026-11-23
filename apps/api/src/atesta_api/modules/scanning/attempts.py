@@ -24,6 +24,12 @@ from atesta_api.modules.connections.api import (
     record_verification,
     scan_target,
 )
+from atesta_api.modules.scanning.error_codes import (
+    BLOCKED_CODES,
+    CONNECTION_NOT_ACTIVE,
+    ENGINE_FAILED,
+    TRANSIENT_ERRORS,
+)
 from atesta_api.modules.scanning.expected import exclusions
 from atesta_api.modules.scanning.ingest import ScanNotFoundError
 from atesta_api.modules.scanning.models import Scan
@@ -40,14 +46,7 @@ from atesta_api.platform.queue import defer
 INGEST_TASK = "atesta:ingest_scan"  # the worker's namespaced name; a worker test pins it
 DONE = 0
 VERIFICATION_REFUSED = 10  # the only permanent wrapper exit (scanner/atesta_scanner/exits.py)
-TRANSIENT_ERRORS = {21: "scanning.timeout", 30: "scanning.output_invalid"}
-ENGINE_FAILED = "scanning.engine_failed"  # 11, 12, 20 and any code the wrapper never returns
 VERIFICATION_FILE = "verification.json"  # the wrapper's report, beside the attempt's output
-BLOCKED_CODES = {
-    "incomplete": "connections.incomplete_permissions",
-    "over_privileged": "connections.over_privileged",
-    "revoked": "connections.revoked",
-}
 
 type Event = Mapping[str, str | int | None]
 
@@ -145,7 +144,7 @@ def start_attempt(
         return Started(None, None)
     target = scan_target(session, organization_id, scan.connection_id)
     if target is None or not target.active or target.external_tenant_id is None:
-        return Started(None, _end(session, scan, "blocked", "scanning.connection_not_active"))
+        return Started(None, _end(session, scan, "blocked", CONNECTION_NOT_ACTIVE))
     scan.status, scan.attempts, scan.error_code = "running", attempt, None
     scan.started_at = func.now()
     job = ScanJob(organization_id, scan.id, attempt, scan.provider, target.credential_ref)
