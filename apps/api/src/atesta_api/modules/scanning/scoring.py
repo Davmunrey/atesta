@@ -15,6 +15,7 @@ from datetime import datetime
 
 from atesta_core.controls import control_results
 from sqlalchemy import func, select
+from sqlalchemy.dialects.postgresql import distinct_on
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.compliance.api import (
@@ -53,7 +54,7 @@ def _as_of(session: Session, scan: Scan) -> list[tuple[str, str, str]]:
             Scan.ingested_at.is_not(None),
             Scan.ingested_at <= scan.ingested_at,
         )
-        .distinct(Scan.connection_id)
+        .ext(distinct_on(Scan.connection_id))
         .order_by(Scan.connection_id, Scan.ingested_at.desc(), Scan.id.desc())
     )
     scans = [scan.id, *session.execute(others).scalars()]

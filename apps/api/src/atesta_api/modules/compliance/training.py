@@ -102,7 +102,7 @@ def _counts(session: Session, org: uuid.UUID) -> dict[uuid.UUID, int]:
         .where(TrainingAcknowledgement.organization_id == org)
         .group_by(TrainingAcknowledgement.campaign_id)
     )
-    return {campaign: count for campaign, count in rows.tuples()}
+    return {campaign: count for campaign, count in rows}
 
 
 def _out(row: TrainingCampaign, count: int) -> CampaignOut:

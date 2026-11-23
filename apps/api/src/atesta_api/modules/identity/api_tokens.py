@@ -114,7 +114,7 @@ def list_tokens(
         .join(User, User.id == ApiToken.created_by)
         .where(ApiToken.organization_id == member.organization_id)
         .order_by(ApiToken.created_at.desc(), ApiToken.id)
-    ).tuples()
+    )
     return [_out(row, email) for row, email in rows]
 
 

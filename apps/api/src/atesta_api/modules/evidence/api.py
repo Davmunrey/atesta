@@ -79,7 +79,7 @@ def statements_by_control(
             EvidenceControl.control_key.in_(keys),
         )
         .order_by(EvidenceControl.control_key, Evidence.collected_at.desc(), Evidence.id)
-    ).tuples()
+    )
     out: dict[str, list[StatementView]] = {}
     for key, evidence, statement in rows:
         found = out.setdefault(key, [])
