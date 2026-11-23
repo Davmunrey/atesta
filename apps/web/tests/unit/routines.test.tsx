@@ -50,7 +50,7 @@ it("shows a policy's approval state and computes no hash unless a file is chosen
   ]] });
   renderWithProviders(<PoliciesView org={owner} />);
   expect(await screen.findByText(/Revisión vencida el 10 ene 2026/)).toBeTruthy();
-  expect(screen.getByText("Sin aprobar")).toBeTruthy();
+  expect(within(screen.getByRole("region", { name: "Registro de políticas" })).getByText("Sin aprobar")).toBeTruthy();
   expect(screen.getByText(/Versión 1.0, aprobada por Comité/)).toBeTruthy();
   fireEvent.click(screen.getAllByRole("button", { name: "Registrar aprobación" })[0]!);
   expect(screen.getByText("Se calcula su huella SHA-256 en tu navegador; el documento no se sube.")).toBeTruthy();

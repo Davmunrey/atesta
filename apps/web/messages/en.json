@@ -1118,5 +1118,41 @@
     "due": "What falls due",
     "nothingDue": "Nothing falls due.",
     "notCertification": "This report gathers what the organization recorded in Atesta. It is not a certification or a conformity assessment."
+  },
+  "summary": {
+    "label": "Summary",
+    "never": "Never",
+    "policies": {
+      "lead": "{attention, plural, =0 {Every policy is approved and up to date.} one {# policy needs attention.} other {# policies need attention.}}",
+      "total": "Policies",
+      "current": "Approved and up to date",
+      "overdue": "Review overdue",
+      "unapproved": "Not approved"
+    },
+    "access": {
+      "lead": "{open, plural, =0 {No open reviews.} one {# open review} other {# open reviews}}{open, plural, =0 {} other {{pending, plural, =0 {, every account decided.} one {, # account still to decide.} other {, # accounts still to decide.}}}}",
+      "total": "Reviews",
+      "open": "Open",
+      "closed": "Closed",
+      "pending": "Accounts to decide"
+    },
+    "training": {
+      "lead": "{open, plural, =0 {No open trainings.} one {# open training.} other {# open trainings.}} {acknowledged, plural, =0 {No confirmations yet.} one {# confirmation recorded.} other {# confirmations recorded.}}",
+      "total": "Trainings",
+      "open": "Open",
+      "acknowledged": "Confirmations"
+    },
+    "incidents": {
+      "lead": "{open, plural, =0 {No open incidents.} one {# open incident} other {# open incidents}}{open, plural, =0 {} other {{overdue, plural, =0 {, no notices overdue.} one {, # with overdue notices.} other {, # with overdue notices.}}}}",
+      "open": "Open",
+      "closed": "Closed",
+      "overdue": "With overdue notices"
+    },
+    "tokens": {
+      "lead": "{active, plural, =0 {No active token: no tool can record evidence.} one {# active token.} other {# active tokens.}}",
+      "active": "Active tokens",
+      "inactive": "Revoked or expired",
+      "lastUsed": "Last used"
+    }
   }
 }

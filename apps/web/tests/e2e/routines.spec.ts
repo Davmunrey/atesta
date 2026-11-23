@@ -44,7 +44,7 @@ test("an access review is decided and closed, and a policy approved, through the
   await page.getByLabel("Nombre de la política").fill("Política de seguridad");
   await page.getByLabel("Enlace al documento (https)").fill("https://example.test/politica.pdf");
   await page.getByRole("button", { name: "Añadir política" }).click();
-  await expect(page.getByText("Sin aprobar")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Registro de políticas" }).getByText("Sin aprobar")).toBeVisible();
   await page.getByRole("button", { name: "Registrar aprobación" }).click();
   await page.getByLabel("Versión", { exact: true }).fill("1.0");
   await page.getByLabel("Aprobada por").fill("Comité de seguridad");

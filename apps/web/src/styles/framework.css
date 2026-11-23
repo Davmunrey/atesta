@@ -106,7 +106,6 @@
   .selection-table th { font-weight: 500; }
   .requirement-guidance .catalog-disclosure { margin-top: 1rem; }
   @media (max-width: 40rem) {
-    .workspace:has(.framework-page) .organization-context { padding-block: 1.25rem; }
     .framework-title .page-title { font-size: 2rem; }
     .requirement-row > summary { grid-template-columns: minmax(0, 1fr) 1rem; gap: 0.5rem; }
     .requirement-row > summary > :is(.requirement-state, .assessment-badges) { grid-column: 1; grid-row: 2; }
