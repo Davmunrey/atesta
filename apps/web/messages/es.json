@@ -55,6 +55,8 @@
     "compliance": {
       "control_not_found": "Este control no existe o ya no está activo en el catálogo.",
       "control_not_manual": "Este control se evalúa con comprobaciones automáticas; no admite revisión manual.",
+      "review_evidence_required": "Para registrarlo como implantado, cita al menos una evidencia de este control.",
+      "review_evidence_invalid": "Una de las evidencias citadas no es de este control. Recarga la página y vuelve a elegirlas.",
       "not_found": "Este marco no está disponible. Vuelve al resumen y elige un marco publicado.",
       "evidence_not_found": "Alguna evidencia indicada no existe en esta organización.",
       "justification_required": "Indica la justificación: es obligatoria si la medida no aplica o si tu decisión difiere de la propuesta.",
@@ -265,7 +267,15 @@
       "save": "Guardar revisión",
       "saving": "Guardando…",
       "cancel": "Cancelar",
-      "saved": "Revisión registrada. La puntuación se actualizará en unos segundos."
+      "saved": "Revisión registrada. La puntuación se actualizará en unos segundos.",
+      "evidence": "Evidencias que cita",
+      "evidenceHelp": "Marca lo que respalda la decisión. Para registrarlo como implantado hace falta al menos una.",
+      "evidenceLoading": "Cargando las evidencias…",
+      "evidenceNone": "Registra primero una evidencia de este control (en «Ver evidencias») para poder marcarlo como implantado.",
+      "evidenceRequired": "Marca al menos una evidencia para registrarlo como implantado.",
+      "evidenceNewest": "{count, plural, one {Se muestra la evidencia más reciente.} other {Se muestran las # más recientes.}}",
+      "cited": "Evidencias citadas",
+      "citesNone": "No cita ninguna evidencia."
     },
     "observationHelp": "Observación técnica a la fecha del análisis, agregada entre conexiones. Es distinta del resultado registrado del requisito.",
     "mappingUnreviewed": "La relación entre este requisito y el control aún no tiene revisión registrada.",

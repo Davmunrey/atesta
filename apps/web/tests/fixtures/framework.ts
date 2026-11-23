@@ -59,4 +59,14 @@ export const passingReview: Review = {
   id: "22222222-2222-4222-8222-222222222222", control_key: "ctl.paper", status: "pass",
   rationale: "Acta del comité de 2026-10-01.\nPunto 3 aprobado.", valid_until: "2027-10-01",
   reviewed_by: "11111111-1111-4111-8111-111111111111", reviewed_at: "2026-10-02T09:30:00Z", expired: false,
+  evidence: [{ id: "33333333-3333-4333-8333-333333333333", title: "Acta del comité 12", kind: "attestation", collected_at: "2026-10-01T10:00:00Z" }],
+};
+
+/** One page of evidence recorded on ctl.paper (#262: a pass review cites one of these). */
+export const paperEvidence = {
+  items: [{
+    id: "33333333-3333-4333-8333-333333333333", title: "Acta del comité 12", kind: "attestation", statement: "Aprobada.",
+    reference_url: null, created_by: "11111111-1111-4111-8111-111111111111", collected_at: "2026-10-01T10:00:00Z", created_at: "2026-10-01T10:00:00Z",
+  }],
+  total: 1,
 };

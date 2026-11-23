@@ -218,6 +218,7 @@ class ControlReview(TenantMixin, Base):
         UniqueConstraint("organization_id", "id"),
         CheckConstraint("status IN ('pass', 'fail')", name="status"),
         CheckConstraint("char_length(rationale) BETWEEN 1 AND 2000", name="rationale_length"),
+        CheckConstraint("cardinality(evidence_ids) <= 20", name="evidence_ids_bounded"),
         Index(
             "ix_control_reviews_latest",
             "organization_id",
@@ -234,6 +235,10 @@ class ControlReview(TenantMixin, Base):
     reviewed_by: Mapped[uuid.UUID]
     reviewed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
+    )
+    # Evidence the decision cites (#262): ids checked through evidence.api at write time.
+    evidence_ids: Mapped[list[uuid.UUID]] = mapped_column(
+        ARRAY(Uuid), server_default=text("'{}'::uuid[]")
     )
 
 

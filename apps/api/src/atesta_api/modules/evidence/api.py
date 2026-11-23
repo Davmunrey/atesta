@@ -101,6 +101,45 @@ def statements_by_control(
     return out
 
 
+@dataclass(frozen=True, slots=True)
+class CitedEvidence:
+    """An evidence item a manual review cites (manual-control-review spec, #262)."""
+
+    id: uuid.UUID
+    title: str
+    kind: str
+    collected_at: datetime
+
+
+def cited_evidence(
+    session: Session,
+    organization_id: uuid.UUID,
+    evidence_ids: Iterable[uuid.UUID],
+    control_key: str | None = None,
+) -> dict[uuid.UUID, CitedEvidence]:
+    """The given ids that are evidence of this org, linked to `control_key` when one is given."""
+    ids = set(evidence_ids)
+    if not ids:
+        return {}
+    query = select(Evidence).where(
+        Evidence.organization_id == organization_id, Evidence.id.in_(ids)
+    )
+    if control_key is not None:
+        query = query.where(
+            select(EvidenceControl.evidence_id)
+            .where(
+                EvidenceControl.organization_id == Evidence.organization_id,
+                EvidenceControl.evidence_id == Evidence.id,
+                EvidenceControl.control_key == control_key,
+            )
+            .exists()
+        )
+    return {
+        row.id: CitedEvidence(row.id, row.title, row.kind, row.collected_at)
+        for row in session.scalars(query)
+    }
+
+
 def evidence_count(session: Session, organization_id: uuid.UUID) -> int:
     """Count tenant records without loading document contents or storage metadata."""
     return session.execute(

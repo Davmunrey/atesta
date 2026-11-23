@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
-import { framework, passingReview, preparationFramework, requirementGuidance, withManualControl } from "../fixtures/framework";
+import { framework, paperEvidence, passingReview, preparationFramework, requirementGuidance, withManualControl } from "../fixtures/framework";
 import { overview } from "../fixtures/overview";
 
 async function createOrganization(page: Page) {
@@ -151,6 +151,7 @@ test("an owner records a human review of a manual control, accessibly and within
   let reviewed = false;
   await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha", (route) => route.fulfill({ json: withManualControl(reviewed ? passingReview : null) }));
   await page.route("**/api/v1/orgs/*/controls/ctl.paper/reviews", (route) => { reviewed = true; return route.fulfill({ status: 201, json: passingReview }); });
+  await page.route("**/api/v1/orgs/*/controls/ctl.paper/evidence?*", (route) => route.fulfill({ json: paperEvidence }));
   await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
   await page.locator("details.requirement-row").filter({ hasText: "R2" }).locator("summary").click();  // failures open first
   const card = page.locator("article.control-guide").filter({ hasText: "Plan de respuesta sintético" });
@@ -162,12 +163,16 @@ test("an owner records a human review of a manual control, accessibly and within
     const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
     expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id), `${width}`).toEqual([]);
   }
+  await card.getByRole("checkbox", { name: /Acta del comité 12/ }).check();
   await card.getByRole("radio", { name: "Implantado", exact: true }).check();
   await card.getByLabel("Justificación").fill("Acta 12 aprobada por la dirección.");
   const post = page.waitForRequest((request) => request.method() === "POST" && request.url().includes("/reviews"));
   await card.getByRole("button", { name: "Guardar revisión" }).click();
-  expect((await post).postDataJSON()).toMatchObject({ status: "pass", rationale: "Acta 12 aprobada por la dirección." });
+  expect((await post).postDataJSON()).toMatchObject({
+    status: "pass", rationale: "Acta 12 aprobada por la dirección.", evidence_ids: [paperEvidence.items[0]!.id],
+  });
   await expect(card.getByRole("status")).toContainText("Revisión registrada");
   await expect(card.getByText("Punto 3 aprobado.", { exact: false })).toBeVisible();
+  await expect(card.getByRole("list", { name: "Evidencias citadas" })).toContainText("Acta del comité 12");
   expect(csp).toEqual([]);
 });
