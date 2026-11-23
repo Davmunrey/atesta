@@ -35,7 +35,8 @@ requirements:
     section: '3.1'
     source_sha256: 45d412b60c19b61890bc913c03d14916f1c63fe6279cfa933e8e3c89ee2c530b
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Política de seguridad aprobada que recoge lo que exige la medida.
         en: Approved security policy covering what the measure requires.
@@ -86,7 +87,8 @@ requirements:
     section: '3.2'
     source_sha256: d0b6231a87b27dec8b816233bd61a363e62e3f2d8173943fc14e310dccbcd5af
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Normas internas de seguridad con el contenido que pide la medida.
         en: Internal security rules with the content the measure asks for.
@@ -147,7 +149,8 @@ requirements:
     section: '3.3'
     source_sha256: 883e594ce07a554238eeaa65fbd20a9091aa324bf998731cb5702eb155489e89
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Procedimientos de seguridad aprobados.
         en: Approved security procedures.
@@ -203,7 +206,8 @@ requirements:
     section: '3.4'
     source_sha256: 4df1b397e8cd8704165fe23ad1e7c6ab3ed7a7ce57d06b3296c0b542e8fc122c
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Registros de las autorizaciones concedidas, por tipo.
         en: Records of authorizations granted, by type.
@@ -272,7 +276,8 @@ requirements:
     section: 4.1.1
     source_sha256: bb383446e55807616f0148d6c60f9890c6b9cd89aa438a40d5f1065a3d99380a
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Metodología de análisis de riesgos y herramienta utilizada.
         en: Risk analysis methodology and the tool used.
@@ -335,7 +340,8 @@ requirements:
     section: 4.1.2
     source_sha256: e26f867186cc28bbf9537c81d7110e4f5bc391b304cb6faacb028ecf22e54f0a
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Planos del CPD y de las salas técnicas con sus instalaciones.
         en: Plans of the data centre and technical rooms with their facilities.
@@ -384,7 +390,8 @@ requirements:
     section: 4.1.3
     source_sha256: cad004654b16daa5ebfd3b32cd9b7e69803db63b4da4373672636b4c0bb647f6
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Descripción del proceso de compras.
         en: Description of the purchasing process.
@@ -440,7 +447,8 @@ requirements:
     section: 4.1.4
     source_sha256: e240e67edb1eae3eebb9ced276b04a883f22bb7a72e4d45d906338a767d0b9f1
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Estudio de capacidad previo a la puesta en marcha.
         en: Capacity study done before go-live.
@@ -494,7 +502,8 @@ requirements:
     section: 4.1.5
     source_sha256: 39d7583087301aac684e05c08587eafb8276ce7f8d62c8ed5078eea0b57a9014
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Productos incluidos en el catálogo CPSTIC (cualificados o aprobados).
         en: Products listed in the CPSTIC catalogue (qualified or approved).
@@ -564,7 +573,8 @@ requirements:
     section: 4.2.1
     source_sha256: e42a56f7d0f7cb70a3920f8988ff421e1255092822c7ae3a701b9b0cd5cbd676
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Cómo se identifica a cada usuario, y prueba de que ningún identificador se repite.
         en: How each user is identified, and proof identifiers are unique.
@@ -615,7 +625,8 @@ requirements:
     section: 4.2.2
     source_sha256: 8055c7c149ce9b0046470b643e7382a16d3e738ccb56f11353c09ec40c525636
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Mecanismos que protegen cada recurso y su responsable asignado.
         en: Mechanisms protecting each resource, and its assigned owner.
@@ -670,7 +681,8 @@ requirements:
     section: 4.2.3
     source_sha256: 7ed8adc01279c1d04740fddf8e5cb385f24dcd9edb0da4a48fa139603a9af54c
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Organigrama que muestra la separación de funciones.
         en: Organization chart showing separation of duties.
@@ -717,7 +729,8 @@ requirements:
     section: 4.2.4
     source_sha256: e0a42206ac88baa1575e76cf17b5ff6132d292ed757b633a45b63f173f330168
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Revisiones periódicas de los permisos de acceso.
         en: Periodic reviews of access permissions.
@@ -814,7 +827,8 @@ requirements:
     section: 4.2.5
     source_sha256: 0a2a367ae49bd190a373a50fad7e97ffff5ebce67a97f3df8bd66c85500503d4
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Entrega de credenciales con acuse de recibo, y retirada cuando dejan de usarse.
         en: Credentials handed over with acknowledgement, and withdrawn when no longer used.
@@ -933,7 +947,8 @@ requirements:
     section: 4.2.6
     source_sha256: 7420ae3b47c5e3952e6eb63a62d7d59c80510fd0f03f3dfe2f239a4ca597cf08
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Entrega, aceptación y retirada de credenciales.
         en: Issuing, acceptance and withdrawal of credentials.
@@ -992,7 +1007,8 @@ requirements:
     section: 4.3.1
     source_sha256: 4f419f8a74edcba1e283e1b41d7a05d0e02d262fe74e736f47486686acf95014
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Inventario de activos con un responsable por activo.
         en: Asset inventory with an owner for each asset.
@@ -1047,7 +1063,8 @@ requirements:
     section: 4.3.2
     source_sha256: 7aef42451dc8fdcd0aae03b01f8987ff6d3785640eb12f7660acde87f1e6db6a
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Guías de bastionado adaptadas a los equipos del sistema.
         en: Hardening guides adapted to the system's equipment.
@@ -1120,7 +1137,8 @@ requirements:
     section: 4.3.3
     source_sha256: 2cc68e4171b2511fa2ab4721a2cbfe57f38396db9bea86f99b80300933ccc4bb
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Tickets u otros registros que prueban que la configuración se mantiene día a día.
         en: Records showing ongoing configuration management, for example tickets.
@@ -1191,7 +1209,8 @@ requirements:
     section: 4.3.4
     source_sha256: 41e06dae6655fba083dd45c441e263827d2603ea625317179dfc278e84b68d4a
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Contratos que cubren el mantenimiento del hardware y software importantes.
         en: Maintenance contracts for relevant hardware and software.
@@ -1249,7 +1268,8 @@ requirements:
     section: 4.3.5
     source_sha256: dcbadea8d8b7b5f7c98a802f1e21f396ab7ba8dfb01e3bfb2c927704b39284e0
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Registro de solicitudes de cambio, por ejemplo en la herramienta de tickets.
         en: Log of change requests, for example in the ticketing tool.
@@ -1322,7 +1342,8 @@ requirements:
     section: 4.3.6
     source_sha256: 87a7b59cae2328574e60f2603a20911c42a3ee97e6eda13785423c3eb616834d
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Antimalware instalado en los equipos y gestionado desde una consola central.
         en: Anti-malware installed on devices and managed from a central console.
@@ -1401,7 +1422,8 @@ requirements:
     section: 4.3.7
     source_sha256: 94346bbdb9c22ae1467ea7dcf3c822cacaa42eba8f45b7d201fb892b739a3487
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Proceso de gestión de incidentes.
         en: Incident handling process.
@@ -1467,7 +1489,8 @@ requirements:
     section: 4.3.8
     source_sha256: cf6d86580362e8ae61a553711cee37c284c08f7992617dfd5e182ac29c5087f1
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Registros de actividad conservados.
         en: Retained activity logs.
@@ -1513,7 +1536,8 @@ requirements:
     section: 4.3.9
     source_sha256: 4b1641daf9309b978bbdf778a55b9c6a3ae4c700fa5a0a6e278309d33d03b4eb
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Registro de incidentes clasificado por tipo.
         en: Incident register classified by type.
@@ -1559,7 +1583,8 @@ requirements:
     section: 4.3.10
     source_sha256: bfc225bbfaac3abf3c27de357af05c9325154caff975ab6b2dcaabf9444fefd0
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Cómo se gestionan las claves criptográficas de forma segura.
         en: How cryptographic keys are managed securely.
@@ -1593,7 +1618,8 @@ requirements:
     section: 4.4.1
     source_sha256: 4e371b0d77c779cb82ec56933dad364eb53e0925861346d30f376ce5261f5246
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Acuerdos de nivel de servicio firmados con los proveedores.
         en: Service level agreements signed with suppliers.
@@ -1631,7 +1657,8 @@ requirements:
     section: 4.4.2
     source_sha256: c03401e9c035a5330b7d2e4d9a720091dc459b4a2a4e04821d72f85c0bb754d9
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: 'Seguimiento de proveedores: actas de reuniones e informes de nivel de servicio.'
         en: 'Supplier follow-up: meeting minutes and service level reports.'
@@ -1686,7 +1713,8 @@ requirements:
     section: 4.4.3
     source_sha256: b846017377732c25df9578fad01339da3489f678a5b6417acd26d176e1e909d5
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Estudio del impacto de un incidente en un proveedor, reflejado en el BIA.
         en: Study of the impact of a supplier incident, reflected in the BIA.
@@ -1731,7 +1759,8 @@ requirements:
     section: 4.4.4
     source_sha256: 642d311ae2fae966c0ca01051f85046877f5a2fcd760bd2c3b9d8103e6d91559
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Autorización de cada interconexión.
         en: Authorisation of each interconnection.
@@ -1785,7 +1814,8 @@ requirements:
     section: 4.5.1
     source_sha256: 54ebb3dae24e69e17f0dffaab8574df018666df45d5ec363039dc4d6a4ef0be4
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Verificación de los requisitos de seguridad del servicio en la nube.
         en: Check of the cloud service's security requirements.
@@ -1828,7 +1858,8 @@ requirements:
     section: 4.6.1
     source_sha256: 4dca2715092ebdf62da7b691998cc6ff299ffa719f39ab4cbe675d6352eca199
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Análisis de impacto (BIA) aprobado y fechado, con RTO y RPO.
         en: Approved, dated business impact analysis (BIA) with RTO and RPO.
@@ -1880,7 +1911,8 @@ requirements:
     section: 4.6.2
     source_sha256: d8e54381196976d81dd64adc900e18ff097ab3c0fd60a88e22edaec16118b8f0
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Plan de continuidad coherente con el BIA, y planes vinculados.
         en: Continuity plan consistent with the BIA, and linked plans.
@@ -1920,7 +1952,8 @@ requirements:
     section: 4.6.3
     source_sha256: 4542f866ab4a01f5ff6e7438c39cabdd94e03d267e269c724514431dd0032a24
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Informe de cada prueba con sus fases y duraciones.
         en: Report of each test with its phases and durations.
@@ -1975,7 +2008,8 @@ requirements:
     section: 4.6.4
     source_sha256: c9ad1208439ab5902e84c42d286b22419bf29eae9a26b4d2610b7b0ad75028e6
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Inventario de medios alternativos para la recuperación.
         en: Inventory of alternative means for recovery.
@@ -2027,7 +2061,8 @@ requirements:
     section: 4.7.1
     source_sha256: 2445129eec71c8e001883eabd588805a6e960201237406aa5c0432a3b58e5c88
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Herramienta de detección o prevención de intrusiones y sus reglas.
         en: Intrusion detection or prevention tool and its rules.
@@ -2072,7 +2107,8 @@ requirements:
     section: 4.7.2
     source_sha256: f4d902b6857aa1285f5f2dd2620db7eef5d0d1f9f3084a3c6bde441bde9f91ac
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Grado de implantación de cada medida, por ejemplo como columna de la declaración de aplicabilidad.
         en: Implementation level of each measure, for example as a column of the statement of applicability.
@@ -2149,7 +2185,8 @@ requirements:
     section: 4.7.3
     source_sha256: 8cb64954608f672b4f97241e9feddd3ed06176405ef375b2068f47bc69a55026
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Recogida y correlación de eventos de seguridad, y prealertas.
         en: Collection and correlation of security events, and early warnings.
@@ -2194,7 +2231,8 @@ requirements:
     section: 5.1.1
     source_sha256: 04f8dc9b0ad9c12fc0cd743dde5dd8bd723da891df33b8572b6f4c2e064d0484
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: CPD y salas técnicas separados, con control de acceso.
         en: Data centre and technical rooms set apart, with access control.
@@ -2231,7 +2269,8 @@ requirements:
     section: 5.1.2
     source_sha256: ab94be37f90245a4cea60206cddfca8faee6bc505cbec0e80295e5fc59d7733d
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Protocolo para pedir y conceder acceso al CPD, puntual o permanente.
         en: Protocol to request and grant data-centre access, one-off or permanent.
@@ -2274,7 +2313,8 @@ requirements:
     section: 5.1.3
     source_sha256: 9b2df2c18df6928788b0d9353f44bc64cfeb6446655b457b7b3857b43a67525c
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Histórico de temperatura y humedad del CPD o de la sala técnica.
         en: Temperature and humidity history for the data centre or technical room.
@@ -2315,7 +2355,8 @@ requirements:
     section: 5.1.4
     source_sha256: 56946b51a1fa1264e25dfab47ab0c95353fdb5f73f709f3c975e5ad30ced0635
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: SAI y generadores, con su carga y la autonomía de las baterías.
         en: UPS and generators, with their load and battery runtime.
@@ -2352,7 +2393,8 @@ requirements:
     section: 5.1.5
     source_sha256: dcd677a052dc98c5810d3ec0a2ef5cd1923730722cba9712c6b672503cceadaf
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Sistemas de detección, alarma y extinción de incendios.
         en: Fire detection, alarm and suppression systems.
@@ -2386,7 +2428,8 @@ requirements:
     section: 5.1.6
     source_sha256: bfa7f661ff02d44856f02cac80bacac68d5a2b3284f63c9b698c597558365b50
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Detectores de líquidos y, si procede, bombas de achique.
         en: Liquid detectors and, where relevant, drainage pumps.
@@ -2420,7 +2463,8 @@ requirements:
     section: 5.1.7
     source_sha256: 31b08dc60d6a3fb750f6fdec384be7c99a789a5adb2477fc5d7c5371654ef98d
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Registro de entradas y salidas de equipos.
         en: Log of equipment entering and leaving.
@@ -2457,7 +2501,8 @@ requirements:
     section: 5.2.1
     source_sha256: bda98a521ef6161fcf112621e1498335f6524118525559fa8fee6519efe8695b
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Análisis de riesgos que tiene en cuenta los puestos de trabajo.
         en: Risk analysis that considers job positions.
@@ -2513,7 +2558,8 @@ requirements:
     section: 5.2.2
     source_sha256: abfa14daf15559526c1be78dc9c82913115b9c977db82774b50e1d2c397979f3
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Acuerdos de confidencialidad firmados por empleados y por empresas de servicios.
         en: Confidentiality agreements signed by employees and service companies.
@@ -2556,7 +2602,8 @@ requirements:
     section: 5.2.3
     source_sha256: 84e6f169c23500732852e71d8e837d7d2669e314492321ecaad979e5c3f1a5b5
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Plan de concienciación, que puede ir junto al de formación.
         en: Awareness plan, which may be combined with training.
@@ -2598,7 +2645,8 @@ requirements:
     section: 5.2.4
     source_sha256: a4738152e583608b7e2c6b437fbe5d6ff7e8367b035b340667cf36f105444a8a
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Plan de formación, que puede ir junto al de concienciación.
         en: Training plan, which may be combined with awareness.
@@ -2642,7 +2690,8 @@ requirements:
     section: 5.3.1
     source_sha256: 780aa56bc5a7880d6b37f8c7696ded6d60cfa37c38e4c6c142d20720e8184101
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Puestos sin soportes a la vista.
         en: Desks with no media left in view.
@@ -2682,7 +2731,8 @@ requirements:
     section: 5.3.2
     source_sha256: 7107770a57efb67d5981383d26c993240cf8a19f2fe309e6811b2920063776e8
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Directiva, por ejemplo una GPO, que bloquea el puesto sin que el usuario pueda cambiarla.
         en: A policy, for example a GPO, that locks the device and users cannot change.
@@ -2734,7 +2784,8 @@ requirements:
     section: 5.3.3
     source_sha256: c191ee4251cbfcd84684c5b32fe88e55c84b83ae512f1234e141ca5455a0ffb7
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Inventario de portátiles actualizado y verificado.
         en: Laptop inventory, kept current and checked.
@@ -2796,7 +2847,8 @@ requirements:
     section: 5.3.4
     source_sha256: ce84bd2aafdde4a2cdb8aab489753739f8a5fef108ce1474959d122670db51bf
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Configuración que controla los flujos de esos dispositivos.
         en: Configuration that controls those devices' data flows.
@@ -2840,7 +2892,8 @@ requirements:
     section: 5.4.1
     source_sha256: 6b354302c78d9922f64926cd494cf718c04ad575acf35d23176e84e1faddac9e
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Cortafuegos y su conjunto de reglas.
         en: Firewalls and their rule sets.
@@ -2894,7 +2947,8 @@ requirements:
     section: 5.4.2
     source_sha256: fc53b8c90c0b31010745e9b1f892d5c57c4a293200b4724c0892fff799dac66b
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Uso de VPN y algoritmos de cifrado que emplean.
         en: Use of VPNs and the encryption algorithms they use.
@@ -2958,7 +3012,8 @@ requirements:
     section: 5.4.3
     source_sha256: c6c66fcb0f75ad542e327db7311b02486b09355b32c7e4c99b2ab23920d1b535
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Enlaces protegidos con TLS o IPsec.
         en: Links protected with TLS or IPsec.
@@ -3032,7 +3087,8 @@ requirements:
     section: 5.4.4
     source_sha256: baab619200e444745f8eb7e56535042516cff83044abb941109f44b7b872cfdc
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Segmentación de red, con diagramas o lista de segmentos.
         en: Network segmentation, with diagrams or a list of segments.
@@ -3074,7 +3130,8 @@ requirements:
     section: 5.5.1
     source_sha256: 2f94a94f0d786f34d8e00ecf0919e590cc6c0503998be5bb3b09fa82e494e64f
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Norma para valorar y calificar la información.
         en: A rule for valuing and classifying information.
@@ -3123,7 +3180,8 @@ requirements:
     section: 5.5.2
     source_sha256: 29d255a52eaef62ac7cfa41da9d5d06d7fcae3007597f7f2ec2f3d6815b57f32
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Normas sobre el cifrado de soportes extraíbles.
         en: Rules on encrypting removable media.
@@ -3162,7 +3220,8 @@ requirements:
     section: 5.5.3
     source_sha256: 65e9c50cc6093dd04e8d968b560bc70f3c34af235bdb04d1cb011d0af42a0e27
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Cómo se protegen los soportes guardados.
         en: Security measures for storing media.
@@ -3207,7 +3266,8 @@ requirements:
     section: 5.5.4
     source_sha256: 09a004db7b1f7ea5f95b632e2ce3e9f0c5f366f95f0ece371512e45390e8fc8d
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Registro de salida y llegada de soportes.
         en: Log of media sent and received.
@@ -3256,7 +3316,8 @@ requirements:
     section: 5.5.5
     source_sha256: 664a3889161c9f5480f5a7ff981aca6392198523cc9cee9d1a61842d2e0acf13
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Registro de borrados y destrucciones de soportes.
         en: Log of media erased and destroyed.
@@ -3330,7 +3391,8 @@ requirements:
     section: 5.6.1
     source_sha256: 5ddcce723e60a800943ff1567d729af2a0627b34337cedb1072af9c5e2176f6f
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Entornos de desarrollo y de producción separados.
         en: Separate development and production environments.
@@ -3384,7 +3446,8 @@ requirements:
     section: 5.6.2
     source_sha256: a3097a3b042fba3a31043b9c3a9c33df19cca167cc325a62dec5d21536aaf478
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Pruebas de aceptación con criterios de seguridad, en un entorno de preproducción.
         en: Acceptance tests with security criteria, in a pre-production environment.
@@ -3424,7 +3487,8 @@ requirements:
     section: 5.7.1
     source_sha256: df79739d7d4a5d4ea0e4377893387068bbed69ab73785648303c37319737a683
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Política de privacidad y registro de actividades de tratamiento (RAT).
         en: Data protection policy and record of processing activities.
@@ -3475,7 +3539,8 @@ requirements:
     section: 5.7.2
     source_sha256: 3570061901ec2a45b8c6b690e83c70730d6095fdce728e0c9ecab39feadd99c7
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Normas para clasificar la información y para categorizar el sistema.
         en: Rules for classifying information and categorising the system.
@@ -3534,7 +3599,8 @@ requirements:
     section: 5.7.3
     source_sha256: 9e4e86d228565140431f0b5982ed2310bec92d63e5e5f01aeb863b0773b17c17
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Tipos de firma electrónica que se usan.
         en: Types of electronic signature in use.
@@ -3582,7 +3648,8 @@ requirements:
     section: 5.7.4
     source_sha256: 4498f66b3890fe44488dc5fa2133ca48aaff7b0f94d0d5274b575644b38c82ca
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: 'Control de los sellados de tiempo: si son cualificados, quién los emite y cuándo caducan.'
         en: 'Time-stamp management: qualification, issuer and expiry.'
@@ -3618,7 +3685,8 @@ requirements:
     section: 5.7.5
     source_sha256: dc7e5c0c214e49a723a2832fe925cf45d81e016b3cd58634bd1f87903664b891
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Norma para revisar y eliminar metadatos no deseados.
         en: Rule for reviewing and removing unwanted metadata.
@@ -3672,7 +3740,8 @@ requirements:
     section: 5.7.6
     source_sha256: d7129e9c8c0544d12af13833d8ca404e2c4b9598568a575b2b417be4a9ef4f7d
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Norma de copias de seguridad, coherente con el RPO del BIA.
         en: Backup rules, consistent with the BIA's RPO.
@@ -3733,7 +3802,8 @@ requirements:
     section: 5.8.1
     source_sha256: 4e9d7555a173e060e7a978301c250246599a86d42c1227a967bb999fb118ebbe
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Reglas para usar el correo electrónico sin riesgos.
         en: Rules for safe use of email.
@@ -3805,7 +3875,8 @@ requirements:
     section: 5.8.2
     source_sha256: b31c39a24fc2257ce732184cf94a588bcf529e7e7744a3ab674c8d2bd1d08ab9
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Desarrollo seguro de las aplicaciones web.
         en: Secure development of web applications.
@@ -3871,7 +3942,8 @@ requirements:
     section: 5.8.3
     source_sha256: 62655cb1b6beffd8d6fa04910e0f53ede8ca2d28cda51c5d181b698dd64ad387
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Normas de navegación segura y política de cookies.
         en: Safe browsing rules and cookie policy.
@@ -3925,7 +3997,8 @@ requirements:
     section: 5.8.4
     source_sha256: 5ac29e9aa401421546797e386b8d8189e2a8baa1bf24bb69a5f5e0736f7856c6
     expected_evidence:
-      reviewed_by: null
+      reviewed_by: David Muñoz
+      reviewed_on: 2026-11-23
       items:
       - es: Protecciones técnicas contra la denegación de servicio, incluidos filtros en el cortafuegos.
         en: Technical denial-of-service protections, including firewall filters.
