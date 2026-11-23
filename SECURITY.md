@@ -91,13 +91,12 @@ for a control.
 - **Local Docker runner (development only).** The attempt's `out/` folder is opened to the
   container's user 10001 (`scanning/local.py`); `LocalDockerRunner` refuses to start outside a
   development `ATESTA_ENV`.
-- **Open hardening work:**
-  - agents cannot yet be told apart from the owner on GitHub, and review is not enforced on the
-    critical paths (#261);
-  - a manual review can pass a control without citing evidence (#262);
-  - stored evidence files are not re-hashed on read (#263);
-  - the AI design relies on filtering, not structural framing (#264);
-  - manual scans have no daily budget (#265).
+- **Evidence lock in governance mode.** Stored evidence is retained 365 days under S3 Object
+  Lock in governance mode, and the bucket policy denies the bypass to every principal (#263).
+  Whoever can change that policy can still lift the lock; compliance mode would close this and
+  would also block GDPR erasure for a year (hosted-environment spec).
+- **Open hardening work:** agents cannot yet be told apart from the owner on GitHub, and review is
+  not enforced on the critical paths (#261). The owner creates the agents' identity first.
 - **Owner decisions pending:** disclosure timing and a safe-harbour statement for researchers
   (#260).
 
