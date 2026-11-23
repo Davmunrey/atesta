@@ -68,6 +68,42 @@ class ExpectedEvidence(Content):
         return self
 
 
+class PageReference(Content):
+    """A section and page of the profile's own guide (its first reference)."""
+
+    section: Text
+    page: Annotated[int, Field(ge=1)]
+
+
+class ScopeProfile(Content):
+    """A published compliance profile as a scope option (requirement-register spec, issue 227):
+    one value per requirement of the pack, a level or `n.a.`. The guide is cited, never copied.
+    A candidate until the owner signs it, like expected evidence."""
+
+    key: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{0,39}$")]
+    title_es: Text
+    title_en: Text
+    summary_es: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=600)
+    ]
+    summary_en: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=600)
+    ]
+    refs: list[GuideReference] = Field(min_length=1, max_length=4)
+    levels: dict[str, Text]
+    criteria: dict[str, PageReference] = Field(default_factory=dict)
+    reviewed_by: Text | None
+    reviewed_on: date | None = None
+
+    @model_validator(mode="after")
+    def signed_in_full(self) -> Self:
+        if self.key == "profile":
+            raise ValueError("the profile key 'profile' is reserved")
+        if (self.reviewed_by is None) != (self.reviewed_on is None):
+            raise ValueError("a signed profile names its reviewer and the review date")
+        return self
+
+
 class RequirementContext(Content):
     """Official text of one requirement (content model v2). Selection tables by category or
     dimension are optional; an act also published in English carries its official English text."""
@@ -196,6 +232,7 @@ class PackContext(Content):
     groups_es: list[GroupHeading] = Field(default_factory=list)
     term_labels: list[TermLabel] = Field(default_factory=list)
     reporting_clocks: list[ReportingClock] = Field(default_factory=list)
+    scope_profiles: list[ScopeProfile] = Field(default_factory=list)
     incident_criteria: list[IncidentCriterion] = Field(default_factory=list)
 
 

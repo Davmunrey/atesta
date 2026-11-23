@@ -1,6 +1,6 @@
 # Spec: requirement register and statement of applicability
 
-- Issues: #133, #226 (expected evidence). Requirement ids: FR-07 (human assessment), Gate A items 2-4 in `ROADMAP.md`
+- Issues: #133, #226 (expected evidence), #227 (scope profiles). Requirement ids: FR-07 (human assessment), Gate A items 2-4 in `ROADMAP.md`
 - Status: built (2026-11-23: every acceptance criterion is implemented and covered by the tests its test plan names)
 
 ## Problem
@@ -84,6 +84,46 @@ of CCN-STIC 808, section 6.2; each reference names the subsection (6.2.1, 6.2.2.
 6.2.3.1 to 6.2.3.8) and the measure. At least ten references are re-opened in the PDF before the pull
 request, and the pull request lists them.
 
+## Scope profiles (issue #227)
+
+Some entities adopt a published compliance profile instead of selecting measures one by one from
+their category and levels. For ENS, CCN-STIC 890 (November 2026) describes the adequacy method,
+and CCN-STIC 890C (November 2026) publishes the essential-requirements profile (PCE-RFS) for
+smaller entities. Its statement of applicability (section 4, pages 8 to 10) says, for each of the
+73 Annex II measures, whether it applies and at what category or level. It has one column for an
+IT scope and one for a converged IT/OT/IoT scope. Owner decision on the issue (2026-11-23): offer
+it as an ENS scope option over the same 73 measures, with no new framework (rule 9).
+
+- [ ] A pack may declare `scope_profiles` in its attributes. Each profile has:
+  - a key, a title in ES and EN, and a short summary in Atesta's own words in ES and EN;
+  - references (guide, edition, section, page); the first is the guide's applicability table;
+  - `levels`: one value per requirement of the pack, either the category or level the profile
+    applies (copied as a term, such as `BÁSICA` or `BAJO`) or `n.a.`;
+  - `criteria`: for requirements the guide gives specific application criteria, the section and
+    page where they are. Their text is cited, never copied;
+  - a review marker, `reviewed_by` and `reviewed_on`, as for expected evidence: `null` means a
+    candidate, and only the owner signs.
+- [ ] The catalog schema rejects a profile that misses a requirement of its pack or names a
+      requirement the pack does not have, a criterion for an unknown requirement, a duplicate key,
+      and a half-signed review marker.
+- [ ] The recorded scope may hold `profile`: the key of one of the pack's profiles. Any other
+      value is 422 `compliance.scope_invalid`. Category and levels may still be recorded with it.
+- [ ] With a profile in the scope, each requirement's proposal comes from the profile:
+  - `n.a.` proposes `not_applicable`, and any other value proposes `applies`;
+  - the rule is the profile's value, and the level is the profile key;
+  - the proposal carries the source reference and, when there is one, the criterion reference.
+
+  Without a profile, proposals come from the selection rules as before. A proposal is still
+  never a decision: a person confirms or overrides it with a justification.
+- [ ] The register and the scope endpoint list the pack's profiles. The scope step offers them
+      next to the axes, with the summary, the references and the candidate note. Each proposal
+      shows its reference. The statement of applicability keeps the profile in its scope.
+- [ ] The ENS pack carries two profiles from CCN-STIC 890C section 4: IT, with 38 measures that
+      apply, and IT/OT/IoT, with 42. Three measures are `n.a.` with criteria (op.exp.9,
+      op.ext.3, op.cont.2, sections 5.7 to 5.9): the guide makes them apply to entities that
+      provide services listed in NIS2 Annexes I and II. The summary says so and cites them.
+- [ ] Every label exists in ES and EN.
+
 ## Out of scope
 
 - The web screens (next PR, same spec).
@@ -126,6 +166,10 @@ are checked at write time. Evidence ids are checked through `evidence.api` (rule
   and an unknown level.
 - **Real Postgres:** RLS isolation between two organizations for each table; append-only grants
   (UPDATE and DELETE refused).
+- **Profiles (#227):** core proposals from a profile value and `n.a.`; a scope with an unknown
+  profile is invalid; the catalog rejects a profile with a missing or unknown requirement; the
+  register proposes from the profile with its references; the ENS profiles have 73 entries each,
+  38 and 42 that apply, and three conditional `n.a.` measures.
 - **Validation:** a justification is required when it differs from the proposal; evidence from
   another organization is rejected; an unknown requirement returns 404; a non-admin write returns 403.
 - **Audit:** metadata holds no free text.

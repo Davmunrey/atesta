@@ -114,11 +114,23 @@ def read_catalog(root: Path, *, expected_checks: set[str], engine_version: str) 
         if terms - {t.term for t in metadata.attributes.term_labels}:
             raise ValueError(f"scope terms without readable labels in {metadata.id}")
         _check_clocks(pack, codes)
+        _check_profiles(pack, codes)
         if any(not any(c.manual for c in group) for group in mapped.values()):
             raise ValueError("candidate mappings must retain documentary review")
         catalog.packs.append(pack)
     _unique([p.metadata.id for p in catalog.packs], "framework")
     return catalog
+
+
+def _check_profiles(pack: Pack, codes: set[str]) -> None:
+    """A scope profile gives a value to every requirement of its pack, and to no other."""
+    profiles = pack.metadata.attributes.scope_profiles
+    _unique([p.key for p in profiles], "scope profile")
+    for profile in profiles:
+        if set(profile.levels) != codes:
+            raise ValueError(f"scope profile {profile.key} must cover every requirement")
+        if set(profile.criteria) - codes:
+            raise ValueError(f"scope profile {profile.key} has criteria for unknown requirements")
 
 
 def _check_clocks(pack: Pack, codes: set[str]) -> None:

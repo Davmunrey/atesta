@@ -3120,6 +3120,34 @@
         "title": "GroupTitle",
         "type": "object"
       },
+      "GuideRef": {
+        "properties": {
+          "edition": {
+            "title": "Edition",
+            "type": "string"
+          },
+          "guide": {
+            "title": "Guide",
+            "type": "string"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "section": {
+            "title": "Section",
+            "type": "string"
+          }
+        },
+        "required": [
+          "guide",
+          "edition",
+          "section",
+          "page"
+        ],
+        "title": "GuideRef",
+        "type": "object"
+      },
       "GuideReference": {
         "additionalProperties": false,
         "description": "Where a guide says it: cited, never copied (requirement-register spec, issue 226).",
@@ -3996,6 +4024,13 @@
             "title": "Scope Es",
             "type": "string"
           },
+          "scope_profiles": {
+            "items": {
+              "$ref": "#/components/schemas/ScopeProfile"
+            },
+            "title": "Scope Profiles",
+            "type": "array"
+          },
           "source_refs": {
             "items": {
               "minLength": 1,
@@ -4044,6 +4079,28 @@
           "verified_on"
         ],
         "title": "PackContext",
+        "type": "object"
+      },
+      "PageReference": {
+        "additionalProperties": false,
+        "description": "A section and page of the profile's own guide (its first reference).",
+        "properties": {
+          "page": {
+            "minimum": 1.0,
+            "title": "Page",
+            "type": "integer"
+          },
+          "section": {
+            "minLength": 1,
+            "title": "Section",
+            "type": "string"
+          }
+        },
+        "required": [
+          "section",
+          "page"
+        ],
+        "title": "PageReference",
         "type": "object"
       },
       "PolicyIn": {
@@ -4189,8 +4246,85 @@
         "title": "PreparationControl",
         "type": "object"
       },
+      "ProfileOut": {
+        "description": "A pack's scope profile as the scope step offers it (requirement-register spec).",
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "refs": {
+            "items": {
+              "$ref": "#/components/schemas/GuideRef"
+            },
+            "title": "Refs",
+            "type": "array"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "reviewed_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed On"
+          },
+          "summary_en": {
+            "title": "Summary En",
+            "type": "string"
+          },
+          "summary_es": {
+            "title": "Summary Es",
+            "type": "string"
+          },
+          "title_en": {
+            "title": "Title En",
+            "type": "string"
+          },
+          "title_es": {
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "title_es",
+          "title_en",
+          "summary_es",
+          "summary_en",
+          "refs",
+          "reviewed_by",
+          "reviewed_on"
+        ],
+        "title": "ProfileOut",
+        "type": "object"
+      },
       "ProposalOut": {
         "properties": {
+          "criterion": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GuideRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "decision": {
             "enum": [
               "applies",
@@ -4221,6 +4355,16 @@
               }
             ],
             "title": "Rule"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GuideRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -4312,6 +4456,13 @@
             "title": "Items",
             "type": "array"
           },
+          "profiles": {
+            "items": {
+              "$ref": "#/components/schemas/ProfileOut"
+            },
+            "title": "Profiles",
+            "type": "array"
+          },
           "review": {
             "anyOf": [
               {
@@ -4345,6 +4496,7 @@
           "framework_version",
           "catalog_version",
           "axes",
+          "profiles",
           "groups_es",
           "term_labels",
           "scope",
@@ -5145,6 +5297,99 @@
           "decided_at"
         ],
         "title": "ScopeOut",
+        "type": "object"
+      },
+      "ScopeProfile": {
+        "additionalProperties": false,
+        "description": "A published compliance profile as a scope option (requirement-register spec, issue 227):\none value per requirement of the pack, a level or `n.a.`. The guide is cited, never copied.\nA candidate until the owner signs it, like expected evidence.",
+        "properties": {
+          "criteria": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PageReference"
+            },
+            "title": "Criteria",
+            "type": "object"
+          },
+          "key": {
+            "pattern": "^[a-z][a-z0-9_]{0,39}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "levels": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Levels",
+            "type": "object"
+          },
+          "refs": {
+            "items": {
+              "$ref": "#/components/schemas/GuideReference"
+            },
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Refs",
+            "type": "array"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "reviewed_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed On"
+          },
+          "summary_en": {
+            "maxLength": 600,
+            "minLength": 1,
+            "title": "Summary En",
+            "type": "string"
+          },
+          "summary_es": {
+            "maxLength": 600,
+            "minLength": 1,
+            "title": "Summary Es",
+            "type": "string"
+          },
+          "title_en": {
+            "minLength": 1,
+            "title": "Title En",
+            "type": "string"
+          },
+          "title_es": {
+            "minLength": 1,
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "title_es",
+          "title_en",
+          "summary_es",
+          "summary_en",
+          "refs",
+          "levels",
+          "reviewed_by"
+        ],
+        "title": "ScopeProfile",
         "type": "object"
       },
       "SearchResult": {

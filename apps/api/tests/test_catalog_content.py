@@ -482,3 +482,56 @@ def test_the_owner_signs_expected_evidence_with_a_name_and_a_date(tmp_path: Path
     found = read(tmp_path).packs[0].requirements[0].attributes.expected_evidence
     assert found is not None
     assert (found.reviewed_by, found.reviewed_on) == ("David Muñoz", date(2026, 11, 23))
+
+
+# --- scope profiles (requirement-register spec, issue 227) ----------------------------------
+
+REF = {"guide": "Guía sintética", "edition": "2026-11", "section": "4", "page": 8}
+PROFILE = {
+    "key": "small_it",
+    "title_es": "Perfil sintético",
+    "title_en": "Synthetic profile",
+    "summary_es": "Resumen propio.",
+    "summary_en": "Own summary.",
+    "refs": [REF],
+    "levels": {"R1": "BAJO"},
+    "criteria": {"R1": {"section": "5.1", "page": 12}},
+    "reviewed_by": None,
+}
+
+
+def test_a_pack_may_publish_a_scope_profile(tmp_path: Path) -> None:
+    catalog_files(tmp_path)
+    change(
+        tmp_path,
+        "frameworks/sample/pack.yaml",
+        lambda d: d["attributes"].update(scope_profiles=[PROFILE]),
+    )
+    [profile] = read(tmp_path).packs[0].metadata.attributes.scope_profiles
+    assert (profile.key, profile.levels, profile.reviewed_by) == ("small_it", {"R1": "BAJO"}, None)
+    assert profile.criteria["R1"].page == 12
+
+
+@pytest.mark.parametrize(
+    ("profiles", "message"),
+    [
+        ([{**PROFILE, "levels": {}}], "every requirement"),
+        ([{**PROFILE, "levels": {"R1": "BAJO", "R9": "n.a."}}], "every requirement"),
+        ([{**PROFILE, "criteria": {"R9": {"section": "5", "page": 1}}}], "criteria"),
+        ([PROFILE, PROFILE], "duplicate scope profile"),
+        ([{**PROFILE, "reviewed_on": "2026-11-23"}], "reviewer and the review date"),
+        ([{**PROFILE, "refs": []}], "refs"),
+        ([{**PROFILE, "key": "profile"}], "reserved"),
+    ],
+)
+def test_scope_profiles_are_checked_against_the_pack(
+    tmp_path: Path, profiles: list[dict[str, object]], message: str
+) -> None:
+    catalog_files(tmp_path)
+    change(
+        tmp_path,
+        "frameworks/sample/pack.yaml",
+        lambda d: d["attributes"].update(scope_profiles=profiles),
+    )
+    with pytest.raises(ValueError, match=message):
+        read(tmp_path)

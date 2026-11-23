@@ -2124,6 +2124,17 @@ export interface components {
             /** Title En */
             title_en?: string | null;
         };
+        /** GuideRef */
+        GuideRef: {
+            /** Edition */
+            edition: string;
+            /** Guide */
+            guide: string;
+            /** Page */
+            page: number;
+            /** Section */
+            section: string;
+        };
         /**
          * GuideReference
          * @description Where a guide says it: cited, never copied (requirement-register spec, issue 226).
@@ -2443,6 +2454,8 @@ export interface components {
             scope_en: string;
             /** Scope Es */
             scope_es: string;
+            /** Scope Profiles */
+            scope_profiles?: components["schemas"]["ScopeProfile"][];
             /** Source Refs */
             source_refs: string[];
             /** Summary En */
@@ -2456,6 +2469,16 @@ export interface components {
              * Format: date
              */
             verified_on: string;
+        };
+        /**
+         * PageReference
+         * @description A section and page of the profile's own guide (its first reference).
+         */
+        PageReference: {
+            /** Page */
+            page: number;
+            /** Section */
+            section: string;
         };
         /** PolicyIn */
         PolicyIn: {
@@ -2507,8 +2530,31 @@ export interface components {
             /** Title Es */
             title_es: string;
         };
+        /**
+         * ProfileOut
+         * @description A pack's scope profile as the scope step offers it (requirement-register spec).
+         */
+        ProfileOut: {
+            /** Key */
+            key: string;
+            /** Refs */
+            refs: components["schemas"]["GuideRef"][];
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed On */
+            reviewed_on: string | null;
+            /** Summary En */
+            summary_en: string;
+            /** Summary Es */
+            summary_es: string;
+            /** Title En */
+            title_en: string;
+            /** Title Es */
+            title_es: string;
+        };
         /** ProposalOut */
         ProposalOut: {
+            criterion?: components["schemas"]["GuideRef"] | null;
             /**
              * Decision
              * @enum {string}
@@ -2518,6 +2564,7 @@ export interface components {
             level: string | null;
             /** Rule */
             rule: string | null;
+            source?: components["schemas"]["GuideRef"] | null;
         };
         /** PublicCampaign */
         PublicCampaign: {
@@ -2551,6 +2598,8 @@ export interface components {
             groups_es: components["schemas"]["GroupTitle"][];
             /** Items */
             items: components["schemas"]["RegisterItem"][];
+            /** Profiles */
+            profiles: components["schemas"]["ProfileOut"][];
             review: components["schemas"]["AssessmentReviewOut"] | null;
             scope: components["schemas"]["ScopeOut"] | null;
             /** Term Labels */
@@ -2850,6 +2899,38 @@ export interface components {
              * Format: uuid
              */
             decided_by: string;
+        };
+        /**
+         * ScopeProfile
+         * @description A published compliance profile as a scope option (requirement-register spec, issue 227):
+         *     one value per requirement of the pack, a level or `n.a.`. The guide is cited, never copied.
+         *     A candidate until the owner signs it, like expected evidence.
+         */
+        ScopeProfile: {
+            /** Criteria */
+            criteria?: {
+                [key: string]: components["schemas"]["PageReference"];
+            };
+            /** Key */
+            key: string;
+            /** Levels */
+            levels: {
+                [key: string]: string;
+            };
+            /** Refs */
+            refs: components["schemas"]["GuideReference"][];
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed On */
+            reviewed_on?: string | null;
+            /** Summary En */
+            summary_en: string;
+            /** Summary Es */
+            summary_es: string;
+            /** Title En */
+            title_en: string;
+            /** Title Es */
+            title_es: string;
         };
         /** SearchResult */
         SearchResult: {

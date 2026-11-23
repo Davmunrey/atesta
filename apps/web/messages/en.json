@@ -514,7 +514,15 @@
     "overdue": "Overdue",
     "formerMember": "Former member",
     "assignedOwner": "Assigned",
-    "exportDossier": "Open the auditor dossier"
+    "exportDossier": "Open the auditor dossier",
+    "profile": "Compliance profile",
+    "profileNone": "None: propose from category and levels",
+    "profileHelp": "If you adopt a published profile, Atesta proposes each measure from its statement of applicability instead of the category tables.",
+    "profileSources": "Sources: {refs}.",
+    "profileCandidate": "Selection Atesta extracted from the cited guide, pending qualified review.",
+    "profileAdopted": "Adopted profile: {title}.",
+    "proposalProfile": "Proposed from the adopted profile: {decision} (<official>{rule}</official>; {reference}). Confirm it or justify another decision.",
+    "proposalCriterion": "The guide gives specific criteria for this measure: {reference}."
   },
   "insights": {
     "title": "Progress",

@@ -514,7 +514,15 @@
     "overdue": "Vencida",
     "formerMember": "Antiguo miembro",
     "assignedOwner": "Asignada",
-    "exportDossier": "Abrir el dossier para el auditor"
+    "exportDossier": "Abrir el dossier para el auditor",
+    "profile": "Perfil de cumplimiento",
+    "profileNone": "Ninguno: proponer según la categoría y los niveles",
+    "profileHelp": "Si adoptáis un perfil publicado, Atesta propone cada medida según su declaración de aplicabilidad en lugar de las tablas por categoría.",
+    "profileSources": "Fuentes: {refs}.",
+    "profileCandidate": "Selección extraída por Atesta de la guía citada, pendiente de revisión cualificada.",
+    "profileAdopted": "Perfil adoptado: {title}.",
+    "proposalProfile": "Propuesta según el perfil adoptado: {decision} (<official>{rule}</official>; {reference}). Confírmala o justifica otra decisión.",
+    "proposalCriterion": "La guía da criterios propios para esta medida: {reference}."
   },
   "insights": {
     "title": "Evolución",

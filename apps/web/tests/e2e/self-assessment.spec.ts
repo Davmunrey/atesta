@@ -6,7 +6,7 @@ import { overview } from "../fixtures/overview";
 /** Synthetic register (workspace-ux spec), never a real normative pack. */
 const register = {
   framework_key: "synthetic_alpha", framework_version: "2", catalog_version: "synthetic-2",
-  axes: { tier: { keys: [], levels: ["LOW", "MID", "HIGH"] } }, groups_es: [{ prefix: "R", title: "Requisitos sintéticos" }], term_labels: [],
+  axes: { tier: { keys: [], levels: ["LOW", "MID", "HIGH"] } }, groups_es: [{ prefix: "R", title: "Requisitos sintéticos" }], term_labels: [], profiles: [],
   scope: null as null | { axis_values: Record<string, string>; decided_by: string; decided_at: string }, review: null,
   items: framework.requirements.filter((r) => r.in_current_catalog).map((r) => ({
     code: `R.${r.code}`, title_es: r.title_es!, title_en: null, selection_basis: "tier · Todas",
