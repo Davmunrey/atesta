@@ -214,3 +214,19 @@ def test_the_implementing_regulation_shows_its_incident_criteria_verbatim() -> N
     assert first is not None
     assert first.official_text_es.startswith("1. Un incidente se considerará significativo")
     assert (first.official_text_en or "").startswith("1. An incident shall be considered")
+
+
+def test_dora_shows_the_major_incident_criteria_of_2024_1772_verbatim() -> None:
+    """Articles 1 to 9 of Delegated Regulation (EU) 2024/1772, ES and EN (dora SOURCES.md)."""
+    criteria = pack("dora").metadata.attributes.incident_criteria
+    texts = [c.text for c in criteria if c.text]
+    assert [t.section for t in texts] == [
+        f"Reglamento Delegado (UE) 2024/1772, artículo {n}" for n in range(1, 10)
+    ]
+    major = texts[7]
+    assert major.official_text_es.startswith(
+        "1. Un incidente se considerará un incidente grave a efectos del artículo 19"
+    )
+    assert (major.official_text_en or "").startswith(
+        "1. An incident shall be considered a major incident for the purposes of Article 19(1)"
+    )
