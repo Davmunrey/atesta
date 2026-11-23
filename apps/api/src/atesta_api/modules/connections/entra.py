@@ -136,25 +136,31 @@ class EntraSignIn:
         return self.validate(id_token, nonce)
 
     def validate(self, id_token: str, nonce: str) -> SignedIn:
-        """Signature, audience, expiry, nonce, and the issuer of the token's own tenant."""
+        """Signature, audience, expiry and nonce, then the issuer of the token's own tenant.
+
+        The issuer is checked after the signature, against the verified `tid`: no claim is read
+        from an unverified token (multi-tenant issuer validation).
+        """
         try:
-            header = jwt.get_unverified_header(id_token)
-            unverified = jwt.decode(id_token, options={"verify_signature": False})
-            tenant = str(unverified.get("tid", ""))
-            if header.get("alg") != "RS256" or not _GUID.match(tenant):
-                raise SignInError("bad header or tenant")
+            header = jwt.get_unverified_header(id_token)  # only `kid` and `alg`, checked below
+            if header.get("alg") != "RS256":
+                raise SignInError("bad algorithm")
             claims: dict[str, Any] = jwt.decode(
                 id_token,
                 self._key(str(header.get("kid", ""))),
                 algorithms=["RS256"],
                 audience=self._settings.signin_client_id,
-                issuer=f"{AUTHORITY}/{tenant}/v2.0",
                 leeway=LEEWAY_SECONDS,
-                options={"require": ["exp", "iat", "iss", "aud", "tid", "oid", "nonce"]},
+                options={
+                    "require": ["exp", "iat", "iss", "aud", "tid", "oid", "nonce"],
+                    "verify_iss": False,  # checked below against the verified tid
+                },
             )
         except jwt.PyJWTError as exc:
             raise SignInError("invalid ID token") from exc
-        object_id = str(claims["oid"])
+        tenant, object_id = str(claims["tid"]), str(claims["oid"])
+        if not _GUID.match(tenant) or claims["iss"] != f"{AUTHORITY}/{tenant}/v2.0":
+            raise SignInError("bad tenant or issuer")
         if not _GUID.match(object_id) or not hmac.compare_digest(str(claims["nonce"]), nonce):
             raise SignInError("bad oid or nonce")
         return SignedIn(tenant_id=tenant, object_id=object_id)
