@@ -33,6 +33,7 @@ from atesta_api.modules.identity.api import (
     Member,
     QueryFreeRoute,
     Role,
+    annotate_scopes,
     require_role,
     require_scope,
 )
@@ -223,3 +224,6 @@ def reject(
     return _record_out(
         _decide(session, member, row, "rejected", action="assessment_proposal.rejected")
     )
+
+
+annotate_scopes(token_router)

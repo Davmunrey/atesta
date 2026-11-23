@@ -151,3 +151,25 @@ def test_every_org_route_refuses_expired_access(client: TestClient, superuser: E
         for method, path in ORG_ROUTES
     }
     assert {k: v for k, v in wrong.items() if v != (403, "identity.access_expired")} == {}
+
+
+def test_the_contract_names_each_token_routes_permission() -> None:
+    """The public API reference (#334) is built from these: tag api-keys and x-atesta-scope."""
+    paths = create_app().openapi()["paths"]
+    tagged = {
+        (method.upper(), path)
+        for path, ops in paths.items()
+        for method, op in ops.items()
+        if "api-keys" in op.get("tags", [])
+    }
+    assert tagged == TOKEN_ROUTES
+    scopes = {(m, p): paths[p][m.lower()].get("x-atesta-scope") for m, p in TOKEN_ROUTES}
+    assert scopes.pop(("GET", "/api/v1/key")) is None
+    assert set(scopes.values()) == {
+        "compliance:read",
+        "incidents:read",
+        "evidence:write",
+        "assessment:propose",
+        "routines:write",
+    }
+    assert scopes[("POST", "/api/v1/ingest/evidence")] == "evidence:write"
