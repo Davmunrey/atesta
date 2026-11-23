@@ -47,7 +47,7 @@ Tests the AI module must ship with:
 - a forged delimiter inside customer text is neutralised and stays inside its own frame;
 - an answer that cites a chunk id it was not given is rejected.
 
-## Amendment 2 (proposed, owner to accept, #357): v1 assistant has no generative model
+## Amendment 2 (accepted 2026-11-23, #357): v1 assistant has no generative model
 
 Status: proposed. The owner decided on 2026-11-23 (relayed by the coordinator) to build two
 assistants, one public on the landing and one in the app, with "no AI model at all" and "catalog
