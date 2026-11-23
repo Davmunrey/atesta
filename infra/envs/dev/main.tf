@@ -115,3 +115,7 @@ output "platform" {
     mail_dns_records  = module.platform.mail_dns_records
   }
 }
+
+output "deploy" {
+  value = module.platform.deploy
+}

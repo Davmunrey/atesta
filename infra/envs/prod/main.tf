@@ -79,6 +79,7 @@ module "cognito" {
 
 module "github_oidc" {
   source            = "../../modules/github-oidc"
+  name              = "atesta-prod"
   repository        = "Davmunrey/atesta"
   state_bucket      = var.state_bucket
   apply_environment = "prod"
@@ -149,4 +150,8 @@ output "platform" {
     mail_dns_records  = module.platform.mail_dns_records
     cognito_dns       = module.ses_cognito.dns_records
   }
+}
+
+output "deploy" {
+  value = module.platform.deploy
 }

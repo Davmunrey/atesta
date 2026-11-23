@@ -1,0 +1,142 @@
+# Deploy (hosted-environment spec, issue #219; runbook docs/runbooks/deploy.md). Manual only,
+# from main, into a protected GitHub environment whose reviewers approve each run. AWS access is
+# the environment's OIDC apply role; no long-lived keys. Order: images and web build, migrations
+# with the new image (a failure stops here, services unchanged), apply, web upload, smoke.
+#
+# Environment variables (non-secret, per GitHub environment): AWS_APPLY_ROLE_ARN,
+# TOFU_STATE_BUCKET, TFVARS_JSON (edge, app_environment, mail_domain and, in prod, app_url and
+# cognito_* settings). Environment secret: BUDGET_EMAIL.
+name: deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to deploy
+        type: choice
+        options: [dev, prod]
+        required: true
+
+permissions: {}
+
+concurrency:
+  group: deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      AWS_REGION: eu-south-2
+      DEPLOY_ENV: ${{ inputs.environment }}
+      TOFU: tofu -chdir=infra/envs/${{ inputs.environment }}
+      TF_VAR_state_bucket: ${{ vars.TOFU_STATE_BUCKET }}
+      TF_VAR_budget_email: ${{ secrets.BUDGET_EMAIL }}
+    steps:
+      - name: Main only
+        run: test "$GITHUB_REF" = "refs/heads/main" || { echo "deploy runs from main"; exit 1; }
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2.0.2
+        with:
+          tofu_version: 1.13.9
+          tofu_wrapper: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          package_json_file: apps/web/package.json
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: apps/web/.nvmrc
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_APPLY_ROLE_ARN }}
+          aws-region: eu-south-2
+      - name: Init
+        run: $TOFU init -input=false -backend-config="bucket=$TF_VAR_state_bucket"
+      - name: Settings
+        env:
+          TFVARS_JSON: ${{ vars.TFVARS_JSON }}
+        run: |
+          echo "$TFVARS_JSON" | jq -e '.edge.aliases[0] and .edge.api_origin_domain' > /dev/null \
+            || { echo "TFVARS_JSON needs edge (see docs/runbooks/deploy.md)"; exit 1; }
+          echo "$TFVARS_JSON" > settings.json
+          $TOFU output -json deploy > deploy.json
+      - name: Build and push images
+        run: |
+          registry=$(jq -r '.repositories.api | split("/")[0]' deploy.json)
+          aws ecr get-login-password | docker login --username AWS --password-stdin "$registry"
+          tag="$GITHUB_SHA"
+          digest() { docker inspect --format '{{index .RepoDigests 0}}' "$1"; }
+          for target in api worker; do
+            repo=$(jq -r ".repositories.$target" deploy.json)
+            docker build -f apps/Dockerfile --target "$target" -t "$repo:$tag" .
+            docker push "$repo:$tag"
+          done
+          scan=$(jq -r '.repositories.scan' deploy.json)
+          docker build -f scanner/Dockerfile -t "$scan:$tag" .
+          docker push "$scan:$tag"
+          jq -n --arg api "$(digest "$(jq -r .repositories.api deploy.json):$tag")" \
+                --arg worker "$(digest "$(jq -r .repositories.worker deploy.json):$tag")" \
+                --arg scan "$(digest "$scan:$tag")" \
+                '{api: $api, worker: $worker, scan: $scan}' > images.json
+          cat images.json
+      - name: Build the web app
+        working-directory: apps/web
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+      - name: Variables
+        run: |
+          jq --slurpfile images images.json --slurpfile csp apps/web/csp-policy.json \
+            '. + {images: $images[0]} | .edge.content_security_policy = $csp[0].policy' \
+            settings.json > "infra/envs/$DEPLOY_ENV/deploy.auto.tfvars.json"
+      - name: Run migrations
+        run: |
+          # Only what the migration needs (first deploy included): cluster, task definition and
+          # the tasks' egress to Postgres and HTTPS. Services keep running the old image.
+          $TOFU apply -input=false -auto-approve \
+            '-target=module.platform.module.ecs[0].aws_ecs_cluster.this' \
+            '-target=module.platform.module.ecs[0].aws_ecs_task_definition.this["migrate"]' \
+            '-target=module.platform.module.ecs[0].aws_vpc_security_group_egress_rule.app_db' \
+            '-target=module.platform.module.ecs[0].aws_vpc_security_group_egress_rule.app_https'
+          $TOFU output -json deploy > deploy.json
+          subnets=$(jq -r '.private_subnets | join(",")' deploy.json)
+          group=$(jq -r '.app_security_group' deploy.json)
+          cluster=$(jq -er '.cluster' deploy.json)
+          task=$(aws ecs run-task --cluster "$cluster" --launch-type FARGATE \
+            --task-definition "$(jq -r .migrate_family deploy.json)" \
+            --network-configuration "awsvpcConfiguration={subnets=[$subnets],securityGroups=[$group],assignPublicIp=DISABLED}" \
+            --query 'tasks[0].taskArn' --output text)
+          aws ecs wait tasks-stopped --cluster "$cluster" --tasks "$task"
+          code=$(aws ecs describe-tasks --cluster "$cluster" --tasks "$task" \
+            --query 'tasks[0].containers[0].exitCode' --output text)
+          echo "migration exitCode=$code"
+          test "$code" = "0"
+      - name: Apply
+        run: $TOFU apply -input=false -auto-approve
+      - name: Upload web
+        run: |
+          $TOFU output -json deploy > deploy.json
+          bucket=$(jq -r .web_bucket deploy.json)
+          aws s3 sync apps/web/out/_next/static "s3://$bucket/_next/static" \
+            --cache-control "public, max-age=31536000, immutable"
+          aws s3 sync apps/web/out "s3://$bucket" --delete --exclude "_next/static/*" \
+            --cache-control "no-cache"
+          aws cloudfront create-invalidation --distribution-id "$(jq -r .distribution deploy.json)" \
+            --paths "/*" > /dev/null
+      - name: Smoke
+        run: |
+          host=$(jq -r .hostname deploy.json)
+          sleep 30
+          headers=$(curl -fsSI "https://$host/")
+          echo "$headers" | grep -qi '^content-security-policy:' || { echo "no CSP"; exit 1; }
+          echo "$headers" | grep -qi '^strict-transport-security:' || { echo "no HSTS"; exit 1; }
+          status=$(curl -s -o /dev/null -w '%{http_code}' "https://$host/api/v1/me")
+          test "$status" = "401" || { echo "/api/v1/me returned $status, expected 401"; exit 1; }
+          echo "smoke ok: headers present, API answers 401 without a session"

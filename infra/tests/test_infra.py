@@ -479,3 +479,25 @@ def test_cognito_email_in_prod_uses_ses_in_paris_and_nothing_else_leaves_spain()
     assert [k for k, v in modules.items() if "providers" in v] == ["ses_cognito"]
     assert modules["cognito"]["email_sending_account"] == "DEVELOPER"
     assert modules["cognito"]["ses_source_arn"] == "${module.ses_cognito.identity_arn}"
+
+
+def test_the_apply_role_manages_only_what_the_platform_uses() -> None:
+    oidc = load("modules/github-oidc/main.tf")
+    apply = next(
+        d["aws_iam_policy_document"]["apply"]
+        for d in oidc["data"]
+        if "apply" in d.get("aws_iam_policy_document", {})
+    )
+    actions = [a for s in apply["statement"] for a in s["actions"]]
+    assert "*" not in actions and "*:*" not in actions
+    iam = next(s for s in apply["statement"] if s.get("sid") == "OwnIam")
+    assert all(
+        ":role/${var.name}-" in r
+        or "atesta-scan" in r
+        or "policy/${var.name}-" in r
+        or "oidc-provider" in r
+        for r in iam["resources"]
+    )
+    roles = resources("modules/github-oidc/main.tf")["aws_iam_role.github"]
+    assert roles["name"] == "${var.name}-${each.key}"
+    assert _modules("prod")["github_oidc"]["name"] == "atesta-prod"

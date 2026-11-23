@@ -183,3 +183,17 @@ output "mail_dns_records" {
 }
 
 data "aws_caller_identity" "current" {}
+
+# Everything the deploy workflow (.github/workflows/deploy.yml) reads, in one output.
+output "deploy" {
+  value = {
+    cluster            = try(module.ecs[0].cluster_arn, null)
+    private_subnets    = module.network.private_subnet_ids
+    app_security_group = aws_security_group.app.id
+    migrate_family     = "${var.name}-migrate"
+    repositories       = module.ecr.repository_urls
+    web_bucket         = try(module.web[0].bucket_name, null)
+    distribution       = try(module.web[0].distribution_id, null)
+    hostname           = try(var.edge.aliases[0], null)
+  }
+}
