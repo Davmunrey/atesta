@@ -6,7 +6,9 @@
   .topbar { position: sticky; top: 0; z-index: 30; min-width: 0; overflow-x: clip; display: flex; align-items: center; gap: 0.75rem; padding-inline: 0.75rem 1rem; background: var(--color-topbar); color: var(--color-topbar-fg); --color-focus: var(--color-accent); }
   .topbar-icon { display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: var(--radius-sm); color: var(--color-topbar-fg); cursor: pointer; }
   .topbar-icon:hover { background: var(--color-topbar-field); }
-  .topbar-brand { font-family: var(--font-display); font-size: 1.375rem; font-weight: 500; letter-spacing: -0.02em; padding-inline: 0.25rem; border-bottom: 3px solid var(--color-accent); line-height: 1.3; }
+  /* Brand system (DESIGN.md, issue 330): the seal lockup on ink; the mark carries the highlighter. */
+  .topbar-brand { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-display); font-size: 1.375rem; font-weight: 600; letter-spacing: -0.03em; padding-inline: 0.25rem; line-height: 1.3; }
+  .topbar-brand .brand-seal { width: 1.5rem; height: 1.5rem; }
   .topbar-org { display: flex; align-items: center; min-width: 0; max-width: 16rem; padding-left: 0.75rem; border-left: 1px solid var(--color-topbar-field); color: var(--color-topbar-muted); font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .topbar-select { max-width: 100%; min-height: 2.25rem; padding: 0.25rem 0.5rem; border: 1px solid var(--color-topbar-field); border-radius: var(--radius-sm); background: var(--color-topbar-field); color: var(--color-topbar-fg); font-size: 0.875rem; }
   .topbar-spacer { flex: 1; }
@@ -83,6 +85,13 @@
   .page-header-row { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; }
   .page-header-text { display: grid; gap: 0.375rem; min-width: 0; max-width: 72ch; }
   .page-header .page-title { font-size: 2rem; margin: 0; }
+  /* The highlighter tab under every console page title, as on the landing's section dividers. */
+  .page-header .page-title::after { content: ""; display: block; width: 3rem; height: 4px; margin-top: 0.625rem; background: var(--color-accent); }
+  /* One key figure per page: the highlighter band behind ink in light mode; in dark mode light text
+     on yellow fails contrast, so the figure is set in the accent instead. */
+  .key-figure { padding-inline: 0.06em; background-image: linear-gradient(var(--color-accent), var(--color-accent)); background-repeat: no-repeat; background-position: 0 90%; background-size: 100% 0.5em; }
+  @media (prefers-color-scheme: dark) { .key-figure { background-image: none; color: var(--color-accent); } }
+  @media print { .key-figure { background-image: none; color: inherit; } }
   .page-description { color: var(--color-muted); }
   .page-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 

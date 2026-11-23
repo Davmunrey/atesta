@@ -13,6 +13,7 @@ import { useMe } from "./auth-gate";
 import { Icon, type IconName } from "./icons";
 import { LocaleSwitcher } from "./locale-switcher";
 import { SiteFooter } from "./site-footer";
+import { BrandMark } from "./brand-mark";
 
 // A detail page lights up its list in the menu.
 const DETAIL_PAGES: Record<string, string> = {
@@ -97,7 +98,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
         onClick={() => (desktop ? setCollapsed(!collapsed) : setDrawer(!drawer))}>
         <Icon name="menu" />
       </button> : null}
-      <Link href="/app" className="topbar-brand">{brand("name")}</Link>
+      <Link href="/app" className="topbar-brand" aria-label={brand("name")}><BrandMark /><span>{brand("name")}</span></Link>
       {org && inOrg ? <OrgSwitcher org={org} memberships={memberships} /> : null}
       {org && inOrg ? <GlobalSearch org={org} /> : <span className="topbar-spacer" />}
       <div className="topbar-end"><LocaleSwitcher compact /><AccountMenu /></div>
