@@ -274,6 +274,14 @@ Every pair is checked by `tests/unit/contrast.test.ts`.
 - **Page titles:** the highlighter tab under every page title.
 - **Key figure:** one per page, the overview's measures assessed. In light mode it gets the band behind ink. In dark mode it is set in the accent yellow with no band, because light text on yellow fails contrast. In print it is plain.
 
+**Scrollytelling (#356, landing-legal amendment A2).** On wide screens with motion allowed:
+- **Pinned steps:** "Cómo funciona" pins one product frame beside the steps. The frame shows the stage of the step in view (IntersectionObserver, no scroll-jacking), with a mono "02 / 04" counter and a 3px highlighter progress bar. Stages crossfade. Inactive step titles dim by colour, never by opacity, so contrast holds.
+- **Reveals:** headlines and the year timeline reveal with CSS view timelines, using only clip-path and transform. Without view timelines, the page rests complete.
+- **Count-up:** the hero figures count up once; the document holds the final numbers.
+- **Marquee:** the frameworks strip is a 40 s marquee with a visible pause button. It is the one exception to the five-second rule.
+- **Phones and reduced motion:** a static page; each step carries its own frame.
+- **Free corner:** the bottom-right corner stays free for the assistant launcher.
+
 **Product frames.** Every product view on public pages sits in a frame: an ink bar carrying the mark,
 the context and a "Datos de ejemplo" label while the fixture is illustrative.
 
