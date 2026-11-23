@@ -51,6 +51,7 @@ it("explains the safety model and says the hosted server is not available yet", 
   expect(screen.getByRole("heading", { level: 1, name: "Guía para agentes de IA (MCP)" })).toBeTruthy();
   expect(screen.getByText(/queda pendiente hasta que una persona la confirma/)).toBeTruthy();
   expect(screen.getByText(/aún no está disponible/)).toBeTruthy();
+  expect(screen.getByText(/Todavía no se distribuye públicamente/)).toBeTruthy();
   const config = screen.getByLabelText("Configuración del cliente") as HTMLTextAreaElement;
   expect(JSON.parse(config.value).mcpServers.atesta.env.ATESTA_API_KEY).toBe("atesta_…");
   cleanup();

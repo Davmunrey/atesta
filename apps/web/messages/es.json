@@ -1650,7 +1650,7 @@
     "setup": {
       "title": "Conectar un agente en tu equipo",
       "key": "Un administrador crea un token en <link>Integraciones</link> con solo los permisos que el agente necesita.",
-      "install": "Instala el servidor atesta-mcp en el equipo donde corre el agente. Atesta os lo facilita.",
+      "install": "Instala el servidor atesta-mcp en el equipo donde corre el agente. Todavía no se distribuye públicamente: de momento Atesta lo facilita solo a los clientes piloto.",
       "config": "Añádelo a la configuración de tu cliente MCP con el token en env, como explica la <link>documentación oficial de MCP</link>. Por ejemplo:",
       "configLabel": "Configuración del cliente",
       "secret": "El token es un secreto: guárdalo solo en esa configuración y revócalo en Integraciones si deja de hacer falta."

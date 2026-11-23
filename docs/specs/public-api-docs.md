@@ -42,6 +42,8 @@ connect an agent. They ask support, or guess.
   - nothing touches the organization's own systems.
 - [ ] **Local setup:**
   - create a key in Integraciones;
+  - install `atesta-mcp`, which is not publicly distributed yet: only pilot customers get it,
+    from Atesta (owner decision, 2026-11-23);
   - a client configuration using `command`, `args` and `env` under `mcpServers`, as documented at
     <https://modelcontextprotocol.io/docs/develop/connect-local-servers> (checked 2026-11-23),
     with the key only in `env`.
@@ -58,7 +60,7 @@ connect an agent. They ask support, or guess.
 ## Out of scope
 
 - An interactive "try it" console, and the session-authenticated routes the web app uses.
-- Publishing the `atesta-mcp` package; the guide does not promise a public package name.
+- Publishing the `atesta-mcp` package: it is internal for now (owner decision, 2026-11-23).
 
 ## Design notes
 

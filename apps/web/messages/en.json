@@ -1650,7 +1650,7 @@
     "setup": {
       "title": "Connect an agent on your computer",
       "key": "An admin creates a token in <link>Integrations</link> with only the permissions the agent needs.",
-      "install": "Install the atesta-mcp server on the computer where the agent runs. Atesta provides it.",
+      "install": "Install the atesta-mcp server on the computer where the agent runs. It is not publicly distributed yet: for now, Atesta provides it to pilot customers only.",
       "config": "Add it to your MCP client's configuration with the token in env, as the <link>official MCP documentation</link> explains. For example:",
       "configLabel": "Client configuration",
       "secret": "The token is a secret: keep it only in that configuration, and revoke it in Integrations when it is no longer needed."
