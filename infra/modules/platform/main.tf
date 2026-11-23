@@ -136,7 +136,13 @@ module "ecs" {
     }
     worker  = { ATESTA_DATABASE_URL = module.database.app_url_secret_arn }
     migrate = { ATESTA_MIGRATION_DATABASE_URL = module.database.migration_url_secret_arn }
+    bootstrap = {
+      ATESTA_MASTER_PASSWORD        = "${module.database.master_secret_arn}:password::"
+      ATESTA_DATABASE_URL           = module.database.app_url_secret_arn
+      ATESTA_MIGRATION_DATABASE_URL = module.database.migration_url_secret_arn
+    }
   }
+  decrypt_key_arns = [module.kms.database_key_arn]
 }
 
 module "web" {
@@ -183,3 +189,18 @@ output "mail_dns_records" {
 }
 
 data "aws_caller_identity" "current" {}
+
+# Everything the deploy workflow (.github/workflows/deploy.yml) reads, in one output.
+output "deploy" {
+  value = {
+    cluster            = try(module.ecs[0].cluster_arn, null)
+    private_subnets    = module.network.private_subnet_ids
+    app_security_group = aws_security_group.app.id
+    migrate_family     = "${var.name}-migrate"
+    bootstrap_family   = "${var.name}-bootstrap"
+    repositories       = module.ecr.repository_urls
+    web_bucket         = try(module.web[0].bucket_name, null)
+    distribution       = try(module.web[0].distribution_id, null)
+    hostname           = try(var.edge.aliases[0], null)
+  }
+}

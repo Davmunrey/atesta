@@ -19,7 +19,8 @@ Modules `kms`, `network`, `s3-evidence`, `rds`, `ses`, `ecr`, `ecs` and `web` fo
 docs/specs/hosted-environment.md. `modules/platform` composes them, and `envs/dev` and `envs/prod`
 call it with their sizes only, so prod cannot drift from what dev exercises. Both environments
 are validated (`tofu validate`) and their security settings are tested (`infra/tests`). Nothing is
-applied. The deploy workflow and the runbook follow in separate PRs.
+applied. Deploying is `.github/workflows/deploy.yml`; the steps, rollback and costs are in
+[docs/runbooks/deploy.md](../docs/runbooks/deploy.md).
 
 - `rds`: the application roles come from `apps/api/migrations/bootstrap.sql`, run once as the
   master user. Their connection URLs go into the two secrets the module creates; values are set by

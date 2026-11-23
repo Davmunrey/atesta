@@ -10,6 +10,12 @@ terraform {
   }
 }
 
+variable "name" {
+  description = "Environment prefix (atesta-dev, atesta-prod): role names and the IAM the apply role may manage."
+  type        = string
+  default     = "atesta-dev"
+}
+
 variable "repository" {
   description = "owner/name of the GitHub repository."
   type        = string
@@ -27,6 +33,10 @@ variable "state_bucket" {
 }
 
 data "aws_caller_identity" "current" {}
+
+locals {
+  account = data.aws_caller_identity.current.account_id
+}
 
 resource "aws_iam_openid_connect_provider" "github" {
   url            = "https://token.actions.githubusercontent.com"
@@ -59,7 +69,7 @@ data "aws_iam_policy_document" "trust" {
 
 resource "aws_iam_role" "github" {
   for_each             = data.aws_iam_policy_document.trust
-  name                 = "atesta-dev-${each.key}"
+  name                 = "${var.name}-${each.key}"
   assume_role_policy   = each.value.json
   max_session_duration = 3600
 }
@@ -87,22 +97,55 @@ resource "aws_iam_role_policy" "state" {
   policy   = data.aws_iam_policy_document.state.json
 }
 
+# Apply and deploy (hosted-environment spec): the services modules/platform uses, plus IAM only
+# for this environment's own roles and policies, per-org scan roles and service-linked roles.
 data "aws_iam_policy_document" "apply" {
   statement {
-    actions   = ["cognito-idp:*", "budgets:*"]
+    sid = "PlatformServices"
+    actions = [
+      "cognito-idp:*", "budgets:*", "ec2:*", "ecs:*", "ecr:*", "elasticloadbalancing:*", "rds:*",
+      "kms:*", "logs:*", "cloudfront:*", "ses:*", "acm:DescribeCertificate", "acm:ListCertificates",
+      "application-autoscaling:*", "cloudwatch:*",
+    ]
     resources = ["*"]
   }
   statement {
+    sid       = "OwnBuckets"
+    actions   = ["s3:*"]
+    resources = ["arn:aws:s3:::${var.name}-*", "arn:aws:s3:::${var.name}-*/*"]
+  }
+  statement {
+    sid       = "OwnSecrets"
+    actions   = ["secretsmanager:*"]
+    resources = ["arn:aws:secretsmanager:*:${local.account}:secret:atesta/${var.name}/*"]
+  }
+  statement {
+    sid     = "OwnIam"
     actions = ["iam:*"]
     resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/atesta-dev-*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com",
+      "arn:aws:iam::${local.account}:role/${var.name}-*",
+      "arn:aws:iam::${local.account}:role/atesta-scan/${var.name}/*",
+      "arn:aws:iam::${local.account}:policy/${var.name}-*",
+      "arn:aws:iam::${local.account}:oidc-provider/token.actions.githubusercontent.com",
     ]
+  }
+  statement {
+    sid       = "ServiceLinkedRoles"
+    actions   = ["iam:CreateServiceLinkedRole"]
+    resources = ["*"]
+    condition {
+      test     = "StringEquals"
+      variable = "iam:AWSServiceName"
+      values = [
+        "ecs.amazonaws.com", "elasticloadbalancing.amazonaws.com", "rds.amazonaws.com",
+        "ecs.application-autoscaling.amazonaws.com",
+      ]
+    }
   }
 }
 
 resource "aws_iam_role_policy" "apply" {
-  name   = "atesta-dev-apply"
+  name   = "${var.name}-apply"
   role   = aws_iam_role.github["apply"].name
   policy = data.aws_iam_policy_document.apply.json
 }

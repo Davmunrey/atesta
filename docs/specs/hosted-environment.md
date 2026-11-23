@@ -22,6 +22,11 @@ happen now, at no cost. Applying it is the owner's decision.
   - **`rds`:** PostgreSQL 16, encrypted with the database key, not publicly accessible, TLS
     required. Backups are kept 14 days in dev and 35 in prod; prod is Multi-AZ. The database
     roles follow `bootstrap.sql` (`atesta_owner` for migrations, `atesta_app` for runtime).
+    A one-off `bootstrap` task (API image, `python -m atesta_api.platform.db_bootstrap`) runs
+    `bootstrap.sql` as the RDS master user and gives each role LOGIN with the password in its
+    own connection-URL secret. The master password reaches the task only as an ECS secret (the
+    `password` key of the RDS-managed secret). The task prints role names only, never a password
+    or URL, and running it again changes nothing but the passwords.
   - **`ecs`:**
     - The API and the worker run as Fargate services. One task definition per scan follows
       ADR-004, with a task role scoped to that tenant's prefix.
