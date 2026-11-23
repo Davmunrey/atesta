@@ -15,3 +15,16 @@ New add-ons are configuration, not refactors. No hard-coded plan checks anywhere
 and `connector_limit` as an access check. Plan and add-on grants for framework packs live in
 `catalog/plans.yaml`, validated against the pack ids in `catalog/frameworks/`. `Feature` keeps
 only framework-agnostic features. Selling a new pack or level is a YAML change (MF-03, rule 9).
+
+## Amendment 2 (proposed 2026-11-23): entitlements are enforced, and the plan is stored
+Status: proposed. The owner decided the substance on 2026-11-23, relayed by the coordinator.
+Accepting the amendment is the owner's call.
+
+- **Storage:** an organization's plan lives in billing's tenant table `subscriptions`, one row per
+  organization. The app only reads it; the operator writes it.
+- **Default:** an organization with no row has `billing.api.DEFAULT_PLAN`, `business`.
+- **Enforcement:** routes enforce plans only through `billing.api.require_connector_slot`,
+  `require_feature` and `require_framework`. A refusal is 403 `billing.plan_limit`.
+- **Grants:** a plan in `catalog/plans.yaml` may be `all`, every framework.
+
+See `docs/specs/billing-entitlements.md`.

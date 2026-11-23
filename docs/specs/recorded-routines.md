@@ -1,7 +1,7 @@
 # Spec: recorded routines
 
 - Issues: #165 (part A), #166 (part B). Builds on `control-evidence-statements.md`, `rbac.md` and `readiness-cockpit.md`.
-- Status: draft
+- Status: built (2026-11-23: every acceptance criterion is implemented and covered by the tests its test plan names)
 
 Organizational measures are evidenced by what people do: reviewing access, approving policies,
 completing training, handling incidents. Done inside Atesta, each routine leaves its own record,
