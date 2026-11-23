@@ -250,7 +250,10 @@ SES = resources("modules/ses/main.tf")
 def test_ses_identity_signs_with_dkim_and_uses_its_own_mail_from() -> None:
     identity = SES["aws_sesv2_email_identity.this"]
     assert identity["dkim_signing_attributes"] == [{"next_signing_key_length": "RSA_2048_BIT"}]
-    assert identity["configuration_set_name"] == "${aws_sesv2_configuration_set.this.configuration_set_name}"
+    assert (
+        identity["configuration_set_name"]
+        == "${aws_sesv2_configuration_set.this.configuration_set_name}"
+    )
     mail_from = SES["aws_sesv2_email_identity_mail_from_attributes.this"]
     assert mail_from["behavior_on_mx_failure"] == "REJECT_MESSAGE"
 
