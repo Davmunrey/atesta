@@ -528,7 +528,11 @@ class DueItem(BaseModel):
 def routines_due(
     member: Annotated[Member, Depends(require_member)], session: DbSession
 ) -> list[DueItem]:
-    org = member.organization_id
+    return due_items(session, member.organization_id)
+
+
+def due_items(session: Session, org: uuid.UUID) -> list[DueItem]:
+    """What falls due in the organization, overdue first (the app and API keys share it)."""
     today = datetime.now().astimezone().date()
     soon = today + timedelta(days=DUE_SOON_DAYS)
     latest = _latest_approvals(session, org)

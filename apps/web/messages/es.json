@@ -1483,5 +1483,85 @@
         "body": "Las cookies y el almacenamiento del navegador se describen en su propia página."
       }
     }
+  },
+  "assistant": {
+    "open": "Asistente",
+    "title": "Asistente del catálogo",
+    "close": "Cerrar",
+    "intro": "Responde con el texto del catálogo tal cual, con su fuente. Sin IA.",
+    "search": {
+      "label": "Busca en el catálogo",
+      "placeholder": "op.acc.6, copias de seguridad…",
+      "submit": "Buscar"
+    },
+    "loading": "Cargando el catálogo…",
+    "loadError": "No se pudo cargar el catálogo.",
+    "retry": "Reintentar",
+    "results": "{count, plural, one {# respuesta} other {# respuestas}}",
+    "noAnswer": "Sin respuesta en el catálogo para esta búsqueda.",
+    "contact": "Escríbenos a <link>{email}</link> y te respondemos.",
+    "flowsTitle": "Preguntas guiadas",
+    "back": "Volver",
+    "kind": {
+      "requirement": "Texto oficial",
+      "evidence": "Evidencias esperadas",
+      "profile": "Perfil de cumplimiento específico",
+      "valuation": "Valoración del sistema",
+      "clock": "Plazo de notificación",
+      "faq": "Preguntas frecuentes"
+    },
+    "cite": {
+      "label": "Fuente:",
+      "section": "apartado {section}",
+      "guide": "{guide} ({edition}), apartado {section}, pág. {page}",
+      "official": "Texto oficial",
+      "faq": "Preguntas frecuentes de Atesta",
+      "pending": "Pendiente de revisión"
+    },
+    "fullText": "Texto completo",
+    "inOrg": "Ver en tu organización",
+    "flows": {
+      "category": {
+        "title": "¿Qué categoría ENS tengo?",
+        "intro": "Elige el nivel de cada dimensión según el daño que causaría un fallo.",
+        "result": "Categoría orientativa: {category}",
+        "waiting": "Responde las cinco preguntas para ver la categoría.",
+        "basis": "La categoría es orientativa y no se guarda."
+      },
+      "evidence": {
+        "title": "¿Qué evidencias pide una medida?",
+        "pick": "Medida",
+        "choose": "Elige una medida"
+      },
+      "profile": {
+        "title": "¿Me aplica el perfil esencial (890C)?",
+        "low": "¿Todas las dimensiones de tu sistema son de nivel BAJO?",
+        "scope": "¿Qué abarca tu sistema?",
+        "it": "Solo tecnologías de la información (IT)",
+        "ot": "IT junto con tecnología de operación (OT) o IoT",
+        "yes": "Sí",
+        "no": "No",
+        "notFit": "El perfil esencial es para sistemas con todas las dimensiones de nivel BAJO.",
+        "levels": "Valor de cada medida en el perfil",
+        "measure": "Medida",
+        "value": "Valor",
+        "criterion": "Criterio: apartado {section}, pág. {page}"
+      },
+      "clocks": {
+        "title": "¿Qué plazos tengo ante un incidente?",
+        "pick": "¿Qué ha pasado?",
+        "needs": {
+          "significant": "Incidente significativo ({framework})",
+          "personal_data": "Violación de seguridad de datos personales ({framework})"
+        },
+        "hours": "{count, plural, one {# hora} other {# horas}}",
+        "months": "{count, plural, one {# mes} other {# meses}}",
+        "after": "Desde: {step}",
+        "criteria": "Cuándo hay que notificar"
+      },
+      "faq": {
+        "title": "¿Qué cubre Atesta?"
+      }
+    }
   }
 }

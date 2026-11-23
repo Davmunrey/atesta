@@ -1111,6 +1111,60 @@
         "title": "CheckReference",
         "type": "object"
       },
+      "Citation": {
+        "properties": {
+          "catalog_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Version"
+          },
+          "framework_version": {
+            "title": "Framework Version",
+            "type": "string"
+          },
+          "section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Section"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "source_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Sha256"
+          }
+        },
+        "required": [
+          "source",
+          "section",
+          "source_sha256",
+          "catalog_version",
+          "framework_version"
+        ],
+        "title": "Citation",
+        "type": "object"
+      },
       "CitedEvidenceOut": {
         "properties": {
           "collected_at": {
@@ -3101,6 +3155,71 @@
         "title": "FrameworkSummary",
         "type": "object"
       },
+      "Gap": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "framework_key": {
+            "title": "Framework Key",
+            "type": "string"
+          },
+          "framework_name": {
+            "title": "Framework Name",
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/GapState"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_es": {
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "framework_key",
+          "framework_name",
+          "code",
+          "title_es",
+          "title_en",
+          "state",
+          "due_on"
+        ],
+        "title": "Gap",
+        "type": "object"
+      },
+      "GapState": {
+        "enum": [
+          "not_assessed",
+          "not_implemented",
+          "partially_implemented"
+        ],
+        "type": "string"
+      },
       "GroupHeading": {
         "additionalProperties": false,
         "properties": {
@@ -3876,6 +3995,166 @@
           "memberships"
         ],
         "title": "MeOut",
+        "type": "object"
+      },
+      "MeasureDetail": {
+        "properties": {
+          "applicability_es": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicability Es"
+          },
+          "assessment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AssessmentOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "citation": {
+            "$ref": "#/components/schemas/Citation"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "controls": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Controls",
+            "type": "array"
+          },
+          "expected_evidence": {
+            "items": {
+              "$ref": "#/components/schemas/ExpectedEvidenceItem"
+            },
+            "title": "Expected Evidence",
+            "type": "array"
+          },
+          "framework_key": {
+            "title": "Framework Key",
+            "type": "string"
+          },
+          "official_text_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Text En"
+          },
+          "official_text_es": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Text Es"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_es": {
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "framework_key",
+          "code",
+          "title_es",
+          "title_en",
+          "official_text_es",
+          "official_text_en",
+          "applicability_es",
+          "citation",
+          "expected_evidence",
+          "controls",
+          "assessment"
+        ],
+        "title": "MeasureDetail",
+        "type": "object"
+      },
+      "MeasureOut": {
+        "properties": {
+          "assessment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AssessmentOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "proposal": {
+            "$ref": "#/components/schemas/ProposalOut"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_es": {
+            "title": "Title Es",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "title_es",
+          "title_en",
+          "proposal",
+          "assessment",
+          "due_on"
+        ],
+        "title": "MeasureOut",
         "type": "object"
       },
       "MemberOut": {
@@ -6436,6 +6715,247 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/due": {
+      "get": {
+        "operationId": "list_due_api_v1_due_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DueItem"
+                  },
+                  "title": "Response List Due Api V1 Due Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Due",
+        "tags": [
+          "api-keys"
+        ]
+      }
+    },
+    "/api/v1/frameworks": {
+      "get": {
+        "operationId": "list_frameworks_api_v1_frameworks_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FrameworkReadiness"
+                  },
+                  "title": "Response List Frameworks Api V1 Frameworks Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Frameworks",
+        "tags": [
+          "api-keys"
+        ]
+      }
+    },
+    "/api/v1/frameworks/{framework_key}/measures": {
+      "get": {
+        "operationId": "list_measures_api_v1_frameworks__framework_key__measures_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MeasureOut"
+                  },
+                  "title": "Response List Measures Api V1 Frameworks  Framework Key  Measures Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Measures",
+        "tags": [
+          "api-keys"
+        ]
+      }
+    },
+    "/api/v1/frameworks/{framework_key}/measures/{code}": {
+      "get": {
+        "operationId": "read_measure_api_v1_frameworks__framework_key__measures__code__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "framework_key",
+            "required": true,
+            "schema": {
+              "title": "Framework Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasureDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Measure",
+        "tags": [
+          "api-keys"
+        ]
+      }
+    },
+    "/api/v1/gaps": {
+      "get": {
+        "description": "Measures not assessed, not implemented or partially implemented, per granted framework.",
+        "operationId": "list_gaps_api_v1_gaps_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Gap"
+                  },
+                  "title": "Response List Gaps Api V1 Gaps Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Gaps",
+        "tags": [
+          "api-keys"
+        ]
+      }
+    },
+    "/api/v1/incidents": {
+      "get": {
+        "operationId": "list_incidents_api_v1_incidents_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IncidentOut"
+                  },
+                  "title": "Response List Incidents Api V1 Incidents Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Incidents",
+        "tags": [
+          "api-keys"
+        ]
+      }
+    },
+    "/api/v1/incidents/{incident_id}": {
+      "get": {
+        "operationId": "read_incident_api_v1_incidents__incident_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Incident",
+        "tags": [
+          "api-keys"
+        ]
+      }
+    },
     "/api/v1/ingest/evidence": {
       "post": {
         "operationId": "ingest_evidence_api_v1_ingest_evidence_post",

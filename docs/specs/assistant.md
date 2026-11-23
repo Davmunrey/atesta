@@ -91,10 +91,10 @@ Guided flows
       service), each quoted with its citation; the person picks a level for each; the result is the
       category the catalog's 803 table gives for the highest level, with the 803 notes it rests on.
 - [ ] "¿Qué evidencias pide una medida?": pick an ENS measure; the signed 808 items, each cited.
-- [ ] "¿Me aplica el perfil esencial (890C)?": three questions (all dimensions low; IT or IT/OT/IoT
-      scope; services in NIS2 Annexes I and II). Not all low: the profile does not fit (890C §2).
-      Otherwise the matching profile card, plus the three NIS2-dependent measures when that
-      answer is yes, each with its 890C criterion section.
+- [ ] "¿Me aplica el perfil esencial (890C)?": two questions (all dimensions low; IT or IT/OT/IoT
+      scope). Not all low: the profile does not fit (890C §2). Otherwise the matching profile card,
+      whose quoted summary states the NIS2 condition, and each measure's value with its 890C
+      criterion section.
 - [ ] "¿Qué plazos tengo ante un incidente?": pick NIS2 (significant incident) or GDPR (personal
       data breach); the pack's clocks with their official text, and the incident criteria.
 - [ ] "¿Qué cubre Atesta?": the FAQ entries.
@@ -116,7 +116,8 @@ Accessibility
 
 - [ ] The panel is a non-modal `<dialog popover="auto">` (modern-web-guidance, dialog rule 2): the
       page stays usable, Esc closes it, a visible close button closes it, focus moves to the search
-      field on open and back to the launcher on close.
+      field on open (or to "Volver" when a flow is open, since reopening keeps the flow) and back to
+      the launcher on close.
 - [ ] Results are announced through one `role="status"` live region ("3 respuestas", "Sin
       respuesta"); the cards themselves are not live.
 - [ ] Everything works with the keyboard alone. axe reports no violations at 375 and 1280 px, in

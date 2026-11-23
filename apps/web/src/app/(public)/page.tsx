@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { AssistantLauncher } from "@/components/assistant/launcher";
 import { BrandMark } from "@/components/brand-mark";
 import { FrameworksStrip } from "@/components/landing/frameworks-strip";
 import { OverviewView } from "@/components/landing/overview-view";
@@ -46,6 +47,7 @@ export default function Landing() {
         <h2 id="landing-close" className="landing-close-title">{t("close")}</h2>
         <a href={mail} className="landing-cta landing-cta-ink">{t("requestAccess")}</a>
       </section>
+      <AssistantLauncher surface="landing" />
     </main>
   );
 }
