@@ -54,6 +54,22 @@ happen now, at no cost. Applying it is the owner's decision.
       (web-shell spec).
   - **`s3-evidence`:** private and encrypted with its key. Versioning is on and public access is
     blocked. Keys use the `<organization_id>/` prefix that the evidence model already checks.
+    - Object Lock (owner, 2026-11-23, #263): every object version is retained 365 days in
+      governance mode by default. A lifecycle expiration cannot delete a locked version (AWS,
+      "Managing S3 Lifecycle policies with Object Lock"), so replaced versions live at least that
+      long; the 90-day noncurrent rule applies after.
+    - The bucket policy denies `s3:BypassGovernanceRetention` to every principal. The deploy
+      role's `s3:*` on the environment's buckets therefore cannot remove a locked version. Erasing
+      one (a GDPR request, a customer leaving) is an owner step: change the bucket policy, delete
+      with the `x-amz-bypass-governance-retention` header, restore the policy. CloudTrail records
+      each step.
+    - Residual, accepted with governance mode: whoever can change the bucket policy (the owner,
+      the apply role) can lift the lock. Compliance mode would close that and would also block
+      GDPR erasure for the retention period.
+    - Every read, download or export of a stored evidence file recomputes its sha256 and refuses
+      a mismatch with a stable error code and an audit event, never serving the file. Ingest
+      already checks each scan output against its manifest; the first other read path is
+      evidence uploads (#222), which carries this rule as an acceptance criterion.
   - **`ses`:** a sending identity for notification email. Where it sits is decided by ADR-007
     amendment 1.
 - [ ] **Environments:** `infra/envs/prod` mirrors `dev` with prod sizes. Each has its own state

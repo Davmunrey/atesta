@@ -66,6 +66,23 @@ def body(**overrides: object) -> dict[str, object]:
     return {**base, **overrides}
 
 
+def cite(
+    client: TestClient, org: str, sub: str, control: str, title: str = "Acta del comité"
+) -> str:
+    """Record an evidence statement on the control; a pass review cites one (#262)."""
+    response = client.post(
+        f"/api/v1/orgs/{org}/controls/{control}/evidence",
+        json={"submission_id": str(uuid.uuid4()), "title": title, "statement": "Aprobada."},
+        headers=auth(sub),
+    )
+    assert response.status_code == 201, response.text
+    return str(response.json()["id"])
+
+
+def passing(client: TestClient, org: str, sub: str, control: str, **overrides: object) -> dict:
+    return body(evidence_ids=[cite(client, org, sub, control)], **overrides)
+
+
 # --- recording -----------------------------------------------------------------------------
 
 
@@ -75,7 +92,9 @@ def test_owner_and_admin_record_a_review(
 ) -> None:
     org, subs = org_with(client, superuser, admin="admin")
     response = client.post(
-        reviews_url(org, manual["manual"]), json=body(), headers=auth(subs[role])
+        reviews_url(org, manual["manual"]),
+        json=passing(client, org, subs[role], manual["manual"]),
+        headers=auth(subs[role]),
     )
     assert response.status_code == 201, response.text
     review = response.json()
@@ -91,7 +110,11 @@ def test_audit_metadata_never_carries_the_rationale(
     client: TestClient, superuser: Engine, manual: dict[str, str]
 ) -> None:
     org, subs = org_with(client, superuser)
-    client.post(reviews_url(org, manual["manual"]), json=body(), headers=auth(subs["owner"]))
+    client.post(
+        reviews_url(org, manual["manual"]),
+        json=passing(client, org, subs["owner"], manual["manual"]),
+        headers=auth(subs["owner"]),
+    )
     with superuser.connect() as conn:
         target, metadata = conn.execute(
             text(
@@ -101,7 +124,11 @@ def test_audit_metadata_never_carries_the_rationale(
             {"o": org},
         ).one()
     assert target == manual["manual"]
-    assert metadata == {"status": "pass", "valid_until": body()["valid_until"]}
+    assert metadata == {
+        "status": "pass",
+        "valid_until": body()["valid_until"],
+        "evidence_count": 1,
+    }
 
 
 def test_a_member_cannot_record_and_a_stranger_sees_nothing(
@@ -182,7 +209,7 @@ def test_rationale_keeps_line_breaks_and_is_trimmed(
     org, subs = org_with(client, superuser)
     response = client.post(
         reviews_url(org, manual["manual"]),
-        json=body(rationale="  Acta 12:\n\tpunto 3 aprobado.  "),
+        json=body(status="fail", rationale="  Acta 12:\n\tpunto 3 aprobado.  "),
         headers=auth(subs["owner"]),
     )
     assert response.json()["rationale"] == "Acta 12:\n\tpunto 3 aprobado."
@@ -197,7 +224,8 @@ def test_history_is_newest_first_and_readable_by_members(
     org, subs = org_with(client, superuser, member="member")
     path = reviews_url(org, manual["manual"])
     for status in ("pass", "fail"):
-        client.post(path, json=body(status=status), headers=auth(subs["owner"]))
+        review = passing(client, org, subs["owner"], manual["manual"], status=status)
+        client.post(path, json=review, headers=auth(subs["owner"]))
     history = client.get(path, headers=auth(subs["member"]))
     assert history.status_code == 200
     assert [r["status"] for r in history.json()] == ["fail", "pass"]
@@ -210,7 +238,8 @@ def test_detail_shows_the_current_review_of_the_callers_org_only(
     other, others = org_with(client, superuser)
     path = reviews_url(org, manual["manual"])
     client.post(path, json=body(status="fail"), headers=auth(subs["owner"]))
-    client.post(path, json=body(status="pass"), headers=auth(subs["owner"]))
+    review = passing(client, org, subs["owner"], manual["manual"])
+    client.post(path, json=review, headers=auth(subs["owner"]))
 
     def review(o: str, sub: str) -> object:
         detail = client.get(detail_url(o, manual["active"]), headers=auth(sub)).json()
@@ -235,7 +264,9 @@ def test_an_expired_review_is_shown_as_expired(
     client: TestClient, superuser: Engine, manual: dict[str, str]
 ) -> None:
     org, subs = org_with(client, superuser)
-    client.post(reviews_url(org, manual["manual"]), json=body(), headers=auth(subs["owner"]))
+    client.post(
+        reviews_url(org, manual["manual"]), json=body(status="fail"), headers=auth(subs["owner"])
+    )
     with superuser.begin() as conn:  # time passes: the row is aged as superuser
         conn.execute(
             text(
@@ -305,7 +336,9 @@ def test_a_recorded_review_queues_a_rescore_of_its_org(
     client: TestClient, superuser: Engine, manual: dict[str, str]
 ) -> None:
     org, subs = org_with(client, superuser)
-    client.post(reviews_url(org, manual["manual"]), json=body(), headers=auth(subs["owner"]))
+    client.post(
+        reviews_url(org, manual["manual"]), json=body(status="fail"), headers=auth(subs["owner"])
+    )
     with superuser.connect() as conn:
         queued = conn.execute(
             text(
@@ -315,3 +348,130 @@ def test_a_recorded_review_queues_a_rescore_of_its_org(
             {"o": org},
         ).all()
     assert [tuple(j) for j in queued] == [(RESCORE_TASK, "scans", {"organization_id": org})]
+
+
+# --- citations (#262) ----------------------------------------------------------------------
+
+
+def reviews_written(superuser: Engine, org: str) -> int:
+    with superuser.connect() as conn:
+        query = text("SELECT count(*) FROM control_reviews WHERE organization_id = :o")
+        return int(conn.execute(query, {"o": org}).scalar_one())
+
+
+def test_a_pass_must_cite_evidence_and_a_fail_need_not(
+    client: TestClient, superuser: Engine, manual: dict[str, str]
+) -> None:
+    org, subs = org_with(client, superuser)
+    path = reviews_url(org, manual["manual"])
+    refused = client.post(path, json=body(), headers=auth(subs["owner"]))
+    assert (refused.status_code, refused.json()["detail"]["code"]) == (
+        422,
+        "compliance.review_evidence_required",
+    )
+    assert reviews_written(superuser, org) == 0
+    assert events(superuser, org, "control.reviewed") == 0
+    failed = client.post(path, json=body(status="fail"), headers=auth(subs["owner"]))
+    assert (failed.status_code, failed.json()["evidence"]) == (201, [])
+
+
+@pytest.mark.parametrize("source", ["other_control", "other_org", "unknown"])
+def test_only_evidence_of_this_control_in_this_org_can_be_cited(
+    client: TestClient, superuser: Engine, manual: dict[str, str], source: str
+) -> None:
+    org, subs = org_with(client, superuser)
+    other, others = org_with(client, superuser)
+    cited = {
+        "other_control": lambda: cite(client, org, subs["owner"], manual["control"]),
+        "other_org": lambda: cite(client, other, others["owner"], manual["manual"]),
+        "unknown": lambda: str(uuid.uuid4()),
+    }[source]()
+    response = client.post(
+        reviews_url(org, manual["manual"]),
+        json=body(evidence_ids=[cited]),
+        headers=auth(subs["owner"]),
+    )
+    assert (response.status_code, response.json()["detail"]["code"]) == (
+        422,
+        "compliance.review_evidence_invalid",
+    )
+    assert reviews_written(superuser, org) == 0
+
+
+def test_at_most_twenty_items_and_each_once(
+    client: TestClient, superuser: Engine, manual: dict[str, str]
+) -> None:
+    org, subs = org_with(client, superuser)
+    path = reviews_url(org, manual["manual"])
+    many = [str(uuid.uuid4()) for _ in range(21)]
+    too_many = client.post(path, json=body(evidence_ids=many), headers=auth(subs["owner"]))
+    assert (too_many.status_code, too_many.json()["detail"]["code"]) == (422, "request.invalid")
+    once = cite(client, org, subs["owner"], manual["manual"])
+    review = client.post(path, json=body(evidence_ids=[once, once]), headers=auth(subs["owner"]))
+    assert review.status_code == 201, review.text
+    assert [e["id"] for e in review.json()["evidence"]] == [once]
+
+
+def test_detail_history_and_dossier_show_what_a_review_cites(
+    client: TestClient, superuser: Engine, manual: dict[str, str]
+) -> None:
+    org, subs = org_with(client, superuser, member="member")
+    path = reviews_url(org, manual["manual"])
+    first = cite(client, org, subs["owner"], manual["manual"], title="Acta 12")
+    second = cite(client, org, subs["owner"], manual["manual"], title="Política v3")
+    recorded = client.post(
+        path, json=body(evidence_ids=[first, second]), headers=auth(subs["owner"])
+    )
+    assert recorded.status_code == 201, recorded.text
+    expected = {(first, "Acta 12"), (second, "Política v3")}
+
+    def titles(review: dict) -> set[tuple[str, str]]:
+        assert all(e["kind"] == "attestation" and e["collected_at"] for e in review["evidence"])
+        return {(e["id"], e["title"]) for e in review["evidence"]}
+
+    assert titles(recorded.json()) == expected
+    history = client.get(path, headers=auth(subs["member"])).json()
+    assert titles(history[0]) == expected
+    detail = client.get(detail_url(org, manual["active"]), headers=auth(subs["member"])).json()
+    r2 = next(r for r in detail["requirements"] if r["code"] == "R2")
+    control = next(c for c in r2["controls"] if c["key"] == manual["manual"])
+    assert titles(control["review"]) == expected
+    dossier = client.get(
+        f"/api/v1/orgs/{org}/frameworks/{manual['active']}/dossier", headers=auth(subs["owner"])
+    )
+    assert dossier.status_code == 200, dossier.text
+    controls = [c for r in dossier.json()["requirements"] for c in r["controls"]]
+    in_dossier = next(c for c in controls if c["key"] == manual["manual"])
+    assert titles(in_dossier["review"]) == expected
+
+
+def test_a_review_recorded_before_citations_reads_as_citing_none(
+    client: TestClient, superuser: Engine, manual: dict[str, str]
+) -> None:
+    org, subs = org_with(client, superuser)
+    with superuser.begin() as conn:  # a pass recorded before #262: no evidence_ids given
+        conn.execute(
+            text(
+                "INSERT INTO control_reviews (id, organization_id, control_key, status,"
+                " rationale, valid_until, reviewed_by) VALUES (gen_random_uuid(), :o, :c,"
+                " 'pass', 'legacy', current_date + 30, gen_random_uuid())"
+            ),
+            {"o": org, "c": manual["manual"]},
+        )
+    detail = client.get(detail_url(org, manual["active"]), headers=auth(subs["owner"])).json()
+    r2 = next(r for r in detail["requirements"] if r["code"] == "R2")
+    review = next(c for c in r2["controls"] if c["key"] == manual["manual"])["review"]
+    assert (review["status"], review["evidence"]) == ("pass", [])
+
+
+def test_the_table_refuses_more_than_twenty_citations(tx: Session) -> None:
+    ids = "{" + ",".join(str(uuid.uuid4()) for _ in range(21)) + "}"
+    with pytest.raises(DBAPIError, match="check constraint"), tx.begin_nested():
+        tx.execute(
+            text(
+                "INSERT INTO control_reviews (id, organization_id, control_key, status,"
+                " rationale, valid_until, reviewed_by, evidence_ids) VALUES (:id, :org,"
+                " 'ctl.any', 'pass', 'ok', current_date + 30, :by, CAST(:ids AS uuid[]))"
+            ),
+            {"id": uuid.uuid4(), "org": ORG_A, "by": uuid.uuid4(), "ids": ids},
+        )

@@ -171,14 +171,42 @@ def test_the_evidence_bucket_is_private_encrypted_versioned_and_tls_only() -> No
         == "BucketOwnerEnforced"
     )
     policy = load("modules/s3-evidence/main.tf")["data"]
-    deny = next(
-        b["aws_iam_policy_document"]["tls_only"] for b in policy if "aws_iam_policy_document" in b
+    document = next(
+        b["aws_iam_policy_document"]["bucket"] for b in policy if "aws_iam_policy_document" in b
     )
-    statement = deny["statement"][0]
+    statement = next(s for s in document["statement"] if s.get("sid") == "DenyInsecureTransport")
     assert (
         statement["effect"] == "Deny"
         and statement["condition"][0]["variable"] == "aws:SecureTransport"
     )
+
+
+def test_the_evidence_bucket_locks_every_version_for_a_year_in_governance_mode() -> None:
+    """#263, owner 2026-11-23: Object Lock in governance mode, 365 days by default."""
+    assert EVIDENCE["aws_s3_bucket.this"]["object_lock_enabled"] is True
+    lock = EVIDENCE["aws_s3_bucket_object_lock_configuration.this"]
+    retention = lock["rule"][0]["default_retention"][0]
+    assert (retention["mode"], retention["days"]) == ("GOVERNANCE", 365)
+    assert "${aws_s3_bucket_versioning.this}" in lock.get("depends_on", [])
+
+
+def test_no_principal_may_bypass_the_evidence_lock() -> None:
+    """An explicit deny in the bucket policy beats any allow, the deploy role's s3:* included.
+
+    Erasing locked evidence (a GDPR request) means changing this policy first, which CloudTrail
+    records (hosted-environment spec, Evidence bucket).
+    """
+    data = load("modules/s3-evidence/main.tf")["data"]
+    document = next(
+        b["aws_iam_policy_document"]["bucket"] for b in data if "aws_iam_policy_document" in b
+    )
+    deny = next(s for s in document["statement"] if s.get("sid") == "DenyGovernanceBypass")
+    assert deny["effect"] == "Deny"
+    assert deny["actions"] == ["s3:BypassGovernanceRetention"]
+    assert deny["principals"][0] == {"type": "*", "identifiers": ["*"]}
+    assert "condition" not in deny
+    policy = EVIDENCE["aws_s3_bucket_policy.this"]
+    assert policy["policy"] == "${data.aws_iam_policy_document.bucket.json}"
 
 
 def test_private_subnets_take_no_public_addresses_and_flow_logs_are_on() -> None:

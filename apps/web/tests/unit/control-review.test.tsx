@@ -3,12 +3,13 @@ import { cleanup, fireEvent, screen, within } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { FrameworkDetailView } from "@/components/framework-detail";
 import type { Role } from "@/lib/permissions";
-import { passingReview, withManualControl } from "../fixtures/framework";
+import { paperEvidence, passingReview, withManualControl } from "../fixtures/framework";
 import { renderWithProviders, stubApi } from "./render";
 
 const detailPath = "GET /api/v1/orgs/primary/frameworks/synthetic_alpha";
 const reviewsPath = "POST /api/v1/orgs/primary/controls/ctl.paper/reviews";
 const membersPath = "GET /api/v1/orgs/primary/members";
+const evidencePath = "GET /api/v1/orgs/primary/controls/ctl.paper/evidence";
 const review = passingReview;
 const withPaper = withManualControl;
 const members = [{ user_id: review.reviewed_by, email: "ana@example.com", display_name: null, role: "admin" }];
@@ -43,18 +44,22 @@ it("lets an admin record a review and refreshes the register", async () => {
   const requests = stubApi({
     [detailPath]: [[200, withPaper(null)], [200, withPaper(review)]],
     [membersPath]: [200, members],
+    [evidencePath]: [200, paperEvidence],
     [reviewsPath]: [201, review],
   });
   render("admin");
   const card = await paperCard();
   fireEvent.click(within(card).getByRole("button", { name: "Registrar revisión" }));
+  fireEvent.click(await within(card).findByRole("checkbox", { name: /Acta del comité 12/ }));
   fireEvent.click(within(card).getByRole("radio", { name: "Implantado" }));
   fireEvent.change(within(card).getByLabelText(/Justificación/), { target: { value: "  Acta 12 aprobada.  " } });
   fireEvent.change(within(card).getByLabelText(/Válida hasta/), { target: { value: "2027-10-01" } });
   fireEvent.click(within(card).getByRole("button", { name: "Guardar revisión" }));
   expect(await within(await paperCard()).findByRole("status")).toBeTruthy();
   const post = requests.find((r) => r.method === "POST")!;
-  expect(await post.json()).toEqual({ status: "pass", rationale: "Acta 12 aprobada.", valid_until: "2027-10-01" });
+  expect(await post.json()).toEqual({
+    status: "pass", rationale: "Acta 12 aprobada.", valid_until: "2027-10-01", evidence_ids: [paperEvidence.items[0]!.id],
+  });
   expect(requests.filter((r) => r.method === "GET" && new URL(r.url).pathname.endsWith("/frameworks/synthetic_alpha"))).toHaveLength(2);
 });
 
@@ -62,6 +67,7 @@ it("shows the API's reason when a review is refused", async () => {
   stubApi({
     [detailPath]: [200, withPaper(null)],
     [membersPath]: [200, members],
+    [evidencePath]: [200, { items: [], total: 0 }],
     [reviewsPath]: [409, { detail: { code: "compliance.control_not_manual" } }],
   });
   render("owner");
@@ -79,4 +85,38 @@ it("never offers a review on an automated control", async () => {
   render("owner");
   const automated = (await screen.findByText("Verificar acceso de prueba")).closest("article")!;
   expect(within(automated).queryByRole("button", { name: "Registrar revisión" })).toBeNull();
+});
+
+it("lists the evidence a review cites, or says it cites none", async () => {
+  stubApi({ [detailPath]: [200, withPaper(review)], [membersPath]: [200, members] });
+  render("member");
+  const cited = within(await paperCard()).getByRole("list", { name: "Evidencias citadas" });
+  expect(within(cited).getByText("Acta del comité 12")).toBeTruthy();
+  cleanup();
+  stubApi({ [detailPath]: [200, withPaper({ ...review, evidence: [] })], [membersPath]: [200, members] });
+  render("member");
+  expect(within(await paperCard()).getByText("No cita ninguna evidencia.")).toBeTruthy();
+});
+
+it("will not save a pass that cites no evidence", async () => {
+  const requests = stubApi({ [detailPath]: [200, withPaper(null)], [membersPath]: [200, members], [evidencePath]: [200, paperEvidence] });
+  render("admin");
+  const card = await paperCard();
+  fireEvent.click(within(card).getByRole("button", { name: "Registrar revisión" }));
+  await within(card).findByRole("checkbox", { name: /Acta del comité 12/ });
+  fireEvent.click(within(card).getByRole("radio", { name: "Implantado" }));
+  fireEvent.change(within(card).getByLabelText(/Justificación/), { target: { value: "Acta 12." } });
+  fireEvent.click(within(card).getByRole("button", { name: "Guardar revisión" }));
+  expect(await within(card).findByText("Marca al menos una evidencia para registrarlo como implantado.")).toBeTruthy();
+  expect(requests.filter((r) => r.method === "POST")).toHaveLength(0);
+});
+
+it("offers only a fail when the control has no evidence yet", async () => {
+  stubApi({ [detailPath]: [200, withPaper(null)], [membersPath]: [200, members], [evidencePath]: [200, { items: [], total: 0 }] });
+  render("admin");
+  const card = await paperCard();
+  fireEvent.click(within(card).getByRole("button", { name: "Registrar revisión" }));
+  expect(await within(card).findByText(/Registra primero una evidencia/)).toBeTruthy();
+  expect((within(card).getByRole("radio", { name: "Implantado" }) as HTMLInputElement).disabled).toBe(true);
+  expect((within(card).getByRole("radio", { name: "No implantado" }) as HTMLInputElement).disabled).toBe(false);
 });
