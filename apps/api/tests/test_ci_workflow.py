@@ -310,9 +310,9 @@ def test_the_newest_python_runs_weekly_and_never_blocks() -> None:
     assert "python-newest" not in contexts
 
 
-def test_dependabot_keeps_python_on_3_12_and_postgres_on_16() -> None:
+def test_dependabot_keeps_python_on_3_12_and_postgres_on_18() -> None:
     # Python and PostgreSQL majors and minors are planned upgrades of every image, CI job and
-    # the RDS engine together; Dependabot proposes only patches (3.12.x, 16.x).
+    # the RDS engine together; Dependabot proposes only patches (3.12.x, 18.x).
     config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
     by_ecosystem = {u["package-ecosystem"]: u for u in config["updates"]}
     docker_ignores = {i["dependency-name"]: i for i in by_ecosystem["docker"]["ignore"]}

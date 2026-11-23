@@ -1,4 +1,4 @@
-# PostgreSQL 16 (hosted-environment spec): encrypted with the database key, private subnets only,
+# PostgreSQL 18, the newest major RDS offers in eu-south-2 (hosted-environment spec, #299): encrypted with the database key, private subnets only,
 # TLS required, master password managed by RDS in Secrets Manager. The application roles
 # (atesta_owner for migrations, atesta_app at runtime) come from apps/api/migrations/bootstrap.sql,
 # run once by the deploy runbook as the master user; their connection URLs live in two secrets
@@ -98,8 +98,8 @@ resource "aws_vpc_security_group_ingress_rule" "from_app" {
 }
 
 resource "aws_db_parameter_group" "this" {
-  name   = "${var.name}-pg16"
-  family = "postgres16"
+  name   = "${var.name}-pg18"
+  family = "postgres18"
 
   parameter {
     name  = "rds.force_ssl"
@@ -115,9 +115,10 @@ resource "aws_db_parameter_group" "this" {
     name  = "log_min_duration_statement"
     value = "-1"
   }
+  # PostgreSQL 18 made log_connections a list; RDS documents this one as the old "1".
   parameter {
     name  = "log_connections"
-    value = "1"
+    value = "receipt,authentication,authorization"
   }
 }
 
@@ -130,7 +131,7 @@ resource "aws_cloudwatch_log_group" "postgres" {
 resource "aws_db_instance" "this" {
   identifier            = var.name
   engine                = "postgres"
-  engine_version        = "16"
+  engine_version        = "18"
   instance_class        = var.instance_class
   allocated_storage     = var.allocated_storage_gb
   max_allocated_storage = var.max_allocated_storage_gb
