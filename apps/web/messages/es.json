@@ -211,6 +211,7 @@
     "accessOn": "Acceso hasta el {date}"
   },
   "invite": {
+    "unavailable": "Invitación no disponible",
     "title": "Únete a la organización",
     "signedInAs": "Vas a aceptar la invitación como {email}.",
     "accept": "Aceptar invitación",
@@ -885,6 +886,7 @@
     }
   },
   "trainingLink": {
+    "unavailable": "Formación no disponible",
     "loading": "Cargando…",
     "missing": "Falta el enlace de la formación. Ábrelo tal como te lo enviaron.",
     "heading": "Confirmar la lectura",

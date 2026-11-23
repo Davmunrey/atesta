@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type BrowserContext, type Page, expect, test } from "@playwright/test";
+import { settled } from "./polish";
 
 async function expectLifetime(context: BrowserContext, name: string, seconds: number, httpOnly: boolean) {
   const cookie = (await context.cookies()).find((item) => item.name === name);
@@ -13,6 +14,7 @@ async function expectLifetime(context: BrowserContext, name: string, seconds: nu
 }
 
 async function expectAccessible(page: Page) {
+  await settled(page);
   const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
   expect(violations.filter((v) => v.impact === "serious" || v.impact === "critical")
     .map((v) => `${v.id}: ${v.help}`)).toEqual([]);
