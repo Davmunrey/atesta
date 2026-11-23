@@ -1683,5 +1683,86 @@
         "start_access_review": "Abre una revisión de acceso."
       }
     }
+  },
+  "public": {
+    "nav": {
+      "label": "Navegación principal",
+      "menu": "Menú",
+      "product": "Producto",
+      "docs": "Docs",
+      "ens": "ENS",
+      "security": "Seguridad",
+      "consultancies": "Consultoras",
+      "groups": {
+        "prepare": "Preparar el ENS",
+        "respond": "Responder y demostrar",
+        "integrate": "Integrar"
+      },
+      "items": {
+        "assess": {
+          "title": "Autoevaluación",
+          "desc": "73 medidas con su texto oficial"
+        },
+        "routines": {
+          "title": "Rutinas",
+          "desc": "Políticas, accesos y formación"
+        },
+        "incidents": {
+          "title": "Incidentes",
+          "desc": "Plazos de notificación en marcha"
+        },
+        "dossier": {
+          "title": "Dossier",
+          "desc": "Listo para el auditor y la firma"
+        },
+        "api": {
+          "title": "API y MCP",
+          "desc": "Claves con permisos y límites"
+        },
+        "apiRef": {
+          "title": "Referencia de la API",
+          "desc": "Rutas, permisos y errores"
+        },
+        "mcp": {
+          "title": "Guía MCP",
+          "desc": "Conecta un agente con permisos de lectura"
+        }
+      },
+      "feature": "Una evidencia sirve a varios marcos: ENS, NIS2, RGPD."
+    },
+    "footer": {
+      "tagline": "Preparación de auditorías. No certifica cumplimiento.",
+      "product": "Producto",
+      "resources": "Recursos",
+      "legal": "Legal",
+      "contact": "Contacto",
+      "how": "Cómo funciona"
+    },
+    "proof": {
+      "label": "Lo que es verdad hoy",
+      "boe": {
+        "lead": "73 medidas",
+        "line": "con el texto oficial del BOE"
+      },
+      "team": {
+        "lead": "Revisado",
+        "line": "evidencias revisadas por el equipo de Atesta"
+      },
+      "spain": {
+        "lead": "España",
+        "line": "Diseñado para alojarse en España (eu-south-2)"
+      },
+      "readonly": {
+        "lead": "Solo lectura",
+        "line": "en tus sistemas, siempre"
+      },
+      "noai": {
+        "lead": "Sin IA",
+        "line": "ninguna IA decide si cumples"
+      }
+    },
+    "customers": {
+      "title": "Organizaciones que usan Atesta"
+    }
   }
 }
