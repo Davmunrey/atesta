@@ -244,6 +244,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/connections/{connection_id}/m365/signin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start Signin */
+        post: operations["start_signin_api_v1_orgs__org_id__connections__connection_id__m365_signin_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/connections/{connection_id}/scans": {
         parameters: {
             query?: never;
@@ -972,6 +989,40 @@ export interface paths {
         };
         /** Logout */
         get: operations["logout_auth_logout_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/m365/consent-callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Consent Callback */
+        get: operations["consent_callback_auth_m365_consent_callback_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/m365/signin-callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Signin Callback */
+        get: operations["signin_callback_auth_m365_signin_callback_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2141,6 +2192,25 @@ export interface components {
             /** Title En */
             title_en?: string | null;
         };
+        /** GuideNoteOut */
+        GuideNoteOut: {
+            /** En */
+            en: string;
+            /** Es */
+            es: string;
+            ref: components["schemas"]["GuideRef"];
+        };
+        /** GuideRef */
+        GuideRef: {
+            /** Edition */
+            edition: string;
+            /** Guide */
+            guide: string;
+            /** Page */
+            page: number;
+            /** Section */
+            section: string;
+        };
         /**
          * GuideReference
          * @description Where a guide says it: cited, never copied (requirement-register spec, issue 226).
@@ -2154,6 +2224,21 @@ export interface components {
             page: number;
             /** Section */
             section: string;
+        };
+        /** GuideStepOut */
+        GuideStepOut: {
+            /**
+             * Asset
+             * @enum {string}
+             */
+            asset: "information" | "service";
+            /** En */
+            en: string;
+            /** Es */
+            es: string;
+            /** Key */
+            key: string;
+            ref: components["schemas"]["GuideRef"];
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -2198,6 +2283,8 @@ export interface components {
              * Format: date-time
              */
             aware_at: string;
+            /** Classified At */
+            classified_at?: string | null;
             /** Personal Data */
             personal_data: boolean;
             /** Significant */
@@ -2212,6 +2299,8 @@ export interface components {
              * Format: date-time
              */
             aware_at: string;
+            /** Classified At */
+            classified_at: string | null;
             /** Clocks */
             clocks: components["schemas"]["ClockOut"][];
             /** Closed At */
@@ -2246,6 +2335,8 @@ export interface components {
              * Format: date-time
              */
             aware_at: string;
+            /** Classified At */
+            classified_at: string | null;
             /** Closed At */
             closed_at: string | null;
             /**
@@ -2460,6 +2551,9 @@ export interface components {
             scope_en: string;
             /** Scope Es */
             scope_es: string;
+            scope_guide?: components["schemas"]["ScopeGuide"] | null;
+            /** Scope Profiles */
+            scope_profiles?: components["schemas"]["ScopeProfile"][];
             /** Source Refs */
             source_refs: string[];
             /** Summary En */
@@ -2473,6 +2567,16 @@ export interface components {
              * Format: date
              */
             verified_on: string;
+        };
+        /**
+         * PageReference
+         * @description A section and page of the profile's own guide (its first reference).
+         */
+        PageReference: {
+            /** Page */
+            page: number;
+            /** Section */
+            section: string;
         };
         /** PolicyIn */
         PolicyIn: {
@@ -2524,8 +2628,31 @@ export interface components {
             /** Title Es */
             title_es: string;
         };
+        /**
+         * ProfileOut
+         * @description A pack's scope profile as the scope step offers it (requirement-register spec).
+         */
+        ProfileOut: {
+            /** Key */
+            key: string;
+            /** Refs */
+            refs: components["schemas"]["GuideRef"][];
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed On */
+            reviewed_on: string | null;
+            /** Summary En */
+            summary_en: string;
+            /** Summary Es */
+            summary_es: string;
+            /** Title En */
+            title_en: string;
+            /** Title Es */
+            title_es: string;
+        };
         /** ProposalOut */
         ProposalOut: {
+            criterion?: components["schemas"]["GuideRef"] | null;
             /**
              * Decision
              * @enum {string}
@@ -2535,6 +2662,7 @@ export interface components {
             level: string | null;
             /** Rule */
             rule: string | null;
+            source?: components["schemas"]["GuideRef"] | null;
         };
         /** PublicCampaign */
         PublicCampaign: {
@@ -2568,8 +2696,11 @@ export interface components {
             groups_es: components["schemas"]["GroupTitle"][];
             /** Items */
             items: components["schemas"]["RegisterItem"][];
+            /** Profiles */
+            profiles: components["schemas"]["ProfileOut"][];
             review: components["schemas"]["AssessmentReviewOut"] | null;
             scope: components["schemas"]["ScopeOut"] | null;
+            scope_guide: components["schemas"]["ScopeGuideOut"] | null;
             /** Term Labels */
             term_labels: components["schemas"]["TermLabelOut"][];
         };
@@ -2625,7 +2756,9 @@ export interface components {
         /**
          * ReportingClock
          * @description A reporting deadline copied from the official text (recorded-routines spec). It starts when
-         *     the organization became aware of the incident, or when the clock named in `after` was met.
+         *     the organization became aware of the incident, when it classified the incident as significant
+         *     (`starts: classified`), or when the clock named in `after` was met. A classified clock may
+         *     keep an outer limit in hours from awareness, which lapses when classification is later.
          */
         ReportingClock: {
             /** After */
@@ -2641,8 +2774,16 @@ export interface components {
              * @enum {string}
              */
             needs: "significant" | "personal_data";
+            /** Outer Limit Hours */
+            outer_limit_hours?: number | null;
             /** Requirement */
             requirement: string;
+            /**
+             * Starts
+             * @default aware
+             * @enum {string}
+             */
+            starts: "aware" | "classified";
             /** Title En */
             title_en: string;
             /** Title Es */
@@ -2846,6 +2987,77 @@ export interface components {
              */
             status: "queued" | "running" | "collected" | "succeeded" | "partial" | "failed" | "blocked";
         };
+        /**
+         * ScopeGuide
+         * @description How to value the system before recording the scope (requirement-register spec, issue 225):
+         *     ordered steps on the pack's dimension axis, and the category each level leads to.
+         */
+        ScopeGuide: {
+            /** Axis */
+            axis: string;
+            /** Category Axis */
+            category_axis: string;
+            /** Category By Level */
+            category_by_level: {
+                [key: string]: string;
+            };
+            /** Notes */
+            notes?: components["schemas"]["ScopeGuideNote"][];
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed On */
+            reviewed_on?: string | null;
+            /** Steps */
+            steps: components["schemas"]["ScopeGuideStep"][];
+        };
+        /** ScopeGuideNote */
+        ScopeGuideNote: {
+            /** En */
+            en: string;
+            /** Es */
+            es: string;
+            ref: components["schemas"]["GuideReference"];
+        };
+        /**
+         * ScopeGuideOut
+         * @description How to value the system, from the pack (requirement-register spec, issue 225).
+         */
+        ScopeGuideOut: {
+            /** Axis */
+            axis: string;
+            /** Category Axis */
+            category_axis: string;
+            /** Category By Level */
+            category_by_level: {
+                [key: string]: string;
+            };
+            /** Notes */
+            notes: components["schemas"]["GuideNoteOut"][];
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed On */
+            reviewed_on: string | null;
+            /** Steps */
+            steps: components["schemas"]["GuideStepOut"][];
+        };
+        /**
+         * ScopeGuideStep
+         * @description One valuation question: an asset type and one dimension key, in Atesta's own words.
+         */
+        ScopeGuideStep: {
+            /**
+             * Asset
+             * @enum {string}
+             */
+            asset: "information" | "service";
+            /** En */
+            en: string;
+            /** Es */
+            es: string;
+            /** Key */
+            key: string;
+            ref: components["schemas"]["GuideReference"];
+        };
         /** ScopeIn */
         ScopeIn: {
             /** Axis Values */
@@ -2871,6 +3083,38 @@ export interface components {
              * Format: uuid
              */
             decided_by: string;
+        };
+        /**
+         * ScopeProfile
+         * @description A published compliance profile as a scope option (requirement-register spec, issue 227):
+         *     one value per requirement of the pack, a level or `n.a.`. The guide is cited, never copied.
+         *     A candidate until the owner signs it, like expected evidence.
+         */
+        ScopeProfile: {
+            /** Criteria */
+            criteria?: {
+                [key: string]: components["schemas"]["PageReference"];
+            };
+            /** Key */
+            key: string;
+            /** Levels */
+            levels: {
+                [key: string]: string;
+            };
+            /** Refs */
+            refs: components["schemas"]["GuideReference"][];
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed On */
+            reviewed_on?: string | null;
+            /** Summary En */
+            summary_en: string;
+            /** Summary Es */
+            summary_es: string;
+            /** Title En */
+            title_en: string;
+            /** Title Es */
+            title_es: string;
         };
         /** SearchResult */
         SearchResult: {
@@ -3011,6 +3255,8 @@ export interface components {
         };
         /** UpdateIn */
         UpdateIn: {
+            /** Classified At */
+            classified_at?: string | null;
             /** Clock */
             clock?: string | null;
             kind: components["schemas"]["UpdateKind"];
@@ -3021,9 +3267,11 @@ export interface components {
             note: string;
         };
         /** @enum {string} */
-        UpdateKind: "note" | "clock" | "closed";
+        UpdateKind: "note" | "clock" | "closed" | "classified";
         /** UpdateOut */
         UpdateOut: {
+            /** Classified At */
+            classified_at?: string | null;
             /** Clock */
             clock: string | null;
             kind: components["schemas"]["UpdateKind"];
@@ -3652,6 +3900,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ConnectionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    start_signin_api_v1_orgs__org_id__connections__connection_id__m365_signin_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                connection_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -5332,6 +5612,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    consent_callback_auth_m365_consent_callback_get: {
+        parameters: {
+            query?: {
+                state?: string;
+                tenant?: string;
+                admin_consent?: string;
+                error?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    signin_callback_auth_m365_signin_callback_get: {
+        parameters: {
+            query?: {
+                code?: string;
+                state?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

@@ -2,8 +2,11 @@
 
 import { useFormatter, useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useId, useState } from "react";
+import { ApiError } from "@/lib/api/hooks";
+import { messageKey } from "@/lib/api/errors";
 import { useAcknowledge, useTrainingLink } from "@/lib/api/routines";
 import { ErrorMessage } from "./error-message";
+import { LinkProblem } from "./public-header";
 import { Icon } from "./icons";
 
 export const TRAINING_KEY = "atesta_training:v1";
@@ -42,6 +45,7 @@ export function captureTrainingToken(): string | null {
 
 export function TrainingConfirm() {
   const t = useTranslations("trainingLink");
+  const errors = useTranslations();
   const format = useFormatter();
   const [token, setToken] = useState<string | null | undefined>(undefined);
   // Browser-only state (the fragment), read once after hydration.
@@ -50,9 +54,14 @@ export function TrainingConfirm() {
   const link = useTrainingLink(token ?? null);
   const acknowledge = useAcknowledge();
   const ids = { name: useId(), email: useId(), read: useId() };
-  if (token === null) return <p role="alert">{t("missing")}</p>;
+  if (token === null) return <LinkProblem title={t("unavailable")}>{t("missing")}</LinkProblem>;
   if (token === undefined || link.isPending) return <p role="status">{t("loading")}</p>;
-  if (link.isError) return <ErrorMessage error={link.error} />;
+  if (link.isError) {
+    // A refused link (4xx) is the link's problem, not a form error: a malformed token reads as invalid.
+    const error = link.error;
+    if (!(error instanceof ApiError) || error.status >= 500) return <ErrorMessage error={error} />;
+    return <LinkProblem title={t("unavailable")}>{errors(messageKey(error.status === 422 ? "compliance.training_link_invalid" : error.code))}</LinkProblem>;
+  }
   const campaign = link.data;
   function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();

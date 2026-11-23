@@ -324,6 +324,14 @@ property lock on, redirect URI `/auth/m365/consent-callback`) and "Atesta Sign-i
 `/auth/m365/signin-callback`). Redirect URIs are https, fixed and exactly registered; per-request
 data travels only in the sealed cookie.
 
+The Sign-in app redeems codes as a confidential web client, with PKCE and a client secret:
+Microsoft documents `client_secret` as "required for confidential web apps" (OAuth 2.0
+authorization code flow, read 2026-11-23, #314). Its secret can only redeem sign-in codes for an
+app with no permissions, so it is a secret, not a certificate. It is held in Secrets Manager,
+passed to the API as `ATESTA_M365_SIGNIN_CLIENT_SECRET` and rotated at least every 180 days; the
+Scanner app stays certificate only. With `ATESTA_M365_SIGNIN_CLIENT_ID`, the secret and
+`ATESTA_M365_SCANNER_CLIENT_ID` unset, onboarding answers 503 `connections.microsoft_unavailable`.
+
 1. An org admin creates the connection: `pending_setup`.
 2. `POST /api/v1/orgs/{org_id}/connections/{id}/m365/signin` seals {org_id, connection_id,
    user_id, `state` (32 random bytes), nonce, PKCE verifier} in an `atesta_m365` cookie (sealed as
@@ -333,15 +341,19 @@ data travels only in the sealed cookie.
 3. `GET /auth/m365/signin-callback` (session cookie; caller still admin+ of the sealed org) checks
    `state`, exchanges the code and validates the ID token (signature, audience, nonce, expiry,
    issuer for its `tid`). An ID token without `oid` or `tid` is rejected
-   (`connections.state_invalid`); `sub` is never used for the binding (it is pairwise per app). It
+   (`connections.signin_invalid`, as are a missing or other user's cookie and a wrong `state`;
+   `connections.state_invalid` keeps meaning a connection that no longer admits the change);
+   `sub` is never used for the binding (it is pairwise per app). It
    re-seals the cookie with `tid`, `oid` and a new `state`, then redirects to
    `https://login.microsoftonline.com/{tid}/adminconsent?client_id=<scanner app>&state=<new
    state>&redirect_uri=<registered>`.
 4. `GET /auth/m365/consent-callback` (same access) is accepted only with the sealed `state`,
    `admin_consent=True`, no `error`, and `tenant` equal to the sealed `tid`. Microsoft warns that
-   the callback's `tenant` can be forged, hence step 3. It stores `ms_tenant_id` and
-   `consented_by_oid` on `connections`, deletes the cookie (single use) and redirects to the
-   static connection page. Granting Graph application permissions needs Privileged Role
+   the callback's `tenant` can be forged, hence step 3. A refusal is `connections.consent_denied`
+   (`error` present or `admin_consent` not `True`) or `connections.tenant_mismatch` (another
+   tenant, or one other than the tenant pinned by an earlier verification). It stores
+   `ms_tenant_id` and `consented_by_oid` on `connections`, writes `connection.consent_granted`,
+   deletes the cookie (single use) and redirects to the static connection page. Granting Graph application permissions needs Privileged Role
    Administrator or a role with that right, such as Global Administrator.
 5. From PR 10 (D1): the screen shows the scanner Application ID and verified publisher, and guides
    the customer to assign Global Reader to the enterprise app whose Application ID matches. Portal
@@ -667,7 +679,8 @@ Audit events: `connection.created`, `connection.consent_granted`, `connection.ve
 `scan.blocked`.
 
 Error codes (ES and EN texts in the web i18n files): `connections.state_invalid`,
-`connections.consent_denied`, `connections.tenant_mismatch`, `connections.admin_not_verified`,
+`connections.consent_denied`, `connections.tenant_mismatch`, `connections.signin_invalid`,
+`connections.microsoft_unavailable`, `connections.admin_not_verified`,
 `connections.incomplete_permissions`, `connections.missing_directory_role`,
 `connections.over_privileged`, `connections.dwd_not_authorized`,
 `connections.subject_not_super_admin`, `connections.revoked`, `scanning.connection_not_active`,

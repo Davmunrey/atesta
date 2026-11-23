@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import hcl2
+import yaml
 
 INFRA = Path(__file__).resolve().parents[1]
 
@@ -170,14 +171,42 @@ def test_the_evidence_bucket_is_private_encrypted_versioned_and_tls_only() -> No
         == "BucketOwnerEnforced"
     )
     policy = load("modules/s3-evidence/main.tf")["data"]
-    deny = next(
-        b["aws_iam_policy_document"]["tls_only"] for b in policy if "aws_iam_policy_document" in b
+    document = next(
+        b["aws_iam_policy_document"]["bucket"] for b in policy if "aws_iam_policy_document" in b
     )
-    statement = deny["statement"][0]
+    statement = next(s for s in document["statement"] if s.get("sid") == "DenyInsecureTransport")
     assert (
         statement["effect"] == "Deny"
         and statement["condition"][0]["variable"] == "aws:SecureTransport"
     )
+
+
+def test_the_evidence_bucket_locks_every_version_for_a_year_in_governance_mode() -> None:
+    """#263, owner 2026-11-23: Object Lock in governance mode, 365 days by default."""
+    assert EVIDENCE["aws_s3_bucket.this"]["object_lock_enabled"] is True
+    lock = EVIDENCE["aws_s3_bucket_object_lock_configuration.this"]
+    retention = lock["rule"][0]["default_retention"][0]
+    assert (retention["mode"], retention["days"]) == ("GOVERNANCE", 365)
+    assert "${aws_s3_bucket_versioning.this}" in lock.get("depends_on", [])
+
+
+def test_no_principal_may_bypass_the_evidence_lock() -> None:
+    """An explicit deny in the bucket policy beats any allow, the deploy role's s3:* included.
+
+    Erasing locked evidence (a GDPR request) means changing this policy first, which CloudTrail
+    records (hosted-environment spec, Evidence bucket).
+    """
+    data = load("modules/s3-evidence/main.tf")["data"]
+    document = next(
+        b["aws_iam_policy_document"]["bucket"] for b in data if "aws_iam_policy_document" in b
+    )
+    deny = next(s for s in document["statement"] if s.get("sid") == "DenyGovernanceBypass")
+    assert deny["effect"] == "Deny"
+    assert deny["actions"] == ["s3:BypassGovernanceRetention"]
+    assert deny["principals"][0] == {"type": "*", "identifiers": ["*"]}
+    assert "condition" not in deny
+    policy = EVIDENCE["aws_s3_bucket_policy.this"]
+    assert policy["policy"] == "${data.aws_iam_policy_document.bucket.json}"
 
 
 def test_private_subnets_take_no_public_addresses_and_flow_logs_are_on() -> None:
@@ -193,9 +222,9 @@ RDS = resources("modules/rds/main.tf")
 RDS_VARS = {k: v for b in load("modules/rds/main.tf")["variable"] for k, v in b.items()}
 
 
-def test_the_database_is_postgres_16_encrypted_private_and_protected() -> None:
+def test_the_database_is_postgres_18_encrypted_private_and_protected() -> None:
     db = RDS["aws_db_instance.this"]
-    assert (db["engine"], db["engine_version"]) == ("postgres", "16")
+    assert (db["engine"], db["engine_version"]) == ("postgres", "18")
     assert db["storage_encrypted"] is True and db["kms_key_id"] == "${var.kms_key_arn}"
     assert db["publicly_accessible"] is False
     assert db["deletion_protection"] is True and db["skip_final_snapshot"] is False
@@ -220,8 +249,23 @@ def test_the_database_requires_tls_and_logs_without_statements() -> None:
     assert params["rds.force_ssl"] == "1"
     assert params["log_statement"] == "none"  # statements may carry customer data (rule 2)
     assert params["log_min_duration_statement"] == "-1"
+    # PostgreSQL 18 made log_connections a list; RDS documents this list as the old "1" (#299).
+    assert params["log_connections"] == "receipt,authentication,authorization"
     assert RDS["aws_cloudwatch_log_group.postgres"]["kms_key_id"] == "${var.logs_key_arn}"
     assert "retention_in_days" in RDS["aws_cloudwatch_log_group.postgres"]
+
+
+def test_rds_ci_and_compose_run_the_same_postgres_major() -> None:
+    """Engine major, parameter group family and the CI/compose image move together (#299)."""
+    db = RDS["aws_db_instance.this"]
+    group = RDS["aws_db_parameter_group.this"]
+    compose = yaml.safe_load((INFRA.parent / "compose.yaml").read_text())
+    image = compose["services"]["postgres"]["image"]
+    tag = image.split("@", 1)[0].split(":", 1)[1]
+    assert image.startswith("postgres:") and "@sha256:" in image
+    assert db["engine_version"] == tag.split(".")[0] == "18"
+    assert group["family"] == f"postgres{db['engine_version']}"
+    assert group["name"] == f"${{var.name}}-pg{db['engine_version']}"
 
 
 def test_only_the_application_security_group_reaches_the_database() -> None:

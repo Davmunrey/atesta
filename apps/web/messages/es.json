@@ -78,7 +78,9 @@
       "clock_unknown": "Ese plazo no se aplica a este incidente.",
       "clock_met": "Ese plazo ya está registrado.",
       "clock_waiting": "Ese plazo empieza cuando se registre el anterior.",
-      "report_month_invalid": "El mes no es válido o todavía no ha empezado."
+      "report_month_invalid": "El mes no es válido o todavía no ha empezado.",
+      "incident_classified": "Este incidente ya tiene registrada su clasificación como significativo.",
+      "classified_before_aware": "La clasificación no puede ser anterior a la constancia del incidente."
     },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
@@ -96,7 +98,11 @@
       "not_found": "No encontramos esa conexión, o no tienes acceso.",
       "over_privileged": "El escaneo se detuvo: la conexión tiene más permisos de los necesarios. Atesta solo usa permisos de lectura; retira los demás y vuelve a verificarla.",
       "revoked": "El escaneo se detuvo: se revocó el acceso de la conexión. Vuelve a conectarla para seguir escaneando.",
-      "state_invalid": "Esta conexión ya no admite ese cambio. Recarga la página."
+      "state_invalid": "Esta conexión ya no admite ese cambio. Recarga la página.",
+      "signin_invalid": "El inicio de sesión con Microsoft no es válido o ha caducado. Vuelve a empezar la conexión desde Atesta.",
+      "consent_denied": "No se concedió el consentimiento de administrador en Microsoft, así que la conexión no avanza. Vuelve a intentarlo con una cuenta de administrador global o de administrador de roles con privilegios.",
+      "tenant_mismatch": "Microsoft devolvió un inquilino distinto del de tu inicio de sesión, o de este enlace. No se ha guardado nada; vuelve a empezar con una cuenta del inquilino correcto.",
+      "microsoft_unavailable": "No podemos contactar con Microsoft en este momento, o la conexión con Microsoft 365 aún no está disponible aquí. Inténtalo de nuevo más tarde."
     },
     "identity": {
       "already_member": "Esta persona ya es miembro de la organización.",
@@ -211,6 +217,7 @@
     "accessOn": "Acceso hasta el {date}"
   },
   "invite": {
+    "unavailable": "Invitación no disponible",
     "title": "Únete a la organización",
     "signedInAs": "Vas a aceptar la invitación como {email}.",
     "accept": "Aceptar invitación",
@@ -526,7 +533,36 @@
     "overdue": "Vencida",
     "formerMember": "Antiguo miembro",
     "assignedOwner": "Asignada",
-    "exportDossier": "Abrir el dossier para el auditor"
+    "exportDossier": "Abrir el dossier para el auditor",
+    "profile": "Perfil de cumplimiento",
+    "profileNone": "Ninguno: proponer según la categoría y los niveles",
+    "profileHelp": "Si adoptáis un perfil publicado, Atesta propone cada medida según su declaración de aplicabilidad en lugar de las tablas por categoría.",
+    "profileSources": "Fuentes: {refs}.",
+    "profileCandidate": "Selección extraída por Atesta de la guía citada, pendiente de revisión cualificada.",
+    "profileAdopted": "Perfil adoptado: {title}.",
+    "proposalProfile": "Propuesta según el perfil adoptado: {decision} (<official>{rule}</official>; {reference}). Confírmala o justifica otra decisión.",
+    "proposalCriterion": "La guía da criterios propios para esta medida: {reference}.",
+    "guide": {
+      "title": "Valorar el sistema paso a paso",
+      "candidate": "Pasos redactados por Atesta a partir de la guía citada, pendientes de revisión cualificada. La valoración es vuestra.",
+      "reviewed": "Pasos redactados por Atesta a partir de la guía citada y revisados por {name}. La valoración es vuestra.",
+      "addInformation": "Añadir un tipo de información",
+      "addService": "Añadir un servicio",
+      "name": {
+        "information": "Nombre del tipo de información",
+        "service": "Nombre del servicio"
+      },
+      "unnamed": {
+        "information": "Información {number}",
+        "service": "Servicio {number}"
+      },
+      "notAssigned": "Sin nivel (N/A)",
+      "remove": "Quitar «{name}»",
+      "empty": "Añade la información y los servicios del sistema y valóralos para ver el resultado.",
+      "result": "Resultado: {levels}. Categoría: {category}.",
+      "apply": "Usar estos niveles",
+      "applied": "Niveles copiados al alcance. Revísalos y guarda el alcance."
+    }
   },
   "insights": {
     "title": "Evolución",
@@ -578,6 +614,7 @@
       "control_reviewed": "Revisó un control",
       "evidence_statement_recorded": "Registró una evidencia",
       "connection_created": "Creó una conexión",
+      "connection_consent_granted": "Concedió el consentimiento de Microsoft 365",
       "connection_disconnected": "Desconectó una conexión",
       "scan_requested": "Solicitó un análisis",
       "access_review_created": "Abrió una revisión de accesos",
@@ -876,17 +913,26 @@
       "kind": {
         "note": "Anotación",
         "clock": "Aviso enviado: {clock}",
-        "closed": "Incidente cerrado"
+        "closed": "Incidente cerrado",
+        "classified": "Clasificado como significativo el {time}"
       },
       "flags": "Características",
       "noFlags": "Ni significativo ni con datos personales",
       "criteria": "Qué dice {framework}: {title}",
       "criteriaGroup": "Qué dice {framework} ({count, plural, one {# criterio} other {# criterios}})",
       "criteriaSource": "Ver en la fuente oficial",
-      "sentWhich": ": «{clock}»"
+      "sentWhich": ": «{clock}»",
+      "classifiedAt": "Clasificado como significativo",
+      "classifiedHelp": "Cuándo lo clasificasteis como significativo (grave). Algunos plazos cuentan desde ese momento, como la notificación inicial de DORA.",
+      "classified": "clasificado como significativo el {time}",
+      "classificationMissing": "falta cuándo se clasificó como significativo",
+      "classify": "Registrar la clasificación",
+      "classifyTitle": "Clasificación como significativo",
+      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registréis."
     }
   },
   "trainingLink": {
+    "unavailable": "Formación no disponible",
     "loading": "Cargando…",
     "missing": "Falta el enlace de la formación. Ábrelo tal como te lo enviaron.",
     "heading": "Confirmar la lectura",

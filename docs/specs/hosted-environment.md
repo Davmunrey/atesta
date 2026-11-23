@@ -19,10 +19,19 @@ happen now, at no cost. Applying it is the owner's decision.
     subnets, and nothing in them takes inbound traffic from the internet. Outbound access is
     either through VPC endpoints for AWS services or through a NAT gateway; the choice is
     recorded with its cost.
-  - **`rds`:** PostgreSQL 16, encrypted with the database key, not publicly accessible, TLS
-    required. Backups are kept 14 days in dev and 35 in prod; prod is Multi-AZ. The database
-    roles follow `bootstrap.sql` (`atesta_owner` for migrations, `atesta_app` for runtime).
-    A one-off `bootstrap` task (API image, `python -m atesta_api.platform.db_bootstrap`) runs
+  - **`rds`:** PostgreSQL 18, the newest major Amazon RDS offers in eu-south-2 (#299; checked
+    2026-11-23 in the [RDS for PostgreSQL release calendar](https://docs.aws.amazon.com/AmazonRDS/latest/PostgreSQLReleaseNotes/postgresql-release-calendar.html),
+    newest minor 18.6, and the [Multi-AZ DB cluster Region table](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RDS_Fea_Regions_DB-eng.Feature.MultiAZDBClusters.html),
+    "Europe (Spain): All PostgreSQL 18 versions"; 19 is only in the Database Preview
+    environment). Parameter group family `postgres18`. Encrypted with the database key, not
+    publicly accessible, TLS required (`rds.force_ssl` 1). Statements are never logged
+    (`log_statement` none, `log_min_duration_statement` -1). Connections are logged with
+    `log_connections` = `receipt,authentication,authorization`: PostgreSQL 18 turned the boolean
+    into a list, and RDS documents that list as the old `1`. CI and `compose.yaml` run the same
+    major (`postgres:18.6`, pinned by digest), and a test keeps the RDS major, the parameter group
+    family and the image major equal. Backups are kept 14 days in dev and 35 in prod; prod is
+    Multi-AZ. The database roles follow `bootstrap.sql` (`atesta_owner` for migrations,
+    `atesta_app` for runtime). A one-off `bootstrap` task (API image, `python -m atesta_api.platform.db_bootstrap`) runs
     `bootstrap.sql` as the RDS master user and gives each role LOGIN with the password in its
     own connection-URL secret. The master password reaches the task only as an ECS secret (the
     `password` key of the RDS-managed secret). The task prints role names only, never a password
@@ -45,6 +54,22 @@ happen now, at no cost. Applying it is the owner's decision.
       (web-shell spec).
   - **`s3-evidence`:** private and encrypted with its key. Versioning is on and public access is
     blocked. Keys use the `<organization_id>/` prefix that the evidence model already checks.
+    - Object Lock (owner, 2026-11-23, #263): every object version is retained 365 days in
+      governance mode by default. A lifecycle expiration cannot delete a locked version (AWS,
+      "Managing S3 Lifecycle policies with Object Lock"), so replaced versions live at least that
+      long; the 90-day noncurrent rule applies after.
+    - The bucket policy denies `s3:BypassGovernanceRetention` to every principal. The deploy
+      role's `s3:*` on the environment's buckets therefore cannot remove a locked version. Erasing
+      one (a GDPR request, a customer leaving) is an owner step: change the bucket policy, delete
+      with the `x-amz-bypass-governance-retention` header, restore the policy. CloudTrail records
+      each step.
+    - Residual, accepted with governance mode: whoever can change the bucket policy (the owner,
+      the apply role) can lift the lock. Compliance mode would close that and would also block
+      GDPR erasure for the retention period.
+    - Every read, download or export of a stored evidence file recomputes its sha256 and refuses
+      a mismatch with a stable error code and an audit event, never serving the file. Ingest
+      already checks each scan output against its manifest; the first other read path is
+      evidence uploads (#222), which carries this rule as an acceptance criterion.
   - **`ses`:** a sending identity for notification email. Where it sits is decided by ADR-007
     amendment 1.
 - [ ] **Environments:** `infra/envs/prod` mirrors `dev` with prod sizes. Each has its own state
