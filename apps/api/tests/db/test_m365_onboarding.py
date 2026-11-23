@@ -3,7 +3,8 @@
 Test plan row "M365 onboarding with a fake identity provider": missing, expired or other-user
 cookie; wrong state; a refused ID token; admin_consent not True; error present; tenant different
 from the signed-in tid: each refused with its code; the happy path stores the tenant and the
-consenting admin, once.
+consenting admin, once. The callbacks are browser navigations, so a refusal redirects to the web
+connections page with its code (web-connections spec, #366).
 """
 
 import logging
@@ -91,6 +92,19 @@ def code_of(response: Any) -> tuple[int, str]:
     return response.status_code, response.json()["detail"]["code"]
 
 
+PAGE = "https://app.example.com/app/connections"
+
+
+def refused(response: Any) -> dict[str, str]:
+    """A callback refusal: 302 to the connections page, the cookie deleted; its query."""
+    assert response.status_code == 302, response.text
+    location = response.headers["location"]
+    assert location.split("?")[0] == PAGE
+    cookie = response.headers.get("set-cookie", "")
+    assert cookie.startswith("atesta_m365=") and "Max-Age=0" in cookie  # a retry starts afresh
+    return {k: v[0] for k, v in parse_qs(urlsplit(location).query).items()}
+
+
 def stored(superuser: Engine, connection: object) -> tuple[str | None, str | None]:
     with superuser.connect() as conn:
         row = conn.execute(
@@ -126,7 +140,7 @@ def test_an_admin_signs_in_then_consents_and_the_tenant_is_bound_once(
     assert stored(superuser, made["id"]) == (TENANT, OID)
     assert events(superuser, org, "connection.consent_granted") == 1
     replay = consent(client, subs["adm"], second_state)  # the cookie was single use
-    assert code_of(replay) == (400, "connections.signin_invalid")
+    assert refused(replay) == {"error": "connections.signin_invalid"}
     assert microsoft.sign_ins[0]["code"] == CODE
     # The test client logs the requests it sends (httpx, https://testserver/...): in production
     # the browser sends them. Every server-side record must hold no code and no state.
@@ -163,14 +177,14 @@ def test_a_missing_cookie_a_wrong_state_or_another_users_cookie_is_refused(
 ) -> None:
     org, subs = org_with(client, superuser, other="admin")
     made = create(client, org, subs["owner"])
+    invalid = {"error": "connections.signin_invalid"}  # no org: the caller was never checked
+    start(client, org, subs["owner"], made["id"])
+    assert refused(signin(client, subs["owner"], "wrong-state")) == invalid
     state = start(client, org, subs["owner"], made["id"])
-    assert code_of(signin(client, subs["owner"], "wrong-state")) == (
-        400,
-        "connections.signin_invalid",
-    )
-    assert code_of(signin(client, subs["other"], state)) == (400, "connections.signin_invalid")
+    assert refused(signin(client, subs["other"], state)) == invalid
+    state = start(client, org, subs["owner"], made["id"])
     client.cookies.clear()
-    assert code_of(signin(client, subs["owner"], state)) == (400, "connections.signin_invalid")
+    assert refused(signin(client, subs["owner"], state)) == invalid
     assert microsoft.sign_ins == []  # nothing reached Microsoft
 
 
@@ -179,20 +193,19 @@ def test_a_refused_id_token_and_an_outage_have_their_own_codes(
 ) -> None:
     org, subs = org_with(client, superuser)
     made = create(client, org, subs["owner"])
-    refused = signin(
-        client, subs["owner"], start(client, org, subs["owner"], made["id"]), "refused"
-    )
-    assert code_of(refused) == (400, "connections.signin_invalid")
+    here = {"org": org, "connection": made["id"]}
+    bad = signin(client, subs["owner"], start(client, org, subs["owner"], made["id"]), "refused")
+    assert refused(bad) == {**here, "error": "connections.signin_invalid"}
     down = signin(client, subs["owner"], start(client, org, subs["owner"], made["id"]), "down")
-    assert code_of(down) == (503, "connections.microsoft_unavailable")
+    assert refused(down) == {**here, "error": "connections.microsoft_unavailable"}
 
 
 @pytest.mark.parametrize(
     ("overrides", "expected"),
     [
-        ({"error": "access_denied"}, (400, "connections.consent_denied")),
-        ({"admin_consent": "False"}, (400, "connections.consent_denied")),
-        ({"tenant": "99999999-2222-4333-8444-555555555555"}, (409, "connections.tenant_mismatch")),
+        ({"error": "access_denied"}, "connections.consent_denied"),  # the admin selected Cancel
+        ({"admin_consent": "False"}, "connections.consent_denied"),
+        ({"tenant": "99999999-2222-4333-8444-555555555555"}, "connections.tenant_mismatch"),
     ],
 )
 def test_a_denied_or_forged_consent_stores_nothing(
@@ -200,15 +213,30 @@ def test_a_denied_or_forged_consent_stores_nothing(
     superuser: Engine,
     microsoft: FakeMicrosoft,
     overrides: dict[str, str],
-    expected: tuple[int, str],
+    expected: str,
 ) -> None:
     org, subs = org_with(client, superuser)
     made = create(client, org, subs["owner"])
     redirected = signin(client, subs["owner"], start(client, org, subs["owner"], made["id"]))
     response = consent(client, subs["owner"], state_of(redirected.headers["location"]), **overrides)
-    assert code_of(response) == expected
+    assert refused(response) == {"org": org, "connection": made["id"], "error": expected}
     assert stored(superuser, made["id"]) == (None, None)
     assert events(superuser, org, "connection.consent_granted") == 0
+
+
+def test_nothing_microsoft_sends_is_reflected_in_the_redirect(
+    client: TestClient, superuser: Engine, microsoft: FakeMicrosoft
+) -> None:
+    org, subs = org_with(client, superuser)
+    made = create(client, org, subs["owner"])
+    redirected = signin(client, subs["owner"], start(client, org, subs["owner"], made["id"]))
+    state = state_of(redirected.headers["location"])
+    response = consent(
+        client, subs["owner"], state, error="access_denied", error_description="AADSTS65004 x<y"
+    )
+    location = response.headers["location"]
+    assert "AADSTS" not in location and "access_denied" not in location and state not in location
+    assert refused(response)["error"] == "connections.consent_denied"
 
 
 def test_the_consent_must_match_the_tenant_pinned_by_an_earlier_verification(
@@ -226,7 +254,11 @@ def test_the_consent_must_match_the_tenant_pinned_by_an_earlier_verification(
         )
     redirected = signin(client, subs["owner"], start(client, org, subs["owner"], made["id"]))
     response = consent(client, subs["owner"], state_of(redirected.headers["location"]))
-    assert code_of(response) == (409, "connections.tenant_mismatch")
+    assert refused(response) == {
+        "org": org,
+        "connection": made["id"],
+        "error": "connections.tenant_mismatch",
+    }
 
 
 def test_a_member_cannot_start_and_a_demoted_admin_cannot_finish(
@@ -247,7 +279,7 @@ def test_a_member_cannot_start_and_a_demoted_admin_cannot_finish(
             ),
             {"o": org, "s": subs["adm"]},
         )
-    assert code_of(signin(client, subs["adm"], state)) == (403, "identity.forbidden")
+    assert refused(signin(client, subs["adm"], state)) == {"error": "identity.forbidden"}
 
 
 def test_only_an_m365_connection_still_onboarding_can_start(
