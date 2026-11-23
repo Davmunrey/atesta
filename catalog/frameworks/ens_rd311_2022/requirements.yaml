@@ -34,6 +34,24 @@ requirements:
       rule: aplica
     section: '3.1'
     source_sha256: 45d412b60c19b61890bc913c03d14916f1c63fe6279cfa933e8e3c89ee2c530b
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Política de seguridad aprobada que recoge lo que exige la medida.
+        en: Approved security policy covering what the measure requires.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.1), page: 18}
+      - es: Prueba de que la política se publicó y se dio a conocer dentro de la organización.
+        en: Proof the policy was published and shared internally.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.1), page: 18}
+      - es: Registro de la legislación aplicable y cómo se mantiene al día.
+        en: A register of applicable law and how it is kept current.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.1), page: 18}
+      - es: 'Actas del comité de seguridad: constitución, altas y bajas de miembros.'
+        en: 'Security committee minutes: set-up, members joining and leaving.'
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.1), page: 18}
+      - es: Firma de cada rol de seguridad y de cada miembro del comité aceptando su función.
+        en: Signed acceptance of security roles and committee membership.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.1), page: 18}
 - id: org.2
   title_es: Normativa de seguridad
   title_en: null
@@ -67,6 +85,18 @@ requirements:
       rule: aplica
     section: '3.2'
     source_sha256: d0b6231a87b27dec8b816233bd61a363e62e3f2d8173943fc14e310dccbcd5af
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Normas internas de seguridad con el contenido que pide la medida.
+        en: Internal security rules with the content the measure asks for.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.2), page: 20}
+      - es: Constancia de que empleados y colaboradores las han aceptado.
+        en: Record that staff and contractors accepted them.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.2), page: 20}
+      - es: Constancia de qué guías CCN-STIC se siguieron al redactarlas.
+        en: Record of which CCN-STIC guides were followed to draft them.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.2), page: 20}
 - id: org.3
   title_es: Procedimientos de seguridad
   title_en: null
@@ -116,6 +146,21 @@ requirements:
       rule: aplica
     section: '3.3'
     source_sha256: 883e594ce07a554238eeaa65fbd20a9091aa324bf998731cb5702eb155489e89
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Procedimientos de seguridad aprobados.
+        en: Approved security procedures.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.3), page: 21}
+      - es: Prueba de que llegaron a quien debe aplicarlos.
+        en: Proof they reached the people who apply them.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.3), page: 21}
+      - es: Procedimiento para tratar la información según su nivel de seguridad.
+        en: A procedure for handling information by its security level.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.3), page: 21}
+      - es: Validación por la autoridad competente cuando corresponda.
+        en: Validation by the competent authority where required.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.3), page: 21}
 - id: org.4
   title_es: Proceso de autorización
   title_en: null
@@ -157,6 +202,18 @@ requirements:
       rule: aplica
     section: '3.4'
     source_sha256: 4df1b397e8cd8704165fe23ad1e7c6ab3ed7a7ce57d06b3296c0b542e8fc122c
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Registros de las autorizaciones concedidas, por tipo.
+        en: Records of authorizations granted, by type.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.4), page: 22}
+      - es: Solicitudes de autorización en la herramienta de tickets, si se usa una.
+        en: Authorization requests in the ticketing tool, if one is used.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.4), page: 22}
+      - es: Lista de personas autorizadas a llevar soportes de información de forma habitual.
+        en: List of people allowed to carry information media routinely.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.1 (org.4), page: 22}
 - id: op.pl.1
   title_es: Análisis de riesgos
   title_en: null
@@ -214,6 +271,24 @@ requirements:
       rule: + R2
     section: 4.1.1
     source_sha256: bb383446e55807616f0148d6c60f9890c6b9cd89aa438a40d5f1065a3d99380a
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Metodología de análisis de riesgos y herramienta utilizada.
+        en: Risk analysis methodology and the tool used.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.1), page: 24}
+      - es: Último análisis completo, con su fecha de cierre.
+        en: The latest complete analysis and the date it closed.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.1), page: 24}
+      - es: Valoración de activos, amenazas identificadas y riesgo inicial y residual.
+        en: Asset valuation, identified threats, and initial and residual risk.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.1), page: 24}
+      - es: Umbral de riesgo aceptable y plan de tratamiento con las salvaguardas elegidas.
+        en: Acceptable risk threshold and the treatment plan with chosen safeguards.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.1), page: 24}
+      - es: Presentación al comité y aprobación formal, con la aceptación del riesgo residual.
+        en: Committee briefing and formal approval, including acceptance of residual risk.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.1), page: 24}
 - id: op.pl.2
   title_es: Arquitectura de seguridad
   title_en: null
@@ -259,6 +334,24 @@ requirements:
       rule: +R1+R2+R3
     section: 4.1.2
     source_sha256: e26f867186cc28bbf9537c81d7110e4f5bc391b304cb6faacb028ecf22e54f0a
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Planos del CPD y de las salas técnicas con sus instalaciones.
+        en: Plans of the data centre and technical rooms with their facilities.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.2), page: 26}
+      - es: Diagramas de red con comunicaciones y líneas de defensa, y documentos de arquitectura.
+        en: Network diagrams with links and lines of defence, and architecture documents.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.2), page: 26}
+      - es: Índice de la documentación del sistema de gestión y reglas para mantenerla.
+        en: List of management system documents and how they are managed.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.2), page: 26}
+      - es: Informes de auditorías internas y seguimiento de sus acciones correctivas y de mejora.
+        en: Internal audit reports and follow-up of corrective and improvement actions.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.2), page: 26}
+      - es: Controles técnicos que validan entradas, procesos intermedios y salidas.
+        en: Technical checks that validate inputs, intermediate processing and outputs.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.2), page: 26}
 - id: op.pl.3
   title_es: Adquisición de nuevos componentes
   title_en: null
@@ -290,6 +383,21 @@ requirements:
       rule: aplica
     section: 4.1.3
     source_sha256: cad004654b16daa5ebfd3b32cd9b7e69803db63b4da4373672636b4c0bb647f6
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Descripción del proceso de compras.
+        en: Description of the purchasing process.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.3), page: 28}
+      - es: Compras recientes coherentes con la arquitectura, incluida la formación necesaria.
+        en: Recent purchases consistent with the architecture, including any training needed.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.3), page: 28}
+      - es: Compras vinculadas al análisis de riesgos o a su plan de tratamiento.
+        en: Purchases linked to the risk analysis or its treatment plan.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.3), page: 28}
+      - es: En el sector público, pliegos técnicos y administrativos de las últimas contrataciones.
+        en: In the public sector, technical and administrative tender documents of recent procurements.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.3), page: 28}
 - id: op.pl.4
   title_es: Dimensionamiento / gestión de la capacidad
   title_en: null
@@ -331,6 +439,21 @@ requirements:
       rule: + R1
     section: 4.1.4
     source_sha256: e240e67edb1eae3eebb9ced276b04a883f22bb7a72e4d45d906338a767d0b9f1
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Estudio de capacidad previo a la puesta en marcha.
+        en: Capacity study done before go-live.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.4), page: 29}
+      - es: Compras dimensionadas según ese estudio.
+        en: Purchases sized according to that study.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.4), page: 29}
+      - es: Plan de capacidad vigente.
+        en: Current capacity plan.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.4), page: 29}
+      - es: Herramientas que vigilan el uso de la capacidad.
+        en: Tools that monitor capacity use.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.4), page: 29}
 - id: op.pl.5
   title_es: Componentes certificados
   title_en: null
@@ -370,6 +493,21 @@ requirements:
       rule: aplica
     section: 4.1.5
     source_sha256: 39d7583087301aac684e05c08587eafb8276ce7f8d62c8ed5078eea0b57a9014
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Productos incluidos en el catálogo CPSTIC (cualificados o aprobados).
+        en: Products listed in the CPSTIC catalogue (qualified or approved).
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.5), page: 30}
+      - es: Otras certificaciones reconocidas del producto o servicio.
+        en: Other recognised certifications of the product or service.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.5), page: 30}
+      - es: Aprobación TEMPEST cuando proceda.
+        en: TEMPEST approval where relevant.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.5), page: 30}
+      - es: Lista de componentes software del producto.
+        en: List of the product's software components.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.1 (op.pl.5), page: 30}
 - id: op.acc.1
   title_es: Identificación
   title_en: null
@@ -425,6 +563,18 @@ requirements:
       rule: + R1
     section: 4.2.1
     source_sha256: e42a56f7d0f7cb70a3920f8988ff421e1255092822c7ae3a701b9b0cd5cbd676
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Cómo se identifica a cada usuario, y prueba de que ningún identificador se repite.
+        en: How each user is identified, and proof identifiers are unique.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.1), page: 32}
+      - es: Procedimiento de bajas y cómo se deshabilitan las cuentas hasta borrarlas.
+        en: Leaver procedure and how accounts are disabled until deleted.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.1), page: 32}
+      - es: Listas de usuarios por recurso, al día.
+        en: Up-to-date user lists per resource.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.1), page: 32}
 - id: op.acc.2
   title_es: Requisitos de acceso
   title_en: null
@@ -464,6 +614,18 @@ requirements:
       rule: + R1
     section: 4.2.2
     source_sha256: 8055c7c149ce9b0046470b643e7382a16d3e738ccb56f11353c09ec40c525636
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Mecanismos que protegen cada recurso y su responsable asignado.
+        en: Mechanisms protecting each resource, and its assigned owner.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.2), page: 34}
+      - es: Reglas que deciden quién entra en cada recurso.
+        en: Access criteria for the resources.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.2), page: 34}
+      - es: Atributos de seguridad de usuarios y grupos, con privilegios ajustados a cada persona.
+        en: Security attributes of users and groups, with privileges fitted to each person.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.2), page: 34}
 - id: op.acc.3
   title_es: Segregación de funciones y tareas
   title_en: null
@@ -507,6 +669,18 @@ requirements:
       rule: + R1
     section: 4.2.3
     source_sha256: 7ed8adc01279c1d04740fddf8e5cb385f24dcd9edb0da4a48fa139603a9af54c
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Organigrama que muestra la separación de funciones.
+        en: Organization chart showing separation of duties.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.3), page: 35}
+      - es: Cuentas con privilegios de auditoría y cómo se controlan.
+        en: Accounts with audit privileges and how they are controlled.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.3), page: 35}
+      - es: Administración permitida solo desde equipos concretos.
+        en: Administration allowed only from designated devices.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.3), page: 35}
 - id: op.acc.4
   title_es: Proceso de gestión de derechos de acceso
   title_en: null
@@ -542,6 +716,18 @@ requirements:
       rule: aplica
     section: 4.2.4
     source_sha256: e0a42206ac88baa1575e76cf17b5ff6132d292ed757b633a45b63f173f330168
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Revisiones periódicas de los permisos de acceso.
+        en: Periodic reviews of access permissions.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.4), page: 36}
+      - es: Concesiones y retiradas de acceso hechas por personal autorizado.
+        en: Access granted and removed by authorised staff.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.4), page: 36}
+      - es: Políticas de control de acceso y de acceso remoto, si existen.
+        en: Access control and remote access policies, if any.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.4), page: 36}
 - id: op.acc.5
   title_es: Mecanismo de autenticación (usuarios externos)
   title_en: null
@@ -627,6 +813,24 @@ requirements:
       rule: + [R2 o R3 o R4] + R5
     section: 4.2.5
     source_sha256: 0a2a367ae49bd190a373a50fad7e97ffff5ebce67a97f3df8bd66c85500503d4
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Entrega de credenciales con acuse de recibo, y retirada cuando dejan de usarse.
+        en: Credentials handed over with acknowledgement, and withdrawn when no longer used.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.5), page: 37}
+      - es: Configuración que limita intentos, exige complejidad y obliga a cambiar credenciales.
+        en: Settings that limit attempts, enforce complexity and force credential changes.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.5), page: 37}
+      - es: Contraseñas de un solo uso o certificados cualificados protegidos por un segundo factor.
+        en: One-time passwords, or qualified certificates protected by a second factor.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.5), page: 37}
+      - es: Registro de accesos correctos y fallidos, y aviso al usuario de su último acceso.
+        en: Log of successful and failed sign-ins, and the user told of their last access.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.5), page: 37}
+      - es: Puntos que piden volver a autenticarse y suspensión de credenciales sin uso.
+        en: Points that require re-authentication, and suspension of unused credentials.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.5), page: 37}
 - id: op.acc.6
   title_es: Mecanismo de autenticación (usuarios de la organización)
   title_en: null
@@ -728,6 +932,24 @@ requirements:
       rule: + [R1 o R2 o R3 o R4] + R5 + R6 + R7 + R8 + R9
     section: 4.2.6
     source_sha256: 7420ae3b47c5e3952e6eb63a62d7d59c80510fd0f03f3dfe2f239a4ca597cf08
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Entrega, aceptación y retirada de credenciales.
+        en: Issuing, acceptance and withdrawal of credentials.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.6), page: 40}
+      - es: Configuración que limita intentos y obliga a cambiar credenciales.
+        en: Settings that limit attempts and force credential changes.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.6), page: 40}
+      - es: Doble factor de autenticación activo.
+        en: Two-factor authentication in place.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.6), page: 40}
+      - es: Registros de acceso y aviso al usuario de su último acceso.
+        en: Access logs, and the user told of their last access.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.6), page: 40}
+      - es: Acceso remoto autorizado expresamente, cifrado, registrado y cortado fuera del horario fijado.
+        en: Remote access explicitly authorised, encrypted, logged and disabled outside agreed hours.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.2 (op.acc.6), page: 40}
 - id: op.exp.1
   title_es: Inventario de activos
   title_en: null
@@ -769,6 +991,18 @@ requirements:
       rule: aplica
     section: 4.3.1
     source_sha256: 4f419f8a74edcba1e283e1b41d7a05d0e02d262fe74e736f47486686acf95014
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Inventario de activos con un responsable por activo.
+        en: Asset inventory with an owner for each asset.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.1), page: 43}
+      - es: Revisiones periódicas del inventario.
+        en: Periodic reviews of the inventory.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.1), page: 43}
+      - es: Herramienta que descubre los activos y sus dependencias.
+        en: A tool that discovers assets and maps their dependencies.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.1), page: 43}
 - id: op.exp.2
   title_es: Configuración de seguridad
   title_en: null
@@ -812,6 +1046,18 @@ requirements:
       rule: aplica
     section: 4.3.2
     source_sha256: 7aef42451dc8fdcd0aae03b01f8987ff6d3785640eb12f7660acde87f1e6db6a
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Guías de bastionado adaptadas a los equipos del sistema.
+        en: Hardening guides adapted to the system's equipment.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.2), page: 44}
+      - es: Listas de comprobación completadas de los equipos bastionados.
+        en: Completed checklists for hardened equipment.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.2), page: 44}
+      - es: Muestras que elige el auditor para comprobar la configuración real.
+        en: Samples the auditor picks to check the actual configuration.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.2), page: 44}
 - id: op.exp.3
   title_es: Gestión de la configuración de seguridad
   title_en: null
@@ -873,6 +1119,24 @@ requirements:
       rule: +R1+R2+R3
     section: 4.3.3
     source_sha256: 2cc68e4171b2511fa2ab4721a2cbfe57f38396db9bea86f99b80300933ccc4bb
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Tickets u otros registros que prueban que la configuración se mantiene día a día.
+        en: Records showing ongoing configuration management, for example tickets.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.3), page: 45}
+      - es: Informes de auditoría de bastionado y de búsqueda de elementos no autorizados.
+        en: Hardening audit reports and checks for unauthorised items.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.3), page: 45}
+      - es: Servicios permitidos en cada servidor y puesto, por escrito.
+        en: List of services authorised on servers and workstations.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.3), page: 45}
+      - es: Quién administra la configuración de seguridad, y copias de esa configuración.
+        en: Who administers security configuration, and backups of that configuration.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.3), page: 45}
+      - es: Herramientas para actualizar y vigilar la configuración de seguridad.
+        en: Tools to update and monitor security configuration.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.3), page: 45}
 - id: op.exp.4
   title_es: Mantenimiento y actualizaciones de seguridad
   title_en: null
@@ -926,6 +1190,21 @@ requirements:
       rule: +R1+R2
     section: 4.3.4
     source_sha256: 41e06dae6655fba083dd45c441e263827d2603ea625317179dfc278e84b68d4a
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Contratos que cubren el mantenimiento del hardware y software importantes.
+        en: Maintenance contracts for relevant hardware and software.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.4), page: 47}
+      - es: Procedimiento escrito para parchear y mantener los sistemas.
+        en: Procedure for updating and maintaining systems.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.4), page: 47}
+      - es: Registro de actualizaciones aplicadas, firmware incluido.
+        en: Record of updates applied, firmware included.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.4), page: 47}
+      - es: Pruebas en preproducción y plan de vuelta atrás antes de cada parche.
+        en: Pre-production tests and a rollback plan before each patch.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.4), page: 47}
 - id: op.exp.5
   title_es: Gestión de cambios
   title_en: null
@@ -969,6 +1248,24 @@ requirements:
       rule: + R1
     section: 4.3.5
     source_sha256: dcbadea8d8b7b5f7c98a802f1e21f396ab7ba8dfb01e3bfb2c927704b39284e0
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Registro de solicitudes de cambio, por ejemplo en la herramienta de tickets.
+        en: Log of change requests, for example in the ticketing tool.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.5), page: 48}
+      - es: Aprobación previa del responsable de seguridad para los cambios de riesgo alto.
+        en: Prior approval by the security officer for high-risk changes.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.5), page: 48}
+      - es: Riesgos del cambio, pruebas de preproducción y de aceptación, y plan de marcha atrás.
+        en: Risks of the change, pre-production and acceptance tests, and a rollback plan.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.5), page: 49}
+      - es: Actas de quien autoriza los cambios, por ejemplo un comité de cambios.
+        en: Minutes of whoever authorises changes, for example a change board.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.5), page: 49}
+      - es: Documentación puesta al día tras el cambio, con su impacto en la seguridad y los fallos comunicados.
+        en: Documentation updated after the change, with its security impact and the failures reported.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.5), page: 49}
 - id: op.exp.6
   title_es: Protección frente a código dañino
   title_en: null
@@ -1024,6 +1321,24 @@ requirements:
       rule: +R1+R2+R3+R4
     section: 4.3.6
     source_sha256: 87a7b59cae2328574e60f2603a20911c42a3ee97e6eda13785423c3eb616834d
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Antimalware instalado en los equipos y gestionado desde una consola central.
+        en: Anti-malware installed on devices and managed from a central console.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.6), page: 50}
+      - es: Licencias y contrato de soporte que cubren todos los equipos.
+        en: Licences and a support contract covering every device.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.6), page: 50}
+      - es: Normas o procedimientos para gestionar la protección antimalware.
+        en: Rules or procedures for managing anti-malware protection.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.6), page: 50}
+      - es: Informes de la solución y comprobaciones de que funciona.
+        en: Reports from the solution, and checks that it works.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.6), page: 50}
+      - es: Otras capas de protección, por ejemplo en el cortafuegos, y lista blanca de aplicaciones.
+        en: Other protection layers, for example on the firewall, and an application allowlist.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.6), page: 50}
 - id: op.exp.7
   title_es: Gestión de incidentes
   title_en: null
@@ -1085,6 +1400,21 @@ requirements:
       rule: + R1+R2+ R3
     section: 4.3.7
     source_sha256: 94346bbdb9c22ae1467ea7dcf3c822cacaa42eba8f45b7d201fb892b739a3487
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Proceso de gestión de incidentes.
+        en: Incident handling process.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.7), page: 52}
+      - es: Tratamiento diferenciado de los incidentes con datos personales.
+        en: Separate handling of incidents involving personal data.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.7), page: 52}
+      - es: Vía preparada para avisar al CCN-CERT cuando haya que hacerlo.
+        en: Means to report incidents to CCN-CERT when required.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.7), page: 52}
+      - es: Procedimientos o herramientas que reconfiguran el sistema ante alertas.
+        en: Procedures or tools that reconfigure the system in response to alerts.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.7), page: 52}
 - id: op.exp.8
   title_es: Registro de la actividad
   title_en: null
@@ -1136,6 +1466,21 @@ requirements:
       rule: +R1+R2+R3+R4+R5
     section: 4.3.8
     source_sha256: cf6d86580362e8ae61a553711cee37c284c08f7992617dfd5e182ac29c5087f1
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Registros de actividad conservados.
+        en: Retained activity logs.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.8), page: 53}
+      - es: Registros configurados en los servidores y sincronización horaria (NTP).
+        en: Logging configured on servers, and time synchronisation (NTP).
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.8), page: 54}
+      - es: Normas de gestión de los registros y protección del acceso a ellos.
+        en: Rules for managing logs and protecting access to them.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.8), page: 54}
+      - es: Revisión de registros centralizados con herramientas de análisis o un SIEM.
+        en: Review of centralised logs with analysis tools or a SIEM.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.8), page: 54}
 - id: op.exp.9
   title_es: Registro de la gestión de incidentes
   title_en: null
@@ -1167,6 +1512,15 @@ requirements:
       rule: aplica
     section: 4.3.9
     source_sha256: 4b1641daf9309b978bbdf778a55b9c6a3ae4c700fa5a0a6e278309d33d03b4eb
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Registro de incidentes clasificado por tipo.
+        en: Incident register classified by type.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.9), page: 55}
+      - es: Acciones tomadas a partir del análisis de esos incidentes.
+        en: Actions taken from analysing those incidents.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.9), page: 55}
 - id: op.exp.10
   title_es: Protección de claves criptográficas
   title_en: null
@@ -1204,6 +1558,15 @@ requirements:
       rule: + R1
     section: 4.3.10
     source_sha256: bfc225bbfaac3abf3c27de357af05c9325154caff975ab6b2dcaabf9444fefd0
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Cómo se gestionan las claves criptográficas de forma segura.
+        en: How cryptographic keys are managed securely.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.10), page: 56}
+      - es: Algoritmos de generación de claves y cifradores en uso.
+        en: Key-generation algorithms and encryption devices in use.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.3 (op.exp.10), page: 56}
 - id: op.ext.1
   title_es: Contratación y acuerdos de nivel de servicio
   title_en: null
@@ -1229,6 +1592,15 @@ requirements:
       rule: aplica
     section: 4.4.1
     source_sha256: 4e371b0d77c779cb82ec56933dad364eb53e0925861346d30f376ce5261f5246
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Acuerdos de nivel de servicio firmados con los proveedores.
+        en: Service level agreements signed with suppliers.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.4 (op.ext.1), page: 57}
+      - es: Certificación ENS vigente de los proveedores que importan.
+        en: ENS conformity certificates of relevant suppliers.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.4 (op.ext.1), page: 57}
 - id: op.ext.2
   title_es: Gestión diaria
   title_en: null
@@ -1258,6 +1630,18 @@ requirements:
       rule: aplica
     section: 4.4.2
     source_sha256: c03401e9c035a5330b7d2e4d9a720091dc459b4a2a4e04821d72f85c0bb754d9
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: 'Seguimiento de proveedores: actas de reuniones e informes de nivel de servicio.'
+        en: 'Supplier follow-up: meeting minutes and service level reports.'
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.4 (op.ext.2), page: 57}
+      - es: Persona de contacto designada por el proveedor.
+        en: Contact person named by the supplier.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.4 (op.ext.2), page: 57}
+      - es: Canal para notificar incidentes al proveedor y seguimiento de los abiertos.
+        en: Channel to report incidents to the supplier, and follow-up of open ones.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.4 (op.ext.2), page: 57}
 - id: op.ext.3
   title_es: Protección de la cadena de suministro
   title_en: null
@@ -1301,6 +1685,18 @@ requirements:
       rule: aplica
     section: 4.4.3
     source_sha256: b846017377732c25df9578fad01339da3489f678a5b6417acd26d176e1e909d5
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Estudio del impacto de un incidente en un proveedor, reflejado en el BIA.
+        en: Study of the impact of a supplier incident, reflected in the BIA.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.4 (op.ext.3), page: 58}
+      - es: Análisis de riesgos que incluye a los proveedores, con su plan de tratamiento.
+        en: Risk analysis that includes suppliers, with its treatment plan.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.4 (op.ext.3), page: 58}
+      - es: Plan de continuidad que contempla la cadena de suministro, y pruebas sin un proveedor.
+        en: Continuity plan covering the supply chain, and tests without a supplier.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.4 (op.ext.3), page: 58}
 - id: op.ext.4
   title_es: Interconexión de sistemas
   title_en: null
@@ -1334,6 +1730,15 @@ requirements:
       rule: + R1
     section: 4.4.4
     source_sha256: 642d311ae2fae966c0ca01051f85046877f5a2fcd760bd2c3b9d8103e6d91559
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Autorización de cada interconexión.
+        en: Authorisation of each interconnection.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.4 (op.ext.4), page: 59}
+      - es: Documentación de las interconexiones.
+        en: Documentation of the interconnections.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.4 (op.ext.4), page: 59}
 - id: op.nub.1
   title_es: Protección de servicios en la nube
   title_en: null
@@ -1379,6 +1784,24 @@ requirements:
       rule: +R1+R2
     section: 4.5.1
     source_sha256: 54ebb3dae24e69e17f0dffaab8574df018666df45d5ec363039dc4d6a4ef0be4
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Verificación de los requisitos de seguridad del servicio en la nube.
+        en: Check of the cloud service's security requirements.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.5 (op.nub.1), page: 60}
+      - es: Certificación ENS del servicio en la nube o de la plataforma que lo sostiene.
+        en: ENS conformity certificate of the service or the system behind it.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.5 (op.nub.1), page: 60}
+      - es: Resultados de pruebas de penetración.
+        en: Penetration test results.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.5 (op.nub.1), page: 60}
+      - es: Si es un servicio de seguridad, su presencia en el catálogo CPSTIC.
+        en: CPSTIC catalogue listing if it is a security service.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.5 (op.nub.1), page: 60}
+      - es: Configuración según las guías CCN-STIC aplicables.
+        en: Configuration following the applicable CCN-STIC guides.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.5 (op.nub.1), page: 60}
 - id: op.cont.1
   title_es: Análisis de impacto
   title_en: null
@@ -1404,6 +1827,15 @@ requirements:
       rule: aplica
     section: 4.6.1
     source_sha256: 4dca2715092ebdf62da7b691998cc6ff299ffa719f39ab4cbe675d6352eca199
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Análisis de impacto (BIA) aprobado y fechado, con RTO y RPO.
+        en: Approved, dated business impact analysis (BIA) with RTO and RPO.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.1), page: 61}
+      - es: Mapa de qué activos necesita cada servicio y cómo dependen entre sí.
+        en: Map of dependencies among the assets behind each service.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.1), page: 61}
 - id: op.cont.2
   title_es: Plan de continuidad
   title_en: null
@@ -1447,6 +1879,21 @@ requirements:
       rule: aplica
     section: 4.6.2
     source_sha256: d8e54381196976d81dd64adc900e18ff097ab3c0fd60a88e22edaec16118b8f0
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Plan de continuidad coherente con el BIA, y planes vinculados.
+        en: Continuity plan consistent with the BIA, and linked plans.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.2), page: 62}
+      - es: Planes de recuperación y de emergencia que lo desarrollan.
+        en: Recovery and emergency plans that implement it.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.2), page: 62}
+      - es: Formación del personal sobre el plan.
+        en: Staff training on the plan.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.2), page: 62}
+      - es: Comprobaciones hechas tras una interrupción.
+        en: Checks done after an interruption.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.2), page: 62}
 - id: op.cont.3
   title_es: Pruebas periódicas
   title_en: null
@@ -1472,6 +1919,18 @@ requirements:
       rule: aplica
     section: 4.6.3
     source_sha256: 4542f866ab4a01f5ff6e7438c39cabdd94e03d267e269c724514431dd0032a24
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Informe de cada prueba con sus fases y duraciones.
+        en: Report of each test with its phases and durations.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.3), page: 63}
+      - es: Comparación de los tiempos obtenidos con los RTO del BIA.
+        en: Comparison of measured times with the BIA's RTOs.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.3), page: 63}
+      - es: Acciones correctivas abiertas cuando una prueba falla.
+        en: Corrective actions opened when a test fails.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.3), page: 63}
 - id: op.cont.4
   title_es: Medios alternativos
   title_en: null
@@ -1515,6 +1974,21 @@ requirements:
       rule: aplica
     section: 4.6.4
     source_sha256: c9ad1208439ab5902e84c42d286b22419bf29eae9a26b4d2610b7b0ad75028e6
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Inventario de medios alternativos para la recuperación.
+        en: Inventory of alternative means for recovery.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.4), page: 64}
+      - es: Contratos y SLA de los medios alternativos que presta un tercero.
+        en: Contracts and SLAs for third-party alternative means.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.4), page: 64}
+      - es: Personal, instalaciones y comunicaciones alternativos.
+        en: Alternative staff, premises and communications.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.4), page: 64}
+      - es: Conmutación automática a los medios alternativos.
+        en: Automatic failover to the alternative means.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.6 (op.cont.4), page: 64}
 - id: op.mon.1
   title_es: Detección de intrusión
   title_en: null
@@ -1552,6 +2026,18 @@ requirements:
       rule: +R1+R2
     section: 4.7.1
     source_sha256: 2445129eec71c8e001883eabd588805a6e960201237406aa5c0432a3b58e5c88
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Herramienta de detección o prevención de intrusiones y sus reglas.
+        en: Intrusion detection or prevention tool and its rules.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.7 (op.mon.1), page: 65}
+      - es: Sonda SAT-INET (CCN-CERT), si la entidad pública la tiene.
+        en: In the public sector, a CCN-CERT SAT-INET probe if used.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.7 (op.mon.1), page: 65}
+      - es: Qué se hace ante cada alerta y qué respuestas se disparan solas.
+        en: Response procedure for alerts, and automatic actions.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.7 (op.mon.1), page: 65}
 - id: op.mon.2
   title_es: Sistema de métricas
   title_en: null
@@ -1585,6 +2071,18 @@ requirements:
       rule: + R1+R2
     section: 4.7.2
     source_sha256: f4d902b6857aa1285f5f2dd2620db7eef5d0d1f9f3084a3c6bde441bde9f91ac
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Grado de implantación de cada medida, por ejemplo como columna de la declaración de aplicabilidad.
+        en: Implementation level of each measure, for example as a column of the statement of applicability.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.7 (op.mon.2), page: 66}
+      - es: Datos recogidos para el informe INES.
+        en: Data collected for the INES report.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.7 (op.mon.2), page: 66}
+      - es: Indicadores de gestión de incidentes y de recursos dedicados a la seguridad.
+        en: Indicators for incident handling and for resources spent on security.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.7 (op.mon.2), page: 66}
 - id: op.mon.3
   title_es: Vigilancia
   title_en: null
@@ -1650,6 +2148,24 @@ requirements:
       rule: + R1+R2+R3+R4+R5+R6
     section: 4.7.3
     source_sha256: 8cb64954608f672b4f97241e9feddd3ed06176405ef375b2068f47bc69a55026
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Recogida y correlación de eventos de seguridad, y prealertas.
+        en: Collection and correlation of security events, and early warnings.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.7 (op.mon.3), page: 67}
+      - es: Escaneo de vulnerabilidades y avisos generados por el tráfico de red.
+        en: Vulnerability detection, and alerts based on network traffic.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.7 (op.mon.3), page: 67}
+      - es: Contrato de vigilancia externa (SOC), si se externaliza.
+        en: External monitoring contract (SOC), if outsourced.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.7 (op.mon.3), page: 67}
+      - es: Pruebas de penetración, verificación de configuración y sus acciones correctivas.
+        en: Penetration tests, configuration checks and their corrective actions.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.7 (op.mon.3), page: 67}
+      - es: Límites y vigilancia sobre la minería de datos.
+        en: Limits on, and monitoring of, data mining.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.2.7 (op.mon.3), page: 67}
 - id: mp.if.1
   title_es: Áreas separadas y con control de acceso
   title_en: null
@@ -1677,6 +2193,18 @@ requirements:
       rule: aplica
     section: 5.1.1
     source_sha256: 04f8dc9b0ad9c12fc0cd743dde5dd8bd723da891df33b8572b6f4c2e064d0484
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: CPD y salas técnicas separados, con control de acceso.
+        en: Data centre and technical rooms set apart, with access control.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.1), page: 69}
+      - es: Vigilancia, y planos de ubicación guardados de forma protegida.
+        en: Surveillance, and location plans kept protected.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.1), page: 69}
+      - es: Racks con cierre.
+        en: Lockable racks.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.1), page: 69}
 - id: mp.if.2
   title_es: Identificación de las personas
   title_en: null
@@ -1702,6 +2230,18 @@ requirements:
       rule: aplica
     section: 5.1.2
     source_sha256: ab94be37f90245a4cea60206cddfca8faee6bc505cbec0e80295e5fc59d7733d
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Protocolo para pedir y conceder acceso al CPD, puntual o permanente.
+        en: Protocol to request and grant data-centre access, one-off or permanent.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.2), page: 70}
+      - es: Sistema de control de accesos y consultas de sus entradas y salidas.
+        en: Access control system, and queries of its entries and exits.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.2), page: 70}
+      - es: Libro de visitas y normas de uso comunicadas a cada visita.
+        en: Visitor log, and usage rules given to each visitor.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.2), page: 70}
 - id: mp.if.3
   title_es: Acondicionamiento de los locales
   title_en: null
@@ -1733,6 +2273,18 @@ requirements:
       rule: aplica
     section: 5.1.3
     source_sha256: 9b2df2c18df6928788b0d9353f44bc64cfeb6446655b457b7b3857b43a67525c
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Histórico de temperatura y humedad del CPD o de la sala técnica.
+        en: Temperature and humidity history for the data centre or technical room.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.3), page: 71}
+      - es: Cableado ordenado y etiquetado, y herramienta que documenta el conexionado si existe.
+        en: Tidy, labelled cabling, and a tool documenting connections if there is one.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.3), page: 71}
+      - es: Contratos y último parte de revisión de los equipos auxiliares.
+        en: Contracts and latest service reports for auxiliary equipment.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.3), page: 71}
 - id: mp.if.4
   title_es: Energía eléctrica
   title_en: null
@@ -1762,6 +2314,18 @@ requirements:
       rule: + R1
     section: 5.1.4
     source_sha256: 56946b51a1fa1264e25dfab47ab0c95353fdb5f73f709f3c975e5ad30ced0635
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: SAI y generadores, con su carga y la autonomía de las baterías.
+        en: UPS and generators, with their load and battery runtime.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.4), page: 71}
+      - es: Acuerdo de suministro preferente de combustible para los generadores, si existe.
+        en: Priority fuel supply agreement for the generators, if any.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.4), page: 71}
+      - es: Contratos de mantenimiento, última revisión e informes de la instalación eléctrica.
+        en: Maintenance contracts, latest inspection and electrical installation reports.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.4), page: 71}
 - id: mp.if.5
   title_es: Protección frente a incendios
   title_en: null
@@ -1787,6 +2351,15 @@ requirements:
       rule: aplica
     section: 5.1.5
     source_sha256: dcd677a052dc98c5810d3ec0a2ef5cd1923730722cba9712c6b672503cceadaf
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Sistemas de detección, alarma y extinción de incendios.
+        en: Fire detection, alarm and suppression systems.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.5), page: 72}
+      - es: Contratos y partes de revisión que exige la normativa contra incendios.
+        en: Maintenance contracts and reports as the regulations require.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.5), page: 73}
 - id: mp.if.6
   title_es: Protección frente a inundaciones
   title_en: null
@@ -1812,6 +2385,15 @@ requirements:
       rule: aplica
     section: 5.1.6
     source_sha256: bfa7f661ff02d44856f02cac80bacac68d5a2b3284f63c9b698c597558365b50
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Detectores de líquidos y, si procede, bombas de achique.
+        en: Liquid detectors and, where relevant, drainage pumps.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.6), page: 73}
+      - es: Contratos y partes de la última revisión.
+        en: Contracts and latest inspection reports.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.6), page: 73}
 - id: mp.if.7
   title_es: Registro de entrada y salida de equipamiento
   title_en: null
@@ -1837,6 +2419,12 @@ requirements:
       rule: aplica
     section: 5.1.7
     source_sha256: 31b08dc60d6a3fb750f6fdec384be7c99a789a5adb2477fc5d7c5371654ef98d
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Registro de entradas y salidas de equipos.
+        en: Log of equipment entering and leaving.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.1 (mp.if.7), page: 74}
 - id: mp.per.1
   title_es: Caracterización del puesto de trabajo
   title_en: null
@@ -1868,6 +2456,21 @@ requirements:
       rule: aplica
     section: 5.2.1
     source_sha256: bda98a521ef6161fcf112621e1498335f6524118525559fa8fee6519efe8695b
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Análisis de riesgos que tiene en cuenta los puestos de trabajo.
+        en: Risk analysis that considers job positions.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.1), page: 75}
+      - es: Perfiles de puesto con sus requisitos de seguridad.
+        en: Job profiles with their security requirements.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.1), page: 75}
+      - es: Requisitos para el personal de empresas contratadas.
+        en: Requirements for contractor staff.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.1), page: 75}
+      - es: Habilitación personal de seguridad (HPS) cuando se requiera.
+        en: Personnel security clearance (HPS) where required.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.1), page: 75}
 - id: mp.per.2
   title_es: Deberes y obligaciones
   title_en: null
@@ -1909,6 +2512,18 @@ requirements:
       rule: + R1
     section: 5.2.2
     source_sha256: abfa14daf15559526c1be78dc9c82913115b9c977db82774b50e1d2c397979f3
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Acuerdos de confidencialidad firmados por empleados y por empresas de servicios.
+        en: Confidentiality agreements signed by employees and service companies.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.2), page: 76}
+      - es: Contratos con prestadores que recogen sus obligaciones de seguridad.
+        en: Contracts with providers that state their security duties.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.2), page: 76}
+      - es: Aceptación firmada de los deberes de seguridad del puesto.
+        en: Signed acceptance of the job's security duties.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.2), page: 76}
 - id: mp.per.3
   title_es: Concienciación
   title_en: null
@@ -1940,6 +2555,15 @@ requirements:
       rule: aplica
     section: 5.2.3
     source_sha256: 84e6f169c23500732852e71d8e837d7d2669e314492321ecaad979e5c3f1a5b5
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Plan de concienciación, que puede ir junto al de formación.
+        en: Awareness plan, which may be combined with training.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.3), page: 77}
+      - es: Últimas campañas y a quién llegaron.
+        en: Recent campaigns and who they reached.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.3), page: 77}
 - id: mp.per.4
   title_es: Formación
   title_en: null
@@ -1973,6 +2597,21 @@ requirements:
       rule: aplica
     section: 5.2.4
     source_sha256: a4738152e583608b7e2c6b437fbe5d6ff7e8367b035b340667cf36f105444a8a
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Plan de formación, que puede ir junto al de concienciación.
+        en: Training plan, which may be combined with awareness.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.4), page: 78}
+      - es: Programa de las acciones realizadas y lista de asistentes.
+        en: Syllabus of sessions held, and attendee lists.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.4), page: 78}
+      - es: 'Pruebas de eficacia: exámenes, encuestas o certificados.'
+        en: 'Proof of effectiveness: tests, surveys or certificates.'
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.4), page: 78}
+      - es: Certificados de formación externa aportados por el personal.
+        en: External training certificates provided by staff.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.2 (mp.per.4), page: 78}
 - id: mp.eq.1
   title_es: Puesto de trabajo despejado
   title_en: null
@@ -2002,6 +2641,15 @@ requirements:
       rule: + R1
     section: 5.3.1
     source_sha256: 780aa56bc5a7880d6b37f8c7696ded6d60cfa37c38e4c6c142d20720e8184101
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Puestos sin soportes a la vista.
+        en: Desks with no media left in view.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.3 (mp.eq.1), page: 79}
+      - es: Armarios o lugares cerrados para soportes con información no pública.
+        en: Locked storage for media with non-public information.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.3 (mp.eq.1), page: 79}
 - id: mp.eq.2
   title_es: Bloqueo de puesto de trabajo
   title_en: null
@@ -2033,6 +2681,15 @@ requirements:
       rule: + R1
     section: 5.3.2
     source_sha256: 7107770a57efb67d5981383d26c993240cf8a19f2fe309e6811b2920063776e8
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Directiva, por ejemplo una GPO, que bloquea el puesto sin que el usuario pueda cambiarla.
+        en: A policy, for example a GPO, that locks the device and users cannot change.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.3 (mp.eq.2), page: 79}
+      - es: Configuración que cierra la sesión tras un tiempo de inactividad.
+        en: Settings that end the session after a period of inactivity.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.3 (mp.eq.2), page: 79}
 - id: mp.eq.3
   title_es: Protección de dispositivos portátiles
   title_en: null
@@ -2076,6 +2733,21 @@ requirements:
       rule: +R1+R2
     section: 5.3.3
     source_sha256: c191ee4251cbfcd84684c5b32fe88e55c84b83ae512f1234e141ca5455a0ffb7
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Inventario de portátiles actualizado y verificado.
+        en: Laptop inventory, kept current and checked.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.3 (mp.eq.3), page: 80}
+      - es: Canal para comunicar una pérdida o un robo.
+        en: Channel to report loss or theft.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.3 (mp.eq.3), page: 80}
+      - es: Normas para usar el portátil y conectarse en remoto con seguridad, también fuera de la oficina.
+        en: Rules for safe use and remote access, including uncontrolled locations.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.3 (mp.eq.3), page: 80}
+      - es: Discos cifrados y filtros de privacidad en pantalla.
+        en: Encrypted disks and screen privacy filters.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.3 (mp.eq.3), page: 80}
 - id: mp.eq.4
   title_es: Otros dispositivos conectados a la red
   title_en: null
@@ -2123,6 +2795,21 @@ requirements:
       rule: + R1
     section: 5.3.4
     source_sha256: ce84bd2aafdde4a2cdb8aab489753739f8a5fef108ce1474959d122670db51bf
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Configuración que controla los flujos de esos dispositivos.
+        en: Configuration that controls those devices' data flows.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.3 (mp.eq.4), page: 81}
+      - es: Borrado de la información que almacenan.
+        en: Erasure of the information they store.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.3 (mp.eq.4), page: 81}
+      - es: Uso de componentes certificados.
+        en: Use of certified components.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.3 (mp.eq.4), page: 81}
+      - es: Herramientas que descubren y vigilan los dispositivos.
+        en: Tools that discover and monitor devices.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.3 (mp.eq.4), page: 81}
 - id: mp.com.1
   title_es: Perímetro seguro
   title_en: null
@@ -2152,6 +2839,15 @@ requirements:
       rule: aplica
     section: 5.4.1
     source_sha256: 6b354302c78d9922f64926cd494cf718c04ad575acf35d23176e84e1faddac9e
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Cortafuegos y su conjunto de reglas.
+        en: Firewalls and their rule sets.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.4 (mp.com.1), page: 82}
+      - es: Autorización previa de las reglas que abren flujos nuevos.
+        en: Prior approval of rules that open new flows.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.4 (mp.com.1), page: 82}
 - id: mp.com.2
   title_es: Protección de la confidencialidad
   title_en: null
@@ -2197,6 +2893,15 @@ requirements:
       rule: +R1+R2+R3
     section: 5.4.2
     source_sha256: fc53b8c90c0b31010745e9b1f892d5c57c4a293200b4724c0892fff799dac66b
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Uso de VPN y algoritmos de cifrado que emplean.
+        en: Use of VPNs and the encryption algorithms they use.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.4 (mp.com.2), page: 83}
+      - es: Dispositivos hardware o cifradores para las VPN.
+        en: Hardware devices or encryptors for the VPNs.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.4 (mp.com.2), page: 83}
 - id: mp.com.3
   title_es: Protección de la integridad y de la autenticidad
   title_en: null
@@ -2252,6 +2957,21 @@ requirements:
       rule: + R1 + R2 + R3 + R4
     section: 5.4.3
     source_sha256: c6c66fcb0f75ad542e327db7311b02486b09355b32c7e4c99b2ab23920d1b535
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Enlaces protegidos con TLS o IPsec.
+        en: Links protected with TLS or IPsec.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.4 (mp.com.3), page: 84}
+      - es: Aplicaciones desarrolladas para resistir ataques activos, e informes de pentest.
+        en: Secure development against active attacks, and penetration test reports.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.4 (mp.com.3), page: 84}
+      - es: Certificados cualificados en uso.
+        en: Qualified certificates in use.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.4 (mp.com.3), page: 84}
+      - es: VPN con algoritmos autorizados por el CCN y dispositivos hardware.
+        en: VPNs with CCN-authorised algorithms and hardware devices.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.4 (mp.com.3), page: 84}
 - id: mp.com.4
   title_es: Separación de flujos de información en la red
   title_en: null
@@ -2311,6 +3031,15 @@ requirements:
       rule: +[R2oR3]+R4
     section: 5.4.4
     source_sha256: baab619200e444745f8eb7e56535042516cff83044abb941109f44b7b872cfdc
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Segmentación de red, con diagramas o lista de segmentos.
+        en: Network segmentation, with diagrams or a list of segments.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.4 (mp.com.4), page: 85}
+      - es: Vigilancia del tráfico entre segmentos.
+        en: Monitoring of traffic between segments.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.4 (mp.com.4), page: 85}
 - id: mp.si.1
   title_es: Marcado de soportes
   title_en: null
@@ -2344,6 +3073,18 @@ requirements:
       rule: aplica
     section: 5.5.1
     source_sha256: 2f94a94f0d786f34d8e00ecf0919e590cc6c0503998be5bb3b09fa82e494e64f
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Norma para valorar y calificar la información.
+        en: A rule for valuing and classifying information.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.1), page: 86}
+      - es: Documentos del sistema de gestión con su calificación.
+        en: Management-system documents with their classification.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.1), page: 86}
+      - es: Soportes marcados con el nivel más alto de la información que contienen.
+        en: Media marked with the highest level of the information they hold.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.1), page: 86}
 - id: mp.si.2
   title_es: Criptografía
   title_en: null
@@ -2381,6 +3122,18 @@ requirements:
       rule: + R1 + R2
     section: 5.5.2
     source_sha256: 29d255a52eaef62ac7cfa41da9d5d06d7fcae3007597f7f2ec2f3d6815b57f32
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Normas sobre el cifrado de soportes extraíbles.
+        en: Rules on encrypting removable media.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.2), page: 87}
+      - es: Soportes extraíbles y copias de seguridad cifrados.
+        en: Encrypted removable media and backups.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.2), page: 87}
+      - es: Productos de cifrado certificados o cualificados.
+        en: Certification or qualification of the encryption products.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.2), page: 87}
 - id: mp.si.3
   title_es: Custodia
   title_en: null
@@ -2408,6 +3161,18 @@ requirements:
       rule: aplica
     section: 5.5.3
     source_sha256: 65e9c50cc6093dd04e8d968b560bc70f3c34af235bdb04d1cb011d0af42a0e27
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Cómo se protegen los soportes guardados.
+        en: Security measures for storing media.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.3), page: 88}
+      - es: Condiciones de almacenamiento que indica el fabricante.
+        en: Storage conditions the manufacturer specifies.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.3), page: 88}
+      - es: Contrato con el tercero que custodia soportes, si lo hay.
+        en: Contract with any third party that stores media.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.3), page: 88}
 - id: mp.si.4
   title_es: Transporte
   title_en: null
@@ -2441,6 +3206,18 @@ requirements:
       rule: aplica
     section: 5.5.4
     source_sha256: 09a004db7b1f7ea5f95b632e2ce3e9f0c5f366f95f0ece371512e45390e8fc8d
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Registro de salida y llegada de soportes.
+        en: Log of media sent and received.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.4), page: 88}
+      - es: Comprobación de que los soportes viajan cifrados y en un contenedor adecuado.
+        en: Check that media travel encrypted and in a suitable case.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.4), page: 88}
+      - es: Contrato con el transportista externo, si lo hay.
+        en: Contract with any external carrier.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.4), page: 89}
 - id: mp.si.5
   title_es: Borrado y destrucción
   title_en: null
@@ -2478,6 +3255,21 @@ requirements:
       rule: + R1
     section: 5.5.5
     source_sha256: 664a3889161c9f5480f5a7ff981aca6392198523cc9cee9d1a61842d2e0acf13
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Registro de borrados y destrucciones de soportes.
+        en: Log of media erased and destroyed.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.5), page: 89}
+      - es: Comprobación de que el borrado o la destrucción fueron efectivos.
+        en: Check that erasure or destruction was effective.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.5), page: 89}
+      - es: Contrato con el tercero que borra o destruye soportes, si lo hay.
+        en: Contract with any third party that erases or destroys media.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.5), page: 89}
+      - es: Productos certificados o cualificados para borrar o destruir.
+        en: Certified or qualified products for erasure or destruction.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.5 (mp.si.5), page: 89}
 - id: mp.sw.1
   title_es: Desarrollo de aplicaciones
   title_en: null
@@ -2537,6 +3329,21 @@ requirements:
       rule: +R1+R2+R3+R4
     section: 5.6.1
     source_sha256: 5ddcce723e60a800943ff1567d729af2a0627b34337cedb1072af9c5e2176f6f
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Entornos de desarrollo y de producción separados.
+        en: Separate development and production environments.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.6 (mp.sw.1), page: 90}
+      - es: Protección del repositorio de código fuente.
+        en: Protection of the source code repository.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.6 (mp.sw.1), page: 90}
+      - es: Metodología de desarrollo seguro que trata la seguridad.
+        en: A secure development methodology that addresses security.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.6 (mp.sw.1), page: 90}
+      - es: Protección de los datos reales usados en pruebas, si los hay.
+        en: Protection of real data used in tests, if any.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.6 (mp.sw.1), page: 91}
 - id: mp.sw.2
   title_es: Aceptación y puesta en servicio
   title_en: null
@@ -2576,6 +3383,21 @@ requirements:
       rule: + R1
     section: 5.6.2
     source_sha256: a3097a3b042fba3a31043b9c3a9c33df19cca167cc325a62dec5d21536aaf478
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Pruebas de aceptación con criterios de seguridad, en un entorno de preproducción.
+        en: Acceptance tests with security criteria, in a pre-production environment.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.6 (mp.sw.2), page: 92}
+      - es: Comprobación de que no afecta a la seguridad de otros componentes.
+        en: Check that it does not affect the security of other components.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.6 (mp.sw.2), page: 92}
+      - es: Informes de pruebas de penetración y de auditoría de código.
+        en: Penetration test and code audit reports.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.6 (mp.sw.2), page: 92}
+      - es: Guías del proveedor para instalar, configurar y usar el sistema de forma segura, si procede.
+        en: Supplier guides to install, configure and use the system securely, where relevant.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.6 (mp.sw.2), page: 92}
 - id: mp.info.1
   title_es: Datos personales
   title_en: null
@@ -2601,6 +3423,24 @@ requirements:
       rule: aplica
     section: 5.7.1
     source_sha256: df79739d7d4a5d4ea0e4377893387068bbed69ab73785648303c37319737a683
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Política de privacidad y registro de actividades de tratamiento (RAT).
+        en: Data protection policy and record of processing activities.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.1), page: 94}
+      - es: Designación del delegado de protección de datos y su comunicación a la AEPD.
+        en: Appointment of the data protection officer and its notice to the AEPD.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.1), page: 94}
+      - es: Valoración de la necesidad de evaluaciones de impacto, y análisis de riesgos que cubre los datos personales.
+        en: Assessment of the need for impact assessments, and risk analysis covering personal data.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.1), page: 94}
+      - es: Procedimientos de ejercicio de derechos y de gestión de brechas.
+        en: Procedures for data subject rights and for breaches.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.1), page: 94}
+      - es: Incidentes con datos personales marcados, con la intervención del delegado.
+        en: Incidents involving personal data flagged, with the DPO's involvement.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.1), page: 94}
 - id: mp.info.2
   title_es: Calificación de la información
   title_en: null
@@ -2634,6 +3474,18 @@ requirements:
       rule: aplica
     section: 5.7.2
     source_sha256: 3570061901ec2a45b8c6b690e83c70730d6095fdce728e0c9ecab39feadd99c7
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Normas para clasificar la información y para categorizar el sistema.
+        en: Rules for classifying information and categorising the system.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.2), page: 95}
+      - es: Valoración hecha por los responsables de la información.
+        en: Valuation done by the information owners.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.2), page: 95}
+      - es: Medidas de seguridad según el nivel de la información y su tratamiento.
+        en: Security measures by information level and handling.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.2), page: 95}
 - id: mp.info.3
   title_es: Firma electrónica
   title_en: null
@@ -2681,6 +3533,15 @@ requirements:
       rule: + R1+R2+R3+R4
     section: 5.7.3
     source_sha256: 9e4e86d228565140431f0b5982ed2310bec92d63e5e5f01aeb863b0773b17c17
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Tipos de firma electrónica que se usan.
+        en: Types of electronic signature in use.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.3), page: 96}
+      - es: 'Gestión de certificados: cualificación, emisor, caducidad y almacenamiento seguro.'
+        en: 'Certificate management: qualification, issuer, expiry and secure storage.'
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.3), page: 96}
 - id: mp.info.4
   title_es: Sellos de tiempo
   title_en: null
@@ -2720,6 +3581,15 @@ requirements:
       rule: aplica
     section: 5.7.4
     source_sha256: 4498f66b3890fe44488dc5fa2133ca48aaff7b0f94d0d5274b575644b38c82ca
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: 'Control de los sellados de tiempo: si son cualificados, quién los emite y cuándo caducan.'
+        en: 'Time-stamp management: qualification, issuer and expiry.'
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.4), page: 97}
+      - es: Sellados de tiempo guardados de forma segura.
+        en: Secure storage of time stamps.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.4), page: 98}
 - id: mp.info.5
   title_es: Limpieza de documentos
   title_en: null
@@ -2747,6 +3617,18 @@ requirements:
       rule: aplica
     section: 5.7.5
     source_sha256: dc7e5c0c214e49a723a2832fe925cf45d81e016b3cd58634bd1f87903664b891
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Norma para revisar y eliminar metadatos no deseados.
+        en: Rule for reviewing and removing unwanted metadata.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.5), page: 98}
+      - es: Herramienta o instrucciones para limpiar metadatos.
+        en: Tool or instructions for cleaning metadata.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.5), page: 98}
+      - es: Documentos publicados, como en la sede electrónica o la web, sin metadatos indebidos.
+        en: Published documents, such as on the e-office or website, free of unwanted metadata.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.5), page: 98}
 - id: mp.info.6
   title_es: Copias de seguridad
   title_en: null
@@ -2789,6 +3671,24 @@ requirements:
       rule: + R1 + R2
     section: 5.7.6
     source_sha256: d7129e9c8c0544d12af13833d8ca404e2c4b9598568a575b2b417be4a9ef4f7d
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Norma de copias de seguridad, coherente con el RPO del BIA.
+        en: Backup rules, consistent with the BIA's RPO.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.6), page: 99}
+      - es: Copias configuradas y realizadas según la norma, con la gestión de sus errores.
+        en: Backups configured and run as the rules say, with error handling.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.6), page: 99}
+      - es: Pruebas de restauración.
+        en: Restore tests.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.6), page: 99}
+      - es: Copias guardadas en otro lugar, y requisitos de ese almacenamiento.
+        en: Copies kept elsewhere, and the requirements for that storage.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.6), page: 99}
+      - es: Informes del proveedor si las copias están externalizadas.
+        en: Supplier reports if backups are outsourced.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.7 (mp.info.6), page: 99}
 - id: mp.s.1
   title_es: Protección del correo electrónico
   title_en: null
@@ -2832,6 +3732,21 @@ requirements:
       rule: aplica
     section: 5.8.1
     source_sha256: 4e9d7555a173e060e7a978301c250246599a86d42c1227a967bb999fb118ebbe
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Reglas para usar el correo electrónico sin riesgos.
+        en: Rules for safe use of email.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.1), page: 100}
+      - es: Filtro antispam con su configuración y registros, y cifrado de mensajes cuando haga falta.
+        en: Anti-spam filter with its settings and logs, and message encryption when needed.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.1), page: 100}
+      - es: Análisis del correo frente a malware y otras amenazas.
+        en: Scanning email for malware and other threats.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.1), page: 101}
+      - es: Campañas de concienciación sobre el correo, y bastionado del servidor si es propio.
+        en: Email awareness campaigns, and hardening of the server if in-house.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.1), page: 101}
 - id: mp.s.2
   title_es: Protección de servicios y aplicaciones web
   title_en: null
@@ -2889,6 +3804,21 @@ requirements:
       rule: +R2+R3
     section: 5.8.2
     source_sha256: b31c39a24fc2257ce732184cf94a588bcf529e7e7744a3ab674c8d2bd1d08ab9
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Desarrollo seguro de las aplicaciones web.
+        en: Secure development of web applications.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.2), page: 101}
+      - es: Informes de pruebas técnicas sin conocimiento interno (caja negra).
+        en: Black-box technical audit reports.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.2), page: 101}
+      - es: Informes de caja blanca y el procedimiento de auditoría.
+        en: White-box reports and the audit procedure.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.2), page: 102}
+      - es: Protección frente a ataques a proxies y cachés.
+        en: Protection against attacks on proxies and caches.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.2), page: 102}
 - id: mp.s.3
   title_es: Protección de la navegación web
   title_en: null
@@ -2940,6 +3870,21 @@ requirements:
       rule: + R1
     section: 5.8.3
     source_sha256: 62655cb1b6beffd8d6fa04910e0f53ede8ca2d28cda51c5d181b698dd64ad387
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Normas de navegación segura y política de cookies.
+        en: Safe browsing rules and cookie policy.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.3), page: 103}
+      - es: Campañas de concienciación, y formación del personal que vigila la navegación.
+        en: Awareness campaigns, and training for staff who monitor browsing.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.3), page: 103}
+      - es: Protecciones frente a amenazas web y listas de destinos bloqueados.
+        en: Protections against web threats, and lists of blocked destinations.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.3), page: 103}
+      - es: Registros de la vigilancia de la navegación.
+        en: Logs from browsing monitoring.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.3), page: 103}
 - id: mp.s.4
   title_es: Protección frente a la denegación de servicio
   title_en: null
@@ -2979,3 +3924,21 @@ requirements:
       rule: + R1
     section: 5.8.4
     source_sha256: 5ac29e9aa401421546797e386b8d8189e2a8baa1bf24bb69a5f5e0736f7856c6
+    expected_evidence:
+      reviewed_by: null
+      items:
+      - es: Protecciones técnicas contra la denegación de servicio, incluidos filtros en el cortafuegos.
+        en: Technical denial-of-service protections, including firewall filters.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.4), page: 104}
+      - es: Gestión de la capacidad, sobre todo de las comunicaciones.
+        en: Capacity management, especially for communications.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.4), page: 104}
+      - es: Procedimiento de reacción ante un ataque.
+        en: Procedure for responding to an attack.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.4), page: 104}
+      - es: Acuerdo antidenegación de servicio con el operador de internet.
+        en: Protection agreement with the internet access provider.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.4), page: 104}
+      - es: Herramienta específica contra DDoS, si se ha implantado.
+        en: Dedicated anti-DDoS tool, if deployed.
+        ref: {guide: CCN-STIC 808, edition: 2026-04, section: 6.2.3.8 (mp.s.4), page: 105}

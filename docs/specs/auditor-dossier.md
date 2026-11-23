@@ -1,6 +1,6 @@
 # Spec: auditor dossier
 
-- Issue: #185. Builds on `requirement-register.md`, `control-evidence-statements.md`, `recorded-routines.md`, `claims-honesty.md`.
+- Issues: #185, #226 (expected evidence). Builds on `requirement-register.md`, `control-evidence-statements.md`, `recorded-routines.md`, `claims-honesty.md`.
 - Status: draft
 
 ## Problem
@@ -31,6 +31,9 @@ the pieces on separate pages, and assembling them by hand takes days.
   - the evidence statements linked to each control (title, date, source, text, link).
 
   Requirement text stays official; nothing is paraphrased.
+- [ ] **Expected evidence:** when the pack gives a requirement an `expected_evidence` checklist
+  (requirement-register spec, issue #226), the requirement shows it in a disclosure with each
+  item's guide reference and the candidate note. The printed dossier shows it open.
 - [ ] **Routines:**
   - policies with their latest approval;
   - access reviews, trainings and incidents closed in the last 12 months.

@@ -92,3 +92,55 @@ def test_mp_s_2_keeps_the_space_inside_the_italic_web() -> None:
     text = next(r for r in pack.requirements if r.id == "mp.s.2").attributes.official_text_es
     assert "Los sistemas que prestan servicios web deberán ser protegidos" in text
     assert "webdeberán" not in text
+
+
+# Measures whose expected evidence the owner has signed in a session, quoted in that PR.
+SIGNED_EXPECTED_EVIDENCE: set[str] = set()
+
+SUBSECTIONS = {
+    "org": "6.2.1",
+    "op.pl": "6.2.2.1",
+    "op.acc": "6.2.2.2",
+    "op.exp": "6.2.2.3",
+    "op.ext": "6.2.2.4",
+    "op.nub": "6.2.2.5",
+    "op.cont": "6.2.2.6",
+    "op.mon": "6.2.2.7",
+    "mp.if": "6.2.3.1",
+    "mp.per": "6.2.3.2",
+    "mp.eq": "6.2.3.3",
+    "mp.com": "6.2.3.4",
+    "mp.si": "6.2.3.5",
+    "mp.sw": "6.2.3.6",
+    "mp.info": "6.2.3.7",
+    "mp.s": "6.2.3.8",
+}
+
+
+def test_every_ens_measure_lists_the_evidence_ccn_stic_808_proposes() -> None:
+    """requirement-register spec (#226): a candidate checklist for each Annex II measure, in
+    Atesta's words, citing the CCN-STIC 808 (April 2026) subsection, the measure and the printed
+    page of its evidence proposal (body pages 18 to 105, where printed page = PDF page)."""
+    pack = next(p for p in _catalog().packs if p.metadata.id == "ens_rd311_2022")
+    signed = set()
+    for requirement in pack.requirements:
+        block = requirement.attributes.expected_evidence
+        assert block is not None, requirement.id
+        if block.reviewed_by is not None:
+            signed.add(requirement.id)
+        group = requirement.id.rsplit(".", 1)[0]  # org.1 -> org, op.acc.1 -> op.acc
+        for item in block.items:
+            assert (item.ref.guide, item.ref.edition) == ("CCN-STIC 808", "2026-04")
+            assert item.ref.section == f"{SUBSECTIONS[group]} ({requirement.id})"
+            assert 18 <= item.ref.page <= 105, requirement.id
+            assert item.es != item.en
+    assert signed == SIGNED_EXPECTED_EVIDENCE
+    # Spot checks re-opened in the PDF (pull request for #226 lists them).
+    pages = {r.id: r.attributes.expected_evidence.items[0].ref.page for r in pack.requirements}  # type: ignore[union-attr]
+    assert (pages["org.1"], pages["op.pl.1"], pages["op.exp.6"], pages["mp.if.4"]) == (
+        18,
+        24,
+        50,
+        71,
+    )
+    assert (pages["mp.per.2"], pages["mp.info.6"], pages["mp.s.4"]) == (76, 99, 104)

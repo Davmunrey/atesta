@@ -1832,6 +1832,7 @@ export interface components {
             controls: components["schemas"]["DossierControl"][];
             /** Decision */
             decision: string;
+            expected_evidence: components["schemas"]["ExpectedEvidence"] | null;
             /** Implementation */
             implementation: string | null;
             /** Justification */
@@ -1961,6 +1962,27 @@ export interface components {
             scan_scopes: string[];
             /** Verifier Scopes */
             verifier_scopes: string[];
+        };
+        /**
+         * ExpectedEvidence
+         * @description What an auditor is likely to ask for, in Atesta's own words with the guide reference.
+         *     A candidate until the owner signs it: a signature is the reviewer's name and the date.
+         */
+        ExpectedEvidence: {
+            /** Items */
+            items: components["schemas"]["ExpectedEvidenceItem"][];
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed On */
+            reviewed_on?: string | null;
+        };
+        /** ExpectedEvidenceItem */
+        ExpectedEvidenceItem: {
+            /** En */
+            en: string;
+            /** Es */
+            es: string;
+            ref: components["schemas"]["GuideReference"];
         };
         /** FindingOut */
         FindingOut: {
@@ -2101,6 +2123,20 @@ export interface components {
             title: string;
             /** Title En */
             title_en?: string | null;
+        };
+        /**
+         * GuideReference
+         * @description Where a guide says it: cited, never copied (requirement-register spec, issue 226).
+         */
+        GuideReference: {
+            /** Edition */
+            edition: string;
+            /** Guide */
+            guide: string;
+            /** Page */
+            page: number;
+            /** Section */
+            section: string;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -2603,6 +2639,7 @@ export interface components {
         RequirementContext: {
             /** Applicability Es */
             applicability_es?: string | null;
+            expected_evidence?: components["schemas"]["ExpectedEvidence"] | null;
             /** Official Text En */
             official_text_en?: string | null;
             /** Official Text Es */

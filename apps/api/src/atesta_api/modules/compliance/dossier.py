@@ -10,6 +10,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from atesta_api.modules.compliance.catalog_schema import ExpectedEvidence
 from atesta_api.modules.compliance.detail import framework_detail
 from atesta_api.modules.compliance.detail_schema import Observation
 from atesta_api.modules.compliance.incidents import IncidentSummary, list_incidents
@@ -81,6 +82,7 @@ class DossierRequirement(BaseModel):
     implementation: str | None
     justification: str
     controls: list[DossierControl]
+    expected_evidence: ExpectedEvidence | None  # the pack's candidate checklist, cited
 
 
 class DossierRoutines(BaseModel):
@@ -140,6 +142,7 @@ def dossier(
                 )
                 for c in r.controls
             ],
+            expected_evidence=r.guidance.expected_evidence if r.guidance else None,
         )
         for r in detail.requirements
         if r.in_current_catalog

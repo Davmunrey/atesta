@@ -1,6 +1,7 @@
 """Catalog boundaries: reject misleading or inconsistent preparation content."""
 
 import copy
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -380,3 +381,104 @@ def test_an_incident_criterion_is_a_requirement_or_an_inline_official_text(
     )
     found = read(tmp_path).packs[0].metadata.attributes.incident_criteria[0]
     assert found.text is not None and found.text.section == "Artículo 3"
+
+
+EXPECTED = {
+    "reviewed_by": None,
+    "items": [
+        {
+            "es": "Política aprobada y comunicada a la plantilla.",
+            "en": "Approved policy, communicated to staff.",
+            "ref": {"guide": "Synthetic guide", "edition": "2026-04", "section": "6.2", "page": 18},
+        }
+    ],
+}
+
+
+def test_a_requirement_may_list_the_evidence_a_guide_expects(tmp_path: Path) -> None:
+    """requirement-register spec, expected evidence (#226): own words, cited, a candidate."""
+    catalog_files(tmp_path)
+    change(
+        tmp_path,
+        "frameworks/sample/requirements.yaml",
+        lambda d: d["requirements"][0]["attributes"].update(expected_evidence=EXPECTED),
+    )
+    found = read(tmp_path).packs[0].requirements[0].attributes.expected_evidence
+    assert found is not None and found.reviewed_by is None
+    item = found.items[0]
+    assert (item.es, item.ref.guide, item.ref.edition, item.ref.page) == (
+        "Política aprobada y comunicada a la plantilla.",
+        "Synthetic guide",
+        "2026-04",
+        18,
+    )
+
+
+def _item(**changes: object) -> dict[str, object]:
+    return {**EXPECTED["items"][0], **changes}  # type: ignore[index]
+
+
+def _ref(**changes: object) -> dict[str, object]:
+    return {**EXPECTED["items"][0]["ref"], **changes}  # type: ignore[index]
+
+
+@pytest.mark.parametrize(
+    "block",
+    [
+        {**EXPECTED, "reviewed_by": "David Muñoz"},
+        {**EXPECTED, "reviewed_on": "2026-11-23"},
+        {**EXPECTED, "reviewed_by": " ", "reviewed_on": "2026-11-23"},
+        {**EXPECTED, "reviewed_by": "David Muñoz", "reviewed_on": "23/11/2026"},
+        {"items": EXPECTED["items"]},
+        {**EXPECTED, "items": []},
+        {**EXPECTED, "items": [_item()] * 9},
+        {**EXPECTED, "items": [_item(en="")]},
+        {**EXPECTED, "items": [{k: v for k, v in _item().items() if k != "es"}]},
+        {**EXPECTED, "items": [_item(es="x" * 201)]},
+        {**EXPECTED, "items": [_item(ref=_ref(page=0))]},
+        {**EXPECTED, "items": [_item(ref=_ref(edition="abril 2026"))]},
+        {**EXPECTED, "items": [_item(ref=_ref(section=" "))]},
+        {**EXPECTED, "items": [_item(note="copied text")]},
+    ],
+    ids=[
+        "signer_without_date",
+        "date_without_signer",
+        "blank_signer",
+        "date_not_iso",
+        "no_marker",
+        "empty",
+        "too_long_list",
+        "no_en",
+        "no_es",
+        "long_item",
+        "page_zero",
+        "edition_text",
+        "no_section",
+        "extra_field",
+    ],
+)
+def test_expected_evidence_must_be_cited_short_and_signed_in_full(
+    tmp_path: Path, block: dict[str, object]
+) -> None:
+    catalog_files(tmp_path)
+    change(
+        tmp_path,
+        "frameworks/sample/requirements.yaml",
+        lambda d: d["requirements"][0]["attributes"].update(expected_evidence=block),
+    )
+    with pytest.raises(ValueError):
+        read(tmp_path)
+
+
+def test_the_owner_signs_expected_evidence_with_a_name_and_a_date(tmp_path: Path) -> None:
+    """A signature adds two fields and changes nothing else in the content (owner, 2026-11-23)."""
+    catalog_files(tmp_path)
+    signed = {**EXPECTED, "reviewed_by": "David Muñoz", "reviewed_on": "2026-11-23"}
+    change(
+        tmp_path,
+        "frameworks/sample/requirements.yaml",
+        lambda d: d["requirements"][0]["attributes"].update(expected_evidence=signed),
+    )
+    found = read(tmp_path).packs[0].requirements[0].attributes.expected_evidence
+    assert found is not None
+    assert (found.reviewed_by, found.reviewed_on) == ("David Muñoz", date(2026, 11, 23))
