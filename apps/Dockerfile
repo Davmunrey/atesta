@@ -6,7 +6,7 @@
 # an export of uv.lock made at build time (so Dependabot's lock updates need no second file);
 # Atesta's own packages build offline from this tree with the hash-locked hatchling. Runs as 10001
 # on a read-only root; only /tmp is written.
-FROM python:3.12.16-slim-trixie@sha256:8523d6abeb48ceae0b7240d30c5808fc26cb79c1a635bacdf19cf3baecfbec07 AS base
+FROM python:3.12.16-slim-trixie@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b AS base
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
