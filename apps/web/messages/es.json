@@ -87,7 +87,10 @@
       "provider_unavailable": "No podemos verificar tu sesión ahora mismo. Vuelve a intentarlo en unos segundos."
     },
     "connections": {
+      "incomplete_permissions": "El escaneo se detuvo: a la conexión le faltan permisos de lectura. Revisa los permisos concedidos y vuelve a verificarla.",
       "not_found": "No encontramos esa conexión, o no tienes acceso.",
+      "over_privileged": "El escaneo se detuvo: la conexión tiene más permisos de los necesarios. Atesta solo usa permisos de lectura; retira los demás y vuelve a verificarla.",
+      "revoked": "El escaneo se detuvo: se revocó el acceso de la conexión. Vuelve a conectarla para seguir escaneando.",
       "state_invalid": "Esta conexión ya no admite ese cambio. Recarga la página."
     },
     "identity": {
@@ -122,7 +125,11 @@
       "already_queued": "Ya hay un escaneo en cola o en curso para esta conexión. Espera a que termine.",
       "daily_limit": "Ya has hecho hoy los 6 escaneos manuales de esta conexión. Los escaneos programados siguen funcionando. Podrás escanear de nuevo a partir de medianoche (hora de Madrid).",
       "connection_not_active": "Esta conexión aún no está activa. Termina de configurarla y verifícala antes de escanear.",
-      "not_found": "No encontramos ese escaneo, o no tienes acceso."
+      "engine_failed": "El escaneo no pudo completarse. Vuelve a lanzarlo más tarde.",
+      "not_found": "No encontramos ese escaneo, o no tienes acceso.",
+      "output_invalid": "El resultado del escaneo no era válido y se descartó. No se guardó ningún dato de este intento.",
+      "tenant_mismatch": "El resultado del escaneo pertenecía a otro inquilino y se descartó. Revisa a qué inquilino apunta la conexión.",
+      "timeout": "El escaneo superó el tiempo máximo y se detuvo."
     }
   },
   "app": {
@@ -1155,5 +1162,11 @@
       "inactive": "Revocados o caducados",
       "lastUsed": "Último uso"
     }
+  },
+  "expectedEvidence": {
+    "title": "Evidencias que propone la guía ({count, plural, one {# elemento} other {# elementos}})",
+    "candidate": "Lista orientativa redactada por Atesta a partir de la guía citada. Pendiente de revisión cualificada; no valora a tu organización.",
+    "reviewed": "Lista redactada por Atesta a partir de la guía citada y revisada por {name} el {date}. No valora a tu organización.",
+    "reference": "{guide} ({edition}), apartado {section}, pág. {page}"
   }
 }

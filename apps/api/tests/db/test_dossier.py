@@ -1,5 +1,6 @@
 """Auditor dossier (auditor-dossier spec), on real PostgreSQL with RLS."""
 
+import json
 import uuid
 from collections.abc import Iterator
 from datetime import date
@@ -104,3 +105,49 @@ def test_an_unknown_framework_has_no_dossier(client: TestClient, superuser: Engi
     org, subs = org_with(client, superuser)
     response = client.get(base(org, "no_such_pack") + "/dossier", headers=auth(subs["owner"]))
     assert response.status_code == 404
+
+
+EXPECTED = {
+    "reviewed_by": None,
+    "items": [
+        {
+            "es": "Registro de altas y bajas de cuentas.",
+            "en": "Record of accounts created and removed.",
+            "ref": {"guide": "Synthetic guide", "edition": "2026-04", "section": "6.2", "page": 32},
+        }
+    ],
+}
+SERVED = {**EXPECTED, "reviewed_on": None}  # unsigned: no reviewer, no date
+
+
+def test_expected_evidence_reaches_the_register_and_the_dossier(
+    client: TestClient, superuser: Engine, pack: str
+) -> None:
+    """requirement-register and auditor-dossier specs (#226): the pack's candidate checklist
+    shows under its requirement, even before the requirement has controls."""
+    attributes = {
+        "official_text_es": "Texto sintético.",
+        "section": "1",
+        "source_sha256": "c" * 64,
+        "expected_evidence": EXPECTED,
+    }
+    with superuser.begin() as conn:
+        conn.execute(
+            text(
+                "INSERT INTO requirements (framework_key, code, title_es, title_en, source,"
+                " attributes) VALUES (:k, 'm.evid', 'Medida con evidencias', NULL, 'synthetic',"
+                " CAST(:a AS jsonb))"
+            ),
+            {"k": pack, "a": json.dumps(attributes)},
+        )
+    org, subs = org_with(client, superuser)
+    detail = client.get(f"/api/v1/orgs/{org}/frameworks/{pack}", headers=auth(subs["owner"]))
+    assert detail.status_code == 200, detail.text
+    guidance = {r["code"]: r["guidance"] for r in detail.json()["requirements"]}
+    assert guidance["m.evid"]["expected_evidence"] == SERVED
+    assert guidance["m.cat"] is None  # synthetic rows without official text expose nothing
+    dossier = client.get(base(org, pack) + "/dossier", headers=auth(subs["owner"])).json()
+    by_code = {r["code"]: r for r in dossier["requirements"]}
+    assert by_code["m.evid"]["controls"] == []
+    assert by_code["m.evid"]["expected_evidence"] == SERVED
+    assert by_code["m.cat"]["expected_evidence"] is None

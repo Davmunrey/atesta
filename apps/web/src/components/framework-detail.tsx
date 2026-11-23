@@ -10,6 +10,7 @@ import { orgFrameworks, orgHome } from "@/lib/org";
 import { Breadcrumbs, PageHeader } from "./page-frame";
 import { type Role, canAssess, canReviewControls, isContributor } from "@/lib/permissions";
 import { CatalogPreparation, PreparationGuides, RequirementGuidance } from "./catalog-preparation";
+import { ExpectedEvidence } from "./expected-evidence";
 import { CatalogReference as Reference } from "./catalog-reference";
 import { ControlReview } from "./control-review";
 import { ControlEvidence } from "./control-evidence";
@@ -159,6 +160,7 @@ function RequirementRow({ requirement: r, initiallyOpen, review, item, recorded 
     </summary>
     <div className="requirement-body">
       {item ? <AssessmentForm item={item} orgId={review.orgId} frameworkKey={review.frameworkKey} canEdit={review.canReview} canAssess={mayAssess} /> : null}
+      {r.guidance?.expected_evidence ? <ExpectedEvidence evidence={r.guidance.expected_evidence} /> : null}
       <Collapsible open={!item} label={r9("guideAndText")}>
       {!item || recorded ? <><p className="requirement-explanation">{t(`meaning.${r.status}`)}</p>
       <h3>{t("nextStep")}</h3><p>{t(`next.${r.status}`)}</p></> : null}

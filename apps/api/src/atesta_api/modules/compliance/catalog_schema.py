@@ -35,6 +35,39 @@ class SelectionRule(Content):
     rule: Text
 
 
+ItemText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
+
+
+class GuideReference(Content):
+    """Where a guide says it: cited, never copied (requirement-register spec, issue 226)."""
+
+    guide: Text
+    edition: Annotated[str, StringConstraints(pattern=r"^\d{4}-(0[1-9]|1[0-2])$")]
+    section: Text
+    page: Annotated[int, Field(ge=1)]
+
+
+class ExpectedEvidenceItem(Content):
+    es: ItemText
+    en: ItemText
+    ref: GuideReference
+
+
+class ExpectedEvidence(Content):
+    """What an auditor is likely to ask for, in Atesta's own words with the guide reference.
+    A candidate until the owner signs it: a signature is the reviewer's name and the date."""
+
+    items: list[ExpectedEvidenceItem] = Field(min_length=1, max_length=8)
+    reviewed_by: Text | None
+    reviewed_on: date | None = None
+
+    @model_validator(mode="after")
+    def signed_in_full(self) -> Self:
+        if (self.reviewed_by is None) != (self.reviewed_on is None):
+            raise ValueError("a signed checklist names its reviewer and the review date")
+        return self
+
+
 class RequirementContext(Content):
     """Official text of one requirement (content model v2). Selection tables by category or
     dimension are optional; an act also published in English carries its official English text."""
@@ -46,6 +79,7 @@ class RequirementContext(Content):
     selection_rules: list[SelectionRule] = Field(default_factory=list)
     section: Text
     source_sha256: Annotated[str, StringConstraints(pattern=r"^[a-f0-9]{64}$")]
+    expected_evidence: ExpectedEvidence | None = None
 
     @model_validator(mode="after")
     def rules_need_a_basis(self) -> Self:

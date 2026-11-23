@@ -196,14 +196,9 @@ handful of organizations, one scan a day each. Taxes are not included.
 | CloudFront | always-free tier: 1 TB and 10 M requests a month | 0 | 0 |
 | **Total** | | **about 138** | **about 228** |
 
-**Against the budget alerts (150, 250 and 400 per account):**
-- **Dev:** about 138 sits just under the first alert.
-- **Prod:** about 228 crosses 150 every month, and db.t4g.small Multi-AZ (+25.55) would put it at
-  about 254, over 250.
-
-So either:
-- move prod's alerts (for example 250, 350 and 450);
-- or keep them and treat 150 and 250 as known monthly notices.
+**Against the budget alerts.** Dev alerts at 150, 250 and 400, and its estimate (about 138)
+sits just under the first one. Prod alerts at 250, 350 and 450 (owner decision, #286), so the
+estimate (about 228, or about 254 with db.t4g.small Multi-AZ) raises at most the first alert.
 
 **What moves the total most:**
 - **NAT gateways** are about a quarter to a third of it. They stay: Cognito, Microsoft Graph and

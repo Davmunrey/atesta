@@ -6,6 +6,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from atesta_api.platform.db import RDS_CA, SSLMODES
+from atesta_api.platform.logs import install_log_redaction
 from procrastinate import App, Blueprint, PsycopgConnector
 from sqlalchemy.engine import URL, make_url
 
@@ -56,6 +57,7 @@ def build_app(url: str | URL, sslmode: str, extra: Iterable[Blueprint] = ()) -> 
 
     Procrastinate's own builtin tasks are not checked: Atesta never defers them.
     """
+    install_log_redaction()  # Procrastinate logs a failed job with exc_info (rule 2)
     blueprints = [make_blueprint(), *extra]
     bad = non_id_parameters(t for bp in blueprints for t in bp.tasks.values())
     if bad:

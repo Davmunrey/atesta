@@ -21,8 +21,9 @@ from sqlalchemy import (
     func,
     text,
 )
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, validates
 
+from atesta_api.modules.scanning.error_codes import SCAN_ERROR_CODES
 from atesta_api.platform.db import Base, TenantMixin
 
 ACTIVE_SCAN = "status IN ('queued', 'running')"
@@ -89,6 +90,13 @@ class Scan(TenantMixin, Base):
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     ingested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    @validates("error_code")
+    def _known_error_code(self, _key: str, value: str | None) -> str | None:
+        """GET /scans returns error_code: each one needs ES and EN text (#270)."""
+        if value is not None and value not in SCAN_ERROR_CODES:
+            raise ValueError(f"unknown scan error code: {value}")
+        return value
 
 
 class ScanCheckResult(TenantMixin, Base):

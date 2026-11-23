@@ -28,7 +28,10 @@
   "compliance.training_full",
   "compliance.training_link_invalid",
   "compliance.training_not_found",
+  "connections.incomplete_permissions",
   "connections.not_found",
+  "connections.over_privileged",
+  "connections.revoked",
   "connections.state_invalid",
   "evidence.control_not_found",
   "evidence.submission_conflict",
@@ -52,6 +55,10 @@
   "scanning.already_queued",
   "scanning.connection_not_active",
   "scanning.daily_limit",
+  "scanning.engine_failed",
   "scanning.not_found",
+  "scanning.output_invalid",
+  "scanning.tenant_mismatch",
+  "scanning.timeout",
   "server.error"
 ]

@@ -1,6 +1,7 @@
 """Worker app wiring: ids-only job arguments, TLS settings, org context entry."""
 
 import datetime
+import logging
 import uuid
 
 import pytest
@@ -118,3 +119,16 @@ def test_ingest_and_schedule_retry_transient_database_errors_only(name: str) -> 
     lost = OperationalError("SELECT 1", {}, Exception("connection lost"))
     assert strategy.get_retry_decision(exception=lost, job=_job(0)) is not None
     assert strategy.get_retry_decision(exception=ScanNotFoundError("x"), job=_job(0)) is None
+
+
+def test_build_app_installs_log_redaction(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Procrastinate logs a failed job with exc_info; its message never reaches the log."""
+    monkeypatch.setattr(logging, "_logRecordFactory", logging.LogRecord)
+    build_app(URL, "disable")
+    error = ValueError("Key (email)=(ana@example.com) already exists.")
+    record = logging.getLogger("procrastinate.worker").makeRecord(
+        "procrastinate.worker", logging.ERROR, "f", 1, "Job ended", (), (ValueError, error, None)
+    )
+    assert record.exc_info is None
+    assert record.exc_text is not None and "ana@example.com" not in record.exc_text
+    assert "builtins.ValueError" in record.exc_text
