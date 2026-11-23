@@ -52,6 +52,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/access-reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Access Reviews */
+        get: operations["list_access_reviews_api_v1_orgs__org_id__access_reviews_get"];
+        put?: never;
+        /** Create Access Review */
+        post: operations["create_access_review_api_v1_orgs__org_id__access_reviews_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/access-reviews/{review_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Access Review */
+        get: operations["read_access_review_api_v1_orgs__org_id__access_reviews__review_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/access-reviews/{review_id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Close Access Review */
+        post: operations["close_access_review_api_v1_orgs__org_id__access_reviews__review_id__close_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/access-reviews/{review_id}/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Decide */
+        post: operations["decide_api_v1_orgs__org_id__access_reviews__review_id__decisions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/activity": {
         parameters: {
             query?: never;
@@ -478,6 +547,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Policies */
+        get: operations["list_policies_api_v1_orgs__org_id__policies_get"];
+        put?: never;
+        /** Create Policy */
+        post: operations["create_policy_api_v1_orgs__org_id__policies_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/policies/{policy_id}/approvals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve Policy */
+        post: operations["approve_policy_api_v1_orgs__org_id__policies__policy_id__approvals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/readiness": {
         parameters: {
             query?: never;
@@ -487,6 +591,23 @@ export interface paths {
         };
         /** Readiness */
         get: operations["readiness_api_v1_orgs__org_id__readiness_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/routines/due": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Routines Due */
+        get: operations["routines_due_api_v1_orgs__org_id__routines_due_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -649,6 +770,87 @@ export interface components {
             organization_id: string;
             role: components["schemas"]["Role"];
         };
+        /** AccessReviewIn */
+        AccessReviewIn: {
+            /** Accounts */
+            accounts: components["schemas"]["AccountIn"][];
+            /** Due On */
+            due_on?: string | null;
+            /** System */
+            system: string;
+            /** Title */
+            title: string;
+        };
+        /** AccessReviewOut */
+        AccessReviewOut: {
+            /** Closed At */
+            closed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Due On */
+            due_on: string | null;
+            /** Entries */
+            entries: components["schemas"]["EntryOut"][];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Keep */
+            keep: number;
+            /** Pending */
+            pending: number;
+            /** Revoke */
+            revoke: number;
+            /** System */
+            system: string;
+            /** Title */
+            title: string;
+            /** Total */
+            total: number;
+        };
+        /** AccessReviewSummary */
+        AccessReviewSummary: {
+            /** Closed At */
+            closed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Due On */
+            due_on: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Keep */
+            keep: number;
+            /** Pending */
+            pending: number;
+            /** Revoke */
+            revoke: number;
+            /** System */
+            system: string;
+            /** Title */
+            title: string;
+            /** Total */
+            total: number;
+        };
+        /** AccountIn */
+        AccountIn: {
+            /** Account */
+            account: string;
+            /**
+             * Detail
+             * @default
+             */
+            detail: string;
+        };
         /** Activity */
         Activity: {
             /** Daily */
@@ -727,6 +929,39 @@ export interface components {
              * @default Generated by Atesta from the organization's own records. Not a certification. / Generado por Atesta a partir de los registros de la propia organización. No es una certificación.
              */
             statement: string;
+        };
+        /** ApprovalIn */
+        ApprovalIn: {
+            /**
+             * Approved On
+             * Format: date
+             */
+            approved_on: string;
+            /** Approver Name */
+            approver_name: string;
+            /** Sha256 */
+            sha256?: string | null;
+            /** Version */
+            version: string;
+        };
+        /** ApprovalOut */
+        ApprovalOut: {
+            /**
+             * Approved On
+             * Format: date
+             */
+            approved_on: string;
+            /** Approver Name */
+            approver_name: string;
+            /**
+             * Recorded At
+             * Format: date-time
+             */
+            recorded_at: string;
+            /** Sha256 */
+            sha256: string | null;
+            /** Version */
+            version: string;
         };
         /** AssessmentIn */
         AssessmentIn: {
@@ -1024,6 +1259,58 @@ export interface components {
              * Format: date
              */
             day: string;
+        };
+        /** @enum {string} */
+        Decision: "keep" | "revoke";
+        /** DecisionIn */
+        DecisionIn: {
+            decision: components["schemas"]["Decision"];
+            /**
+             * Entry Id
+             * Format: uuid
+             */
+            entry_id: string;
+            /**
+             * Note
+             * @default
+             */
+            note: string;
+        };
+        /** DueItem */
+        DueItem: {
+            /** Due On */
+            due_on: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "policy_review" | "policy_unapproved" | "access_review_overdue";
+            /** Overdue */
+            overdue: boolean;
+            /** Title */
+            title: string;
+        };
+        /** EntryOut */
+        EntryOut: {
+            /** Account */
+            account: string;
+            /** Decided At */
+            decided_at: string | null;
+            decision: components["schemas"]["Decision"] | null;
+            /** Detail */
+            detail: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Note */
+            note: string;
         };
         /** EvidenceOut */
         EvidenceOut: {
@@ -1403,6 +1690,37 @@ export interface components {
              * Format: date
              */
             verified_on: string;
+        };
+        /** PolicyIn */
+        PolicyIn: {
+            /** Location Url */
+            location_url: string;
+            /** Review Months */
+            review_months: number;
+            /** Title */
+            title: string;
+        };
+        /** PolicyOut */
+        PolicyOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            latest: components["schemas"]["ApprovalOut"] | null;
+            /** Location Url */
+            location_url: string;
+            /** Next Review On */
+            next_review_on: string | null;
+            /** Review Months */
+            review_months: number;
+            /** Title */
+            title: string;
         };
         /** PreparationControl */
         PreparationControl: {
@@ -1875,6 +2193,172 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrgOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_access_reviews_api_v1_orgs__org_id__access_reviews_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccessReviewSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_access_review_api_v1_orgs__org_id__access_reviews_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccessReviewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccessReviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_access_review_api_v1_orgs__org_id__access_reviews__review_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                review_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccessReviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    close_access_review_api_v1_orgs__org_id__access_reviews__review_id__close_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                review_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccessReviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decide_api_v1_orgs__org_id__access_reviews__review_id__decisions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                review_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntryOut"];
                 };
             };
             /** @description Validation Error */
@@ -2976,6 +3460,108 @@ export interface operations {
             };
         };
     };
+    list_policies_api_v1_orgs__org_id__policies_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PolicyOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_policy_api_v1_orgs__org_id__policies_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PolicyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PolicyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    approve_policy_api_v1_orgs__org_id__policies__policy_id__approvals_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                policy_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApprovalIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PolicyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     readiness_api_v1_orgs__org_id__readiness_get: {
         parameters: {
             query?: never;
@@ -2994,6 +3580,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FrameworkReadiness"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    routines_due_api_v1_orgs__org_id__routines_due_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DueItem"][];
                 };
             };
             /** @description Validation Error */

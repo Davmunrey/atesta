@@ -21,6 +21,13 @@ export const orgInvitations = (orgId: string): string =>
 
 export const orgSettings = (orgId: string): string => `/app/settings?org=${encodeURIComponent(orgId)}`;
 
+export const orgAccessReviews = (orgId: string): string => `/app/access-reviews?org=${encodeURIComponent(orgId)}`;
+
+export const orgAccessReview = (orgId: string, id: string): string =>
+  `/app/access-review?org=${encodeURIComponent(orgId)}&id=${encodeURIComponent(id)}`;
+
+export const orgPolicies = (orgId: string): string => `/app/policies?org=${encodeURIComponent(orgId)}`;
+
 export const orgMyWork = (orgId: string): string => `/app/my-work?org=${encodeURIComponent(orgId)}`;
 
 export const orgActivity = (orgId: string): string => `/app/activity?org=${encodeURIComponent(orgId)}`;

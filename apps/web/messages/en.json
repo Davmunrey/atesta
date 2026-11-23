@@ -61,7 +61,12 @@
       "requirement_not_found": "This requirement is not in the current catalog.",
       "scope_invalid": "The scope contains values this framework does not define.",
       "owner_not_member": "Only a member of this organization can be the owner.",
-      "not_owner": "You can only assess the measures assigned to you."
+      "not_owner": "You can only assess the measures assigned to you.",
+      "access_review_not_found": "This access review does not exist.",
+      "access_review_entry_not_found": "This account is not part of the review.",
+      "access_review_closed": "The review is closed and takes no more decisions.",
+      "access_review_pending": "Some accounts have no decision yet; decide them all before closing.",
+      "policy_not_found": "This policy does not exist."
     },
     "unknown": "Something went wrong. Try again, and contact support if it keeps happening.",
     "auth": {
@@ -598,7 +603,12 @@
       "review": "Security officer's review of {framework}: the whole self-assessment is complete",
       "unowned": "{count, plural, one {# open measure without an owner} other {# open measures without an owner}} in {framework}",
       "scope": "Scope of {framework}",
-      "auditor": "{email}'s auditor access ends on {date}"
+      "auditor": "{email}'s auditor access ends on {date}",
+      "due": {
+        "policy_review": "Review the policy “{title}” by {date}",
+        "policy_unapproved": "Record the approval of the policy “{title}”",
+        "access_review_overdue": "Finish the access review “{title}” (due {date})"
+      }
     },
     "step": {
       "scope": "Define the scope of {framework}",
@@ -629,7 +639,8 @@
       "general": "General",
       "team": "Team",
       "oversight": "Oversight",
-      "organization": "Organization"
+      "organization": "Organization",
+      "records": "Records"
     },
     "searchLabel": "Search Atesta",
     "searchPlaceholder": "Search measures, frameworks and pages",
@@ -652,6 +663,68 @@
       "act": "Needs action",
       "clear": "Up to date"
     },
-    "frameworksPage": "Self-assessment progress and recorded results for each framework."
+    "frameworksPage": "Self-assessment progress and recorded results for each framework.",
+    "accessReviews": "Access reviews",
+    "policies": "Policies"
+  },
+  "routines": {
+    "access": {
+      "title": "Access reviews",
+      "intro": "Decide, account by account, who keeps access. Closing leaves evidence of the result. Atesta changes nothing in your systems.",
+      "loading": "Loading…",
+      "list": "Reviews",
+      "empty": "No access reviews yet.",
+      "review": "Review",
+      "progress": "Progress",
+      "state": "State",
+      "decided": "{decided} of {total, plural, one {# account decided} other {# accounts decided}}",
+      "closedOn": "Closed on {date}",
+      "dueOn": "Due {date}",
+      "open": "Open",
+      "create": "New review",
+      "createHelp": "Paste one account per line (add a detail after a comma) or choose a CSV. It is read in your browser; no file is uploaded.",
+      "reviewTitle": "Review name",
+      "system": "System reviewed",
+      "due": "Due date (optional)",
+      "accounts": "Accounts",
+      "accountsHelp": "{count, plural, =0 {No accounts yet} one {# account ready} other {# accounts ready}}",
+      "csv": "Or choose a CSV",
+      "start": "Start the review",
+      "close": "Close and record",
+      "closeBlocked": "{count, plural, one {# account still needs a decision} other {# accounts still need a decision}}",
+      "closedEvidence": "Review closed. The evidence is recorded on the access review control.",
+      "account": "Account",
+      "decision": "Decision",
+      "decisionFor": "Decision for {account}",
+      "keep": "Keep",
+      "revoke": "Revoke",
+      "pending": "Not decided"
+    },
+    "policies": {
+      "title": "Policies",
+      "intro": "Where each policy lives, which version is approved and when it is due for review. Each approval is recorded as evidence.",
+      "loading": "Loading…",
+      "list": "Policy register",
+      "empty": "No policies registered yet.",
+      "unapproved": "Not approved",
+      "reviewOverdue": "Review overdue since {date}",
+      "reviewBy": "Review by {date}",
+      "latest": "Version {version}, approved by {approver} on {date}",
+      "never": "Never approved",
+      "approve": "Record approval",
+      "version": "Version",
+      "approver": "Approved by",
+      "approvedOn": "Approval date",
+      "file": "Approved document (optional)",
+      "fileHelp": "Its SHA-256 is computed in your browser; the document is not uploaded.",
+      "hash": "SHA-256: {hash}",
+      "record": "Record",
+      "create": "New policy",
+      "createHelp": "Link the document where you keep it (SharePoint, Drive…). Atesta does not copy it.",
+      "policyTitle": "Policy name",
+      "location": "Link to the document (https)",
+      "reviewMonths": "Review every (months)",
+      "add": "Add policy"
+    }
   }
 }

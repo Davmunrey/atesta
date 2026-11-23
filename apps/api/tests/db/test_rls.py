@@ -119,6 +119,17 @@ INSERT INTO assessment_reviews (id, organization_id, framework_key, reviewer_nam
   current_date, 'c', :u);
 INSERT INTO requirement_assignments (id, organization_id, framework_key, requirement_code,
   owner_user_id, assigned_by) VALUES (gen_random_uuid(), :o, 'fw_rls', 'r1', :u, :u);
+WITH r AS (INSERT INTO access_reviews (id, organization_id, title, system, created_by)
+  VALUES (gen_random_uuid(), :o, 't', 's', :u) RETURNING id),
+e AS (INSERT INTO access_review_entries (id, organization_id, review_id, account)
+  SELECT gen_random_uuid(), :o, id, 'a' FROM r RETURNING id)
+INSERT INTO access_review_decisions (id, organization_id, entry_id, decision, decided_by)
+  SELECT gen_random_uuid(), :o, id, 'keep', :u FROM e;
+WITH p AS (INSERT INTO policies (id, organization_id, title, location_url, review_months,
+  created_by)
+  VALUES (gen_random_uuid(), :o, 't', 'https://example.com/p', 12, :u) RETURNING id)
+INSERT INTO policy_approvals (id, organization_id, policy_id, version, approver_name, approved_on,
+  recorded_by) SELECT gen_random_uuid(), :o, id, '1', 'n', current_date, :u FROM p;
 INSERT INTO probe_child VALUES (:o, :p);
 """
 

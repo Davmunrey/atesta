@@ -10,6 +10,7 @@ from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import (
+    CHAR,
     Boolean,
     CheckConstraint,
     Computed,
@@ -353,5 +354,117 @@ class RequirementAssignment(TenantMixin, Base):
     due_on: Mapped[date | None] = mapped_column(Date)
     assigned_by: Mapped[uuid.UUID]
     assigned_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
+# --- Recorded routines (recorded-routines spec, part A). Append-only except a review's closing.
+
+
+class AccessReview(TenantMixin, Base):
+    """An access review: accounts of one system, each decided keep or revoke, then closed."""
+
+    __tablename__ = "access_reviews"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        CheckConstraint("length(btrim(title)) BETWEEN 1 AND 200", name="title_length"),
+        CheckConstraint("length(btrim(system)) BETWEEN 1 AND 200", name="system_length"),
+        CheckConstraint("(closed_at IS NULL) = (closed_by IS NULL)", name="closed_together"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    title: Mapped[str] = mapped_column(Text)
+    system: Mapped[str] = mapped_column(Text)
+    due_on: Mapped[date | None] = mapped_column(Date)
+    created_by: Mapped[uuid.UUID]
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    closed_by: Mapped[uuid.UUID | None]
+
+
+class AccessReviewEntry(TenantMixin, Base):
+    __tablename__ = "access_review_entries"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        ForeignKeyConstraint(
+            ["organization_id", "review_id"],
+            ["access_reviews.organization_id", "access_reviews.id"],
+            ondelete="RESTRICT",
+        ),
+        CheckConstraint("length(btrim(account)) BETWEEN 1 AND 320", name="account_length"),
+        CheckConstraint("length(detail) <= 200", name="detail_length"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    review_id: Mapped[uuid.UUID]
+    account: Mapped[str] = mapped_column(Text)
+    detail: Mapped[str] = mapped_column(Text, server_default="")
+
+
+class AccessReviewDecision(TenantMixin, Base):
+    __tablename__ = "access_review_decisions"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        ForeignKeyConstraint(
+            ["organization_id", "entry_id"],
+            ["access_review_entries.organization_id", "access_review_entries.id"],
+            ondelete="RESTRICT",
+        ),
+        CheckConstraint("decision IN ('keep', 'revoke')", name="decision"),
+        CheckConstraint("length(note) <= 1000", name="note_length"),
+        Index("ix_access_review_decisions_latest", "organization_id", "entry_id", "decided_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    entry_id: Mapped[uuid.UUID]
+    decision: Mapped[str] = mapped_column(Text)
+    note: Mapped[str] = mapped_column(Text, server_default="")
+    decided_by: Mapped[uuid.UUID]
+    decided_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Policy(TenantMixin, Base):
+    __tablename__ = "policies"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        CheckConstraint("length(btrim(title)) BETWEEN 1 AND 200", name="title_length"),
+        CheckConstraint(
+            "left(location_url, 8) = 'https://' AND length(location_url) <= 2000",
+            name="location_https",
+        ),
+        CheckConstraint("review_months BETWEEN 1 AND 36", name="review_months"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    title: Mapped[str] = mapped_column(Text)
+    location_url: Mapped[str] = mapped_column(Text)
+    review_months: Mapped[int]
+    created_by: Mapped[uuid.UUID]
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class PolicyApproval(TenantMixin, Base):
+    __tablename__ = "policy_approvals"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "id"),
+        ForeignKeyConstraint(
+            ["organization_id", "policy_id"],
+            ["policies.organization_id", "policies.id"],
+            ondelete="RESTRICT",
+        ),
+        CheckConstraint("length(btrim(version)) BETWEEN 1 AND 50", name="version_length"),
+        CheckConstraint("length(btrim(approver_name)) BETWEEN 1 AND 200", name="approver_length"),
+        CheckConstraint("sha256 IS NULL OR sha256 ~ '^[0-9a-f]{64}$'", name="sha256_format"),
+        Index("ix_policy_approvals_latest", "organization_id", "policy_id", "recorded_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    policy_id: Mapped[uuid.UUID]
+    version: Mapped[str] = mapped_column(Text)
+    sha256: Mapped[str | None] = mapped_column(CHAR(64))
+    approver_name: Mapped[str] = mapped_column(Text)
+    approved_on: Mapped[date] = mapped_column(Date)
+    recorded_by: Mapped[uuid.UUID]
+    recorded_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

@@ -4,6 +4,8 @@
   "auth.bad_state",
   "auth.invalid_token",
   "auth.provider_unavailable",
+  "compliance.access_review_closed",
+  "compliance.access_review_pending",
   "compliance.control_not_found",
   "compliance.control_not_manual",
   "compliance.evidence_not_found",

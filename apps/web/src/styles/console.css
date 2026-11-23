@@ -138,4 +138,19 @@
   .console .insights-grid { gap: 1.25rem; }
   .console .framework-page > .page-header { margin-bottom: 0; }
   .console .catalog-about { padding: 0.75rem 1.25rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-panel); }
+
+  /* Recorded routines (recorded-routines spec). */
+  .routine-form { display: grid; gap: 1rem; }
+  @media (min-width: 48rem) { .routine-form { grid-template-columns: repeat(3, minmax(0, 1fr)); } .routine-form-wide, .routine-form > .form-actions, .routine-form > [role="alert"] { grid-column: 1 / -1; } }
+  .routine-form > span { display: grid; gap: 0.375rem; min-width: 0; }
+  .routine-form :is(input, textarea) { min-width: 0; padding: 0.5rem 0.75rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-bg); color: var(--color-fg); }
+  .routine-form textarea { font-family: var(--font-mono); font-size: 0.875rem; }
+  .decision-group { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+  .decision-group button[aria-pressed="true"] { background: var(--color-accent); color: var(--color-accent-fg); border-color: var(--color-fg); }
+  .badge[data-severity="done"] { color: var(--color-success); }
+  .policy-list > li { padding-block: 0.875rem; border-bottom: 1px solid var(--color-border-subtle); }
+  .policy-list > li:last-child { border-bottom: 0; }
+  .policy-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 0.75rem 1rem; }
+  @media (max-width: 40rem) { .policy-row { grid-template-columns: minmax(0, 1fr); } }
+  .policy-list .routine-form { margin-top: 1rem; padding: 1rem; border-radius: var(--radius-md); background: var(--color-surface); }
 }

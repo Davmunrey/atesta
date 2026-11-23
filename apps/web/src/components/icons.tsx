@@ -11,6 +11,8 @@ const PATHS: Record<string, ReactNode> = {
   settings: <><circle cx="12" cy="12" r="3" /><path d="M12 3.5v2.25M12 18.25v2.25M3.5 12h2.25M18.25 12h2.25M6 6l1.6 1.6M16.4 16.4 18 18M6 18l1.6-1.6M16.4 7.6 18 6" /></>,
   search: <><circle cx="10.5" cy="10.5" r="6" /><path d="m15 15 5.5 5.5" /></>,
   menu: <><path d="M4 7h16M4 12h16M4 17h16" /></>,
+  reviews: <><path d="M12 3.5 19 6v5.5c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V6Z" /><path d="m9 12 2.25 2.25L15.5 10" /></>,
+  policies: <><path d="M7 3.5h7.5L19 8v12.5H7Z" /><path d="M14.5 3.5V8H19" /><path d="M10 12.5h6M10 16h6" /></>,
   chevron: <><path d="m9.5 6 6 6-6 6" /></>,
   overdue: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5v5" /><path d="M12 16h.01" /></>,
   missing: <><path d="M12 4 21 19.5H3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></>,
