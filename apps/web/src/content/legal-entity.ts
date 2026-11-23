@@ -8,5 +8,5 @@ export const legalEntity = {
   nif: "[PENDIENTE] NIF",
   address: "[PENDIENTE] Domicilio",
   registry: "[PENDIENTE] Datos registrales",
-  email: "pendiente@atesta.invalid",
+  email: "hello@atesta.cloud", // the owner's contact address (23/11/2026)
 };

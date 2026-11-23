@@ -1,9 +1,18 @@
-/* Public landing (landing-legal spec, L1-L6, issue 308): paper and ink, the product view as the argument.
-   Motion is CSS only, never on the headline (the LCP), and rests on the final state. */
+/* Public landing and brand system (landing-legal spec L1-L7, amendment A1, issue 323).
+   Paper and ink; the highlighter stroke is the signature motif: on one phrase of the headline, as
+   the tab of every section divider and of every product frame. Motion is CSS only, never hides the
+   headline (the LCP), and rests on the final state. */
 @layer components {
   .landing { flex: 1; }
   /* Equal edges: the header and footer share the content column (73.5rem plus 1.25rem gutters). */
   .public-surface :is(.document-header, .site-footer) { padding-inline: max(1.25rem, calc((100% - 73.5rem) / 2)); }
+
+  /* Lockup: the mark beside the live wordmark. */
+  .brand-lockup { display: inline-flex; align-items: center; gap: 0.625rem; min-height: 2.75rem; color: var(--color-fg); }
+  .brand-seal { flex: none; width: 2rem; height: 2rem; }
+  .brand-seal-highlight { fill: var(--color-accent); }
+  .brand-word { font-family: var(--font-display); font-size: 1.75rem; font-weight: 600; line-height: 1; letter-spacing: -0.04em; }
+
   .public-header-end { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.5rem; }
   .public-header-actions { display: flex; align-items: center; gap: 0.5rem 1rem; }
   .landing-signin { display: inline-flex; align-items: center; min-height: 2.75rem; padding-inline: 0.25rem; text-decoration: underline; text-underline-offset: 0.2em; }
@@ -15,24 +24,71 @@
   .landing-cta:hover { transform: translateY(-2px); }
   .landing-cta:active { transform: translateY(0) scale(0.98); }
 
-  .landing-hero { width: 100%; max-width: 76rem; margin-inline: auto; padding: clamp(3rem, 8vw, 6.5rem) 1.25rem clamp(3rem, 6vw, 5rem); display: grid; gap: clamp(2.5rem, 5vw, 4.5rem); }
-  .landing-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(2.5rem, 1.5rem + 4.4vw, 5.5rem); line-height: 1.02; letter-spacing: -0.035em; max-width: 15ch; text-wrap: balance; }
-  .landing-sub { margin-top: 1.25rem; max-width: 40ch; font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem); color: var(--color-muted); }
+  /* The highlighter stroke. */
+  .hl { padding-inline: 0.06em; color: inherit; background-color: transparent; background-image: linear-gradient(var(--color-accent), var(--color-accent)); background-repeat: no-repeat; background-position: 0 90%; background-size: 100% 0.5em; }
+
+  .landing-hero { width: 100%; max-width: 76rem; margin-inline: auto; padding: clamp(3rem, 8vw, 6.5rem) 1.25rem clamp(3.5rem, 7vw, 6rem); display: grid; gap: clamp(2.5rem, 5vw, 4.5rem); }
+  .landing-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(2.6rem, 1.5rem + 4.8vw, 6rem); line-height: 1; letter-spacing: -0.04em; max-width: 14ch; text-wrap: balance; }
+  .landing-sub { margin-top: 1.5rem; max-width: 44ch; font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem); color: var(--color-muted); }
+  /* From 80rem the hero is one viewport: headline left, the overview frame right, running past the fold. */
+  @media (min-width: 80rem) {
+    .landing-hero { grid-template-columns: minmax(0, 11fr) minmax(0, 13fr); align-items: start; column-gap: 3.5rem; padding-top: clamp(3rem, 6vw, 5rem); }
+    .landing-hero-copy { padding-top: 2rem; }
+    .landing-hero .landing-title { font-size: clamp(3rem, 1.4rem + 2.4vw, 4.25rem); max-width: none; }
+    .landing-hero .landing-view { margin-top: 7rem; }
+  }
   .landing-actions { margin-top: 2rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; }
 
-  .landing-view { margin: 0; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-panel); overflow: hidden; }
-  .lv-bar-top { display: flex; align-items: center; gap: 1.25rem; padding: 0.75rem clamp(1rem, 3vw, 2.5rem); background: var(--color-ink); color: var(--color-on-ink); font-size: 0.875rem; }
-  .lv-mark { font-family: var(--font-display); font-size: 1.25rem; line-height: 1; padding-bottom: 0.15rem; border-bottom: 3px solid var(--color-accent); }
+  /* Sections: a hairline divider with the highlighter tab, generous rhythm. */
+  .landing-band { position: relative; display: grid; gap: 2rem; width: calc(100% - 2.5rem); max-width: 73.5rem; margin-inline: auto; padding-block: clamp(4rem, 9vw, 7.5rem); border-top: 1px solid var(--color-border-subtle); }
+  .landing-band::before { content: ""; position: absolute; top: -2px; left: 0; width: 3rem; height: 4px; background: var(--color-accent); }
+  .landing-h2, .landing-moment-title { max-width: 16ch; font-family: var(--font-display); font-weight: 500; font-size: clamp(2.25rem, 1.3rem + 3.6vw, 4.5rem); line-height: 1.04; letter-spacing: -0.03em; text-wrap: balance; }
+  .landing-statement { max-width: 44ch; font-family: var(--font-display); font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem); line-height: 1.35; }
+  @media (min-width: 64rem) {
+    .landing-problem, .landing-moment { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; column-gap: 4rem; }
+  }
+
+  /* The ink band: "Cómo funciona" on ink, full bleed, with the highlighter tab and yellow step numbers. */
+  .landing-ink { background: var(--color-ink); color: var(--color-on-ink); }
+  .landing-ink-inner { position: relative; display: grid; gap: 2.5rem; width: calc(100% - 2.5rem); max-width: 73.5rem; margin-inline: auto; padding-block: clamp(4.5rem, 10vw, 8rem); }
+  .landing-ink-inner::before { content: ""; position: absolute; top: 0; left: 0; width: 3rem; height: 4px; background: var(--color-accent); }
+  .landing-ink .landing-steps li { border-top-color: var(--color-on-ink); }
+  .landing-ink .landing-step-number { color: var(--color-cta); font-size: 1rem; }
+  .landing-ink .landing-step-body { color: var(--color-on-ink-muted); }
+  .landing-ink .landing-soon { border-color: var(--color-on-ink-muted); color: var(--color-on-ink-muted); }
+  .landing-ink :focus-visible { outline-color: var(--color-cta); }
+  .landing-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 2rem 1.5rem; }
+  .landing-steps li { display: grid; align-content: start; gap: 0.5rem; padding-top: 1.25rem; border-top: 2px solid var(--color-fg); }
+  .landing-step-number { font-family: var(--font-mono); font-size: 0.875rem; color: var(--color-muted); }
+  .landing-step-title { font-size: 1.25rem; font-weight: 600; line-height: 1.3; }
+  .landing-step-body { color: var(--color-muted); }
+  .landing-soon { display: inline-block; margin-left: 0.5rem; padding: 0.125rem 0.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 0.8125rem; font-weight: 500; line-height: 1.4; color: var(--color-muted); vertical-align: middle; }
+
+  .landing-frameworks { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .landing-frameworks li { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; padding: 0.5rem 1rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-panel); font-weight: 500; }
+  .landing-frameworks .landing-framework-lead { border-color: var(--color-ink); background: var(--color-ink); color: var(--color-on-ink); }
+  .landing-framework-lead .brand-seal { width: 1.25rem; height: 1.25rem; }
+  .landing-frameworks .landing-by-plan { margin-left: 0.25rem; }
+  .landing-consultancies { max-width: 50ch; padding-top: 1rem; font-family: var(--font-display); font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem); color: var(--color-muted); }
+
+  /* Product frames: ink bar with the mark, the highlighter tab and the sample-data label. */
+  .landing-view { margin: 0; overflow: hidden; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-panel); }
+  .lv-bar-top { position: relative; display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem clamp(1rem, 3vw, 2.5rem); background: var(--color-ink); color: var(--color-on-ink); font-size: 0.875rem; }
+  .lv-bar-top::after { content: ""; position: absolute; bottom: 0; left: clamp(1rem, 3vw, 2.5rem); width: 3rem; height: 3px; background: var(--color-accent); }
+  .lv-seal { width: 1.25rem; height: 1.25rem; }
+  .lv-sample { margin-left: auto; font-size: 0.8125rem; color: var(--color-on-ink-muted); }
   .lv-body { display: grid; gap: 1.25rem; padding: clamp(1.25rem, 3vw, 2.5rem); }
   .lv-title { font-size: 1.125rem; }
   .lv-title span { margin-left: 0.5rem; font-size: 0.9375rem; color: var(--color-muted); }
-  .lv-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: 1px; overflow: hidden; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-border-subtle); }
+  .lv-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; overflow: hidden; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-border-subtle); }
   .lv-kpis > div { padding: 1rem; background: var(--color-panel); }
   .lv-kpis dt { font-size: 0.8125rem; color: var(--color-muted); }
   .lv-kpis dd { margin-top: 0.25rem; font-size: 2rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
   .lv-kpis dd span { font-size: 0.875rem; color: var(--color-muted); }
+  .lv-kpis .lv-figure { font-size: inherit; color: var(--color-fg); }
   .lv-kpis dd.lv-state { display: flex; align-items: center; gap: 0.3rem; font-size: 0.8125rem; font-weight: 500; color: var(--color-danger); }
   .lv-distribution { display: block; width: 100%; height: 0.5rem; }
+  .lv-track { fill: var(--color-border-subtle); }
   .lv-part-implemented { fill: var(--color-success); }
   .lv-part-partial { fill: var(--color-warning); }
   .lv-part-missing { fill: var(--color-danger); }
@@ -41,38 +97,6 @@
   .lv-now { margin-top: 0.5rem; font-weight: 600; }
   .lv-rows li { display: grid; grid-template-columns: 6rem minmax(0, 1fr) auto; align-items: baseline; gap: 0.25rem 1rem; padding-block: 0.875rem; border-top: 1px solid var(--color-border-subtle); }
   .lv-code { font-family: var(--font-mono); font-size: 0.875rem; }
-  .lv-track { fill: var(--color-border-subtle); }
-  @media (max-width: 40rem) {
-    .lv-rows li { grid-template-columns: minmax(0, 1fr); }
-    .lv-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    /* The hero's request sits right below the header on a phone; one copy is enough. */
-    .public-header-actions .landing-cta { display: none; }
-  }
-
-  .landing-covers { width: 100%; max-width: 76rem; margin-inline: auto; padding: clamp(3rem, 7vw, 5rem) 1.25rem clamp(4rem, 9vw, 7rem); display: grid; gap: 0.75rem; font-family: var(--font-display); font-size: clamp(1.25rem, 1rem + 0.9vw, 1.75rem); line-height: 1.3; }
-  .landing-covers p + p { color: var(--color-muted); }
-
-  .landing-close { display: grid; justify-items: start; gap: 2rem; padding: clamp(4rem, 10vw, 8rem) max(1.25rem, calc((100% - 73.5rem) / 2)); background: var(--color-ink); color: var(--color-on-ink); }
-  .landing-close-title { max-width: 18ch; font-family: var(--font-display); font-weight: 500; font-size: clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem); line-height: 1.05; letter-spacing: -0.03em; text-wrap: balance; }
-  .landing-cta-ink { background: var(--color-cta); color: var(--color-ink); }
-  .landing-close :focus-visible { outline-color: var(--color-cta); }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .landing-view { animation: landing-rise var(--duration-entrance) var(--ease-entrance) 120ms backwards; }
-    .lv-distribution { animation: landing-fill 1400ms var(--ease-entrance) 500ms backwards; }
-    .lv-rows li { animation: landing-rise 900ms var(--ease-entrance) 900ms backwards; }
-    .lv-rows li:nth-child(2) { animation-delay: 1020ms; }
-    .lv-rows li:nth-child(3) { animation-delay: 1140ms; }
-  }
-  @keyframes landing-rise { from { opacity: 0; translate: 0 var(--entrance-distance); } }
-  @keyframes landing-fill { from { clip-path: inset(0 100% 0 0); } }
-}
-
-/* Product moments (L7, issue 313): one view per section, headline beside it on wide screens. */
-@layer components {
-  .landing-moment { width: calc(100% - 2.5rem); max-width: 73.5rem; margin-inline: auto; padding-block: clamp(3rem, 7vw, 6rem); display: grid; gap: 2rem; border-top: 1px solid var(--color-border-subtle); }
-  @media (min-width: 64rem) { .landing-moment { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; gap: 4rem; } }
-  .landing-moment-title { max-width: 12ch; font-family: var(--font-display); font-weight: 500; font-size: clamp(2rem, 1.4rem + 2.4vw, 3.5rem); line-height: 1.05; letter-spacing: -0.03em; text-wrap: balance; }
   .lm-label { font-size: 0.8125rem; font-weight: 500; color: var(--color-muted); }
   .lm-official { padding-left: 1rem; border-left: 1px solid var(--color-border); }
   .lm-official p + p, .lm-assessment p + p { margin-top: 0.375rem; }
@@ -86,4 +110,37 @@
   .lm-sign { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem 2rem; }
   .lm-sign div { padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); }
   .lm-sign dt { font-size: 0.8125rem; color: var(--color-muted); }
+  @media (max-width: 40rem) {
+    .lv-rows li { grid-template-columns: minmax(0, 1fr); }
+    .lv-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* The hero's request sits right below the header on a phone; one copy is enough. */
+    .public-header-actions .landing-cta { display: none; }
+  }
+
+  .landing-close { display: grid; justify-items: start; gap: 2rem; padding: clamp(4rem, 10vw, 8rem) max(1.25rem, calc((100% - 73.5rem) / 2)); background: var(--color-ink); color: var(--color-on-ink); }
+  .landing-close-seal { width: 3.5rem; height: 3.5rem; }
+  .landing-close-title { max-width: 18ch; font-family: var(--font-display); font-weight: 500; font-size: clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem); line-height: 1.05; letter-spacing: -0.03em; text-wrap: balance; }
+  .landing-cta-ink { background: var(--color-cta); color: var(--color-ink); }
+  .landing-close :focus-visible { outline-color: var(--color-cta); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hl { animation: landing-highlight 900ms var(--ease-entrance) 300ms backwards; }
+    .landing-hero .landing-view { animation: landing-rise var(--duration-entrance) var(--ease-entrance) 120ms backwards; }
+    .landing-hero .lv-distribution { animation: landing-fill 1400ms var(--ease-entrance) 500ms backwards; }
+    .landing-hero .lv-rows li { animation: landing-rise 900ms var(--ease-entrance) 900ms backwards; }
+    .landing-hero .lv-rows li:nth-child(2) { animation-delay: 1020ms; }
+    .landing-hero .lv-rows li:nth-child(3) { animation-delay: 1140ms; }
+    .landing-hero .lv-figure { animation: landing-highlight 900ms var(--ease-entrance) 700ms backwards; }
+  }
+  @keyframes landing-highlight { from { background-size: 0% 0.5em; } }
+  @keyframes landing-rise { from { opacity: 0; translate: 0 var(--entrance-distance); } }
+  @keyframes landing-fill { from { clip-path: inset(0 100% 0 0); } }
+}
+
+/* Draft legal pages (issue 316): the draft state is written, never colour alone. */
+@layer components {
+  .legal-draft-notice { padding: 0.75rem 1rem; border: 1px solid var(--color-warning); border-radius: var(--radius-md); color: var(--color-warning); font-weight: 500; }
+  .legal-clause-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 0.75rem; }
+  .legal-draft-mark { padding: 0.125rem 0.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 500; color: var(--color-muted); }
+  .site-footer nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
 }

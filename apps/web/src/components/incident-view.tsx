@@ -53,9 +53,10 @@ export function IncidentView({ org, incidentId }: { org: Membership; incidentId:
         ? <p className="notice" data-severity="overdue" role="note"><Icon name="overdue" />{t("classificationMissingNotice")}</p> : null}
       {canAct && incident.classified_at === null ? <section className="classify-block" aria-labelledby={`${classifyId}-title`}>
         <h3 id={`${classifyId}-title`}>{t("classifyTitle")}</h3>
-        <p className="text-sm text-muted">{t("classifiedHelp")}</p>
+        <p id={`${classifyId}-help`} className="text-sm text-muted">{t("classifiedHelp")}</p>
         <form onSubmit={classify} className="routine-form">
-          <span><label htmlFor={classifyId}>{t("classifiedAt")}</label><input id={classifyId} name="classified_at" type="datetime-local" required max={localInput(new Date())} /></span>
+          <span><label htmlFor={classifyId}>{t("classifiedAt")}</label><input id={classifyId} name="classified_at" type="datetime-local" required
+            min={localInput(new Date(incident.aware_at))} max={localInput(new Date())} aria-describedby={`${classifyId}-help`} /></span>
           <div className="form-actions"><button type="submit" className="dashboard-button" disabled={update.isPending}>{t("classify")}</button></div>
         </form>
       </section> : null}

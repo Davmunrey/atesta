@@ -4,7 +4,9 @@
   },
   "footer": {
     "label": "Información del sitio",
-    "readiness": "Preparación de auditorías. No certifica cumplimiento."
+    "readiness": "Preparación de auditorías. No certifica cumplimiento.",
+    "notice": "Aviso legal",
+    "privacy": "Privacidad"
   },
   "cookies": {
     "title": "Cookies y almacenamiento",
@@ -43,13 +45,49 @@
     }
   },
   "landing": {
-    "headline": "Prepara el ENS sin un consultor a tiempo completo",
-    "sub": "Para pymes que venden al sector público.",
-    "covers": "También cubre, según el plan: NIS2, RGPD, LOPDGDD y DORA.",
-    "consultancies": "Para consultoras: varios clientes, una cuenta.",
-    "close": "Tu próxima auditoría, preparada.",
+    "headline": "Prepara el <hl>ENS</hl> sin un consultor a tiempo completo",
+    "sub": "Atesta reúne las medidas, las evidencias y los registros que pide el auditor, para pymes que venden al sector público.",
     "requestAccess": "Solicitar acceso",
     "signIn": "Entrar",
+    "soon": "Próximamente",
+    "problem": {
+      "title": "El ENS no cabe en una hoja de cálculo",
+      "body": "Setenta y tres medidas, cada una con su texto oficial, sus evidencias y sus revisiones. Repartidas entre correos y carpetas, nadie sabe qué falta hasta que llega la auditoría."
+    },
+    "how": {
+      "title": "Cómo funciona",
+      "steps": {
+        "connect": {
+          "title": "Conecta tus sistemas",
+          "body": "Microsoft 365 o Google Workspace, solo con permisos de lectura."
+        },
+        "assess": {
+          "title": "Autoevalúa cada medida",
+          "body": "Con su texto oficial y la propuesta de aplicabilidad para tu categoría."
+        },
+        "routines": {
+          "title": "Registra las rutinas",
+          "body": "Políticas, revisiones de acceso, formación e incidentes, con sus plazos."
+        },
+        "dossier": {
+          "title": "Entrega el dossier",
+          "body": "Todo lo registrado, listo para que el auditor lo revise y la dirección lo firme."
+        }
+      }
+    },
+    "moments": {
+      "measure": "El texto oficial de cada medida",
+      "records": "Los registros que pide el auditor",
+      "dossier": "Un dossier listo para firmar"
+    },
+    "frameworks": {
+      "title": "ENS primero, y más según tu plan",
+      "body": "También cubre NIS2, RGPD, LOPDGDD y DORA. Una misma evidencia sirve a varios marcos.",
+      "byPlan": "Según el plan"
+    },
+    "consultancies": "Para consultoras: todos tus clientes en una cuenta, cada uno con su propio espacio.",
+    "close": "Tu próxima auditoría, preparada.",
+    "sample": "Datos de ejemplo",
     "view": {
       "label": "Resumen de una organización en Atesta",
       "category": "Categoría {category}",
@@ -90,11 +128,6 @@
         "date": "Fecha",
         "signature": "Firma"
       }
-    },
-    "moments": {
-      "measure": "El texto oficial de cada medida",
-      "records": "Los registros que pide el auditor",
-      "dossier": "Un dossier listo para firmar"
     }
   },
   "locale": {
@@ -1294,5 +1327,96 @@
     "reviewed": "Lista redactada por Atesta a partir de la guía citada y revisada por {name} el {date}. No valora a tu organización.",
     "reference": "{guide} ({edition}), apartado {section}, pág. {page}",
     "shared": "Referencia: {reference}"
+  },
+  "legal": {
+    "draft": "Borrador pendiente de revisión jurídica. Este texto no es definitivo.",
+    "clause": "Borrador",
+    "binding": "La versión en español de esta página es la vinculante.",
+    "index": "En esta página",
+    "pending": "[PENDIENTE]",
+    "fields": {
+      "name": "Nombre o razón social",
+      "address": "Domicilio",
+      "email": "Correo electrónico",
+      "contact": "Otro canal de contacto directo",
+      "registry": "Datos registrales",
+      "nif": "NIF"
+    },
+    "notice": {
+      "title": "Aviso legal",
+      "intro": "Información general del sitio, según el artículo 10 de la Ley 34/2002 (LSSI-CE).",
+      "holder": {
+        "title": "Titular del sitio",
+        "body": "Identidad del titular y canales para contactar con él de forma directa."
+      },
+      "registry": {
+        "title": "Inscripción registral",
+        "body": "Datos de inscripción en el Registro Mercantil u otro registro público, si los hay."
+      },
+      "nif": {
+        "title": "Número de identificación fiscal",
+        "body": "NIF del titular."
+      },
+      "conduct": {
+        "title": "Códigos de conducta",
+        "body": "[PENDIENTE] Indicar los códigos de conducta a los que se adhiere el titular, o que no se adhiere a ninguno."
+      },
+      "prices": {
+        "title": "Precios",
+        "body": "El sitio no muestra precios. Si los mostrara, este apartado indicaría si incluyen impuestos y gastos de envío."
+      }
+    },
+    "privacy": {
+      "title": "Política de privacidad",
+      "intro": "Cómo se tratan los datos personales en el sitio y en la aplicación, según el artículo 13 del RGPD.",
+      "controller": {
+        "title": "Responsable del tratamiento",
+        "body": "Identidad y datos de contacto del responsable."
+      },
+      "dpo": {
+        "title": "Delegado de protección de datos",
+        "body": "[PENDIENTE] Indicar si se ha designado un delegado y su contacto; si no, retirar este apartado."
+      },
+      "purposes": {
+        "title": "Finalidades y base jurídica",
+        "body": "Gestionar la cuenta y la sesión de quien usa la aplicación, y atender las solicitudes de acceso recibidas por correo. [PENDIENTE] Base jurídica de cada tratamiento."
+      },
+      "interests": {
+        "title": "Intereses legítimos",
+        "body": "[PENDIENTE] Solo si algún tratamiento se basa en el artículo 6.1 f) del RGPD."
+      },
+      "recipients": {
+        "title": "Destinatarios",
+        "body": "Encargados del tratamiento que prestan la infraestructura, como Amazon Web Services en su región de España (eu-south-2). [PENDIENTE] Lista completa de encargados."
+      },
+      "transfers": {
+        "title": "Transferencias internacionales",
+        "body": "No se prevén transferencias fuera del Espacio Económico Europeo. [PENDIENTE] Garantías si el contrato de algún encargado permitiera una."
+      },
+      "retention": {
+        "title": "Plazo de conservación",
+        "body": "[PENDIENTE] Plazo o criterio de conservación de cada tratamiento."
+      },
+      "rights": {
+        "title": "Derechos",
+        "body": "Acceso, rectificación, supresión, limitación, portabilidad y oposición (artículos 15 a 22 del RGPD), por escrito a la dirección de contacto del responsable."
+      },
+      "complaint": {
+        "title": "Reclamación",
+        "body": "Derecho a presentar una reclamación ante la Agencia Española de Protección de Datos."
+      },
+      "required": {
+        "title": "Obligación de facilitar los datos",
+        "body": "[PENDIENTE] Qué datos son necesarios para usar el servicio y qué ocurre si no se facilitan."
+      },
+      "automated": {
+        "title": "Decisiones automatizadas",
+        "body": "[PENDIENTE] Confirmar que no se toman decisiones basadas únicamente en un tratamiento automatizado ni se elaboran perfiles."
+      },
+      "cookies": {
+        "title": "Cookies",
+        "body": "Las cookies y el almacenamiento del navegador se describen en su propia página."
+      }
+    }
   }
 }
