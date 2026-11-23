@@ -176,6 +176,41 @@ def test_logout_clears_cookies_and_ends_the_cognito_session(client: TestClient) 
     assert response.headers["location"].startswith("https://auth.example.com/logout?client_id=")
 
 
+def test_logout_revokes_the_refresh_token_so_a_copied_session_ends(
+    client: TestClient, oauth: FakeOAuth
+) -> None:
+    """Cognito's /logout revokes no token; /oauth2/revoke does (#324)."""
+    sub = new_sub()
+    signed_in(client, sub)
+    copied = client.cookies.get(REFRESH_COOKIE)  # e.g. lifted from a shared machine
+    response = client.get("/auth/logout", follow_redirects=False)
+    assert response.status_code == 302
+    assert oauth.revoked == [f"rt-{sub}"]
+    client.cookies.clear()
+    client.cookies.set(ACCESS_COOKIE, CRYPTO.seal(ACCESS_COOKIE, f"expired-{sub}"))
+    client.cookies.set(REFRESH_COOKIE, copied or "")
+    assert client.get("/api/v1/me").status_code == 401  # the copy no longer refreshes
+
+
+def test_logout_still_signs_out_when_revocation_fails(
+    client: TestClient, oauth: FakeOAuth, caplog: pytest.LogCaptureFixture
+) -> None:
+    caplog.set_level(logging.DEBUG)
+    sub = new_sub()
+    signed_in(client, sub)
+    oauth.revoke_fails = True
+    response = client.get("/auth/logout", follow_redirects=False)
+    raw = "\n".join(response.headers.get_list("set-cookie"))
+    assert response.status_code == 302 and f'{REFRESH_COOKIE}=""' in raw
+    assert f"rt-{sub}" not in caplog.text
+
+
+def test_logout_without_a_session_revokes_nothing(client: TestClient, oauth: FakeOAuth) -> None:
+    client.cookies.set(REFRESH_COOKIE, "not-a-sealed-value")
+    response = client.get("/auth/logout", follow_redirects=False)
+    assert response.status_code == 302 and oauth.revoked == []
+
+
 def test_tokens_never_reach_logs(client: TestClient, caplog: pytest.LogCaptureFixture) -> None:
     caplog.set_level(logging.DEBUG)
     sub = new_sub()

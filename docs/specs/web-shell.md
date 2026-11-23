@@ -39,7 +39,12 @@ later screen (connections, scores, evidence) plugs into.
       `HttpOnly` cookie and redirects to `/oauth2/authorize` with `lang=es` (default) or `lang=en`
       and scopes `openid email`. `/auth/callback` rejects a missing or mismatched `state`,
       exchanges the code, sets the session cookies and redirects to `/app`. `/auth/logout`
-      clears them and calls the Cognito logout endpoint.
+      revokes the refresh token at Cognito's `/oauth2/revoke` (best effort: an error never
+      blocks sign-out, and only its type is logged), clears the cookies and calls the Cognito
+      logout endpoint. Cognito's `/logout` revokes no token, so without the revocation a copied
+      session cookie would keep refreshing for up to 12 hours (#324). The login's `return_to`
+      keeps only a same-site path: it must start with `/`, not `//`, and hold no backslash,
+      whitespace or control character (#325); anything else becomes `/app`.
 - [ ] API routes move from `/v1` to `/api/v1` (one router prefix), so CloudFront can route by
       path without rewriting.
 - [ ] Local development keeps one origin too: the Next.js dev server rewrites `/api/*` and
@@ -143,7 +148,7 @@ Next.js rules) are adopted in a separate PR before the first screen.
 
 | Area | Cases |
 |---|---|
-| BFF routes (pytest, API) | login sets an HttpOnly state cookie and redirects with PKCE S256 and `lang`; callback rejects missing or wrong `state`; callback sets one encrypted cookie per token with HttpOnly, Secure, SameSite=Lax; tampered cookie rejected; logout clears all |
+| BFF routes (pytest, API) | login sets an HttpOnly state cookie and redirects with PKCE S256 and `lang`; callback rejects missing or wrong `state`; callback sets one encrypted cookie per token with HttpOnly, Secure, SameSite=Lax; tampered cookie rejected; logout revokes the refresh token, then clears all, and still signs out when Cognito fails; `return_to` with `//`, a backslash, whitespace or a control character becomes `/app` |
 | Cookie auth (pytest, API) | cookie and bearer reach the same user; expired access token refreshed once and cookies rotated; cross-origin POST, PATCH, DELETE with a cookie get 403 `auth.bad_origin`; logs contain no cookie or token |
 | Invite (unit) | fragment token moved to sessionStorage and removed from the URL; posted in the body; deleted after success |
 | i18n | every error code in the backend specs has an ES and EN message (test reads the code list) |
