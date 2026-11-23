@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Suspense, lazy, useId, useState } from "react";
+import { BrandMark } from "../brand-mark";
 import type { Surface } from "./panel";
 
 const Panel = lazy(() => import("./panel"));
@@ -20,9 +21,7 @@ export function AssistantLauncher({ surface, orgId }: { surface: Surface; orgId?
   return (
     <>
       <button type="button" className="assistant-launcher" popoverTarget={`assistant-${id}`}>
-        <svg aria-hidden="true" viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 4.5h12v8H9l-3.5 3v-3H4z" /><path d="M7.5 7.5h5M7.5 10h3" />
-        </svg>
+        <BrandMark />
         <span>{t("open")}</span>
       </button>
       <dialog id={`assistant-${id}`} popover="auto" className="assistant-dialog" aria-labelledby={`assistant-${id}-title`}

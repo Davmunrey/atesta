@@ -66,6 +66,12 @@
   .policy-copy h2 { font-size: 1.375rem; font-weight: 500; line-height: 1.3; }
   .policy-copy p, .policy-copy section > a { margin-top: 1rem; }
   .policy-copy section > a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  /* Public tables (issue 374): padded cells, a header rule, row rules; identifiers kept whole. */
+  .policy-copy table { margin-top: 1rem; border-collapse: collapse; }
+  .policy-copy :is(th, td) { padding: 0.625rem 0.75rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--color-border-subtle); }
+  .policy-copy :is(th, td):first-child { padding-left: 0; }
+  .policy-copy thead th { border-bottom-color: var(--color-border); font-size: 0.8125rem; font-weight: 500; color: var(--color-muted); }
+  @media (min-width: 40rem) { .policy-copy td.font-mono { white-space: nowrap; } }
   .storage-list { margin-block: 1.5rem; border-bottom: 1px solid var(--color-border); }
   .storage-list > div { border-top: 1px solid var(--color-border); padding-block: 1.25rem; }
   .storage-list dt { margin-bottom: 0.5rem; }
