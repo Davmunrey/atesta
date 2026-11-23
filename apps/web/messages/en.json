@@ -75,15 +75,16 @@
         }
       }
     },
-    "moments": {
-      "measure": "The official text of every measure",
-      "records": "The records your auditor asks for",
-      "dossier": "A dossier ready to sign"
+    "year": {
+      "title": "A year of ENS"
     },
     "frameworks": {
       "title": "The ENS first, more by plan",
       "body": "Also covers NIS2, GDPR, LOPDGDD and DORA. One piece of evidence serves several frameworks.",
       "byPlan": "By plan"
+    },
+    "marquee": {
+      "pause": "Pause the animation"
     },
     "consultancies": "For consultancies: all your clients in one account, each in its own space.",
     "close": "Your next audit, prepared.",
@@ -127,7 +128,39 @@
         "role": "Role",
         "date": "Date",
         "signature": "Signature"
-      }
+      },
+      "year": {
+        "label": "A year of ENS in Atesta",
+        "m0": {
+          "month": "January",
+          "text": "Scope defined: category MEDIA."
+        },
+        "m1": {
+          "month": "February",
+          "text": "Self-assessment of the 73 measures."
+        },
+        "m2": {
+          "month": "April",
+          "text": "Quarterly access review closed."
+        },
+        "m3": {
+          "month": "June",
+          "text": "Incident recorded; early warning sent within 24 h."
+        },
+        "m4": {
+          "month": "September",
+          "text": "Annual training: 18 confirmations."
+        },
+        "m5": {
+          "month": "November",
+          "text": "Dossier handed to the auditor."
+        }
+      },
+      "connect": {
+        "label": "Connecting systems in Atesta",
+        "access": "Read-only"
+      },
+      "stage": "Step"
     }
   },
   "locale": {

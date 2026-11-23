@@ -8,7 +8,10 @@ import { type Page, expect } from "@playwright/test";
  */
 /** Waits until no animation or transition runs: a control fading in (180ms opacity) is not its final contrast. */
 export async function settled(page: Page) {
-  await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running"));
+  // Finite, time-based animations only: scroll timelines rest with the reader, and the landing's
+  // marquee loops by design behind its own pause button (landing-legal amendment A2).
+  await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running"
+    || a.timeline !== document.timeline || a.effect?.getTiming().iterations === Infinity));
 }
 
 export async function expectPolished(page: Page, where: string) {

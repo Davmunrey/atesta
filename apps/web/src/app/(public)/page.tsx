@@ -2,14 +2,12 @@
 
 import { useTranslations } from "next-intl";
 import { BrandMark } from "@/components/brand-mark";
-import { DossierView, MeasureView, RecordsView } from "@/components/landing/moment-views";
+import { FrameworksStrip } from "@/components/landing/frameworks-strip";
 import { OverviewView } from "@/components/landing/overview-view";
-import fixture from "@/content/landing-fixture.json";
+import { PinnedSteps } from "@/components/landing/pinned-steps";
+import { YearOfEns } from "@/components/landing/year-of-ens";
 import { legalEntity } from "@/content/legal-entity";
 
-const MOMENTS = [{ key: "measure", View: MeasureView }, { key: "records", View: RecordsView }, { key: "dossier", View: DossierView }] as const;
-const STEPS = [["connect", true], ["assess", false], ["routines", false], ["dossier", false]] as const;
-const FRAMEWORKS = ["NIS2", "RGPD", "LOPDGDD", "DORA"] as const;
 
 /** The public landing (landing-legal spec, L1-L7 and amendment A1): the ENS lead, the
  *  product as the argument, one brand system (mark, highlighter motif, paper and ink). */
@@ -32,29 +30,14 @@ export default function Landing() {
         <p className="landing-statement">{t("problem.body")}</p>
       </section>
 
-      <section className="landing-ink" aria-labelledby="how-title">
-        <div className="landing-ink-inner">
-        <h2 id="how-title" className="landing-h2">{t("how.title")}</h2>
-        <ol className="landing-steps">{STEPS.map(([key, soon], i) => <li key={key}>
-          <span className="landing-step-number" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-          <p className="landing-step-title">{t(`how.steps.${key}.title`)}{soon ? <span className="landing-soon">{t("soon")}</span> : null}</p>
-          <p className="landing-step-body">{t(`how.steps.${key}.body`)}</p>
-        </li>)}</ol>
-        </div>
-      </section>
+      <PinnedSteps />
 
-      {MOMENTS.map(({ key, View }) => <section key={key} className="landing-band landing-moment" aria-labelledby={`moment-${key}`}>
-        <h2 id={`moment-${key}`} className="landing-moment-title">{t(`moments.${key}`)}</h2>
-        <View />
-      </section>)}
+      <YearOfEns />
 
       <section className="landing-band" aria-labelledby="frameworks-title">
         <h2 id="frameworks-title" className="landing-h2">{t("frameworks.title")}</h2>
         <p className="landing-statement">{t("frameworks.body")}</p>
-        <ul className="landing-frameworks">
-          <li className="landing-framework-lead"><BrandMark /> {fixture.framework}</li>
-          {FRAMEWORKS.map((name) => <li key={name}>{name} <span className="landing-soon landing-by-plan">{t("frameworks.byPlan")}</span></li>)}
-        </ul>
+        <FrameworksStrip />
         <p className="landing-consultancies">{t("consultancies")}</p>
       </section>
 
