@@ -35,6 +35,7 @@ def _articles(units: set[str]) -> set[str]:
     ("key", "units"),
     [
         ("nis2", {f"art{n}" for n in range(1, 47)} | {"annex1", "annex2", "annex3"}),
+        ("gdpr_art32", {f"art{n}" for n in range(1, 100)}),
         (
             "ens_rd311_2022",
             {f"art{n}" for n in range(1, 42)}
@@ -82,3 +83,29 @@ def test_group_headings_have_the_official_english_heading_when_one_exists() -> N
     groups = {g.prefix: g for g in pack("nis2").metadata.attributes.groups_es}
     assert groups["art23"].title == "Obligaciones de notificación"
     assert groups["art23"].title_en == "Reporting obligations"
+
+
+def test_gdpr_keeps_the_official_text_of_articles_32_to_34() -> None:
+    gdpr = pack("gdpr_art32")
+    requirements = {r.id: r for r in gdpr.requirements}
+    assert len(requirements) == 14
+    assert "art32.3" not in requirements  # a means to demonstrate compliance, not a duty
+    assert (
+        requirements["art32.1a"].title_es == "La seudonimización y el cifrado de datos personales"
+    )
+    assert (
+        requirements["art32.1a"].title_en == "The pseudonymisation and encryption of personal data"
+    )
+    breach = requirements["art33.1"].attributes
+    assert "a más tardar 72 horas después de que haya tenido constancia de ella" in (
+        breach.official_text_es
+    )
+    assert "not later than 72 hours after having become aware of it" in (
+        breach.official_text_en or ""
+    )
+    assert gdpr.metadata.attributes.assessment_enabled is False
+    assert all(m.reviewed_by is None for m in gdpr.mappings)
+    manual = {c.id for c in catalog().controls.values() if c.manual}
+    for requirement in gdpr.requirements:
+        controls = {m.control_id for m in gdpr.mappings if m.requirement_id == requirement.id}
+        assert controls & manual, requirement.id

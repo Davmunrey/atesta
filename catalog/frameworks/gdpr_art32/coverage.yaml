@@ -1,0 +1,205 @@
+source: Regulation (EU) 2016/679, OJ L 119, 4.5.2016, p. 1 (CELEX 32016R0679)
+entries:
+- units:
+  - art1
+  - art2
+  - art3
+  - art4
+  status: excluded
+  reason_es: 'Objeto, ámbito material y territorial y definiciones: delimitan a qué tratamientos se aplica
+    el Reglamento; no son medidas que se evalúen.'
+  reason_en: 'Subject matter, material and territorial scope and definitions: they define which processing
+    the Regulation applies to; they are not measures to assess.'
+- units:
+  - art5
+  - art6
+  - art7
+  - art8
+  - art9
+  - art10
+  - art11
+  status: excluded
+  reason_es: 'Principios y licitud del tratamiento: fuera del alcance de esta guía de seguridad del tratamiento.
+    El principio de integridad y confidencialidad del artículo 5, apartado 1, letra f), se desarrolla
+    en el artículo 32.'
+  reason_en: 'Principles and lawfulness of processing: outside this security-of-processing guide. The
+    integrity and confidentiality principle in Article 5(1)(f) is developed in Article 32.'
+- units:
+  - art12
+  - art13
+  - art14
+  - art15
+  - art16
+  - art17
+  - art18
+  - art19
+  - art20
+  - art21
+  - art22
+  - art23
+  status: excluded
+  reason_es: 'Derechos del interesado: fuera del alcance de esta guía de seguridad del tratamiento.'
+  reason_en: 'Rights of the data subject: outside this security-of-processing guide.'
+- units:
+  - art24
+  - art25
+  - art26
+  - art27
+  - art28
+  - art29
+  - art30
+  - art31
+  status: excluded
+  reason_es: 'Obligaciones generales del responsable y del encargado (responsabilidad, protección de datos
+    desde el diseño, encargados, registro de actividades, cooperación): fuera de esta guía; candidatas
+    a una versión posterior.'
+  reason_en: 'General obligations of controllers and processors (responsibility, data protection by design,
+    processors, records of processing, cooperation): outside this guide; candidates for a later version.'
+- units:
+  - art32.1-2
+  - art32.4
+  status: covered
+  requirements:
+  - art32.1a
+  - art32.1b
+  - art32.1c
+  - art32.1d
+  - art32.2
+  - art32.4
+- units:
+  - art32.3
+  status: excluded
+  reason_es: La adhesión a un código de conducta o a una certificación aprobados es un elemento para demostrar
+    el cumplimiento, no una obligación.
+  reason_en: Adherence to an approved code of conduct or certification is an element to demonstrate compliance,
+    not an obligation.
+- units:
+  - art33
+  status: covered
+  requirements:
+  - art33.1
+  - art33.2
+  - art33.3
+  - art33.4
+  - art33.5
+- units:
+  - art34.1-3
+  status: covered
+  requirements:
+  - art34.1
+  - art34.2
+  - art34.3
+- units:
+  - art34.4
+  status: excluded
+  reason_es: Facultad de la autoridad de control de exigir la comunicación al interesado.
+  reason_en: Power of the supervisory authority to require the communication to the data subject.
+- units:
+  - art35
+  - art36
+  status: excluded
+  reason_es: 'Evaluación de impacto y consulta previa: fuera de esta guía; candidatas a una versión posterior.'
+  reason_en: 'Data protection impact assessment and prior consultation: outside this guide; candidates
+    for a later version.'
+- units:
+  - art37
+  - art38
+  - art39
+  status: excluded
+  reason_es: 'Delegado de protección de datos: fuera de esta guía de seguridad del tratamiento.'
+  reason_en: 'Data protection officer: outside this security-of-processing guide.'
+- units:
+  - art40
+  - art41
+  - art42
+  - art43
+  status: excluded
+  reason_es: 'Códigos de conducta y certificación: mecanismos voluntarios y organismos que los supervisan.'
+  reason_en: 'Codes of conduct and certification: voluntary mechanisms and the bodies that monitor them.'
+- units:
+  - art44
+  - art45
+  - art46
+  - art47
+  - art48
+  - art49
+  - art50
+  status: excluded
+  reason_es: 'Transferencias internacionales: fuera de esta guía de seguridad del tratamiento.'
+  reason_en: 'International transfers: outside this security-of-processing guide.'
+- units:
+  - art51
+  - art52
+  - art53
+  - art54
+  - art55
+  - art56
+  - art57
+  - art58
+  - art59
+  - art60
+  - art61
+  - art62
+  - art63
+  - art64
+  - art65
+  - art66
+  - art67
+  - art68
+  - art69
+  - art70
+  - art71
+  - art72
+  - art73
+  - art74
+  - art75
+  - art76
+  status: excluded
+  reason_es: 'Autoridades de control, cooperación, coherencia y Comité Europeo de Protección de Datos:
+    funciones de las autoridades.'
+  reason_en: 'Supervisory authorities, cooperation, consistency and the European Data Protection Board:
+    functions of the authorities.'
+- units:
+  - art77
+  - art78
+  - art79
+  - art80
+  - art81
+  - art82
+  - art83
+  - art84
+  status: excluded
+  reason_es: 'Recursos, responsabilidad y sanciones: consecuencias del incumplimiento, no medidas.'
+  reason_en: 'Remedies, liability and penalties: consequences of non-compliance, not measures.'
+- units:
+  - art85
+  - art86
+  - art87
+  - art88
+  - art89
+  - art90
+  - art91
+  status: excluded
+  reason_es: 'Situaciones específicas de tratamiento (libertad de expresión, acceso a documentos, número
+    nacional de identificación, ámbito laboral, archivo e investigación, secreto, iglesias): pueden concretarse
+    en el Derecho de cada Estado miembro; fuera de esta guía.'
+  reason_en: 'Specific processing situations (freedom of expression, access to documents, national identification
+    number, employment, archiving and research, secrecy, churches): may be specified in each Member State''s
+    law; outside this guide.'
+- units:
+  - art92
+  - art93
+  status: excluded
+  reason_es: Actos delegados y procedimiento de comité.
+  reason_en: Delegated acts and committee procedure.
+- units:
+  - art94
+  - art95
+  - art96
+  - art97
+  - art98
+  - art99
+  status: excluded
+  reason_es: 'Disposiciones finales: derogación, relación con otras normas, informes, revisión y entrada
+    en vigor.'
+  reason_en: 'Final provisions: repeal, relationship with other acts, reports, review and entry into force.'
