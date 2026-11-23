@@ -59,6 +59,7 @@ Start with the question you have.
 - [insights](specs/insights.md)
 - [landing-legal](specs/landing-legal.md)
 - [local-dev-auth](specs/local-dev-auth.md)
+- [management-report](specs/management-report.md)
 - [manual-control-review](specs/manual-control-review.md)
 - [organization-closure](specs/organization-closure.md)
 - [organization-shell-design](specs/organization-shell-design.md)

@@ -75,7 +75,8 @@
       "incident_closed": "The incident is closed and takes no more entries.",
       "clock_unknown": "That deadline does not apply to this incident.",
       "clock_met": "That deadline is already recorded.",
-      "clock_waiting": "That deadline starts once the previous one is recorded."
+      "clock_waiting": "That deadline starts once the previous one is recorded.",
+      "report_month_invalid": "The month is not valid or has not started yet."
     },
     "unknown": "Something went wrong. Try again, and contact support if it keeps happening.",
     "auth": {
@@ -683,7 +684,8 @@
     "policies": "Policies",
     "training": "Training",
     "incidents": "Incidents",
-    "integrations": "Integrations"
+    "integrations": "Integrations",
+    "report": "Monthly report"
   },
   "routines": {
     "access": {
@@ -1048,5 +1050,41 @@
         "help": "The security officer reviews; management reads the summary and signs."
       }
     }
+  },
+  "report": {
+    "title": "Monthly report",
+    "intro": "For management: what was done in the month, how the frameworks stand and what falls due. Print it or save it as PDF and sign it.",
+    "print": "Print or save as PDF",
+    "month": "Month",
+    "loading": "Preparing the report…",
+    "kicker": "Monthly report for management",
+    "done": "Done in {month}",
+    "nothingDone": "No activity was recorded this month.",
+    "lines": {
+      "measures_assessed": "Measures assessed",
+      "assessments_reviewed": "Security officer reviews",
+      "evidence_by_people": "Evidence recorded by people",
+      "evidence_by_tools": "Evidence sent by tools",
+      "policies_approved": "Policies approved",
+      "access_reviews_closed": "Access reviews closed",
+      "trainings_closed": "Trainings closed",
+      "incidents_recorded": "Incidents recorded",
+      "incidents_closed": "Incidents closed",
+      "deadlines_met": "Reporting deadlines met",
+      "people_joined": "People who joined"
+    },
+    "status": "Framework status",
+    "statusHelp": "This is the current status, not the status at the end of the month.",
+    "noFrameworks": "No framework in progress.",
+    "framework": "Framework",
+    "assessed": "Assessed",
+    "implemented": "Implemented",
+    "overdue": "Overdue",
+    "review": "Last review",
+    "noReview": "No review",
+    "ofTotal": "{done} of {total, plural, one {#} other {#}}",
+    "due": "What falls due",
+    "nothingDue": "Nothing falls due.",
+    "notCertification": "This report gathers what the organization recorded in Atesta. It is not a certification or a conformity assessment."
   }
 }

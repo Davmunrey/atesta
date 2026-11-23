@@ -50,7 +50,7 @@ it("shows an auditor only what they may read, with the end of their access", asy
   window.history.replaceState(null, "", "/app/org?org=primary");
   renderShell("auditor");
   const nav = await screen.findByRole("navigation", { name: "Secciones de la organización" });
-  expect(within(nav).getAllByRole("link").map((link) => link.textContent)).toEqual(["Resumen", "Marcos", "Revisiones de acceso", "Políticas", "Formación", "Incidentes"]);
+  expect(within(nav).getAllByRole("link").map((link) => link.textContent)).toEqual(["Resumen", "Marcos", "Informe mensual", "Revisiones de acceso", "Políticas", "Formación", "Incidentes"]);
   expect(screen.getByRole("note").textContent).toBe("Acceso de auditor, solo lectura, hasta el 31 de diciembre de 2026");
 });
 

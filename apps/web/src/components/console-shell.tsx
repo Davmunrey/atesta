@@ -7,7 +7,7 @@ import { type ReactNode, useDeferredValue, useEffect, useId, useRef, useState, u
 import { useOverview } from "@/lib/api/hooks";
 import { useSearch } from "@/lib/api/register-hooks";
 import { LOGOUT_URL } from "@/lib/auth";
-import { type Membership, orgAccessReviews, orgActivity, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgIncidents, orgIntegrations, orgMyWork, orgPolicies, orgSettings, orgTraining, selectOrg } from "@/lib/org";
+import { type Membership, orgAccessReviews, orgActivity, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgIncidents, orgIntegrations, orgMyWork, orgPolicies, orgReport, orgSettings, orgTraining, selectOrg } from "@/lib/org";
 import { canInvite, canReviewControls, isContributor } from "@/lib/permissions";
 import { useMe } from "./auth-gate";
 import { Icon, type IconName } from "./icons";
@@ -22,7 +22,7 @@ const DETAIL_PAGES: Record<string, string> = {
   "/app/training-campaign": "/app/training-campaigns",
   "/app/incident": "/app/incidents",
 };
-const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings", "/app/access-reviews", "/app/access-review", "/app/policies", "/app/training-campaigns", "/app/training-campaign", "/app/incidents", "/app/incident", "/app/integrations", "/app/dossier"];
+const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings", "/app/access-reviews", "/app/access-review", "/app/policies", "/app/training-campaigns", "/app/training-campaign", "/app/incidents", "/app/incident", "/app/integrations", "/app/dossier", "/app/report"];
 const DESKTOP = "(min-width: 64rem)";
 
 // The collapsed rail is a remembered preference; media and storage are read as external stores.
@@ -53,6 +53,7 @@ export function useSections(org: Membership | null): { group: string; items: Sec
       { key: "/app/org", label: t("overview"), href: orgHome(id), icon: "home" as const },
       ...(isContributor(org.role) ? [{ key: "/app/my-work", label: t("myWork"), href: orgMyWork(id), icon: "work" as const }] : []),
       { key: "/app/frameworks", label: c("frameworks"), href: orgFrameworks(id), icon: "frameworks" as const },
+      { key: "/app/report", label: c("report"), href: orgReport(id), icon: "report" as const },
     ] },
     { group: c("groups.records"), items: [
       { key: "/app/access-reviews", label: c("accessReviews"), href: orgAccessReviews(id), icon: "reviews" as const },
