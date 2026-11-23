@@ -104,7 +104,7 @@ other than `<name>_id: str`.
 - **Why not a user session:** tools in a customer's CI have no person signed in, and a person's
   session must not be copied into a pipeline.
 
-## Amendment 6 (proposed 2026-11-23, ADR-016, api-keys-v2 and mcp-server specs)
+## Amendment 6 (accepted by the owner 2026-11-23, ADR-016, api-keys-v2 and mcp-server specs)
 
 - **Keys may read.** Amendment 5 made a key write-only. With ADR-016, a key carries explicit
   scopes, and its read scopes (`compliance:read`, `incidents:read`) open read routes.

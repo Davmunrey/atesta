@@ -1,6 +1,7 @@
 # ADR-016: An MCP server lets AI agents work with Atesta through scoped API keys
 
-- Status: proposed (2026-11-23). The owner accepts it.
+- Status: accepted by the owner (2026-11-23), relayed by the coordinator: "ADR-016 and ADR-012
+  amendment 6 are ACCEPTED (2026-11-23)." (AGENTS.md, "Owner decisions").
 - Owner decision, 2026-11-23, high priority: issues #332 (API keys v2), #333 (MCP server) and
   #334 (public API reference and MCP guide).
 - Specs: `docs/specs/api-keys-v2.md`, `docs/specs/mcp-server.md`.

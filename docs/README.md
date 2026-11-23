@@ -37,7 +37,7 @@ Start with the question you have.
 | [ADR-013: Third-party agent tooling is vendored, pinned and reviewed](adr/0013-agent-tooling.md) | accepted (2026-11-12) |
 | [ADR-014: A read-only device agent that reports posture and never acts](adr/0014-device-agent.md) | proposed (2026-11-23) |
 | [ADR-015: The repository is public](adr/0015-public-repository.md) | proposed (2026-11-23) |
-| [ADR-016: An MCP server lets AI agents work with Atesta through scoped API keys](adr/0016-mcp-server-for-ai-agents.md) | proposed (2026-11-23) |
+| [ADR-016: An MCP server lets AI agents work with Atesta through scoped API keys](adr/0016-mcp-server-for-ai-agents.md) | accepted (2026-11-23) |
 
 ## Feature specs
 

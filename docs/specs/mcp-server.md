@@ -1,7 +1,7 @@
 # Spec: MCP server for AI agents, and self-assessment proposals
 
 - Issues: #333, and #339 for proposals; the decision is recorded in #338. Builds on
-  `api-keys-v2.md`; decided in ADR-016 (proposed). The public guide is #334.
+  `api-keys-v2.md`; decided in ADR-016 (accepted 2026-11-23). The public guide is #334.
 - Status: draft
 
 ## Problem
