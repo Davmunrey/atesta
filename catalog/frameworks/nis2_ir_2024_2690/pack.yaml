@@ -1,0 +1,212 @@
+id: nis2_ir_2024_2690
+name: NIS2 · Reglamento de Ejecución (UE) 2024/2690
+version: 2024-2690.draft1
+jurisdiction: EU; applies to the relevant entities listed in its Article 1
+source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32024R2690
+license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
+  EU documents is authorised under Commission Decision 2011/833/EU, © European Union. Article 2 and the
+  161 points of the Annex are imported; coverage.yaml accounts for every other unit.
+status: draft
+attributes:
+  content_state: partial
+  assessment_enabled: false
+  summary_es: 'Los requisitos técnicos y metodológicos de las medidas del artículo 21, apartado 2, de
+    NIS2: el artículo 2 y los 161 puntos del anexo, en español e inglés. Mapeos candidatos pendientes
+    de revisión cualificada. No es una evaluación.'
+  summary_en: 'The technical and methodological requirements of the measures in Article 21(2) of NIS2:
+    Article 2 and the 161 points of the Annex, in Spanish and English. Candidate mappings await qualified
+    review. Not an assessment.'
+  scope_es: 'Se aplica a las entidades pertinentes de su artículo 1: los proveedores de servicios de DNS,
+    los registros de nombres de dominio de primer nivel, los proveedores de servicios de computación en
+    nube, los proveedores de servicios de centros de datos, los proveedores de redes de distribución de
+    contenidos, los proveedores de servicios gestionados, los proveedores de servicios de seguridad gestionados,
+    así como los proveedores de mercados en línea, de motores de búsqueda en línea y de plataformas de
+    servicios de redes sociales, y los prestadores de servicios de confianza.'
+  scope_en: 'It applies to the relevant entities in its Article 1: DNS service providers, TLD name registries,
+    cloud computing service providers, data centre service providers, content delivery network providers,
+    managed service providers, managed security service providers, providers of online market places,
+    of online search engines and of social networking services platforms, and trust service providers.'
+  applicability_es: El artículo 2 pide aplicar los requisitos de forma adecuada a los riesgos, según la
+    exposición, el tamaño y la probabilidad y gravedad de los incidentes. Cuando el anexo dice «según
+    proceda», «cuando proceda» o «en la medida de lo posible» y la entidad decide no aplicar un requisito,
+    debe dejar escrito su razonamiento.
+  applicability_en: Article 2 asks for the requirements to be applied in a way appropriate to the risks,
+    taking account of exposure, size, and the likelihood and severity of incidents. Where the Annex says
+    ‘where appropriate’, ‘where applicable’ or ‘to the extent feasible’ and the entity decides not to
+    apply a requirement, it must document its reasoning.
+  limitations_es: Importados el artículo 2 y los 161 puntos del anexo. Los criterios de incidente significativo
+    (artículos 3 a 14) no se importan; la cobertura lo explica. Confirma con tu revisor si tu entidad
+    está entre las del artículo 1.
+  limitations_en: Article 2 and the 161 points of the Annex are imported. The criteria for significant
+    incidents (Articles 3 to 14) are not; the coverage explains why. Confirm with your reviewer whether
+    your entity is among those in Article 1.
+  preparation_controls:
+  - ctl.security_governance
+  - ctl.risk_analysis
+  - ctl.incident_response
+  - ctl.continuity_restore
+  - ctl.supplier_cloud_review
+  - ctl.change_vulnerability_review
+  - ctl.people_awareness
+  - ctl.cryptography_review
+  - ctl.access_review
+  - ctl.asset_inventory
+  - ctl.physical_security
+  source_refs:
+  - https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32024R2690
+  - https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R2690
+  verified_on: '2026-11-23'
+  groups_es:
+  - prefix: art2
+    title: Requisitos técnicos y metodológicos
+    title_en: Technical and methodological requirements
+  - prefix: '1.1'
+    title: Política sobre la seguridad de las redes y sistemas de información
+    title_en: Policy on the security of network and information systems
+  - prefix: '1.2'
+    title: Roles, responsabilidades y autoridades
+    title_en: Roles, responsibilities and authorities
+  - prefix: '2.1'
+    title: Marco de la gestión de riesgos
+    title_en: Risk management framework
+  - prefix: '2.2'
+    title: Control del cumplimiento
+    title_en: Compliance monitoring
+  - prefix: '2.3'
+    title: Revisión independiente de la seguridad de la información y las redes
+    title_en: Independent review of information and network security
+  - prefix: '3.1'
+    title: Política de gestión de incidentes
+    title_en: Incident handling policy
+  - prefix: '3.2'
+    title: Supervisión y registro
+    title_en: Monitoring and logging
+  - prefix: '3.3'
+    title: Notificación de sucesos
+    title_en: Event reporting
+  - prefix: '3.4'
+    title: Evaluación y clasificación de sucesos
+    title_en: Event assessment and classification
+  - prefix: '3.5'
+    title: Respuesta ante incidentes
+    title_en: Incident response
+  - prefix: '3.6'
+    title: Revisiones posteriores al incidente
+    title_en: Post-incident reviews
+  - prefix: '4.1'
+    title: Plan de continuidad de las actividades y de recuperación en caso de catástrofe
+    title_en: Business continuity and disaster recovery plan
+  - prefix: '4.2'
+    title: Gestión de las copias de seguridad y las redundancias
+    title_en: Backup and redundancy management
+  - prefix: '4.3'
+    title: Gestión de crisis
+    title_en: Crisis management
+  - prefix: '5.1'
+    title: Política de seguridad de las cadenas de suministros
+    title_en: Supply chain security policy
+  - prefix: '5'
+    title: Seguridad de las cadenas de suministro [artículo 21, apartado 2, letra d), de la Directiva
+      (UE) 2022/2555]
+    title_en: Supply chain security (Article 21(2), point (d), of Directive (EU) 2022/2555)
+  - prefix: '6.1'
+    title: Seguridad en la adquisición de servicios TIC o productos TIC
+    title_en: Security in acquisition of ICT services or ICT products
+  - prefix: '6.2'
+    title: Ciclo de vida del desarrollo seguro
+    title_en: Secure development life cycle
+  - prefix: '6.3'
+    title: Gestión de configuraciones
+    title_en: Configuration management
+  - prefix: '6.4'
+    title: Gestión de cambios, reparaciones y mantenimiento
+    title_en: Change management, repairs and maintenance
+  - prefix: '6.5'
+    title: Pruebas de seguridad
+    title_en: Security testing
+  - prefix: '6.6'
+    title: Gestión de parches de seguridad
+    title_en: Security patch management
+  - prefix: '6.7'
+    title: Seguridad de las redes
+    title_en: Network security
+  - prefix: '6.8'
+    title: Segmentación de la red
+    title_en: Network segmentation
+  - prefix: '6.9'
+    title: Protección frente a los programas informáticos maliciosos y no autorizados
+    title_en: Protection against malicious and unauthorised software
+  - prefix: '6.10'
+    title: Gestión y divulgación de las vulnerabilidades
+    title_en: Vulnerability handling and disclosure
+  - prefix: '7'
+    title: Orientaciones y procedimientos para evaluar la eficacia de las medidas de gestión de riesgos
+      de ciberseguridad [artículo 21, apartado 2, letra f), de la Directiva (UE) 2022/2555]
+    title_en: Policies and procedures to assess the effectiveness of cybersecurity risk-management measures
+      (Article 21(2), point (f), of Directive (EU) 2022/2555)
+  - prefix: '8.1'
+    title: Mejora de la sensibilización y prácticas básicas de ciberhigiene
+    title_en: Awareness raising and basic cyber hygiene practices
+  - prefix: '8.2'
+    title: Formación en seguridad
+    title_en: Security training
+  - prefix: '9'
+    title: Criptografía [artículo 21, apartado 2, letra h), de la Directiva (UE) 2022/2555]
+    title_en: Cryptography (Article 21(2), point (h), of Directive (EU) 2022/2555)
+  - prefix: '10.1'
+    title: Seguridad de los recursos humanos
+    title_en: Human resources security
+  - prefix: '10.2'
+    title: Comprobación de antecedentes
+    title_en: Verification of background
+  - prefix: '10.3'
+    title: Terminación o cambio de los procedimientos de contratación
+    title_en: Termination or change of employment procedures
+  - prefix: '10.4'
+    title: Procedimiento disciplinario
+    title_en: Disciplinary process
+  - prefix: '11.1'
+    title: Política de control de accesos
+    title_en: Access control policy
+  - prefix: '11.2'
+    title: Gestión de derechos de acceso
+    title_en: Management of access rights
+  - prefix: '11.3'
+    title: Cuentas privilegiadas y cuentas de administración del sistema
+    title_en: Privileged accounts and system administration accounts
+  - prefix: '11.4'
+    title: Sistemas de administración
+    title_en: Administration systems
+  - prefix: '11.5'
+    title: Identificación
+    title_en: Identification
+  - prefix: '11.6'
+    title: Autenticación
+    title_en: Authentication
+  - prefix: '11.7'
+    title: Autenticación de múltiples factores
+    title_en: Multi-factor authentication
+  - prefix: '12.1'
+    title: Clasificación de activos
+    title_en: Asset classification
+  - prefix: '12.2'
+    title: Gestión de activos
+    title_en: Handling of assets
+  - prefix: '12.3'
+    title: Política de soportes extraíbles
+    title_en: Removable media policy
+  - prefix: '12.4'
+    title: Inventario de activos
+    title_en: Asset inventory
+  - prefix: '12'
+    title: Gestión de activos [artículo 21, apartado 2, letra i), de la Directiva (UE) 2022/2555]
+    title_en: Asset management (Article 21(2), point (i), of Directive (EU) 2022/2555)
+  - prefix: '13.1'
+    title: Servicios públicos
+    title_en: Supporting utilities
+  - prefix: '13.2'
+    title: Protección contra las amenazas físicas y medioambientales
+    title_en: Protection against physical and environmental threats
+  - prefix: '13.3'
+    title: Control de acceso perimetral y físico
+    title_en: Perimeter and physical access control

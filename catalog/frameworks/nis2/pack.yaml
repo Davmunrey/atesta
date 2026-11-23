@@ -1,6 +1,6 @@
 id: nis2
 name: NIS2
-version: 2022-2555.draft3
+version: 2022-2555.draft4
 jurisdiction: EU; national implementation must be reviewed
 source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022L2555
 license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
@@ -27,11 +27,11 @@ attributes:
   applicability_en: Review scope, exemptions, sector and risk-management/reporting duties. This template
     does not determine essential/important status or the state of Spanish transposition.
   limitations_es: Importados los artículos 20, 21 (apartados 1 a 4) y 23 (apartados 1 a 4); el resto de
-    la Directiva figura en la cobertura con su motivo. Falta el Reglamento de Ejecución (UE) 2024/2690
-    y la ley española de transposición; confirma ambos con tu revisor.
+    la Directiva figura en la cobertura con su motivo. El Reglamento de Ejecución (UE) 2024/2690 tiene
+    su propio marco en Atesta. Falta la ley española de transposición; confírmala con tu revisor.
   limitations_en: Articles 20, 21(1)-(4) and 23(1)-(4) are imported; the rest of the Directive is listed
-    in the coverage with its reason. Implementing Regulation (EU) 2024/2690 and the Spanish transposing
-    law are missing; confirm both with your reviewer.
+    in the coverage with its reason. Implementing Regulation (EU) 2024/2690 has its own framework in
+    Atesta. The Spanish transposing law is missing; confirm it with your reviewer.
   preparation_controls:
   - ctl.security_governance
   - ctl.risk_analysis

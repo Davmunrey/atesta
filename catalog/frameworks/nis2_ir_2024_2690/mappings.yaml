@@ -1,0 +1,976 @@
+mappings:
+- requirement_id: art2
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Article 2. Whether this point applies, and how it is
+    met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#art_2
+  reviewed_by: null
+- requirement_id: 1.1.1
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Policy on the security of network and information systems.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 1.1.2
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Policy on the security of network and information systems.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 1.2.1
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Policy on the security of network and information systems.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 1.2.2
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Policy on the security of network and information systems.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 1.2.3
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Policy on the security of network and information systems.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 1.2.4
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Policy on the security of network and information systems.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 1.2.5
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Policy on the security of network and information systems.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 1.2.6
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Policy on the security of network and information systems.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 2.1.1
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Risk management policy. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 2.1.2
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Risk management policy. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 2.1.3
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Risk management policy. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 2.1.4
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Risk management policy. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 2.2.1
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Risk management policy. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 2.2.2
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Risk management policy. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 2.2.3
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Risk management policy. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 2.3.1
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Risk management policy. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 2.3.2
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Risk management policy. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 2.3.3
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Risk management policy. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 2.3.4
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Risk management policy. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.1.1
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.1.2
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.1.3
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.2.1
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.2.2
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.2.3
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.2.4
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.2.5
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.2.6
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.2.7
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.3.1
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.3.2
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.4.1
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.4.2
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.5.1
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.5.2
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.5.3
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.5.4
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.5.5
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.6.1
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.6.2
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 3.6.3
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Incident handling. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.1.1
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.1.2
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.1.3
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.1.4
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.2.1
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.2.2
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.2.3
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.2.4
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.2.5
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.2.6
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.3.1
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.3.2
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.3.3
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 4.3.4
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Business continuity and crisis management. Whether this
+    point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 5.1.1
+  control_id: ctl.supplier_cloud_review
+  rationale: 'Candidate: documentary measure for Supply chain security. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 5.1.2
+  control_id: ctl.supplier_cloud_review
+  rationale: 'Candidate: documentary measure for Supply chain security. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 5.1.3
+  control_id: ctl.supplier_cloud_review
+  rationale: 'Candidate: documentary measure for Supply chain security. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 5.1.4
+  control_id: ctl.supplier_cloud_review
+  rationale: 'Candidate: documentary measure for Supply chain security. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 5.1.5
+  control_id: ctl.supplier_cloud_review
+  rationale: 'Candidate: documentary measure for Supply chain security. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 5.1.6
+  control_id: ctl.supplier_cloud_review
+  rationale: 'Candidate: documentary measure for Supply chain security. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 5.1.7
+  control_id: ctl.supplier_cloud_review
+  rationale: 'Candidate: documentary measure for Supply chain security. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: '5.2'
+  control_id: ctl.supplier_cloud_review
+  rationale: 'Candidate: documentary measure for Supply chain security. Whether this point applies, and
+    how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.1.1
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.1.2
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.1.3
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.2.1
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.2.2
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.2.3
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.2.4
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.3.1
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.3.2
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.3.3
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.4.1
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.4.2
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.4.3
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.4.4
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.5.1
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.5.2
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.5.3
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.6.1
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.6.2
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.7.1
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.7.2
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.7.3
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.8.1
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.8.2
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.8.3
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.9.1
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.9.2
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.10.1
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.10.2
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.10.3
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 6.10.4
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Security in network and information systems acquisition,
+    development and maintenance. Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: '7.1'
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Policies and procedures to assess the effectiveness of
+    cybersecurity risk-management measures. Whether this point applies, and how it is met, needs qualified
+    review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: '7.2'
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Policies and procedures to assess the effectiveness of
+    cybersecurity risk-management measures. Whether this point applies, and how it is met, needs qualified
+    review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: '7.3'
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Policies and procedures to assess the effectiveness of
+    cybersecurity risk-management measures. Whether this point applies, and how it is met, needs qualified
+    review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 8.1.1
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Basic cyber hygiene practices and security training.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 8.1.2
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Basic cyber hygiene practices and security training.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 8.1.3
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Basic cyber hygiene practices and security training.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 8.2.1
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Basic cyber hygiene practices and security training.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 8.2.2
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Basic cyber hygiene practices and security training.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 8.2.3
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Basic cyber hygiene practices and security training.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 8.2.4
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Basic cyber hygiene practices and security training.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 8.2.5
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Basic cyber hygiene practices and security training.
+    Whether this point applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: '9.1'
+  control_id: ctl.cryptography_review
+  rationale: 'Candidate: documentary measure for Cryptography. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: '9.2'
+  control_id: ctl.cryptography_review
+  rationale: 'Candidate: documentary measure for Cryptography. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: '9.3'
+  control_id: ctl.cryptography_review
+  rationale: 'Candidate: documentary measure for Cryptography. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 10.1.1
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Human resources security. Whether this point applies,
+    and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 10.1.2
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Human resources security. Whether this point applies,
+    and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 10.1.3
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Human resources security. Whether this point applies,
+    and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 10.2.1
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Human resources security. Whether this point applies,
+    and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 10.2.2
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Human resources security. Whether this point applies,
+    and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 10.2.3
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Human resources security. Whether this point applies,
+    and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 10.3.1
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Human resources security. Whether this point applies,
+    and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 10.3.2
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Human resources security. Whether this point applies,
+    and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 10.4.1
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Human resources security. Whether this point applies,
+    and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 10.4.2
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Human resources security. Whether this point applies,
+    and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.1.1
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.1.2
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.1.3
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.2.1
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.2.2
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.2.3
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.3.1
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.3.2
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.3.3
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.4.1
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.4.2
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.5.1
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.5.2
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.5.3
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.5.4
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.6.1
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.6.2
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.6.3
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.6.4
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.7.1
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 11.7.2
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Access control. Whether this point applies, and how it
+    is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 12.1.1
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 12.1.2
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 12.1.3
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 12.2.1
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 12.2.2
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 12.2.3
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 12.3.1
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 12.3.2
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 12.3.3
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 12.4.1
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 12.4.2
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 12.4.3
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: '12.5'
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Asset management. Whether this point applies, and how
+    it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 13.1.1
+  control_id: ctl.physical_security
+  rationale: 'Candidate: documentary measure for Environmental and physical security. Whether this point
+    applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 13.1.2
+  control_id: ctl.physical_security
+  rationale: 'Candidate: documentary measure for Environmental and physical security. Whether this point
+    applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 13.1.3
+  control_id: ctl.physical_security
+  rationale: 'Candidate: documentary measure for Environmental and physical security. Whether this point
+    applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 13.2.1
+  control_id: ctl.physical_security
+  rationale: 'Candidate: documentary measure for Environmental and physical security. Whether this point
+    applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 13.2.2
+  control_id: ctl.physical_security
+  rationale: 'Candidate: documentary measure for Environmental and physical security. Whether this point
+    applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 13.2.3
+  control_id: ctl.physical_security
+  rationale: 'Candidate: documentary measure for Environmental and physical security. Whether this point
+    applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 13.3.1
+  control_id: ctl.physical_security
+  rationale: 'Candidate: documentary measure for Environmental and physical security. Whether this point
+    applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 13.3.2
+  control_id: ctl.physical_security
+  rationale: 'Candidate: documentary measure for Environmental and physical security. Whether this point
+    applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
+- requirement_id: 13.3.3
+  control_id: ctl.physical_security
+  rationale: 'Candidate: documentary measure for Environmental and physical security. Whether this point
+    applies, and how it is met, needs qualified review.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R2690#anx_1
+  reviewed_by: null
