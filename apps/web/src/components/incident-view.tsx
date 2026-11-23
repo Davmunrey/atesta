@@ -3,6 +3,7 @@
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { type FormEvent, useId } from "react";
 import { type IncidentClock, useIncident, useIncidentUpdate } from "@/lib/api/routines";
+import { localInput } from "./incidents-view";
 import { type Membership, orgHome, orgIncidents } from "@/lib/org";
 import { isContributor } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
@@ -17,6 +18,7 @@ export function IncidentView({ org, incidentId }: { org: Membership; incidentId:
   const query = useIncident(org.organization_id, incidentId);
   const update = useIncidentUpdate(org.organization_id, incidentId);
   const noteId = useId();
+  const classifyId = useId();
   const crumbs = [{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title"), href: orgIncidents(org.organization_id) }];
   if (query.isPending) return <><PageHeader crumbs={crumbs} title={t("title")} /><Loading label={t("loading")} /></>;
   if (query.isError) return <><PageHeader crumbs={crumbs} title={t("title")} /><LoadError error={query.error} onRetry={() => void query.refetch()} /></>;
@@ -32,15 +34,31 @@ export function IncidentView({ org, incidentId }: { org: Membership; incidentId:
     const form = e.currentTarget;
     update.mutate({ kind: "note", note: String(new FormData(form).get("note") ?? "") }, { onSuccess: () => form.reset() });
   }
+  function classify(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const at = String(new FormData(e.currentTarget).get("classified_at") ?? "");
+    update.mutate({ kind: "classified", classified_at: new Date(at).toISOString(), note: "" });
+  }
   return <div className="panel-grid">
     <PageHeader crumbs={[...crumbs, { label: incident.title }]} title={incident.title}
-      description={<>{t("aware")}: {time(incident.aware_at)} · {flags || t("noFlags")}</>}
+      description={<>{t("aware")}: {time(incident.aware_at)} · {flags || t("noFlags")}
+        {incident.classified_at ? <> · {t("classified", { time: time(incident.classified_at) })}</> : incident.significant ? <> · {t("classificationMissing")}</> : null}</>}
       actions={canAct
         ? <button type="button" className="button-primary" disabled={update.isPending} onClick={() => update.mutate({ kind: "closed", note: "" })}>{t("close")}</button>
         : incident.closed_at ? <span className="badge" data-severity="done"><Icon name="done" />{t("closed")}</span> : null} />
     {update.isError ? <ErrorMessage error={update.error} /> : null}
     {update.isSuccess && !open ? <p role="status" className="notice"><Icon name="done" />{t("closedEvidence")}</p> : null}
     <Panel title={t("clocks")} description={t("clocksHelp")}>
+      {open && incident.significant && incident.classified_at === null
+        ? <p className="notice" data-severity="overdue" role="note"><Icon name="overdue" />{t("classificationMissingNotice")}</p> : null}
+      {canAct && incident.classified_at === null ? <section className="classify-block" aria-labelledby={`${classifyId}-title`}>
+        <h3 id={`${classifyId}-title`}>{t("classifyTitle")}</h3>
+        <p className="text-sm text-muted">{t("classifiedHelp")}</p>
+        <form onSubmit={classify} className="routine-form">
+          <span><label htmlFor={classifyId}>{t("classifiedAt")}</label><input id={classifyId} name="classified_at" type="datetime-local" required max={localInput(new Date())} /></span>
+          <div className="form-actions"><button type="submit" className="dashboard-button" disabled={update.isPending}>{t("classify")}</button></div>
+        </form>
+      </section> : null}
       {incident.clocks.length === 0 ? <p className="text-muted">{t("noClocks")}</p>
         : <div className="table-region" role="region" aria-label={t("clocks")} tabIndex={0}><table className="w-full text-left">
           <thead><tr><th scope="col">{t("clock")}</th><th scope="col">{t("due")}</th><th scope="col">{t("status")}</th></tr></thead>
@@ -58,7 +76,8 @@ export function IncidentView({ org, incidentId }: { org: Membership; incidentId:
       {incident.updates.length === 0 ? <p className="text-muted">{t("noUpdates")}</p>
         : <ol className="update-list">{incident.updates.map((u) => <li key={`${u.recorded_at}:${u.kind}:${u.clock ?? ""}`}>
           <span className="text-sm text-muted tabular-nums">{time(u.recorded_at)}</span>
-          <span>{u.kind === "clock" ? t("kind.clock", { clock: u.clock && byRef.has(u.clock) ? title(byRef.get(u.clock)!) : u.clock ?? "" }) : t(`kind.${u.kind}`)}
+          <span>{u.kind === "clock" ? t("kind.clock", { clock: u.clock && byRef.has(u.clock) ? title(byRef.get(u.clock)!) : u.clock ?? "" })
+            : u.kind === "classified" ? t("kind.classified", { time: u.classified_at ? time(u.classified_at) : "" }) : t(`kind.${u.kind}`)}
             {u.note ? <span className="block">{u.note}</span> : null}</span>
         </li>)}</ol>}
       {canAct ? <form onSubmit={addNote} className="routine-form">

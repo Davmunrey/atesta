@@ -78,7 +78,9 @@
       "clock_unknown": "That deadline does not apply to this incident.",
       "clock_met": "That deadline is already recorded.",
       "clock_waiting": "That deadline starts once the previous one is recorded.",
-      "report_month_invalid": "The month is not valid or has not started yet."
+      "report_month_invalid": "The month is not valid or has not started yet.",
+      "incident_classified": "This incident already has its classification as significant recorded.",
+      "classified_before_aware": "The classification cannot be earlier than becoming aware of the incident."
     },
     "unknown": "Something went wrong. Try again, and contact support if it keeps happening.",
     "auth": {
@@ -874,14 +876,22 @@
       "kind": {
         "note": "Entry",
         "clock": "Notice sent: {clock}",
-        "closed": "Incident closed"
+        "closed": "Incident closed",
+        "classified": "Classified as significant on {time}"
       },
       "flags": "Characteristics",
       "noFlags": "Neither significant nor involving personal data",
       "criteria": "What {framework} says: {title}",
       "criteriaGroup": "What {framework} says ({count, plural, one {# criterion} other {# criteria}})",
       "criteriaSource": "View in the official source",
-      "sentWhich": ": “{clock}”"
+      "sentWhich": ": “{clock}”",
+      "classifiedAt": "Classified as significant",
+      "classifiedHelp": "When you classified it as significant (major). Some deadlines run from then, such as DORA's initial notification.",
+      "classified": "classified as significant on {time}",
+      "classificationMissing": "the time it was classified as significant is missing",
+      "classify": "Record the classification",
+      "classifyTitle": "Classification as significant",
+      "classificationMissingNotice": "This incident is significant, but the time it was classified is missing. Deadlines that run from classification show only their outer limit until you record it."
     }
   },
   "trainingLink": {

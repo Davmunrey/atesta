@@ -2198,6 +2198,8 @@ export interface components {
              * Format: date-time
              */
             aware_at: string;
+            /** Classified At */
+            classified_at?: string | null;
             /** Personal Data */
             personal_data: boolean;
             /** Significant */
@@ -2212,6 +2214,8 @@ export interface components {
              * Format: date-time
              */
             aware_at: string;
+            /** Classified At */
+            classified_at: string | null;
             /** Clocks */
             clocks: components["schemas"]["ClockOut"][];
             /** Closed At */
@@ -2246,6 +2250,8 @@ export interface components {
              * Format: date-time
              */
             aware_at: string;
+            /** Classified At */
+            classified_at: string | null;
             /** Closed At */
             closed_at: string | null;
             /**
@@ -2625,7 +2631,9 @@ export interface components {
         /**
          * ReportingClock
          * @description A reporting deadline copied from the official text (recorded-routines spec). It starts when
-         *     the organization became aware of the incident, or when the clock named in `after` was met.
+         *     the organization became aware of the incident, when it classified the incident as significant
+         *     (`starts: classified`), or when the clock named in `after` was met. A classified clock may
+         *     keep an outer limit in hours from awareness, which lapses when classification is later.
          */
         ReportingClock: {
             /** After */
@@ -2641,8 +2649,16 @@ export interface components {
              * @enum {string}
              */
             needs: "significant" | "personal_data";
+            /** Outer Limit Hours */
+            outer_limit_hours?: number | null;
             /** Requirement */
             requirement: string;
+            /**
+             * Starts
+             * @default aware
+             * @enum {string}
+             */
+            starts: "aware" | "classified";
             /** Title En */
             title_en: string;
             /** Title Es */
@@ -3011,6 +3027,8 @@ export interface components {
         };
         /** UpdateIn */
         UpdateIn: {
+            /** Classified At */
+            classified_at?: string | null;
             /** Clock */
             clock?: string | null;
             kind: components["schemas"]["UpdateKind"];
@@ -3021,9 +3039,11 @@ export interface components {
             note: string;
         };
         /** @enum {string} */
-        UpdateKind: "note" | "clock" | "closed";
+        UpdateKind: "note" | "clock" | "closed" | "classified";
         /** UpdateOut */
         UpdateOut: {
+            /** Classified At */
+            classified_at?: string | null;
             /** Clock */
             clock: string | null;
             kind: components["schemas"]["UpdateKind"];

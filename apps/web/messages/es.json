@@ -78,7 +78,9 @@
       "clock_unknown": "Ese plazo no se aplica a este incidente.",
       "clock_met": "Ese plazo ya está registrado.",
       "clock_waiting": "Ese plazo empieza cuando se registre el anterior.",
-      "report_month_invalid": "El mes no es válido o todavía no ha empezado."
+      "report_month_invalid": "El mes no es válido o todavía no ha empezado.",
+      "incident_classified": "Este incidente ya tiene registrada su clasificación como significativo.",
+      "classified_before_aware": "La clasificación no puede ser anterior a la constancia del incidente."
     },
     "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, contacta con soporte.",
     "auth": {
@@ -874,14 +876,22 @@
       "kind": {
         "note": "Anotación",
         "clock": "Aviso enviado: {clock}",
-        "closed": "Incidente cerrado"
+        "closed": "Incidente cerrado",
+        "classified": "Clasificado como significativo el {time}"
       },
       "flags": "Características",
       "noFlags": "Ni significativo ni con datos personales",
       "criteria": "Qué dice {framework}: {title}",
       "criteriaGroup": "Qué dice {framework} ({count, plural, one {# criterio} other {# criterios}})",
       "criteriaSource": "Ver en la fuente oficial",
-      "sentWhich": ": «{clock}»"
+      "sentWhich": ": «{clock}»",
+      "classifiedAt": "Clasificado como significativo",
+      "classifiedHelp": "Cuándo lo clasificasteis como significativo (grave). Algunos plazos cuentan desde ese momento, como la notificación inicial de DORA.",
+      "classified": "clasificado como significativo el {time}",
+      "classificationMissing": "falta cuándo se clasificó como significativo",
+      "classify": "Registrar la clasificación",
+      "classifyTitle": "Clasificación como significativo",
+      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registréis."
     }
   },
   "trainingLink": {
