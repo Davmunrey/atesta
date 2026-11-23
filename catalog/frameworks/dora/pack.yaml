@@ -1,6 +1,6 @@
 id: dora
 name: DORA
-version: 2022-2554.draft2
+version: 2022-2554.draft3
 jurisdiction: EU
 source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022R2554
 license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
@@ -27,12 +27,14 @@ attributes:
   applicability_en: Determine regime and proportionality with the accountable owner. Prepare ICT-risk
     governance, incidents, continuity, resilience testing and third-party management. Confirm applicable
     technical standards and specific duties.
-  limitations_es: 'Cada requisito es un artículo completo: revisa cada apartado con tu revisor. Faltan
-    las normas técnicas de regulación y de ejecución que desarrollan los artículos, y el marco de vigilancia
-    de proveedores críticos.'
+  limitations_es: 'Cada requisito es un artículo completo: revisa cada apartado con tu revisor. Las normas
+    técnicas del marco de gestión del riesgo TIC (Reglamento Delegado (UE) 2024/1774) tienen su propio
+    marco. Faltan las demás normas técnicas de regulación y de ejecución, y el marco de vigilancia de
+    proveedores críticos.'
   limitations_en: 'Each requirement is a whole article: review every paragraph with your reviewer. The
-    regulatory and implementing technical standards that detail the articles, and the oversight framework
-    for critical providers, are missing.'
+    technical standards on the ICT risk management framework (Delegated Regulation (EU) 2024/1774) have
+    their own framework. The other regulatory and implementing technical standards, and the oversight
+    framework for critical providers, are missing.'
   preparation_controls:
   - ctl.security_governance
   - ctl.risk_analysis
