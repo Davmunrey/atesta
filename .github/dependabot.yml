@@ -16,11 +16,9 @@ updates:
     groups:
       python-minor-and-patch:
         update-types: ["minor", "patch"]
-    ignore:
-      # procrastinate ships its schema as SQL; migration 0009_queue_tables.py pins the 3.10.0
-      # schema.sql digest, so any version change needs a reviewed queue migration (#123).
-      # Security updates still arrive: ignore applies to version updates only.
-      - dependency-name: "procrastinate"
+    # procrastinate is no longer ignored (owner decision, 2026-11-23): its migrations are vendored in
+    # apps/api/migrations/sql, and test_queue_migrations fails on any upgrade that brings new SQL,
+    # so a bump PR stays red until the new migration is copied and reviewed.
     open-pull-requests-limit: 10
 
   - package-ecosystem: "npm"  # pnpm is configured through the npm ecosystem

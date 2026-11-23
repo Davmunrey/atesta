@@ -1,7 +1,8 @@
 # ADR-015: The repository is public
 
-- Status: proposed (2026-11-23); the owner accepts it. The owner made the repository public on
-  2026-11-22 ("He hecho la app pública para tener minutos de CI").
+- Status: accepted by the owner (2026-11-23). The owner made the repository public on
+  2026-11-22 ("He hecho la app pública para tener minutos de CI"). The owner plans to make it
+  private again; until then every rule below holds, and making it private needs no new ADR.
 - Related: SECURITY.md, AGENTS.md ("Owner decisions"), ADR-013.
 
 ## Context
