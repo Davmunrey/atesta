@@ -31,7 +31,7 @@ it("shows official selection rules separately from recorded status", async () =>
 
 it("prioritizes failures and open work before passed requirements", async () => {
   stubApi({ [path]: [200, { ...framework, requirements: [...framework.requirements].reverse() }] }); render();
-  await screen.findByRole("heading", { level: 1 });
+  await screen.findByRole("heading", { level: 1, name: framework.name });
   const rows = Array.from(document.querySelectorAll("details.requirement-row"));
   expect(rows.map((row) => row.querySelector("summary .requirement-code")?.textContent)).toEqual(["R1", "R2", "R3", "R4", "OLD"]);
   expect(rows[0]?.getAttribute("open")).toBe("");
@@ -94,9 +94,9 @@ const expectedEvidence = { reviewed_by: null, items: [
 it("lists the evidence a guide expects under the requirement, cited and marked as a candidate", async () => {
   stubApi({ [path]: [200, { ...framework, requirements: [{ ...framework.requirements[0], guidance: { ...requirementGuidance, expected_evidence: expectedEvidence } }] }] }); render();
   const disclosure = (await screen.findByText(/Evidencias que propone la guía/)).closest("details")!;
-  expect(disclosure.className).toContain("catalog-disclosure");
+  expect(disclosure.className).toContain("row-section");
   expect(within(disclosure).getByText("Registro de altas y bajas de cuentas.")).toBeTruthy();
-  expect(within(disclosure).getByText("CCN-STIC 808 (abril de 2026), apartado 6.2.2.2 (op.acc.1), pág. 32")).toBeTruthy();
+  expect(within(disclosure).getByText("Referencia: CCN-STIC 808 (abril de 2026), apartado 6.2.2.2 (op.acc.1), pág. 32")).toBeTruthy();
   expect(within(disclosure).getByText(/Pendiente de revisión cualificada/)).toBeTruthy();
 });
 
@@ -104,7 +104,7 @@ it("reads the expected evidence in English", async () => {
   stubApi({ [path]: [200, { ...framework, requirements: [{ ...framework.requirements[0], guidance: { ...requirementGuidance, expected_evidence: expectedEvidence } }] }] });
   renderWithProviders(<FrameworkDetailView orgId="primary" frameworkKey="synthetic_alpha" />, "en");
   expect(await screen.findByText("Record of accounts created and removed.")).toBeTruthy();
-  expect(screen.getByText("CCN-STIC 808 (April 2026), section 6.2.2.2 (op.acc.1), p. 32")).toBeTruthy();
+  expect(screen.getByText("Reference: CCN-STIC 808 (April 2026), section 6.2.2.2 (op.acc.1), p. 32")).toBeTruthy();
 });
 
 it("names the reviewer and the date once the owner signs the expected evidence", async () => {

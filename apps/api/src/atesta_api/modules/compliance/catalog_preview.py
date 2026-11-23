@@ -112,7 +112,7 @@ def import_preview(conn: Connection, catalog: Catalog) -> list[str]:
                         "framework_key": metadata.id,
                         "requirement_code": m.requirement_id,
                         "control_key": m.control_id,
-                        **m.model_dump(exclude={"requirement_id", "control_id"}),
+                        **m.model_dump(exclude={"requirement_id", "control_id", "reviewed_on"}),
                     }
                     for m in pack.mappings
                 ],

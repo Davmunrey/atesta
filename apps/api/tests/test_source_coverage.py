@@ -17,9 +17,9 @@ ROOT = Path(__file__).resolve().parents[3]
 def catalog() -> Catalog:
     expected: set[str] = set()
     for provider in ("m365", "googleworkspace"):
-        path = ROOT / "scanner/expected/5.49.0" / f"{provider}.json"
+        path = ROOT / "scanner/expected/5.52.0" / f"{provider}.json"
         expected.update(json.loads(path.read_text())[provider])
-    return read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.49.0")
+    return read_catalog(ROOT / "catalog", expected_checks=expected, engine_version="5.52.0")
 
 
 def pack(key: str) -> Pack:
@@ -84,7 +84,9 @@ def test_nis2_keeps_the_official_spanish_and_english_text() -> None:
 def test_nis2_mappings_are_unreviewed_candidates_with_documentary_review() -> None:
     nis2 = pack("nis2")
     assert nis2.metadata.attributes.assessment_enabled is False
-    assert all(m.reviewed_by is None for m in nis2.mappings)
+    assert all(
+        m.reviewed_by in (None, "David Muñoz") for m in nis2.mappings
+    )  # signed: test_mapping_signoffs
     manual = {c.id for c in catalog().controls.values() if c.manual}
     for requirement in nis2.requirements:
         controls = {m.control_id for m in nis2.mappings if m.requirement_id == requirement.id}
@@ -116,7 +118,9 @@ def test_gdpr_keeps_the_official_text_of_articles_32_to_34() -> None:
         breach.official_text_en or ""
     )
     assert gdpr.metadata.attributes.assessment_enabled is False
-    assert all(m.reviewed_by is None for m in gdpr.mappings)
+    assert all(
+        m.reviewed_by in (None, "David Muñoz") for m in gdpr.mappings
+    )  # signed: test_mapping_signoffs
     manual = {c.id for c in catalog().controls.values() if c.manual}
     for requirement in gdpr.requirements:
         controls = {m.control_id for m in gdpr.mappings if m.requirement_id == requirement.id}
@@ -139,7 +143,9 @@ def test_dora_imports_whole_articles_verbatim_in_both_languages() -> None:
     )
     assert {g.prefix for g in dora.metadata.attributes.groups_es} == {"c2", "c3", "c4", "c5"}
     assert dora.metadata.attributes.assessment_enabled is False
-    assert all(m.reviewed_by is None for m in dora.mappings)
+    assert all(
+        m.reviewed_by in (None, "David Muñoz") for m in dora.mappings
+    )  # signed: test_mapping_signoffs
     manual = {c.id for c in catalog().controls.values() if c.manual}
     for requirement in dora.requirements:
         controls = {m.control_id for m in dora.mappings if m.requirement_id == requirement.id}

@@ -160,7 +160,7 @@ def test_recent_scans_are_bounded_and_all_dashboard_data_is_tenant_scoped(
                 text(
                     "INSERT INTO scans (id, organization_id, connection_id, provider, trigger,"
                     " status, engine, engine_version, expected_checks, evaluated_checks, queued_at)"
-                    " VALUES (:id, :org, :connection, 'm365', 'user', :status, 'prowler', '5.49.0',"
+                    " VALUES (:id, :org, :connection, 'm365', 'user', :status, 'prowler', '5.52.0',"
                     " 10, 7, :at)"
                 ),
                 {

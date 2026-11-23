@@ -28,7 +28,9 @@ isolated per tenant.
       and the pack-level declaration in `frameworks.attributes`.
 - [ ] Provenance in the schema (MF-06, rule 10): `mappings.source`, `mappings.rationale` and
       `requirements.source` are NOT NULL with `CHECK (btrim(col) <> '')`. `mappings.reviewed_by`
-      is NULL until a qualified reviewer signs, with `CHECK (reviewed_by IS NULL OR
+      is NULL until a qualified reviewer signs (in the pack: `reviewed_by` and
+      `reviewed_on`, both or neither; the owner signs in session after each guide citation is
+      checked, #210; the database keeps the name, git keeps the date), with `CHECK (reviewed_by IS NULL OR
       btrim(reviewed_by) <> '')`. The catalog sync job refuses to mark a framework `reviewed` or
       `released` while any of its mappings has `reviewed_by` NULL (catalog spec).
 - [ ] `frameworks.status` has runtime meaning: `compliance.api` lists, selects and scores only

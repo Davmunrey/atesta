@@ -294,7 +294,8 @@ mappings:
   control_id: ctl.app_governance
   rationale: "Candidate: app consent, registration and credential settings, and legacy access. What each app does with data needs documentary review."
   source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
-  reviewed_by: null
+  reviewed_by: David Muñoz
+  reviewed_on: 2026-11-23
 - requirement_id: art21.2i
   control_id: ctl.hybrid_identity
   rationale: "Candidate: hybrid identity settings between Active Directory and Entra. The on-premises directory itself needs documentary review."
@@ -319,9 +320,11 @@ mappings:
   control_id: ctl.exchange_access_hardening
   rationale: "Candidate: modern authentication, SMTP AUTH and shared-mailbox sign-in in Exchange Online. Mirrors ctl.legacy_authentication. Needs PowerShell; no result until it is granted."
   source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
-  reviewed_by: null
+  reviewed_by: David Muñoz
+  reviewed_on: 2026-11-23
 - requirement_id: art21.2i
   control_id: ctl.teams_external_access
   rationale: "Candidate: Teams external access and meeting policies. Mirrors ctl.m365_external_sharing. Needs PowerShell; no result until it is granted."
   source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022L2555#art_21
-  reviewed_by: null
+  reviewed_by: David Muñoz
+  reviewed_on: 2026-11-23

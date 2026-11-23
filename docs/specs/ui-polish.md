@@ -1,6 +1,8 @@
 # Spec: UI polish for phones, management and dark mode
 
-- Issues: #238 (phones), #239 (readable activity, consistent panels), #240 (executive summaries).
+- Issues: #238 (phones), #239 (readable activity, consistent panels), #240 (executive summaries),
+  #276 (incident criteria on phones), #283 (loading, error and empty states),
+  #287 (records at a glance on the overview), #295 (expected evidence polish).
 - Builds on `console-shell.md`, `insights.md`, `recorded-routines.md` and DESIGN.md. Operate mode:
   refinement of the console, not a new visual world.
 - Status: draft
@@ -72,9 +74,17 @@ Policies, access reviews, training, incidents and integrations each open with:
 **Strings**
 - [ ] **i18n:** ES and EN strings with ICU plurals.
 
-## Tests
+## Incident criteria on phones (#276)
+
+The incident form shows the official text behind each flag (recorded-routines spec). With several
+frameworks active, one flag can carry twenty or more criteria.
+
+- [ ] **Grouped by framework:** under each flag, criteria are grouped by framework, in the order the API returns them.
+- [ ] **One disclosure per framework:** a framework with several criteria shows a single disclosure, "Qué dice DORA (9 criterios)" / "What DORA says (9 criteria)". It opens onto one disclosure per criterion, titled by the criterion alone. A framework with one criterion keeps the single disclosure "Qué dice RGPD: …".
+- [ ] **Official text unchanged:** text keeps `lang="es"` when no official English exists, and each criterion keeps its official source link.
+
 
 | Area | Cases |
 |---|---|
-| Unit | stacked tables carry a `data-label` per cell; every API audit action has ES and EN labels; unknown actions and UUIDs never show; incident button name; summaries count from fixtures; dark `surface`/`panel` differ and pass contrast |
+| Unit | expected evidence: shared reference once, per-item references otherwise, dossier lists open for print and restored after; overview records rows: order, states and links from fixtures; incident criteria grouped by framework, with counts; a failed list load offers a retry that refetches; members keeps its header while loading; no retry on 4xx; stacked tables carry a `data-label` per cell; every API audit action has ES and EN labels; unknown actions and UUIDs never show; incident button name; summaries count from fixtures; dark `surface`/`panel` differ and pass contrast |
 | e2e | axe with no violations and no horizontal overflow at 375 and 1280 px on the pages above; CSP reports stay empty |

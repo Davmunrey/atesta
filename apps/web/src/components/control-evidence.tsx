@@ -6,6 +6,7 @@ import { EVIDENCE_PAGE_SIZE, useControlEvidence, useRecordEvidence } from "@/lib
 import { useMembers } from "@/lib/api/hooks";
 import { CatalogReference } from "./catalog-reference";
 import { ErrorMessage } from "./error-message";
+import { Empty, LoadError, Loading } from "./page-frame";
 
 type Context = { orgId: string; controlKey: string };
 
@@ -47,11 +48,10 @@ function EvidenceWorkspace({ orgId, controlKey, active }: Context & { active: bo
     <p className="text-sm text-muted">{t("boundary")}</p>
     {saved ? <p role="status">{t("saved")}</p> : null}
     <div ref={results} tabIndex={-1} role="region" aria-label={t("pages")} aria-busy={query.isFetching}>
-    {query.isPending ? <p role="status">{t("loading")}</p> : query.isError ? <>
-      <ErrorMessage error={query.error} /><button type="button" className="dashboard-button" onClick={() => void query.refetch()}>{t("retry")}</button>
-    </> : query.data ? <>
+    {query.isPending ? <Loading label={t("loading")} /> : query.isError ? <LoadError error={query.error} onRetry={() => void query.refetch()} />
+    : query.data ? <>
       <p className="evidence-count">{t("count", { count: query.data.total })}</p>
-      {query.data.total === 0 ? <p>{t("empty")}</p> : <ol className="evidence-list">
+      {query.data.total === 0 ? <Empty>{t("empty")}</Empty> : <ol className="evidence-list">
         {query.data.items.map((item) => <li key={item.id}>
           <strong>{item.title}</strong>
           <p className="evidence-metadata">{t("recorded", { author: members.data?.find((m) => m.user_id === item.created_by)?.email ?? t(item.kind === "scan_output" ? "scanner" : "member"), date: format.dateTime(new Date(item.created_at), { dateStyle: "medium", timeStyle: "short" }) })}</p>
