@@ -42,6 +42,60 @@ def statements_in_org(
     return set(rows)
 
 
+@dataclass(frozen=True, slots=True)
+class StatementView:
+    """An evidence statement as an auditor reads it (auditor-dossier spec)."""
+
+    title: str
+    statement: str
+    reference_url: str | None
+    collected_at: datetime
+    source_type: str
+
+
+def statements_by_control(
+    session: Session, organization_id: uuid.UUID, control_keys: Iterable[str], limit: int = 20
+) -> dict[str, list[StatementView]]:
+    """The newest statements linked to each control, at most `limit` per control."""
+    from atesta_api.modules.evidence.models import EvidenceStatement
+
+    keys = set(control_keys)
+    if not keys:
+        return {}
+    rows = session.execute(
+        select(EvidenceControl.control_key, Evidence, EvidenceStatement)
+        .join(
+            Evidence,
+            (Evidence.organization_id == EvidenceControl.organization_id)
+            & (Evidence.id == EvidenceControl.evidence_id),
+        )
+        .join(
+            EvidenceStatement,
+            (EvidenceStatement.organization_id == Evidence.organization_id)
+            & (EvidenceStatement.evidence_id == Evidence.id),
+        )
+        .where(
+            EvidenceControl.organization_id == organization_id,
+            EvidenceControl.control_key.in_(keys),
+        )
+        .order_by(EvidenceControl.control_key, Evidence.collected_at.desc(), Evidence.id)
+    ).tuples()
+    out: dict[str, list[StatementView]] = {}
+    for key, evidence, statement in rows:
+        found = out.setdefault(key, [])
+        if len(found) < limit:
+            found.append(
+                StatementView(
+                    title=evidence.title,
+                    statement=statement.statement,
+                    reference_url=statement.reference_url,
+                    collected_at=evidence.collected_at,
+                    source_type=evidence.source_type,
+                )
+            )
+    return out
+
+
 def evidence_count(session: Session, organization_id: uuid.UUID) -> int:
     """Count tenant records without loading document contents or storage metadata."""
     return session.execute(

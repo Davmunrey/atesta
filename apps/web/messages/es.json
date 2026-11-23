@@ -500,7 +500,8 @@
     "saveOwner": "Guardar responsable",
     "overdue": "Vencida",
     "formerMember": "Antiguo miembro",
-    "assignedOwner": "Asignada"
+    "assignedOwner": "Asignada",
+    "exportDossier": "Abrir el dossier para el auditor"
   },
   "insights": {
     "title": "Evolución",
@@ -869,5 +870,83 @@
     "revokedOn": "Revocado el {date}",
     "revoke": "Revocar",
     "revokeNamed": "Revocar el token {name}"
+  },
+  "dossier": {
+    "title": "Dossier para el auditor",
+    "frameworks": "Marcos",
+    "loading": "Preparando el dossier…",
+    "intro": "Todo lo que pide el auditor en un solo documento: resumen para dirección, aplicabilidad, evidencias por requisito y rutinas. Imprímelo o guárdalo en PDF desde el navegador.",
+    "print": "Imprimir o guardar en PDF",
+    "coverKicker": "Dossier de preparación de auditoría",
+    "organization": "Organización",
+    "version": "Versión del marco",
+    "catalog": "Versión del catálogo",
+    "generated": "Generado",
+    "notCertification": "Este dossier reúne lo registrado por la organización en Atesta. No es una certificación ni una evaluación de conformidad; la decisión es del auditor.",
+    "signature": "Firma de la dirección",
+    "signer": {
+      "name": "Nombre",
+      "role": "Cargo",
+      "date": "Fecha",
+      "sign": "Firma"
+    },
+    "summary": "Resumen para dirección",
+    "summaryHelp": "Recuentos y fechas registrados; no es una puntuación de cumplimiento.",
+    "counts": {
+      "total": "Medidas",
+      "assessed": "Evaluadas",
+      "implemented": "Implantadas",
+      "partial": "Implantadas en parte",
+      "notImplemented": "No implantadas",
+      "notApplicable": "No aplican",
+      "overdue": "Vencidas"
+    },
+    "noRequirements": "Este marco aún no tiene medidas importadas.",
+    "review": "Revisión del responsable de seguridad",
+    "reviewBy": "{name} ({role}), {date}.",
+    "noReview": "Sin revisión registrada.",
+    "routinesState": "Rutinas pendientes",
+    "routinesClear": "No hay rutinas pendientes.",
+    "pending": {
+      "policiesDue": "{count, plural, one {# política por revisar} other {# políticas por revisar}}",
+      "policiesUnapproved": "{count, plural, one {# política sin aprobar} other {# políticas sin aprobar}}",
+      "accessReviewsOverdue": "{count, plural, one {# revisión de accesos vencida} other {# revisiones de accesos vencidas}}",
+      "trainingsUnclosed": "{count, plural, one {# formación por cerrar} other {# formaciones por cerrar}}",
+      "incidentClocksOverdue": "{count, plural, one {# plazo de notificación vencido} other {# plazos de notificación vencidos}}"
+    },
+    "applicability": "Declaración de aplicabilidad",
+    "code": "Código",
+    "measure": "Medida",
+    "decision": "Aplicabilidad",
+    "implementation": "Implantación",
+    "justification": "Justificación",
+    "decisions": {
+      "applies": "Aplica",
+      "not_applicable": "No aplica",
+      "undecided": "Sin decidir"
+    },
+    "evidence": "Evidencias por requisito",
+    "evidenceHelp": "Para cada requisito, sus medidas comunes con la última observación del escaneo, la revisión vigente y las evidencias registradas.",
+    "reviewed": "Revisada el {date}",
+    "notReviewed": "Sin revisión vigente",
+    "noEvidence": "Sin evidencias registradas.",
+    "sources": {
+      "user": "Registrada en Atesta",
+      "api": "Enviada por una herramienta",
+      "scan": "Escaneo",
+      "upload": "Documento"
+    },
+    "routines": "Rutinas registradas (últimos 12 meses)",
+    "policies": "Políticas",
+    "accessReviews": "Revisiones de acceso cerradas",
+    "trainings": "Formaciones cerradas",
+    "incidents": "Incidentes cerrados",
+    "none": "Ninguna.",
+    "policyApproved": "versión {version}, aprobada por {approver} el {date}",
+    "policyUnapproved": "sin aprobar",
+    "nextReview": "próxima revisión: {date}",
+    "accessReviewClosed": "{total, plural, one {# cuenta revisada} other {# cuentas revisadas}} (mantener: {keep}; retirar: {revoke}); cerrada el {date}",
+    "trainingClosed": "{count, plural, one {# confirmación} other {# confirmaciones}}; cerrada el {date}",
+    "incidentClosed": "constancia el {aware}; cerrado el {date}"
   }
 }
