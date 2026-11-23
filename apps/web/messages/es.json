@@ -75,15 +75,16 @@
         }
       }
     },
-    "moments": {
-      "measure": "El texto oficial de cada medida",
-      "records": "Los registros que pide el auditor",
-      "dossier": "Un dossier listo para firmar"
+    "year": {
+      "title": "Un año de ENS"
     },
     "frameworks": {
       "title": "ENS primero, y más según tu plan",
       "body": "También cubre NIS2, RGPD, LOPDGDD y DORA. Una misma evidencia sirve a varios marcos.",
       "byPlan": "Según el plan"
+    },
+    "marquee": {
+      "pause": "Pausar la animación"
     },
     "consultancies": "Para consultoras: todos tus clientes en una cuenta, cada uno con su propio espacio.",
     "close": "Tu próxima auditoría, preparada.",
@@ -127,7 +128,39 @@
         "role": "Cargo",
         "date": "Fecha",
         "signature": "Firma"
-      }
+      },
+      "year": {
+        "label": "Un año de ENS en Atesta",
+        "m0": {
+          "month": "Enero",
+          "text": "Alcance definido: categoría MEDIA."
+        },
+        "m1": {
+          "month": "Febrero",
+          "text": "Autoevaluación de las 73 medidas."
+        },
+        "m2": {
+          "month": "Abril",
+          "text": "Revisión trimestral de accesos cerrada."
+        },
+        "m3": {
+          "month": "Junio",
+          "text": "Incidente registrado; alerta temprana enviada en 24 h."
+        },
+        "m4": {
+          "month": "Septiembre",
+          "text": "Formación anual: 18 confirmaciones."
+        },
+        "m5": {
+          "month": "Noviembre",
+          "text": "Dossier entregado al auditor."
+        }
+      },
+      "connect": {
+        "label": "Conexión de sistemas en Atesta",
+        "access": "Solo lectura"
+      },
+      "stage": "Paso"
     }
   },
   "locale": {
