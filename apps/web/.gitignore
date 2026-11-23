@@ -3,3 +3,4 @@ next-env.d.ts
 csp-policy.json
 test-results/
 playwright-report/
+/public/assistant/

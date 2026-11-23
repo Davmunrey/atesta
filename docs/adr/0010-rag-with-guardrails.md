@@ -46,3 +46,23 @@ Tests the AI module must ship with:
   answer's citations nor any verdict, and the answer never states a pass or fail (ADR-005);
 - a forged delimiter inside customer text is neutralised and stays inside its own frame;
 - an answer that cites a chunk id it was not given is rejected.
+
+## Amendment 2 (proposed, owner to accept, #357): v1 assistant has no generative model
+
+Status: proposed. The owner decided on 2026-11-23 (relayed by the coordinator) to build two
+assistants, one public on the landing and one in the app, with "no AI model at all" and "catalog
+content only". Accepting this amendment records that decision here.
+
+- **v1 is retrieval only.** The assistant searches a static index of catalog content and an
+  owner-reviewed FAQ, in the browser, and shows the matching passages verbatim. Guided flows are
+  decision trees over the same content. No model writes, summarises or rephrases anything.
+- **The citation rule still holds, unchanged.** Every answer card names the chunk it quotes:
+  framework, requirement and source URL for official text; guide, edition, section and page for
+  CCN-STIC content. A card without a citation is dropped.
+- **The relevance threshold still holds.** Below it the assistant says it found no answer and
+  offers the contact address; it never guesses.
+- **Nothing here decides pass or fail** (ADR-005), and no customer data enters the index.
+- **What stays for later:** the hybrid search, pgvector, the generated JSON answers and the
+  golden set above apply when a model is introduced. That needs a new owner decision and a spec.
+
+Spec: `docs/specs/assistant.md`.
