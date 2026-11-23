@@ -74,6 +74,7 @@ Start with the question you have.
 ## Runbooks
 
 - [onboarding](runbooks/onboarding.md): a new customer, from contract to first review.
+- [demo](runbooks/demo.md): a realistic demo organization on the local stack.
 - [offboarding](runbooks/offboarding.md): export, closure and erasure at the end of a contract.
 - [security-incident](runbooks/security-incident.md): triage, containment, fix and notification.
 
