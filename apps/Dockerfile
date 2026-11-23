@@ -20,6 +20,7 @@ WORKDIR /src
 COPY pyproject.toml uv.lock ./
 COPY packages/core/pyproject.toml packages/core/
 COPY apps/api/pyproject.toml apps/api/
+COPY apps/mcp/pyproject.toml apps/mcp/
 COPY apps/worker/pyproject.toml apps/worker/
 COPY scanner/pyproject.toml scanner/
 COPY apps/build-requirements.txt /tmp/
@@ -31,9 +32,10 @@ RUN uv export --frozen --no-dev --package atesta-worker --no-emit-workspace \
  && /opt/venv/bin/pip install --require-hashes --no-deps -r /tmp/requirements.txt
 COPY packages/core /src/packages/core
 COPY apps/api /src/apps/api
+COPY apps/mcp /src/apps/mcp
 COPY apps/worker /src/apps/worker
 RUN /opt/build/bin/pip wheel --no-deps --no-build-isolation --no-index -w /wheels \
-      /src/packages/core /src/apps/api /src/apps/worker \
+      /src/packages/core /src/apps/api /src/apps/mcp /src/apps/worker \
  && /opt/venv/bin/pip install --no-deps --no-index /wheels/*.whl
 
 FROM base AS runtime

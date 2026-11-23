@@ -6,7 +6,7 @@ and to whom, is the organization's decision (ADR-005).
 """
 
 import uuid
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Annotated, Literal, cast
@@ -277,37 +277,47 @@ def open_incidents(session: Session, org: uuid.UUID) -> list[IncidentOut]:
     return [o for o in out if o.closed_at is None]
 
 
+type Via = Mapping[str, str] | None  # an API key's audit metadata (api-keys-v2 spec)
+
+
 @router.post("/incidents", status_code=201)
 def create_incident(
     body: IncidentIn,
     member: Annotated[Member, Depends(require_role(Role.MEMBER))],
     session: DbSession,
 ) -> IncidentOut:
+    return record_incident(session, member.organization_id, member.user_id, body)
+
+
+def record_incident(
+    session: Session, org: uuid.UUID, author: uuid.UUID, body: IncidentIn, via: Via = None
+) -> IncidentOut:
     incident = Incident(
-        organization_id=member.organization_id,
+        organization_id=org,
         title=body.title,
         aware_at=body.aware_at,
         significant=body.significant,
         personal_data=body.personal_data,
-        created_by=member.user_id,
+        created_by=author,
     )
     session.add(incident)
     session.flush()
     session.refresh(incident)
     updates: list[IncidentUpdate] = []
     if body.classified_at is not None:
-        updates.append(_classify(session, incident, member.user_id, body.classified_at))
+        updates.append(_classify(session, incident, author, body.classified_at))
     record(
         session,
-        organization_id=member.organization_id,
+        organization_id=org,
         action="incident.created",
         target_type="incident",
         target_id=str(incident.id),
-        actor_user_id=member.user_id,
+        actor_user_id=author,
         metadata={
             "significant": body.significant,
             "personal_data": body.personal_data,
             "classified": body.classified_at is not None,
+            **(via or {}),
         },
     )
     return _out(incident, updates, clock_defs(session))
@@ -464,7 +474,17 @@ def add_update(
     member: Annotated[Member, Depends(require_role(Role.MEMBER))],
     session: DbSession,
 ) -> IncidentOut:
-    org = member.organization_id
+    return add_incident_update(session, member.organization_id, member.user_id, incident_id, body)
+
+
+def add_incident_update(
+    session: Session,
+    org: uuid.UUID,
+    author: uuid.UUID,
+    incident_id: uuid.UUID,
+    body: UpdateIn,
+    via: Via = None,
+) -> IncidentOut:
     incident = _incident(session, org, incident_id)
     defs = clock_defs(session)
     before = _out(incident, _updates(session, org, [incident_id]), defs)
@@ -482,7 +502,7 @@ def add_update(
         if before.classified_at is not None:
             raise _error(409, "compliance.incident_classified")
         at = cast(datetime, body.classified_at)  # UpdateIn requires it for this kind
-        update = _classify(session, incident, member.user_id, at, body.note)
+        update = _classify(session, incident, author, at, body.note)
     else:
         update = IncidentUpdate(
             organization_id=org,
@@ -490,19 +510,19 @@ def add_update(
             kind=body.kind,
             clock_ref=body.clock,
             note=body.note.strip(),
-            recorded_by=member.user_id,
+            recorded_by=author,
         )
         session.add(update)
         session.flush()
         session.refresh(update)
     after = _out(incident, _updates(session, org, [incident_id]), defs)
     if body.kind == "closed":
-        email, locale = person(session, member.user_id)
+        email, locale = person(session, author)
         lang: Locale = "en" if locale == "en" else "es"
         record_attestation(
             session,
             organization_id=org,
-            author=member.user_id,
+            author=author,
             control_key=INCIDENT_CONTROL,
             title=message(lang, "routines.incident_title").format(title=incident.title),
             statement=_closing_statement(lang, incident, after.clocks, update.recorded_at, email),
@@ -513,7 +533,7 @@ def add_update(
         action=f"incident.{'clock_met' if body.kind == 'clock' else body.kind}",
         target_type="incident",
         target_id=str(incident_id),
-        actor_user_id=member.user_id,
-        metadata={"clock": body.clock} if body.clock else None,
+        actor_user_id=author,
+        metadata={**({"clock": body.clock} if body.clock else {}), **(via or {})},
     )
     return after

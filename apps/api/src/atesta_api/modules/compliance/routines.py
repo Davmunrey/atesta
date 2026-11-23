@@ -6,6 +6,7 @@ customer's systems (rule 1) and never decides whether a measure is met (ADR-005)
 """
 
 import uuid
+from collections.abc import Mapping
 from datetime import UTC, date, datetime, timedelta
 from typing import Annotated, Literal, cast
 
@@ -172,13 +173,22 @@ def create_access_review(
     member: Annotated[Member, Depends(require_role(Role.ADMIN))],
     session: DbSession,
 ) -> AccessReviewOut:
-    org = member.organization_id
+    return start_access_review(session, member.organization_id, member.user_id, body)
+
+
+def start_access_review(
+    session: Session,
+    org: uuid.UUID,
+    author: uuid.UUID,
+    body: AccessReviewIn,
+    via: Mapping[str, str] | None = None,
+) -> AccessReviewOut:
     review = AccessReview(
         organization_id=org,
         title=body.title,
         system=body.system,
         due_on=body.due_on,
-        created_by=member.user_id,
+        created_by=author,
     )
     session.add(review)
     session.flush()
@@ -196,8 +206,8 @@ def create_access_review(
         action="access_review.created",
         target_type="access_review",
         target_id=str(review.id),
-        actor_user_id=member.user_id,
-        metadata={"accounts": len(body.accounts)},
+        actor_user_id=author,
+        metadata={"accounts": len(body.accounts), **(via or {})},
     )
     entries = _entries(session, org, review.id)
     return AccessReviewOut(**_summary(review, entries).model_dump(), entries=entries)

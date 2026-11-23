@@ -128,12 +128,13 @@ def test_an_admin_signs_in_then_consents_and_the_tenant_is_bound_once(
     replay = consent(client, subs["adm"], second_state)  # the cookie was single use
     assert code_of(replay) == (400, "connections.signin_invalid")
     assert microsoft.sign_ins[0]["code"] == CODE
-    # The test client logs the requests it sends (httpx, https://testserver/...): in production
-    # the browser sends them. Every server-side record must hold no code and no state.
+    # The test client logs the requests it sends (httpx, or httpx2 once the MCP SDK installs it,
+    # https://testserver/...): in production the browser sends them. Every server-side record
+    # must hold no code and no state.
     server = [
         r.getMessage()
         for r in caplog.records
-        if not (r.name == "httpx" and "https://testserver/" in r.getMessage())
+        if not (r.name in ("httpx", "httpx2") and "https://testserver/" in r.getMessage())
     ]
     logged = "\n".join(server)
     assert CODE not in logged and first_state not in logged and second_state not in logged
