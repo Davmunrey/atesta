@@ -10,10 +10,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from atesta_api.modules.billing.api import Feature, require_feature
 from atesta_api.modules.compliance.catalog_schema import ExpectedEvidence
 from atesta_api.modules.compliance.detail import framework_detail
 from atesta_api.modules.compliance.detail_schema import Observation
 from atesta_api.modules.compliance.incidents import IncidentSummary, list_incidents
+from atesta_api.modules.compliance.plan_gate import framework_in_plan
 from atesta_api.modules.compliance.readiness import FrameworkReadiness, framework_readiness
 from atesta_api.modules.compliance.register import (
     NOT_A_CERTIFICATION,
@@ -36,7 +38,11 @@ from atesta_api.modules.identity.api import Member, require_member
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 
-router = APIRouter(prefix="/api/v1/orgs/{org_id}/frameworks/{framework_key}", tags=["compliance"])
+router = APIRouter(
+    prefix="/api/v1/orgs/{org_id}/frameworks/{framework_key}",
+    tags=["compliance"],
+    dependencies=[Depends(framework_in_plan)],
+)
 
 RECENT = timedelta(days=365)
 
@@ -111,6 +117,7 @@ def dossier(
     framework_key: str, member: Annotated[Member, Depends(require_member)], session: DbSession
 ) -> Dossier:
     org = member.organization_id
+    require_feature(session, org, Feature.EVIDENCE_EXPORT)
     detail = framework_detail(framework_key, member, session)  # 404 for an unknown framework
     statement = applicability_statement(session, org, framework_key)
     today = datetime.now().astimezone().date()

@@ -1,11 +1,14 @@
-# Framework grants per plan and add-on (ADR-009, control-model spec).
+# Framework grants per plan and add-on (ADR-009, billing-entitlements spec).
 # Keys are pack ids from catalog/frameworks/<pack>/pack.yaml. Values are "all" or a list of that
-# pack's applies_to values. Grants are added as each pack is released (catalog spec), so a new
-# pack or level is a YAML change, never code (MF-03, rule 9).
-# Business plan hypothesis to encode then: starter = first pack at its lowest level;
-# pro = first pack, all levels; business = every released pack.
+# pack's applies_to values; a plan may instead be "all", every framework including packs added
+# later. A new pack or level is a YAML change, never code (MF-03, rule 9).
+# Business plan hypothesis, accepted by the owner on 2026-11-23: starter = the first pack at its
+# lowest level; pro = the first pack, all levels; business = every pack.
+# Levels are not enforced yet: a listed framework is open whatever its scope (spec, Out of scope).
 plans:
-  starter: {}
-  pro: {}
-  business: {}
+  starter:
+    ens_rd311_2022: [BÁSICA]
+  pro:
+    ens_rd311_2022: all
+  business: all
 addons: {}

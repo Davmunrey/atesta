@@ -8,6 +8,7 @@ from atesta_core.connectors.readonly import GOOGLE_V1, M365_V1
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, StringConstraints
 
+from atesta_api.modules.billing.api import require_connector_slot
 from atesta_api.modules.connections import service
 from atesta_api.modules.connections.models import Connection
 from atesta_api.modules.identity.api import Member, Role, require_member, require_role
@@ -90,6 +91,8 @@ def create_connection(
     member: Annotated[Member, Depends(require_role(Role.ADMIN))],
     session: DbSession,
 ) -> ConnectionOut:
+    in_use = sum(1 for c in service.list_connections(session) if c.status != "disconnected")
+    require_connector_slot(session, member.organization_id, in_use)  # billing-entitlements spec
     connection = service.create_connection(
         session,
         organization_id=member.organization_id,
