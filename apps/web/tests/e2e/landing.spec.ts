@@ -67,10 +67,10 @@ test("the pinned steps show each stage at its scroll position, with the counter"
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
   const pinned = page.locator(".landing-pinned");
-  for (const step of [1, 2, 3, 4]) {
+  for (const step of [1, 2, 3, 4, 5]) {
     await page.locator(`.landing-steps > li[data-step="${step}"]`).evaluate((el) => el.scrollIntoView({ block: "center" }));
     await expect(pinned).toHaveAttribute("data-stage", String(step));
-    await expect(page.locator(".landing-stage-counter")).toHaveText(`0${step} / 04`);
+    await expect(page.locator(".landing-stage-counter")).toHaveText(`0${step} / 05`);
     await expect(page.locator(".landing-stage[data-active='true']")).toHaveCount(1);
   }
 });
@@ -84,7 +84,7 @@ test("phones and reduced motion get the unpinned steps, each with its own frame"
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await expect(page.locator(".landing-stage-frame")).toBeHidden();
-  await expect(page.locator(".landing-step-stage").nth(3)).toBeVisible();
+  await expect(page.locator(".landing-step-stage").nth(4)).toBeVisible();
 });
 
 test("the frameworks marquee pauses from its button", async ({ page }) => {

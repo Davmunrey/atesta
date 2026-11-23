@@ -145,6 +145,7 @@ constraints below were agreed with the coordinator the same day). It refines A1'
       marquee, and each pinned stage is verified at fixed scroll positions.
 - [ ] **Accessibility and performance e2e:** axe runs at 375, 1280 and 1440 px; CLS stays under
       0.1 and LCP is measured.
+
 Amendment A3: the public site (#371 and following). Status: **accepted** (owner, 23/11/2026,
 relayed by the coordinator). Research and direction: phase 1 and 2 notes kept outside the
 repository (four reference sites rendered and measured; techniques mapped to original uses).
@@ -187,6 +188,26 @@ repository (four reference sites rendered and measured; techniques mapped to ori
 - [ ] **Unchanged:** every A1/A2 rule (light only, 0 CSP hashes, WCAG 2.2 AA with axe at 375, 1280
       and 1440 px, pause controls, CLS 0, LCP regression at most 10%, e2e at fixed scroll positions,
       the bottom-right corner free for the assistant).
+
+A3, landing (#373):
+
+**Hero**
+- [ ] **Hero tabs:** the overview frame has tabs (Resumen, Autoevaluar, Rutinas, Incidente,
+      Dossier) that switch on click or arrow keys, with no auto-advance.
+- [ ] **Proof and integrations:** the proof strip and "Se conecta con" (Microsoft 365, Google
+      Workspace, each "Próximamente", as names) follow the hero.
+
+**Steps and frameworks**
+- [ ] **Five steps:** the pinned steps are connect (Próximamente), assess, routines, incident and
+      dossier.
+- [ ] **Incident stage:** it shows a deadline whose progress bar fills once (no ticking clock)
+      and a timestamped log.
+- [ ] **Ring diagram:** "Una evidencia, muchos marcos" is an original SVG ring diagram with a text
+      equivalent, revealed by a mask wipe.
+
+**Motion**
+- [ ] **No overshoot:** figures never overshoot their real value; the distribution bar settles on
+      the spring token.
 
 Legal pages (Spanish is the binding version)
 
