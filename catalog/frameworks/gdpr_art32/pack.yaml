@@ -1,12 +1,12 @@
 id: gdpr_art32
 name: RGPD · Art. 32-34
-version: 2016-679.art32-34.draft3
+version: 2016-679.art32-34.draft4
 jurisdiction: EU
 source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32016R0679
 license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
   EU documents is authorised under Commission Decision 2011/833/EU, © European Union. Only Articles 32
   (except paragraph 3), 33 and 34(1)-(3) are imported; coverage.yaml accounts for every other article.
-  Not a complete GDPR pack; the LOPDGDD is not imported.
+  Not a complete GDPR pack; the security provisions of the LOPDGDD are in their own pack, lopdgdd.
 status: draft
 attributes:
   content_state: partial
@@ -28,11 +28,13 @@ attributes:
     measures. Review confidentiality, integrity, availability, recovery and regular testing; no universal
     configuration is sufficient.
   limitations_es: Importados los artículos 32 (salvo el apartado 3), 33 y 34 (apartados 1 a 3); el resto
-    del Reglamento figura en la cobertura con su motivo. No cubre bases jurídicas, derechos, transferencias,
-    evaluaciones de impacto ni la LOPDGDD. Revisa con tu delegado de protección de datos cuando corresponda.
+    del Reglamento figura en la cobertura con su motivo. No cubre bases jurídicas, derechos, transferencias
+    ni evaluaciones de impacto. Los preceptos de seguridad de la LOPDGDD tienen su propio marco. Revisa
+    con tu delegado de protección de datos cuando corresponda.
   limitations_en: Articles 32 (except paragraph 3), 33 and 34(1)-(3) are imported; the rest of the Regulation
-    is listed in the coverage with its reason. Legal bases, rights, transfers, impact assessments and
-    the Spanish LOPDGDD are not covered. Review with your data protection officer where applicable.
+    is listed in the coverage with its reason. Legal bases, rights, transfers and impact assessments
+    are not covered. The security provisions of the Spanish LOPDGDD have their own framework. Review
+    with your data protection officer where applicable.
   preparation_controls:
   - ctl.information_handling
   - ctl.risk_analysis

@@ -1,0 +1,209 @@
+source: Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos
+  digitales, BOE núm. 294, 6.12.2018 (BOE-A-2018-16673), consolidated text
+entries:
+- units:
+  - art1
+  - art2
+  - art3
+  - art4
+  status: excluded
+  reason_es: 'Objeto, ámbito, datos de fallecidos y exactitud: delimitan la ley; no son medidas de seguridad.'
+  reason_en: 'Subject matter, scope, deceased persons and accuracy: they bound the law; they are not security
+    measures.'
+- units:
+  - art6
+  - art7
+  - art8
+  - art9
+  - art10
+  - art11
+  - art12
+  - art13
+  - art14
+  - art15
+  - art16
+  - art17
+  - art18
+  - art19
+  - art20
+  - art21
+  - art22
+  - art23
+  - art24
+  - art25
+  - art26
+  - art27
+  status: excluded
+  reason_es: 'Bases jurídicas, consentimiento, categorías especiales, transparencia, derechos de las personas
+    y tratamientos concretos: protección de datos más allá de la seguridad del tratamiento. Fuera de este
+    marco.'
+  reason_en: 'Legal bases, consent, special categories, transparency, data subject rights and specific
+    processing: data protection beyond security of processing. Outside this framework.'
+- units:
+  - art29
+  - art30
+  status: excluded
+  reason_es: 'Corresponsables y representantes de responsables no establecidos en la Unión: reparto de
+    responsabilidad, no medidas de seguridad.'
+  reason_en: 'Joint controllers and representatives of controllers not established in the Union: allocation
+    of responsibility, not security measures.'
+- units:
+  - art34
+  - art35
+  - art36
+  - art37
+  - art38
+  - art39
+  status: excluded
+  reason_es: 'Delegado de protección de datos, códigos de conducta y certificación: gobierno de la protección
+    de datos; pendiente de una importación propia.'
+  reason_en: 'Data protection officer, codes of conduct and certification: data protection governance;
+    awaiting its own import.'
+- units:
+  - art40
+  - art41
+  - art42
+  - art43
+  status: excluded
+  reason_es: 'Transferencias internacionales de datos: fuera de este marco.'
+  reason_en: 'International data transfers: outside this framework.'
+- units:
+  - art44
+  - art45
+  - art46
+  - art47
+  - art48
+  - art49
+  - art50
+  - art51
+  - art52
+  - art53
+  - art53bis
+  - art54
+  - art55
+  - art56
+  - art57
+  - art58
+  - art59
+  - art60
+  - art61
+  - art62
+  - art63
+  - art64
+  - art65
+  - art66
+  - art67
+  - art68
+  - art69
+  - art70
+  - art71
+  - art72
+  - art73
+  - art74
+  - art75
+  - art76
+  - art77
+  - art78
+  status: excluded
+  reason_es: 'Autoridades de protección de datos, procedimientos y régimen sancionador: obligaciones de
+    la autoridad o consecuencias, no medidas de la organización.'
+  reason_en: 'Data protection authorities, procedures and penalties: duties of the authority or consequences,
+    not the organization''s measures.'
+- units:
+  - art79
+  - art80
+  - art81
+  - art82
+  - art83
+  - art84
+  - art85
+  - art86
+  - art87
+  - art88
+  - art89
+  - art90
+  - art91
+  - art92
+  - art93
+  - art94
+  - art95
+  - art96
+  - art97
+  status: excluded
+  reason_es: 'Garantía de los derechos digitales: derechos de las personas en entornos digitales y laborales.
+    Fuera de este marco; algunos (por ejemplo, el artículo 87 sobre dispositivos digitales en el trabajo)
+    pueden importarse aparte.'
+  reason_en: 'Guarantee of digital rights: individual rights in digital and work settings. Outside this
+    framework; some (for example Article 87 on digital devices at work) may be imported separately.'
+- units:
+  - da2
+  - da3
+  - da4
+  - da5
+  - da6
+  - da7
+  - da8
+  - da9
+  - da10
+  - da11
+  - da12
+  - da13
+  - da14
+  - da15
+  - da16
+  - da17
+  - da18
+  - da19
+  - da20
+  - da21
+  - da22
+  - da23
+  status: excluded
+  reason_es: Disposiciones adicionales sobre materias concretas (cómputo de plazos, tratamientos específicos,
+    sector público). No son medidas de seguridad generales.
+  reason_en: Additional provisions on specific matters (time limits, specific processing, the public sector).
+    They are not general security measures.
+- units:
+  - dt1
+  - dt2
+  - dt3
+  - dt4
+  - dt5
+  - dt6
+  - dd
+  - df1
+  - df2
+  - df3
+  - df4
+  - df5
+  - df6
+  - df7
+  - df8
+  - df9
+  - df10
+  - df11
+  - df12
+  - df13
+  - df14
+  - df15
+  - df16
+  status: excluded
+  reason_es: 'Disposiciones transitorias, derogatoria y finales: régimen temporal, derogaciones y modificaciones
+    de otras leyes.'
+  reason_en: 'Transitional, repealing and final provisions: transition, repeals and amendments to other
+    laws.'
+- units:
+  - art5
+  - art28
+  - art31
+  - art32
+  - art33
+  - da1
+  status: covered
+  requirements:
+  - art5
+  - art28
+  - art31
+  - art32
+  - art33
+  - da1

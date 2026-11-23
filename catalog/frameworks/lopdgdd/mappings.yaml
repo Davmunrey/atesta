@@ -1,0 +1,49 @@
+mappings:
+- requirement_id: art5
+  control_id: ctl.information_handling
+  rationale: 'Candidate: documentary measure for Artículo 5 of Organic Law 3/2018 (in force since 2018-12-07).
+    How it applies to each processing activity needs qualified review.'
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673#a5
+  reviewed_by: null
+- requirement_id: art5
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Artículo 5 of Organic Law 3/2018 (in force since 2018-12-07).
+    How it applies to each processing activity needs qualified review.'
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673#a5
+  reviewed_by: null
+- requirement_id: art28
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Artículo 28 of Organic Law 3/2018 (in force since 2018-12-07).
+    How it applies to each processing activity needs qualified review.'
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673#a2-10
+  reviewed_by: null
+- requirement_id: art28
+  control_id: ctl.information_handling
+  rationale: 'Candidate: documentary measure for Artículo 28 of Organic Law 3/2018 (in force since 2018-12-07).
+    How it applies to each processing activity needs qualified review.'
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673#a2-10
+  reviewed_by: null
+- requirement_id: art31
+  control_id: ctl.information_handling
+  rationale: 'Candidate: documentary measure for Artículo 31 of Organic Law 3/2018 (in force since 2018-12-07).
+    How it applies to each processing activity needs qualified review.'
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673#a3-3
+  reviewed_by: null
+- requirement_id: art32
+  control_id: ctl.information_handling
+  rationale: 'Candidate: documentary measure for Artículo 32 of Organic Law 3/2018 (in force since 2018-12-07).
+    How it applies to each processing activity needs qualified review.'
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673#a3-4
+  reviewed_by: null
+- requirement_id: art33
+  control_id: ctl.supplier_cloud_review
+  rationale: 'Candidate: documentary measure for Artículo 33 of Organic Law 3/2018 (in force since 2018-12-07).
+    How it applies to each processing activity needs qualified review.'
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673#a3-5
+  reviewed_by: null
+- requirement_id: da1
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Disposición adicional primera of Organic Law 3/2018 (in
+    force since 2018-12-07). How it applies to each processing activity needs qualified review.'
+  source: https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673#da
+  reviewed_by: null
