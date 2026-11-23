@@ -1,6 +1,6 @@
 id: dora
 name: DORA
-version: 2022-2554.draft4
+version: 2022-2554.draft5
 jurisdiction: EU
 source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022R2554
 license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
@@ -85,3 +85,645 @@ attributes:
   - prefix: c5
     title: Gestión del riesgo relacionado con las TIC derivado de terceros
     title_en: Managing of ICT third-party risk
+  incident_criteria:
+  - needs: significant
+    text:
+      section: Reglamento Delegado (UE) 2024/1772, artículo 1
+      title_es: Clientes, contrapartes financieras y transacciones · Reglamento Delegado (UE) 2024/1772,
+        artículo 1
+      title_en: Clients, financial counterparts and transactions · Delegated Regulation (EU) 2024/1772,
+        Article 1
+      official_text_es: '1. El número de clientes afectados por el incidente a que se refiere el artículo
+        18, apartado 1, letra a), del Reglamento (UE) 2022/2554 reflejará el número de todos los clientes
+        afectados, ya sean personas físicas o jurídicas, que no puedan, o no hayan podido, utilizar el servicio
+        prestado por la entidad financiera durante el incidente o que se hayan visto afectados negativamente
+        por el incidente. Dicho número incluirá también a terceros que estén expresamente cubiertos por
+        el acuerdo contractual entre la entidad financiera y el cliente como beneficiarios del servicio
+        afectado.
+
+
+        2. El número de contrapartes financieras afectadas por el incidente a que se refiere el artículo
+        18, apartado 1, letra a), del Reglamento (UE) 2022/2554 reflejará el número de todas las contrapartes
+        financieras afectadas que hayan celebrado un acuerdo contractual con la entidad financiera.
+
+
+        3. En relación con la pertinencia de los clientes y las contrapartes financieras afectados por el
+        incidente a que se refiere el artículo 18, apartado 1, letra a), del Reglamento (UE) 2022/2554,
+        la entidad financiera tendrá en cuenta la medida en que los efectos para un cliente o contraparte
+        financiera incidirán en la consecución de los objetivos empresariales de la entidad financiera,
+        así como el posible efecto del incidente en la eficiencia del mercado.
+
+
+        4. En relación con la cantidad o el número de transacciones afectadas por el incidente a que se
+        refiere el artículo 18, apartado 1, letra a), del Reglamento (UE) 2022/2554, la entidad financiera
+        tendrá en cuenta todas las transacciones afectadas que impliquen un importe monetario cuando al
+        menos una parte de la transacción se lleve a cabo en la Unión.
+
+
+        5. Cuando no pueda determinarse el número real de clientes o contrapartes financieras afectados
+        o el número o la cantidad reales de las transacciones afectadas, la entidad financiera estimará
+        dicho número o dicha cantidad sobre la base de los datos disponibles de períodos de referencia comparables.'
+      official_text_en: '1. The number of clients affected by the incident as referred to in Article 18(1),
+        point (a), of Regulation (EU) 2022/2554, shall reflect the number of all affected clients, whether
+        natural or legal persons, that are or were unable to make use of the service provided by the financial
+        entity during the incident or that were adversely impacted by the incident. That number shall also
+        include third parties explicitly covered by the contractual agreement between the financial entity
+        and the client as beneficiaries of the affected service.
+
+
+        2. The number of financial counterparts affected by the incident as referred to in Article 18(1),
+        point (a), of Regulation (EU) 2022/2554 shall reflect the number of all affected financial counterparts
+        that have concluded a contractual arrangement with the financial entity.
+
+
+        3. In relation to the relevance of clients and financial counterparts affected by the incident as
+        referred to in Article 18(1), point (a), of Regulation (EU) 2022/2554, the financial entity shall
+        take into account the extent to which the impact on a client or a financial counterpart will affect
+        the implementation of the business objectives of the financial entity, as well as the potential
+        impact of the incident on market efficiency.
+
+
+        4. In relation to the amount or number of transactions affected by the incident as referred to in
+        Article 18(1), point (a), of Regulation (EU) 2022/2554, the financial entity shall take into account
+        all affected transactions involving a monetary amount where at least one part of the transaction
+        is carried out in the Union.
+
+
+        5. Where the actual number of clients or financial counterparts affected or the actual number or
+        amount of transactions affected cannot be determined, the financial entity shall estimate those
+        numbers or amounts based on available data from comparable reference periods.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1772#art_1
+      source_sha256: eaf0eae66afabf98dceee74dfdb3c56a7c84387bf4c51d96d190441f30869895
+  - needs: significant
+    text:
+      section: Reglamento Delegado (UE) 2024/1772, artículo 2
+      title_es: Repercusión en la reputación · Reglamento Delegado (UE) 2024/1772, artículo 2
+      title_en: Reputational impact · Delegated Regulation (EU) 2024/1772, Article 2
+      official_text_es: '1. A efectos de determinar la repercusión en la reputación del incidente a que
+        se refiere el artículo 18, apartado 1, letra a), del Reglamento (UE) 2022/2554, las entidades financieras
+        considerarán que el incidente ha repercutido en la reputación cuando se cumpla al menos uno de los
+        criterios siguientes:
+
+
+        a) el incidente se ha reflejado en los medios de comunicación;
+
+
+        b) el incidente ha dado lugar a quejas reiteradas de distintos clientes o contrapartes financieras
+        sobre servicios de cara al cliente o relaciones comerciales esenciales;
+
+
+        c) la entidad financiera no podrá cumplir los requisitos reglamentarios, o es probable que no pueda
+        cumplirlos, como consecuencia del incidente;
+
+
+        d) la entidad financiera perderá, o es probable que pierda, clientes o contrapartes financieras
+        como consecuencia del incidente, lo que acarreará consecuencias importantes para sus actividades.
+
+
+        2. Al evaluar la repercusión en la reputación del incidente, las entidades financieras tendrán en
+        cuenta el nivel de visibilidad que el incidente haya alcanzado o pueda alcanzar en relación con
+        cada uno de los criterios enumerados en el apartado 1.'
+      official_text_en: '1. For the purposes of determining the reputational impact of the incident as referred
+        to in Article 18(1), point (a), of Regulation (EU) 2022/2554, financial entities shall consider
+        that a reputational impact has occurred where at least one of the following criteria is met:
+
+
+        (a) the incident has been reflected in the media;
+
+
+        (b) the incident has resulted in repetitive complaints from different clients or financial counterparts
+        on client-facing services or critical business relationships;
+
+
+        (c) the financial entity will not be able to or is likely not to be able to meet regulatory requirements
+        as a result of the incident;
+
+
+        (d) the financial entity will or is likely to lose clients or financial counterparts with a material
+        impact on its business as a result of the incident.
+
+
+        2. When assessing the reputational impact of the incident, financial entities shall take into account
+        the level of visibility that the incident has gained or is likely to gain in relation to each criterion
+        listed in paragraph 1.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1772#art_2
+      source_sha256: fb835fae3d9e2d16628352720401fcae4b4d1d9d8d73443dfa80bde2b9965599
+  - needs: significant
+    text:
+      section: Reglamento Delegado (UE) 2024/1772, artículo 3
+      title_es: Duración del incidente y duración de la interrupción del servicio · Reglamento Delegado
+        (UE) 2024/1772, artículo 3
+      title_en: Duration and service downtime · Delegated Regulation (EU) 2024/1772, Article 3
+      official_text_es: '1. Las entidades financieras medirán la duración del incidente a que se refiere
+        el artículo 18, apartado 1, letra b), del Reglamento (UE) 2022/2554, desde el momento en que se
+        produzca el incidente hasta el momento en que se resuelva.
+
+
+        Cuando las entidades financieras no puedan determinar el momento en que se haya producido el incidente,
+        medirán la duración del incidente desde el momento en que se detectase. Cuando las entidades financieras
+        tengan conocimiento de que el incidente se ha producido antes de su detección, medirán la duración
+        desde el momento en que se registre el incidente en registros de redes o sistemas o en otras fuentes
+        de datos.
+
+
+        Cuando las entidades financieras aún no sepan cuándo se resolverá el incidente o no puedan verificar
+        los datos en los registros o en otras fuentes de datos, realizarán estimaciones.
+
+
+        2. Las entidades financieras medirán la duración de la interrupción del servicio derivada de los
+        incidentes a que se refiere el artículo 18, apartado 1, letra b), del Reglamento (UE) 2022/2554,
+        desde el momento en que el servicio no esté disponible total o parcialmente para los clientes, las
+        contrapartes financieras u otros usuarios internos o externos hasta el momento en que se restablezcan
+        las actividades u operaciones regulares al nivel de servicio que se prestaba antes del incidente.
+        Cuando la interrupción del servicio provoque retrasos en la prestación del servicio después de que
+        se hayan restablecido las actividades u operaciones regulares, la duración de la interrupción del
+        servicio se medirá desde el inicio del incidente hasta el momento en que el servicio que haya sufrido
+        un retraso se preste en su totalidad.
+
+
+        Cuando las entidades financieras no puedan determinar el momento en que se haya iniciado la interrupción
+        del servicio, medirán la duración de la interrupción del servicio desde el momento en que se detecte.'
+      official_text_en: '1. Financial entities shall measure the duration of an incident as referred to
+        in Article 18(1), point (b), of Regulation (EU) 2022/2554, from the moment the incident occurs until
+        the moment when it is resolved.
+
+
+        Where financial entities are unable to determine the moment when the incident occurred, they shall
+        measure the duration of the incident from the moment it was detected. Where financial entities become
+        aware that the incident occurred prior to its detection, they shall measure the duration from the
+        moment the incident is recorded in network or system logs or other data sources.
+
+
+        Where financial entities do not yet know when the incident will be resolved or are unable to verify
+        records in logs or other data sources, they shall apply estimates.
+
+
+        2. Financial entities shall measure the service downtime of an incident as referred to in Article
+        18(1), point (b), of Regulation (EU) 2022/2554, from the moment the service is fully or partially
+        unavailable to clients, financial counterparts or other internal or external users to the moment
+        when regular activities or operations have been restored to the level of service that was provided
+        prior to the incident. Where the service downtime causes a delay in the provision of service after
+        regular activities or operations have been restored, the downtime shall be measured from the start
+        of the incident to the moment when that delayed service is fully provided.
+
+
+        Where financial entities are unable to determine the moment when the service downtime started, they
+        shall measure the service downtime from the moment it was detected.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1772#art_3
+      source_sha256: 2672f371a786a2ba26de2c089d8ac02e65fb31819000abeda9aa31e368c9995f
+  - needs: significant
+    text:
+      section: Reglamento Delegado (UE) 2024/1772, artículo 4
+      title_es: Extensión geográfica · Reglamento Delegado (UE) 2024/1772, artículo 4
+      title_en: Geographical spread · Delegated Regulation (EU) 2024/1772, Article 4
+      official_text_es: 'A efectos de determinar la extensión geográfica con respecto a las zonas afectadas
+        por el incidente a que se refiere el artículo 18, apartado 1, letra c), del Reglamento (UE) 2022/2554,
+        las entidades financieras evaluarán si el incidente tiene o ha tenido consecuencias en otros Estados
+        miembros y, en particular, la importancia de dichas consecuencias en lo que respecta a:
+
+
+        a) los clientes y las contrapartes financieras de otros Estados miembros;
+
+
+        b) las sucursales u otras entidades financieras del grupo que lleven a cabo actividades en otros
+        Estados miembros;
+
+
+        c) las infraestructuras de los mercados financieros o los proveedores terceros que puedan afectar
+        a entidades financieras en otros Estados miembros a las que presten servicios, en la medida en que
+        se disponga de tal información.'
+      official_text_en: 'For the purpose of determining the geographical spread with regard to the areas
+        affected by the incident as referred to in Article 18(1), point (c), of Regulation (EU) 2022/2554,
+        financial entities shall assess whether the incident has or had an impact in other Member States,
+        and in particular the significance of the impact in relation to any of the following:
+
+
+        (a) clients and financial counterparts in other Member States;
+
+
+        (b) branches or other financial entities within the group carrying out activities in other Member
+        States;
+
+
+        (c) financial market infrastructures or third-party providers, which may affect financial entities
+        in other Member States to which they provide services, to the extent such information is available.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1772#art_4
+      source_sha256: 73757b361103163426d79c0a08a3dd8270e6ba8c5d8d2ffe68e91ecaba6e4c4b
+  - needs: significant
+    text:
+      section: Reglamento Delegado (UE) 2024/1772, artículo 5
+      title_es: Pérdidas de datos · Reglamento Delegado (UE) 2024/1772, artículo 5
+      title_en: Data losses · Delegated Regulation (EU) 2024/1772, Article 5
+      official_text_es: 'A efectos de determinar las pérdidas de datos que acarrea el incidente a que se
+        refiere el artículo 18, apartado 1, letra d), del Reglamento (UE) 2022/2554, las entidades financieras
+        tendrán en cuenta lo siguiente:
+
+
+        a) en relación con la disponibilidad de los datos, si el incidente ha hecho que los datos solicitados
+        por la entidad financiera, sus clientes o sus contrapartes sean inaccesibles o inutilizables de
+        forma temporal o permanente;
+
+
+        b) en relación con la autenticidad de los datos, si el incidente ha puesto en peligro la fiabilidad
+        de la fuente de los datos;
+
+
+        c) en relación con la integridad de los datos, si el incidente ha dado lugar a una modificación
+        no autorizada de datos que haya hecho que dichos datos sean inexactos o incompletos;
+
+
+        d) en relación con la confidencialidad de los datos, si el incidente ha dado lugar a que una parte
+        o un sistema no autorizado haya tenido acceso a los datos o los haya divulgado.'
+      official_text_en: 'For the purpose of determining the data losses that the incident entails as referred
+        to in Article 18(1), point (d), of Regulation (EU) 2022/2554, financial entities shall take into
+        account the following:
+
+
+        (a) in relation to the availability of data, whether the incident has rendered the data on demand
+        by the financial entity, its clients or its counterparts temporarily or permanently inaccessible
+        or unusable;
+
+
+        (b) in relation to the authenticity of data, whether the incident has compromised the trustworthiness
+        of the source of data;
+
+
+        (c) in relation to the integrity of data, whether the incident has resulted in non-authorised modification
+        of data that has rendered it inaccurate or incomplete;
+
+
+        (d) in relation to the confidentiality of data, whether the incident has resulted in data having
+        been accessed by or disclosed to an unauthorised party or system.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1772#art_5
+      source_sha256: 8bf83139c1536364981bbb6444f91f504ee512f535b0325f6af502d141fd8b7a
+  - needs: significant
+    text:
+      section: Reglamento Delegado (UE) 2024/1772, artículo 6
+      title_es: Carácter esencial de los servicios afectados · Reglamento Delegado (UE) 2024/1772, artículo
+        6
+      title_en: Criticality of services affected · Delegated Regulation (EU) 2024/1772, Article 6
+      official_text_es: 'A efectos de determinar el carácter esencial de los servicios afectados a que se
+        refiere el artículo 18, apartado 1, letra e), del Reglamento (UE) 2022/2554, las entidades financieras
+        evaluarán si el incidente:
+
+
+        a) afecta o ha afectado a servicios de TIC o redes y sistemas de información que sustenten funciones
+        esenciales o importantes de la entidad financiera;
+
+
+        b) afecta o ha afectado a servicios financieros prestados por ellas que requieran una autorización
+        o un registro o que sean supervisados por las autoridades competentes;
+
+
+        c) constituye o ha constituido un acceso efectivo, malintencionado y no autorizado a las redes y
+        sistemas de información de la entidad financiera.'
+      official_text_en: 'For the purpose of determining the criticality of the services affected as referred
+        to in Article 18(1), point (e), of Regulation (EU) 2022/2554, financial entities shall assess whether
+        the incident:
+
+
+        (a) affects or has affected ICT services or network and information systems that support critical
+        or important functions of the financial entity;
+
+
+        (b) affects or has affected financial services provided by the financial entity that require authorisation,
+        registration or that are supervised by competent authorities;
+
+
+        (c) constitutes or has constituted a successful, malicious and unauthorised access to the network
+        and information systems of the financial entity.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1772#art_6
+      source_sha256: 3385aaf221c98965a1d9fb380a6bd0f5b2c246fe7e768d8113b94edf7cf08d30
+  - needs: significant
+    text:
+      section: Reglamento Delegado (UE) 2024/1772, artículo 7
+      title_es: Consecuencias económicas · Reglamento Delegado (UE) 2024/1772, artículo 7
+      title_en: Economic impact · Delegated Regulation (EU) 2024/1772, Article 7
+      official_text_es: '1. A efectos de determinar las consecuencias económicas del incidente a que se
+        refiere el artículo 18, apartado 1, letra f), del Reglamento (UE) 2022/2554, las entidades financieras
+        tendrán en cuenta, sin contabilizar las recuperaciones financieras, los siguientes tipos de costes
+        y pérdidas directos e indirectos que hayan sufrido como consecuencia del incidente:
+
+
+        a) los fondos o los activos financieros expropiados de los que sean responsables, incluidos los
+        activos perdidos como consecuencia de un robo;
+
+
+        b) los costes de sustitución o reubicación de software, hardware o infraestructuras;
+
+
+        c) los gastos de personal, incluidos los costes relacionados con la sustitución o la reubicación
+        de personal, la contratación de personal suplementario, la remuneración de las horas extraordinarias
+        y la recuperación de las competencias perdidas o mermadas;
+
+
+        d) los desembolsos por incumplimiento de las obligaciones contractuales;
+
+
+        e) los costes de reparación y de indemnización a los clientes;
+
+
+        f) las pérdidas por lucro cesante;
+
+
+        g) los costes asociados a la comunicación interna y externa;
+
+
+        h) los costes de asesoramiento, incluidos los relacionados con el asesoramiento jurídico, los servicios
+        forenses y los servicios de reparación.
+
+
+        2. Los costes y pérdidas a que se refiere el apartado 1 no incluirán los costes necesarios para
+        el funcionamiento diario de la empresa, en particular:
+
+
+        a) los costes de mantenimiento general de las infraestructuras, los equipos, el hardware y el software,
+        así como los costes de actualización de las competencias del personal;
+
+
+        b) los costes internos o externos dedicados a mejorar la actividad después del incidente, incluidas
+        las actualizaciones, las mejoras y las iniciativas relacionadas con la evaluación de riesgos;
+
+
+        c) las primas de seguros.
+
+
+        3. Las entidades financieras calcularán los importes de los costes y las pérdidas sobre la base
+        de los datos disponibles en el momento de la notificación. Cuando no puedan determinarse los importes
+        reales de los costes y las pérdidas, las entidades financieras los estimarán.
+
+
+        4. Al evaluar las consecuencias económicas del incidente, las entidades financieras sumarán los
+        costes y las pérdidas a que se refiere el apartado 1.'
+      official_text_en: '1. For the purpose of determining the economic impact of the incident as referred
+        to in Article 18(1), point (f), of Regulation (EU) 2022/2554, financial entities shall, without
+        accounting for financial recoveries, take into account the following types of direct and indirect
+        costs and losses which they have incurred as a result of the incident:
+
+
+        (a) expropriated funds or financial assets for which they are liable, including assets lost to theft;
+
+
+        (b) costs for replacement or relocation of software, hardware or infrastructure;
+
+
+        (c) staff costs, including costs associated with replacement or relocation of staff, recruitment
+        of extra staff, remuneration of overtime and recovery of lost or impaired skills;
+
+
+        (d) fees due to non-compliance with contractual obligations;
+
+
+        (e) costs for redress and compensation to customers;
+
+
+        (f) losses due to forgone revenues;
+
+
+        (g) costs associated with internal and external communication;
+
+
+        (h) advisory costs, including costs associated with legal counselling, forensic services and remediation
+        services.
+
+
+        2. Costs and losses referred to in paragraph 1 shall not include costs that are necessary for the
+        day-to-day operation of the business, in particular the following:
+
+
+        (a) costs for general maintenance of infrastructure, equipment, hardware and software, and costs
+        for keeping skills of staff up to date;
+
+
+        (b) internal or external costs to enhance the business after the incident, including upgrades, improvements
+        and risk assessment initiatives;
+
+
+        (c) insurance premiums.
+
+
+        3. Financial entities shall calculate the amounts of costs and losses based on data available at
+        the time of reporting. Where the actual amounts of costs and losses cannot be determined, financial
+        entities shall estimate those amounts.
+
+
+        4. When assessing the economic impact of the incident, financial entities shall sum up the costs
+        and losses referred to in paragraph 1.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1772#art_7
+      source_sha256: e99d18e453117d33cd69ac0c6cc133fc2a8e676f96c41f8b2a8d97880dd1101e
+  - needs: significant
+    text:
+      section: Reglamento Delegado (UE) 2024/1772, artículo 8
+      title_es: Incidentes graves · Reglamento Delegado (UE) 2024/1772, artículo 8
+      title_en: Major incidents · Delegated Regulation (EU) 2024/1772, Article 8
+      official_text_es: '1. Un incidente se considerará un incidente grave a efectos del artículo 19, apartado
+        1, del Reglamento (UE) 2022/2554 cuando haya afectado a los servicios esenciales a que se refiere
+        el artículo 6 y se cumpla alguna de las condiciones siguientes:
+
+
+        a) si se alcanza el umbral de importancia relativa a que se refiere el artículo 9, apartado 5, letra
+        b);
+
+
+        b) si se cumplen dos o más de los demás umbrales de importancia relativa a que se refiere el artículo
+        9, apartados 1 a 6.
+
+
+        2. Los incidentes recurrentes que no se consideren individualmente un incidente grave en el sentido
+        del apartado 1 se considerarán un incidente grave cuando cumplan todas las condiciones siguientes:
+
+
+        a) si se han producido al menos dos veces en un plazo de seis meses;
+
+
+        b) si tienen la misma causa subyacente aparente, tal como se contempla en el artículo 20, párrafo
+        primero, letra b), del Reglamento (UE) 2022/2554;
+
+
+        c) si se cumplen colectivamente los criterios para ser considerados un incidente grave enumerados
+        en el apartado 1.
+
+
+        Las entidades financieras evaluarán mensualmente la existencia de incidentes recurrentes.
+
+
+        El presente apartado no se aplicará a las microempresas ni a las entidades financieras enumeradas
+        en el artículo 16, apartado 1, del Reglamento (UE) 2022/2554.'
+      official_text_en: '1. An incident shall be considered a major incident for the purposes of Article
+        19(1) of Regulation (EU) 2022/2554 where it has affected critical services as referred to in Article
+        6 and where either of the following conditions is fulfilled:
+
+
+        (a) the materiality threshold referred to in Article 9(5), point (b), is met;
+
+
+        (b) two or more of the other materiality thresholds referred to in Articles 9(1) to (6) are met.
+
+
+        2. Recurring incidents that individually are not considered a major incident in accordance with
+        paragraph 1 shall be considered as one major incident where they meet all of the following conditions:
+
+
+        (a) they have occurred at least twice within 6 months;
+
+
+        (b) they have the same apparent root cause as referred to in Article 20, first subparagraph, point
+        (b) of Regulation (EU) 2022/2554;
+
+
+        (c) they collectively fulfil the criteria for being considered a major incident set out in paragraph
+        1.
+
+
+        Financial entities shall assess the existence of recurring incidents on a monthly basis.
+
+
+        This paragraph does not apply to microenterprises and to financial entities listed in Article 16(1)
+        of Regulation (EU) 2022/2554.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1772#art_8
+      source_sha256: 80d1ff061f0bc694fbb597a878f5d003f8995189d245fca7bc08ed5c86dbca70
+  - needs: significant
+    text:
+      section: Reglamento Delegado (UE) 2024/1772, artículo 9
+      title_es: Umbrales de importancia relativa para determinar los incidentes graves · Reglamento Delegado
+        (UE) 2024/1772, artículo 9
+      title_en: Materiality thresholds for determining major incidents · Delegated Regulation (EU) 2024/1772,
+        Article 9
+      official_text_es: '1. Se alcanzará el umbral de importancia relativa para el criterio «clientes, contrapartes
+        financieras y transacciones» cuando se cumpla cualquiera de las condiciones siguientes:
+
+
+        a) cuando el número de clientes afectados sea superior al 10 % del conjunto de los clientes que
+        utilizan el servicio afectado;
+
+
+        b) el número de clientes afectados que utilizan el servicio afectado sea superior a 100 000;
+
+
+        c) el número de contrapartes financieras afectadas sea superior al 30 % del conjunto de las contrapartes
+        financieras que llevan a cabo actividades relacionadas con la prestación del servicio afectado;
+
+
+        d) el número de transacciones afectadas sea superior al 10 % del número medio diario de las transacciones
+        realizadas por la entidad financiera relacionadas con el servicio afectado;
+
+
+        e) la cantidad de transacciones afectadas sea superior al 10 % del valor medio diario de las transacciones
+        realizadas por la entidad financiera relacionadas con el servicio afectado;
+
+
+        f) se hayan visto afectados los clientes o las contrapartes financieras que se hayan considerado
+        pertinentes con arreglo a lo establecidos en el artículo 1, apartado 3.
+
+
+        Cuando no pueda determinarse el número real de clientes o contrapartes financieras afectados o el
+        número o la cantidad reales de las transacciones afectadas, la entidad financiera estimará dicho
+        número o dicha cantidad sobre la base de los datos disponibles de períodos de referencia comparables.
+
+
+        2. Se alcanzará el umbral de importancia relativa para el criterio «repercusión en la reputación»
+        cuando se cumpla cualquiera de las condiciones establecidas en el artículo 2, letras a) a d).
+
+
+        3. Se alcanzará el umbral de importancia relativa para el criterio «duración del incidente y duración
+        de la interrupción del servicio» cuando se cumpla cualquiera de las condiciones siguientes:
+
+
+        a) cuando la duración del incidente sea superior a 24 horas;
+
+
+        b) cuando la duración de la interrupción del servicio sea superior a dos horas en el caso de los
+        servicios de TIC que sustenten funciones esenciales o importantes.
+
+
+        4. Se alcanzará el umbral de importancia relativa para el criterio de «extensión geográfica» cuando
+        el incidente tenga consecuencias en dos o más Estados miembros de conformidad con lo establecido
+        en el artículo 4.
+
+
+        5. Se alcanzará el umbral de importancia relativa para el criterio «pérdidas de datos» cuando se
+        cumpla cualquiera de las condiciones siguientes:
+
+
+        a) cuando la incidencia sobre la disponibilidad, la autenticidad, la integridad o la confidencialidad
+        de los datos a que se refiere el artículo 5 tenga o vaya a tener efectos negativos en la consecución
+        de los objetivos empresariales de la entidad financiera o en su capacidad para cumplir los requisitos
+        reglamentarios;
+
+
+        b) cuando las redes y los sistemas de información sean objeto de un acceso efectivo, malintencionado
+        y no autorizado no contemplado en la letra a), cuando dicho acceso pueda dar lugar a pérdidas de
+        datos.
+
+
+        6. Se alcanzará el umbral de importancia relativa para el criterio «consecuencias económicas» cuando
+        los costes y las pérdidas sufridas por la entidad financiera debido al incidente hayan superado
+        o probablemente puedan superar los 100 000 EUR.'
+      official_text_en: '1. The materiality threshold for the criterion ‘clients, financial counterparts
+        and transactions’ is met where any of the following conditions are fulfilled:
+
+
+        (a) the number of affected clients is higher than 10 % of all clients using the affected service;
+
+
+        (b) the number of affected clients using the affected service is higher than 100 000;
+
+
+        (c) the number of affected financial counterparts is higher than 30 % of all financial counterparts
+        carrying out activities related to the provision of the affected service;
+
+
+        (d) the number of affected transactions is higher than 10 % of the daily average number of transactions
+        carried out by the financial entity related to the affected service;
+
+
+        (e) the amount of affected transactions is higher than 10 % of the daily average value of transactions
+        carried out by the financial entity related to the affected service;
+
+
+        (f) clients or financial counterparts which have been identified as relevant in accordance with
+        Article 1(3) have been affected.
+
+
+        Where the actual number of clients or financial counterparts affected or the actual number or amount
+        of transactions affected cannot be determined, the financial entity shall estimate those numbers
+        or amounts based on available data from comparable reference periods.
+
+
+        2. The materiality threshold for the criterion ‘reputational impact’ is met where any of the conditions
+        set out in Article 2, points (a) to (d), are fulfilled.
+
+
+        3. The materiality threshold for the criterion ‘duration and service downtime’ is met where any
+        of the following conditions are fulfilled:
+
+
+        (a) the duration of the incident is longer than 24 hours;
+
+
+        (b) the service downtime is longer than 2 hours for ICT services that support critical or important
+        functions.
+
+
+        4. The materiality threshold for the criterion ‘geographical spread’ is met where the incident has
+        an impact in two or more Member States in accordance with Article 4.
+
+
+        5. The materiality threshold for the criterion ‘data losses’ is met where any of the following conditions
+        are fulfilled:
+
+
+        (a) any impact as referred to in Article 5 on the availability, authenticity, integrity or confidentiality
+        of data has or will have an adverse impact on the implementation of the business objectives of the
+        financial entity or on its ability to meet regulatory requirements;
+
+
+        (b) any successful, malicious and unauthorised access not covered by point (a) occurs to network
+        and information systems, where such access may result in data losses.
+
+
+        6. The materiality threshold for the criterion ‘economic impact’ is met where the costs and losses
+        incurred by the financial entity due to the incident have exceeded or are likely to exceed 100 000
+        euro.'
+      source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1772#art_9
+      source_sha256: 3a6e0f8e124c10f6791b0d76bad55851bc830ca1bfeff13fa9b58623c97cc7f6

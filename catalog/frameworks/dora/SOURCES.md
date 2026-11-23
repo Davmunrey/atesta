@@ -40,3 +40,18 @@ This pack cannot be scored, including when development draft visibility is enabl
 - Each article keeps at least one documentary review.
 - Technical observations (administrator MFA, Workspace 2-step verification, legacy authentication, mailbox audit bypass) support Articles 9 and 10 only partially.
 - Every `reviewed_by` is null.
+
+## Major incident criteria (draft5)
+
+- **Act:** Commission Delegated Regulation (EU) 2024/1772 (RTS on the classification of ICT-related incidents and cyber threats), CELEX `32024R1772`.
+- **Captured** on 2026-11-23 from the Publications Office (`http://publications.europa.eu/resource/celex/32024R1772`, `Accept: application/xhtml+xml`):
+  - ES manifestation `fa35ec94-328d-11ef-a61b-01aa75ed71a1.0007.03`, SHA-256 `cec536d1de33db588b598124e0a9a509b91e3dd6ae069b6991864bada6fe3306`;
+  - EN manifestation `…0006.03`, SHA-256 `ff97c2c669031563bfe256ae39a06f9d07b9136267577e447f1ac339265816c0`.
+
+  Both have 13 articles with matching paragraph counts. The SPARQL endpoint lists no corrigenda.
+- **Shown:** Articles 1 to 9 (classification criteria, major incidents and their materiality thresholds) are `incident_criteria` with `needs: significant`, extracted with `eu_act.py`. They carry the official ES and EN text and the usual per-text hash.
+- **Not shown:**
+  - Article 10 is about significant cyber threats, not incidents;
+  - Articles 11 and 12 are addressed to competent authorities;
+  - Article 13 is entry into force.
+- **What the user sees:** the incident form shows the criteria next to the "significant" flag. Atesta shows the text; whether an incident is major is the financial entity's decision (ADR-005).
