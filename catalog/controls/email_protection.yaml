@@ -38,17 +38,17 @@ remediation_refs:
   - https://knowledge.workspace.google.com/admin/gmail/advanced/advanced-phishing-and-malware-protection
   - https://knowledge.workspace.google.com/admin/security/help-prevent-phishing-with-pre-delivery-message-scanning
   - https://knowledge.workspace.google.com/admin/gmail/let-users-automatically-forward-their-own-gmail-emails
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defender/defender_domain_dmarc_records_published/defender_domain_dmarc_records_published.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_anomalous_attachment_protection_enabled/gmail_anomalous_attachment_protection_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_domain_spoofing_protection_enabled/gmail_domain_spoofing_protection_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_employee_name_spoofing_protection_enabled/gmail_employee_name_spoofing_protection_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_encrypted_attachment_protection_enabled/gmail_encrypted_attachment_protection_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_enhanced_pre_delivery_scanning_enabled/gmail_enhanced_pre_delivery_scanning_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_external_image_scanning_enabled/gmail_external_image_scanning_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_groups_spoofing_protection_enabled/gmail_groups_spoofing_protection_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_inbound_domain_spoofing_protection_enabled/gmail_inbound_domain_spoofing_protection_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_script_attachment_protection_enabled/gmail_script_attachment_protection_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_shortener_scanning_enabled/gmail_shortener_scanning_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_unauthenticated_email_protection_enabled/gmail_unauthenticated_email_protection_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_untrusted_link_warnings_enabled/gmail_untrusted_link_warnings_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/gmail/gmail_auto_forwarding_disabled/gmail_auto_forwarding_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defender/defender_domain_dmarc_records_published/defender_domain_dmarc_records_published.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_anomalous_attachment_protection_enabled/gmail_anomalous_attachment_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_domain_spoofing_protection_enabled/gmail_domain_spoofing_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_employee_name_spoofing_protection_enabled/gmail_employee_name_spoofing_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_encrypted_attachment_protection_enabled/gmail_encrypted_attachment_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_enhanced_pre_delivery_scanning_enabled/gmail_enhanced_pre_delivery_scanning_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_external_image_scanning_enabled/gmail_external_image_scanning_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_groups_spoofing_protection_enabled/gmail_groups_spoofing_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_inbound_domain_spoofing_protection_enabled/gmail_inbound_domain_spoofing_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_script_attachment_protection_enabled/gmail_script_attachment_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_shortener_scanning_enabled/gmail_shortener_scanning_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_unauthenticated_email_protection_enabled/gmail_unauthenticated_email_protection_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_untrusted_link_warnings_enabled/gmail_untrusted_link_warnings_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/googleworkspace/services/gmail/gmail_auto_forwarding_disabled/gmail_auto_forwarding_disabled.py

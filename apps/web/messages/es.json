@@ -128,6 +128,7 @@
     },
     "scanning": {
       "already_queued": "Ya hay un escaneo en cola o en curso para esta conexión. Espera a que termine.",
+      "daily_limit": "Ya has hecho hoy los 6 escaneos manuales de esta conexión. Los escaneos programados siguen funcionando. Podrás escanear de nuevo a partir de medianoche (hora de Madrid).",
       "connection_not_active": "Esta conexión aún no está activa. Termina de configurarla y verifícala antes de escanear.",
       "engine_failed": "El escaneo no pudo completarse. Vuelve a lanzarlo más tarde.",
       "not_found": "No encontramos ese escaneo, o no tienes acceso.",
@@ -139,6 +140,7 @@
   "app": {
     "skipContent": "Saltar al contenido",
     "loading": "Cargando…",
+    "retry": "Reintentar",
     "signOut": "Cerrar sesión",
     "signedInAs": "Sesión iniciada como {email}",
     "account": "Cuenta",
@@ -877,6 +879,7 @@
       "flags": "Características",
       "noFlags": "Ni significativo ni con datos personales",
       "criteria": "Qué dice {framework}: {title}",
+      "criteriaGroup": "Qué dice {framework} ({count, plural, one {# criterio} other {# criterios}})",
       "criteriaSource": "Ver en la fuente oficial",
       "sentWhich": ": «{clock}»"
     }
@@ -1142,6 +1145,15 @@
   "summary": {
     "label": "Resumen",
     "never": "Nunca",
+    "glance": {
+      "title": "Registros",
+      "help": "Lo que pide una auditoría, de un vistazo. Cada fila enlaza a su registro.",
+      "record": "Registro",
+      "state": "Estado",
+      "summary": "Resumen",
+      "none": "Sin registros",
+      "failed": "No se pudo cargar."
+    },
     "policies": {
       "lead": "{attention, plural, =0 {Todas las políticas están aprobadas y al día.} one {# política necesita atención.} other {# políticas necesitan atención.}}",
       "total": "Políticas",
@@ -1179,6 +1191,7 @@
     "title": "Evidencias que propone la guía ({count, plural, one {# elemento} other {# elementos}})",
     "candidate": "Lista orientativa redactada por Atesta a partir de la guía citada. Pendiente de revisión cualificada; no valora a tu organización.",
     "reviewed": "Lista redactada por Atesta a partir de la guía citada y revisada por {name} el {date}. No valora a tu organización.",
-    "reference": "{guide} ({edition}), apartado {section}, pág. {page}"
+    "reference": "{guide} ({edition}), apartado {section}, pág. {page}",
+    "shared": "Referencia: {reference}"
   }
 }

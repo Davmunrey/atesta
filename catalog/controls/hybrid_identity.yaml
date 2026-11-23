@@ -29,8 +29,8 @@ remediation_refs:
   - https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/how-to-connect-sso
   - https://learn.microsoft.com/en-us/graph/api/resources/onpremisesdirectorysynchronization?view=graph-rest-1.0
   - https://learn.microsoft.com/en-us/defender-for-identity/health-alerts
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_password_protection_on_premises_enforced/entra_password_protection_on_premises_enforced.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_password_hash_sync_enabled/entra_password_hash_sync_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_seamless_sso_disabled/entra_seamless_sso_disabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_directory_sync_object_takeover_blocked/entra_directory_sync_object_takeover_blocked.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/defenderidentity/defenderidentity_health_issues_no_open/defenderidentity_health_issues_no_open.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_password_protection_on_premises_enforced/entra_password_protection_on_premises_enforced.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_password_hash_sync_enabled/entra_password_hash_sync_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_seamless_sso_disabled/entra_seamless_sso_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/entra/entra_directory_sync_object_takeover_blocked/entra_directory_sync_object_takeover_blocked.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/defenderidentity/defenderidentity_health_issues_no_open/defenderidentity_health_issues_no_open.py

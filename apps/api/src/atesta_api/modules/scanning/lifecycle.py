@@ -4,13 +4,20 @@ One transaction inserts the scan and defers its run on the session's own connect
 commit or neither does. The partial unique index on scans allows one queued or running scan per
 connection; a second request is refused inside a savepoint, so a caller such as the schedule job
 can skip it and go on. The caller has already entered the org context.
+
+"Scan now" has a daily budget (#265): each scan reads the customer's whole tenant, and Graph and
+Google throttle per tenant and per app. `user` scans are counted per connection over the Madrid
+calendar day, read from the database clock; `schedule` and `activation` scans never are.
 """
 
 import uuid
+from datetime import datetime, timedelta
 from typing import Literal
+from zoneinfo import ZoneInfo
 
 from procrastinate.exceptions import AlreadyEnqueued
 from psycopg.errors import UniqueViolation
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -27,6 +34,8 @@ GOOGLE_POLICY_API_LOCK = "gws-policy-api"  # 1 QPS per GCP project, shared by ev
 SCHEDULE_TASK = "atesta:schedule_scan"
 SCHEDULE_EVERY_SECONDS = 24 * 3600
 _UNSCHEDULED = frozenset({"disconnected", "revoked"})  # the daily chain ends with the connection
+MANUAL_SCANS_PER_DAY = 6  # owner, 2026-11-23 (#265)
+MADRID = ZoneInfo("Europe/Madrid")
 
 type Trigger = Literal["schedule", "user", "activation"]
 
@@ -41,6 +50,43 @@ class ConnectionNotActiveError(RuntimeError):
 
 class AlreadyQueuedError(RuntimeError):
     """The connection already has a queued or running scan."""
+
+
+class DailyLimitError(RuntimeError):
+    """The connection has used today's manual scans; retry_at is the next Madrid midnight."""
+
+    def __init__(self, retry_at: datetime) -> None:
+        super().__init__(retry_at.isoformat())
+        self.retry_at = retry_at
+
+
+def madrid_day(now: datetime) -> tuple[datetime, datetime]:
+    """The Madrid calendar day holding `now`, as [start, end) in UTC; 23 h or 25 h on DST days."""
+    if now.tzinfo is None:
+        raise ValueError("now needs a timezone")
+    day = now.astimezone(MADRID).date()
+    start = datetime(day.year, day.month, day.day, tzinfo=MADRID)
+    following = day + timedelta(days=1)
+    end = datetime(following.year, following.month, following.day, tzinfo=MADRID)
+    return start.astimezone(ZoneInfo("UTC")), end.astimezone(ZoneInfo("UTC"))
+
+
+def _check_daily_budget(
+    session: Session, organization_id: uuid.UUID, connection_id: uuid.UUID
+) -> None:
+    start, end = madrid_day(session.execute(select(func.now())).scalar_one())
+    used = session.execute(
+        select(func.count())
+        .select_from(Scan)
+        .where(
+            Scan.organization_id == organization_id,
+            Scan.connection_id == connection_id,
+            Scan.trigger == "user",
+            Scan.queued_at >= start,
+        )
+    ).scalar_one()
+    if used >= MANUAL_SCANS_PER_DAY:
+        raise DailyLimitError(end)
 
 
 def _is_active_scan_conflict(exc: IntegrityError) -> bool:
@@ -66,6 +112,8 @@ def queue_scan(
         raise ConnectionNotFoundError(str(connection_id))
     if not target.active:
         raise ConnectionNotActiveError(target.status)
+    if trigger == "user":
+        _check_daily_budget(session, organization_id, connection_id)
     scan = Scan(
         organization_id=organization_id,
         connection_id=connection_id,

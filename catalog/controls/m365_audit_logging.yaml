@@ -24,6 +24,6 @@ atesta_checks: []
 remediation_refs:
   - https://learn.microsoft.com/en-us/purview/audit-log-enable-disable
   - https://learn.microsoft.com/en-us/purview/audit-mailboxes
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_organization_mailbox_auditing_enabled/exchange_organization_mailbox_auditing_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_user_mailbox_auditing_enabled/exchange_user_mailbox_auditing_enabled.py
-  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/purview/purview_audit_log_search_enabled/purview_audit_log_search_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_organization_mailbox_auditing_enabled/exchange_organization_mailbox_auditing_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/exchange/exchange_user_mailbox_auditing_enabled/exchange_user_mailbox_auditing_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.52.0/prowler/providers/m365/services/purview/purview_audit_log_search_enabled/purview_audit_log_search_enabled.py

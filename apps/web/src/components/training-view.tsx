@@ -8,7 +8,7 @@ import { type Membership, orgHome, orgTrainingCampaign } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
-import { PageHeader, Panel } from "./page-frame";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { RecordSummary } from "./record-summary";
 import { trainingSummary } from "@/lib/summaries";
 
@@ -27,8 +27,8 @@ export function TrainingView({ org }: { org: Membership }) {
       { label: s("total"), value: format.number(sum.total) }, { label: s("open"), value: format.number(sum.open) },
       { label: s("acknowledged"), value: format.number(sum.acknowledged) }]} /> : null}
     <Panel title={t("list")}>
-      {list.isPending ? <p role="status">{t("loading")}</p> : list.isError ? <ErrorMessage error={list.error} />
-        : list.data.length === 0 ? <p className="text-muted">{t("empty")}</p>
+      {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
+        : list.data.length === 0 ? <Empty>{t("empty")}</Empty>
         : <div className="table-region" role="region" aria-label={t("list")} tabIndex={0}><table className="w-full text-left">
           <thead><tr><th scope="col">{t("campaign")}</th><th scope="col">{t("people")}</th><th scope="col">{t("state")}</th></tr></thead>
           <tbody>{list.data.map((c) => <tr key={c.id}>

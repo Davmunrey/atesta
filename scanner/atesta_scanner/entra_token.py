@@ -1,6 +1,6 @@
 """The verifier's Graph token: client credentials with Atesta's one M365 certificate (D5).
 
-The same azure-identity CertificateCredential Prowler 5.49.0 uses (m365_provider.py:595-601),
+The same azure-identity CertificateCredential Prowler 5.52.0 uses (m365_provider.py:656-662),
 which ships in the image with Prowler. Only Entra's answers that mean the customer removed the
 app or its consent count as `revoked`; any other refusal is Atesta's own credential problem and
 never changes the connection. Errors never carry Entra's message (it can echo the client).

@@ -1,6 +1,6 @@
 # Synthetic catalog for atesta-dev-scan and its tests (scanner-connectors spec). Test content
 # only (rule 10): no real framework, requirement or control text. Outside catalog/frameworks/
-# on purpose. Check ids come from scanner/expected/5.49.0/; a test keeps them there.
+# on purpose. Check ids come from scanner/expected/5.52.0/; a test keeps them there.
 catalog_version: synthetic-1
 frameworks:
   - key: syn_alpha
