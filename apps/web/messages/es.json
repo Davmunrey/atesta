@@ -176,6 +176,15 @@
         "log2": "Clasificado como significativo; empiezan tres plazos",
         "log3": "Anotación: contraseñas restablecidas y sesiones revocadas",
         "source": "Plazo tomado del texto oficial: Directiva (UE) 2022/2555, art. 23"
+      },
+      "assistant": {
+        "label": "Asistente: respuesta con su cita",
+        "question": "¿Qué evidencias pide {code}?",
+        "cite": "Fuente:"
+      },
+      "api": {
+        "label": "API y MCP: una consulta y las herramientas de un agente",
+        "tools": "Herramientas MCP de lectura"
       }
     },
     "tabs": {
@@ -1746,6 +1755,10 @@
           "title": "Dossier",
           "desc": "Listo para el auditor y la firma"
         },
+        "assistant": {
+          "title": "Asistente",
+          "desc": "Respuestas con su cita"
+        },
         "api": {
           "title": "API y MCP",
           "desc": "Claves con permisos y límites"
@@ -1794,6 +1807,82 @@
     },
     "customers": {
       "title": "Organizaciones que usan Atesta"
-    }
+    },
+    "onThisPage": "En esta página"
+  },
+  "producto": {
+    "title": "Lo que hace Atesta, <hl>pantalla a pantalla</hl>",
+    "sub": "Cada parte del ENS tiene su sitio: las medidas, las rutinas que las mantienen vivas, los incidentes y el dossier que firma la dirección.",
+    "ens": "Qué es el ENS",
+    "assess": {
+      "title": "Autoevaluación con el texto oficial",
+      "body": "Las 73 medidas del anexo II, cada una con su texto del BOE. Decides si aplica, cómo está y quién responde, y queda registrado quién lo decidió y cuándo.",
+      "p1": "Texto oficial y cita en cada medida",
+      "p2": "Responsable y próxima revisión",
+      "p3": "La decisión es siempre de una persona"
+    },
+    "routines": {
+      "title": "Rutinas que no se pierden",
+      "body": "Políticas con su fecha de revisión, revisiones de acceso y formaciones con la confirmación de cada persona. Atesta reúne lo que vence en una sola lista.",
+      "p1": "Políticas y su próxima revisión",
+      "p2": "Revisiones de acceso registradas",
+      "p3": "Formación con confirmación de lectura"
+    },
+    "incidents": {
+      "title": "Incidentes con sus plazos",
+      "body": "Registras el incidente y lo clasificas. Atesta abre los plazos de notificación que marca el texto oficial y guarda cada anotación con su hora.",
+      "p1": "Plazos tomados del texto oficial",
+      "p2": "Anotaciones con fecha y hora",
+      "p3": "La clasificación la hace una persona"
+    },
+    "dossier": {
+      "title": "Un dossier para el auditor",
+      "body": "Medidas, evidencias y registros en un solo documento, con un resumen para la dirección y espacio para su firma. Se imprime o se guarda en PDF desde el navegador.",
+      "p1": "Resumen para dirección",
+      "p2": "Cada medida con su cita oficial",
+      "p3": "Listo para firmar"
+    },
+    "assistant": {
+      "title": "Un asistente que cita",
+      "body": "Pregunta qué evidencias pide una medida o qué categoría te corresponde. Responde con texto oficial y guías revisadas, siempre con su cita, y nunca decide por ti.",
+      "p1": "Solo texto oficial y contenido revisado",
+      "p2": "Cada respuesta con su cita",
+      "p3": "Sin fuente, no hay respuesta"
+    },
+    "api": {
+      "title": "API y MCP",
+      "body": "Claves con permisos acotados, límites de uso y un registro de cada llamada. Conecta tus scripts, o un agente de IA por MCP, para consultar medidas, plazos y lo que falta.",
+      "p1": "Permisos por clave",
+      "p2": "Registro de uso",
+      "p3": "MCP local hoy; alojado, próximamente"
+    },
+    "close": "Míralo con tus propias medidas."
+  },
+  "ens": {
+    "title": "El <hl>ENS</hl>, con el texto del BOE",
+    "sub": "El Esquema Nacional de Seguridad (Real Decreto 311/2022) se aplica al sector público y a las empresas que, por contrato, le prestan servicios o le proveen soluciones. Aquí están sus categorías y sus medidas, tal como las publica el BOE.",
+    "source": "Texto oficial en el BOE",
+    "categories": {
+      "title": "Tres categorías",
+      "body": "Valoras cinco dimensiones de seguridad: confidencialidad, integridad, trazabilidad, autenticidad y disponibilidad. La categoría del sistema sigue al nivel más alto de todas ellas.",
+      "step": "Nivel más alto <l>{level}</l>: categoría <c>{category}</c>"
+    },
+    "chooser": {
+      "title": "¿Qué categoría tengo?",
+      "body": "Cinco preguntas, una por dimensión. Cada una cita la guía del CCN en la que se apoya.",
+      "note": "Orienta, no decide: la categoría la valora y la documenta tu organización.",
+      "loading": "Cargando el asistente…",
+      "error": "No se pudo cargar el asistente. El resto de la página sigue disponible."
+    },
+    "measures": {
+      "title": "{count, plural, one {# medida} other {Las # medidas}}",
+      "body": "Agrupadas como en el anexo II. Las que dependen de la categoría siguen la del sistema; las demás, el nivel de las dimensiones indicadas. «+ R1» añade un refuerzo.",
+      "count": "{count, plural, one {# medida} other {# medidas}}",
+      "code": "Código",
+      "measure": "Medida",
+      "dimensions": "Dimensiones"
+    },
+    "close": "Prepara el ENS con Atesta.",
+    "product": "Ver el producto"
   }
 }

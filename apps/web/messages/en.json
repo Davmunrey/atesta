@@ -176,6 +176,15 @@
         "log2": "Classified as significant; three deadlines start",
         "log3": "Note: passwords reset and sessions revoked",
         "source": "Deadline taken from the official text: Directive (EU) 2022/2555, art. 23"
+      },
+      "assistant": {
+        "label": "Assistant: an answer with its citation",
+        "question": "What evidence does {code} ask for?",
+        "cite": "Source:"
+      },
+      "api": {
+        "label": "API and MCP: one request and an agent's tools",
+        "tools": "Read-only MCP tools"
       }
     },
     "tabs": {
@@ -1746,6 +1755,10 @@
           "title": "Dossier",
           "desc": "Ready for the auditor and signature"
         },
+        "assistant": {
+          "title": "Assistant",
+          "desc": "Answers with their citation"
+        },
         "api": {
           "title": "API and MCP",
           "desc": "Keys with scopes and limits"
@@ -1794,6 +1807,82 @@
     },
     "customers": {
       "title": "Organizations using Atesta"
-    }
+    },
+    "onThisPage": "On this page"
+  },
+  "producto": {
+    "title": "What Atesta does, <hl>screen by screen</hl>",
+    "sub": "Every part of the ENS has its place: the measures, the routines that keep them alive, incidents and the dossier your management signs.",
+    "ens": "What the ENS is",
+    "assess": {
+      "title": "Self-assessment with the official text",
+      "body": "The 73 Annex II measures, each with its BOE text. You decide whether it applies, where it stands and who owns it, and the record shows who decided and when.",
+      "p1": "Official text and citation on every measure",
+      "p2": "Owner and next review",
+      "p3": "A person always makes the decision"
+    },
+    "routines": {
+      "title": "Routines that do not slip",
+      "body": "Policies with their review date, access reviews and training with each person's confirmation. Atesta gathers what falls due in one list.",
+      "p1": "Policies and their next review",
+      "p2": "Recorded access reviews",
+      "p3": "Training with read confirmation"
+    },
+    "incidents": {
+      "title": "Incidents with their deadlines",
+      "body": "You record the incident and classify it. Atesta opens the notification deadlines the official text sets and keeps each note with its time.",
+      "p1": "Deadlines taken from the official text",
+      "p2": "Notes with date and time",
+      "p3": "A person makes the classification"
+    },
+    "dossier": {
+      "title": "A dossier for the auditor",
+      "body": "Measures, evidence and records in one document, with a summary for management and room for their signature. Print it or save it as PDF from the browser.",
+      "p1": "Summary for management",
+      "p2": "Every measure with its official citation",
+      "p3": "Ready to sign"
+    },
+    "assistant": {
+      "title": "An assistant that cites",
+      "body": "Ask what evidence a measure needs or which category fits you. It answers with official text and reviewed guides, always with the citation, and never decides for you.",
+      "p1": "Only official text and reviewed content",
+      "p2": "Every answer with its citation",
+      "p3": "No source, no answer"
+    },
+    "api": {
+      "title": "API and MCP",
+      "body": "Keys with narrow permissions, rate limits and a log of every call. Connect your scripts, or an AI agent over MCP, to read measures, deadlines and what is missing.",
+      "p1": "Permissions per key",
+      "p2": "Usage log",
+      "p3": "Local MCP today; hosted, coming soon"
+    },
+    "close": "See it with your own measures."
+  },
+  "ens": {
+    "title": "The <hl>ENS</hl>, with the BOE text",
+    "sub": "Spain's National Security Framework (Royal Decree 311/2022) applies to the public sector and to companies that, under contract, provide it with services or solutions. Here are its categories and its measures, as the BOE publishes them.",
+    "source": "Official text in the BOE",
+    "categories": {
+      "title": "Three categories",
+      "body": "You rate five security dimensions: confidentiality, integrity, traceability, authenticity and availability. The system's category follows the highest level among them.",
+      "step": "Highest level <l>{level}</l>: category <c>{category}</c>"
+    },
+    "chooser": {
+      "title": "Which category am I?",
+      "body": "Five questions, one per dimension. Each cites the CCN guide it relies on.",
+      "note": "It guides, it does not decide: your organization rates and documents its category.",
+      "loading": "Loading the assistant…",
+      "error": "The assistant could not load. The rest of the page is still available."
+    },
+    "measures": {
+      "title": "{count, plural, one {# measure} other {The # measures}}",
+      "body": "Grouped as in Annex II. Category measures follow the system's category; the rest follow the level of the dimensions shown. “+ R1” adds a reinforcement.",
+      "count": "{count, plural, one {# measure} other {# measures}}",
+      "code": "Code",
+      "measure": "Measure",
+      "dimensions": "Dimensions"
+    },
+    "close": "Prepare the ENS with Atesta.",
+    "product": "See the product"
   }
 }
