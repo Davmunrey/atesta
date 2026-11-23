@@ -210,3 +210,13 @@ mappings:
   rationale: "Candidate: directory settings for group and tenant creation, scheduled access reviews and admin portals. Whether reviews are done needs documentary review."
   source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
   reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.m365_mail_threat_policies
+  rationale: "Candidate: Defender for Office 365 and Exchange mail-flow policies. Mirrors ctl.email_protection. Needs PowerShell; no result until it is granted."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null
+- requirement_id: art32.1b
+  control_id: ctl.teams_external_access
+  rationale: "Candidate: Teams external access and meeting policies. Mirrors ctl.m365_external_sharing. Needs PowerShell; no result until it is granted."
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32016R0679#art_32
+  reviewed_by: null

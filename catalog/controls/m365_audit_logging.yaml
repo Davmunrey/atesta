@@ -1,0 +1,29 @@
+id: ctl.m365_audit_logging
+title_es: "Registro de auditoría en Microsoft 365"
+title_en: "Audit logging in Microsoft 365"
+description_es: |
+  Preparar: confirma la política de registro y conservación y quién consulta la auditoría en Purview.
+  1. Activa la búsqueda del registro de auditoría en Purview.
+  2. Mantén activada la auditoría de buzones en la organización y en cada buzón, con las acciones de administrador, delegado y propietario y la antigüedad de registro exigida.
+  3. Genera una operación de prueba y localiza su evento.
+  Evidencia: configuración, buzones auditados y muestra minimizada del evento.
+  Límite: no prueba la revisión, la protección ni la conservación de los registros; las exclusiones de auditoría tienen su propia medida. Depende de PowerShell, excluido de la recogida actual: no hay resultado hasta que se conceda; ausencia de datos no significa correcto.
+description_en: |
+  Prepare: confirm the logging and retention policy and who reads the audit log in Purview.
+  1. Turn on audit log search in Purview.
+  2. Keep mailbox auditing on for the organization and every mailbox, with the required admin, delegate and owner actions and log age.
+  3. Generate a test operation and retrieve its event.
+  Evidence: configuration, audited mailboxes and a minimized event sample.
+  Limit: it does not prove that logs are reviewed, protected or retained; audit bypass exclusions have their own measure. It needs PowerShell, excluded from current collection: there is no result until it is granted; missing data never means correct.
+manual: false
+prowler_checks:
+  - exchange_organization_mailbox_auditing_enabled
+  - exchange_user_mailbox_auditing_enabled
+  - purview_audit_log_search_enabled
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/purview/audit-log-enable-disable
+  - https://learn.microsoft.com/en-us/purview/audit-mailboxes
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_organization_mailbox_auditing_enabled/exchange_organization_mailbox_auditing_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_user_mailbox_auditing_enabled/exchange_user_mailbox_auditing_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/purview/purview_audit_log_search_enabled/purview_audit_log_search_enabled.py

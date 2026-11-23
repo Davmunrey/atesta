@@ -1,9 +1,12 @@
 """Where the pinned scanner checks sit in the common controls (ADR-005, ADR-011).
 
 A check stored `not_evaluated` keeps its control from passing (`atesta_core.controls`). So a
-control must not list a check the scanner never runs.
+control must not list a check the scanner never runs, and a PowerShell-backed check, which waits
+for its permission (scanner-connectors spec, D1), must not share a control with checks that run
+today. Every other check feeds exactly one control.
 """
 
+from collections import Counter
 from functools import cache
 from pathlib import Path
 
@@ -49,3 +52,17 @@ def test_the_pinned_lists_split_as_the_spec_says() -> None:
 @pytest.mark.parametrize("control", controls(), ids=lambda c: c.id)
 def test_no_control_lists_a_check_the_scanner_never_runs(control: ControlContent) -> None:
     assert sorted(set(control.prowler_checks) & never_run()) == []
+
+
+@pytest.mark.parametrize("control", controls(), ids=lambda c: c.id)
+def test_a_control_waiting_for_powershell_holds_only_powershell_checks(
+    control: ControlContent,
+) -> None:
+    checks = set(control.prowler_checks)
+    assert not checks & waiting() or checks <= waiting()
+
+
+def test_every_check_that_runs_now_or_after_powershell_feeds_exactly_one_control() -> None:
+    placed = Counter(c for control in controls() for c in control.prowler_checks)
+    assert sorted(c for c, n in placed.items() if n > 1) == []
+    assert sorted(listed() - never_run() - placed.keys()) == []

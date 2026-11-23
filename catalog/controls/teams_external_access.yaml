@@ -1,0 +1,62 @@
+id: ctl.teams_external_access
+title_es: "Acceso externo y reuniones en Microsoft Teams"
+title_en: "External access and meetings in Microsoft Teams"
+description_es: |
+  Preparar: decide con qué organizaciones se habla por Teams, quién entra en las reuniones y qué se comparte fuera.
+  1. Permite solo los dominios externos aprobados; bloquea las cuentas no administradas, los inquilinos de prueba y el correo a canales.
+  2. En las reuniones, impide que los anónimos las inicien o se unan, que externos y llamadas omitan la sala de espera, el chat con organizaciones no fiables y el control externo; limita quién presenta y desactiva la grabación por defecto.
+  3. Restringe el almacenamiento externo de archivos, activa la notificación de mensajes sospechosos y desactiva el calendario compartido externo y Bookings compartido si no se usan.
+  Evidencia: directivas de Teams y de la organización y resultado del escaneo.
+  Límite: los checks miran las directivas globales, no las asignadas a grupos ni las reuniones ya creadas. Depende de PowerShell, excluido de la recogida actual: no hay resultado hasta que se conceda; ausencia de datos no significa correcto.
+description_en: |
+  Prepare: decide which organizations people talk to in Teams, who joins meetings and what is shared outside.
+  1. Allow only approved external domains; block unmanaged accounts, trial tenants and email to channels.
+  2. In meetings, stop anonymous users starting or joining, external and dial-in users bypassing the lobby, chat with untrusted organizations and external control; limit who presents and turn recording off by default.
+  3. Restrict external file storage, turn on reporting of suspicious messages, and turn off external calendar sharing and shared Bookings if unused.
+  Evidence: Teams and organization policies and the scan result.
+  Limit: the checks read global policies, not those assigned to groups or meetings already created. It needs PowerShell, excluded from current collection: there is no result until it is granted; missing data never means correct.
+manual: false
+prowler_checks:
+  - admincenter_external_calendar_sharing_disabled
+  - admincenter_shared_bookings_disabled
+  - teams_email_sending_to_channel_disabled
+  - teams_external_access_trial_tenants_blocked
+  - teams_external_domains_restricted
+  - teams_external_file_sharing_restricted
+  - teams_external_users_cannot_start_conversations
+  - teams_meeting_anonymous_user_join_disabled
+  - teams_meeting_anonymous_user_start_disabled
+  - teams_meeting_chat_anonymous_users_disabled
+  - teams_meeting_dial_in_lobby_bypass_disabled
+  - teams_meeting_external_chat_disabled
+  - teams_meeting_external_control_disabled
+  - teams_meeting_external_lobby_bypass_disabled
+  - teams_meeting_presenters_restricted
+  - teams_meeting_recording_disabled
+  - teams_security_reporting_enabled
+  - teams_unmanaged_communication_disabled
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/microsoftteams/manage-external-access
+  - https://learn.microsoft.com/en-us/microsoftteams/who-can-bypass-meeting-lobby
+  - https://learn.microsoft.com/en-us/microsoftteams/settings-policies-reference
+  - https://learn.microsoft.com/en-us/microsoft-365/admin/manage/share-calendars-with-external-users
+  - https://learn.microsoft.com/en-us/microsoft-365/bookings/turn-bookings-on-or-off
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/admincenter/admincenter_external_calendar_sharing_disabled/admincenter_external_calendar_sharing_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/admincenter/admincenter_shared_bookings_disabled/admincenter_shared_bookings_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_email_sending_to_channel_disabled/teams_email_sending_to_channel_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_external_access_trial_tenants_blocked/teams_external_access_trial_tenants_blocked.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_external_domains_restricted/teams_external_domains_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_external_file_sharing_restricted/teams_external_file_sharing_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_external_users_cannot_start_conversations/teams_external_users_cannot_start_conversations.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_anonymous_user_join_disabled/teams_meeting_anonymous_user_join_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_anonymous_user_start_disabled/teams_meeting_anonymous_user_start_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_chat_anonymous_users_disabled/teams_meeting_chat_anonymous_users_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_dial_in_lobby_bypass_disabled/teams_meeting_dial_in_lobby_bypass_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_external_chat_disabled/teams_meeting_external_chat_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_external_control_disabled/teams_meeting_external_control_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_external_lobby_bypass_disabled/teams_meeting_external_lobby_bypass_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_presenters_restricted/teams_meeting_presenters_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_meeting_recording_disabled/teams_meeting_recording_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_security_reporting_enabled/teams_security_reporting_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/teams/teams_unmanaged_communication_disabled/teams_unmanaged_communication_disabled.py

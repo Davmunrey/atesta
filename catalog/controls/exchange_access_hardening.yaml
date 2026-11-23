@@ -1,0 +1,46 @@
+id: ctl.exchange_access_hardening
+title_es: "Acceso a Exchange Online"
+title_en: "Exchange Online access"
+description_es: |
+  Preparar: inventaria los buzones compartidos, las aplicaciones con permisos de buzón y los clientes que aún usan SMTP AUTH.
+  1. Exige autenticación moderna, desactiva SMTP AUTH y bloquea el inicio de sesión en los buzones compartidos.
+  2. Limita con directivas de acceso de aplicaciones qué buzones leen las apps; impide instalar complementos y usar cuentas personales o almacenamiento adicional en Outlook en la web.
+  3. Usa un dominio propio como dirección principal y activa la resiliencia ante la retirada de licencias y la Caja de seguridad del cliente (Customer Lockbox).
+  Evidencia: configuración de la organización, directivas y resultado del escaneo.
+  Límite: no revisa qué datos lee cada aplicación ni quién aprueba las solicitudes de Customer Lockbox. Depende de PowerShell, excluido de la recogida actual: no hay resultado hasta que se conceda; ausencia de datos no significa correcto.
+description_en: |
+  Prepare: list the shared mailboxes, the apps with mailbox permissions and the clients that still use SMTP AUTH.
+  1. Require modern authentication, turn off SMTP AUTH and block sign-in to shared mailboxes.
+  2. Use application access policies to limit which mailboxes apps read; stop users installing add-ins and using personal accounts or extra storage in Outlook on the web.
+  3. Use your own domain as the primary address and turn on delicensing resiliency and Customer Lockbox.
+  Evidence: organization settings, policies and the scan result.
+  Limit: it does not review what data each app reads or who approves Customer Lockbox requests. It needs PowerShell, excluded from current collection: there is no result until it is granted; missing data never means correct.
+manual: false
+prowler_checks:
+  - admincenter_organization_customer_lockbox_enabled
+  - exchange_application_access_policy_restricts_mailbox_apps
+  - exchange_mailbox_policy_additional_storage_restricted
+  - exchange_mailbox_primary_smtp_uses_custom_domain
+  - exchange_organization_delicensing_resiliency_enabled
+  - exchange_organization_modern_authentication_enabled
+  - exchange_owa_mailbox_policy_personal_accounts_disabled
+  - exchange_roles_assignment_policy_addins_disabled
+  - exchange_shared_mailbox_sign_in_disabled
+  - exchange_transport_config_smtp_auth_disabled
+atesta_checks: []
+remediation_refs:
+  - https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/enable-or-disable-modern-authentication-in-exchange-online
+  - https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/authenticated-client-smtp-submission
+  - https://learn.microsoft.com/en-us/microsoft-365/admin/email/about-shared-mailboxes
+  - https://learn.microsoft.com/en-us/graph/auth-limit-mailbox-access
+  - https://learn.microsoft.com/en-us/azure/security/fundamentals/customer-lockbox-overview
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/admincenter/admincenter_organization_customer_lockbox_enabled/admincenter_organization_customer_lockbox_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_application_access_policy_restricts_mailbox_apps/exchange_application_access_policy_restricts_mailbox_apps.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_mailbox_policy_additional_storage_restricted/exchange_mailbox_policy_additional_storage_restricted.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_mailbox_primary_smtp_uses_custom_domain/exchange_mailbox_primary_smtp_uses_custom_domain.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_organization_delicensing_resiliency_enabled/exchange_organization_delicensing_resiliency_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_organization_modern_authentication_enabled/exchange_organization_modern_authentication_enabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_owa_mailbox_policy_personal_accounts_disabled/exchange_owa_mailbox_policy_personal_accounts_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_roles_assignment_policy_addins_disabled/exchange_roles_assignment_policy_addins_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_shared_mailbox_sign_in_disabled/exchange_shared_mailbox_sign_in_disabled.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/exchange/exchange_transport_config_smtp_auth_disabled/exchange_transport_config_smtp_auth_disabled.py
