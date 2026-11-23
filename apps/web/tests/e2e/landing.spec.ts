@@ -38,3 +38,23 @@ test("the layout stays put while the landing loads", async ({ page }) => {
   }));
   expect(cls).toBeLessThan(0.1);
 });
+
+test("the hero's four figures stay on one row at every desktop width, with no empty cell", async ({ page }) => {
+  for (const width of [1024, 1280, 1440, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    const tiles = page.locator(".landing-hero .lv-kpis > div");
+    await expect(tiles).toHaveCount(4);
+    const tops = await tiles.evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
+    expect(new Set(tops).size, `${width}px: ${tops.join(",")}`).toBe(1);
+    const grid = await page.locator(".landing-hero .lv-kpis").evaluate((el) => {
+      const box = el.getBoundingClientRect();
+      const last = el.lastElementChild!.getBoundingClientRect();
+      return { gap: Math.round(box.right - last.right) };
+    });
+    expect(grid.gap, `${width}px: the last tile reaches the grid's edge`).toBeLessThanOrEqual(2);
+    // The headline stays a headline: at most three lines beside the frame.
+    const lines = await page.getByRole("heading", { level: 1 }).evaluate((h) => Math.round(h.getBoundingClientRect().height / parseFloat(getComputedStyle(h).lineHeight)));
+    expect(lines, `${width}px headline lines`).toBeLessThanOrEqual(width >= 1280 ? 3 : 4);
+  }
+});

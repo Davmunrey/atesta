@@ -45,13 +45,49 @@
     }
   },
   "landing": {
-    "headline": "Prepara el ENS sin un consultor a tiempo completo",
-    "sub": "Para pymes que venden al sector público.",
-    "covers": "También cubre, según el plan: NIS2, RGPD, LOPDGDD y DORA.",
-    "consultancies": "Para consultoras: varios clientes, una cuenta.",
-    "close": "Tu próxima auditoría, preparada.",
+    "headline": "Prepara el <hl>ENS</hl> sin un consultor a tiempo completo",
+    "sub": "Atesta reúne las medidas, las evidencias y los registros que pide el auditor, para pymes que venden al sector público.",
     "requestAccess": "Solicitar acceso",
     "signIn": "Entrar",
+    "soon": "Próximamente",
+    "problem": {
+      "title": "El ENS no cabe en una hoja de cálculo",
+      "body": "Setenta y tres medidas, cada una con su texto oficial, sus evidencias y sus revisiones. Repartidas entre correos y carpetas, nadie sabe qué falta hasta que llega la auditoría."
+    },
+    "how": {
+      "title": "Cómo funciona",
+      "steps": {
+        "connect": {
+          "title": "Conecta tus sistemas",
+          "body": "Microsoft 365 o Google Workspace, solo con permisos de lectura."
+        },
+        "assess": {
+          "title": "Autoevalúa cada medida",
+          "body": "Con su texto oficial y la propuesta de aplicabilidad para tu categoría."
+        },
+        "routines": {
+          "title": "Registra las rutinas",
+          "body": "Políticas, revisiones de acceso, formación e incidentes, con sus plazos."
+        },
+        "dossier": {
+          "title": "Entrega el dossier",
+          "body": "Todo lo registrado, listo para que el auditor lo revise y la dirección lo firme."
+        }
+      }
+    },
+    "moments": {
+      "measure": "El texto oficial de cada medida",
+      "records": "Los registros que pide el auditor",
+      "dossier": "Un dossier listo para firmar"
+    },
+    "frameworks": {
+      "title": "ENS primero, y más según tu plan",
+      "body": "También cubre NIS2, RGPD, LOPDGDD y DORA. Una misma evidencia sirve a varios marcos.",
+      "byPlan": "Según el plan"
+    },
+    "consultancies": "Para consultoras: todos tus clientes en una cuenta, cada uno con su propio espacio.",
+    "close": "Tu próxima auditoría, preparada.",
+    "sample": "Datos de ejemplo",
     "view": {
       "label": "Resumen de una organización en Atesta",
       "category": "Categoría {category}",
@@ -92,11 +128,6 @@
         "date": "Fecha",
         "signature": "Firma"
       }
-    },
-    "moments": {
-      "measure": "El texto oficial de cada medida",
-      "records": "Los registros que pide el auditor",
-      "dossier": "Un dossier listo para firmar"
     }
   },
   "locale": {
