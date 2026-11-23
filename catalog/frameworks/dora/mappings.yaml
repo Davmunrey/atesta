@@ -1,1 +1,326 @@
-mappings: []
+mappings:
+- requirement_id: c2.art5
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for c2.art5; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_5
+  reviewed_by: null
+- requirement_id: c2.art5
+  control_id: ctl.people_awareness
+  rationale: Candidate documentary review for c2.art5; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_5
+  reviewed_by: null
+- requirement_id: c2.art6
+  control_id: ctl.risk_analysis
+  rationale: Candidate documentary review for c2.art6; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_6
+  reviewed_by: null
+- requirement_id: c2.art6
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for c2.art6; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_6
+  reviewed_by: null
+- requirement_id: c2.art7
+  control_id: ctl.capacity_resilience
+  rationale: Candidate documentary review for c2.art7; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_7
+  reviewed_by: null
+- requirement_id: c2.art7
+  control_id: ctl.security_architecture
+  rationale: Candidate documentary review for c2.art7; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_7
+  reviewed_by: null
+- requirement_id: c2.art8
+  control_id: ctl.asset_inventory
+  rationale: Candidate documentary review for c2.art8; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_8
+  reviewed_by: null
+- requirement_id: c2.art8
+  control_id: ctl.risk_analysis
+  rationale: Candidate documentary review for c2.art8; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_8
+  reviewed_by: null
+- requirement_id: c2.art8
+  control_id: ctl.supplier_cloud_review
+  rationale: Candidate documentary review for c2.art8; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_8
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.security_architecture
+  rationale: Candidate documentary review for c2.art9; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.access_review
+  rationale: Candidate documentary review for c2.art9; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.authentication_review
+  rationale: Candidate documentary review for c2.art9; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.cryptography_review
+  rationale: Candidate documentary review for c2.art9; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.change_vulnerability_review
+  rationale: Candidate documentary review for c2.art9; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.secure_configuration
+  rationale: Candidate documentary review for c2.art9; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.admin_mfa
+  rationale: Candidate technical observation for c2.art9; it covers only part of the article and never
+    replaces the documentary review.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.workspace_mfa
+  rationale: Candidate technical observation for c2.art9; it covers only part of the article and never
+    replaces the documentary review.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art9
+  control_id: ctl.legacy_authentication
+  rationale: Candidate technical observation for c2.art9; it covers only part of the article and never
+    replaces the documentary review.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_9
+  reviewed_by: null
+- requirement_id: c2.art10
+  control_id: ctl.threat_monitoring
+  rationale: Candidate documentary review for c2.art10; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_10
+  reviewed_by: null
+- requirement_id: c2.art10
+  control_id: ctl.activity_logging_review
+  rationale: Candidate documentary review for c2.art10; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_10
+  reviewed_by: null
+- requirement_id: c2.art10
+  control_id: ctl.mailbox_audit_bypass
+  rationale: Candidate technical observation for c2.art10; it covers only part of the article and never
+    replaces the documentary review.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_10
+  reviewed_by: null
+- requirement_id: c2.art11
+  control_id: ctl.continuity_restore
+  rationale: Candidate documentary review for c2.art11; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_11
+  reviewed_by: null
+- requirement_id: c2.art11
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for c2.art11; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_11
+  reviewed_by: null
+- requirement_id: c2.art12
+  control_id: ctl.continuity_restore
+  rationale: Candidate documentary review for c2.art12; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_12
+  reviewed_by: null
+- requirement_id: c2.art13
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for c2.art13; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_13
+  reviewed_by: null
+- requirement_id: c2.art13
+  control_id: ctl.people_awareness
+  rationale: Candidate documentary review for c2.art13; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_13
+  reviewed_by: null
+- requirement_id: c2.art13
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for c2.art13; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_13
+  reviewed_by: null
+- requirement_id: c2.art14
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for c2.art14; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_14
+  reviewed_by: null
+- requirement_id: c2.art16
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for c2.art16; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_16
+  reviewed_by: null
+- requirement_id: c2.art16
+  control_id: ctl.risk_analysis
+  rationale: Candidate documentary review for c2.art16; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_16
+  reviewed_by: null
+- requirement_id: c2.art16
+  control_id: ctl.continuity_restore
+  rationale: Candidate documentary review for c2.art16; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_16
+  reviewed_by: null
+- requirement_id: c3.art17
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for c3.art17; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_17
+  reviewed_by: null
+- requirement_id: c3.art18
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for c3.art18; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_18
+  reviewed_by: null
+- requirement_id: c3.art19
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for c3.art19; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_19
+  reviewed_by: null
+- requirement_id: c3.art23
+  control_id: ctl.incident_response
+  rationale: Candidate documentary review for c3.art23; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_23
+  reviewed_by: null
+- requirement_id: c4.art24
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for c4.art24; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_24
+  reviewed_by: null
+- requirement_id: c4.art24
+  control_id: ctl.change_vulnerability_review
+  rationale: Candidate documentary review for c4.art24; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_24
+  reviewed_by: null
+- requirement_id: c4.art25
+  control_id: ctl.change_vulnerability_review
+  rationale: Candidate documentary review for c4.art25; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_25
+  reviewed_by: null
+- requirement_id: c4.art26
+  control_id: ctl.change_vulnerability_review
+  rationale: Candidate documentary review for c4.art26; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_26
+  reviewed_by: null
+- requirement_id: c4.art26
+  control_id: ctl.security_governance
+  rationale: Candidate documentary review for c4.art26; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_26
+  reviewed_by: null
+- requirement_id: c4.art27
+  control_id: ctl.secure_procurement
+  rationale: Candidate documentary review for c4.art27; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_27
+  reviewed_by: null
+- requirement_id: c4.art27
+  control_id: ctl.supplier_cloud_review
+  rationale: Candidate documentary review for c4.art27; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_27
+  reviewed_by: null
+- requirement_id: c5.art28
+  control_id: ctl.supplier_cloud_review
+  rationale: Candidate documentary review for c5.art28; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_28
+  reviewed_by: null
+- requirement_id: c5.art28
+  control_id: ctl.secure_procurement
+  rationale: Candidate documentary review for c5.art28; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_28
+  reviewed_by: null
+- requirement_id: c5.art29
+  control_id: ctl.supplier_cloud_review
+  rationale: Candidate documentary review for c5.art29; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_29
+  reviewed_by: null
+- requirement_id: c5.art30
+  control_id: ctl.supplier_cloud_review
+  rationale: Candidate documentary review for c5.art30; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_30
+  reviewed_by: null
+- requirement_id: c5.art30
+  control_id: ctl.secure_procurement
+  rationale: Candidate documentary review for c5.art30; the evidence must be checked against the complete
+    article, its regulatory technical standards and the entity's proportionality. This shared control
+    is not an equivalence or approval.
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32022R2554#art_30
+  reviewed_by: null

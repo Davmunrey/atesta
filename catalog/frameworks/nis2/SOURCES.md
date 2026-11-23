@@ -56,3 +56,11 @@ This pack cannot be scored, including when development draft visibility is enabl
 - Annexes I to IV.
 
 Annex II is covered by the 73 imported measures. Every other unit is excluded with its reason.
+
+## Corrigenda check (2026-11-23)
+
+- **Source of the list:** the Publications Office SPARQL endpoint lists nine corrigenda to Directive (EU) 2022/2555, `32022L2555R(01)` to `R(09)`.
+- **Spanish:** none corrects the Spanish text.
+- **English:** only `R(04)` (OJ L, 2023/90206, 22.12.2023) covers English.
+  - It corrects Article 19(1) alone ("on 17 January 2025" becomes "by 17 January 2025"); captured text SHA-256 `fa8913a509771efdab0418a38f7381f1d01b8340d9638ff004b7d2f418172c75`.
+  - Article 19 is not imported, so the imported text is unaffected.

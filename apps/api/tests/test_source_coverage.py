@@ -36,6 +36,7 @@ def _articles(units: set[str]) -> set[str]:
     [
         ("nis2", {f"art{n}" for n in range(1, 47)} | {"annex1", "annex2", "annex3"}),
         ("gdpr_art32", {f"art{n}" for n in range(1, 100)}),
+        ("dora", {f"art{n}" for n in range(1, 65)}),
         (
             "ens_rd311_2022",
             {f"art{n}" for n in range(1, 42)}
@@ -108,4 +109,27 @@ def test_gdpr_keeps_the_official_text_of_articles_32_to_34() -> None:
     manual = {c.id for c in catalog().controls.values() if c.manual}
     for requirement in gdpr.requirements:
         controls = {m.control_id for m in gdpr.mappings if m.requirement_id == requirement.id}
+        assert controls & manual, requirement.id
+
+
+def test_dora_imports_whole_articles_verbatim_in_both_languages() -> None:
+    dora = pack("dora")
+    requirements = {r.id: r for r in dora.requirements}
+    assert len(requirements) == 22
+    assert requirements["c5.art30"].title_es == "Cláusulas contractuales fundamentales"
+    assert requirements["c5.art30"].title_en == "Key contractual provisions"
+    governance = requirements["c2.art5"].attributes
+    # The Journal's own wording, including its missing "de": source spelling is never corrected.
+    assert governance.official_text_es.startswith(
+        "1. A fin lograr un nivel elevado de resiliencia operativa digital"
+    )
+    assert (governance.official_text_en or "").startswith(
+        "1. Financial entities shall have in place an internal governance and control framework"
+    )
+    assert {g.prefix for g in dora.metadata.attributes.groups_es} == {"c2", "c3", "c4", "c5"}
+    assert dora.metadata.attributes.assessment_enabled is False
+    assert all(m.reviewed_by is None for m in dora.mappings)
+    manual = {c.id for c in catalog().controls.values() if c.manual}
+    for requirement in dora.requirements:
+        controls = {m.control_id for m in dora.mappings if m.requirement_id == requirement.id}
         assert controls & manual, requirement.id

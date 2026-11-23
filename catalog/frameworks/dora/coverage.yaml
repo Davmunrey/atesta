@@ -1,0 +1,132 @@
+source: Regulation (EU) 2022/2554, OJ L 333, 27.12.2022, p. 1 (CELEX 32022R2554)
+entries:
+- units:
+  - art1
+  - art2
+  - art3
+  - art4
+  status: excluded
+  reason_es: 'Objeto, ámbito, definiciones y principio de proporcionalidad: delimitan qué entidades financieras
+    están sujetas y con qué intensidad; no son medidas que se evalúen.'
+  reason_en: 'Subject matter, scope, definitions and the proportionality principle: they define which
+    financial entities are in scope and how strictly; they are not measures to assess.'
+- units:
+  - art5
+  - art6
+  - art7
+  - art8
+  - art9
+  - art10
+  - art11
+  - art12
+  - art13
+  - art14
+  - art16
+  status: covered
+  requirements:
+  - c2.art5
+  - c2.art6
+  - c2.art7
+  - c2.art8
+  - c2.art9
+  - c2.art10
+  - c2.art11
+  - c2.art12
+  - c2.art13
+  - c2.art14
+  - c2.art16
+- units:
+  - art15
+  - art20
+  status: excluded
+  reason_es: Mandatos a las Autoridades Europeas de Supervisión para elaborar normas técnicas; las normas
+    adoptadas se importarán en una versión posterior.
+  reason_en: Mandates for the European Supervisory Authorities to draft technical standards; the adopted
+    standards will be imported in a later version.
+- units:
+  - art17
+  - art18
+  - art19
+  - art23
+  status: covered
+  requirements:
+  - c3.art17
+  - c3.art18
+  - c3.art19
+  - c3.art23
+- units:
+  - art21
+  - art22
+  status: excluded
+  reason_es: 'Centralización de la notificación y respuesta supervisora: tareas de las autoridades.'
+  reason_en: 'Centralisation of reporting and supervisory feedback: tasks of the authorities.'
+- units:
+  - art24
+  - art25
+  - art26
+  - art27
+  - art28
+  - art29
+  - art30
+  status: covered
+  requirements:
+  - c4.art24
+  - c4.art25
+  - c4.art26
+  - c4.art27
+  - c5.art28
+  - c5.art29
+  - c5.art30
+- units:
+  - art31
+  - art32
+  - art33
+  - art34
+  - art35
+  - art36
+  - art37
+  - art38
+  - art39
+  - art40
+  - art41
+  - art42
+  - art43
+  - art44
+  status: excluded
+  reason_es: 'Marco de vigilancia de los proveedores terceros críticos de servicios TIC: obligaciones
+    de esos proveedores y de las autoridades de vigilancia.'
+  reason_en: 'Oversight framework of critical ICT third-party service providers: obligations of those
+    providers and of the overseers.'
+- units:
+  - art45
+  status: excluded
+  reason_es: Acuerdos voluntarios de intercambio de información sobre ciberamenazas.
+  reason_en: Voluntary arrangements for sharing cyber threat information.
+- units:
+  - art46
+  - art47
+  - art48
+  - art49
+  - art50
+  - art51
+  - art52
+  - art53
+  - art54
+  - art55
+  - art56
+  status: excluded
+  reason_es: 'Autoridades competentes, cooperación, sanciones y secreto profesional: actuaciones de las
+    autoridades.'
+  reason_en: 'Competent authorities, cooperation, penalties and professional secrecy: actions of the authorities.'
+- units:
+  - art57
+  - art58
+  - art59
+  - art60
+  - art61
+  - art62
+  - art63
+  - art64
+  status: excluded
+  reason_es: Actos delegados, revisión, modificaciones de otros reglamentos y entrada en vigor.
+  reason_en: Delegated acts, review, amendments to other regulations and entry into force.

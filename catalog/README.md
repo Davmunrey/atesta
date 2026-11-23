@@ -31,11 +31,12 @@ Pack order: ENS (wedge) -> NIS2 -> ISO 27001 -> RGPD art. 32 -> DORA -> SOC 2 an
 ## Preparation content
 
 See [the preparation inventory](PREPARATION.md) for the six planned frameworks.
-ISO/IEC 27001, DORA and SOC 2 currently contain scope/source templates and
+ISO/IEC 27001 and SOC 2 currently contain scope/source templates and
 candidate preparation controls, with no imported normative requirements or mappings.
 `nis2` contains 23 requirements from Articles 20, 21 and 23 of Directive (EU) 2022/2555 in
 Spanish and English (read its `SOURCES.md`). `gdpr_art32` contains 14 requirements from
-Articles 32 to 34 of Regulation (EU) 2016/679, also in both languages. Official EU text is captured with
+Articles 32 to 34 of Regulation (EU) 2016/679, and `dora` 22 articles of Regulation (EU)
+2022/2554, both in Spanish and English. Official EU text is captured with
 `apps/api/devtools/eu_act.py`.
 
 `ens_rd311_2022` contains the 73 Annex II measures from the official BOE publication, with

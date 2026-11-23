@@ -1,18 +1,22 @@
 id: dora
 name: DORA
-version: 2022-2554.template1
+version: 2022-2554.draft1
 jurisdiction: EU
-source: https://eur-lex.europa.eu/eli/reg/2022/2554/oj?uri=CELEX%3A32022R2554
-license_notes: Preparation metadata only. No official requirement text or delegated/implementing technical
-  standards have been imported.
+source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022R2554
+license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office; reuse of
+  EU documents is authorised under Commission Decision 2011/833/EU, © European Union. Articles 5-14, 16-19,
+  23 and 24-30 are imported, one requirement per article; coverage.yaml accounts for every other article.
+  Delegated and implementing technical standards are not imported.
 status: draft
 attributes:
-  content_state: template
+  content_state: partial
   assessment_enabled: false
-  summary_es: Plantilla para resiliencia operativa digital del sector financiero. Reglamento europeo,
-    no sello general de certificación.
-  summary_en: Template for digital operational resilience in the financial sector. An EU regulation, not
-    a general certification label.
+  summary_es: 22 artículos oficiales de DORA sobre gestión del riesgo TIC, incidentes, pruebas de resiliencia
+    y riesgo de terceros, en español e inglés, uno por requisito. Mapeos candidatos pendientes de revisión
+    cualificada. Solo para entidades financieras.
+  summary_en: 22 official DORA articles on ICT risk management, incidents, resilience testing and third-party
+    risk, in Spanish and English, one per requirement. Candidate mappings await qualified review. For
+    financial entities only.
   scope_es: Comprueba tipo de entidad, servicios financieros, exclusiones y papel de proveedores TIC conforme
     al ámbito del reglamento; no presupongas aplicación por usar servicios cloud.
   scope_en: Check entity type, financial services, exclusions and ICT-provider role under the regulation
@@ -23,12 +27,12 @@ attributes:
   applicability_en: Determine regime and proportionality with the accountable owner. Prepare ICT-risk
     governance, incidents, continuity, resilience testing and third-party management. Confirm applicable
     technical standards and specific duties.
-  limitations_es: Faltan requisitos oficiales, normas técnicas, mapeos revisados, registros y evaluación
-    real. Las guías compartidas no demuestran resiliencia operativa ni cumplimiento de obligaciones de
-    notificación o contratación.
-  limitations_en: Official requirements, technical standards, reviewed mappings, registers and real assessment
-    are missing. Shared guides do not prove operational resilience or compliance with reporting/contracting
-    duties.
+  limitations_es: 'Cada requisito es un artículo completo: revisa cada apartado con tu revisor. Faltan
+    las normas técnicas de regulación y de ejecución que desarrollan los artículos, y el marco de vigilancia
+    de proveedores críticos.'
+  limitations_en: 'Each requirement is a whole article: review every paragraph with your reviewer. The
+    regulatory and implementing technical standards that detail the articles, and the oversight framework
+    for critical providers, are missing.'
   preparation_controls:
   - ctl.security_governance
   - ctl.risk_analysis
@@ -51,5 +55,19 @@ attributes:
   - ctl.workspace_mfa
   - ctl.mailbox_audit_bypass
   source_refs:
-  - https://eur-lex.europa.eu/eli/reg/2022/2554/oj?uri=CELEX%3A32022R2554
-  verified_on: '2026-11-13'
+  - https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022R2554
+  - https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2554
+  verified_on: '2026-11-23'
+  groups_es:
+  - prefix: c2
+    title: Gestión del riesgo relacionado con las TIC
+    title_en: ICT risk management
+  - prefix: c3
+    title: Gestión, clasificación y notificación de incidentes relacionados con las TIC
+    title_en: ICT-related incident management, classification and reporting
+  - prefix: c4
+    title: Pruebas de resiliencia operativa digital
+    title_en: Digital operational resilience testing
+  - prefix: c5
+    title: Gestión del riesgo relacionado con las TIC derivado de terceros
+    title_en: Managing of ICT third-party risk
