@@ -120,6 +120,7 @@
     },
     "scanning": {
       "already_queued": "Ya hay un escaneo en cola o en curso para esta conexión. Espera a que termine.",
+      "daily_limit": "Ya has hecho hoy los 6 escaneos manuales de esta conexión. Los escaneos programados siguen funcionando. Podrás escanear de nuevo a partir de medianoche (hora de Madrid).",
       "connection_not_active": "Esta conexión aún no está activa. Termina de configurarla y verifícala antes de escanear.",
       "not_found": "No encontramos ese escaneo, o no tienes acceso."
     }

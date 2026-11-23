@@ -121,6 +121,12 @@ D12 (Microsoft Partner Program account and a verified domain).
       transaction (`SyncPsycopgConnector` on the session's psycopg connection, data-layer spec). A
       partial unique index allows one `queued` or `running` scan per connection; a violation is
       409 `scanning.already_queued` (schedule: skipped).
+- [ ] "Scan now" has a daily budget (owner, 2026-11-23, #265): at most 6 `user` scans per
+      connection per calendar day in Europe/Madrid. The 7th request is refused with 429
+      `scanning.daily_limit`, a `retry_at` (the next Madrid midnight, ISO 8601 in UTC) and a
+      `Retry-After` header in seconds; no scan row and no audit event are written. `schedule` and
+      `activation` scans are never counted or refused. Every `user` scan queued that day counts,
+      whatever its outcome.
 - [ ] Every job enters tenant context only through
       `identity.api.enter_org_context(session, org_id, ContextReason.JOB)`. A job whose org and
       scan ids do not match finds no row and fails without retry.
@@ -547,6 +553,16 @@ v1, measured in the live golden test.
 "Scan now" (`POST .../scans`) returns 409 `scanning.already_queued` when the connection has a scan
 `queued` or `running`.
 
+Each scan reads the customer's whole tenant, and Microsoft Graph and Google's APIs throttle per
+tenant and per app, so manual scans have a budget (#265): 6 `user` scans per connection per
+Madrid calendar day. `queue_scan(trigger=user)` counts that connection's `user` scans queued since
+the last Madrid midnight, read from the database clock, before it inserts; the 7th returns 429
+`scanning.daily_limit` with `retry_at` (the next Madrid midnight in UTC) and `Retry-After`. The
+day follows the Madrid calendar, so it is 23 h long in March and 25 h in October. The one-active
+index already serialises requests for a connection, so two concurrent requests cannot both pass
+the count. `schedule` and `activation` scans keep their own cadence and are not counted. The
+count reads the tenant's own scans through the `(organization_id, id)` index; no new index.
+
 ### Runners
 
 | | Local (this spec) | Fargate (AWS spec builds it to these requirements) |
@@ -655,7 +671,7 @@ Error codes (ES and EN texts in the web i18n files): `connections.state_invalid`
 `connections.incomplete_permissions`, `connections.missing_directory_role`,
 `connections.over_privileged`, `connections.dwd_not_authorized`,
 `connections.subject_not_super_admin`, `connections.revoked`, `scanning.connection_not_active`,
-`scanning.already_queued`, `scanning.timeout`, `scanning.engine_failed`,
+`scanning.already_queued`, `scanning.daily_limit`, `scanning.timeout`, `scanning.engine_failed`,
 `scanning.tenant_mismatch`, `scanning.output_invalid`.
 
 ### Proposed ADR changes (same PR as the spec)
@@ -808,6 +824,7 @@ Error codes (ES and EN texts in the web i18n files): `connections.state_invalid`
 | Exit code mapping: 0, 3 with `-z`, 1, missing output, wrong tenant, verification refused | Retry classification |
 | `run_scan` with `FixtureRunner` forced to fail transiently: 3 retries at 300, 600, 900 s then `failed` with one `scan.finished` carrying its fields; a retried `run_scan` returns to `todo` without error; a permanent failure is not retried | Retry policy |
 | Two "Scan now" calls, and "Scan now" while a scan is running: 409; `schedule_scan` skips on `already_queued` and re-defers itself after a failed scan | Locks and schedule chain |
+| A 7th "Scan now" on one Madrid day: 429 `scanning.daily_limit` with `retry_at` and `Retry-After`, no row, no event; 6 `user` scans queued before the last Madrid midnight and any number of `schedule` scans do not count; the Madrid day is 23 h on 2026-03-29 and 25 h on 2026-10-25 | Daily budget (#265) |
 | Job with org A id and org B scan id: no row, no retry | Job context |
 | Every registered task's arguments are uuids, a Google client id or a credential ref only; an email, token or key in a job argument fails the test | ADR-012 amendment, rule 2 |
 | Startup with `ATESTA_ENV=prod` and any local runner, store or credential store configured fails; `record_verification` refuses a `local:` ref in prod | Dev-only local path |

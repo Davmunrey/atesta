@@ -120,6 +120,7 @@
     },
     "scanning": {
       "already_queued": "A scan of this connection is already queued or running. Wait for it to finish.",
+      "daily_limit": "You have used today's 6 manual scans for this connection. Scheduled scans keep running. You can scan again after midnight, Madrid time.",
       "connection_not_active": "This connection is not active yet. Finish its setup and verify it before scanning.",
       "not_found": "We couldn't find that scan, or you don't have access."
     }

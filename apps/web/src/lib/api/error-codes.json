@@ -51,6 +51,7 @@
   "request.not_found",
   "scanning.already_queued",
   "scanning.connection_not_active",
+  "scanning.daily_limit",
   "scanning.not_found",
   "server.error"
 ]

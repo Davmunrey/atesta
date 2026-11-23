@@ -1,6 +1,7 @@
 """Scan endpoints (scanner-connectors spec, Endpoints): scan now, scans, findings."""
 
 import uuid
+from datetime import datetime
 
 import pytest
 from fastapi.testclient import TestClient
@@ -175,3 +176,36 @@ def test_invalid_paging_is_refused(
     url = f"/api/v1/orgs/{org}/scans/{scan_id}/findings"
     response = client.get(url, params=params, headers=auth(subs["owner"]))
     assert (response.status_code, code(response.json())) == (422, "request.invalid")
+
+
+def test_the_seventh_manual_scan_of_the_day_says_when_to_retry(
+    client: TestClient, superuser: Engine
+) -> None:
+    """#265: 429 with a stable code, the next Madrid midnight and Retry-After; nothing written."""
+    org, subs = org_with(client, superuser)
+    made = create(client, org, subs["owner"])
+    active(superuser, made["id"])
+    with superuser.begin() as conn:
+        for _ in range(6):
+            conn.execute(
+                text(
+                    "INSERT INTO scans (id, organization_id, connection_id, provider, trigger,"
+                    " status, engine, engine_version, finished_at) VALUES (gen_random_uuid(),"
+                    " :o, :c, 'm365', 'user', 'failed', 'prowler', '5.49.0', now())"
+                ),
+                {"o": org, "c": made["id"]},
+            )
+        midnight = conn.execute(
+            text(
+                "SELECT (date_trunc('day', now() AT TIME ZONE 'Europe/Madrid') + interval '1 day')"
+                " AT TIME ZONE 'Europe/Madrid'"
+            )
+        ).scalar_one()
+    url = f"/api/v1/orgs/{org}/connections/{made['id']}/scans"
+    response = client.post(url, headers=auth(subs["owner"]))
+    assert response.status_code == 429
+    body = response.json()
+    assert code(body) == "scanning.daily_limit"
+    assert datetime.fromisoformat(body["detail"]["retry_at"]) == midnight
+    assert 0 < int(response.headers["Retry-After"]) <= 25 * 3600
+    assert events(superuser, org, "scan.requested") == 0
