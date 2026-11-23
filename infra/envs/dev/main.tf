@@ -81,4 +81,45 @@ module "evidence" {
   kms_key_arn = module.kms.evidence_key_arn
 }
 
+# The API, worker and migration tasks share this group; the ECS module (next PR) attaches it.
+resource "aws_security_group" "app" {
+  name        = "atesta-dev-app"
+  description = "Application tasks: the only clients of the database"
+  vpc_id      = module.network.vpc_id
+}
+
+module "database" {
+  source                = "../../modules/rds"
+  name                  = "atesta-dev"
+  vpc_id                = module.network.vpc_id
+  private_subnet_ids    = module.network.private_subnet_ids
+  app_security_group_id = aws_security_group.app.id
+  kms_key_arn           = module.kms.database_key_arn
+  secrets_key_arn       = module.kms.secrets_key_arn
+  logs_key_arn          = module.kms.logs_key_arn
+  multi_az              = false
+  backup_retention_days = 14
+}
+
+variable "mail_domain" {
+  description = "Sending domain for notification email; leave unset until the owner picks one."
+  type        = string
+  default     = null
+}
+
+module "ses_notifications" {
+  source = "../../modules/ses"
+  count  = var.mail_domain == null ? 0 : 1
+  name   = "atesta-dev-notifications"
+  domain = var.mail_domain
+}
+
+output "database_endpoint" {
+  value = module.database.endpoint
+}
+
+output "mail_dns_records" {
+  value = try(module.ses_notifications[0].dns_records, [])
+}
+
 data "aws_caller_identity" "current" {}
