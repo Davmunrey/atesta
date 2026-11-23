@@ -1177,6 +1177,7 @@
     "title": "Evidencias que propone la guía ({count, plural, one {# elemento} other {# elementos}})",
     "candidate": "Lista orientativa redactada por Atesta a partir de la guía citada. Pendiente de revisión cualificada; no valora a tu organización.",
     "reviewed": "Lista redactada por Atesta a partir de la guía citada y revisada por {name} el {date}. No valora a tu organización.",
-    "reference": "{guide} ({edition}), apartado {section}, pág. {page}"
+    "reference": "{guide} ({edition}), apartado {section}, pág. {page}",
+    "shared": "Referencia: {reference}"
   }
 }
