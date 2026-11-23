@@ -25,6 +25,7 @@ prowler_checks:
   - entra_conditional_access_policy_device_code_flow_blocked
   - security_less_secure_apps_disabled
   - security_login_challenges_configured
+  - entra_users_mfa_capable
 atesta_checks: []
 remediation_refs:
   - https://learn.microsoft.com/en-us/entra/identity/authentication/tutorial-enable-azure-mfa
@@ -40,3 +41,4 @@ remediation_refs:
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_conditional_access_policy_device_code_flow_blocked/entra_conditional_access_policy_device_code_flow_blocked.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_less_secure_apps_disabled/security_less_secure_apps_disabled.py
   - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/googleworkspace/services/security/security_login_challenges_configured/security_login_challenges_configured.py
+  - https://github.com/prowler-cloud/prowler/blob/5.49.0/prowler/providers/m365/services/entra/entra_users_mfa_capable/entra_users_mfa_capable.py
