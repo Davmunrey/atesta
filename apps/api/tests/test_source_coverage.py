@@ -38,6 +38,7 @@ def _articles(units: set[str]) -> set[str]:
         ("gdpr_art32", {f"art{n}" for n in range(1, 100)}),
         ("dora", {f"art{n}" for n in range(1, 65)}),
         ("nis2_ir_2024_2690", {f"art{n}" for n in range(1, 17)} | {"annex"}),
+        ("dora_rts_2024_1774", {f"art{n}" for n in range(1, 43)}),
         (
             "lopdgdd",
             {f"art{n}" for n in range(1, 98)}
@@ -182,4 +183,21 @@ def test_lopdgdd_keeps_the_official_spanish_text() -> None:
     assert (
         "f) Cuando se produzca un tratamiento masivo"
         in requirements["art28"].attributes.official_text_es
+    )
+
+
+def test_dora_rts_keeps_the_official_text_with_its_corrigendum() -> None:
+    """Article 22(d) as corrected by 32024R1774R(02), in both languages (SOURCES.md)."""
+    rts = pack("dora_rts_2024_1774")
+    requirements = {r.id: r for r in rts.requirements}
+    assert len(requirements) == 41
+    assert {"t1.art1", "t2c3.art22", "t3c4.art41"} <= requirements.keys()
+    article = requirements["t2c3.art22"].attributes
+    assert (
+        "de conformidad con el artículo 8, apartado 2, del Reglamento Delegado (UE) 2024/1772"
+        in (article.official_text_es)
+    )
+    assert "[artículo [15]" not in article.official_text_es
+    assert "in accordance with Article 8(2) of Commission Delegated Regulation (EU) 2024/1772" in (
+        article.official_text_en or ""
     )

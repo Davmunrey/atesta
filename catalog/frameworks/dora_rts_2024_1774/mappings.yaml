@@ -1,0 +1,256 @@
+mappings:
+- requirement_id: t1.art1
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Article 1 (Overall risk profile and complexity). Each
+    paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_1
+  reviewed_by: null
+- requirement_id: t2c1.art2
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Article 2 (General elements of ICT security policies,
+    procedures, protocols, and tools). Each paragraph needs qualified review, and Title II and Title III
+    apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_2
+  reviewed_by: null
+- requirement_id: t2c1.art3
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Article 3 (ICT risk management). Each paragraph needs
+    qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_3
+  reviewed_by: null
+- requirement_id: t2c1.art4
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Article 4 (ICT asset management policy). Each paragraph
+    needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_4
+  reviewed_by: null
+- requirement_id: t2c1.art5
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Article 5 (ICT asset management procedure). Each paragraph
+    needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_5
+  reviewed_by: null
+- requirement_id: t2c1.art6
+  control_id: ctl.cryptography_review
+  rationale: 'Candidate: documentary measure for Article 6 (Encryption and cryptographic controls). Each
+    paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_6
+  reviewed_by: null
+- requirement_id: t2c1.art7
+  control_id: ctl.cryptography_review
+  rationale: 'Candidate: documentary measure for Article 7 (Cryptographic key management). Each paragraph
+    needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_7
+  reviewed_by: null
+- requirement_id: t2c1.art8
+  control_id: ctl.secure_configuration
+  rationale: 'Candidate: documentary measure for Article 8 (Policies and procedures for ICT operations).
+    Each paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_8
+  reviewed_by: null
+- requirement_id: t2c1.art9
+  control_id: ctl.capacity_resilience
+  rationale: 'Candidate: documentary measure for Article 9 (Capacity and performance management). Each
+    paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_9
+  reviewed_by: null
+- requirement_id: t2c1.art10
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Article 10 (Vulnerability and patch management). Each
+    paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_10
+  reviewed_by: null
+- requirement_id: t2c1.art11
+  control_id: ctl.information_handling
+  rationale: 'Candidate: documentary measure for Article 11 (Data and system security). Each paragraph
+    needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_11
+  reviewed_by: null
+- requirement_id: t2c1.art12
+  control_id: ctl.activity_logging_review
+  rationale: 'Candidate: documentary measure for Article 12 (Logging). Each paragraph needs qualified
+    review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_12
+  reviewed_by: null
+- requirement_id: t2c1.art13
+  control_id: ctl.security_architecture
+  rationale: 'Candidate: documentary measure for Article 13 (Network security management). Each paragraph
+    needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_13
+  reviewed_by: null
+- requirement_id: t2c1.art14
+  control_id: ctl.security_architecture
+  rationale: 'Candidate: documentary measure for Article 14 (Securing information in transit). Each paragraph
+    needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_14
+  reviewed_by: null
+- requirement_id: t2c1.art15
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Article 15 (ICT project management). Each paragraph needs
+    qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_15
+  reviewed_by: null
+- requirement_id: t2c1.art16
+  control_id: ctl.secure_procurement
+  rationale: 'Candidate: documentary measure for Article 16 (ICT systems acquisition, development, and
+    maintenance). Each paragraph needs qualified review, and Title II and Title III apply to different
+    financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_16
+  reviewed_by: null
+- requirement_id: t2c1.art17
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Article 17 (ICT change management). Each paragraph needs
+    qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_17
+  reviewed_by: null
+- requirement_id: t2c1.art18
+  control_id: ctl.physical_security
+  rationale: 'Candidate: documentary measure for Article 18 (Physical and environmental security). Each
+    paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_18
+  reviewed_by: null
+- requirement_id: t2c2.art19
+  control_id: ctl.people_awareness
+  rationale: 'Candidate: documentary measure for Article 19 (Human resources policy). Each paragraph needs
+    qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_19
+  reviewed_by: null
+- requirement_id: t2c2.art20
+  control_id: ctl.authentication_review
+  rationale: 'Candidate: documentary measure for Article 20 (Identity management). Each paragraph needs
+    qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_20
+  reviewed_by: null
+- requirement_id: t2c2.art21
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Article 21 (Access control). Each paragraph needs qualified
+    review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_21
+  reviewed_by: null
+- requirement_id: t2c3.art22
+  control_id: ctl.incident_response
+  rationale: 'Candidate: documentary measure for Article 22 (ICT-related incident management policy).
+    Each paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_22
+  reviewed_by: null
+- requirement_id: t2c3.art23
+  control_id: ctl.threat_monitoring
+  rationale: 'Candidate: documentary measure for Article 23 (Anomalous activities detection and criteria
+    for ICT-related incidents detection and response). Each paragraph needs qualified review, and Title
+    II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_23
+  reviewed_by: null
+- requirement_id: t2c4.art24
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Article 24 (Components of the ICT business continuity
+    policy). Each paragraph needs qualified review, and Title II and Title III apply to different financial
+    entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_24
+  reviewed_by: null
+- requirement_id: t2c4.art25
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Article 25 (Testing of the ICT business continuity plans).
+    Each paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_25
+  reviewed_by: null
+- requirement_id: t2c4.art26
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Article 26 (ICT response and recovery plans). Each paragraph
+    needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_26
+  reviewed_by: null
+- requirement_id: t2c5.art27
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Article 27 (Format and content of the report on the review
+    of the ICT risk management framework). Each paragraph needs qualified review, and Title II and Title
+    III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_27
+  reviewed_by: null
+- requirement_id: t3c1.art28
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Article 28 (Governance and organisation). Each paragraph
+    needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_28
+  reviewed_by: null
+- requirement_id: t3c1.art29
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Article 29 (Information security policy and measures).
+    Each paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_29
+  reviewed_by: null
+- requirement_id: t3c1.art30
+  control_id: ctl.asset_inventory
+  rationale: 'Candidate: documentary measure for Article 30 (Classification of information assets and
+    ICT assets). Each paragraph needs qualified review, and Title II and Title III apply to different
+    financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_30
+  reviewed_by: null
+- requirement_id: t3c1.art31
+  control_id: ctl.risk_analysis
+  rationale: 'Candidate: documentary measure for Article 31 (ICT risk management). Each paragraph needs
+    qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_31
+  reviewed_by: null
+- requirement_id: t3c1.art32
+  control_id: ctl.physical_security
+  rationale: 'Candidate: documentary measure for Article 32 (Physical and environmental security). Each
+    paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_32
+  reviewed_by: null
+- requirement_id: t3c2.art33
+  control_id: ctl.access_review
+  rationale: 'Candidate: documentary measure for Article 33 (Access Control). Each paragraph needs qualified
+    review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_33
+  reviewed_by: null
+- requirement_id: t3c2.art34
+  control_id: ctl.secure_configuration
+  rationale: 'Candidate: documentary measure for Article 34 (ICT operations security). Each paragraph
+    needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_34
+  reviewed_by: null
+- requirement_id: t3c2.art35
+  control_id: ctl.security_architecture
+  rationale: 'Candidate: documentary measure for Article 35 (Data, system and network security). Each
+    paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_35
+  reviewed_by: null
+- requirement_id: t3c2.art36
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Article 36 (ICT security testing). Each paragraph needs
+    qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_36
+  reviewed_by: null
+- requirement_id: t3c2.art37
+  control_id: ctl.secure_procurement
+  rationale: 'Candidate: documentary measure for Article 37 (ICT systems acquisition, development, and
+    maintenance). Each paragraph needs qualified review, and Title II and Title III apply to different
+    financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_37
+  reviewed_by: null
+- requirement_id: t3c2.art38
+  control_id: ctl.change_vulnerability_review
+  rationale: 'Candidate: documentary measure for Article 38 (ICT project and change management). Each
+    paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_38
+  reviewed_by: null
+- requirement_id: t3c3.art39
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Article 39 (Components of the ICT business continuity
+    plan). Each paragraph needs qualified review, and Title II and Title III apply to different financial
+    entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_39
+  reviewed_by: null
+- requirement_id: t3c3.art40
+  control_id: ctl.continuity_restore
+  rationale: 'Candidate: documentary measure for Article 40 (Testing of business continuity plans). Each
+    paragraph needs qualified review, and Title II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_40
+  reviewed_by: null
+- requirement_id: t3c4.art41
+  control_id: ctl.security_governance
+  rationale: 'Candidate: documentary measure for Article 41 (Format and content of the report on the review
+    of the simplified ICT risk management framework). Each paragraph needs qualified review, and Title
+    II and Title III apply to different financial entities.'
+  source: https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:32024R1774#art_41
+  reviewed_by: null

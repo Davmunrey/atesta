@@ -1,0 +1,93 @@
+id: dora_rts_2024_1774
+name: DORA · RTS (UE) 2024/1774 · Gestión del riesgo TIC
+version: 2024-1774.draft1
+jurisdiction: EU; financial entities under Regulation (EU) 2022/2554
+source: https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32024R1774
+license_notes: Official Journal text (ES and EN) reproduced from the EU Publications Office, with corrigendum
+  32024R1774R(02) applied; reuse of EU documents is authorised under Commission Decision 2011/833/EU,
+  © European Union. Articles 1 to 41 are imported; coverage.yaml accounts for Article 42.
+status: draft
+attributes:
+  content_state: partial
+  assessment_enabled: false
+  summary_es: 'Las normas técnicas de regulación que especifican las herramientas, métodos, procesos y
+    políticas de gestión del riesgo relacionado con las TIC y el marco simplificado: artículos 1 a 41,
+    en español e inglés. Mapeos candidatos pendientes de revisión cualificada. No es una evaluación.'
+  summary_en: 'The regulatory technical standards specifying ICT risk management tools, methods, processes
+    and policies, and the simplified framework: Articles 1 to 41, in Spanish and English. Candidate mappings
+    await qualified review. Not an assessment.'
+  scope_es: Entidades financieras sujetas a DORA. El título II desarrolla el artículo 15 de DORA; el título
+    III recoge el marco simplificado para las entidades financieras del artículo 16, apartado 1, de DORA.
+  scope_en: Financial entities subject to DORA. Title II details Article 15 of DORA; Title III sets out
+    the simplified framework for the financial entities referred to in Article 16(1) of DORA.
+  applicability_es: Determina con tu revisor si tu entidad aplica el título II o el título III. El artículo
+    1 pide tener en cuenta el perfil de riesgo global y la complejidad de la entidad.
+  applicability_en: Decide with your reviewer whether your entity applies Title II or Title III. Article
+    1 asks for the entity's overall risk profile and complexity to be taken into account.
+  limitations_es: Importados los artículos 1 a 41. Las demás normas técnicas de DORA (clasificación y
+    notificación de incidentes, registro de información, pruebas de penetración guiadas por amenazas,
+    subcontratación) no se importan todavía.
+  limitations_en: Articles 1 to 41 are imported. The other DORA technical standards (incident classification
+    and reporting, register of information, threat-led penetration testing, subcontracting) are not imported
+    yet.
+  preparation_controls:
+  - ctl.risk_analysis
+  - ctl.security_governance
+  - ctl.asset_inventory
+  - ctl.cryptography_review
+  - ctl.secure_configuration
+  - ctl.capacity_resilience
+  - ctl.change_vulnerability_review
+  - ctl.information_handling
+  - ctl.activity_logging_review
+  - ctl.security_architecture
+  - ctl.secure_procurement
+  - ctl.physical_security
+  - ctl.people_awareness
+  - ctl.authentication_review
+  - ctl.access_review
+  - ctl.incident_response
+  - ctl.threat_monitoring
+  - ctl.continuity_restore
+  source_refs:
+  - https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32024R1774
+  - https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1774
+  - https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32024R1774R(02)
+  verified_on: '2026-11-23'
+  groups_es:
+  - prefix: t1
+    title: TÍTULO I · PRINCIPIO GENERAL
+    title_en: TITLE I · GENERAL PRINCIPLE
+  - prefix: t2c1
+    title: TÍTULO II · CAPÍTULO I · Políticas, procedimientos, protocolos y herramientas en materia de
+      seguridad de las TIC
+    title_en: TITLE II · CHAPTER I · ICT Security policies, procedures, protocols, and tools
+  - prefix: t2c2
+    title: TÍTULO II · Capítulo II · Política de recursos humanos y control de acceso
+    title_en: TITLE II · CHAPTER II · Human resources policy and access control
+  - prefix: t2c3
+    title: TÍTULO II · CAPÍTULO III · Detección de incidentes relacionados con las TIC y respuesta a tales
+      incidentes
+    title_en: TITLE II · CHAPTER III · ICT-related incident detection and response
+  - prefix: t2c4
+    title: TÍTULO II · CAPÍTULO IV · Gestión de la continuidad de la actividad en materia de TIC
+    title_en: TITLE II · CHAPTER IV · ICT business continuity management
+  - prefix: t2c5
+    title: TÍTULO II · CAPÍTULO V · Informe sobre la revisión del marco de gestión del riesgo relacionado
+      con las TIC
+    title_en: TITLE II · CHAPTER V · Report on the ICT risk management framework review
+  - prefix: t3c1
+    title: TÍTULO III · CAPÍTULO I · Marco simplificado de gestión del riesgo relacionado con las TIC
+    title_en: TITLE III · CHAPTER I · Simplified ICT risk management framework
+  - prefix: t3c2
+    title: TÍTULO III · CAPÍTULO II · Otros elementos de los sistemas, protocolos y herramientas para
+      minimizar las consecuencias del riesgo relacionado con las TIC
+    title_en: TITLE III · CHAPTER II · Further elements of systems, protocols, and tools to minimise the
+      impact of ICT risk
+  - prefix: t3c3
+    title: TÍTULO III · CAPÍTULO III · Gestión de la continuidad de la actividad en materia de TIC
+    title_en: TITLE III · CHAPTER III · ICT business continuity management
+  - prefix: t3c4
+    title: TÍTULO III · CAPÍTULO IV · Informe sobre la revisión del marco simplificado de gestión del
+      riesgo relacionado con las TIC
+    title_en: TITLE III · CHAPTER IV · Report on the review of the simplified ICT risk management framework
