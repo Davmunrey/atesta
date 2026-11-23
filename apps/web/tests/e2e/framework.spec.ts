@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
+import { settled } from "./polish";
 import { framework, paperEvidence, passingReview, preparationFramework, requirementGuidance, withManualControl } from "../fixtures/framework";
 import { overview } from "../fixtures/overview";
 
@@ -42,6 +43,7 @@ test("evidence form supports keyboard submission and responsive themes", async (
       await page.setViewportSize({ width, height: 900 });
       await expect(page.locator("body")).toHaveCSS("background-color", colorScheme === "dark" ? "rgb(23, 23, 21)" : "rgb(244, 241, 234)");
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await settled(page);
       const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
       expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id)).toEqual([]);
     }
@@ -107,6 +109,7 @@ test("framework register supports navigation, guidance, filters, locales and res
         await expect(row.locator("summary strong")).toHaveCSS("color", dark ? "rgb(244, 241, 234)" : "rgb(20, 20, 20)");
         await expect(page.getByRole("contentinfo").getByRole("link")).toHaveCSS("color", dark ? "rgb(192, 186, 174)" : "rgb(85, 81, 74)");
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        await settled(page);
         const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
         expect(violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => `${v.id}: ${v.nodes.map((n) => n.failureSummary).join("; ")}`), `${locale}/${colorScheme}/${width}`).toEqual([]);
       }
@@ -133,6 +136,7 @@ test("preparation exposes scope, missing work, official rules and configuration 
   for (const width of [375, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await settled(page);
     const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
     expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id)).toEqual([]);
   }
@@ -160,6 +164,7 @@ test("an owner records a human review of a manual control, accessibly and within
   for (const width of [375, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await settled(page);
     const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
     expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id), `${width}`).toEqual([]);
   }

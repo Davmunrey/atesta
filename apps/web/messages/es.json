@@ -98,7 +98,11 @@
       "not_found": "No encontramos esa conexión, o no tienes acceso.",
       "over_privileged": "El escaneo se detuvo: la conexión tiene más permisos de los necesarios. Atesta solo usa permisos de lectura; retira los demás y vuelve a verificarla.",
       "revoked": "El escaneo se detuvo: se revocó el acceso de la conexión. Vuelve a conectarla para seguir escaneando.",
-      "state_invalid": "Esta conexión ya no admite ese cambio. Recarga la página."
+      "state_invalid": "Esta conexión ya no admite ese cambio. Recarga la página.",
+      "signin_invalid": "El inicio de sesión con Microsoft no es válido o ha caducado. Vuelve a empezar la conexión desde Atesta.",
+      "consent_denied": "No se concedió el consentimiento de administrador en Microsoft, así que la conexión no avanza. Vuelve a intentarlo con una cuenta de administrador global o de administrador de roles con privilegios.",
+      "tenant_mismatch": "Microsoft devolvió un inquilino distinto del de tu inicio de sesión, o de este enlace. No se ha guardado nada; vuelve a empezar con una cuenta del inquilino correcto.",
+      "microsoft_unavailable": "No podemos contactar con Microsoft en este momento, o la conexión con Microsoft 365 aún no está disponible aquí. Inténtalo de nuevo más tarde."
     },
     "identity": {
       "already_member": "Esta persona ya es miembro de la organización.",
@@ -213,6 +217,7 @@
     "accessOn": "Acceso hasta el {date}"
   },
   "invite": {
+    "unavailable": "Invitación no disponible",
     "title": "Únete a la organización",
     "signedInAs": "Vas a aceptar la invitación como {email}.",
     "accept": "Aceptar invitación",
@@ -578,6 +583,7 @@
       "control_reviewed": "Revisó un control",
       "evidence_statement_recorded": "Registró una evidencia",
       "connection_created": "Creó una conexión",
+      "connection_consent_granted": "Concedió el consentimiento de Microsoft 365",
       "connection_disconnected": "Desconectó una conexión",
       "scan_requested": "Solicitó un análisis",
       "access_review_created": "Abrió una revisión de accesos",
@@ -895,6 +901,7 @@
     }
   },
   "trainingLink": {
+    "unavailable": "Formación no disponible",
     "loading": "Cargando…",
     "missing": "Falta el enlace de la formación. Ábrelo tal como te lo enviaron.",
     "heading": "Confirmar la lectura",

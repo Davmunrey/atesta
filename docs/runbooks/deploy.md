@@ -162,6 +162,11 @@ step 5 approve each run.
 - If new tasks fail their health checks, ECS's circuit breaker rolls the service back to the
   previous task definition.
 
+**The database engine is PostgreSQL 18** (`infra/modules/rds`, #299). RDS applies 18.x minor
+versions itself in the Sunday maintenance window. A major upgrade is a planned change of the RDS
+module, CI and `compose.yaml` together. On a running instance it also needs a new `postgresN`
+parameter group, `allow_major_version_upgrade`, and a manual snapshot taken first.
+
 ## 8. Rollback
 
 | What broke | Do |

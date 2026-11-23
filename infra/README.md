@@ -22,7 +22,9 @@ are validated (`tofu validate`) and their security settings are tested (`infra/t
 applied. Deploying is `.github/workflows/deploy.yml`; the steps, rollback and costs are in
 [docs/runbooks/deploy.md](../docs/runbooks/deploy.md).
 
-- `rds`: the application roles come from `apps/api/migrations/bootstrap.sql`, run once as the
+- `rds`: PostgreSQL 18, the newest major RDS offers in eu-south-2 (#299). The engine major, the
+  parameter group family (`postgres18`) and the CI and compose image major move together;
+  `infra/tests` fails when they differ. The application roles come from `apps/api/migrations/bootstrap.sql`, run once as the
   master user. Their connection URLs go into the two secrets the module creates; values are set by
   hand, never committed.
 - `ecr` comes first: images are pushed, then `envs/dev` takes them pinned by digest (`images`);

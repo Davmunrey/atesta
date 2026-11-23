@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
+import { settled } from "./polish";
 import { framework } from "../fixtures/framework";
 import { overview } from "../fixtures/overview";
 
@@ -28,6 +29,7 @@ async function createOrganization(page: Page) {
 }
 
 async function expectAccessible(page: Page, where: string) {
+  await settled(page);
   const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
   expect(violations.filter((v) => ["serious", "critical"].includes(v.impact ?? "")).map((v) => v.id), where).toEqual([]);
 }
