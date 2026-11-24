@@ -1,3 +1,8 @@
+# One workspace at the repository root (ADR-017): the console and the shared UI package. The
+# operator portal joins when it is built.
+packages:
+  - apps/web
+  - packages/ui
 # Same 7-day cooldown as uv's exclude-newer (pnpm docs, dependency resolution settings).
 minimumReleaseAge: 10080
 # next-intl pulls these for its optional message extraction; prebuilt binaries, no install scripts.

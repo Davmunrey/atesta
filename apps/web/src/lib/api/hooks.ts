@@ -1,31 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { expectOk, unwrap } from "@atesta/ui/api-error";
 import type { components } from "@/lib/api/schema";
 import type { Role } from "@/lib/permissions";
 import { api } from "./client";
-import { errorCode } from "./errors";
-
-export class ApiError extends Error {
-  constructor(
-    readonly status: number,
-    readonly code: string | null,
-  ) {
-    super(code ?? `HTTP ${status}`);
-  }
-}
-
-type Result<T> = { data?: T; error?: unknown; response: Response };
-
-export async function unwrap<T>(call: Promise<Result<T>>): Promise<T> {
-  const { data, error, response } = await call;
-  if (data === undefined) throw new ApiError(response.status, errorCode(error));
-  return data;
-}
-
-/** For 204 responses, which carry no body. */
-export async function expectOk(call: Promise<{ error?: unknown; response: Response }>): Promise<void> {
-  const { error, response } = await call;
-  if (!response.ok) throw new ApiError(response.status, errorCode(error));
-}
 
 export const ME = ["me"] as const;
 const members = (orgId: string) => ["members", orgId] as const;

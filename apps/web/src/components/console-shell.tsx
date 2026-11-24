@@ -10,8 +10,8 @@ import { LOGOUT_URL } from "@/lib/auth";
 import { type Membership, orgAccessReviews, orgActivity, orgConnections, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgIncidents, orgIntegrations, orgMyWork, orgNotifications, orgPolicies, orgReport, orgSettings, orgTraining, selectOrg } from "@/lib/org";
 import { canInvite, canReviewControls, isContributor } from "@/lib/permissions";
 import { useMe } from "./auth-gate";
-import { Icon, type IconName } from "./icons";
-import { LocaleSwitcher } from "./locale-switcher";
+import { Icon, type IconName } from "@atesta/ui/icons";
+import { LocaleSwitcher } from "@atesta/ui/locale-switcher";
 import { SiteFooter } from "./site-footer";
 import { BrandMark } from "./brand-mark";
 

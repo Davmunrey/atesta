@@ -3,8 +3,8 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { useMe } from "@/components/auth-gate";
-import { ErrorMessage } from "@/components/error-message";
-import { ApiError } from "@/lib/api/hooks";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { ApiError } from "@atesta/ui/api-error";
 import { OverviewDashboard } from "@/components/overview-dashboard";
 import { selectOrg } from "@/lib/org";
 

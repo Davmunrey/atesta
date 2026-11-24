@@ -4,11 +4,12 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Suspense } from "react";
 import { useMe } from "@/components/auth-gate";
-import { ErrorMessage } from "@/components/error-message";
+import { ErrorMessage } from "@atesta/ui/error-message";
 import { FrameworkLedger } from "@/components/framework-ledger";
-import { LoadError, Loading, PageHeader } from "@/components/page-frame";
+import { LoadError, Loading, PageHeader } from "@atesta/ui/page-frame";
 import { ScanHistory } from "@/components/scan-history";
-import { ApiError, useOverview } from "@/lib/api/hooks";
+import { ApiError } from "@atesta/ui/api-error";
+import { useOverview } from "@/lib/api/hooks";
 import { useReadiness } from "@/lib/api/register-hooks";
 import { orgHome, selectOrg } from "@/lib/org";
 

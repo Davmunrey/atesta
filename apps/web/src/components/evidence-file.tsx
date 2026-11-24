@@ -3,12 +3,12 @@
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useId, useRef, useState } from "react";
 import { useDownloadEvidenceFile, useUploadEvidenceFile } from "@/lib/api/evidence-hooks";
-import { ApiError } from "@/lib/api/hooks";
+import { ApiError } from "@atesta/ui/api-error";
 import type { components } from "@/lib/api/schema";
-import { fileSize } from "@/lib/format";
-import type { State } from "@/lib/severity";
-import { Badge } from "./badge";
-import { ErrorMessage } from "./error-message";
+import { fileSize } from "@atesta/ui/format";
+import type { State } from "@atesta/ui/severity";
+import { Badge } from "@atesta/ui/badge";
+import { ErrorMessage } from "@atesta/ui/error-message";
 
 type StoredFile = components["schemas"]["FileOut"];
 type Limits = components["schemas"]["FileUploads"];

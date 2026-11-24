@@ -90,7 +90,7 @@
   ],
   "narrative": {
     "northStar": "Paper and ink",
-    "overview": "The approved identity uses warm paper, dark ink, editorial headings and a yellow highlighter. The dashboard extends this identity into a working review surface: readable rows, explicit labels and recorded provenance. It does not introduce a replacement visual world.\n\nThis record describes implemented styles, not the future landing composition. Source authority: `apps/web/src/styles/tokens.css`, `apps/web/src/app/globals.css` and `apps/web/src/styles/dashboard.css`; inherited identity: decisions L4/L5 in `docs/specs/landing-legal.md`. The dashboard composition and behavior remain in `docs/specs/dashboard-overview.md`.",
+    "overview": "The approved identity uses warm paper, dark ink, editorial headings and a yellow highlighter. The dashboard extends this identity into a working review surface: readable rows, explicit labels and recorded provenance. It does not introduce a replacement visual world.\n\nThis record describes implemented styles, not the future landing composition. Source authority: `packages/ui/src/styles/tokens.css`, `packages/ui/src/styles/base.css`, `apps/web/src/app/globals.css` and `apps/web/src/styles/dashboard.css`; inherited identity: decisions L4/L5 in `docs/specs/landing-legal.md`. The dashboard composition and behavior remain in `docs/specs/dashboard-overview.md`.",
     "keyCharacteristics": [
       "Newsreader page titles paired with IBM Plex Sans interface text and IBM Plex Mono identifiers.",
       "Flat paper surfaces, fine rules and restrained rounding.",

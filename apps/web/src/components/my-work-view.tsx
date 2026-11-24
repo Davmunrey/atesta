@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 import { orgHome as homeOf } from "@/lib/org";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { isMyWorkOverdue, useMyWork } from "@/lib/api/register-hooks";
 import { type Membership, orgFramework, orgFrameworks } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
-import { Badge } from "./badge";
+import { Badge } from "@atesta/ui/badge";
 
 /** Mi trabajo (rbac spec): what the signed-in person has to do, soonest first. */
 export function MyWorkView({ org }: { org: Membership }) {

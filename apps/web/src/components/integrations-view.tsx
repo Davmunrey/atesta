@@ -6,10 +6,10 @@ import { type FormEvent, useId, useState } from "react";
 import { type ApiToken, curlExample, RATE_LIMITS, type Scope, SCOPES, useApiTokens, useApiTokenUsage, useCreateApiToken, useRevokeApiToken } from "@/lib/api/tokens";
 import { evidenceTemplate, type TemplateFormat, USE_CASES, type UseCase } from "@/lib/evidence-templates";
 import { type Membership, orgHome } from "@/lib/org";
-import { Badge } from "./badge";
-import { ErrorMessage } from "./error-message";
-import { Icon } from "./icons";
-import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { Badge } from "@atesta/ui/badge";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { Icon } from "@atesta/ui/icons";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 import { RecordSummary, useRecordStates } from "./record-summary";
 
 const EXPIRIES = [30, 90, 180, 365] as const;

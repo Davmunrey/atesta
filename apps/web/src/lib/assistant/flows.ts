@@ -1,6 +1,7 @@
 /** Guided-flow logic and helpers (assistant spec). Pure; nothing here judges compliance (ADR-005). */
 import { orgFramework } from "@/lib/org";
-import type { Doc, FlowData, Index, Locale, Text } from "./types";
+import type { Locale } from "@atesta/ui/i18n/locale";
+import type { Doc, FlowData, Index, Text } from "./types";
 
 export const INDEX_URL = "/assistant/index.json";
 

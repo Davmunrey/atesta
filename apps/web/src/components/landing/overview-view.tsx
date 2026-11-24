@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import fixture from "@/content/landing-fixture.json";
-import { Icon } from "../icons";
+import { Icon } from "@atesta/ui/icons";
 import { CountUp } from "./count-up";
 import { ViewFrame } from "./view-frame";
 

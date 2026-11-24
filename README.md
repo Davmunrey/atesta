@@ -24,6 +24,7 @@ apps/
 scanner/      Container image: pinned Prowler + Atesta custom checks
 packages/
   core/       Pure domain logic: scoring, diff
+  ui/         Shared web UI (@atesta/ui): tokens, fonts, shared components, CSP build step
 catalog/      Common controls and framework packs (YAML): ENS, NIS2, DORA, GDPR, LOPDGDD, ISO 27001, SOC 2
 infra/        OpenTofu (AWS eu-south-2)
 docs/adr/     Architecture decision records

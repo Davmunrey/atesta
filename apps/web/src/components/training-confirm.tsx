@@ -1,13 +1,12 @@
 "use client";
 
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useMessages, useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useId, useState } from "react";
-import { ApiError } from "@/lib/api/hooks";
-import { messageKey } from "@/lib/api/errors";
+import { ApiError, messageKey } from "@atesta/ui/api-error";
 import { useAcknowledge, useTrainingLink } from "@/lib/api/routines";
-import { ErrorMessage } from "./error-message";
+import { ErrorMessage } from "@atesta/ui/error-message";
 import { LinkProblem } from "./public-header";
-import { Icon } from "./icons";
+import { Icon } from "@atesta/ui/icons";
 
 export const TRAINING_KEY = "atesta_training:v1";
 
@@ -46,6 +45,7 @@ export function captureTrainingToken(): string | null {
 export function TrainingConfirm() {
   const t = useTranslations("trainingLink");
   const errors = useTranslations();
+  const messages = useMessages();
   const format = useFormatter();
   const [token, setToken] = useState<string | null | undefined>(undefined);
   // Browser-only state (the fragment), read once after hydration.
@@ -60,7 +60,7 @@ export function TrainingConfirm() {
     // A refused link (4xx) is the link's problem, not a form error: a malformed token reads as invalid.
     const error = link.error;
     if (!(error instanceof ApiError) || error.status >= 500) return <ErrorMessage error={error} />;
-    return <LinkProblem title={t("unavailable")}>{errors(messageKey(error.status === 422 ? "compliance.training_link_invalid" : error.code))}</LinkProblem>;
+    return <LinkProblem title={t("unavailable")}>{errors(messageKey(error.status === 422 ? "compliance.training_link_invalid" : error.code, messages))}</LinkProblem>;
   }
   const campaign = link.data;
   function submit(e: FormEvent<HTMLFormElement>) {

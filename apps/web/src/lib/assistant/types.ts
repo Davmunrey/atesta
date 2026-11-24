@@ -1,6 +1,5 @@
 /** The assistant's index (assistant spec): catalog content quoted verbatim, each piece cited. */
 
-export type Locale = "es" | "en";
 /** One text in both languages; `en` is null when no English is published. */
 export type Text = { es: string | null; en: string | null };
 

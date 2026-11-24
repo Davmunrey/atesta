@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 import { orgHome as homeOf } from "@/lib/org";
 import { useState } from "react";
 import { useActivity } from "@/lib/api/hooks";

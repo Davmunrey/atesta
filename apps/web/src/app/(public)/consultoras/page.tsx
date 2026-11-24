@@ -3,7 +3,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { AssistantLauncher } from "@/components/assistant/launcher";
 import { BrandMark } from "@/components/brand-mark";
-import { Icon } from "@/components/icons";
+import { Icon } from "@atesta/ui/icons";
 import { ViewFrame } from "@/components/landing/view-frame";
 import fixture from "@/content/landing-fixture.json";
 import { legalEntity } from "@/content/legal-entity";

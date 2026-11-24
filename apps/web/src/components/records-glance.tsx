@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useAccessReviews, useIncidents, usePolicies, useTrainingCampaigns } from "@/lib/api/routines";
 import { type Membership, orgAccessReviews, orgIncidents, orgPolicies, orgTraining } from "@/lib/org";
-import { Badge } from "./badge";
-import { Panel } from "./page-frame";
+import { Badge } from "@atesta/ui/badge";
+import { Panel } from "@atesta/ui/page-frame";
 import { RecordBadge, type RecordState, useRecordSentence, useRecordStates } from "./record-summary";
 
 type Row = { name: string; href: string; query: UseQueryResult<unknown[]>; empty: string; read: () => RecordState };

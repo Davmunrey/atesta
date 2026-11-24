@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { components } from "@/lib/api/schema";
 import { api } from "./client";
-import { expectOk, unwrap } from "./hooks";
+import { expectOk, unwrap } from "@atesta/ui/api-error";
 
 export type ApiToken = components["schemas"]["TokenOut"];
 export type Scope = components["schemas"]["TokenIn"]["scopes"][number];

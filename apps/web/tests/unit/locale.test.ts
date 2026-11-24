@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_LOCALE, LOCALE_COOKIE, localeCookie, localeFromCookie } from "@/i18n/locale";
+import { DEFAULT_LOCALE, LOCALE_COOKIE, localeCookie, localeFromCookie } from "@atesta/ui/i18n/locale";
 
 describe("localeFromCookie", () => {
   it("defaults to Spanish", () => {

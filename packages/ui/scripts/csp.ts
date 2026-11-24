@@ -3,10 +3,11 @@
  * CloudFront sends (infra spec applies it). A static export has no per-request nonce, and one
  * hash per page grew the header towards CloudFront's limit (#212), so every inline script moves
  * into a same-origin file named by its SHA-256 and `script-src 'self'` covers it.
- * Usage: node scripts/csp.ts (after next build). Writes csp-policy.json next to out/.
+ * Usage, from the app's directory after next build: node node_modules/@atesta/ui/scripts/csp.ts.
+ * Shared by every Atesta web app (ADR-017); writes csp-policy.json next to the app's out/.
  */
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, realpathSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -71,8 +72,9 @@ function htmlFiles(dir: string): string[] {
   );
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const root = fileURLToPath(new URL("..", import.meta.url));
+// The app runs this file through its node_modules link, so compare real paths.
+if (process.argv[1] && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const root = process.cwd();
   const out = join(root, "out");
   const pages = htmlFiles(out).map((file) => {
     const moved = externalize(readFileSync(file, "utf8"));

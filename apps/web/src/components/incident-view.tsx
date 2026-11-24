@@ -6,10 +6,10 @@ import { type IncidentClock, useIncident, useIncidentUpdate } from "@/lib/api/ro
 import { localInput } from "./incidents-view";
 import { type Membership, orgHome, orgIncidents } from "@/lib/org";
 import { isContributor } from "@/lib/permissions";
-import { Badge, ClockBadge } from "./badge";
-import { ErrorMessage } from "./error-message";
-import { Icon } from "./icons";
-import { LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { Badge, ClockBadge } from "@atesta/ui/badge";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { Icon } from "@atesta/ui/icons";
+import { LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 
 /** One incident: its reporting deadlines from pack content, its entries, and closing it. */
 export function IncidentView({ org, incidentId }: { org: Membership; incidentId: string }) {

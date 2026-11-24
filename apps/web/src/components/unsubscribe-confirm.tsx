@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useUnsubscribe } from "@/lib/api/notifications";
-import { ErrorMessage } from "./error-message";
+import { ErrorMessage } from "@atesta/ui/error-message";
 import { LinkProblem } from "./public-header";
 
 const KEY = "atesta_unsubscribe:v1";

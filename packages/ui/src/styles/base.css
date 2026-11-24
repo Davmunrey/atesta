@@ -1,0 +1,38 @@
+/*
+ * Base element styles shared by every Atesta web app (ADR-017). Values come from tokens.css.
+ * The package's own files are scanned for utility classes, as the app's are.
+ */
+@source "../../";
+
+@layer base {
+  body { line-height: 1.6; }
+  a, button, input, select { -webkit-tap-highlight-color: transparent; }
+  button, select, input { min-height: 2.75rem; }
+  input, select { max-width: 100%; }
+  /* Foreground/background swaps must be atomic to keep contrast during state changes. */
+  button { transition: opacity 180ms ease-out; }
+  .bg-accent:is(a, button):hover { text-decoration: underline; }
+  button:enabled, select:enabled { cursor: pointer; }
+  button:disabled, select:disabled { cursor: not-allowed; opacity: 0.6; }
+  a { text-underline-offset: 0.2em; }
+  a:hover { text-decoration-thickness: 2px; }
+  /* The console lets long unbroken names shrink their grid cell (min-content), so it keeps `anywhere`.
+     Public pages break a word only when it cannot fit on its own line (landing-legal A4). */
+  h1, h2, p, li { overflow-wrap: anywhere; }
+  .landing :is(h1, h2, p, li) { overflow-wrap: break-word; }
+  p { text-wrap: pretty; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

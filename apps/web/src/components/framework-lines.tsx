@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import type { components } from "@/lib/api/schema";
 import type { Readiness } from "@/lib/api/register-hooks";
-import { percent } from "@/lib/format";
+import { percent } from "@atesta/ui/format";
 import { orgFramework, orgFrameworks } from "@/lib/org";
-import { Panel } from "./page-frame";
+import { Panel } from "@atesta/ui/page-frame";
 
 type Framework = components["schemas"]["FrameworkSummary"];
 

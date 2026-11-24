@@ -2,12 +2,13 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { type ReactNode, createContext, use, useEffect } from "react";
-import { isLocale } from "@/i18n/locale";
-import { ApiError, useMeQuery } from "@/lib/api/hooks";
+import { isLocale } from "@atesta/ui/i18n/locale";
+import { ApiError } from "@atesta/ui/api-error";
+import { useMeQuery } from "@/lib/api/hooks";
 import type { components } from "@/lib/api/schema";
 import { loginUrl } from "@/lib/auth";
 import { goTo } from "@/lib/navigation";
-import { ErrorMessage } from "./error-message";
+import { ErrorMessage } from "@atesta/ui/error-message";
 
 type Me = components["schemas"]["MeOut"];
 const MeContext = createContext<Me | null>(null);

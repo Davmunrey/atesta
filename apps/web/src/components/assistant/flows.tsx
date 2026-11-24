@@ -3,7 +3,8 @@
 import { useLocale, useTranslations } from "next-intl";
 import { type ReactNode, useId, useState } from "react";
 import { categoryFor, pick } from "@/lib/assistant/flows";
-import type { Doc, Index, Locale, Text } from "@/lib/assistant/types";
+import type { Locale } from "@atesta/ui/i18n/locale";
+import type { Doc, Index, Text } from "@/lib/assistant/types";
 import { AnswerCard, Cites, Quote } from "./card";
 
 export const FLOWS = ["category", "evidence", "profile", "clocks", "faq"] as const;

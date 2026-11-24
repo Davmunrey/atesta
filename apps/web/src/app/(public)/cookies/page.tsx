@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { LOCALE_COOKIE, ONE_YEAR_SECONDS } from "@/i18n/locale";
+import { LOCALE_COOKIE, ONE_YEAR_SECONDS } from "@atesta/ui/i18n/locale";
 import { INVITE_KEY } from "@/lib/invite";
 
 // Browser tests compare these documented lifetimes with the real API's cookies.

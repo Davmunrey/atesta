@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { components } from "@/lib/api/schema";
 import { api } from "./client";
-import { unwrap } from "./hooks";
+import { unwrap } from "@atesta/ui/api-error";
 
 export type AccessReviewSummary = components["schemas"]["AccessReviewSummary"];
 export type AccessReview = components["schemas"]["AccessReviewOut"];

@@ -8,7 +8,7 @@ import { IncidentsView } from "@/components/incidents-view";
 import { MembersView } from "@/components/members-view";
 import { MyWorkView } from "@/components/my-work-view";
 import { ReportView, monthsUpTo } from "@/components/report-view";
-import { STATE_SEVERITY } from "@/lib/severity";
+import { STATE_SEVERITY } from "@atesta/ui/severity";
 import es from "../../messages/es.json";
 import { renderWithProviders, stubApi } from "./render";
 

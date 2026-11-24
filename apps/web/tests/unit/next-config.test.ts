@@ -23,3 +23,9 @@ it("never writes Next's agent instructions into the repo (ADR-013)", async () =>
     expect((await config(phase)).agentRules).toBe(false);
   }
 });
+
+it("compiles the shared UI package with the app, in every phase (ADR-017)", async () => {
+  for (const phase of [PHASE_PRODUCTION_BUILD, PHASE_DEVELOPMENT_SERVER]) {
+    expect((await config(phase)).transpilePackages).toContain("@atesta/ui");
+  }
+});

@@ -6,9 +6,9 @@ import { type FormEvent, useId, useState } from "react";
 import { parseAccounts, useAccessReviews, useCreateAccessReview } from "@/lib/api/routines";
 import { type Membership, orgAccessReview, orgHome } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
-import { Badge } from "./badge";
-import { ErrorMessage } from "./error-message";
-import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { Badge } from "@atesta/ui/badge";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 import { RecordSummary, useRecordStates } from "./record-summary";
 
 /** Access reviews (recorded-routines spec): who keeps access, decided and recorded per account. */

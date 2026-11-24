@@ -8,8 +8,8 @@ import { isMyWorkOverdue, type MyWorkItem, type Readiness, useMyWork } from "@/l
 import { useRoutinesDue } from "@/lib/api/routines";
 import { type Membership, orgAccessReview, orgFramework, orgIncident, orgMembers, orgMyWork, orgPolicies, orgTrainingCampaign } from "@/lib/org";
 import { canReviewControls, isContributor } from "@/lib/permissions";
-import { Badge, ClockBadge } from "./badge";
-import { Panel } from "./page-frame";
+import { Badge, ClockBadge } from "@atesta/ui/badge";
+import { Panel } from "@atesta/ui/page-frame";
 
 export type Step = { kind: "scope" | "assess" | "review" | "export"; count: number };
 /**

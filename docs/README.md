@@ -76,6 +76,7 @@ Start with the question you have.
 - [requirement-register](specs/requirement-register.md)
 - [scanner-connectors](specs/scanner-connectors.md)
 - [tenant-data-layer](specs/tenant-data-layer.md)
+- [ui-package](specs/ui-package.md)
 - [web-shell](specs/web-shell.md)
 - [workspace-ux](specs/workspace-ux.md)
 

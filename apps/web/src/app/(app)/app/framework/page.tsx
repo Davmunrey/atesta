@@ -3,9 +3,9 @@
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useMe } from "@/components/auth-gate";
-import { ErrorMessage } from "@/components/error-message";
+import { ErrorMessage } from "@atesta/ui/error-message";
 import { FrameworkDetailView } from "@/components/framework-detail";
-import { ApiError } from "@/lib/api/hooks";
+import { ApiError } from "@atesta/ui/api-error";
 import { selectOrg } from "@/lib/org";
 
 export default function FrameworkPage() {

@@ -4,10 +4,10 @@ import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import type { components } from "@/lib/api/schema";
 import Link from "next/link";
-import { percent } from "@/lib/format";
+import { percent } from "@atesta/ui/format";
 import type { Readiness } from "@/lib/api/register-hooks";
 import { orgFramework } from "@/lib/org";
-import { Panel } from "./page-frame";
+import { Panel } from "@atesta/ui/page-frame";
 import { ReadinessBar, ReadinessCounts, StepLink } from "./readiness";
 
 type Framework = components["schemas"]["FrameworkSummary"];

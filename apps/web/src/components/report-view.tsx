@@ -4,7 +4,7 @@ import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { type Report, useReport } from "@/lib/api/report";
 import { type Membership, orgHome } from "@/lib/org";
-import { LoadError, Loading, PageHeader } from "./page-frame";
+import { LoadError, Loading, PageHeader } from "@atesta/ui/page-frame";
 
 /** Months offered in the picker, newest first. */
 const MONTHS_BACK = 24;

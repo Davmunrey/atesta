@@ -2,7 +2,8 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { orgLink, pick } from "@/lib/assistant/flows";
-import type { Citation, Doc, Locale, Text } from "@/lib/assistant/types";
+import type { Locale } from "@atesta/ui/i18n/locale";
+import type { Citation, Doc, Text } from "@/lib/assistant/types";
 
 /** One cited source line (assistant spec): official text links to BOE or EUR-Lex. */
 export function Cite({ cite }: { cite: Citation }) {

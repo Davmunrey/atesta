@@ -502,7 +502,7 @@ answered from the law below and stays open for the owner's tax adviser.
 ## Design notes
 
 - **Build order:**
-  1. `packages/ui` move, with no visual change.
+  1. `packages/ui` move, with no visual change (`ui-package.md`, #440).
   2. Migrations:
      - the role, grants, policies and snapshots;
      - `billing_profiles`;

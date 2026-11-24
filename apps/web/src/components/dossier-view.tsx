@@ -4,7 +4,7 @@ import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { type Dossier, useDossier } from "@/lib/api/dossier";
 import { type Membership, orgFramework, orgFrameworks, orgHome } from "@/lib/org";
 import { ExpectedEvidence } from "./expected-evidence";
-import { LoadError, Loading, PageHeader } from "./page-frame";
+import { LoadError, Loading, PageHeader } from "@atesta/ui/page-frame";
 
 type Requirement = Dossier["requirements"][number];
 
