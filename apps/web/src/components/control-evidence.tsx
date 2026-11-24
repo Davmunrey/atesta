@@ -4,11 +4,14 @@ import { useFormatter, useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useId, useRef, useState } from "react";
 import { EVIDENCE_PAGE_SIZE, useControlEvidence, useRecordEvidence } from "@/lib/api/evidence-hooks";
 import { useMembers } from "@/lib/api/hooks";
+import type { components } from "@/lib/api/schema";
 import { CatalogReference } from "./catalog-reference";
 import { ErrorMessage } from "./error-message";
+import { EvidenceFileForm, EvidenceFileLine } from "./evidence-file";
 import { Empty, LoadError, Loading } from "./page-frame";
 
 type Context = { orgId: string; controlKey: string };
+type FileUploads = components["schemas"]["FileUploads"];
 
 export function ControlEvidence(props: Context) {
   const t = useTranslations("evidence");
@@ -25,12 +28,13 @@ function EvidenceWorkspace({ orgId, controlKey, active }: Context & { active: bo
   const t = useTranslations("evidence");
   const format = useFormatter();
   const [offset, setOffset] = useState(0);
-  const [editing, setEditing] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [editing, setEditing] = useState<"statement" | "file" | null>(null);
+  const [saved, setSaved] = useState<"statement" | "file" | null>(null);
   const recordButton = useRef<HTMLButtonElement>(null);
-  const wasEditing = useRef(false);
-  useEffect(() => {
-    if (!editing && wasEditing.current && active) recordButton.current?.focus();
+  const uploadButton = useRef<HTMLButtonElement>(null);
+  const wasEditing = useRef<"statement" | "file" | null>(null);
+  useEffect(() => {  // back to the button that opened the form
+    if (!editing && wasEditing.current && active) (wasEditing.current === "file" ? uploadButton : recordButton).current?.focus();
     wasEditing.current = editing;
   }, [editing, active]);
   const query = useControlEvidence(orgId, controlKey, offset, active);
@@ -44,9 +48,11 @@ function EvidenceWorkspace({ orgId, controlKey, active }: Context & { active: bo
     }
   }, [query.isFetching, offset, active]);
   const members = useMembers(orgId);
+  // Offered only where the API says uploads work (evidence-file-uploads spec); kept across refetches.
+  const uploads = (query.data as { file_uploads?: FileUploads } | undefined)?.file_uploads;
   return <div className="evidence-workspace">
     <p className="text-sm text-muted">{t("boundary")}</p>
-    {saved ? <p role="status">{t("saved")}</p> : null}
+    {saved ? <p role="status">{t(saved === "file" ? "uploaded" : "saved")}</p> : null}
     <div ref={results} tabIndex={-1} role="region" aria-label={t("pages")} aria-busy={query.isFetching}>
     {query.isPending ? <Loading label={t("loading")} /> : query.isError ? <LoadError error={query.error} onRetry={() => void query.refetch()} />
     : query.data ? <>
@@ -55,7 +61,7 @@ function EvidenceWorkspace({ orgId, controlKey, active }: Context & { active: bo
         {query.data.items.map((item) => <li key={item.id}>
           <strong>{item.title}</strong>
           <p className="evidence-metadata">{t("recorded", { author: members.data?.find((m) => m.user_id === item.created_by)?.email ?? t(item.kind === "scan_output" ? "scanner" : "member"), date: format.dateTime(new Date(item.created_at), { dateStyle: "medium", timeStyle: "short" }) })}</p>
-          <p className="evidence-statement">{item.statement ?? t("collected")}</p>
+          {item.file ? <EvidenceFileLine orgId={orgId} evidenceId={item.id} file={item.file} /> : <p className="evidence-statement">{item.statement ?? t("collected")}</p>}
           {item.reference_url ? <p className="evidence-reference"><CatalogReference value={item.reference_url} /></p> : null}
         </li>)}
       </ol>}
@@ -66,8 +72,12 @@ function EvidenceWorkspace({ orgId, controlKey, active }: Context & { active: bo
       </nav> : null}
     </> : null}
     </div>
-    {editing ? <EvidenceForm orgId={orgId} controlKey={controlKey} onDone={(ok) => { setEditing(false); setSaved(ok); if (ok) setOffset(0); }} />
-      : <button ref={recordButton} type="button" className="dashboard-button" onClick={() => { setEditing(true); setSaved(false); }}>{t("record")}</button>}
+    {editing === "statement" ? <EvidenceForm orgId={orgId} controlKey={controlKey} onDone={(ok) => { setEditing(null); setSaved(ok ? "statement" : null); if (ok) setOffset(0); }} />
+      : editing === "file" && uploads ? <EvidenceFileForm orgId={orgId} controlKey={controlKey} limits={uploads} onDone={(ok) => { setEditing(null); setSaved(ok ? "file" : null); if (ok) setOffset(0); }} />
+      : <div className="evidence-actions">
+        <button ref={recordButton} type="button" className="dashboard-button" onClick={() => { setEditing("statement"); setSaved(null); }}>{t("record")}</button>
+        {uploads?.enabled ? <button ref={uploadButton} type="button" className="dashboard-button" onClick={() => { setEditing("file"); setSaved(null); }}>{t("upload")}</button> : null}
+      </div>}
   </div>;
 }
 
