@@ -2,7 +2,9 @@
 
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any
 
 from atesta_scanner.invocation import prowler_argv
 
@@ -11,6 +13,19 @@ _KEYS = frozenset(
     {"organization_id", "scan_id", "attempt", "provider", "tenant", "excluded", "allowlist_version"}
 )
 _VERSIONS = {"m365": frozenset({"m365-v1"}), "google_workspace": frozenset({"google-v1"})}
+_GOOGLE = frozenset({"google_subject", "google_service_accounts"})
+_ALLOWED = {  # (required, optional) keys beyond _KEYS
+    "m365": (frozenset(), frozenset({"admin_oid"})),
+    "google_workspace": (_GOOGLE, frozenset({"verified_since"})),
+}
+# Google usernames are letters, digits, dashes, underscores, apostrophes and periods; the domain
+# is a DNS name. Nothing else reaches the users.get path or Prowler's environment.
+_EMAIL = re.compile(
+    r"[A-Za-z0-9._'+-]{1,64}@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}"
+)
+_CUSTOMER = re.compile(r"C[0-9A-Za-z]{4,20}")
+_DOMAIN = re.compile(r"(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}")
+_UNIQUE_ID = re.compile(r"[0-9]{6,30}")
 
 
 class JobError(ValueError):
@@ -27,6 +42,40 @@ class Job:
     excluded: tuple[str, ...]
     allowlist_version: str  # the verifier compares grants with this version's expected set
     admin_oid: str | None = None  # activation only: the consenting admin to bind (step 6, #331)
+    # Google only (issue 390): the super admin to impersonate (never logged), both service
+    # accounts' IAM uniqueIds, and the last `ok` verification the audit log is re-read from.
+    google_subject: str | None = field(default=None, repr=False)
+    google_service_accounts: tuple[str, ...] = ()
+    verified_since: datetime | None = None
+
+
+def _google(data: dict[str, Any]) -> dict[str, Any]:
+    subject, accounts = data["google_subject"], data["google_service_accounts"]
+    if not (isinstance(subject, str) and len(subject) <= 254 and _EMAIL.fullmatch(subject)):
+        raise JobError("job google_subject is not an email")
+    if not (
+        isinstance(accounts, list)
+        and len(accounts) == 2
+        and len(set(accounts)) == 2
+        and all(isinstance(a, str) and _UNIQUE_ID.fullmatch(a) for a in accounts)
+    ):
+        raise JobError("job google_service_accounts must be two numeric ids")
+    tenant = data["tenant"]
+    if not (isinstance(tenant, str) and (_CUSTOMER.fullmatch(tenant) or _DOMAIN.fullmatch(tenant))):
+        raise JobError("job google tenant is neither a customer id nor a domain")
+    since = data.get("verified_since")
+    if since is not None:
+        try:
+            since = datetime.fromisoformat(since) if isinstance(since, str) else None
+        except ValueError:
+            since = None
+        if since is None or since.utcoffset() is None:
+            raise JobError("job verified_since is not a time with a zone")
+    return {
+        "google_subject": subject,
+        "google_service_accounts": tuple(accounts),
+        "verified_since": since,
+    }
 
 
 def load_job(raw: bytes) -> Job:
@@ -34,7 +83,11 @@ def load_job(raw: bytes) -> Job:
         data = json.loads(raw)
     except ValueError:
         raise JobError("job.json is not JSON") from None
-    if not isinstance(data, dict) or data.keys() not in (_KEYS, _KEYS | {"admin_oid"}):
+    if not isinstance(data, dict) or data.get("provider") not in _ALLOWED:
+        raise JobError("job.json names no known provider")
+    required, optional = _ALLOWED[data["provider"]]
+    extra = data.keys() - _KEYS - required
+    if not (_KEYS | required) <= data.keys() or not extra <= optional:
         raise JobError("job.json has unexpected or missing keys")
     admin_oid = data.get("admin_oid")
     # A GUID only: it is placed in a Graph $filter, so nothing else may reach the query.
@@ -57,4 +110,14 @@ def load_job(raw: bytes) -> Job:
     version = data["allowlist_version"]
     if version not in _VERSIONS[data["provider"]]:
         raise JobError("job allowlist version is not one of the provider's")
-    return Job(*ids, attempt, data["provider"], tenant, tuple(sorted(excluded)), version, admin_oid)
+    google = _google(data) if data["provider"] == "google_workspace" else {}
+    return Job(
+        *ids,
+        attempt,
+        data["provider"],
+        tenant,
+        tuple(sorted(excluded)),
+        version,
+        admin_oid,
+        **google,
+    )

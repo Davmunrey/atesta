@@ -23,6 +23,7 @@ from atesta_scanner.run import (
 )
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "synthetic" / "m365"
+GOOGLE_FIXTURES = FIXTURES.parent / "googleworkspace"
 TENANT = "11111111-1111-4111-8111-111111111111"
 SECRET = {  # Atesta's one M365 certificate: the tenant comes from the job (D5)
     "AZURE_CLIENT_ID": "22222222-aaaa-4bbb-8ccc-333333333333",
@@ -65,7 +66,7 @@ REAL_VERIFY_JOB = run_module.verify_job  # before the autouse stand-in replaces 
 def verdict(name: str, **fields: object) -> Verifier:
     """A verifier standing in for Entra and Graph (test_verify_m365 covers the real one)."""
 
-    def verifier(job: Job, credential: Mapping[str, str]) -> dict[str, object]:
+    def verifier(job: Job, credential: Mapping[str, str], full: bool) -> dict[str, object]:
         return {"verdict": name, "tenant_id": job.tenant, **fields}
 
     return verifier
@@ -312,7 +313,7 @@ def test_an_ok_verification_is_kept_beside_the_scan_output(tmp_path: Path) -> No
 
 
 def test_an_unusable_credential_during_verification_is_exit_11(tmp_path: Path) -> None:
-    def unusable(job: Job, credential: Mapping[str, str]) -> dict[str, object]:
+    def unusable(job: Job, credential: Mapping[str, str], full: bool) -> dict[str, object]:
         raise run_module.TokenUnavailableError("refused")
 
     work, output = tmp_path / "work", tmp_path / "output"
@@ -323,7 +324,122 @@ def test_an_unusable_credential_during_verification_is_exit_11(tmp_path: Path) -
     assert files(tmp_path) == []
 
 
-def test_a_google_job_fails_closed_until_its_verifier_exists() -> None:
-    google = {**JOB, "provider": "google_workspace", "tenant": "C0abc", "excluded": []}
-    job = load_job(json.dumps({**google, "allowlist_version": "google-v1"}).encode())
-    assert REAL_VERIFY_JOB(job, {})["verdict"] == "incomplete"  # never a token, never Prowler
+GOOGLE_JOB = {
+    **JOB,
+    "provider": "google_workspace",
+    "tenant": "C0fixture1",
+    "excluded": [],
+    "allowlist_version": "google-v1",
+    "google_subject": "admin@example.es",
+    "google_service_accounts": ["333333333333333333333", "444444444444444444444"],
+}
+SCAN_KEY = {"GOOGLEWORKSPACE_CREDENTIALS_CONTENT": '{"type": "service_account"}'}
+VERIFY_KEYS = {**SCAN_KEY, "ATESTA_GOOGLE_VERIFIER_CREDENTIALS_CONTENT": '{"type": "x"}'}
+
+
+def google_job(**changes: object) -> Job:
+    return load_job(json.dumps({**GOOGLE_JOB, **changes}).encode())
+
+
+def test_a_google_job_carries_its_subject_service_accounts_and_last_verification() -> None:
+    job = google_job(verified_since="2026-11-20T09:00:00+00:00")
+    assert job.google_subject == "admin@example.es"
+    assert job.google_service_accounts == ("333333333333333333333", "444444444444444444444")
+    assert job.verified_since is not None and job.verified_since.utcoffset() is not None
+    assert google_job().verified_since is None
+    assert google_job(tenant="example.es").tenant == "example.es"  # before the first `ok`
+    assert "admin@example.es" not in repr(job)  # never logged with the job (rule 2)
+
+
+BAD_GOOGLE_JOBS = {
+    "no subject": {"google_subject": None},
+    "subject not an email": {"google_subject": "admin"},
+    "subject with a path": {"google_subject": "../admin@example.es"},
+    "one service account": {"google_service_accounts": ["333333333333333333333"]},
+    "the same account twice": {
+        "google_service_accounts": ["333333333333333333333", "333333333333333333333"]
+    },
+    "an account that is not a number": {"google_service_accounts": ["x" * 21, "4" * 21]},
+    "a tenant that is neither": {"tenant": "C0 fixture"},
+    "an M365 binding": {"admin_oid": "8e8e8e8e-0000-4000-8000-000000000005"},
+    "a time without a zone": {"verified_since": "2026-11-20T09:00:00"},
+    "a time that is not one": {"verified_since": "yesterday"},
+}
+
+
+@pytest.mark.parametrize("name", sorted(BAD_GOOGLE_JOBS))
+def test_a_malformed_google_job_is_refused(name: str) -> None:
+    data = {**GOOGLE_JOB, **BAD_GOOGLE_JOBS[name]}
+    data = {k: v for k, v in data.items() if v is not None}
+    with pytest.raises(JobError):
+        load_job(json.dumps(data).encode())
+
+
+def test_m365_jobs_never_carry_google_fields() -> None:
+    with pytest.raises(JobError):
+        load_job(json.dumps({**JOB, "google_subject": "admin@example.es"}).encode())
+
+
+@pytest.mark.parametrize(("full", "credential"), [(True, VERIFY_KEYS), (False, SCAN_KEY)])
+def test_google_verification_uses_the_keys_of_its_run(
+    monkeypatch: pytest.MonkeyPatch, full: bool, credential: dict[str, str]
+) -> None:
+    """verify holds both keys and runs step 3; a scan run holds the scan key only (D7)."""
+    calls: list[dict[str, object]] = []
+    monkeypatch.setattr(run_module, "load_key", lambda raw: f"key:{raw}")
+
+    def verify_google(mint: object, read: object, target: object, scan: object, verifier: object):
+        calls.append({"target": target, "scan": scan, "verifier": verifier})
+        return {"verdict": "ok"}
+
+    monkeypatch.setattr(run_module, "verify_google", verify_google)
+    assert REAL_VERIFY_JOB(google_job(), credential, full) == {"verdict": "ok"}
+    [call] = calls
+    assert call["scan"] == "key:" + SCAN_KEY["GOOGLEWORKSPACE_CREDENTIALS_CONTENT"]
+    assert (call["verifier"] is None) is (not full)
+    target = call["target"]
+    assert isinstance(target, run_module.GoogleTarget)
+    assert (target.subject, target.tenant) == ("admin@example.es", "C0fixture1")
+
+
+@pytest.mark.parametrize(("full", "credential"), [(True, SCAN_KEY), (False, VERIFY_KEYS)])
+def test_a_google_run_without_exactly_its_keys_is_exit_11(
+    tmp_path: Path, full: bool, credential: dict[str, str]
+) -> None:
+    """A verify run never falls back to the scan key's checks; a scan run never holds both."""
+    with pytest.raises(run_module.TokenUnavailableError):
+        REAL_VERIFY_JOB(google_job(), credential, full)
+
+
+def test_a_google_scan_sets_the_subject_from_the_job_and_pins_the_verified_customer(
+    tmp_path: Path,
+) -> None:
+    """Before the pin the job names the primary domain; findings must carry the customer id."""
+    work, output = tmp_path / "work", tmp_path / "output"
+    fixture = GOOGLE_FIXTURES / "scan.ocsf.json"
+    executable = fake_prowler(tmp_path, WRITE_OUTPUT.format(fixture=str(fixture)))
+    job = google_job(tenant="example.es")
+    got = run_scan(
+        job, SCAN_KEY, DirectorySink(output), work, executable, verdict_for("C0fixture1")
+    )
+    assert got == ExitCode.DONE
+    log = (output / "prowler.log").read_text()
+    assert "GOOGLEWORKSPACE_DELEGATED_USER" in log and "ATESTA_GOOGLE_VERIFIER" not in log
+    other = tmp_path / "other"
+    again = run_scan(
+        job,
+        SCAN_KEY,
+        DirectorySink(other / "output"),
+        other / "work",
+        executable,
+        verdict_for("C0another1"),
+    )
+    assert again == ExitCode.OUTPUT_INVALID  # findings of a customer the verifier did not read
+
+
+def verdict_for(tenant_id: str) -> Verifier:
+    def verifier(job: Job, credential: Mapping[str, str], full: bool) -> dict[str, object]:
+        assert full is False  # the scan run re-checks steps 1 and 2 only
+        return {"verdict": "ok", "tenant_id": tenant_id}
+
+    return verifier
