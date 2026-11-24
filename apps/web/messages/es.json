@@ -569,7 +569,7 @@
   "evidence": {
     "show": "Ver evidencias",
     "hide": "Ocultar evidencias",
-    "boundary": "Declaraciones y referencias aportadas por el equipo. No validan documentos ni aprueban el control.",
+    "boundary": "Declaraciones, referencias y archivos aportados por el equipo. Atesta no valida su contenido ni aprueba el control.",
     "saved": "Evidencia registrada. La revisión se decide por separado.",
     "loading": "Cargando evidencias…",
     "retry": "Reintentar",
@@ -591,7 +591,17 @@
     "immutable": "El registro se conserva en el historial. Para corregirlo, añade una nueva evidencia que explique el cambio.",
     "saving": "Guardando…",
     "save": "Guardar evidencia",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "upload": "Subir archivo",
+    "file": "Archivo",
+    "fileHelp": "{types}. Hasta {size}.",
+    "notScanned": "Atesta guarda el archivo tal cual y no lo analiza en busca de malware. Sube solo documentos de origen conocido.",
+    "uploading": "Subiendo…",
+    "uploaded": "Archivo subido. La revisión se decide por separado.",
+    "fileDetails": "{type} · {size}",
+    "download": "Descargar",
+    "downloadFile": "Descargar {name}",
+    "downloading": "Descargando…"
   },
   "register": {
     "title": "Autoevaluación de tu organización",

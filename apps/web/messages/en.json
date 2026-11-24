@@ -569,7 +569,7 @@
   "evidence": {
     "show": "View evidence",
     "hide": "Hide evidence",
-    "boundary": "Statements and references provided by the team. They do not verify documents or approve the control.",
+    "boundary": "Statements, references and files provided by the team. Atesta does not validate their content or approve the control.",
     "saved": "Evidence recorded. The review is decided separately.",
     "loading": "Loading evidence…",
     "retry": "Retry",
@@ -591,7 +591,17 @@
     "immutable": "This record stays in the history. To correct it, add new evidence explaining the change.",
     "saving": "Saving…",
     "save": "Save evidence",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "upload": "Upload file",
+    "file": "File",
+    "fileHelp": "{types}. Up to {size}.",
+    "notScanned": "Atesta stores the file as it is and does not scan it for malware. Upload only documents from a known source.",
+    "uploading": "Uploading…",
+    "uploaded": "File uploaded. The review is decided separately.",
+    "fileDetails": "{type} · {size}",
+    "download": "Download",
+    "downloadFile": "Download {name}",
+    "downloading": "Downloading…"
   },
   "register": {
     "title": "Your organization's self-assessment",
