@@ -38,6 +38,15 @@
   ],
   [
    "api_token_usage",
+   "operator_metadata_read",
+   "SELECT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
+   ""
+  ],
+  [
+   "api_token_usage",
    "retention",
    "DELETE",
    "RESTRICTIVE",
@@ -61,6 +70,15 @@
    "PERMISSIVE",
    "public",
    "(token_sha256 = app_setting_text('app.api_token_sha256'::text))",
+   ""
+  ],
+  [
+   "api_tokens",
+   "operator_metadata_read",
+   "SELECT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
    ""
   ],
   [
@@ -92,12 +110,84 @@
   ],
   [
    "audit_events",
+   "operator_audit_only",
+   "INSERT",
+   "RESTRICTIVE",
+   "atesta_operator",
+   "",
+   "((action ~~ 'operator.%'::text) AND (actor_user_id IS NULL))"
+  ],
+  [
+   "audit_events",
+   "operator_audit_write",
+   "INSERT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "",
+   "((action ~~ 'operator.%'::text) AND (actor_user_id IS NULL))"
+  ],
+  [
+   "audit_events",
+   "operator_metadata_read",
+   "SELECT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
+   ""
+  ],
+  [
+   "audit_events",
    "tenant_isolation",
    "ALL",
    "PERMISSIVE",
    "public",
    "(organization_id = app_setting_uuid('app.organization_id'::text))",
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "billing_profiles",
+   "operator_insert",
+   "INSERT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "",
+   "true"
+  ],
+  [
+   "billing_profiles",
+   "operator_metadata_read",
+   "SELECT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
+   ""
+  ],
+  [
+   "billing_profiles",
+   "operator_update",
+   "UPDATE",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
+   "true"
+  ],
+  [
+   "billing_profiles",
+   "tenant_isolation",
+   "ALL",
+   "PERMISSIVE",
+   "public",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))",
+   "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "connections",
+   "operator_metadata_read",
+   "SELECT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
+   ""
   ],
   [
    "connections",
@@ -200,12 +290,30 @@
   ],
   [
    "invitations",
+   "operator_metadata_read",
+   "SELECT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
+   ""
+  ],
+  [
+   "invitations",
    "tenant_isolation",
    "ALL",
    "PERMISSIVE",
    "public",
    "(organization_id = app_setting_uuid('app.organization_id'::text))",
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "memberships",
+   "operator_metadata_read",
+   "SELECT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
+   ""
   ],
   [
    "memberships",
@@ -242,6 +350,24 @@
    "public",
    "(organization_id = app_setting_uuid('app.organization_id'::text))",
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "organizations",
+   "operator_metadata_read",
+   "SELECT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
+   ""
+  ],
+  [
+   "organizations",
+   "operator_update",
+   "UPDATE",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
+   "true"
   ],
   [
    "organizations",
@@ -308,6 +434,15 @@
   ],
   [
    "scans",
+   "operator_metadata_read",
+   "SELECT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
+   ""
+  ],
+  [
+   "scans",
    "tenant_isolation",
    "ALL",
    "PERMISSIVE",
@@ -323,6 +458,33 @@
    "public",
    "(organization_id = app_setting_uuid('app.organization_id'::text))",
    "(organization_id = app_setting_uuid('app.organization_id'::text))"
+  ],
+  [
+   "subscriptions",
+   "operator_insert",
+   "INSERT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "",
+   "true"
+  ],
+  [
+   "subscriptions",
+   "operator_metadata_read",
+   "SELECT",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
+   ""
+  ],
+  [
+   "subscriptions",
+   "operator_update",
+   "UPDATE",
+   "PERMISSIVE",
+   "atesta_operator",
+   "true",
+   "true"
   ],
   [
    "subscriptions",
@@ -444,6 +606,12 @@
    "INSERT,SELECT"
   ],
   [
+   "billing_profiles",
+   "",
+   "atesta_app",
+   "SELECT"
+  ],
+  [
    "checks",
    "",
    "atesta_app",
@@ -561,7 +729,37 @@
    "organizations",
    "",
    "atesta_app",
-   "INSERT,SELECT,UPDATE"
+   "INSERT,SELECT"
+  ],
+  [
+   "organizations",
+   "closure_requested_at",
+   "atesta_app",
+   "UPDATE"
+  ],
+  [
+   "organizations",
+   "closure_requested_by",
+   "atesta_app",
+   "UPDATE"
+  ],
+  [
+   "organizations",
+   "locale",
+   "atesta_app",
+   "UPDATE"
+  ],
+  [
+   "organizations",
+   "name",
+   "atesta_app",
+   "UPDATE"
+  ],
+  [
+   "organizations",
+   "updated_at",
+   "atesta_app",
+   "UPDATE"
   ],
   [
    "policies",
@@ -681,6 +879,344 @@
    "users",
    "",
    "atesta_app",
+   "INSERT,SELECT,UPDATE"
+  ]
+ ],
+ "operator_grants": [
+  [
+   "api_token_usage",
+   "at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "api_token_usage",
+   "organization_id",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "api_tokens",
+   "expires_at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "api_tokens",
+   "organization_id",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "api_tokens",
+   "revoked_at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "audit_events",
+   "action",
+   "atesta_operator",
+   "INSERT,SELECT"
+  ],
+  [
+   "audit_events",
+   "id",
+   "atesta_operator",
+   "INSERT"
+  ],
+  [
+   "audit_events",
+   "metadata",
+   "atesta_operator",
+   "INSERT"
+  ],
+  [
+   "audit_events",
+   "occurred_at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "audit_events",
+   "organization_id",
+   "atesta_operator",
+   "INSERT,SELECT"
+  ],
+  [
+   "audit_events",
+   "request_id",
+   "atesta_operator",
+   "INSERT"
+  ],
+  [
+   "audit_events",
+   "target_id",
+   "atesta_operator",
+   "INSERT"
+  ],
+  [
+   "audit_events",
+   "target_type",
+   "atesta_operator",
+   "INSERT"
+  ],
+  [
+   "billing_profiles",
+   "address_line1",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "billing_profiles",
+   "address_line2",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "billing_profiles",
+   "city",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "billing_profiles",
+   "contact_email",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "billing_profiles",
+   "country",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "billing_profiles",
+   "legal_name",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "billing_profiles",
+   "organization_id",
+   "atesta_operator",
+   "INSERT,SELECT"
+  ],
+  [
+   "billing_profiles",
+   "postal_code",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "billing_profiles",
+   "region",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "billing_profiles",
+   "tax_id",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "billing_profiles",
+   "updated_at",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "connections",
+   "organization_id",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "connections",
+   "provider",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "connections",
+   "status",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "erasure_receipts",
+   "closure_requested_at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "erasure_receipts",
+   "erased_at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "erasure_receipts",
+   "id",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "erasure_receipts",
+   "organization_id",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "erasure_receipts",
+   "row_counts",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "invitations",
+   "accepted_at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "invitations",
+   "expires_at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "invitations",
+   "organization_id",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "invitations",
+   "revoked_at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "memberships",
+   "organization_id",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "memberships",
+   "role",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "organizations",
+   "closure_origin",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "organizations",
+   "closure_requested_at",
+   "atesta_operator",
+   "SELECT,UPDATE"
+  ],
+  [
+   "organizations",
+   "created_at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "organizations",
+   "id",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "organizations",
+   "locale",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "organizations",
+   "name",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "organizations",
+   "suspended_at",
+   "atesta_operator",
+   "SELECT,UPDATE"
+  ],
+  [
+   "organizations",
+   "suspension_reason",
+   "atesta_operator",
+   "SELECT,UPDATE"
+  ],
+  [
+   "organizations",
+   "trial_ends_at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "scans",
+   "finished_at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "scans",
+   "organization_id",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "scans",
+   "queued_at",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "scans",
+   "status",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "subscriptions",
+   "addons",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "subscriptions",
+   "note",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "subscriptions",
+   "organization_id",
+   "atesta_operator",
+   "INSERT,SELECT"
+  ],
+  [
+   "subscriptions",
+   "plan",
+   "atesta_operator",
+   "INSERT,SELECT,UPDATE"
+  ],
+  [
+   "subscriptions",
+   "updated_at",
+   "atesta_operator",
    "INSERT,SELECT,UPDATE"
   ]
  ]

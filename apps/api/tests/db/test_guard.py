@@ -8,7 +8,7 @@ from atesta_api.platform.guard import assert_safe_runtime_role
 from sqlalchemy import Engine
 from sqlalchemy.engine import URL
 
-from .conftest import APP_PASSWORD
+from .conftest import APP_PASSWORD, OPERATOR_PASSWORD
 
 APP = "atesta_app"
 # name: (apply, undo, expected problems)
@@ -148,3 +148,50 @@ def test_setting_in_connection_options_is_refused(app_url: URL) -> None:
 def test_plaintext_connection_is_refused_when_tls_required(app_url: URL) -> None:
     with pytest.raises(RuntimeError, match="not TLS"):
         assert_safe_runtime_role(_engine(app_url), require_tls=True)
+
+
+# The operator service (ADR-017) runs the same guard against atesta_operator; each service refuses
+# the other's role (ADR-012 amendment 8, "Startup guard").
+
+
+@pytest.fixture
+def operator_url(database: URL, probe: object) -> URL:
+    return database.set(username="atesta_operator", password=OPERATOR_PASSWORD)
+
+
+def test_clean_operator_setup_passes(operator_url: URL) -> None:
+    assert_safe_runtime_role(_engine(operator_url), require_tls=False, role="atesta_operator")
+
+
+def test_the_api_refuses_the_operator_role(operator_url: URL) -> None:
+    with pytest.raises(RuntimeError, match="is atesta_operator, not atesta_app"):
+        assert_safe_runtime_role(_engine(operator_url), require_tls=False)
+
+
+def test_the_operator_service_refuses_the_app_role(app_url: URL) -> None:
+    with pytest.raises(RuntimeError, match="is atesta_app, not atesta_operator"):
+        assert_safe_runtime_role(_engine(app_url), require_tls=False, role="atesta_operator")
+
+
+@pytest.mark.parametrize(
+    ("grant", "undo"),
+    [
+        (
+            "GRANT UPDATE (note) ON erasure_receipts TO atesta_operator",
+            "REVOKE UPDATE (note) ON erasure_receipts FROM atesta_operator",
+        ),
+    ],
+)
+def test_a_writable_operator_trail_is_refused(
+    superuser: Engine, operator_url: URL, grant: str, undo: str
+) -> None:
+    with superuser.begin() as conn:
+        conn.exec_driver_sql(grant)
+    try:
+        with pytest.raises(RuntimeError, match="can write an append-only"):
+            assert_safe_runtime_role(
+                _engine(operator_url), require_tls=False, role="atesta_operator"
+            )
+    finally:
+        with superuser.begin() as conn:
+            conn.exec_driver_sql(undo)
