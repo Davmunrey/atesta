@@ -112,14 +112,14 @@ describe("official text in both languages (content model v2)", () => {
     "%s interface shows the official text in its own language", async (locale, text, lang) => {
       stubApi({});
       renderWithProviders(<RequirementGuidance guidance={eu} />, locale);
-      expect(screen.getByText(text).getAttribute("lang")).toBe(lang);
+      expect(screen.getByText(text).closest("[lang]")!.getAttribute("lang")).toBe(lang);
       expect(screen.queryByRole("table")).toBeNull(); // no selection table without selection rules
     });
 
   it("falls back to the Spanish text, marked as such, when no official English exists", () => {
     stubApi({});
     renderWithProviders(<RequirementGuidance guidance={{ ...eu, official_text_en: null }} />, "en");
-    expect(screen.getByText("Texto oficial en español.").getAttribute("lang")).toBe("es");
+    expect(screen.getByText("Texto oficial en español.").closest("[lang]")!.getAttribute("lang")).toBe("es");
   });
 
   it("lists every unit of the source, imported or excluded with its reason", () => {

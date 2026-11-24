@@ -25,7 +25,7 @@ it("shows official selection rules separately from recorded status", async () =>
   expect(await screen.findByRole("table")).toBeTruthy();
   expect(screen.getByRole("rowheader", { name: "BAJO" })).toBeTruthy();
   expect(screen.getByText("+ [R1 o R2]")).toBeTruthy();
-  expect(screen.getByText(requirementGuidance.official_text_es).getAttribute("lang")).toBe("es");
+  expect(screen.getByText(requirementGuidance.official_text_es).closest("blockquote")!.getAttribute("lang")).toBe("es");
   expect(within(document.querySelector("details.requirement-row")!).getByText("No superado")).toBeTruthy();
 });
 

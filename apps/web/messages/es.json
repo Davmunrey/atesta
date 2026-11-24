@@ -643,7 +643,6 @@
       "not_applicable": "No aplican"
     },
     "groupProgress": "{assessed} de {total, plural, one {# evaluada} other {# evaluadas}}",
-    "guideAndText": "Guía y texto oficial",
     "configurationAndEvidence": "Configuración, evidencias y revisión ({count, plural, one {# control} other {# controles}})",
     "states": {
       "pending": "Pendiente",

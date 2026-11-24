@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
 import { settled } from "./polish";
-import { framework } from "../fixtures/framework";
+import { framework, requirementGuidance } from "../fixtures/framework";
 import { overview } from "../fixtures/overview";
 
 /** Synthetic register (workspace-ux spec), never a real normative pack. */
@@ -168,5 +168,31 @@ test("the dashboard cockpit says where we stand, what needs attention and who do
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}`).toBe(true);
     await expectAccessible(page, `cockpit ${width}`);
+  }
+});
+
+test("a measure reads as the shared sheet: the record beside the law, stacked on a phone (issue 426)", async ({ page }) => {
+  const org = await createOrganization(page);
+  const guided = { ...detail, requirements: detail.requirements.map((r, n) => n === 0 ? { ...r, guidance: { ...requirementGuidance, official_text_es: "Primer párrafo.\n\nSegundo párrafo." } } : r) };
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha", (route) => route.fulfill({ json: guided }));
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha/register", (route) => route.fulfill({ json: register }));
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha/register/history", (route) => route.fulfill({ json: [] }));
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha/trend", (route) => route.fulfill({ json: [] }));
+  await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha#req-R.R1`);
+  const row = page.locator("details.requirement-row.measure-sheet").filter({ hasText: "R.R1" });
+  await expect(row).toHaveAttribute("open", "");
+  await row.locator("summary", { hasText: "Leer texto oficial" }).click();
+  const record = row.locator(".measure-sheet-record");
+  const law = row.locator(".measure-sheet-law");
+  await expect(law.locator("blockquote.official-text")).toHaveAttribute("lang", "es");
+  for (const colorScheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
+    for (const [width, sideBySide] of [[375, false], [1280, true]] as const) {
+      await page.setViewportSize({ width, height: 900 });
+      const [a, b] = [(await record.boundingBox())!, (await law.boundingBox())!];
+      expect(Math.abs(a.y - b.y) < 1 && b.x > a.x + a.width, `${colorScheme} ${width} side by side`).toBe(sideBySide);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${colorScheme} ${width}`).toBe(true);
+      await expectAccessible(page, `measure sheet ${colorScheme} ${width}`);
+    }
   }
 });

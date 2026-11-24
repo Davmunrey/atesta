@@ -114,7 +114,7 @@ function RequirementEvidence({ r }: { r: Requirement }) {
   const title = english && r.title_en ? r.title_en : r.title_es;
   return <article className="dossier-requirement">
     <h3><span className="font-mono">{r.code}</span> <span lang={english && r.title_en ? undefined : "es"}>{title}</span></h3>
-    {r.expected_evidence ? <ExpectedEvidence evidence={r.expected_evidence} forPrint /> : null}
+    {r.expected_evidence ? <ExpectedEvidence evidence={r.expected_evidence} variant="print" /> : null}
     {r.controls.map((c) => <div key={c.key} className="dossier-control">
       <p><strong>{english ? c.title_en : c.title_es}</strong> · {c.manual
         ? (c.review ? t("reviewed", { date: format.dateTime(new Date(c.review.reviewed_at), { dateStyle: "medium" }) }) : t("notReviewed"))

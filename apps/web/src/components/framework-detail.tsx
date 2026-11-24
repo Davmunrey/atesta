@@ -15,6 +15,7 @@ import { CatalogReference as Reference } from "./catalog-reference";
 import { ControlReview } from "./control-review";
 import { ControlEvidence } from "./control-evidence";
 import { Icon } from "./icons";
+import { MeasureSheet } from "./measure-sheet";
 import { OwnerInsights, ProgressInsights } from "./insights";
 import { AssessmentBadge, AssessmentForm, SelfAssessmentPanel } from "./self-assessment";
 
@@ -151,24 +152,19 @@ function RequirementRow({ requirement: r, initiallyOpen, review, item, recorded 
     row.current.scrollIntoView({ block: "start" });
   }, [r.code]);
   const mayAssess = canAssess(review.role ?? (review.canReview ? "admin" : "member"), item?.assignment?.owner_user_id, review.userId ?? "");
-  return <details ref={row} id={`req-${r.code}`} className="requirement-row" open={initiallyOpen}>
-    <summary><span className="requirement-heading"><span className="requirement-code">{r.code}</span><strong lang={spanishOnly ? "es" : undefined}>{title}</strong></span>
-      {item ? <AssessmentBadge item={item} /> : null}
-      {!item || recorded ? <span className="requirement-state" data-state={r.status}><Icon name={RESULT_ICON[r.status] ?? "pending"} size={16} />{t(`states.${r.status}`)}</span> : null}
-      <svg className="disclosure-icon" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m6 3 5 5-5 5" /></svg>
-    </summary>
-    <div className="requirement-body">
-      {item ? <AssessmentForm item={item} orgId={review.orgId} frameworkKey={review.frameworkKey} canEdit={review.canReview} canAssess={mayAssess} /> : null}
-      {r.guidance?.expected_evidence ? <ExpectedEvidence evidence={r.guidance.expected_evidence} /> : null}
-      <Collapsible open={!item} label={r9("guideAndText")}>
-      {!item || recorded ? <><p className="requirement-explanation">{t(`meaning.${r.status}`)}</p>
-      <h3>{t("nextStep")}</h3><p>{t(`next.${r.status}`)}</p></> : null}
-      {!r.in_current_catalog ? <p className="framework-notice">{t("historicalHelp")}</p> : null}
+  // Recorded results explain the scan; with the register leading they sit with the configurations.
+  const status = !item || recorded ? <><p className="requirement-explanation">{t(`meaning.${r.status}`)}</p>
+    <h3>{t("nextStep")}</h3><p>{t(`next.${r.status}`)}</p></> : null;
+  return <MeasureSheet code={r.code} title={title} titleLang={spanishOnly ? "es" : undefined} source={r.source} row={{ id: `req-${r.code}`, open: initiallyOpen }} ref={row}
+    state={<>{item ? <AssessmentBadge item={item} /> : null}
+      {!item || recorded ? <span className="requirement-state" data-state={r.status}><Icon name={RESULT_ICON[r.status] ?? "pending"} size={16} />{t(`states.${r.status}`)}</span> : null}</>}
+    record={<>{item ? <AssessmentForm item={item} orgId={review.orgId} frameworkKey={review.frameworkKey} canEdit={review.canReview} canAssess={mayAssess} /> : status}
+      {r.guidance?.expected_evidence ? <ExpectedEvidence evidence={r.guidance.expected_evidence} /> : null}</>}
+    law={<>{!r.in_current_catalog ? <p className="framework-notice">{t("historicalHelp")}</p> : null}
       {r.applies_to.length > 0 ? <p className="text-sm text-muted">{t("applicability")}: {r.applies_to.join(", ")}</p> : null}
-      {r.guidance ? <RequirementGuidance guidance={r.guidance} /> : null}
-      {r.source ? <p className="requirement-source">{t("source")}: <Reference value={r.source} /></p> : null}
-      </Collapsible>
-      <Collapsible open={!item} label={r9("configurationAndEvidence", { count: r.controls.length })}>
+      {r.guidance ? <RequirementGuidance guidance={r.guidance} /> : null}</>}>
+    <Collapsible open={!item} label={r9("configurationAndEvidence", { count: r.controls.length })}>
+      {item ? status : null}
       <div className="control-guides"><h3>{t("configurations")}</h3>
         {r.controls.length === 0 ? <p className="text-muted">{t("noControls")}</p> : r.controls.map((control) => <article className="control-guide" key={control.key}>
           <div className="control-heading"><h4>{english ? control.title_en : control.title_es}</h4><span className="requirement-state" data-state={control.observed_status ?? "not_evaluated"}>{control.manual ? t("manualControl") : t(`observations.${control.observed_status ?? "missing"}`)}</span></div>
@@ -184,9 +180,8 @@ function RequirementRow({ requirement: r, initiallyOpen, review, item, recorded 
           <div className="control-references"><h5>{t("applyGuide")}</h5>{control.remediation_refs.length ? <ul>{control.remediation_refs.map((value, i) => <li key={i}><Reference value={value} /></li>)}</ul> : <p>{t("missingReferences")}</p>}</div>
         </article>)}
       </div>
-      </Collapsible>
-    </div>
-  </details>;
+    </Collapsible>
+  </MeasureSheet>;
 }
 
 /** Groups in the order the pack declares its headings (the source's own order), then the rest. */

@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import type { components } from "@/lib/api/schema";
 import { CatalogReference } from "./catalog-reference";
 import { ControlEvidence } from "./control-evidence";
+import { OfficialText } from "./measure-sheet";
 
 type Context = components["schemas"]["PackContext"];
 type Guidance = components["schemas"]["RequirementContext"];
@@ -52,8 +53,8 @@ export function RequirementGuidance({ guidance }: { guidance: Guidance }) {
     </> : null}
     {guidance.applicability_es ? <p className="official-text" lang="es">{guidance.applicability_es}</p> : null}
     <details className="catalog-disclosure">
-      {ownLanguage ? <><summary>{t("officialTextOwn")}</summary><p className="official-text" lang={english ? "en" : "es"}>{ownLanguage}</p></>
-        : <><summary>{t("officialText")}</summary><p className="official-text" lang="es">{guidance.official_text_es}</p></>}
+      {ownLanguage ? <><summary>{t("officialTextOwn")}</summary><OfficialText text={ownLanguage} lang={english ? "en" : "es"} /></>
+        : <><summary>{t("officialText")}</summary><OfficialText text={guidance.official_text_es} lang="es" /></>}
     </details>
   </div>;
 }
