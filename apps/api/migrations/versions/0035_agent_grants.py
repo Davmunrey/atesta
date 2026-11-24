@@ -5,15 +5,15 @@ ADR-016 amendment 1 and ADR-012 amendment 11: an authorization is a key without 
 privilege changes: atesta_app already holds SELECT, INSERT and UPDATE on api_tokens, and the row
 is found through the existing api_token_read policy.
 
-Revision ID: 0033
-Revises: 0032
+Revision ID: 0035
+Revises: 0034
 """
 
 import sqlalchemy as sa
 from alembic import op
 
-revision = "0033"
-down_revision = "0032"
+revision = "0035"
+down_revision = "0034"
 branch_labels = None
 depends_on = None
 
