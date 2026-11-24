@@ -8,6 +8,22 @@
   /* The space kept for the launcher belongs to the footer, so the page ends on it (issue 374). */
   body:has(.assistant-launcher) :is(.site-footer, .public-footer) { padding-block-end: 5.5rem; }
   .assistant-launcher .brand-seal { width: 1.25rem; height: 1.25rem; }
+  /* A paper keyline keeps the ink launcher visible over ink bands (A4). */
+  .assistant-launcher { box-shadow: 0 0 0 2px var(--color-bg); }
+  /* Phones, public pages (A4): the seal alone, its label kept for assistive technology; on the landing
+     it waits until the hero has scrolled away, where scroll timelines and motion are available. */
+  @media (max-width: 40rem) {
+    .landing .assistant-launcher { padding: 0.625rem; }
+    .landing .assistant-launcher > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  }
+  @media (max-width: 40rem) and (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .landing:has(> .landing-hero) { timeline-scope: --landing-hero; }
+      .landing-hero { view-timeline-name: --landing-hero; }
+      .landing:has(> .landing-hero) .assistant-launcher { animation: launcher-wait linear both; animation-timeline: --landing-hero; animation-range: exit 0% exit 100%; }
+    }
+  }
+  @keyframes launcher-wait { 0%, 99% { visibility: hidden; } 100% { visibility: visible; } }
 
   .assistant-dialog { position: fixed; inset: auto 1.25rem 4.75rem auto; margin: 0; width: min(30rem, calc(100vw - 2.5rem)); max-height: min(44rem, calc(100dvh - 6.5rem)); overflow-y: auto; overscroll-behavior: contain; padding: 0; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-panel); color: var(--color-fg); }
   @media (max-width: 40rem) {

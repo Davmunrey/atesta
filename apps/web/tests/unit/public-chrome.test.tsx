@@ -45,7 +45,8 @@ it("states five facts that are true today", () => {
   renderWithProviders(<ProofStrip />);
   const facts = screen.getAllByRole("listitem").map((li) => li.textContent);
   expect(facts).toHaveLength(5);
-  expect(facts.join(" ")).toContain("revisadas por el equipo de Atesta");
+  expect(facts.join(" ")).toContain("Guías de evidencia revisadas por el equipo de Atesta");
+  expect(facts.join(" ")).not.toMatch(/evidencias revisadas/);
   expect(facts.join(" ")).toContain("Diseñado para alojarse en España");
 });
 
