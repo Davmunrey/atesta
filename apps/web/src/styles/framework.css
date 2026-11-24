@@ -14,6 +14,7 @@
   .evidence-file > p:first-child { min-width: 0; }
   .evidence-file-name { font-family: var(--font-mono); font-size: 0.8125rem; }
   .evidence-file > [role="alert"] { flex-basis: 100%; }
+  .evidence-scan-help { flex-basis: 100%; max-width: 72ch; }
   .evidence-form { margin-top: 1.5rem; max-width: 44rem; }
   .evidence-form fieldset { display: grid; gap: 0.5rem; min-width: 0; }
   .evidence-form legend { margin-bottom: 1rem; font-weight: 500; }

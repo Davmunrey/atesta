@@ -224,6 +224,11 @@
 .getting-started li svg { flex: none; margin-top: 0.2rem; }
 .getting-started li[data-done="true"] svg { color: var(--color-success, inherit); }
 
+/* Data tables, any width: the row a page returned to (aria-current) is marked, and a row's detail
+   row (a full-width `row-detail` holding a disclosure) belongs to the row above it. */
+tr[aria-current="true"] { background: var(--color-surface); }
+tr.row-detail > td { padding-top: 0; }
+
 /* Phones (ui-polish spec, phones). Unlayered on purpose: these win over spacing utilities.
    Data tables stack by their own width (modern-web-guidance responsive-table): one block per
    row, each cell named by its data-label; the hidden header row is not read twice. */
@@ -234,6 +239,7 @@
   .table-region tbody, .table-region tr { display: block; }
   .table-region tr { padding-block: 0.75rem; }
   .table-region tr + tr { border-top: 1px solid var(--color-border-subtle); }
+  .table-region tr + tr.row-detail { border-top: 0; padding-top: 0; }
   .table-region td { display: block; max-width: none; padding: 0.125rem 0; border: 0; white-space: normal; overflow-wrap: anywhere; }
   .table-region td:empty { display: none; }
   .table-region td + td { margin-top: 0.375rem; }
@@ -263,15 +269,25 @@ html:has(.console):has(.assistant-launcher) { scroll-padding-bottom: 5rem; }
   .breadcrumbs a { display: inline-flex; align-items: center; min-height: 2.75rem; }
 }
 
-/* Connections (web-connections spec): the row the consent callback returned to, and providers. */
-tr[aria-current="true"] { background: var(--color-surface); }
+/* Connections (web-connections spec): badges wrap, and the permission lists are codes. */
 .connections-table .badge { white-space: normal; }
-.connections-table .row-detail > td { padding-top: 0; }
-.disclosure-button { display: block; min-height: 2.75rem; padding: 0; text-align: start; font-size: 0.8125rem; color: var(--color-muted); text-decoration: underline; text-underline-offset: 0.2em; }
-.permission-detail { display: grid; gap: 0.5rem; }
-.permission-list { columns: 16rem auto; column-gap: 2rem; margin: 0; padding: 0; list-style: none; font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.8125rem; }
-.provider-list { display: grid; gap: 0.5rem; margin: 1rem 0 0; padding: 0; list-style: none; }
-.provider-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+/* Names break between words: the shared first-cell `anywhere` wrap would otherwise let the
+   state notes squeeze this column to a few letters. */
+.connections-table td:first-child { min-width: 11rem; }
+.permission-detail { display: grid; gap: 0.5rem; padding-bottom: 1rem; }
+.permission-list { columns: 16rem auto; column-gap: 2rem; margin: 0; padding: 0; list-style: none; font-family: var(--font-mono); font-size: 0.8125rem; }
+/* Google onboarding steps (issue 425): ordered, because the order is the instruction. Each
+   delegation entry pairs a label with a code and its copy button; codes wrap anywhere. */
+.setup-steps { display: grid; gap: 1.25rem; margin: 0; padding-inline-start: 1.25rem; list-style: decimal; }
+.setup-steps > li { max-width: 72ch; } /* stays a list-item, so the step number shows */
+.setup-steps > li > * + * { margin-top: 0.5rem; }
+.setup-steps > li::marker { font-weight: 500; }
+.delegation-entry { display: grid; gap: 0.25rem; }
+.delegation-entry dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 0.375rem 1rem; align-items: baseline; margin: 0; }
+.delegation-entry dt { font-size: 0.8125rem; color: var(--color-muted); }
+.delegation-entry dd { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.75rem; margin: 0; }
+.delegation-entry .font-mono { overflow-wrap: anywhere; }
+@container (width < 36rem) { .delegation-entry dl { grid-template-columns: minmax(0, 1fr); } }
 
 /* Polish from the API keys review (issue 374): a neutral tag, subordinate scope legends, one checkbox size. */
 @layer components {

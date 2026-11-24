@@ -1979,6 +1979,8 @@ export interface components {
             expected_access: components["schemas"]["ExpectedAccess"];
             /** Google Client Id */
             google_client_id: string | null;
+            /** Google Subject Set */
+            google_subject_set: boolean;
             /** Google Verifier Client Id */
             google_verifier_client_id: string | null;
             /**
@@ -1987,6 +1989,8 @@ export interface components {
              */
             id: string;
             last_verification: components["schemas"]["LastVerification"] | null;
+            /** Primary Domain */
+            primary_domain: string | null;
             /** Provider */
             provider: string;
             /** Status */
@@ -2019,11 +2023,15 @@ export interface components {
             created_at: string;
             /** Display Name */
             display_name: string;
+            /** Google Subject Set */
+            google_subject_set: boolean;
             /**
              * Id
              * Format: uuid
              */
             id: string;
+            /** Primary Domain */
+            primary_domain: string | null;
             /** Provider */
             provider: string;
             /** Status */
@@ -2476,12 +2484,20 @@ export interface components {
         /**
          * FileOut
          * @description An uploaded document (evidence-file-uploads spec). The storage key stays in the API.
+         *
+         *     scan_status: the malware scan (evidence-malware-scanning spec); only `no_threats_found`, or
+         *     `not_scanned` in local development, can be downloaded.
          */
         FileOut: {
             /** Media Type */
             media_type: string;
             /** Name */
             name: string;
+            /**
+             * Scan Status
+             * @enum {string}
+             */
+            scan_status: "pending" | "no_threats_found" | "threats_found" | "unsupported" | "access_denied" | "failed" | "not_scanned";
             /** Sha256 */
             sha256: string;
             /** Size Bytes */
@@ -2906,7 +2922,7 @@ export interface components {
          * Kind
          * @enum {string}
          */
-        Kind: "connection_alert" | "incident_clock" | "scan_problem" | "due_digest" | "weekly_summary";
+        Kind: "connection_alert" | "evidence_malware" | "incident_clock" | "scan_problem" | "due_digest" | "weekly_summary";
         /**
          * LastVerification
          * @description What the last verification found missing or extra, and what it cannot read.

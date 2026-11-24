@@ -32,7 +32,7 @@ def tokens(key: bytes = KEY) -> UnsubscribeTokens:
 
 
 def test_kinds_split_into_critical_and_optional() -> None:
-    assert {Kind.CONNECTION_ALERT, Kind.INCIDENT_CLOCK} == CRITICAL
+    assert {Kind.CONNECTION_ALERT, Kind.EVIDENCE_MALWARE, Kind.INCIDENT_CLOCK} == CRITICAL
     assert {Kind.SCAN_PROBLEM, Kind.DUE_DIGEST, Kind.WEEKLY_SUMMARY} == OPTIONAL
 
 

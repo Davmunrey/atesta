@@ -3,7 +3,7 @@
 import re
 import uuid
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, StringConstraints, field_validator
 
@@ -46,13 +46,28 @@ class StatementIn(BaseModel):
         return value
 
 
+ScanStatus = Literal[
+    "pending",
+    "no_threats_found",
+    "threats_found",
+    "unsupported",
+    "access_denied",
+    "failed",
+    "not_scanned",
+]
+
+
 class FileOut(BaseModel):
-    """An uploaded document (evidence-file-uploads spec). The storage key stays in the API."""
+    """An uploaded document (evidence-file-uploads spec). The storage key stays in the API.
+
+    scan_status: the malware scan (evidence-malware-scanning spec); only `no_threats_found`, or
+    `not_scanned` in local development, can be downloaded."""
 
     name: str
     media_type: str
     size_bytes: int
     sha256: str
+    scan_status: ScanStatus
 
 
 class FileUploads(BaseModel):

@@ -6,7 +6,7 @@ from atesta_api.modules.notifications.api import configure_mail, mail_config_fro
 from atesta_api.platform.db import make_engine
 from atesta_api.platform.guard import assert_safe_runtime_role
 
-from atesta_worker import context
+from atesta_worker import context, file_scans
 from atesta_worker.app import build_app
 from atesta_worker.scans import config_from_env, configure_scans
 
@@ -19,6 +19,7 @@ def main() -> None:
     context.configure(engine)
     configure_scans(config_from_env(os.environ))
     configure_mail(mail_config_from_env(os.environ))  # none configured: nothing is sent
+    file_scans.configure(file_scans.config_from_env(os.environ))  # none: the poll does nothing
     build_app(url, sslmode).run_worker()
 
 

@@ -12,7 +12,12 @@ from sqlalchemy.orm import Session
 
 from atesta_api.modules.compliance.api import control_is_visible
 from atesta_api.modules.evidence.files import file_out, file_uploads
-from atesta_api.modules.evidence.models import Evidence, EvidenceControl, EvidenceStatement
+from atesta_api.modules.evidence.models import (
+    Evidence,
+    EvidenceControl,
+    EvidenceFileScan,
+    EvidenceStatement,
+)
 from atesta_api.modules.evidence.schemas import EvidenceOut, EvidencePage, StatementIn
 from atesta_api.modules.identity.api import Member, require_member
 from atesta_api.platform.audit import record
@@ -28,7 +33,9 @@ def visible(session: Session, key: str) -> None:
         raise HTTPException(404, detail={"code": "evidence.control_not_found"})
 
 
-def output(row: Evidence, statement: EvidenceStatement | None) -> EvidenceOut:
+def output(
+    row: Evidence, statement: EvidenceStatement | None, scan: EvidenceFileScan | None = None
+) -> EvidenceOut:
     return EvidenceOut(
         id=row.id,
         kind=row.kind,
@@ -38,7 +45,7 @@ def output(row: Evidence, statement: EvidenceStatement | None) -> EvidenceOut:
         collected_at=row.collected_at.astimezone(UTC),
         statement=statement.statement if statement else None,
         reference_url=statement.reference_url if statement else None,
-        file=file_out(row),
+        file=file_out(row, scan),
     )
 
 
@@ -58,7 +65,7 @@ def list_evidence(
     )
     total = session.scalar(select(func.count()).select_from(EvidenceControl).where(linked)) or 0
     rows = session.execute(
-        select(Evidence, EvidenceStatement)
+        select(Evidence, EvidenceStatement, EvidenceFileScan)
         .join(
             EvidenceControl,
             and_(
@@ -73,6 +80,13 @@ def list_evidence(
                 EvidenceStatement.organization_id == Evidence.organization_id,
             ),
         )
+        .outerjoin(
+            EvidenceFileScan,
+            and_(
+                EvidenceFileScan.evidence_id == Evidence.id,
+                EvidenceFileScan.organization_id == Evidence.organization_id,
+            ),
+        )
         .where(linked)
         .order_by(Evidence.created_at.desc(), Evidence.id.desc())
         .offset(offset)
@@ -80,7 +94,7 @@ def list_evidence(
     )
     return EvidencePage(
         total=total,
-        items=[output(row, statement) for row, statement in rows],
+        items=[output(row, statement, scan) for row, statement, scan in rows],
         file_uploads=file_uploads(request),
     )
 

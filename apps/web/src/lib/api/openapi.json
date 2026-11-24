@@ -1372,6 +1372,10 @@
             ],
             "title": "Google Client Id"
           },
+          "google_subject_set": {
+            "title": "Google Subject Set",
+            "type": "boolean"
+          },
           "google_verifier_client_id": {
             "anyOf": [
               {
@@ -1397,6 +1401,17 @@
                 "type": "null"
               }
             ]
+          },
+          "primary_domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Domain"
           },
           "provider": {
             "title": "Provider",
@@ -1440,6 +1455,8 @@
           "verified_at",
           "consented",
           "tenant_id",
+          "google_subject_set",
+          "primary_domain",
           "google_client_id",
           "google_verifier_client_id",
           "expected_access",
@@ -1498,10 +1515,25 @@
             "title": "Display Name",
             "type": "string"
           },
+          "google_subject_set": {
+            "title": "Google Subject Set",
+            "type": "boolean"
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
             "type": "string"
+          },
+          "primary_domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Domain"
           },
           "provider": {
             "title": "Provider",
@@ -1544,7 +1576,9 @@
           "created_at",
           "verified_at",
           "consented",
-          "tenant_id"
+          "tenant_id",
+          "google_subject_set",
+          "primary_domain"
         ],
         "title": "ConnectionOut",
         "type": "object"
@@ -2848,7 +2882,7 @@
         "type": "object"
       },
       "FileOut": {
-        "description": "An uploaded document (evidence-file-uploads spec). The storage key stays in the API.",
+        "description": "An uploaded document (evidence-file-uploads spec). The storage key stays in the API.\n\nscan_status: the malware scan (evidence-malware-scanning spec); only `no_threats_found`, or\n`not_scanned` in local development, can be downloaded.",
         "properties": {
           "media_type": {
             "title": "Media Type",
@@ -2856,6 +2890,19 @@
           },
           "name": {
             "title": "Name",
+            "type": "string"
+          },
+          "scan_status": {
+            "enum": [
+              "pending",
+              "no_threats_found",
+              "threats_found",
+              "unsupported",
+              "access_denied",
+              "failed",
+              "not_scanned"
+            ],
+            "title": "Scan Status",
             "type": "string"
           },
           "sha256": {
@@ -2871,7 +2918,8 @@
           "name",
           "media_type",
           "size_bytes",
-          "sha256"
+          "sha256",
+          "scan_status"
         ],
         "title": "FileOut",
         "type": "object"
@@ -4048,6 +4096,7 @@
       "Kind": {
         "enum": [
           "connection_alert",
+          "evidence_malware",
           "incident_clock",
           "scan_problem",
           "due_digest",

@@ -1,6 +1,9 @@
 # Customer-managed keys (hosted-environment spec): one per data class (database, evidence,
-# application secrets, logs), yearly rotation. The logs key lets CloudWatch Logs in this region
-# use it, scoped to this account's log groups.
+# application secrets, logs, queues), yearly rotation. The logs key lets CloudWatch Logs in this
+# region use it, scoped to this account's log groups. The queues key lets EventBridge encrypt the
+# messages it puts on this account's queues (evidence-malware-scanning spec): EventBridge cannot
+# deliver to an encrypted queue otherwise ("My events are not delivered to the target Amazon SQS
+# queue", EventBridge troubleshooting).
 
 terraform {
   required_providers {
@@ -54,6 +57,24 @@ data "aws_iam_policy_document" "logs" {
   }
 }
 
+data "aws_iam_policy_document" "queues" {
+  source_policy_documents = [data.aws_iam_policy_document.base.json]
+  statement {
+    sid       = "EventBridgeUse"
+    actions   = ["kms:Decrypt", "kms:GenerateDataKey"]
+    resources = ["*"]
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [local.account]
+    }
+  }
+}
+
 resource "aws_kms_key" "database" {
   description             = "${var.name} database"
   enable_key_rotation     = true
@@ -82,6 +103,13 @@ resource "aws_kms_key" "logs" {
   policy                  = data.aws_iam_policy_document.logs.json
 }
 
+resource "aws_kms_key" "queues" {
+  description             = "${var.name} queues"
+  enable_key_rotation     = true
+  deletion_window_in_days = 30
+  policy                  = data.aws_iam_policy_document.queues.json
+}
+
 resource "aws_kms_alias" "database" {
   name          = "alias/${var.name}-database"
   target_key_id = aws_kms_key.database.key_id
@@ -102,6 +130,11 @@ resource "aws_kms_alias" "logs" {
   target_key_id = aws_kms_key.logs.key_id
 }
 
+resource "aws_kms_alias" "queues" {
+  name          = "alias/${var.name}-queues"
+  target_key_id = aws_kms_key.queues.key_id
+}
+
 output "database_key_arn" {
   value = aws_kms_key.database.arn
 }
@@ -116,4 +149,8 @@ output "secrets_key_arn" {
 
 output "logs_key_arn" {
   value = aws_kms_key.logs.arn
+}
+
+output "queues_key_arn" {
+  value = aws_kms_key.queues.arn
 }

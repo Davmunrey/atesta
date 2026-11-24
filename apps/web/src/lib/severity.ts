@@ -13,6 +13,11 @@ export const STATE_SEVERITY = {
   tokenActive: "done", tokenExpired: "overdue", tokenRevoked: "pending",
   measureOverdue: "overdue",
   recordsAct: "overdue", recordsClear: "done", recordsEmpty: "pending",
+  // Evidence file malware scan (evidence-malware-scanning spec).
+  fileScanPending: "pending", fileClean: "done", fileBlocked: "overdue", fileNotScanned: "missing",
+  fileDevUnscanned: "pending",
+  connectionActive: "done", connectionWaiting: "pending", connectionIncomplete: "missing",
+  connectionOverPrivileged: "overdue", connectionRevoked: "overdue",
 } as const satisfies Record<string, Severity>;
 
 export type State = keyof typeof STATE_SEVERITY;

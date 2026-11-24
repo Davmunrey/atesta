@@ -38,6 +38,8 @@ class ConnectionOut(BaseModel):
     verified_at: datetime | None
     consented: bool  # Microsoft sign-in and admin consent recorded (web-connections spec)
     tenant_id: str | None  # the pinned tenant, else the consented one; never the admin's oid
+    google_subject_set: bool  # Google: a super admin is named; the email is never returned
+    primary_domain: str | None  # Google: the customer's primary domain (issue 425)
 
 
 class GoogleSubjectIn(BaseModel):
@@ -93,6 +95,8 @@ def _out(connection: Connection) -> ConnectionOut:
         verified_at=connection.verified_at,
         consented=bool(connection.ms_tenant_id and connection.consented_by_oid),
         tenant_id=connection.external_tenant_id or connection.ms_tenant_id,
+        google_subject_set=connection.google_subject_email is not None,
+        primary_domain=connection.primary_domain,
     )
 
 

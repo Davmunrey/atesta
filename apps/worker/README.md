@@ -22,6 +22,7 @@ ATESTA_DB_SSLMODE=disable uv run atesta-worker
 |---|---|---|---|
 | `retry_stalled_jobs` | maintenance | n/a (every 5 min) | Retries jobs whose worker stopped sending heartbeats |
 | `snapshot_scores` | scans | 3, transient database errors only | One score snapshot per scoreable framework, at REPEATABLE READ; deferred by ingest in its own transaction |
+| `poll_file_scans` | files | n/a (every minute) | Drains GuardDuty's malware scan results from `ATESTA_FILE_SCAN_QUEUE_URL` and records each in its organization's context; on malware, queues `notify_event` for owners and admins. Unset: does nothing (evidence-malware-scanning spec) |
 
 ## One synthetic scan, end to end (dev only)
 
