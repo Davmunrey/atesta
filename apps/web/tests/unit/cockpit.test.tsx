@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, screen, within } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
+import { FrameworkLedger } from "@/components/framework-ledger";
 import { OverviewDashboard } from "@/components/overview-dashboard";
 import { nextStep } from "@/components/readiness";
 import type { Readiness } from "@/lib/api/register-hooks";
@@ -30,11 +31,11 @@ it("walks the self-assessment one step at a time", () => {
   expect(nextStep(r({ has_axes: false, assessed: 10, review_on: "2026-11-20" }))).toEqual({ kind: "export", count: 0 });
 });
 
-it("summarizes progress in one sentence and lists only what truly needs attention", async () => {
+it("states progress once, on the framework line, and lists only what truly needs attention", async () => {
   stubApi(routes([r({ scope_defined: true, assessed: 6, implemented: 4, partial: 1, not_implemented: 1, overdue: 2, unowned_open: 3 })]));
   renderWithProviders(<OverviewDashboard orgId="primary" org={owner} />);
-  expect(await screen.findByText(/Synthetic Alpha: 6 de 10 medidas evaluadas, 4 implantadas\./)).toBeTruthy();
-  expect(screen.getByText("Hay 2 asuntos que requieren atención.")).toBeTruthy();
+  const line = within(await screen.findByRole("region", { name: "Marcos" })).getByRole("link", { name: "Synthetic Alpha" }).closest("li")!;
+  expect(line.textContent).toBe("Synthetic Alpha6 de 10 medidas evaluadas · 4 implantadas");
   const now = within(screen.getByRole("region", { name: "Ahora" }));
   const items = now.getAllByRole("listitem").map((li) => li.textContent);
   expect(items).toEqual([
@@ -60,8 +61,8 @@ it("names the next step when nothing is urgent", async () => {
 });
 
 it("writes the bar's numbers as text and never calls a self-assessed framework unassessed", async () => {
-  stubApi(routes([r({ scope_defined: true, assessed: 6, implemented: 4, partial: 1, not_implemented: 0, not_applicable: 1 })]));
-  renderWithProviders(<OverviewDashboard orgId="primary" org={owner} />);
+  const row = r({ scope_defined: true, assessed: 6, implemented: 4, partial: 1, not_implemented: 0, not_applicable: 1 });
+  renderWithProviders(<FrameworkLedger frameworks={overview.frameworks} orgId="primary" readiness={[row]} />);
   expect(await screen.findByText("6 de 10 evaluadas · 4 implantadas · 1 en parte · 0 sin implantar · 1 no aplica")).toBeTruthy();
   expect(document.querySelector(".readiness-bar")?.getAttribute("aria-hidden")).toBe("true");
 });

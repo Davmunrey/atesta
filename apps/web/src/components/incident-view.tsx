@@ -1,11 +1,12 @@
 "use client";
 
 import { useFormatter, useLocale, useTranslations } from "next-intl";
-import { type FormEvent, useId } from "react";
+import { type FormEvent, useId, useState } from "react";
 import { type IncidentClock, useIncident, useIncidentUpdate } from "@/lib/api/routines";
 import { localInput } from "./incidents-view";
 import { type Membership, orgHome, orgIncidents } from "@/lib/org";
 import { isContributor } from "@/lib/permissions";
+import { ClockBadge } from "./badge";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { LoadError, Loading, PageHeader, Panel } from "./page-frame";
@@ -19,6 +20,7 @@ export function IncidentView({ org, incidentId }: { org: Membership; incidentId:
   const update = useIncidentUpdate(org.organization_id, incidentId);
   const noteId = useId();
   const classifyId = useId();
+  const [confirming, setConfirming] = useState(false);
   const crumbs = [{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title"), href: orgIncidents(org.organization_id) }];
   if (query.isPending) return <><PageHeader crumbs={crumbs} title={t("title")} /><Loading label={t("loading")} /></>;
   if (query.isError) return <><PageHeader crumbs={crumbs} title={t("title")} /><LoadError error={query.error} onRetry={() => void query.refetch()} /></>;
@@ -28,6 +30,8 @@ export function IncidentView({ org, incidentId }: { org: Membership; incidentId:
   const time = (value: string) => format.dateTime(new Date(value), { dateStyle: "medium", timeStyle: "short" });
   const title = (c: IncidentClock) => (locale === "en" ? c.title_en : c.title_es);
   const byRef = new Map(incident.clocks.map((c) => [c.ref, c]));
+  const unsent = incident.clocks.filter((c) => c.state !== "met").length;
+  const close = () => update.mutate({ kind: "closed", note: "" }, { onSettled: () => setConfirming(false) });
   const flags = [incident.significant ? t("significant") : null, incident.personal_data ? t("personalData") : null].filter(Boolean).join(" · ");
   function addNote(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -44,7 +48,14 @@ export function IncidentView({ org, incidentId }: { org: Membership; incidentId:
       description={<>{t("aware")}: {time(incident.aware_at)} · {flags || t("noFlags")}
         {incident.classified_at ? <> · {t("classified", { time: time(incident.classified_at) })}</> : incident.significant ? <> · {t("classificationMissing")}</> : null}</>}
       actions={canAct
-        ? <button type="button" className="button-primary" disabled={update.isPending} onClick={() => update.mutate({ kind: "closed", note: "" })}>{t("close")}</button>
+        // Sending a notice is the primary action; closing is secondary and asks first while
+        // a notice is still unsent (console-unification spec).
+        ? confirming ? <span className="confirm-row" role="group" aria-label={t("close")}>
+            <span>{t("closeConfirm", { count: unsent })}</span>
+            <button type="button" className="button-danger" disabled={update.isPending} onClick={close}>{t("closeAnyway")}</button>
+            <button type="button" className="dashboard-button" onClick={() => setConfirming(false)}>{t("cancel")}</button>
+          </span>
+          : <button type="button" className="dashboard-button" disabled={update.isPending} onClick={() => (unsent > 0 ? setConfirming(true) : close())}>{t("close")}</button>
         : incident.closed_at ? <span className="badge" data-severity="done"><Icon name="done" />{t("closed")}</span> : null} />
     {update.isError ? <ErrorMessage error={update.error} /> : null}
     {update.isSuccess && !open ? <p role="status" className="notice"><Icon name="done" />{t("closedEvidence")}</p> : null}
@@ -68,7 +79,7 @@ export function IncidentView({ org, incidentId }: { org: Membership; incidentId:
             <td data-label={t("due")} className="tabular-nums">{c.due_at ? time(c.due_at) : "—"}</td>
             <td data-label={t("status")}><ClockStatus clock={c} time={time} />
               {canAct && (c.state === "running" || c.state === "overdue")
-                ? <button type="button" className="dashboard-button clock-action" disabled={update.isPending}
+                ? <button type="button" className="button-primary clock-action" disabled={update.isPending}
                   onClick={() => update.mutate({ kind: "clock", clock: c.ref, note: "" })}>{t("sent")}<span className="sr-only">{t("sentWhich", { clock: title(c) })}</span></button> : null}</td>
           </tr>)}</tbody>
         </table></div>}
@@ -96,7 +107,8 @@ function ClockStatus({ clock, time }: { clock: IncidentClock; time: (value: stri
       ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("metLate", { time: time(clock.met_at) })}</span>
       : <span className="badge" data-severity="done"><Icon name="done" />{t("met", { time: time(clock.met_at) })}</span>;
   }
+  if ((clock.state === "overdue" || clock.state === "running") && clock.due_at) return <ClockBadge dueAt={clock.due_at} />;
   if (clock.state === "overdue") return <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("late")}</span>;
-  if (clock.state === "running") return <span className="badge" data-severity="pending"><Icon name="pending" />{t("running")}</span>;
+  if (clock.state === "running") return <span className="badge" data-severity="clock"><Icon name="pending" />{t("running")}</span>;
   return <span className="text-sm text-muted">{t("waiting")}</span>;
 }

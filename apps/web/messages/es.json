@@ -841,15 +841,13 @@
     "languageSaved": "Guardado. Los avisos llegarán en {language}."
   },
   "cockpit": {
-    "summary": "{framework}: {assessed} de {total, plural, one {# medida evaluada} other {# medidas evaluadas}}, {implemented, plural, one {# implantada} other {# implantadas}}.",
-    "summaryAttention": "{count, plural, one {Hay # asunto que requiere atención.} other {Hay # asuntos que requieren atención.}}",
-    "summaryCalm": "Nada urgente.",
     "now": "Ahora",
     "calm": "Nada urgente. Siguiente paso:",
     "severity": {
       "overdue": "Vencido",
       "missing": "Falta",
-      "pending": "Pendiente"
+      "pending": "Pendiente",
+      "clock": "Plazo legal"
     },
     "attention": {
       "overdue": "{count, plural, one {# medida con fecha límite vencida} other {# medidas con fecha límite vencida}} en {framework}",
@@ -865,7 +863,9 @@
         "incident_clock": "{clock} ({framework}) del incidente «{title}»: {when}",
         "clockOverdue": "venció el {time}",
         "clockRunning": "vence el {time}"
-      }
+      },
+      "overdueOthers": "{count, plural, one {# medida más con fecha límite vencida} other {# medidas más con fecha límite vencida}} en {framework}",
+      "mineOverdue": "venció el {date}"
     },
     "step": {
       "scope": "Define el alcance de {framework}",
@@ -874,18 +874,14 @@
       "export": "Exporta la declaración de aplicabilidad de {framework}"
     },
     "counts": "{assessed} de {total, plural, one {# evaluada} other {# evaluadas}} · {implemented, plural, one {# implantada} other {# implantadas}} · {partial} en parte · {notImplemented} sin implantar · {notApplicable, plural, one {# no aplica} other {# no aplican}}",
-    "yourWork": "Tu trabajo",
-    "yourWorkEmpty": "No tienes medidas abiertas asignadas.",
     "noDue": "Sin fecha",
     "allMyWork": "Ver todo en Mi trabajo",
-    "team": "Equipo",
-    "teamChart": "Medidas abiertas por persona",
-    "teamEmpty": "Aún no hay medidas asignadas.",
-    "formerMember": "Antiguo miembro",
-    "recent": "Actividad reciente",
-    "recentEmpty": "Sin actividad en los últimos 30 días.",
-    "system": "Sistema",
-    "allActivity": "Ver toda la actividad"
+    "frameworks": "Marcos",
+    "allFrameworks": "Ver todos los marcos",
+    "line": "<key>{assessed}</key> de {total, plural, one {# medida evaluada} other {# medidas evaluadas}} · {implemented, plural, one {# implantada} other {# implantadas}}",
+    "lineScore": "Último análisis: {score}",
+    "lineUnscored": "Último análisis sin puntuación",
+    "lineNotStarted": "Sin evaluar"
   },
   "console": {
     "skip": "Saltar al contenido",
@@ -1078,7 +1074,10 @@
       "classificationMissing": "falta cuándo se clasificó como significativo",
       "classify": "Registrar la clasificación",
       "classifyTitle": "Clasificación como significativo",
-      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registréis."
+      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registréis.",
+      "closeConfirm": "{count, plural, one {Queda # aviso sin enviar. ¿Cerrar igualmente?} other {Quedan # avisos sin enviar. ¿Cerrar igualmente?}}",
+      "closeAnyway": "Cerrar",
+      "cancel": "Cancelar"
     }
   },
   "trainingLink": {
@@ -1334,7 +1333,8 @@
         "title": "Registra la revisión y abre el dossier de {framework}",
         "help": "El responsable de seguridad revisa; la dirección lee el resumen y firma."
       }
-    }
+    },
+    "line": "{done} de {total, plural, other {#}}"
   },
   "report": {
     "title": "Informe mensual",
@@ -1405,7 +1405,7 @@
       "acknowledged": "Confirmaciones"
     },
     "incidents": {
-      "lead": "{open, plural, =0 {No hay incidentes abiertos.} one {# incidente abierto} other {# incidentes abiertos}}{open, plural, =0 {} other {{overdue, plural, =0 {, sin avisos vencidos.} one {, # con avisos vencidos.} other {, # con avisos vencidos.}}}}",
+      "lead": "{open, plural, =0 {No hay incidentes abiertos.} one {# incidente abierto} other {# incidentes abiertos}}{open, plural, =0 {} other {{overdue, plural, =0 {{running, plural, =0 {, sin avisos pendientes.} one {, # con un aviso por enviar en plazo.} other {, # con avisos por enviar en plazo.}}} one {, # con avisos vencidos.} other {, # con avisos vencidos.}}}}",
       "open": "Abiertos",
       "closed": "Cerrados",
       "overdue": "Con avisos vencidos"
@@ -2019,5 +2019,9 @@
     },
     "view": "Cartera: tus organizaciones de un vistazo",
     "close": "Prepara a tus clientes con Atesta."
+  },
+  "deadline": {
+    "left": "{unit, select, days {{value, plural, one {Queda # día} other {Quedan # días}}} other {{value, plural, one {Queda # h} other {Quedan # h}}}}",
+    "past": "{unit, select, days {{value, plural, one {Vencido hace # día} other {Vencido hace # días}}} other {Vencido hace {value} h}}"
   }
 }
