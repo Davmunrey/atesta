@@ -35,6 +35,7 @@ class ScanJob:
     attempt: int
     provider: str
     credential_ref: str | None = None  # Google: the connection's; M365 uses the platform's (D5)
+    verifier_credential_ref: str | None = None  # Google: read by the verify run only (D7)
 
 
 class ScanStore(Protocol):

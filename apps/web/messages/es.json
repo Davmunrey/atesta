@@ -46,52 +46,49 @@
   },
   "landing": {
     "headline": "Prepara el <hl>ENS</hl> sin un consultor a tiempo completo",
-    "sub": "Atesta reúne las medidas, las evidencias y los registros que pide el auditor, para pymes que venden al sector público.",
+    "sub": "Cada medida del ENS con su texto oficial, junto a tu autoevaluación y tus evidencias. Para pymes que prestan servicios al sector público.",
     "requestAccess": "Solicitar acceso",
     "signIn": "Entrar",
     "soon": "Próximamente",
     "problem": {
-      "title": "El ENS no cabe en una hoja de cálculo",
-      "body": "Setenta y tres medidas, cada una con su texto oficial, sus evidencias y sus revisiones. Repartidas entre correos y carpetas, nadie sabe qué falta hasta que llega la auditoría."
+      "title": "Qué pide el ENS a tu empresa",
+      "body": "Aplicar las medidas del anexo II que corresponden a tu categoría y poder demostrarlo con evidencias. En hojas de cálculo y carpetas, cuesta saber qué falta y quién se encarga."
     },
     "how": {
       "title": "Cómo funciona",
       "steps": {
-        "connect": {
-          "title": "Conecta tus sistemas",
-          "body": "Microsoft 365 o Google Workspace, solo con permisos de lectura."
-        },
         "assess": {
-          "title": "Autoevalúa cada medida",
-          "body": "Con su texto oficial y la propuesta de aplicabilidad para tu categoría."
+          "title": "Autoevalúa las 73 medidas",
+          "body": "Atesta propone si cada medida aplica a tu categoría. Tú decides y registras su estado."
         },
         "routines": {
-          "title": "Registra las rutinas",
-          "body": "Políticas, revisiones de acceso, formación e incidentes, con sus plazos."
+          "title": "Lleva los registros periódicos",
+          "body": "Políticas, revisiones de acceso, formación e incidentes, con sus fechas y lo que requiere acción."
         },
         "incidents": {
-          "title": "Responde a un incidente",
-          "body": "Los plazos de notificación empiezan solos al registrarlo."
+          "title": "Registra los incidentes",
+          "body": "Qué pasó, cuándo y a quién lo notificaste, con la hora de cada anotación. Con NIS2 o el RGPD, calcula además sus plazos."
         },
         "dossier": {
-          "title": "Entrega el dossier",
-          "body": "Todo lo registrado, listo para que el auditor lo revise y la dirección lo firme."
+          "title": "Entrega el dossier al auditor",
+          "body": "Todo lo registrado en un documento, con espacio para la firma de la dirección."
+        },
+        "connect": {
+          "title": "Conecta Microsoft 365 o Google Workspace",
+          "body": "Atesta leerá su configuración con permisos de solo lectura."
         }
       }
     },
-    "year": {
-      "title": "Un año de ENS"
-    },
     "frameworks": {
-      "title": "ENS primero, y más según tu plan",
-      "body": "También cubre NIS2, RGPD, LOPDGDD y DORA. Una misma evidencia sirve a varios marcos.",
-      "byPlan": "Según el plan"
+      "title": "Si además te aplica NIS2, el RGPD o DORA",
+      "body": "Cada evidencia se guarda una vez, en un control común: una comprobación que piden varios marcos. Además del ENS, Atesta prepara NIS2, RGPD, LOPDGDD y DORA como módulos aparte.",
+      "consultancies": "Para consultoras: una organización por cliente y un solo usuario para ti.",
+      "consultanciesLink": "Atesta para consultoras"
     },
-    "marquee": {
-      "pause": "Pausar la animación"
+    "close": {
+      "title": "Escríbenos y te enseñamos Atesta en una llamada",
+      "body": "Repasamos contigo las medidas del ENS que aplican a tu categoría y cómo las llevarías en Atesta."
     },
-    "consultancies": "Para consultoras: todos tus clientes en una cuenta, cada uno con su propio espacio.",
-    "close": "Tu próxima auditoría, preparada.",
     "sample": "Datos de ejemplo",
     "view": {
       "label": "Resumen de una organización en Atesta",
@@ -102,14 +99,6 @@
         "overdue": "Revisión vencida",
         "missing": "Sin evidencias",
         "pending": "Sin responsable"
-      },
-      "measure": {
-        "label": "Una medida del ENS en Atesta",
-        "official": "Texto oficial (RD 311/2022, anexo II)",
-        "assessment": "Tu autoevaluación",
-        "decision": "Aplica (categoría {level})",
-        "implementation": "Implantada en parte",
-        "owner": "Responsable: área de sistemas"
       },
       "records": {
         "label": "Los registros de una organización en Atesta",
@@ -133,49 +122,15 @@
         "date": "Fecha",
         "signature": "Firma"
       },
-      "year": {
-        "label": "Un año de ENS en Atesta",
-        "m0": {
-          "month": "Enero",
-          "text": "Alcance definido: categoría MEDIA."
-        },
-        "m1": {
-          "month": "Febrero",
-          "text": "Autoevaluación de las 73 medidas."
-        },
-        "m2": {
-          "month": "Abril",
-          "text": "Revisión trimestral de accesos cerrada."
-        },
-        "m3": {
-          "month": "Junio",
-          "text": "Incidente registrado; alerta temprana enviada en 24 h."
-        },
-        "m4": {
-          "month": "Septiembre",
-          "text": "Formación anual: 18 confirmaciones."
-        },
-        "m5": {
-          "month": "Noviembre",
-          "text": "Dossier entregado al auditor."
-        }
-      },
-      "connect": {
-        "label": "Conexión de sistemas en Atesta",
-        "access": "Solo lectura"
-      },
-      "stage": "Paso",
       "incident": {
         "label": "Un incidente en Atesta",
         "title": "Caída del correo durante seis horas",
-        "meta": "Constancia: 23 nov, 09:40 · Significativo",
-        "deadline": "Alerta temprana (NIS2, art. 23.4.a)",
-        "due": "Vence 24 nov, 09:40",
-        "state": "En curso",
+        "meta": "Constancia: 23 nov, 09:40",
         "log1": "Incidente registrado por el responsable de sistemas",
-        "log2": "Clasificado como significativo; empiezan tres plazos",
+        "log2": "Anotación: afecta al correo que prestamos a un ayuntamiento",
         "log3": "Anotación: contraseñas restablecidas y sesiones revocadas",
-        "source": "Plazo tomado del texto oficial: Directiva (UE) 2022/2555, art. 23"
+        "log4": "Anotación: incidente notificado a INCIBE-CERT",
+        "source": "Notificación a INCIBE-CERT: Real Decreto 311/2022, art. 33.7. El real decreto no fija un plazo en horas."
       },
       "assistant": {
         "label": "Asistente: respuesta con su cita",
@@ -185,23 +140,27 @@
       "api": {
         "label": "API y MCP: una consulta y las herramientas de un agente",
         "tools": "Herramientas MCP de lectura"
+      },
+      "hero": {
+        "label": "Una medida del ENS en Atesta",
+        "note": "Doble factor activo en el correo y la VPN. Falta en el portal de proveedores.",
+        "ownerValue": "Área de sistemas",
+        "excerpt": "Texto oficial (fragmento)"
+      },
+      "map": {
+        "caption": "Control común: {control}",
+        "framework": "Marco",
+        "requirement": "Requisito en el texto oficial",
+        "note": "Correspondencias revisadas por el equipo de Atesta. Cada referencia enlaza a su fuente oficial.",
+        "names": {
+          "ens_rd311_2022": "ENS",
+          "nis2": "NIS2",
+          "gdpr_art32": "RGPD",
+          "dora": "DORA"
+        }
       }
     },
-    "tabs": {
-      "label": "Vistas del producto",
-      "overview": "Resumen",
-      "assess": "Autoevaluar",
-      "routines": "Rutinas",
-      "incident": "Incidente",
-      "dossier": "Dossier"
-    },
-    "more": "Ver cómo funciona",
-    "connects": "Se conecta con",
-    "ring": {
-      "label": "Una evidencia, muchos marcos",
-      "center": "Controles comunes",
-      "text": "Una misma evidencia, registrada una vez sobre un control común, sirve a todos los marcos que lo exigen."
-    }
+    "more": "Ver cómo funciona"
   },
   "locale": {
     "label": "Idioma",
@@ -262,7 +221,8 @@
       "signin_invalid": "El inicio de sesión con Microsoft no es válido o ha caducado. Vuelve a empezar la conexión desde Atesta.",
       "consent_denied": "No se concedió el consentimiento de administrador en Microsoft, así que la conexión no avanza. Vuelve a intentarlo con una cuenta de administrador global o de administrador de roles con privilegios.",
       "tenant_mismatch": "Microsoft devolvió un inquilino distinto del de tu inicio de sesión, o de este enlace. No se ha guardado nada; vuelve a empezar con una cuenta del inquilino correcto.",
-      "microsoft_unavailable": "No podemos contactar con Microsoft en este momento, o la conexión con Microsoft 365 aún no está disponible aquí. Inténtalo de nuevo más tarde."
+      "microsoft_unavailable": "No podemos contactar con Microsoft en este momento, o la conexión con Microsoft 365 aún no está disponible aquí. Inténtalo de nuevo más tarde.",
+      "google_subject_invalid": "Escribe el correo de un superadministrador de Google Workspace, como admin@tuempresa.es. Si está en un dominio secundario, indica también el dominio principal."
     },
     "identity": {
       "already_member": "Esta persona ya es miembro de la organización.",
@@ -803,7 +763,9 @@
       "evidence_file_uploaded": "Subió un archivo de evidencia",
       "evidence_statement_recorded": "Registró una evidencia",
       "connection_created": "Creó una conexión",
-      "connection_verification_requested": "Solicitó verificar una conexión de Microsoft 365",
+      "connection_verification_requested": "Solicitó verificar una conexión",
+      "connection_provisioned": "Atesta preparó las cuentas de servicio de Google Workspace",
+      "connection_google_subject_set": "Indicó el superadministrador de Google Workspace",
       "connection_consent_granted": "Concedió el consentimiento de Microsoft 365",
       "connection_disconnected": "Desconectó una conexión",
       "scan_requested": "Solicitó un análisis",
@@ -893,15 +855,13 @@
     "languageSaved": "Guardado. Los avisos llegarán en {language}."
   },
   "cockpit": {
-    "summary": "{framework}: {assessed} de {total, plural, one {# medida evaluada} other {# medidas evaluadas}}, {implemented, plural, one {# implantada} other {# implantadas}}.",
-    "summaryAttention": "{count, plural, one {Hay # asunto que requiere atención.} other {Hay # asuntos que requieren atención.}}",
-    "summaryCalm": "Nada urgente.",
     "now": "Ahora",
     "calm": "Nada urgente. Siguiente paso:",
     "severity": {
       "overdue": "Vencido",
       "missing": "Falta",
-      "pending": "Pendiente"
+      "pending": "Pendiente",
+      "clock": "Plazo legal"
     },
     "attention": {
       "overdue": "{count, plural, one {# medida con fecha límite vencida} other {# medidas con fecha límite vencida}} en {framework}",
@@ -917,7 +877,9 @@
         "incident_clock": "{clock} ({framework}) del incidente «{title}»: {when}",
         "clockOverdue": "venció el {time}",
         "clockRunning": "vence el {time}"
-      }
+      },
+      "overdueOthers": "{count, plural, one {# medida más con fecha límite vencida} other {# medidas más con fecha límite vencida}} en {framework}",
+      "mineOverdue": "venció el {date}"
     },
     "step": {
       "scope": "Define el alcance de {framework}",
@@ -926,18 +888,14 @@
       "export": "Exporta la declaración de aplicabilidad de {framework}"
     },
     "counts": "{assessed} de {total, plural, one {# evaluada} other {# evaluadas}} · {implemented, plural, one {# implantada} other {# implantadas}} · {partial} en parte · {notImplemented} sin implantar · {notApplicable, plural, one {# no aplica} other {# no aplican}}",
-    "yourWork": "Tu trabajo",
-    "yourWorkEmpty": "No tienes medidas abiertas asignadas.",
     "noDue": "Sin fecha",
     "allMyWork": "Ver todo en Mi trabajo",
-    "team": "Equipo",
-    "teamChart": "Medidas abiertas por persona",
-    "teamEmpty": "Aún no hay medidas asignadas.",
-    "formerMember": "Antiguo miembro",
-    "recent": "Actividad reciente",
-    "recentEmpty": "Sin actividad en los últimos 30 días.",
-    "system": "Sistema",
-    "allActivity": "Ver toda la actividad"
+    "frameworks": "Marcos",
+    "allFrameworks": "Ver todos los marcos",
+    "line": "<key>{assessed}</key> de {total, plural, one {# medida evaluada} other {# medidas evaluadas}} · {implemented, plural, one {# implantada} other {# implantadas}}",
+    "lineScore": "Último análisis: {score}",
+    "lineUnscored": "Último análisis sin puntuación",
+    "lineNotStarted": "Sin evaluar"
   },
   "console": {
     "skip": "Saltar al contenido",
@@ -1130,7 +1088,10 @@
       "classificationMissing": "falta cuándo se clasificó como significativo",
       "classify": "Registrar la clasificación",
       "classifyTitle": "Clasificación como significativo",
-      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registréis."
+      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registréis.",
+      "closeConfirm": "{count, plural, one {Queda # aviso sin enviar. ¿Cerrar igualmente?} other {Quedan # avisos sin enviar. ¿Cerrar igualmente?}}",
+      "closeAnyway": "Cerrar",
+      "cancel": "Cancelar"
     }
   },
   "trainingLink": {
@@ -1386,7 +1347,8 @@
         "title": "Registra la revisión y abre el dossier de {framework}",
         "help": "El responsable de seguridad revisa; la dirección lee el resumen y firma."
       }
-    }
+    },
+    "line": "{done} de {total, plural, other {#}}"
   },
   "report": {
     "title": "Informe mensual",
@@ -1457,7 +1419,7 @@
       "acknowledged": "Confirmaciones"
     },
     "incidents": {
-      "lead": "{open, plural, =0 {No hay incidentes abiertos.} one {# incidente abierto} other {# incidentes abiertos}}{open, plural, =0 {} other {{overdue, plural, =0 {, sin avisos vencidos.} one {, # con avisos vencidos.} other {, # con avisos vencidos.}}}}",
+      "lead": "{open, plural, =0 {No hay incidentes abiertos.} one {# incidente abierto} other {# incidentes abiertos}}{open, plural, =0 {} other {{overdue, plural, =0 {{running, plural, =0 {, sin avisos pendientes.} one {, # con un aviso por enviar en plazo.} other {, # con avisos por enviar en plazo.}}} one {, # con avisos vencidos.} other {, # con avisos vencidos.}}}}",
       "open": "Abiertos",
       "closed": "Cerrados",
       "overdue": "Con avisos vencidos"
@@ -1474,7 +1436,8 @@
     "candidate": "Lista orientativa redactada por Atesta a partir de la guía citada. Pendiente de revisión cualificada; no valora a tu organización.",
     "reviewed": "Lista redactada por Atesta a partir de la guía citada y revisada por {name} el {date}. No valora a tu organización.",
     "reference": "{guide} ({edition}), apartado {section}, pág. {page}",
-    "shared": "Referencia: {reference}"
+    "shared": "Referencia: {reference}",
+    "reviewedTeam": "Lista redactada por Atesta a partir de la guía citada y revisada por el equipo de Atesta. No valora a tu organización."
   },
   "legal": {
     "draft": "Borrador pendiente de revisión jurídica. Este texto no es definitivo.",
@@ -1813,29 +1776,6 @@
       "contact": "Contacto",
       "how": "Cómo funciona"
     },
-    "proof": {
-      "label": "Lo que es verdad hoy",
-      "boe": {
-        "lead": "73 medidas",
-        "line": "con el texto oficial del BOE"
-      },
-      "team": {
-        "lead": "Revisado",
-        "line": "evidencias revisadas por el equipo de Atesta"
-      },
-      "spain": {
-        "lead": "España",
-        "line": "Diseñado para alojarse en España (eu-south-2)"
-      },
-      "readonly": {
-        "lead": "Solo lectura",
-        "line": "en tus sistemas, siempre"
-      },
-      "noai": {
-        "lead": "Tú decides",
-        "line": "ninguna IA decide si cumples"
-      }
-    },
     "customers": {
       "title": "Organizaciones que usan Atesta"
     },
@@ -1846,8 +1786,8 @@
     }
   },
   "producto": {
-    "title": "Lo que hace Atesta, <hl>pantalla a pantalla</hl>",
-    "sub": "Cada parte del ENS tiene su sitio: las medidas, las rutinas que las mantienen vivas, los incidentes y el dossier que firma la dirección.",
+    "title": "Qué puedes hacer con <hl>Atesta</hl>",
+    "sub": "Autoevaluar las medidas del ENS, llevar los registros periódicos, anotar incidentes y preparar el dossier para el auditor. Cada sección muestra su pantalla con datos de ejemplo.",
     "ens": "Qué es el ENS",
     "assess": {
       "title": "Autoevaluación con el texto oficial",
@@ -1882,7 +1822,7 @@
       "body": "Pregunta qué evidencias pide una medida o qué categoría te corresponde. Responde con texto oficial y guías revisadas, siempre con su cita, y nunca decide por ti.",
       "p1": "Solo texto oficial y contenido revisado",
       "p2": "Cada respuesta con su cita",
-      "p3": "Sin fuente, no hay respuesta"
+      "p3": "Si no encuentra la fuente, no responde"
     },
     "api": {
       "title": "API y MCP",
@@ -1891,11 +1831,11 @@
       "p2": "Registro de uso",
       "p3": "MCP local hoy; alojado, próximamente"
     },
-    "close": "Míralo con tus propias medidas."
+    "close": "Escríbenos y te lo enseñamos en una llamada."
   },
   "ens": {
-    "title": "El <hl>ENS</hl>, con el texto del BOE",
-    "sub": "El Esquema Nacional de Seguridad (Real Decreto 311/2022) se aplica al sector público y a las empresas que, por contrato, le prestan servicios o le proveen soluciones. Aquí están sus categorías y sus medidas, tal como las publica el BOE.",
+    "title": "El <hl>ENS</hl>: categorías y medidas, con el texto del BOE",
+    "sub": "El Esquema Nacional de Seguridad (Real Decreto 311/2022) se aplica al sector público y a las empresas que le prestan servicios o le proveen soluciones por contrato. Aquí están sus categorías y sus medidas, tal como las publica el BOE.",
     "source": "Texto oficial en el BOE",
     "categories": {
       "title": "Tres categorías",
@@ -2013,8 +1953,8 @@
     "missing": "El enlace no está completo. Ábrelo de nuevo desde el correo."
   },
   "seguridad": {
-    "title": "Lo que Atesta puede tocar, <hl>y lo que no</hl>",
-    "sub": "Atesta lee la configuración de seguridad de tus sistemas y guarda tus evidencias. Aquí está cómo lo hace, regla a regla, y qué sostiene cada regla.",
+    "title": "Qué lee Atesta de tus sistemas y <hl>dónde guarda los datos</hl>",
+    "sub": "Atesta leerá la configuración de seguridad de Microsoft 365 o Google Workspace con permisos de solo lectura, y guarda las evidencias que registras. Aquí explicamos cada regla y cómo se comprueba.",
     "status": "Atesta aún no está en producción. Esta página describe cómo está diseñada; la actualizaremos cuando lo esté.",
     "diagram": {
       "label": "Qué puede tocar Atesta",
@@ -2076,8 +2016,8 @@
     }
   },
   "consultoras": {
-    "title": "Todos tus clientes, <hl>cada uno en su espacio</hl>",
-    "sub": "Para consultoras y equipos de TI que preparan el ENS de varias empresas: un solo acceso, una organización por cliente y una cartera que dice dónde mirar primero.",
+    "title": "El ENS de varios clientes, <hl>desde una sola cuenta</hl>",
+    "sub": "Para consultoras y equipos de TI que preparan el ENS de varias empresas: entras con un solo usuario, cada cliente es una organización separada y la cartera muestra qué cliente tiene tareas vencidas.",
     "how": "Cómo se trabaja con varios clientes",
     "p1": {
       "title": "Cada cliente, aislado",
@@ -2093,5 +2033,9 @@
     },
     "view": "Cartera: tus organizaciones de un vistazo",
     "close": "Prepara a tus clientes con Atesta."
+  },
+  "deadline": {
+    "left": "{unit, select, days {{value, plural, one {Queda # día} other {Quedan # días}}} other {{value, plural, one {Queda # h} other {Quedan # h}}}}",
+    "past": "{unit, select, days {{value, plural, one {Vencido hace # día} other {Vencido hace # días}}} other {Vencido hace {value} h}}"
   }
 }

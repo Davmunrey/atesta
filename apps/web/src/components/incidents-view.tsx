@@ -8,6 +8,7 @@ import { goTo } from "@/lib/navigation";
 import { type Membership, orgHome, orgIncident } from "@/lib/org";
 import { isContributor } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
+import { ClockBadge } from "./badge";
 import { Icon } from "./icons";
 import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { RecordSummary } from "./record-summary";
@@ -28,7 +29,7 @@ export function IncidentsView({ org }: { org: Membership }) {
   const sum = list.data?.length ? incidentSummary(list.data) : null;
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
-    {sum ? <RecordSummary lead={s("lead", { open: sum.open, overdue: sum.overdue })} figures={[
+    {sum ? <RecordSummary lead={s("lead", { open: sum.open, overdue: sum.overdue, running: sum.running })} figures={[
       { label: s("open"), value: format.number(sum.open) }, { label: s("closed"), value: format.number(sum.closed) },
       { label: s("overdue"), value: format.number(sum.overdue), attention: sum.overdue > 0 }]} /> : null}
     <Panel title={t("list")}>
@@ -41,7 +42,7 @@ export function IncidentsView({ org }: { org: Membership }) {
             <td data-label={t("aware")} className="tabular-nums">{time(i.aware_at)}</td>
             <td data-label={t("state")}>{i.closed_at ? <span className="badge" data-severity="done"><Icon name="done" />{t("closed")}</span>
               : i.overdue > 0 ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("overdue", { count: i.overdue })}</span>
-              : i.next_due_at ? <span className="badge" data-severity="pending"><Icon name="pending" />{t("next", { time: time(i.next_due_at) })}</span>
+              : i.next_due_at ? <><ClockBadge dueAt={i.next_due_at} /><span className="block text-sm text-muted">{t("next", { time: time(i.next_due_at) })}</span></>
               : <span className="text-muted">{t("noClocks")}</span>}</td>
           </tr>)}</tbody>
         </table></div>}

@@ -37,6 +37,7 @@
   "compliance.training_link_invalid",
   "compliance.training_not_found",
   "connections.consent_denied",
+  "connections.google_subject_invalid",
   "connections.incomplete_permissions",
   "connections.microsoft_unavailable",
   "connections.not_found",

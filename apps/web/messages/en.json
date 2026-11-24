@@ -46,52 +46,49 @@
   },
   "landing": {
     "headline": "Get <hl>ENS</hl>-ready without a full-time consultant",
-    "sub": "Atesta gathers the measures, the evidence and the records your auditor asks for, for SMEs that sell to the public sector.",
+    "sub": "Each ENS measure with its official text, beside your self-assessment and evidence. For SMEs that serve the public sector.",
     "requestAccess": "Request access",
     "signIn": "Sign in",
     "soon": "Coming soon",
     "problem": {
-      "title": "The ENS does not fit in a spreadsheet",
-      "body": "Seventy-three measures, each with its official text, its evidence and its reviews. Spread across emails and folders, nobody knows what is missing until the audit arrives."
+      "title": "What the ENS asks of your company",
+      "body": "Apply the Annex II measures for your category and be able to show it with evidence. In spreadsheets and folders, it is hard to know what is missing and who owns it."
     },
     "how": {
       "title": "How it works",
       "steps": {
-        "connect": {
-          "title": "Connect your systems",
-          "body": "Microsoft 365 or Google Workspace, with read-only permissions."
-        },
         "assess": {
-          "title": "Assess every measure",
-          "body": "With its official text and the applicability proposal for your category."
+          "title": "Self-assess the 73 measures",
+          "body": "Atesta proposes whether each measure applies to your category. You decide and record its state."
         },
         "routines": {
-          "title": "Record the routines",
-          "body": "Policies, access reviews, training and incidents, with their deadlines."
+          "title": "Keep the periodic records",
+          "body": "Policies, access reviews, training and incidents, with their dates and what needs action."
         },
         "incidents": {
-          "title": "Respond to an incident",
-          "body": "Notification deadlines start as soon as you record it."
+          "title": "Record incidents",
+          "body": "What happened, when, and whom you notified, with the time of every note. With NIS2 or the GDPR, it also works out their deadlines."
         },
         "dossier": {
-          "title": "Hand over the dossier",
-          "body": "Everything recorded, ready for the auditor to review and management to sign."
+          "title": "Hand the dossier to the auditor",
+          "body": "Everything recorded in one document, with room for management to sign."
+        },
+        "connect": {
+          "title": "Connect Microsoft 365 or Google Workspace",
+          "body": "Atesta will read their settings with read-only permissions."
         }
       }
     },
-    "year": {
-      "title": "A year of ENS"
-    },
     "frameworks": {
-      "title": "The ENS first, more by plan",
-      "body": "Also covers NIS2, GDPR, LOPDGDD and DORA. One piece of evidence serves several frameworks.",
-      "byPlan": "By plan"
+      "title": "If NIS2, the GDPR or DORA also apply to you",
+      "body": "Each piece of evidence is kept once, on a common control: a check several frameworks ask for. Besides the ENS, Atesta prepares NIS2, GDPR, LOPDGDD and DORA as separate modules.",
+      "consultancies": "For consultancies: one organization per client, and one sign-in for you.",
+      "consultanciesLink": "Atesta for consultancies"
     },
-    "marquee": {
-      "pause": "Pause the animation"
+    "close": {
+      "title": "Write to us and we will show you Atesta on a call",
+      "body": "We go through the ENS measures for your category and how you would keep them in Atesta."
     },
-    "consultancies": "For consultancies: all your clients in one account, each in its own space.",
-    "close": "Your next audit, prepared.",
     "sample": "Sample data",
     "view": {
       "label": "An organization's overview in Atesta",
@@ -102,14 +99,6 @@
         "overdue": "Review overdue",
         "missing": "No evidence",
         "pending": "No owner"
-      },
-      "measure": {
-        "label": "An ENS measure in Atesta",
-        "official": "Official text (RD 311/2022, annex II)",
-        "assessment": "Your self-assessment",
-        "decision": "Applies (category {level})",
-        "implementation": "Partly implemented",
-        "owner": "Owner: systems team"
       },
       "records": {
         "label": "An organization's records in Atesta",
@@ -133,49 +122,15 @@
         "date": "Date",
         "signature": "Signature"
       },
-      "year": {
-        "label": "A year of ENS in Atesta",
-        "m0": {
-          "month": "January",
-          "text": "Scope defined: category MEDIA."
-        },
-        "m1": {
-          "month": "February",
-          "text": "Self-assessment of the 73 measures."
-        },
-        "m2": {
-          "month": "April",
-          "text": "Quarterly access review closed."
-        },
-        "m3": {
-          "month": "June",
-          "text": "Incident recorded; early warning sent within 24 h."
-        },
-        "m4": {
-          "month": "September",
-          "text": "Annual training: 18 confirmations."
-        },
-        "m5": {
-          "month": "November",
-          "text": "Dossier handed to the auditor."
-        }
-      },
-      "connect": {
-        "label": "Connecting systems in Atesta",
-        "access": "Read-only"
-      },
-      "stage": "Step",
       "incident": {
         "label": "An incident in Atesta",
         "title": "Email outage lasting six hours",
-        "meta": "Aware: 23 Nov, 09:40 · Significant",
-        "deadline": "Early warning (NIS2, art. 23.4.a)",
-        "due": "Due 24 Nov, 09:40",
-        "state": "Running",
+        "meta": "Aware: 23 Nov, 09:40",
         "log1": "Incident recorded by the systems owner",
-        "log2": "Classified as significant; three deadlines start",
+        "log2": "Note: affects the email service we provide to a town council",
         "log3": "Note: passwords reset and sessions revoked",
-        "source": "Deadline taken from the official text: Directive (EU) 2022/2555, art. 23"
+        "log4": "Note: incident reported to INCIBE-CERT",
+        "source": "Report to INCIBE-CERT: Royal Decree 311/2022, art. 33.7. The decree sets no deadline in hours."
       },
       "assistant": {
         "label": "Assistant: an answer with its citation",
@@ -185,23 +140,27 @@
       "api": {
         "label": "API and MCP: one request and an agent's tools",
         "tools": "Read-only MCP tools"
+      },
+      "hero": {
+        "label": "An ENS measure in Atesta",
+        "note": "Two-factor sign-in active for email and the VPN. Missing on the supplier portal.",
+        "ownerValue": "Systems team",
+        "excerpt": "Official text (excerpt)"
+      },
+      "map": {
+        "caption": "Common control: {control}",
+        "framework": "Framework",
+        "requirement": "Requirement in the official text",
+        "note": "Mappings reviewed by the Atesta team. Each reference links to its official source.",
+        "names": {
+          "ens_rd311_2022": "ENS",
+          "nis2": "NIS2",
+          "gdpr_art32": "GDPR",
+          "dora": "DORA"
+        }
       }
     },
-    "tabs": {
-      "label": "Product views",
-      "overview": "Overview",
-      "assess": "Assess",
-      "routines": "Routines",
-      "incident": "Incident",
-      "dossier": "Dossier"
-    },
-    "more": "See how it works",
-    "connects": "Connects with",
-    "ring": {
-      "label": "One piece of evidence, many frameworks",
-      "center": "Common controls",
-      "text": "One piece of evidence, recorded once on a common control, serves every framework that requires it."
-    }
+    "more": "See how it works"
   },
   "locale": {
     "label": "Language",
@@ -262,7 +221,8 @@
       "signin_invalid": "The Microsoft sign-in is not valid or has expired. Start the connection again from Atesta.",
       "consent_denied": "Admin consent was not granted in Microsoft, so the connection cannot continue. Try again with a Global Administrator or Privileged Role Administrator account.",
       "tenant_mismatch": "Microsoft returned a tenant different from your sign-in, or from this link. Nothing was saved; start again with an account in the right tenant.",
-      "microsoft_unavailable": "We cannot reach Microsoft right now, or the Microsoft 365 connection is not available here yet. Try again later."
+      "microsoft_unavailable": "We cannot reach Microsoft right now, or the Microsoft 365 connection is not available here yet. Try again later.",
+      "google_subject_invalid": "Enter the email of a Google Workspace super admin, such as admin@yourcompany.com. If it is on a secondary domain, also enter the primary domain."
     },
     "identity": {
       "already_member": "This person is already a member of the organization.",
@@ -803,7 +763,9 @@
       "evidence_file_uploaded": "Uploaded an evidence file",
       "evidence_statement_recorded": "Recorded evidence",
       "connection_created": "Created a connection",
-      "connection_verification_requested": "Requested a Microsoft 365 connection verification",
+      "connection_verification_requested": "Requested a connection verification",
+      "connection_provisioned": "Atesta prepared the Google Workspace service accounts",
+      "connection_google_subject_set": "Named the Google Workspace super admin",
       "connection_consent_granted": "Granted Microsoft 365 consent",
       "connection_disconnected": "Disconnected a connection",
       "scan_requested": "Requested a scan",
@@ -893,15 +855,13 @@
     "languageSaved": "Saved. Notices will arrive in {language}."
   },
   "cockpit": {
-    "summary": "{framework}: {assessed} of {total, plural, one {# measure assessed} other {# measures assessed}}, {implemented} implemented.",
-    "summaryAttention": "{count, plural, one {# item needs attention.} other {# items need attention.}}",
-    "summaryCalm": "Nothing urgent.",
     "now": "Now",
     "calm": "Nothing urgent. Next step:",
     "severity": {
       "overdue": "Overdue",
       "missing": "Missing",
-      "pending": "Pending"
+      "pending": "Pending",
+      "clock": "Legal deadline"
     },
     "attention": {
       "overdue": "{count, plural, one {# measure past its due date} other {# measures past their due date}} in {framework}",
@@ -917,7 +877,9 @@
         "incident_clock": "{clock} ({framework}) for the incident “{title}”: {when}",
         "clockOverdue": "was due on {time}",
         "clockRunning": "due on {time}"
-      }
+      },
+      "overdueOthers": "{count, plural, one {# more measure past its due date} other {# more measures past their due date}} in {framework}",
+      "mineOverdue": "was due on {date}"
     },
     "step": {
       "scope": "Define the scope of {framework}",
@@ -926,18 +888,14 @@
       "export": "Export the statement of applicability of {framework}"
     },
     "counts": "{assessed} of {total} assessed · {implemented} implemented · {partial} partially · {notImplemented} not implemented · {notApplicable, plural, one {# does not apply} other {# do not apply}}",
-    "yourWork": "Your work",
-    "yourWorkEmpty": "You have no open measures assigned.",
     "noDue": "No date",
     "allMyWork": "See everything in My work",
-    "team": "Team",
-    "teamChart": "Open measures per person",
-    "teamEmpty": "No measures are assigned yet.",
-    "formerMember": "Former member",
-    "recent": "Recent activity",
-    "recentEmpty": "No activity in the last 30 days.",
-    "system": "System",
-    "allActivity": "See all activity"
+    "frameworks": "Frameworks",
+    "allFrameworks": "See all frameworks",
+    "line": "<key>{assessed}</key> of {total, plural, one {# measure assessed} other {# measures assessed}} · {implemented} implemented",
+    "lineScore": "Latest scan: {score}",
+    "lineUnscored": "Latest scan without a score",
+    "lineNotStarted": "Not assessed"
   },
   "console": {
     "skip": "Skip to content",
@@ -1130,7 +1088,10 @@
       "classificationMissing": "the time it was classified as significant is missing",
       "classify": "Record the classification",
       "classifyTitle": "Classification as significant",
-      "classificationMissingNotice": "This incident is significant, but the time it was classified is missing. Deadlines that run from classification show only their outer limit until you record it."
+      "classificationMissingNotice": "This incident is significant, but the time it was classified is missing. Deadlines that run from classification show only their outer limit until you record it.",
+      "closeConfirm": "{count, plural, one {# notice not sent yet. Close anyway?} other {# notices not sent yet. Close anyway?}}",
+      "closeAnyway": "Close",
+      "cancel": "Cancel"
     }
   },
   "trainingLink": {
@@ -1386,7 +1347,8 @@
         "title": "Record the review and open the {framework} dossier",
         "help": "The security officer reviews; management reads the summary and signs."
       }
-    }
+    },
+    "line": "{done} of {total, plural, other {#}}"
   },
   "report": {
     "title": "Monthly report",
@@ -1457,7 +1419,7 @@
       "acknowledged": "Confirmations"
     },
     "incidents": {
-      "lead": "{open, plural, =0 {No open incidents.} one {# open incident} other {# open incidents}}{open, plural, =0 {} other {{overdue, plural, =0 {, no notices overdue.} one {, # with overdue notices.} other {, # with overdue notices.}}}}",
+      "lead": "{open, plural, =0 {No open incidents.} one {# open incident} other {# open incidents}}{open, plural, =0 {} other {{overdue, plural, =0 {{running, plural, =0 {, no notices pending.} other {, # with a notice due within its deadline.}}} other {, # with overdue notices.}}}}",
       "open": "Open",
       "closed": "Closed",
       "overdue": "With overdue notices"
@@ -1474,7 +1436,8 @@
     "candidate": "A guidance list Atesta wrote from the cited guide. Pending qualified review; it does not assess your organization.",
     "reviewed": "A list Atesta wrote from the cited guide, reviewed by {name} on {date}. It does not assess your organization.",
     "reference": "{guide} ({edition}), section {section}, p. {page}",
-    "shared": "Reference: {reference}"
+    "shared": "Reference: {reference}",
+    "reviewedTeam": "A list Atesta wrote from the cited guide, reviewed by the Atesta team. It does not assess your organization."
   },
   "legal": {
     "draft": "Draft pending legal review. This text is not final.",
@@ -1813,29 +1776,6 @@
       "contact": "Contact",
       "how": "How it works"
     },
-    "proof": {
-      "label": "What is true today",
-      "boe": {
-        "lead": "73 measures",
-        "line": "with the official BOE text"
-      },
-      "team": {
-        "lead": "Reviewed",
-        "line": "evidence reviewed by the Atesta team"
-      },
-      "spain": {
-        "lead": "Spain",
-        "line": "Designed to be hosted in Spain (eu-south-2)"
-      },
-      "readonly": {
-        "lead": "Read-only",
-        "line": "in your systems, always"
-      },
-      "noai": {
-        "lead": "You decide",
-        "line": "no AI decides your compliance"
-      }
-    },
     "customers": {
       "title": "Organizations using Atesta"
     },
@@ -1846,8 +1786,8 @@
     }
   },
   "producto": {
-    "title": "What Atesta does, <hl>screen by screen</hl>",
-    "sub": "Every part of the ENS has its place: the measures, the routines that keep them alive, incidents and the dossier your management signs.",
+    "title": "What you can do with <hl>Atesta</hl>",
+    "sub": "Self-assess the ENS measures, keep the periodic records, log incidents and prepare the dossier for the auditor. Each section shows its screen with sample data.",
     "ens": "What the ENS is",
     "assess": {
       "title": "Self-assessment with the official text",
@@ -1882,7 +1822,7 @@
       "body": "Ask what evidence a measure needs or which category fits you. It answers with official text and reviewed guides, always with the citation, and never decides for you.",
       "p1": "Only official text and reviewed content",
       "p2": "Every answer with its citation",
-      "p3": "No source, no answer"
+      "p3": "If it finds no source, it does not answer"
     },
     "api": {
       "title": "API and MCP",
@@ -1891,11 +1831,11 @@
       "p2": "Usage log",
       "p3": "Local MCP today; hosted, coming soon"
     },
-    "close": "See it with your own measures."
+    "close": "Write to us and we will show you on a call."
   },
   "ens": {
-    "title": "The <hl>ENS</hl>, with the BOE text",
-    "sub": "Spain's National Security Framework (Royal Decree 311/2022) applies to the public sector and to companies that, under contract, provide it with services or solutions. Here are its categories and its measures, as the BOE publishes them.",
+    "title": "The <hl>ENS</hl>: categories and measures, with the BOE text",
+    "sub": "Spain's National Security Framework (Royal Decree 311/2022) applies to the public sector and to companies that provide it with services or solutions under contract. Here are its categories and its measures, as the BOE publishes them.",
     "source": "Official text in the BOE",
     "categories": {
       "title": "Three categories",
@@ -2013,8 +1953,8 @@
     "missing": "The link is incomplete. Open it again from the email."
   },
   "seguridad": {
-    "title": "What Atesta can touch, <hl>and what it cannot</hl>",
-    "sub": "Atesta reads the security settings of your systems and keeps your evidence. Here is how, rule by rule, and what holds each rule.",
+    "title": "What Atesta reads from your systems and <hl>where it keeps the data</hl>",
+    "sub": "Atesta will read the security settings of Microsoft 365 or Google Workspace with read-only permissions, and keeps the evidence you record. Here is each rule and how it is checked.",
     "status": "Atesta is not in production yet. This page describes how it is designed; we will update it when it is.",
     "diagram": {
       "label": "What Atesta can touch",
@@ -2076,8 +2016,8 @@
     }
   },
   "consultoras": {
-    "title": "All your clients, <hl>each in its own space</hl>",
-    "sub": "For consultancies and IT teams preparing the ENS for several companies: one sign-in, one organization per client and a portfolio that tells you where to look first.",
+    "title": "The ENS for several clients, <hl>from one account</hl>",
+    "sub": "For consultancies and IT teams preparing the ENS for several companies: you sign in with one user, each client is a separate organization, and the portfolio shows which client has overdue work.",
     "how": "How work with several clients runs",
     "p1": {
       "title": "Each client, isolated",
@@ -2093,5 +2033,9 @@
     },
     "view": "Portfolio: your organizations at a glance",
     "close": "Prepare your clients with Atesta."
+  },
+  "deadline": {
+    "left": "{unit, select, days {{value, plural, one {# day left} other {# days left}}} other {{value} h left}}",
+    "past": "{unit, select, days {{value, plural, one {Overdue by # day} other {Overdue by # days}}} other {Overdue by {value} h}}"
   }
 }
