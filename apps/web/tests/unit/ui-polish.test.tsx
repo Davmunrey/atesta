@@ -21,7 +21,7 @@ it.each(readdirSync(components).filter((f) => f.endsWith(".tsx") && source(f).in
 );
 
 it("stacks tables by their own width, with the column name before each value", () => {
-  const css = readFileSync(join(__dirname, "../../src/styles/console.css"), "utf8");
+  const css = readFileSync(join(__dirname, "../../../../packages/ui/src/styles/components.css"), "utf8");
   expect(css).toMatch(/\.table-region\s*\{[^}]*container-type:\s*inline-size/);
   expect(css).toMatch(/@container \(width < 36rem\)/);
   expect(css).toContain("content: attr(data-label)");
