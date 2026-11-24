@@ -79,6 +79,7 @@ updates:
     directories:
       - "/apps"
       - "/scanner"
+      - "/infra/egress" # the scan egress proxy's Envoy base (issue 454; owner, 2026-11-24)
     schedule:
       interval: "weekly"
       day: "monday"
