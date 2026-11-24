@@ -9,8 +9,7 @@ import { type Membership, orgHome } from "@/lib/org";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
-import { RecordSummary } from "./record-summary";
-import { tokenSummary } from "@/lib/summaries";
+import { RecordSummary, useRecordStates } from "./record-summary";
 
 const EXPIRIES = [30, 90, 180, 365] as const;
 
@@ -18,15 +17,10 @@ const EXPIRIES = [30, 90, 180, 365] as const;
 export function IntegrationsView({ org }: { org: Membership }) {
   const t = useTranslations("integrations");
   const list = useApiTokens(org.organization_id);
-  const s = useTranslations("summary");
-  const format = useFormatter();
-  const sum = list.data?.length ? tokenSummary(list.data, new Date()) : null;
+  const states = useRecordStates();
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
-    {sum ? <RecordSummary lead={s("tokens.lead", { active: sum.active })} figures={[
-      { label: s("tokens.active"), value: format.number(sum.active), attention: sum.active === 0 },
-      { label: s("tokens.inactive"), value: format.number(sum.inactive) },
-      { label: s("tokens.lastUsed"), value: sum.lastUsed ? format.dateTime(new Date(sum.lastUsed), { dateStyle: "medium" }) : s("never") }]} /> : null}
+    {list.data?.length ? <RecordSummary state={states.tokens(list.data)} /> : null}
     <p className="text-sm">{t.rich("docs", { api: (c) => <Link href="/docs/api" className="underline">{c}</Link>, mcp: (c) => <Link href="/docs/mcp" className="underline">{c}</Link> })}</p>
     <Panel title={t("list")}>
       {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
