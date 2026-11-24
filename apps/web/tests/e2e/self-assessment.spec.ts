@@ -182,14 +182,18 @@ test("a measure reads as the shared sheet: the record beside the law, stacked on
   const row = page.locator("details.requirement-row.measure-sheet").filter({ hasText: "R.R1" });
   await expect(row).toHaveAttribute("open", "");
   await row.locator("summary", { hasText: "Leer texto oficial" }).click();
-  const record = row.locator(".measure-sheet-record");
   const law = row.locator(".measure-sheet-law");
   await expect(law.locator("blockquote.official-text")).toHaveAttribute("lang", "es");
   for (const colorScheme of ["light", "dark"] as const) {
     await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
     for (const [width, sideBySide] of [[375, false], [1280, true]] as const) {
       await page.setViewportSize({ width, height: 900 });
-      const [a, b] = [(await record.boundingBox())!, (await law.boundingBox())!];
+      // Both boxes from one settled frame: two separate reads can straddle a style change (#456).
+      await settled(page);
+      const { a, b } = await row.evaluate((sheet) => {
+        const box = (part: string) => sheet.querySelector(part)!.getBoundingClientRect().toJSON() as DOMRect;
+        return { a: box(".measure-sheet-record"), b: box(".measure-sheet-law") };
+      });
       expect(Math.abs(a.y - b.y) < 1 && b.x > a.x + a.width, `${colorScheme} ${width} side by side`).toBe(sideBySide);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${colorScheme} ${width}`).toBe(true);
       await expectAccessible(page, `measure sheet ${colorScheme} ${width}`);

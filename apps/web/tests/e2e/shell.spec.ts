@@ -217,7 +217,7 @@ test("organization navigation, local fonts and long content work across sizes an
   expect(type.every(({ loaded }) => loaded)).toBe(true);
   expect(fonts.length).toBeGreaterThanOrEqual(2);
   expect(fonts.every((url) => new URL(url).origin === new URL(home).origin && new URL(url).pathname.endsWith(".woff2"))).toBe(true);
-  expect(await page.getByRole("button", { name: "English" }).evaluate((element) => getComputedStyle(element).transitionDuration)).toBe("1e-05s");
+  expect(await page.getByRole("button", { name: "English" }).evaluate((element) => getComputedStyle(element).transitionDuration)).toBe("0s");
   for (const path of ["/", "/no-such-page"]) {
     await page.goto(path);
     expect(await page.getByRole("main").evaluate((element) => getComputedStyle(element).colorScheme)).toBe("light");
