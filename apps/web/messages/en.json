@@ -708,7 +708,7 @@
     "notApplicable": "Do not apply",
     "pending": "Pending",
     "implementedOverTime": "Measures implemented over time",
-    "historyHelp": "The chart appears once self-assessments exist on at least two different days.",
+    "historyHelp": "The trend appears once the register has changed on at least 7 different days.",
     "scoreOverTime": "Recorded score over time",
     "score": "Score",
     "showTable": "Show the data as a table",
@@ -718,7 +718,8 @@
     "openByOwner": "Open measures by owner",
     "noOwners": "No measure has an owner yet. Assign one from each measure.",
     "formerMember": "Former member",
-    "day": "Day"
+    "day": "Day",
+    "oneOwner": "{email} holds {count, plural, one {the only open assigned measure} other {all # open assigned measures}}."
   },
   "activity": {
     "title": "Activity",
@@ -1373,8 +1374,6 @@
     "notCertification": "This report gathers what the organization recorded in Atesta. It is not a certification or a conformity assessment."
   },
   "summary": {
-    "label": "Summary",
-    "never": "Never",
     "glance": {
       "title": "Records",
       "help": "What an audit asks for, at a glance. Each row links to its record.",
@@ -1385,37 +1384,31 @@
       "failed": "Could not load."
     },
     "policies": {
-      "lead": "{attention, plural, =0 {Every policy is approved and up to date.} one {# policy needs attention.} other {# policies need attention.}}",
-      "total": "Policies",
-      "current": "Approved and up to date",
-      "overdue": "Review overdue",
-      "unapproved": "Not approved"
+      "overdue": "{count, plural, one {# policy past its review date} other {# policies past their review date}}",
+      "unapproved": "{count, plural, one {# policy not approved} other {# policies not approved}}",
+      "calm": "Every policy is approved and up to date."
     },
     "access": {
-      "lead": "{open, plural, =0 {No open reviews.} one {# open review} other {# open reviews}}{open, plural, =0 {} other {{pending, plural, =0 {, every account decided.} one {, # account still to decide.} other {, # accounts still to decide.}}}}",
-      "total": "Reviews",
-      "open": "Open",
-      "closed": "Closed",
-      "pending": "Accounts to decide"
+      "pending": "{count, plural, one {# account to decide} other {# accounts to decide}}",
+      "late": "{count, plural, one {# review past its date} other {# reviews past their date}}",
+      "calm": "No open reviews.",
+      "calmOpen": "Every account in the open reviews is decided."
     },
     "training": {
-      "lead": "{open, plural, =0 {No open trainings.} one {# open training.} other {# open trainings.}} {acknowledged, plural, =0 {No confirmations yet.} one {# confirmation recorded.} other {# confirmations recorded.}}",
-      "total": "Trainings",
-      "open": "Open",
-      "acknowledged": "Confirmations"
+      "late": "{count, plural, one {# training ended and not closed} other {# trainings ended and not closed}}",
+      "calm": "No open trainings.",
+      "calmOpen": "The open trainings are within their dates."
     },
     "incidents": {
-      "lead": "{open, plural, =0 {No open incidents.} one {# open incident} other {# open incidents}}{open, plural, =0 {} other {{overdue, plural, =0 {{running, plural, =0 {, no notices pending.} other {, # with a notice due within its deadline.}}} other {, # with overdue notices.}}}}",
-      "open": "Open",
-      "closed": "Closed",
-      "overdue": "With overdue notices"
+      "overdue": "{count, plural, one {# incident with overdue notices} other {# incidents with overdue notices}}",
+      "running": "{count, plural, one {# incident with a notice due within its deadline} other {# incidents with notices due within their deadlines}}",
+      "calm": "No open incident has a notice pending."
     },
     "tokens": {
-      "lead": "{active, plural, =0 {No active token: no tool can record evidence.} one {# active token.} other {# active tokens.}}",
-      "active": "Active tokens",
-      "inactive": "Revoked or expired",
-      "lastUsed": "Last used"
-    }
+      "none": "No active token: no tool can record evidence",
+      "calm": "At least one token is active."
+    },
+    "needs": "{list}."
   },
   "expectedEvidence": {
     "title": "Evidence the guide proposes ({count, plural, one {# item} other {# items}})",
