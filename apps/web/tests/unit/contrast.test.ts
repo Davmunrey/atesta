@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-const [css = "", print = ""] = readFileSync(join(import.meta.dirname, "../../src/styles/tokens.css"), "utf8").split("@media print");
+const [css = "", print = ""] = readFileSync(join(import.meta.dirname, "../../../../packages/ui/src/styles/tokens.css"), "utf8").split("@media print");
 const [workspace = "", publicLight = ""] = css.split(".public-surface");
 const [light = "", dark = ""] = workspace.split("prefers-color-scheme: dark");
 

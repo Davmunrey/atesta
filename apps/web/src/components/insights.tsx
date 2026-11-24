@@ -1,6 +1,6 @@
 "use client";
 
-import { percent } from "@/lib/format";
+import { percent } from "@atesta/ui/format";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useMembers } from "@/lib/api/hooks";
 import {

@@ -1,8 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { components } from "./schema";
 import { api } from "./client";
-import { ApiError, unwrap } from "./hooks";
-import { errorCode } from "./errors";
+import { ApiError, unwrap, errorCode } from "@atesta/ui/api-error";
 
 export const EVIDENCE_PAGE_SIZE = 20;
 const path = "/api/v1/orgs/{org_id}/controls/{control_key}/evidence";

@@ -22,7 +22,8 @@ updates:
     open-pull-requests-limit: 10
 
   - package-ecosystem: "npm"  # pnpm is configured through the npm ecosystem
-    directory: "/apps/web"
+    # The pnpm workspace root (ADR-017): one lockfile for apps/web and packages/ui.
+    directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"

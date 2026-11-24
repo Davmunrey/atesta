@@ -1,4 +1,4 @@
-import { ApiError } from "./hooks";
+import { ApiError } from "@atesta/ui/api-error";
 
 /**
  * Query retry policy (ui-polish spec): a 4xx answer will not change on retry, so it shows at

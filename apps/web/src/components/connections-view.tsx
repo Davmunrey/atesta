@@ -5,15 +5,15 @@ import { type FormEvent, useEffect, useId, useRef, useState } from "react";
 import {
   type Connection, ONBOARDING, useConnection, useConnections, useCreateConnection, useDisconnect, useScanNow, useSetGoogleSubject, useStartSignIn, useVerify,
 } from "@/lib/api/connections";
-import { ApiError } from "@/lib/api/hooks";
+import { ApiError } from "@atesta/ui/api-error";
 import { type Membership, orgHome } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
-import type { State } from "@/lib/severity";
-import { Badge } from "./badge";
+import type { State } from "@atesta/ui/severity";
+import { Badge } from "@atesta/ui/badge";
 import { CopyButton } from "./copy-button";
-import { ErrorMessage } from "./error-message";
-import { Icon } from "./icons";
-import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { Icon } from "@atesta/ui/icons";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 
 /** Each status as a shared severity state (DESIGN.md, severity mapping; issue 397). */
 const STATE: Record<string, State> = {

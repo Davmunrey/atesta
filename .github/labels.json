@@ -8,7 +8,7 @@
   {"name": "blocked", "color": "000000", "description": "Waiting on an owner decision or an outside party"},
   {"name": "area:api", "color": "0e8a16", "description": "apps/api"},
   {"name": "area:worker", "color": "0e8a16", "description": "apps/worker"},
-  {"name": "area:web", "color": "0e8a16", "description": "apps/web"},
+  {"name": "area:web", "color": "0e8a16", "description": "apps/web and packages/ui"},
   {"name": "area:scanner", "color": "0e8a16", "description": "scanner image and connectors"},
   {"name": "area:catalog", "color": "0e8a16", "description": "catalog/ content packs and controls"},
   {"name": "area:infra", "color": "0e8a16", "description": "infra/ OpenTofu"},

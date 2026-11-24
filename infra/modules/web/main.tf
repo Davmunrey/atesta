@@ -1,7 +1,7 @@
 # Web hosting (hosted-environment spec, web-shell spec): the static export in a private bucket
 # behind CloudFront with origin access control. The app is single-origin (CSP connect-src 'self',
 # same-site session cookie), so /api/* and /auth/* go through the same distribution to the API's
-# load balancer. Every response carries the CSP built by apps/web/scripts/csp.ts and the
+# load balancer. Every response carries the CSP built by packages/ui/scripts/csp.ts and the
 # security headers; /invite and /training send no referrer.
 
 terraform {

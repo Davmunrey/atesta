@@ -5,9 +5,9 @@ import { type FormEvent, useId, useState } from "react";
 import { type Policy, sha256Of, useApprovePolicy, useCreatePolicy, usePolicies } from "@/lib/api/routines";
 import { type Membership, orgHome } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
-import { Badge } from "./badge";
-import { ErrorMessage } from "./error-message";
-import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { Badge } from "@atesta/ui/badge";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 import { RecordSummary, useRecordStates } from "./record-summary";
 
 /** Policies (recorded-routines spec): where each lives, its approved version and when it is due. */

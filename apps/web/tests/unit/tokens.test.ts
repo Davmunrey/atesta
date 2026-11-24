@@ -3,7 +3,9 @@ import { join, relative } from "node:path";
 import { expect, it } from "vitest";
 
 const SRC = join(import.meta.dirname, "../../src");
-const TOKENS = join(SRC, "styles/tokens.css");
+// The shared UI package (ADR-017) holds the tokens and is held to the same rule.
+const UI = join(import.meta.dirname, "../../../../packages/ui/src");
+const TOKENS = join(UI, "styles/tokens.css");
 const COLOR = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklch|oklab|lab|lch|color)\(/i;
 const ARBITRARY = /\b(?:bg|text|border|ring|fill|stroke|from|to|via|shadow|outline)-\[/;
 
@@ -14,13 +16,13 @@ function files(dir: string): string[] {
 }
 
 it("no color value outside the tokens file", () => {
-  const offenders = files(SRC)
+  const offenders = [SRC, UI].flatMap(files)
     .filter((file) => file !== TOKENS && /\.(tsx?|css)$/.test(file))
     .filter((file) => {
       const text = readFileSync(file, "utf8");
       return COLOR.test(text) || ARBITRARY.test(text);
     })
-    .map((file) => relative(SRC, file));
+    .map((file) => relative(join(SRC, ".."), file));
   expect(offenders).toEqual([]);
 });
 

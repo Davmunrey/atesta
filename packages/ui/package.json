@@ -1,0 +1,29 @@
+{
+  "name": "@atesta/ui",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./api-error": "./src/api-error.ts",
+    "./badge": "./src/badge.tsx",
+    "./deadline": "./src/deadline.ts",
+    "./error-message": "./src/error-message.tsx",
+    "./fonts": "./src/fonts.ts",
+    "./format": "./src/format.ts",
+    "./i18n/locale": "./src/i18n/locale.ts",
+    "./i18n/provider": "./src/i18n/provider.tsx",
+    "./icons": "./src/icons.tsx",
+    "./locale-switcher": "./src/locale-switcher.tsx",
+    "./page-frame": "./src/page-frame.tsx",
+    "./severity": "./src/severity.ts",
+    "./styles/*": "./src/styles/*",
+    "./csp": "./scripts/csp.ts"
+  },
+  "peerDependencies": {
+    "next": "16.4.6",
+    "next-intl": "4.15.1",
+    "react": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0"
+  }
+}

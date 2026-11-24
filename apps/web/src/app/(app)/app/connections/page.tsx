@@ -6,8 +6,8 @@ import { useTranslations } from "next-intl";
 import { Suspense, useEffect, useState } from "react";
 import { useMe } from "@/components/auth-gate";
 import { ConnectionsView } from "@/components/connections-view";
-import { ErrorMessage } from "@/components/error-message";
-import { ApiError } from "@/lib/api/hooks";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { ApiError } from "@atesta/ui/api-error";
 import { orgConnections, selectOrg } from "@/lib/org";
 import { isContributor } from "@/lib/permissions";
 

@@ -10,7 +10,7 @@ the two seem to differ, `AGENTS.md` wins.
 ## Set up
 
 Python 3.13 with [uv](https://docs.astral.sh/uv/), Node 22 with pnpm 10 (`apps/web/.nvmrc`,
-`apps/web/package.json`), Postgres 18 for database tests, Docker for the scanner image, and
+`package.json`; one pnpm workspace at the root for `apps/web` and `packages/ui`), Postgres 18 for database tests, Docker for the scanner image, and
 OpenTofu for `infra/`.
 
 ```bash

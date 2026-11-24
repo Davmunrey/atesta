@@ -1,4 +1,4 @@
-import type { Locale } from "@/i18n/locale";
+import type { Locale } from "@atesta/ui/i18n/locale";
 
 export const LOGOUT_URL = "/auth/logout";
 

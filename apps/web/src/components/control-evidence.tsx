@@ -6,9 +6,9 @@ import { EVIDENCE_PAGE_SIZE, useControlEvidence, useRecordEvidence } from "@/lib
 import { useMembers } from "@/lib/api/hooks";
 import type { components } from "@/lib/api/schema";
 import { CatalogReference } from "./catalog-reference";
-import { ErrorMessage } from "./error-message";
+import { ErrorMessage } from "@atesta/ui/error-message";
 import { EvidenceFileForm, EvidenceFileLine } from "./evidence-file";
-import { Empty, LoadError, Loading } from "./page-frame";
+import { Empty, LoadError, Loading } from "@atesta/ui/page-frame";
 
 type Context = { orgId: string; controlKey: string };
 type FileUploads = components["schemas"]["FileUploads"];

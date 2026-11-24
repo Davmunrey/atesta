@@ -5,8 +5,8 @@ import { type FormEvent, useEffect, useId, useRef, useState } from "react";
 import { EVIDENCE_PAGE_SIZE, useControlEvidence } from "@/lib/api/evidence-hooks";
 import { useMembers, useRecordReview } from "@/lib/api/hooks";
 import type { components } from "@/lib/api/schema";
-import { ErrorMessage } from "./error-message";
-import { Icon } from "./icons";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { Icon } from "@atesta/ui/icons";
 
 type Review = components["schemas"]["ReviewOut"];
 type Decision = Review["status"];

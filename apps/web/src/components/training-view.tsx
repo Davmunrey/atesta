@@ -6,9 +6,9 @@ import { type FormEvent, useId, useState } from "react";
 import { type TrainingCampaign, useCreateTraining, useTrainingCampaigns } from "@/lib/api/routines";
 import { type Membership, orgHome, orgTrainingCampaign } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
-import { Badge } from "./badge";
-import { ErrorMessage } from "./error-message";
-import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { Badge } from "@atesta/ui/badge";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 import { RecordSummary, useRecordStates } from "./record-summary";
 
 const utcDay = (day: string) => new Date(`${day}T00:00:00Z`);

@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 import { legalEntity } from "@/content/legal-entity";
 import { BrandMark } from "./brand-mark";
-import { LocaleSwitcher } from "./locale-switcher";
+import { LocaleSwitcher } from "@atesta/ui/locale-switcher";
 import { DOCS, LINKS, type MenuItem, PRODUCT } from "./public/site-map";
 
 type Panel = "product" | "docs" | "menu" | null;

@@ -7,7 +7,7 @@ import type { Membership } from "@/lib/org";
 import { FirstSteps } from "./first-steps";
 import { FrameworkLines } from "./framework-lines";
 import { GettingStarted } from "./getting-started";
-import { LoadError, PageHeader } from "./page-frame";
+import { LoadError, PageHeader } from "@atesta/ui/page-frame";
 import { RecordsGlance } from "./records-glance";
 import { AttentionList, started, useAttention } from "./readiness";
 

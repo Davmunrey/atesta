@@ -4,13 +4,13 @@ import { useQueries } from "@tanstack/react-query";
 import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { api } from "@/lib/api/client";
-import { unwrap } from "@/lib/api/hooks";
+import { unwrap } from "@atesta/ui/api-error";
 import type { Readiness } from "@/lib/api/register-hooks";
 import type { DueItem } from "@/lib/api/routines";
 import { type Membership, orgHome } from "@/lib/org";
 import type { ReactNode } from "react";
-import { Badge } from "./badge";
-import { PageHeader, Panel } from "./page-frame";
+import { Badge } from "@atesta/ui/badge";
+import { PageHeader, Panel } from "@atesta/ui/page-frame";
 
 type Row = {
   org: Membership;

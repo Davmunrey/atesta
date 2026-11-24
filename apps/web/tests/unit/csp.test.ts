@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CLOUDFRONT_CSP_LIMIT, buildPolicy, externalize, inlineScripts, inlineStyles, sha256 } from "../../scripts/csp";
+import { CLOUDFRONT_CSP_LIMIT, buildPolicy, externalize, inlineScripts, inlineStyles, sha256 } from "@atesta/ui/csp";
 
 describe("inlineScripts", () => {
   it("returns inline script bodies and skips external ones", () => {

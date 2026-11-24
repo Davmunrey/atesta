@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import type { ReactNode, Ref } from "react";
 import { CatalogReference } from "./catalog-reference";
 import { useGuideReference, type GuideReference } from "./expected-evidence";
-import { Icon } from "./icons";
+import { Icon } from "@atesta/ui/icons";
 
 /**
  * One measure, wherever the product shows it (DESIGN.md "Measure sheet"; console-unification

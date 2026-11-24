@@ -5,8 +5,8 @@ import { useId } from "react";
 import { useCreateOrg } from "@/lib/api/hooks";
 import { goTo } from "@/lib/navigation";
 import { orgHome } from "@/lib/org";
-import { ErrorMessage } from "./error-message";
-import { type Crumb, PageHeader, Panel } from "./page-frame";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { type Crumb, PageHeader, Panel } from "@atesta/ui/page-frame";
 
 /** The new-organization form, on the console page grid (console-unification spec). */
 export function CreateOrgForm({ crumbs }: { crumbs?: Crumb[] }) {

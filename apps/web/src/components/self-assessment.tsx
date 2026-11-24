@@ -9,11 +9,11 @@ import {
   applicabilityUrl, isOverdue, registerProgress, useDecideProposal, useRecordAssessment, useRecordAssessmentReview, useRecordAssignment,
   useRecordScope, type AssessmentInput, type AxisValues, type Register, type RegisterItem,
 } from "@/lib/api/register-hooks";
-import { ErrorMessage } from "./error-message";
+import { ErrorMessage } from "@atesta/ui/error-message";
 import { useGuideReference } from "./expected-evidence";
 import { AssessmentFields, AssessmentIntro, AssessmentState } from "./measure-sheet";
 import { ScopeGuide } from "./scope-guide";
-import { Icon } from "./icons";
+import { Icon } from "@atesta/ui/icons";
 
 type Ctx = { orgId: string; frameworkKey: string; canEdit: boolean };
 

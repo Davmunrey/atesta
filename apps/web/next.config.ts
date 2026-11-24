@@ -14,6 +14,8 @@ export default async function config(phase: string): Promise<NextConfig> {
     // `next dev` would write its own agent instructions into AGENTS.md; ADR-013 vendors those.
     agentRules: false,
     devIndicators: false,
+    // The shared UI set ships as TypeScript source (ADR-017); Next compiles it with the app.
+    transpilePackages: ["@atesta/ui"],
   };
   if (phase !== PHASE_DEVELOPMENT_SERVER) return { ...shared, output: "export" };
   return {

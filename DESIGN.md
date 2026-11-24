@@ -128,7 +128,7 @@ components:
 
 The approved identity uses warm paper, dark ink, editorial headings and a yellow highlighter. The dashboard extends this identity into a working review surface: readable rows, explicit labels and recorded provenance. It does not introduce a replacement visual world.
 
-This record describes implemented styles, not the future landing composition. Source authority: `apps/web/src/styles/tokens.css`, `apps/web/src/app/globals.css` and `apps/web/src/styles/dashboard.css`; inherited identity: decisions L4/L5 in `docs/specs/landing-legal.md`. The dashboard composition and behavior remain in `docs/specs/dashboard-overview.md`.
+This record describes implemented styles, not the future landing composition. Source authority: `packages/ui/src/styles/tokens.css`, `packages/ui/src/styles/base.css`, `apps/web/src/app/globals.css` and `apps/web/src/styles/dashboard.css`; inherited identity: decisions L4/L5 in `docs/specs/landing-legal.md`. The dashboard composition and behavior remain in `docs/specs/dashboard-overview.md`.
 
 **Key Characteristics:**
 - Newsreader page titles paired with IBM Plex Sans interface text and IBM Plex Mono identifiers.
@@ -187,6 +187,8 @@ Controls and navigation use the small radius; shared primary actions and the col
 
 ## Components
 
+**One shared set (ADR-017, `docs/specs/ui-package.md`).** Every Atesta web app (the console in `apps/web`, the operator portal in `apps/operator-web` when it is built) takes the design system from one package, `@atesta/ui` in `packages/ui`: the tokens, the self-hosted fonts and the base styles, the page frame (`PageHeader`, `Panel`, `Breadcrumbs`, `Loading`, `LoadError`, `Empty`), `Badge` and `ClockBadge` with the severity mapping, the icon set, `ErrorMessage` with the API error envelope, the locale switcher and its provider, the number formats and the CSP build step. A component a second app needs moves into the package and is documented here in the same pull request; it is never copied into an app (tests in `apps/web/tests/unit/ui-package.test.ts`). The component stylesheets (buttons, fields, data tables, panels, badges and states) still live in `apps/web/src/styles` and move into the package before the first portal screen (#441).
+
 **Buttons.** Shared primary actions use highlighter fill, medium rounding and medium-weight text. Destructive actions use the danger pair (`.button-danger`), and the control that asks for one ("Quitar", "Cerrar el incidente" with notices unsent) is a bordered `dashboard-button` followed by an inline confirmation (`.confirm-row`): the question, the danger action, then "Cancelar". Dashboard refresh, retry and clear-search controls use a bordered paper surface, small rounding and a surface-colored hover. Buttons, inputs and selects have a minimum height of (2.75rem). Disabled buttons retain their label with (0.6) opacity and a non-interactive cursor. Primary hover underlines text; keyboard focus uses the shared outline.
 
 **Fields.** Search and organization selection use a one-pixel border, paper background and small rounding. Labels remain visible above the field. Search spans its available width; its caret uses the link color. Fields in console forms, selects included, share one style (`.routine-form` fields and `.field`): one-pixel border, paper background, small rounding, link-coloured caret. A select is never left with the browser's default look. Placeholders inside the page use `muted` (7.0:1 on light `bg`, 9.3:1 on dark). Month pickers are selects labelled in the interface language, not `<input type="month">`, which follows the browser's language. Error messages use danger text and a danger border with an alert role.
@@ -210,7 +212,7 @@ Otherwise a muted sentence or the table stands in for it.
 
 **State badges.** Every recorded state shows a drawn icon beside its label: done (circle check), partial (half-ruled circle), missing (triangle), not applicable (slashed circle), pending (clock). Colour reinforces, never carries, the state.
 
-**Severity mapping (console-unification spec, 2026-11-24).** This table is the one source for how urgent a state looks. `Badge` and `ClockBadge` (`components/badge.tsx`) draw it from the state names in `lib/severity.ts` (`policyUnapproved`, `reviewLate`, `tokenRevoked`…); no console page sets a badge's colour or icon by hand, and a test fails if one does.
+**Severity mapping (console-unification spec, 2026-11-24).** This table is the one source for how urgent a state looks. `Badge` and `ClockBadge` (`@atesta/ui/badge`) draw it from the state names in `@atesta/ui/severity` (`policyUnapproved`, `reviewLate`, `tokenRevoked`…); no console page sets a badge's colour or icon by hand, and a test fails if one does.
 
 | Severity | Icon | Colour | Label | Used for |
 |---|---|---|---|---|

@@ -2,11 +2,11 @@
 
 import { useNow, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
-import { countdown } from "@/lib/deadline";
-import { type Severity, type State, STATE_SEVERITY } from "@/lib/severity";
+import { countdown } from "./deadline";
+import { type Severity, type State, STATE_SEVERITY } from "./severity";
 import { Icon } from "./icons";
 
-export type { Severity } from "@/lib/severity";
+export type { Severity } from "./severity";
 const ICON: Record<Severity, string> = { clock: "pending", overdue: "overdue", missing: "missing", pending: "pending", done: "done" };
 
 /** A state written as icon plus text; colour reinforces, never carries it. Name the `state`

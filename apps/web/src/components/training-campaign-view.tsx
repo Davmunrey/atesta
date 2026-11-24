@@ -4,9 +4,9 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useCloseTraining, useTrainingCampaign } from "@/lib/api/routines";
 import { type Membership, orgHome, orgTraining } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
-import { ErrorMessage } from "./error-message";
-import { Icon } from "./icons";
-import { LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { Icon } from "@atesta/ui/icons";
+import { LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 import { CampaignState } from "./training-view";
 
 /** One training: who confirmed, and closing it into evidence (recorded-routines spec). */

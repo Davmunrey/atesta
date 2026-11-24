@@ -7,9 +7,9 @@ import { type IncidentCriterion, useCreateIncident, useIncidentCriteria, useInci
 import { goTo } from "@/lib/navigation";
 import { type Membership, orgHome, orgIncident } from "@/lib/org";
 import { isContributor } from "@/lib/permissions";
-import { ErrorMessage } from "./error-message";
-import { Badge, ClockBadge } from "./badge";
-import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { Badge, ClockBadge } from "@atesta/ui/badge";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 import { RecordSummary, useRecordStates } from "./record-summary";
 
 /** The value of a datetime-local input for a moment, in the browser's time zone. */

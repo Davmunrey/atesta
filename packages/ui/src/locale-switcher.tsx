@@ -1,8 +1,8 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { LOCALES } from "@/i18n/locale";
-import { setLocale } from "@/i18n/provider";
+import { LOCALES } from "./i18n/locale";
+import { setLocale } from "./i18n/provider";
 
 /** compact: the console top bar shows "ES / EN" on ink; full names stay as accessible labels. */
 export function LocaleSwitcher({ compact = false }: { compact?: boolean }) {

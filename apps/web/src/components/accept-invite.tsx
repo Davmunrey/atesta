@@ -2,13 +2,14 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { isLocale } from "@/i18n/locale";
-import { ApiError, useAcceptInvitation, useMeQuery } from "@/lib/api/hooks";
+import { isLocale } from "@atesta/ui/i18n/locale";
+import { ApiError } from "@atesta/ui/api-error";
+import { useAcceptInvitation, useMeQuery } from "@/lib/api/hooks";
 import { loginUrl } from "@/lib/auth";
 import { captureInviteToken, forgetInviteToken } from "@/lib/invite";
 import { goTo } from "@/lib/navigation";
 import { orgHome } from "@/lib/org";
-import { ErrorMessage } from "./error-message";
+import { ErrorMessage } from "@atesta/ui/error-message";
 import { LinkProblem } from "./public-header";
 
 // A different account might still accept these; anything else means the token is spent.

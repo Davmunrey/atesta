@@ -1,14 +1,14 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 import { orgHome as homeOf } from "@/lib/org";
 import { useState } from "react";
 import { useChangeRole, useMembers, useRemoveMember } from "@/lib/api/hooks";
 import type { Membership } from "@/lib/org";
 import { ROLES, type Role, auditorWindow, canChangeRoles, canRemove } from "@/lib/permissions";
 import { useMe } from "./auth-gate";
-import { ErrorMessage } from "./error-message";
+import { ErrorMessage } from "@atesta/ui/error-message";
 
 export function MembersView({ org }: { org: Membership }) {
   const t = useTranslations();

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { components } from "@/lib/api/schema";
 import { api } from "./client";
-import { ApiError, unwrap } from "./hooks";
+import { ApiError, unwrap } from "@atesta/ui/api-error";
 
 /** Connections (scanner-connectors and web-connections specs). The API decides every action. */
 export type Connection = components["schemas"]["ConnectionOut"];

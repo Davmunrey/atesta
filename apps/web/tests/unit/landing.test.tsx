@@ -172,12 +172,12 @@ it.each([["es", es], ["en", en]])("keeps the replaced lines out of the %s messag
 });
 
 it("never breaks body text inside a word, and keeps figures and headlines in their limits", () => {
-  const globals = readFileSync(join(WEB, "src/app/globals.css"), "utf8");
+  const base = readFileSync(join(WEB, "../../packages/ui/src/styles/base.css"), "utf8");
   const css = readFileSync(join(WEB, "src/styles/landing.css"), "utf8");
-  const tokens = readFileSync(join(WEB, "src/styles/tokens.css"), "utf8");
+  const tokens = readFileSync(join(WEB, "../../packages/ui/src/styles/tokens.css"), "utf8");
   // Public pages break a word only when it cannot fit; the console keeps `anywhere` for long names.
-  expect(globals).toMatch(/\.landing :is\(h1, h2, p, li\) \{ overflow-wrap: break-word; \}/);
-  expect(globals).toMatch(/text-wrap: pretty/);
+  expect(base).toMatch(/\.landing :is\(h1, h2, p, li\) \{ overflow-wrap: break-word; \}/);
+  expect(base).toMatch(/text-wrap: pretty/);
   // KPI suffixes are small through their own class; the figure keeps its size.
   expect(css).not.toMatch(/\.lv-kpis dd span \{/);
   // Nothing overshoots: no cubic-bezier with a y control point above 1.

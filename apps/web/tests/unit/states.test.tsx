@@ -4,7 +4,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import { AuthGate } from "@/components/auth-gate";
 import { MembersView } from "@/components/members-view";
 import { PoliciesView } from "@/components/policies-view";
-import { ApiError } from "@/lib/api/hooks";
+import { ApiError } from "@atesta/ui/api-error";
 import { retryQuery } from "@/lib/api/retry";
 import { renderWithProviders, stubApi } from "./render";
 

@@ -3,7 +3,7 @@
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import fixture from "@/content/landing-fixture.json";
 import type { HeroMeasure } from "@/lib/catalog/landing";
-import { Icon } from "../icons";
+import { Icon } from "@atesta/ui/icons";
 import { ExpectedEvidence } from "../expected-evidence";
 import { AssessmentFields, AssessmentIntro, AssessmentState, MeasureSheet, OfficialText } from "../measure-sheet";
 import { ViewFrame } from "./view-frame";

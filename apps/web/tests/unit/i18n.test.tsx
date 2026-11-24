@@ -7,8 +7,8 @@ import { createTranslator } from "next-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { RequirementGuidance, SourceCoverage } from "@/components/catalog-preparation";
 import { FrameworkDetailView } from "@/components/framework-detail";
-import { preferredLocale } from "@/i18n/locale";
-import { percent } from "@/lib/format";
+import { preferredLocale } from "@atesta/ui/i18n/locale";
+import { percent } from "@atesta/ui/format";
 import en from "../../messages/en.json";
 import es from "../../messages/es.json";
 import { framework } from "../fixtures/framework";
@@ -30,6 +30,7 @@ function sources(dir: string): string[] {
   });
 }
 const SRC = join(__dirname, "../../src");
+const UI = join(__dirname, "../../../../packages/ui/src"); // shared components (ADR-017)
 
 describe("language choice", () => {
   it("follows the browser on a first visit", () => {
@@ -69,7 +70,7 @@ describe("messages", () => {
   });
 
   it("no component writes user-facing text inline", () => {
-    const offenders = sources(SRC).flatMap((file) => {
+    const offenders = [SRC, UI].flatMap(sources).flatMap((file) => {
       const code = readFileSync(file, "utf8").replace(/\{\/\*[\s\S]*?\*\/\}/g, "");
       const text = [...code.matchAll(/>([^<>{}()?:=&|;`]*[A-Za-zÀ-ÿ]{2,}[^<>{}()?:=&|;`]*)</g)].map((m) => m[1]!.trim());
       const attrs = [...code.matchAll(/\b(aria-label|title|placeholder|alt)="([^"]*[A-Za-zÀ-ÿ]{2,}[^"]*)"/g)].map((m) => m[2]!);
@@ -80,7 +81,7 @@ describe("messages", () => {
 
   it("percentages come from the locale, never from a hand-written sign", () => {
     // A number shown as a percentage, built by hand; CSS lengths (`${x}%` in style) are not text.
-    const offenders = sources(SRC).filter((file) => /\} %`|format\.number\([^`]*\)\}%/.test(readFileSync(file, "utf8")));
+    const offenders = [SRC, UI].flatMap(sources).filter((file) => /\} %`|format\.number\([^`]*\)\}%/.test(readFileSync(file, "utf8")));
     expect(offenders).toEqual([]);
   });
 });

@@ -1,12 +1,13 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { PageHeader, Panel } from "./page-frame";
+import { PageHeader, Panel } from "@atesta/ui/page-frame";
 import { orgHome as homeOf } from "@/lib/org";
 import { useId, useState } from "react";
 import { useCancelClosure, useRequestClosure, useSetOrganizationLocale } from "@/lib/api/hooks";
 import type { Membership } from "@/lib/org";
-import { ErrorMessage } from "./error-message";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import type { Locale } from "@atesta/ui/i18n/locale";
 
 /** Owner settings (organization-closure spec): take the data, or close the organization. */
 export function SettingsView({ org }: { org: Membership }) {
@@ -49,7 +50,6 @@ export function SettingsView({ org }: { org: Membership }) {
   </div>;
 }
 
-type Locale = "es" | "en";
 const LANGUAGES: Record<Locale, string> = { es: "Español", en: "English" };
 
 /** The organization's email language (notifications spec PR 2): owner only, like the rest. */

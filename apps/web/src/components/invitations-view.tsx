@@ -1,13 +1,13 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { Empty, LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 import { orgHome as homeOf } from "@/lib/org";
 import { useId, useState } from "react";
 import { useCreateInvitation, useInvitations, useRevokeInvitation } from "@/lib/api/hooks";
 import type { Membership } from "@/lib/org";
 import { type Role, auditorWindow, invitableRoles } from "@/lib/permissions";
-import { ErrorMessage } from "./error-message";
+import { ErrorMessage } from "@atesta/ui/error-message";
 
 export function InvitationsView({ org }: { org: Membership }) {
   const t = useTranslations();

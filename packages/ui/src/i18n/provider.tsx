@@ -1,12 +1,9 @@
 "use client";
 
-import { NextIntlClientProvider } from "next-intl";
+import { type AbstractIntlMessages, NextIntlClientProvider } from "next-intl";
 import { type ReactNode, useEffect, useSyncExternalStore } from "react";
-import en from "../../messages/en.json";
-import es from "../../messages/es.json";
 import { DEFAULT_LOCALE, type Locale, localeCookie, preferredLocale } from "./locale";
 
-const MESSAGES = { es, en } as const;
 const listeners = new Set<() => void>();
 
 function subscribe(listener: () => void): () => void {
@@ -27,14 +24,15 @@ export function setLocale(locale: Locale): void {
   for (const listener of listeners) listener();
 }
 
-export function I18nProvider({ children }: { children: ReactNode }) {
+/** Each app passes its own messages, Spanish first (AGENTS.md, i18n). */
+export function I18nProvider({ messages, children }: { messages: Record<Locale, AbstractIntlMessages>; children: ReactNode }) {
   const locale = useSyncExternalStore(subscribe, readCookie, prerendered);
   const timeZone = useSyncExternalStore(noSubscription, browserTimeZone, prerenderedTimeZone);
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
   return (
-    <NextIntlClientProvider locale={locale} messages={MESSAGES[locale]} timeZone={timeZone}>
+    <NextIntlClientProvider locale={locale} messages={messages[locale]} timeZone={timeZone}>
       {children}
     </NextIntlClientProvider>
   );

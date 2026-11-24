@@ -6,7 +6,7 @@ import { IncidentView } from "@/components/incident-view";
 import { OverviewDashboard } from "@/components/overview-dashboard";
 import { RecordsGlance } from "@/components/records-glance";
 import type { Readiness } from "@/lib/api/register-hooks";
-import { countdown } from "@/lib/deadline";
+import { countdown } from "@atesta/ui/deadline";
 import { overview } from "../fixtures/overview";
 import { renderWithProviders, stubApi } from "./render";
 

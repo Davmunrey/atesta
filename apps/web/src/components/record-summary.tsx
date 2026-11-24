@@ -4,7 +4,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import type { ApiToken } from "@/lib/api/tokens";
 import type { AccessReviewSummary, Incident, Policy, TrainingCampaign } from "@/lib/api/routines";
 import { incidentSummary, overdueTrainings, policySummary, reviewSummary, tokenSummary } from "@/lib/summaries";
-import { Badge, ClockBadge } from "./badge";
+import { Badge, ClockBadge } from "@atesta/ui/badge";
 
 /** What a register needs now: the figures that need action (written), or why nothing does.
  *  `clock` is the soonest running legal deadline, when one runs and nothing is overdue. */

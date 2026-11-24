@@ -53,7 +53,7 @@ AI output (prompt injection); customer data processed outside the EU.
 | AI never decides pass or fail; answers cite retrieved chunks | rules 5–6, ADR-005, ADR-010 | Design rule. The AI module is not built yet (`apps/api/src/atesta_api/modules/ai/api.py`), so no test holds it today |
 | Locked, audited, cooled-down dependencies | ADR-006, ADR-013 | `.github/workflows/ci.yml` job `security` (pip-audit on the exported lock and the scanner requirements, semgrep), `apps/api/tests/test_ci_workflow.py`, `.github/dependabot.yml` (7-day cooldown) |
 | No GPL or AGPL in the web bundle or the Python dependencies; LGPL only where listed | rule 4, ADR-006 | `apps/web/scripts/check-licenses.ts` (CI job `web`), `apps/api/devtools/python_licenses.py` (CI job `python`), `apps/api/tests/test_python_licenses.py` |
-| Strict Content Security Policy for the static web | web-shell spec | `apps/web/scripts/csp.ts`, run by `pnpm build` in CI |
+| Strict Content Security Policy for the static web | web-shell spec | `packages/ui/scripts/csp.ts`, run by `pnpm build` in CI |
 | Uploaded evidence files are served only after GuardDuty Malware Protection for S3 reports them clean; a file with possible malware is blocked, kept under Object Lock, and owners and admins are told | evidence-malware-scanning spec, #401 | `apps/api/tests/db/test_evidence_malware.py`, `apps/api/tests/db/test_file_scan_job.py`, `apps/api/tests/test_malware_events.py`; the API role reads only versions tagged `NO_THREATS_FOUND` and only the scan role may write that tag (`infra/tests/test_infra.py`) |
 
 ## Trusted inputs and accepted gaps

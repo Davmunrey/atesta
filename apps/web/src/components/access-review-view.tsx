@@ -4,10 +4,10 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useAccessReview, useCloseReview, useDecide } from "@/lib/api/routines";
 import { type Membership, orgAccessReviews, orgHome } from "@/lib/org";
 import { canReviewControls, isContributor } from "@/lib/permissions";
-import { Badge } from "./badge";
-import { ErrorMessage } from "./error-message";
-import { Icon } from "./icons";
-import { LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { Badge } from "@atesta/ui/badge";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { Icon } from "@atesta/ui/icons";
+import { LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 
 /** One access review: decide keep or revoke per account, then close it (recorded-routines spec). */
 export function AccessReviewView({ org, reviewId }: { org: Membership; reviewId: string }) {

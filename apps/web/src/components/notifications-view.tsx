@@ -4,8 +4,8 @@ import { useTranslations } from "next-intl";
 import { useId } from "react";
 import { type Kind, type Preference, useChangePreference, usePreferences } from "@/lib/api/notifications";
 import { type Membership, orgHome } from "@/lib/org";
-import { ErrorMessage } from "./error-message";
-import { LoadError, Loading, PageHeader, Panel } from "./page-frame";
+import { ErrorMessage } from "@atesta/ui/error-message";
+import { LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 
 /** A person's email notices in one organization (notifications spec PR 1, issue 379). */
 export function NotificationsView({ org }: { org: Membership }) {

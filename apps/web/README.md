@@ -5,7 +5,7 @@ Next.js static export (App Router, TypeScript strict, Tailwind CSS). Spec:
 `/api/*` and `/auth/*` to the API.
 
 ```bash
-pnpm install          # pnpm 10, minimumReleaseAge 7 days (pnpm-workspace.yaml)
+pnpm install          # pnpm 10, minimumReleaseAge 7 days (root pnpm-workspace.yaml)
 pnpm dev              # http://localhost:3000; /api and /auth rewritten to ATESTA_API_URL (default :8000)
 pnpm test             # vitest unit tests
 pnpm typecheck && pnpm lint
@@ -46,8 +46,12 @@ unknown code shows `errors.unknown`, never the raw code.
 
 - Spanish first: `messages/es.json`, then `messages/en.json`, same keys (tested). The choice
   lives in the `atesta_locale` cookie; the export is prerendered in Spanish.
-- Design tokens: `src/styles/tokens.css` is the only file with color, font or radius values
-  (tested). Neutral until the owner picks a brand identity.
+- Design tokens: `packages/ui/src/styles/tokens.css` is the only file with color, font or radius
+  values (tested).
+- Shared UI (ADR-017, `docs/specs/ui-package.md`): tokens, fonts, base styles, page frame, badges,
+  icons, the error message, the locale switcher, `format`, the API error envelope and the CSP
+  script come from `@atesta/ui` (`packages/ui`). A component another app could need goes there,
+  never into a copy here (tested).
 - Frontend skills: `.claude/skills/frontend-design` and `.claude/skills/react-best-practices`.
 
 ## e2e

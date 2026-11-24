@@ -116,6 +116,20 @@ def test_node_types_follow_the_runtime_major() -> None:
     )
 
 
+def test_web_tooling_reads_the_pnpm_workspace_root() -> None:
+    """One pnpm workspace at the root (ADR-017): Dependabot and every pnpm setup use its lock."""
+    root = WORKFLOWS.parents[1]
+    assert (root / "pnpm-lock.yaml").exists() and (root / "pnpm-workspace.yaml").exists()
+    config = yaml.safe_load((WORKFLOWS.parent / "dependabot.yml").read_text())
+    npm = next(u for u in config["updates"] if u["package-ecosystem"] == "npm")
+    assert npm["directory"] == "/"
+    pnpm = [s for s in _steps() if s.get("uses", "").startswith("pnpm/action-setup@")]
+    node = [s for s in _steps() if s.get("with", {}).get("cache") == "pnpm"]
+    assert pnpm and all(s["with"]["package_json_file"] == "package.json" for s in pnpm)
+    assert node and all(s["with"]["cache-dependency-path"] == "pnpm-lock.yaml" for s in node)
+    assert json.loads((root / "package.json").read_text())["packageManager"].startswith("pnpm@")
+
+
 # Workflow hardening (issue #106). Each check takes the workflow directory as an argument so a
 # planted copy in tmp_path can prove it fails.
 

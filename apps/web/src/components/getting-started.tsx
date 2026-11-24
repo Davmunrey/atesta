@@ -9,8 +9,8 @@ import { useAccessReviews, usePolicies, useTrainingCampaigns } from "@/lib/api/r
 import { useApiTokens } from "@/lib/api/tokens";
 import { type Membership, orgAccessReviews, orgDossier, orgFramework, orgIntegrations, orgInvitations, orgPolicies } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
-import { Icon } from "./icons";
-import { Panel } from "./page-frame";
+import { Icon } from "@atesta/ui/icons";
+import { Panel } from "@atesta/ui/page-frame";
 
 export const FIRST_ASSESSMENTS = 10;
 /** From this many steps done, the checklist folds to one line (console-unification spec). */
