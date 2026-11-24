@@ -15,7 +15,7 @@ import pytest
 from alembic import command
 from alembic.config import Config
 from atesta_api.platform.db import make_engine
-from sqlalchemy import Connection, Engine, text
+from sqlalchemy import Connection, Engine, column, insert, table, text
 from sqlalchemy.engine import URL, make_url
 from sqlalchemy.exc import IntegrityError
 
@@ -34,14 +34,8 @@ def su(superuser: Engine, probe: object) -> Iterator[Connection]:
 
 def _org(conn: Connection, **columns: object) -> uuid.UUID:
     org = uuid.uuid4()
-    names = ["id", "name", *columns]
-    conn.execute(
-        text(
-            f"INSERT INTO organizations ({', '.join(names)})"  # noqa: S608
-            f" VALUES ({', '.join(':' + n for n in names)})"
-        ),
-        {"id": org, "name": "org", **columns},
-    )
+    values = {"id": org, "name": "org", **columns}
+    conn.execute(insert(table("organizations", *(column(c) for c in values))).values(values))
     return org
 
 
@@ -99,7 +93,7 @@ def test_closure_origin_follows_who_asked(su: Connection) -> None:
 
 
 @pytest.mark.parametrize(
-    ("column", "value"),
+    ("field", "value"),
     [
         ("legal_name", ""),
         ("tax_id", "   "),
@@ -109,14 +103,12 @@ def test_closure_origin_follows_who_asked(su: Connection) -> None:
     ],
 )
 def test_billing_details_refuse_blank_and_malformed_values(
-    su: Connection, column: str, value: str
+    su: Connection, field: str, value: str
 ) -> None:
     org = _org(su)
     with pytest.raises(IntegrityError, match="ck_billing_profiles"), su.begin_nested():
-        su.execute(
-            text(f"INSERT INTO billing_profiles (organization_id, {column}) VALUES (:o, :v)"),  # noqa: S608
-            {"o": org, "v": value},
-        )
+        values = {"organization_id": org, field: value}
+        su.execute(insert(table("billing_profiles", *(column(c) for c in values))).values(values))
 
 
 def test_existing_organizations_get_a_trial_from_the_migration_and_keep_their_closure(

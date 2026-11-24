@@ -9,7 +9,7 @@ from collections.abc import Iterator
 
 import pytest
 from atesta_api.platform.tables import OPERATOR_READ, table_classes
-from sqlalchemy import Connection, Engine, text
+from sqlalchemy import Connection, Engine, column, delete, insert, literal, select, table, text
 from sqlalchemy.exc import DBAPIError
 
 from .conftest import ORG_A, ORG_B
@@ -69,9 +69,9 @@ def seeded(superuser: Engine, probe: object) -> Iterator[None]:
             )
     yield
     with superuser.begin() as conn:
-        for table in ("audit_events", "billing_profiles", "subscriptions", "memberships"):
-            delete = f"DELETE FROM {table} WHERE organization_id = ANY(:o)"  # noqa: S608
-            conn.execute(text(delete), {"o": list(users)})
+        for name in ("audit_events", "billing_profiles", "subscriptions", "memberships"):
+            owned = column("organization_id").in_(list(users))
+            conn.execute(delete(table(name, column("organization_id"))).where(owned))
         conn.execute(text("DELETE FROM users WHERE id = ANY(:u)"), {"u": list(users.values())})
 
 
@@ -86,8 +86,8 @@ def _privileged_columns(conn: Connection, privilege: str) -> dict[str, set[str]]
         {"r": OP, "p": privilege},
     ).all()
     found: dict[str, set[str]] = {}
-    for table, column in rows:
-        found.setdefault(table, set()).add(column)
+    for name, col in rows:
+        found.setdefault(name, set()).add(col)
     return found
 
 
@@ -141,22 +141,22 @@ def test_no_privilege_at_all_on_a_table_outside_the_list(superuser: Engine, tabl
     assert tuple(held) == (False, False)
 
 
-@pytest.mark.parametrize("table", NOT_LISTED)
-def test_reading_a_table_outside_the_list_is_refused(op: Connection, table: str) -> None:
+@pytest.mark.parametrize("name", NOT_LISTED)
+def test_reading_a_table_outside_the_list_is_refused(op: Connection, name: str) -> None:
     with pytest.raises(DBAPIError, match="permission denied"):
-        op.execute(text(f"SELECT 1 FROM {table} LIMIT 1"))  # noqa: S608
+        op.execute(select(literal(1)).select_from(table(name)).limit(1))
 
 
-@pytest.mark.parametrize("table", ["evidence", "findings", "incidents", "policies"])
-def test_named_content_tables_are_refused(op: Connection, table: str) -> None:
+@pytest.mark.parametrize("name", ["evidence", "findings", "incidents", "policies"])
+def test_named_content_tables_are_refused(op: Connection, name: str) -> None:
     """The spec's named examples, kept explicit in case the generated list ever shrinks."""
-    assert table in NOT_LISTED
+    assert name in NOT_LISTED
     with pytest.raises(DBAPIError, match="permission denied"):
-        op.execute(text(f"SELECT * FROM {table}"))  # noqa: S608
+        op.execute(select(text("*")).select_from(table(name)))
 
 
 @pytest.mark.parametrize(
-    ("table", "column"),
+    ("name", "col"),
     [
         ("organizations", "closure_requested_by"),
         ("organizations", "updated_at"),
@@ -172,42 +172,35 @@ def test_named_content_tables_are_refused(op: Connection, table: str) -> None:
         ("erasure_receipts", "note"),
     ],
 )
-def test_a_column_outside_the_list_is_refused(op: Connection, table: str, column: str) -> None:
+def test_a_column_outside_the_list_is_refused(op: Connection, name: str, col: str) -> None:
     with pytest.raises(DBAPIError, match="permission denied"):
-        op.execute(text(f"SELECT {column} FROM {table}"))  # noqa: S608
+        op.execute(select(column(col)).select_from(table(name)))
 
 
-@pytest.mark.parametrize("table", sorted(OPERATOR_READ))
-def test_listed_columns_are_readable(op: Connection, seeded: None, table: str) -> None:
-    columns = ", ".join(sorted(OPERATOR_READ[table]))
-    op.execute(text(f"SELECT {columns} FROM {table}"))  # noqa: S608
+@pytest.mark.parametrize("name", sorted(OPERATOR_READ))
+def test_listed_columns_are_readable(op: Connection, seeded: None, name: str) -> None:
+    op.execute(select(*(column(c) for c in sorted(OPERATOR_READ[name]))).select_from(table(name)))
 
 
 @pytest.mark.parametrize(
-    "table", ["organizations", "memberships", "subscriptions", "billing_profiles", "audit_events"]
+    "name", ["organizations", "memberships", "subscriptions", "billing_profiles", "audit_events"]
 )
-def test_metadata_is_read_across_organizations(op: Connection, seeded: None, table: str) -> None:
-    key = "id" if table == "organizations" else "organization_id"
-    seen = set(op.execute(text(f"SELECT {key} FROM {table}")).scalars())  # noqa: S608
+def test_metadata_is_read_across_organizations(op: Connection, seeded: None, name: str) -> None:
+    key = column("id" if name == "organizations" else "organization_id")
+    seen = set(op.execute(select(key).select_from(table(name))).scalars())
     assert {ORG_A, ORG_B} <= seen
 
 
 def _audit(op: Connection, action: str, **extra: object) -> None:
-    columns = ["id", "organization_id", "action", "target_type", "target_id", *extra]
-    op.execute(
-        text(
-            f"INSERT INTO audit_events ({', '.join(columns)})"  # noqa: S608
-            f" VALUES ({', '.join(':' + c for c in columns)})"
-        ),
-        {
-            "id": uuid.uuid4(),
-            "organization_id": ORG_A,
-            "action": action,
-            "target_type": "organization",
-            "target_id": str(ORG_A),
-            **extra,
-        },
-    )
+    values = {
+        "id": uuid.uuid4(),
+        "organization_id": ORG_A,
+        "action": action,
+        "target_type": "organization",
+        "target_id": str(ORG_A),
+        **extra,
+    }
+    op.execute(insert(table("audit_events", *(column(c) for c in values))).values(values))
 
 
 def test_the_role_writes_only_operator_actions_to_the_customer_trail(op: Connection) -> None:
