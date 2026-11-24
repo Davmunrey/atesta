@@ -26,8 +26,8 @@ it("styles selects in forms like every other field", () => {
 });
 
 it("draws every console badge from the one severity mapping", () => {
-  // Public and landing views are another lane; connections keeps its own row states for now.
-  const own = readdirSync(components).filter((f) => f.endsWith(".tsx") && !["badge.tsx", "connections-view.tsx"].includes(f));
+  // Public and landing views are another lane; the connections screen joined in issue 397.
+  const own = readdirSync(components).filter((f) => f.endsWith(".tsx") && f !== "badge.tsx");
   const handmade = own.filter((f) => /className="badge"/.test(readFileSync(join(components, f), "utf8")));
   expect(handmade).toEqual([]);
   // "Sin aprobar" looks the same everywhere: the policy badge and the home's task use one severity.

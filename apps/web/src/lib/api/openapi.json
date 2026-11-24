@@ -1372,6 +1372,10 @@
             ],
             "title": "Google Client Id"
           },
+          "google_subject_set": {
+            "title": "Google Subject Set",
+            "type": "boolean"
+          },
           "google_verifier_client_id": {
             "anyOf": [
               {
@@ -1397,6 +1401,17 @@
                 "type": "null"
               }
             ]
+          },
+          "primary_domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Domain"
           },
           "provider": {
             "title": "Provider",
@@ -1440,6 +1455,8 @@
           "verified_at",
           "consented",
           "tenant_id",
+          "google_subject_set",
+          "primary_domain",
           "google_client_id",
           "google_verifier_client_id",
           "expected_access",
@@ -1498,10 +1515,25 @@
             "title": "Display Name",
             "type": "string"
           },
+          "google_subject_set": {
+            "title": "Google Subject Set",
+            "type": "boolean"
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
             "type": "string"
+          },
+          "primary_domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Domain"
           },
           "provider": {
             "title": "Provider",
@@ -1544,7 +1576,9 @@
           "created_at",
           "verified_at",
           "consented",
-          "tenant_id"
+          "tenant_id",
+          "google_subject_set",
+          "primary_domain"
         ],
         "title": "ConnectionOut",
         "type": "object"
