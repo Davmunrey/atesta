@@ -18,9 +18,34 @@ test("the landing calls no third party and sets no cookie before the visitor act
 
 test("motion stops under reduced motion and nothing runs after five seconds", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
+  // Every transition or animation that starts is recorded from the first style on, so the check does
+  // not depend on the frame it samples (#456). The web fonts are held until the page has rendered:
+  // their swap changes every width set in `ch`, and that change must not animate either.
+  await page.addInitScript(() => {
+    const started: string[] = [];
+    Object.assign(window, { motionStarted: started });
+    for (const type of ["transitionrun", "animationstart"]) addEventListener(type, (event) => {
+      const { propertyName, animationName } = event as TransitionEvent & AnimationEvent;
+      started.push(`${propertyName ?? animationName} on <${(event.target as Element).tagName.toLowerCase()} class="${(event.target as Element).className}">`);
+    }, true);
+  });
+  let rendered!: () => void;
+  const fontsHeld = new Promise<void>((resolve) => { rendered = resolve; });
+  await page.route(/\.woff2$/, async (route) => { await fontsHeld; await route.continue(); });
+  await page.goto("/", { waitUntil: "domcontentloaded" }); // the load event waits for the held, preloaded fonts
   await expect(page.getByRole("figure").first()).toBeVisible();
-  expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))); // a frame is on screen
+  rendered();
+  const live = await page.evaluate(async () => {
+    await document.fonts.ready;
+    // getAnimations() flushes style, so anything the swap starts exists now; two frames later its event has fired.
+    const live = document.getAnimations().map((a) => `${(a as CSSTransition).transitionProperty ?? (a as CSSAnimation).animationName}`);
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    return live;
+  });
+  expect(live, "live animations under reduced motion").toEqual([]);
+  expect(await page.evaluate(() => (window as unknown as { motionStarted: string[] }).motionStarted), "motion started under reduced motion").toEqual([]);
+  await page.unrouteAll();
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
   await page.waitForTimeout(5_000);
