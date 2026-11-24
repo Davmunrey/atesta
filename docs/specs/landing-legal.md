@@ -284,6 +284,83 @@ A3, existing subpages (#384):
 - [ ] **404:** it says what may have happened, links home, to Producto and to ENS, and opens the
       assistant from a button in the card.
 
+Amendment A4: one story, told once (#393). Status: **accepted** (owner, 24/11/2026, relayed by
+the coordinator: scope "rehacer estructura", tone "directo y sobrio", both truthfulness fixes). An
+impeccable critique found the landing repeated itself and read as generated copy. A4 replaces A1's
+section list, A2's year timeline, stage counter and marquee, and A3's hero tabs, landing proof strip
+and ring diagram. Every other criterion stays.
+
+**Sections, in order**
+- [ ] **Hero:** the ENS headline (at most 5rem), one line on what Atesta does, the request and "Ver
+      cómo funciona". Below it, the one view only Atesta can show: one ENS measure as a paper
+      document and the self-assessment beside it.
+      - The document is the catalog's own text (rule 10): code, title, annex section, a contiguous
+        excerpt of `official_text_es` with one clause highlighted, and a link to its BOE source.
+        It is official text, so it is not labelled as sample data.
+      - The self-assessment beside it uses the console's own fields (proposal for the level,
+        applicability, implementation, notes) and one expected-evidence item from the reviewed
+        guide with its citation. It carries the page's single "Datos de ejemplo" label in the hero.
+      - No tab bar, no KPI grid and no badge row in the hero.
+      - **One idiom** (owner, 24/11/2026): the measure is the console's requirement row, same
+        structure, classes and labels, as a shared measure sheet (DESIGN.md). `/producto` shows the
+        same sheet. No one-off styles; the mapping table below is a shared component too.
+- [ ] **The problem:** one heading and one statement.
+- [ ] **How it works** (ink band): assess, records, incidents, dossier, then connect, which comes
+      last and keeps its "Próximamente" tag. Assess shows the overview; the others show their
+      moment (L7). Connect has no frame. One "Datos de ejemplo" notice for the section, not one
+      per frame. With motion on wide screens the frame pins beside the steps, with no counter
+      and no progress bar; otherwise each step sits on its own row with its frame beside or
+      below it, never in narrow columns.
+- [ ] **Other frameworks:** one heading, one statement and one mapping table: one common control
+      and the ENS measure, NIS2, RGPD and DORA requirements it answers. Rows are read at build
+      time from `catalog/frameworks/*/mappings.yaml`, signed mappings only (`reviewed_by`
+      present); the reviewer's name is never shown. The other frameworks are "módulos aparte";
+      no plan or price wording. One line and a link for consultancies.
+- [ ] **The close** (ink band): says what happens after writing to us, with the `mailto:` request.
+      A visible seam separates it from the ink footer.
+
+**Removed, and why**
+- [ ] **Hero tabs, "Un año de ENS" and the frameworks marquee:** they repeated the steps.
+- [ ] **The proof strip under the hero:** it stays in the footer only, once per page.
+- [ ] **"Se conecta con" under the hero:** the connect step already says it.
+- [ ] **The ring diagram:** concentric rings implied that frameworks nest inside each other.
+- [ ] **The stage counter and progress bar:** the highlighted step title already says where you are.
+
+**Copy**
+- [ ] **Tone:** direct and sober. Each line states a task or a fact a security lead or an IT
+      consultant would say. No aphorisms, puns, triads or taglines.
+- [ ] **Jargon:** "eu-south-2", "MCP", "control común" and "rutinas" are explained in place or not used.
+- [ ] **Banned:** a unit test keeps the replaced lines out of both message files (for example "El
+      ENS no cabe en una hoja de cálculo", "Tu próxima auditoría, preparada.", "Míralo con tus
+      propias medidas.", "Lo que Atesta puede tocar", "Sin fuente, no hay respuesta", "Según el
+      plan").
+- [ ] **Subpages:** the same pass applies to the hero title and line of `/producto`, `/ens`,
+      `/seguridad` and `/consultoras`; their structure does not change.
+
+**Truthfulness**
+- [ ] **Proof strip:** "Guías de evidencia revisadas por el equipo de Atesta". The team reviewed the
+      expected-evidence guides, not customer evidence.
+- [ ] **Incident example:** the ENS duty, not NIS2. RD 311/2022, art. 33.7: private-sector
+      organizations that provide services to public entities notify INCIBE-CERT of the incidents
+      that affect them, and INCIBE-CERT informs the CCN-CERT
+      (https://www.boe.es/buscar/act.php?id=BOE-A-2022-7191#a3-5, checked 24/11/2026 through the
+      BOE open-data API). The RD sets no deadline in hours, so the example shows the incident record
+      and its notes with no clock. The incident feature itself does not change.
+
+**Craft**
+- [ ] **Wrapping:** on public pages, words never break inside a word that could move to the next
+      line (`overflow-wrap: break-word`). The console keeps `anywhere`, which lets long unbroken
+      names shrink their grid cell. Paragraphs use `text-wrap: pretty`.
+- [ ] **Figures:** KPI suffixes are small through their own class, never by shrinking the figure.
+      Bars and figures use a non-overshooting ease; the overshooting spring token is removed.
+- [ ] **Assistant launcher:** visible on ink and on paper. On phones it is compact and, where scroll
+      timelines and motion are available, it stays faded until the hero has scrolled away. It never leaves the tab order, and focus
+      always shows it.
+
+**Unchanged budgets:** light only, 0 CSP hashes, WCAG 2.2 AA with axe at 375, 1280 and 1440 px,
+reduced motion respected, the bottom-right corner free for the assistant, at most 260 words of
+landing copy, and the motion library budget.
+
 Legal pages (Spanish is the binding version)
 
 - [ ] Until the owner supplies the identity and a lawyer reviews the texts, both pages open with a
