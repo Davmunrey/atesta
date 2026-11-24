@@ -177,6 +177,11 @@ confirmation link to that address; click it once, or the scan failure-rate alarm
 Merge to `main`, then run the deploy workflow for the environment. The reviewers you set in
 step 5 approve each run.
 
+**Once, before the first deploy that carries migration 0033 (operator portal, #445):** run the
+bootstrap task of step 6.2 again. It adds the `atesta_operator` role (no LOGIN yet), which
+`atesta_owner` cannot create; the other roles keep their passwords. Without it, migration 0033
+stops with "role atesta_operator does not exist" and the running version stays.
+
 **Migrations run before the services change:**
 - If a migration fails, the old version keeps running.
 - If new tasks fail their health checks, ECS's circuit breaker rolls the service back to the

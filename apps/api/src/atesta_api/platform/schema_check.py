@@ -78,7 +78,8 @@ _GRANTS = (
     " string_agg(x.privilege_type || CASE WHEN x.is_grantable THEN '+grant' ELSE '' END,"
     " ',' ORDER BY x.privilege_type)"
     " FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace, aclexplode(c.relacl) x"
-    " WHERE n.nspname = 'public' AND x.grantee IN (0, 'atesta_app'::regrole) GROUP BY 1, 2, 3"
+    " WHERE n.nspname = 'public'"
+    " AND x.grantee IN (0, 'atesta_app'::regrole, 'atesta_operator'::regrole) GROUP BY 1, 2, 3"
     " UNION ALL SELECT c.relname, a.attname,"
     " CASE x.grantee WHEN 0 THEN 'PUBLIC' ELSE x.grantee::regrole::text END,"
     " string_agg(x.privilege_type || CASE WHEN x.is_grantable THEN '+grant' ELSE '' END,"
@@ -86,7 +87,8 @@ _GRANTS = (
     " FROM pg_attribute a JOIN pg_class c ON c.oid = a.attrelid"
     " JOIN pg_namespace n ON n.oid = c.relnamespace, aclexplode(a.attacl) x"
     " WHERE n.nspname = 'public' AND a.attnum > 0 AND NOT a.attisdropped"
-    " AND x.grantee IN (0, 'atesta_app'::regrole) GROUP BY 1, 2, 3 ORDER BY 1, 2, 3"
+    " AND x.grantee IN (0, 'atesta_app'::regrole, 'atesta_operator'::regrole)"
+    " GROUP BY 1, 2, 3 ORDER BY 1, 2, 3"
 )
 _ORG_COLUMN = (
     "SELECT a.attnotnull AND a.atttypid = 'uuid'::regtype,"
@@ -97,7 +99,8 @@ _ORG_COLUMN = (
 
 
 def snapshot(conn: Connection, exclude: frozenset[str] = frozenset()) -> dict[str, Any]:
-    """Policies and grants to atesta_app or PUBLIC in public: what a reviewed PR may change.
+    """Policies, and grants to atesta_app or PUBLIC and to atesta_operator, in public: what a
+    reviewed PR may change. The operator role's grants are a second list (ADR-012 amendment 8).
 
     Grants come from the ACLs, table and column level, so a column grant, a grant to PUBLIC
     (which every role inherits) or a grant option shows up as a diff.
@@ -110,9 +113,11 @@ def snapshot(conn: Connection, exclude: frozenset[str] = frozenset()) -> dict[st
         )
     ).all()
     grants = conn.execute(text(_GRANTS)).all()
+    kept = [list(r) for r in grants if r[0] not in exclude]
     return {
         "policies": [list(r) for r in policies if r[0] not in exclude],
-        "grants": [list(r) for r in grants if r[0] not in exclude],
+        "grants": [r for r in kept if r[2] != "atesta_operator"],
+        "operator_grants": [r for r in kept if r[2] == "atesta_operator"],
     }
 
 

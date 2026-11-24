@@ -1328,6 +1328,7 @@
     "organizations": "{count, plural, one {# organización} other {# organizaciones}}",
     "withOverdue": "{count, plural, one {# con algo vencido} other {# con algo vencido}}",
     "notStarted": "{count, plural, one {# sin empezar} other {# sin empezar}}",
+    "notShown": "{count, plural, one {# organización más sin mostrar} other {# organizaciones más sin mostrar}}",
     "organization": "Organización",
     "assessed": "Medidas evaluadas",
     "overdue": "Medidas vencidas",

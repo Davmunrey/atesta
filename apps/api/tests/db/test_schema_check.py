@@ -38,6 +38,16 @@ BAD_OBJECTS = {
     "truncate grant": ("GRANT TRUNCATE ON audit_events TO atesta_app", "differ from"),
     "column grant": ("GRANT UPDATE (action) ON audit_events TO atesta_app", "differ from"),
     "grant to PUBLIC": ("GRANT DELETE ON organizations TO PUBLIC", "differ from"),
+    "operator column grant": (
+        "GRANT SELECT (display_name) ON connections TO atesta_operator",
+        "differ from",
+    ),
+    "operator table grant": ("GRANT SELECT ON evidence TO atesta_operator", "differ from"),
+    "operator policy": (
+        "CREATE POLICY operator_metadata_read ON evidence FOR SELECT TO atesta_operator"
+        " USING (true)",
+        "differ from",
+    ),
     "grant option": ("GRANT SELECT ON controls TO atesta_app WITH GRANT OPTION", "differ from"),
     "unclassified table": ("CREATE TABLE stray (id int)", "stray is not classified"),
     "table outside public": (
