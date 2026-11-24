@@ -40,14 +40,7 @@
   .public-footer-map { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1.5rem; }
   .public-footer-map h2 { margin-bottom: 0.5rem; font-size: 0.8125rem; font-weight: 500; color: var(--color-on-ink-muted); }
   .public-footer :focus-visible { outline-color: var(--color-cta); }
-  .public-footer-proof { padding: 0 max(1.25rem, calc((100% - 73.5rem) / 2)) 3rem; }
 
-  .proof-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); border-top: 1px solid var(--color-border-subtle); }
-  .proof-strip li { display: grid; gap: 0.25rem; padding: 1.25rem 1.25rem 1.25rem 0; }
-  .proof-strip strong { font-family: var(--font-display); font-size: 1.35rem; font-weight: 500; }
-  .proof-strip span { color: var(--color-muted); }
-  .proof-strip-ink { border-top-color: var(--color-on-ink-muted); }
-  .proof-strip-ink span { color: var(--color-on-ink-muted); }
 
   .customer-logos ul { display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; }
   .customer-logos img { height: 2rem; width: auto; }

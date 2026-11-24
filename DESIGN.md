@@ -306,15 +306,16 @@ highlighter, with one motion language. Honest facts replace logos and testimonia
     never under reduced motion.
   - Panels are disclosure buttons with `aria-expanded`; Esc and an outside click close them.
 - **Footer:** an ink band with the lockup, "Preparación de auditorías. No certifica
-  cumplimiento.", four columns (Producto, Recursos, Empresa, Legal) and the proof strip.
+  cumplimiento.", four columns (Producto, Recursos, Empresa, Legal). No proof strip (owner, 24/11/2026).
 - **Links:** public pages link with plain anchors, so each navigation is a document load. That
   lets cross-document View Transitions morph the lockup and the page title. Reduced motion or no
   support: a normal load.
 
 **Honest proof**
-- **Proof strip:** five true facts, each a short serif lead with one plain line, in the footer only
-  (once per page). The team reviewed the evidence guides: "Guías de evidencia revisadas por el
-  equipo de Atesta". No person's name appears on a public page; the reviewer is "el equipo de Atesta".
+- **No proof strip:** the owner removed it on 24/11/2026 (landing-legal amendment A5). Facts
+  stay where they belong: the BOE text on the landing and /ens, read-only access, hosting and the
+  AI rule on /seguridad. No person's name appears on a public page; the reviewer is "el equipo de
+  Atesta".
 - **Customer logos:** a data file (`content/customers.json`) whose entries need a written-permission
   reference. The section does not render while the file is empty.
 

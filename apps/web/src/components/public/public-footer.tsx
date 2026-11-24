@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 import { legalEntity } from "@/content/legal-entity";
 import { BrandMark } from "../brand-mark";
-import { ProofStrip } from "./proof-strip";
 import { DOCS, LINKS, PAGES } from "./site-map";
 
 /** The public footer (A3): a full map of the public site on ink, with the honest proof. Plain
@@ -30,6 +29,5 @@ export function PublicFooter() {
           <li><a href="/aviso-legal">{legal("notice")}</a></li><li><a href="/privacidad">{legal("privacy")}</a></li><li><a href="/cookies">{cookies("title")}</a></li></ul></div>
       </nav>
     </div>
-    <div className="public-footer-proof"><ProofStrip onInk /></div>
   </footer>;
 }

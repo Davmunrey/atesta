@@ -1762,29 +1762,6 @@
       "contact": "Contact",
       "how": "How it works"
     },
-    "proof": {
-      "label": "What is true today",
-      "boe": {
-        "lead": "73 measures",
-        "line": "with the official BOE text"
-      },
-      "team": {
-        "lead": "Evidence guides",
-        "line": "reviewed by the Atesta team"
-      },
-      "spain": {
-        "lead": "Spain",
-        "line": "Designed to be hosted in Spain (AWS, Aragon region)"
-      },
-      "readonly": {
-        "lead": "Read-only",
-        "line": "Atesta asks only for read access to your systems"
-      },
-      "noai": {
-        "lead": "No AI decisions",
-        "line": "a person decides the state of each measure"
-      }
-    },
     "customers": {
       "title": "Organizations using Atesta"
     },
