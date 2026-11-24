@@ -69,17 +69,23 @@ BASE = {
 }
 M365_SECRET = {"AZURE_CLIENT_ID": "client", "M365_CERTIFICATE_CONTENT": "cGZ4LXNlY3JldA=="}
 TENANT = "abcdef01-1111-4111-8111-111111111111"
-GOOGLE_SECRET = {
-    "GOOGLEWORKSPACE_CREDENTIALS_CONTENT": '{"private_key": "k"}',
-    "GOOGLEWORKSPACE_DELEGATED_USER": "admin@example.com",
-}
+GOOGLE_SECRET = {"GOOGLEWORKSPACE_CREDENTIALS_CONTENT": '{"private_key": "k"}'}
+SUBJECT = "admin@example.com"
 
 
 def test_the_child_gets_only_the_listed_variables(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "never-inherited")
     pinned = {**BASE, **M365_SECRET, "AZURE_TENANT_ID": TENANT}  # from the job, never the secret
     assert child_env("m365", M365_SECRET, TENANT) == pinned
-    assert child_env("google_workspace", GOOGLE_SECRET, "C0abc") == {**BASE, **GOOGLE_SECRET}
+    # The subject comes from job.json (issue 390), never from a stored secret.
+    delegated = {**BASE, **GOOGLE_SECRET, "GOOGLEWORKSPACE_DELEGATED_USER": SUBJECT}
+    assert child_env("google_workspace", GOOGLE_SECRET, "C0abc", SUBJECT) == delegated
+
+
+def test_a_google_child_needs_the_jobs_subject_and_never_names_it() -> None:
+    for subject in (None, ""):
+        with pytest.raises(ValueError, match="subject"):
+            child_env("google_workspace", GOOGLE_SECRET, "C0abc", subject)
 
 
 @pytest.mark.parametrize("tenant", ["", "tenant", TENANT.upper(), f"{TENANT}\n"])
@@ -96,11 +102,17 @@ def test_the_m365_tenant_pin_must_be_a_tenant_id(tenant: str) -> None:
         ("m365", {**M365_SECRET, "AZURE_TENANT_ID": TENANT}),  # a secret never names a tenant
         ("m365", {**M365_SECRET, "AZURE_CLIENT_ID": ""}),
         ("google_workspace", M365_SECRET),
+        # D7: the verifier key never reaches Prowler, and a stored secret never names the subject.
+        (
+            "google_workspace",
+            {**GOOGLE_SECRET, "ATESTA_GOOGLE_VERIFIER_CREDENTIALS_CONTENT": '{"k": "verifier"}'},
+        ),
+        ("google_workspace", {**GOOGLE_SECRET, "GOOGLEWORKSPACE_DELEGATED_USER": SUBJECT}),
     ],
 )
 def test_a_credential_must_have_exactly_its_variables(
     provider: str, credential: dict[str, str]
 ) -> None:
     with pytest.raises(ValueError, match="credential") as error:
-        child_env(provider, credential, TENANT)
+        child_env(provider, credential, TENANT, SUBJECT)
     assert not any(v and v in str(error.value) for v in credential.values())  # rule 2

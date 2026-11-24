@@ -151,8 +151,13 @@ def check_m365(version: str, grants: M365Grants) -> Report:
     return _report(missing, extra)
 
 
+def google_allowlist(version: str) -> GoogleAllowlist:
+    """The expected scopes of each Google client for this version (the verifier's step 1)."""
+    return _version(_GOOGLE_VERSIONS, version)
+
+
 def check_google(version: str, grants: GoogleGrants) -> Report:
-    allowlist = _version(_GOOGLE_VERSIONS, version)
+    allowlist = google_allowlist(version)
     missing, extra = [], []
     for client, granted, expected in (
         ("scan", grants.scan_scopes, allowlist.scan_scopes),

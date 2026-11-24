@@ -17,13 +17,17 @@ _CHECK_ID = re.compile(r"[a-z0-9]+(_[a-z0-9]+)+")
 # GOOGLEWORKSPACE_* (googleworkspace_provider.py:247, :307-362). The M365 secret is Atesta's one
 # certificate for every tenant (D5), so it never names a tenant: AZURE_TENANT_ID comes from the
 # job's pin, and a scan can only reach the tenant the connection pinned.
+# The Google subject is connection data, not a secret: the wrapper sets it from job.json (issue
+# 390). The verifier key (D7) is never a Prowler variable, so a scan run refuses a credential
+# that holds it.
+GOOGLE_SCAN_KEY = "GOOGLEWORKSPACE_CREDENTIALS_CONTENT"
+GOOGLE_VERIFIER_KEY = "ATESTA_GOOGLE_VERIFIER_CREDENTIALS_CONTENT"
 _CREDENTIAL = {
     "m365": frozenset({"AZURE_CLIENT_ID", "M365_CERTIFICATE_CONTENT"}),
-    "google_workspace": frozenset(
-        {"GOOGLEWORKSPACE_CREDENTIALS_CONTENT", "GOOGLEWORKSPACE_DELEGATED_USER"}
-    ),
+    "google_workspace": frozenset({GOOGLE_SCAN_KEY}),
 }
 _TENANT_VARIABLE = {"m365": "AZURE_TENANT_ID"}
+_SUBJECT_VARIABLE = {"google_workspace": "GOOGLEWORKSPACE_DELEGATED_USER"}
 _GUID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
 _BASE_ENV = {
     "PATH": "/usr/local/bin:/usr/bin:/bin",
@@ -55,7 +59,9 @@ def prowler_argv(provider: str, excluded: Iterable[str], work: str = "/work") ->
     return [*argv, "--excluded-checks", *checks] if checks else argv
 
 
-def child_env(provider: str, credential: Mapping[str, str], tenant: str) -> dict[str, str]:
+def child_env(
+    provider: str, credential: Mapping[str, str], tenant: str, subject: str | None = None
+) -> dict[str, str]:
     """The whole environment of the Prowler process. Errors name variables, never values."""
     expected = _CREDENTIAL[_provider(provider)]
     if set(credential) != expected:
@@ -70,4 +76,9 @@ def child_env(provider: str, credential: Mapping[str, str], tenant: str) -> dict
         if not _GUID.fullmatch(tenant):
             raise ValueError("the job's M365 tenant pin is not a tenant id")
         env[variable] = tenant
+    subject_variable = _SUBJECT_VARIABLE.get(provider)
+    if subject_variable is not None:
+        if not subject:
+            raise ValueError("the job names no Google subject")
+        env[subject_variable] = subject
     return env

@@ -295,7 +295,8 @@ allowlist.
 
 - The wrapper fetches the credential at start (task role in AWS, stdin locally) and places it
   only in the Prowler child process environment (`M365_CERTIFICATE_CONTENT`, `AZURE_CLIENT_ID`;
-  `GOOGLEWORKSPACE_CREDENTIALS_CONTENT`, `GOOGLEWORKSPACE_DELEGATED_USER`). The M365 secret never
+  `GOOGLEWORKSPACE_CREDENTIALS_CONTENT`, with `GOOGLEWORKSPACE_DELEGATED_USER` set from the job's
+  subject; the verifier key never enters it). The M365 secret never
   names a tenant (D5): the wrapper sets `AZURE_TENANT_ID` from the job's pinned tenant and refuses
   a secret that carries one, so a scan reaches only the pinned tenant. It
   never writes it to disk, logs it, or puts it in the manifest. Prowler then mints its own
@@ -505,6 +506,71 @@ with the scan key only (D7). Output is a JSON report of ids and verdicts.
   confirms them (a step that proves impossible moves here and its criterion narrows); a Google
   admin role assigned to a group that contains a service account (candidate); tokens issued
   before revocation.
+
+### Google verifier contract (issue 390)
+
+The Google column of the table above, made exact. `atesta_scanner/verify_google.py` holds the
+steps, `google_token.py` the delegated token and `google_api.py` a GET-only Admin SDK reader.
+Sources: the Admin SDK discovery documents (directory_v1 and reports_v1, revision 20261117), the
+admin domain settings events appendix (updated 2026-09-03), Google's service account OAuth page
+(updated 2026-11-19) and the IAM v1 discovery document (revision 20261106), read 2026-11-24.
+
+- **Modes.** `atesta-scan verify` runs steps 1 to 3 with both keys and never Prowler. `atesta-scan
+  scan` runs steps 1 and 2 with the scan key only, then Prowler (D7). The mode is the command, never
+  inferred from the credential: a `verify` run without the verifier key is exit 11.
+- **Credential on stdin.** `scan`: exactly `GOOGLEWORKSPACE_CREDENTIALS_CONTENT` (the scan key
+  JSON). `verify`: that and `ATESTA_GOOGLE_VERIFIER_CREDENTIALS_CONTENT` (the verifier key JSON).
+  A key must be `type` `service_account` with `client_email`, a numeric `client_id`,
+  `private_key_id` and an RSA `private_key`; anything else is exit 11 and nothing names a value.
+  The key's `token_uri` is ignored: tokens come only from `https://oauth2.googleapis.com/token`.
+- **job.json.** A Google job adds `google_subject` (the super admin email), `google_service_accounts`
+  (the two service accounts' IAM `uniqueId`s, numeric) and, after a first `ok`, `verified_since`
+  (the connection's `verified_at`, RFC 3339 UTC). `tenant` is the pinned customer id, or before the
+  first `ok` the primary domain the customer entered. The subject reaches Prowler only as
+  `GOOGLEWORKSPACE_DELEGATED_USER`, set by the wrapper from the job, never from a stored secret.
+- **Step 1, token.** JWT bearer grant (RS256, `kid` the key's `private_key_id`, `iss` its
+  `client_email`, `sub` the subject, `scope` the client's expected scopes space-separated, `aud`
+  the token URL, `exp` 3,600 s after `iat`). Google's `error` decides; its `error_description` is
+  only compared, never stored or logged:
+
+  | Answer | Result |
+  |---|---|
+  | `unauthorized_client`, `access_denied` | `incomplete`, `<client>_client_not_authorized` (DWD entry missing or not yet propagated) |
+  | `admin_policy_enforced` | `incomplete`, `<client>_client_blocked_by_policy` |
+  | `invalid_grant` whose description does not start with `Invalid JWT` | `incomplete`, `delegated_user` (the user does not exist) |
+  | `invalid_grant` starting `Invalid JWT` (clock or signature), `invalid_client`, `deleted_client`, `invalid_scope`, any other 4xx, a key that does not load | exit 11: Atesta's credential, the connection is unchanged |
+  | 429, 5xx, a network failure, an answer that is not JSON | `transient` |
+
+- **Step 2, identity.** `GET admin/directory/v1/customers/my_customer`: its `id` is the report's
+  `tenant_id`; with a pinned customer id it must be equal (`customer_pin` otherwise). Before the
+  pin, the entered domain must be a verified primary domain in
+  `GET .../customer/my_customer/domains` (`primary_domain`). The subject's domain must be a
+  verified domain or domain alias there (`delegated_user_domain`).
+  `GET .../users/<subject>` must have `isAdmin` true (super admin, `delegated_user_not_super_admin`)
+  and `suspended` false (`delegated_user_suspended`); a 404 is `delegated_user`.
+- **Step 3, grants (`verify` only).** With the verifier token, `GET admin/reports/v1/activity/users/all/applications/admin`
+  for `eventName` `AUTHORIZE_API_CLIENT_ACCESS` and `REMOVE_API_CLIENT_ACCESS`, `maxResults` 1000,
+  every page, from `verified_since` minus 1 h when the job has it. An event belongs to a client when
+  `API_CLIENT_NAME` equals that key's `client_id`. Per client the latest event decides (at equal
+  times a removal wins): a removal is `revoked`; an authorization's `API_SCOPES` (its
+  `multiValue`, else its `value` split on commas and spaces) is the granted set compared by
+  `check_google`. No event in the window: with `verified_since` nothing changed since the last
+  `ok`, and step 1 proved the expected scopes are still authorized, so the expected set stands;
+  without it, `incomplete`, `<client>_client_authorization_event` (the admin log lags minutes,
+  onboarding retries). Then, with the scan token, `GET .../customer/my_customer/roleassignments`,
+  `maxResults` 200, every page: an assignment whose `assignedTo` is either `uniqueId` or either
+  `client_id` is counted, and any count is `over_privileged`.
+- **Order.** `verify`: verifier token, scan token, the Reports events (a removal is `revoked` even
+  when the scan token was refused), then step 2, the role assignments and the scope comparison.
+  Removing the verifier client therefore reads as `incomplete`, not `revoked`.
+- **Report.** `verdict`, `tenant_id` (the customer id read in step 2), `granted` (`scan_scopes`,
+  `verifier_scopes`, `role_assignments`: the `roleAssignmentId`s found), `missing`, `extra`,
+  `limits` (`roles_through_groups_not_read`, `tokens_issued_before_revocation`). No email, token,
+  key or Google message. A `scan` run pins its OCSF findings to that `tenant_id`.
+- **Reader.** GET only, `https://admin.googleapis.com` only; pages follow `nextPageToken` as a
+  parameter, never a URL from an answer, at most 100 pages. 400, 401, 403 and 404 are refusals
+  (`incomplete`, `read access for verification`, except the 404 above); 429, 5xx, network
+  failures and malformed answers are `transient`.
 
 ### Scanner image
 
@@ -855,6 +921,9 @@ not, unless the row says so.
 | One Prowler Google scan stays under the Policy API quota | Live golden Google (429 count) |
 | `AUTHORIZE_API_CLIENT_ACCESS` lists the full scope set after an edit, and the Reports query can filter by client ID | Live golden Google onboarding |
 | `roleAssignments` shows a role on a service account under its IAM `uniqueId`; Google allows a role on a group that contains a service account | Live golden Google; until then the second is a Verifier limit |
+| A service account's IAM `uniqueId` equals its OAuth `client_id` (IAM documents them as two fields); `roleAssignments.list` with `userKey` set to a service account and `includeIndirectRoleAssignments` would read roles through groups | Live golden Google; until then the verifier matches both ids and the group case stays a limit |
+| `API_SCOPES` arrives as `multiValue` or as one comma-separated `value` (the appendix types it `string`) | Live golden Google onboarding; the verifier accepts both |
+| An `invalid_grant` for a missing user never starts with `Invalid JWT` (Google's table lists the descriptions) | Live golden Google with a deleted subject |
 | `users.get` `isAdmin` means super admin for the subject check | Live golden Google |
 | A mechanism to record Google token requests for the live golden | To be found; not part of the pass condition until then |
 | Cross-tenant confused deputy with a shared Google client ID (design reasoning, not tested) | Design argument; per-org service accounts avoid it |

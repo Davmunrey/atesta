@@ -15,6 +15,7 @@ from atesta_core.connectors.readonly import (
     Verdict,
     check_google,
     check_m365,
+    google_allowlist,
     is_read_only_name,
     required_resource_access,
 )
@@ -152,6 +153,13 @@ def test_the_google_v1_scopes_are_the_specs() -> None:
         )
     )
     assert GOOGLE_V1.verifier_scopes == frozenset({prefix + "admin.reports.audit.readonly"})
+
+
+def test_the_google_allowlist_of_a_version_is_its_expected_set() -> None:
+    """The verifier asks for exactly these scopes with each key (issue 390)."""
+    assert google_allowlist("google-v1") is GOOGLE_V1
+    with pytest.raises(ValueError, match="allowlist version"):
+        google_allowlist("m365-v1")
 
 
 GOOGLE_CASES = {
