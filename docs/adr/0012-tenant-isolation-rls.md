@@ -221,7 +221,7 @@ Status: proposed. The owner chose the substance on 2026-11-24, in the session th
   - The limit is in the database, not in the job: a wrong date or a missing WHERE in the code
     deletes nothing younger.
   - `rls_v1.py` is unchanged. The standard tenant policy is the same; this is one more named
-    policy on one table, written in migration 0029.
+    policy on one table, written in migration 0030.
 - **Who deletes:** each organization's daily job, in that organization's context with the reason
   `job`. No new context reason, no new setting and no cross-tenant path.
 - **Guard and linter:**

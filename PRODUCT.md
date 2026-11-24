@@ -23,8 +23,8 @@ and the test behind each row. Read it before describing the product. In short:
   customer's tools and AI agents record evidence and propose assessments; a person confirms a
   proposal. Microsoft 365 can be connected from the web, on the local stack only.
 - **Not there yet.** Nothing is deployed to AWS. No customer tenant has been scanned. There is no
-  payment provider, no operator portal, no device agent and no hosted MCP server. Evidence is
-  statements and links until file upload merges.
+  payment provider, no operator portal, no device agent and no hosted MCP server. Evidence files
+  go through the API; their console screen is issue #400.
 
 Show only implemented actions and recorded data: no invented scores, scans or product states.
 Never say that a customer satisfies a framework: states read Superado / No superado and

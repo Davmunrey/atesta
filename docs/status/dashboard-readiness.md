@@ -1,6 +1,6 @@
 # Dashboard and framework readiness
 
-Observed on 2026-11-24 at `main` `ead81a12a328d275672d38ffe1399f1809fe2f4c`.
+Observed on 2026-11-24 at `main` `f1c06b387e464a5d7091b8ccd7bfc5d07cf8fb27`.
 
 This is an inventory of what the repository implements. It is not an assessment of any
 customer, and merged code is not a deployed service: nothing runs in AWS yet
@@ -16,10 +16,11 @@ Verified on the local stack (fake Cognito, local Postgres, fixture scans). "Spec
 | --- | --- | --- |
 | Sign-in, organizations, members, invitations | `identity-auth.md`, `test_identity_http.py`, `test_invitation_flows.py` | Hosted sign-in with MFA waits for AWS |
 | Roles: owner, admin, member, and an external auditor with an end date | `rbac.md`, `test_rbac.py`, `test_route_sweep.py` | The auditor reads; it never writes |
-| Organization overview: first steps, records at a glance, what is due | `readiness-cockpit.md`, `test_overview.py`, `test_readiness.py` | Shows recorded rows only; nothing is estimated |
+| Organization home: a task list of what needs someone now, legal deadlines first; then one line per framework and the records | `console-unification.md`, `readiness-cockpit.md`, `test_overview.py`, `test_readiness.py` | Shows recorded rows only; nothing is estimated |
 | ENS scope, self-assessment per measure, reviewer analysis, statement of applicability export | `requirement-register.md`, `test_requirement_register.py` | The organization records its own assessment. Atesta proposes applicability from the BOE tables; a person decides |
 | Framework detail: measure text, selection rules, expected evidence, guides, technical observations | `framework-detail.md`, `test_framework_detail.py` | A technical observation never makes a measure pass: every ENS measure keeps a manual control |
 | Evidence statements with optional HTTPS links, per common control | `control-evidence-statements.md`, `test_evidence.py`, `test_control_workspace.py` | A statement is a declaration. Atesta does not fetch or verify the link |
+| Evidence files through the API: upload, and download after an integrity check | `evidence-file-uploads.md`, `test_evidence_files.py`, `apps/api/tests/test_evidence_store.py` | No console screen yet (#400). Files are not scanned for malware (#401). The S3 store has not run against AWS |
 | Manual control review that cites its evidence | `manual-control-review.md`, `test_control_reviews.py` | A person approves; the AI and the scanner never do (ADR-005) |
 | Recorded routines: access reviews, policies, training acknowledgements, incident register with reporting deadlines | `recorded-routines.md`, `test_routines.py`, `test_routines_b.py` | Deadlines are computed from what the organization recorded |
 | Auditor dossier and monthly management report | `auditor-dossier.md`, `management-report.md`, `test_dossier.py`, `test_report.py` | Printed from recorded rows; no conformity statement |
@@ -68,12 +69,12 @@ when it names its reviewer.
 - **Hosted environment.** OpenTofu for dev and prod exists in `infra/` and is not applied. The
   owner postponed AWS until after the go/no-go of 2026-12-18 (`hosted-environment.md`).
   `docs/runbooks/deploy.md` is the path from no account to a running environment.
-- **Evidence files.** Uploading a file as evidence (#222, #400) is in open pull requests #402
-  and #412. Until they merge, evidence is statements and links. Malware scanning of uploads is
-  not built (#401).
+- **Evidence files in the console.** The API takes and returns files (table above). The screen
+  to upload and download them is issue #400. Uploads are not scanned for malware (#401).
 - **Live tenant collection.** No customer or test tenant has been scanned end to end (Gate B).
-  Google Workspace: the API accepts the connection and the scanner has its read-only verifier
-  (#390); the Connections page connects Microsoft 365 only (#365).
+  Google Workspace: the API prepares and verifies the connection and the scanner has its
+  read-only verifier (#390, #398); the Connections page connects Microsoft 365 only (#365), so
+  a customer cannot start it from the app.
 - **Operator portal.** Decided (ADR-017, `operator-portal.md`) and not built.
 - **Payments.** No payment provider is integrated.
 - **AI.** No generative model is called anywhere. ADR-010 sets the rules for when one is.

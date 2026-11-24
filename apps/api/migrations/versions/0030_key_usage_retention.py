@@ -8,15 +8,15 @@ refused, so a row's time cannot be moved to make it deletable.
 rls_v1 is not changed: the standard tenant policy stays as it is, and this is one more named
 policy on one table.
 
-Revision ID: 0029
-Revises: 0028
+Revision ID: 0030
+Revises: 0029
 """
 
 import rls_v1
 from alembic import op
 
-revision = "0029"
-down_revision = "0028"
+revision = "0030"
+down_revision = "0029"
 branch_labels = None
 depends_on = None
 
