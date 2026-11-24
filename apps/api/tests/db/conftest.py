@@ -34,6 +34,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 API_DIR = Path(__file__).resolve().parents[2]
 APP_PASSWORD = "atesta-test-only"  # noqa: S105  local test role, never deployed
+OPERATOR_PASSWORD = "atesta-operator-test-only"  # noqa: S105  local test role, never deployed
 ORG_A = uuid.UUID("aaaaaaaa-0000-4000-8000-000000000001")
 ORG_B = uuid.UUID("bbbbbbbb-0000-4000-8000-000000000002")
 
@@ -62,6 +63,7 @@ def fresh_database() -> Iterator[URL]:
     with make_engine(url, sslmode="disable", null_pool=True).begin() as conn:
         conn.exec_driver_sql((API_DIR / "migrations" / "bootstrap.sql").read_text())
         conn.exec_driver_sql(f"ALTER ROLE atesta_app LOGIN PASSWORD '{APP_PASSWORD}'")
+        conn.exec_driver_sql(f"ALTER ROLE atesta_operator LOGIN PASSWORD '{OPERATOR_PASSWORD}'")
     config = Config(str(API_DIR / "alembic.ini"))
     config.set_main_option("sqlalchemy.url", url.render_as_string(hide_password=False))
     config.attributes["role"] = "atesta_owner"
@@ -85,6 +87,12 @@ def superuser(database: URL) -> Engine:
 @pytest.fixture(scope="session")
 def app_engine(database: URL) -> Engine:
     url = database.set(username="atesta_app", password=APP_PASSWORD)
+    return make_engine(url, sslmode="disable", pool_size=1, max_overflow=0)
+
+
+@pytest.fixture(scope="session")
+def operator_engine(database: URL) -> Engine:
+    url = database.set(username="atesta_operator", password=OPERATOR_PASSWORD)
     return make_engine(url, sslmode="disable", pool_size=1, max_overflow=0)
 
 

@@ -1,6 +1,8 @@
 """Startup guard: refuse to run with a runtime role that could bypass tenant isolation.
 
-Conditions are listed in the tenant-data-layer spec ("Startup guard"). has_table_privilege
+Conditions are listed in the tenant-data-layer spec ("Startup guard"). The API and the worker run
+as atesta_app; the operator service runs as atesta_operator (ADR-017), and each refuses the
+other's role (ADR-012 amendment 8). has_table_privilege
 counts grants to PUBLIC and inherited roles but not column grants, so column-level privileges
 are checked with has_any_column_privilege.
 """
@@ -8,7 +10,9 @@ are checked with has_any_column_privilege.
 from sqlalchemy import Connection, Engine, text
 
 from atesta_api.platform.context import SETTING_NAMES
-from atesta_api.platform.tables import APPEND_ONLY, CATALOG, RETENTION_DAYS
+from atesta_api.platform.tables import APPEND_ONLY, CATALOG, OPERATOR_APPEND_ONLY, RETENTION_DAYS
+
+APP_ROLE = "atesta_app"
 
 _PUBLIC = "SELECT c.oid, c.relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace"
 _CHECKS = {
@@ -62,9 +66,9 @@ _CHECKS = {
 }
 
 
-def startup_problems(conn: Connection, *, require_tls: bool) -> list[str]:
+def startup_problems(conn: Connection, *, require_tls: bool, role: str = APP_ROLE) -> list[str]:
     params = {
-        "append_only": sorted(APPEND_ONLY),
+        "append_only": sorted(APPEND_ONLY | OPERATOR_APPEND_ONLY),
         "catalog": sorted(CATALOG),
         "retention": sorted(RETENTION_DAYS),
     }
@@ -73,6 +77,9 @@ def startup_problems(conn: Connection, *, require_tls: bool) -> list[str]:
         for label, sql in _CHECKS.items()
         if conn.execute(text(sql), params).first() is not None
     ]
+    current = conn.execute(text("SELECT current_user")).scalar()
+    if current != role:
+        problems.append(f"runtime role is {current}, not {role}")
     for _, name in SETTING_NAMES:
         if conn.execute(text("SELECT current_setting(:n, true)"), {"n": name}).scalar() not in (
             None,
@@ -88,10 +95,10 @@ def startup_problems(conn: Connection, *, require_tls: bool) -> list[str]:
     return problems
 
 
-def assert_safe_runtime_role(engine: Engine, *, require_tls: bool) -> None:
+def assert_safe_runtime_role(engine: Engine, *, require_tls: bool, role: str = APP_ROLE) -> None:
     """Raise at startup if isolation could be bypassed. Run on a fresh pooled connection."""
     with engine.connect() as conn:
-        problems = startup_problems(conn, require_tls=require_tls)
+        problems = startup_problems(conn, require_tls=require_tls, role=role)
         conn.rollback()
     if problems:
         raise RuntimeError("unsafe database setup: " + "; ".join(problems))
