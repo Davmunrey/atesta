@@ -131,3 +131,72 @@ other than `<name>_id: str`.
   - `notification_deliveries`: SELECT and INSERT, and UPDATE only of the delivery status.
 - **No named read policy and no new setting.** The token is sealed, not stored, so nothing is
   read before the organization is known.
+
+## Amendment 8 (proposed 2026-11-24, ADR-017, operator-portal spec)
+
+Status: proposed. The owner decided the substance on 2026-11-24, relayed by the coordinator
+(ADR-017, "Owner decisions"); accepting the amendment is the owner's call.
+
+- **Second runtime role, `atesta_operator`:** used only by the operator service (ADR-017).
+  - **Attributes:** LOGIN, NOSUPERUSER, NOBYPASSRLS, owns nothing, member of no role.
+  - **Grants:** only through `rls_v1.grant()` (or its successor), like `atesta_app`, and never
+    TRUNCATE, REFERENCES or TRIGGER.
+  - **Defined in** `bootstrap.sql`, with no password.
+- **It crosses tenants by design and never sets a tenant context.** No new context reason and no
+  new setting. Isolation from content holds because the role has no privilege on content tables,
+  not because of `app.organization_id`.
+- **Closed column list.** Column-level grants only, no table-level SELECT. A table or column
+  added here needs this amendment updated and both snapshots changed in the same reviewed pull
+  request.
+
+  | Table | SELECT columns | Writes |
+  | --- | --- | --- |
+  | `organizations` | `id`, `name`, `locale`, `created_at`, `closure_requested_at`, `closure_origin`, `suspended_at`, `suspension_reason` | UPDATE of `suspended_at`, `suspension_reason`, `closure_requested_at`, `closure_origin` |
+  | `subscriptions` | `organization_id`, `plan`, `addons`, `note`, `updated_at` | INSERT and UPDATE of the same columns |
+  | `billing_profiles` (new) | every column | INSERT and UPDATE of every column but `organization_id` on UPDATE |
+  | `memberships` | `organization_id`, `role` | none |
+  | `invitations` | `organization_id`, `expires_at`, `accepted_at`, `revoked_at` | none |
+  | `connections` | `organization_id`, `provider`, `status` | none |
+  | `scans` | `organization_id`, `status`, `queued_at`, `finished_at` | none |
+  | `api_tokens` | `organization_id`, `expires_at`, `revoked_at` | none |
+  | `api_token_usage` | `organization_id`, `at` | none |
+  | `audit_events` | `organization_id`, `action`, `occurred_at` | INSERT of `id`, `organization_id`, `action`, `target_type`, `target_id`, `metadata`, `request_id` |
+  | `erasure_receipts` (operator) | `id`, `organization_id`, `closure_requested_at`, `erased_at`, `row_counts` | none |
+
+  Every other tenant table, and `users`, gives `atesta_operator` no privilege. That covers
+  assessments, evidence, statements, findings, check results, policies, training, incidents,
+  access reviews, proposals and notification tables.
+- **New named policies, all scoped `TO atesta_operator`:**
+  - `operator_metadata_read`: `FOR SELECT USING (true)`, on each table in the list above that
+    has RLS.
+  - `operator_write`:
+    - on `subscriptions` and `billing_profiles`: `FOR INSERT WITH CHECK (true)` and
+      `FOR UPDATE USING (true) WITH CHECK (true)`;
+    - on `organizations`: `FOR UPDATE` only.
+  - `operator_audit_write` on `audit_events`: `FOR INSERT WITH CHECK (action LIKE 'operator.%'
+    AND actor_user_id IS NULL)`. `actor_user_id` is also absent from the column grant.
+  - These are the only writes that do not pass `tenant_isolation`. For `atesta_app`, nothing
+    changes: the policies do not apply to it.
+- **New tenant table `billing_profiles`:** standard `tenant_isolation`, SELECT only for
+  `atesta_app` (owners read it in the console), plus the operator policies above. Erasure
+  deletes it like every tenant table.
+- **New columns on the tenant root `organizations`:**
+  - `suspended_at`, and `suspension_reason`, a text code held by a CHECK from a closed list; both
+    NULL or both set;
+  - `closure_origin` (`owner` or `operator`), NULL exactly when `closure_requested_at` is NULL.
+  - `atesta_app` gains no write grant on them.
+- **New operator tables** (the class from amendment 3): no RLS, no `organization_id` foreign
+  key, no privilege for `atesta_app`.
+  - `operator_staff`: SELECT, INSERT, and UPDATE of role and `disabled_at`.
+  - `operator_audit_events`: append-only, SELECT and INSERT.
+  - `erasure_requests`: SELECT, INSERT, and UPDATE of the approval and cancellation columns.
+  - Only `atesta_owner`, through the erasure runner, sets `executed_at` and the receipt link.
+- **Linter and guard:**
+  - **Grants snapshot:** the schema linter keeps a second grants snapshot for `atesta_operator`,
+    read from `relacl` and `attacl` like the first.
+  - **Content test:** a test enumerates every tenant table outside the list and asserts that
+    the role has no table or column privilege on it.
+  - **Startup guard:** the operator service runs the same guard as the API against its own role,
+    and refuses to start under `atesta_app`. The API refuses to start under `atesta_operator`.
+- **Why column grants and not SECURITY DEFINER functions or views:** the ban on SECURITY
+  DEFINER functions above stands. ADR-017, "Database", gives the reasons.
