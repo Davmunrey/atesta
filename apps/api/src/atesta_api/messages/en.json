@@ -104,5 +104,9 @@
       "due": "Due in the next 7 days: {soon}. Overdue: {overdue}.",
       "report": "The monthly report is ready: {url}"
     }
+  },
+  "standing": {
+    "organization_suspended": "This organization is suspended.",
+    "trial_ended": "The 14-day trial has ended: the organization is read-only until Atesta sets a plan."
   }
 }

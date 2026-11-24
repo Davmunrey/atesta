@@ -27,6 +27,7 @@ from atesta_api.modules.identity.api import (
     Role,
     enter_org_context,
     enter_training_link_context,
+    is_suspended,
     normalize_email,
     person,
     require_member,
@@ -303,7 +304,10 @@ def _open_by_token(session: Session, token: str) -> TrainingCampaign:
     )
     if campaign is None:
         raise _error(404, "compliance.training_link_invalid")
-    if campaign.closed_at is not None or campaign.closes_on < _today():
+    # A suspended organization's link answers as a closed campaign (operator-portal spec).
+    enter_org_context(session, campaign.organization_id, ContextReason.TRAINING_LINK)
+    closed = campaign.closed_at is not None or campaign.closes_on < _today()
+    if closed or is_suspended(session, campaign.organization_id):
         raise _error(410, "compliance.training_closed")
     return campaign
 

@@ -9,6 +9,7 @@ BLOCKED_CODES = {
     "revoked": "connections.revoked",
 }
 CONNECTION_NOT_ACTIVE = "scanning.connection_not_active"
+ORGANIZATION_SUSPENDED = "scanning.organization_suspended"  # operator-portal spec
 TENANT_MISMATCH = "scanning.tenant_mismatch"
 OUTPUT_INVALID = TRANSIENT_ERRORS[30]
 
@@ -18,6 +19,7 @@ SCAN_ERROR_CODES = frozenset(
         ENGINE_FAILED,
         *BLOCKED_CODES.values(),
         CONNECTION_NOT_ACTIVE,
+        ORGANIZATION_SUSPENDED,
         TENANT_MISMATCH,
     }
 )

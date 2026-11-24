@@ -36,7 +36,7 @@ export function ActivityView({ org }: { org: Membership }) {
           <thead><tr><th scope="col">{t("when")}</th><th scope="col">{t("who")}</th><th scope="col">{t("what")}</th></tr></thead>
           <tbody>{query.data.events.map((e, i) => <tr key={`${e.occurred_at}-${i}`}>
             <td data-label={t("when")}><time dateTime={e.occurred_at}>{format.dateTime(new Date(e.occurred_at), { dateStyle: "medium", timeStyle: "short" })}</time></td>
-            <td data-label={t("who")}>{e.actor_email ?? t("system")}</td>
+            <td data-label={t("who")}>{e.actor_kind === "atesta" ? t("actor.atesta") : e.actor_email ?? t("system")}</td>
             <td data-label={t("what")}>{activityLabel(t, e.action)}{activityTarget(e.target_id) ? <span className="activity-target">{activityTarget(e.target_id)}</span> : null}</td>
           </tr>)}</tbody>
         </table></div>}

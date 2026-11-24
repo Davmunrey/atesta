@@ -372,6 +372,15 @@
             ],
             "title": "Actor Email"
           },
+          "actor_kind": {
+            "enum": [
+              "member",
+              "system",
+              "atesta"
+            ],
+            "title": "Actor Kind",
+            "type": "string"
+          },
           "occurred_at": {
             "format": "date-time",
             "title": "Occurred At",
@@ -389,6 +398,7 @@
         "required": [
           "occurred_at",
           "actor_email",
+          "actor_kind",
           "action",
           "target_type",
           "target_id"
@@ -935,6 +945,133 @@
           "assigned_at"
         ],
         "title": "AssignmentOut",
+        "type": "object"
+      },
+      "BillingProfileOut": {
+        "properties": {
+          "address_line1": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address Line1"
+          },
+          "address_line2": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address Line2"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "contact_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Email"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "legal_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Name"
+          },
+          "postal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postal Code"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "tax_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tax Id"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "legal_name",
+          "tax_id",
+          "address_line1",
+          "address_line2",
+          "postal_code",
+          "city",
+          "region",
+          "country",
+          "contact_email",
+          "complete",
+          "updated_at"
+        ],
+        "title": "BillingProfileOut",
         "type": "object"
       },
       "CampaignDetail": {
@@ -4557,6 +4694,21 @@
             ],
             "title": "Closure Erase After"
           },
+          "closure_origin": {
+            "anyOf": [
+              {
+                "enum": [
+                  "owner",
+                  "operator"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closure Origin"
+          },
           "organization_id": {
             "format": "uuid",
             "title": "Organization Id",
@@ -4577,6 +4729,34 @@
           },
           "role": {
             "$ref": "#/components/schemas/Role"
+          },
+          "suspended": {
+            "default": false,
+            "title": "Suspended",
+            "type": "boolean"
+          },
+          "suspended_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suspended At"
+          },
+          "suspension_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suspension Reason"
           }
         },
         "required": [
@@ -7228,6 +7408,32 @@
         "title": "TrendPoint",
         "type": "object"
       },
+      "TrialOut": {
+        "properties": {
+          "ended": {
+            "title": "Ended",
+            "type": "boolean"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          }
+        },
+        "required": [
+          "ends_at",
+          "ended"
+        ],
+        "title": "TrialOut",
+        "type": "object"
+      },
       "UnsubscribedOut": {
         "properties": {
           "kind": {
@@ -8751,6 +8957,56 @@
         ],
         "summary": "Token Usage",
         "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/billing-profile": {
+      "get": {
+        "description": "Read-only: the operator records them (ADR-017); owners see them, even while suspended.",
+        "operationId": "read_billing_profile_api_v1_orgs__org_id__billing_profile_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Billing Profile",
+        "tags": [
+          "identity",
           "identity"
         ]
       }
@@ -12493,6 +12749,55 @@
         "summary": "Close Campaign",
         "tags": [
           "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/trial": {
+      "get": {
+        "operationId": "read_trial_api_v1_orgs__org_id__trial_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrialOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Trial",
+        "tags": [
+          "identity",
+          "identity"
         ]
       }
     },

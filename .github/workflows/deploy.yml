@@ -81,10 +81,14 @@ jobs:
           scan=$(jq -r '.repositories.scan' deploy.json)
           docker build -f scanner/Dockerfile -t "$scan:$tag" .
           docker push "$scan:$tag"
+          egress=$(jq -r '.repositories.egress' deploy.json)
+          docker build -f infra/egress/Dockerfile -t "$egress:$tag" .
+          docker push "$egress:$tag"
           jq -n --arg api "$(digest "$(jq -r .repositories.api deploy.json):$tag")" \
                 --arg worker "$(digest "$(jq -r .repositories.worker deploy.json):$tag")" \
                 --arg scan "$(digest "$scan:$tag")" \
-                '{api: $api, worker: $worker, scan: $scan}' > images.json
+                --arg egress "$(digest "$egress:$tag")" \
+                '{api: $api, worker: $worker, scan: $scan, egress: $egress}' > images.json
           cat images.json
       - name: Build the web app
         working-directory: apps/web

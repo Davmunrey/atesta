@@ -40,6 +40,7 @@ from atesta_api.modules.identity.models import (
     Role,
     User,
 )
+from atesta_api.modules.identity.standing import enforce
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 from atesta_api.platform.i18n import accepted_locale, message
@@ -448,6 +449,15 @@ def require_api_token(request: Request, session: DbSession) -> ApiCaller:
             raise _error(401, "identity.api_token_invalid", request)
         row = found
         enter_org_context(session, row.organization_id, ContextReason.API_TOKEN)
+    language = accepted_locale(request.headers.get("accept-language"))
+    enforce(
+        session,
+        row.organization_id,
+        method=request.method,
+        path=request.url.path,
+        owner=False,
+        language=language,
+    )
     # Taking the row lock serializes this key's requests: idempotency and rate counts hold.
     session.execute(
         update(ApiToken)

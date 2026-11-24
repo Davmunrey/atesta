@@ -441,6 +441,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/billing-profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Billing Profile
+         * @description Read-only: the operator records them (ADR-017); owners see them, even while suspended.
+         */
+        get: operations["read_billing_profile_api_v1_orgs__org_id__billing_profile_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/closure": {
         parameters: {
             query?: never;
@@ -1312,6 +1332,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/trial": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Trial */
+        get: operations["read_trial_api_v1_orgs__org_id__trial_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/portfolio": {
         parameters: {
             query?: never;
@@ -1643,6 +1680,11 @@ export interface components {
             /** Actor Email */
             actor_email: string | null;
             /**
+             * Actor Kind
+             * @enum {string}
+             */
+            actor_kind: "member" | "system" | "atesta";
+            /**
              * Occurred At
              * Format: date-time
              */
@@ -1865,6 +1907,34 @@ export interface components {
             due_on: string | null;
             /** Owner User Id */
             owner_user_id: string | null;
+        };
+        /** BillingProfileOut */
+        BillingProfileOut: {
+            /** Address Line1 */
+            address_line1: string | null;
+            /** Address Line2 */
+            address_line2: string | null;
+            /** City */
+            city: string | null;
+            /** Complete */
+            complete: boolean;
+            /** Contact Email */
+            contact_email: string | null;
+            /** Country */
+            country: string | null;
+            /** Legal Name */
+            legal_name: string | null;
+            /** Postal Code */
+            postal_code: string | null;
+            /** Region */
+            region: string | null;
+            /** Tax Id */
+            tax_id: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
         };
         /** CampaignDetail */
         CampaignDetail: {
@@ -3119,6 +3189,8 @@ export interface components {
             access_expires_on?: string | null;
             /** Closure Erase After */
             closure_erase_after?: string | null;
+            /** Closure Origin */
+            closure_origin?: ("owner" | "operator") | null;
             /**
              * Organization Id
              * Format: uuid
@@ -3133,6 +3205,15 @@ export interface components {
             /** Organization Name */
             organization_name: string;
             role: components["schemas"]["Role"];
+            /**
+             * Suspended
+             * @default false
+             */
+            suspended: boolean;
+            /** Suspended At */
+            suspended_at?: string | null;
+            /** Suspension Reason */
+            suspension_reason?: string | null;
         };
         /** MyWorkItem */
         MyWorkItem: {
@@ -4078,6 +4159,13 @@ export interface components {
             /** Score */
             score: number | null;
         };
+        /** TrialOut */
+        TrialOut: {
+            /** Ended */
+            ended: boolean;
+            /** Ends At */
+            ends_at: string | null;
+        };
         /** UnsubscribedOut */
         UnsubscribedOut: {
             kind: components["schemas"]["Kind"];
@@ -4985,6 +5073,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UsageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_billing_profile_api_v1_orgs__org_id__billing_profile_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BillingProfileOut"];
                 };
             };
             /** @description Validation Error */
@@ -7039,6 +7158,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CampaignDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_trial_api_v1_orgs__org_id__trial_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrialOut"];
                 };
             };
             /** @description Validation Error */

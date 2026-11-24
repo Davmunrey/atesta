@@ -3,7 +3,8 @@
 # region use it, scoped to this account's log groups. The queues key lets EventBridge encrypt the
 # messages it puts on this account's queues (evidence-malware-scanning spec): EventBridge cannot
 # deliver to an encrypted queue otherwise ("My events are not delivered to the target Amazon SQS
-# queue", EventBridge troubleshooting).
+# queue", EventBridge troubleshooting). It also lets CloudWatch alarms publish to the alerts topic
+# it encrypts (issue 453), as AWS documents ("Encryption at rest", Amazon SNS key management).
 
 terraform {
   required_providers {
@@ -59,6 +60,15 @@ data "aws_iam_policy_document" "logs" {
 
 data "aws_iam_policy_document" "queues" {
   source_policy_documents = [data.aws_iam_policy_document.base.json]
+  statement {
+    sid       = "CloudWatchAlarmsUse"
+    actions   = ["kms:Decrypt", "kms:GenerateDataKey*"]
+    resources = ["*"]
+    principals {
+      type        = "Service"
+      identifiers = ["cloudwatch.amazonaws.com"]
+    }
+  }
   statement {
     sid       = "EventBridgeUse"
     actions   = ["kms:Decrypt", "kms:GenerateDataKey"]

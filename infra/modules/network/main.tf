@@ -123,6 +123,40 @@ resource "aws_vpc_endpoint" "s3" {
 
 data "aws_region" "current" {}
 
+# Scan egress (scanner-connectors spec, AWS runner; issue 454). A scan task may not reach the
+# internet, yet Fargate pulls its image and ships its logs through the task's own network
+# interface, without the container's proxy (AWS, "Amazon ECR interface VPC endpoints"; "Fargate
+# task networking"). These endpoints carry that traffic and the wrapper's Secrets Manager reads;
+# S3 already has its gateway. Private DNS sends every task in the VPC through them. Dev keeps one
+# zone (any subnet reaches it), prod one per zone, as the NAT gateways.
+locals {
+  endpoint_subnets = var.nat_per_az ? aws_subnet.private[*].id : [aws_subnet.private[0].id]
+}
+
+resource "aws_security_group" "endpoints" {
+  name        = "${var.name}-endpoints"
+  description = "Interface endpoints: HTTPS from inside the VPC"
+  vpc_id      = aws_vpc.this.id
+}
+
+resource "aws_vpc_security_group_ingress_rule" "endpoints_https" {
+  security_group_id = aws_security_group.endpoints.id
+  cidr_ipv4         = var.cidr
+  ip_protocol       = "tcp"
+  from_port         = 443
+  to_port           = 443
+}
+
+resource "aws_vpc_endpoint" "interface" {
+  for_each            = toset(["ecr.api", "ecr.dkr", "logs", "secretsmanager"])
+  vpc_id              = aws_vpc.this.id
+  service_name        = "com.amazonaws.${data.aws_region.current.region}.${each.key}"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = local.endpoint_subnets
+  security_group_ids  = [aws_security_group.endpoints.id]
+  private_dns_enabled = true
+}
+
 resource "aws_cloudwatch_log_group" "flow" {
   name              = "/${var.name}/vpc-flow"
   retention_in_days = var.log_retention_days
@@ -173,4 +207,12 @@ output "public_subnet_ids" {
 
 output "private_subnet_ids" {
   value = aws_subnet.private[*].id
+}
+
+output "s3_prefix_list_id" {
+  value = aws_vpc_endpoint.s3.prefix_list_id
+}
+
+output "endpoints_security_group_id" {
+  value = aws_security_group.endpoints.id
 }

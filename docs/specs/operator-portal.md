@@ -209,6 +209,43 @@ The portal never shows:
 - **Unsubscribe:** one-click unsubscribe keeps working, because RFC 8058 and the user's choice
   do not depend on the plan.
 
+### Customer side as built (build step 3, #463)
+
+Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
+- **One enforcement point:** `identity.standing.enforce`, called by `require_member` and by the
+  API-key check after each enters the organization's context. It reads `suspended_at` and
+  `trial_ends_at` by primary key, and the plan only once the trial date has passed. The
+  allowlists are matched against the request's own path with this organization's id, so any
+  other spelling is refused.
+- **The ended trial (owner answer 1):** when `trial_ends_at` has passed and there is no
+  `subscriptions` row, every write answers 403 `billing.trial_ended`. What stays:
+  - every read, export included;
+  - an owner's `POST` and `DELETE /api/v1/orgs/{org}/closure`;
+  - anyone's `PUT /api/v1/orgs/{org}/notifications/preferences`, a person's choice like the
+    one-click unsubscribe;
+  - training-link confirmations, which are the employees' records, not the organization's
+    members' writes. Invitation acceptance is not an organization route and is unchanged.
+- **Trial state:** `GET /api/v1/orgs/{org}/trial` returns `{ends_at, ended}` to every member,
+  `ends_at` null once a plan is set. `/me` cannot carry it, because `subscriptions` is read only
+  in the organization's own context.
+- **API keys and MCP:** the remote MCP endpoint calls the key routes in-process, so the key
+  check covers it. A key's refusal carries `message` in the caller's language, as the other key
+  errors do (api-keys-v2 spec).
+- **Worker:** the scheduled-scan chain keeps re-arming while suspended, so scans resume after
+  reactivation; a scan that starts for a suspended organization ends `blocked` with
+  `scanning.organization_suspended`, so none stays queued. A notice to a suspended organization
+  is suppressed before its delivery is claimed, so a notice still due after reactivation can go.
+- **Training link:** reading the suspension needs the organization's context, so the link
+  handler enters it (reason `training_link`) before answering 410 `compliance.training_closed`.
+- **Owner billing view:** `GET /api/v1/orgs/{org}/billing-profile` lives in identity next to
+  the organization settings, calling `billing.api.billing_profile`; billing stays a module with
+  no routes and no import of identity.
+- **`errors.identity.closure_by_operator`:** the shared error component renders texts without
+  values, so the text names no address ("El cierre lo inició Atesta: solo Atesta puede
+  cancelarlo"). The settings page shows the contact address next to an operator closure.
+- **Activity:** `actor_kind` is `atesta` for an `operator.*` action, `member` when the event
+  names a person, `system` otherwise.
+
 ## Permissions matrix
 
 | Action | admin | billing | support |
@@ -292,6 +329,21 @@ The console replaces every organization page with one full-page state, inside th
   in both languages (DESIGN.md, "Activity").
 - **Contact address:** `{email}` is the support address from configuration. It is an open
   question until the domain exists.
+
+**Console as built (build step 3, #464).** Amended 2026-11-24 where the text above was ambiguous
+or did not fit DESIGN.md:
+- **Voice:** `suspended.reason.customer_request` reads "a petición de tu organización". DESIGN.md
+  ("Voice") addresses the reader as "tú", never "vosotros", and a test holds it.
+- **Owners' billing details** show on the suspended page itself, read-only, so
+  `suspended.billing` ("Ver los datos de facturación") is not used. The closure link opens
+  Ajustes, which a suspended organization's owner can still reach (without the language panel,
+  whose save would be refused).
+- **Trial notices** use the console's notice row: owners and admins see "Prueba de 14 días:
+  termina el {date}." while it runs; everyone sees the read-only notice, in the overdue style,
+  once it has ended (`org.trialEnds`, `org.trialEnded`).
+- **Operator closure in Ajustes:** no cancel button; "El cierre lo inició Atesta. Para
+  cancelarlo, escribe a {email}." (`settings.closingByAtesta`), with the address from
+  `content/legal-entity.ts` (owner answer 9).
 
 **Service notices** (notifications module, `apps/api/src/atesta_api/messages`, ES and EN). They
 go to owners, and to admins where noted, and cannot be unsubscribed from, because they concern
@@ -536,6 +588,38 @@ answered from the law below and stays open for the owner's tax adviser.
   - **scanning:** `scan_counts(session, org_ids, since)`.
   - **notifications:** `queue_service_notice(session, org_id, kind)`.
   - The API-key counts come from identity, which owns `api_tokens`.
+- **Module functions as built (build step 3, #461, #462).** Amended 2026-11-24 where the list
+  above was ambiguous or did not fit the code:
+  - **Refusals:** the functions raise `identity.api.OperatorError` with a bare code
+    (`not_found`, `already_suspended`, `not_suspended`, `closure_exists`, `closure_by_owner`,
+    `no_closure`, `erasure_pending`, `same_approver`, `cooling_off`, `erasure_expired`,
+    `erasure_approved`, `erasure_cancelled`, `erasure_executed`). The operator API maps each to
+    `operator.<code>` and its status; `cooling_off` and `erasure_approved` are 409s the API
+    table above did not name. `billing.api.UnknownAddonError` becomes `operator.invalid_plan`.
+  - **List filters across modules:** `organization_rows` takes `OrganizationFilters(state,
+    within, exclude, sort)`. The plan, health and billing filters are other modules' data, so
+    the operator service turns them into id sets (`within`, `exclude`) from
+    `subscriptions_for(session, None)`, `health_counts(session, None)` and
+    `billing_summaries(session, None)`, where `None` reads every organization. Search and sort,
+    including by last activity, stay in identity.
+  - **Added:** `identity.api_key_counts(session, org_ids, since)` (active keys, calls since);
+    `identity.request_erasure`, `approve_erasure` and `cancel_erasure`, which hold the two rules
+    the database cannot (a requester approves only as the sole enabled admin; a new request
+    cancels an expired, unapproved one); `billing.billing_summaries(session, org_ids)` (legal
+    name and completeness, what support sees) and `billing.known_addons()`.
+  - **Renamed:** `scanning.scan_activity(session, org_ids, since)`, because `scan_counts` already
+    exists for one organization (weekly summary).
+  - **Connection health:** a fourth value, `pending`, when no connection needs attention but one
+    is still being set up or verified (`pending_provisioning`, `pending_setup`, `verifying`):
+    neither "OK" nor "needs attention" fits it.
+  - **Audit trails are not written by these functions:** they return what the trails need
+    (`suspended_at`, the erase date, the previous plan, the changed billing field names), and
+    the operator service writes the customer event and the operator trail row in the same
+    transaction.
+  - **Open: `notifications.queue_service_notice` is not built.** Deferring a job inserts into
+    the Procrastinate tables, and ADR-012 amendment 8's closed list gives `atesta_operator` no
+    privilege on them. Service notices need either an amendment granting the role the defer
+    path for one queue, or another trigger; the owner decides.
 - **Composition:** the operator service composes these results per page of 50 organizations. At
   the expected number of organizations, this is a handful of grouped queries per page, not one
   per organization.

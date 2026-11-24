@@ -66,7 +66,7 @@ output "cognito_domain" {
 # decides. images, edge and mail_domain stay null until images are pushed and the owner has a
 # domain and certificates (docs/runbooks/deploy.md); until then only the base layer is planned.
 variable "images" {
-  type    = object({ api = string, worker = string, scan = string })
+  type    = object({ api = string, worker = string, scan = string, egress = string })
   default = null
 }
 
@@ -92,6 +92,12 @@ variable "mail_domain" {
   default = null
 }
 
+variable "scan_organizations" {
+  description = "Customers whose scan roles to create: organization id => connectors. Set in the untracked tfvars."
+  type        = map(set(string))
+  default     = {}
+}
+
 module "platform" {
   source                = "../../modules/platform"
   name                  = "atesta-dev"
@@ -104,6 +110,8 @@ module "platform" {
   edge                  = var.edge
   app_environment       = var.app_environment
   mail_domain           = var.mail_domain
+  alert_email           = var.budget_email
+  scan_organizations    = var.scan_organizations
 }
 
 output "platform" {

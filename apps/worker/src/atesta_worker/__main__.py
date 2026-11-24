@@ -8,10 +8,12 @@ from atesta_api.platform.guard import assert_safe_runtime_role
 
 from atesta_worker import context, file_scans
 from atesta_worker.app import build_app
+from atesta_worker.logs import configure_logging
 from atesta_worker.scans import config_from_env, configure_scans
 
 
 def main() -> None:
+    configure_logging()  # INFO events such as scan.finished reach stdout (issue 452)
     url = os.environ["ATESTA_DATABASE_URL"]
     sslmode = os.environ.get("ATESTA_DB_SSLMODE", "verify-full")
     engine = make_engine(url, sslmode=sslmode)
