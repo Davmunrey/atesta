@@ -66,6 +66,10 @@
         "body": "{org}: una conexión de {provider} tiene más permisos de los de solo lectura que Atesta necesita. Atesta no la escanea hasta que se retiren."
       }
     },
+    "evidence_malware": {
+      "subject": "Atesta: archivo bloqueado por posible malware",
+      "body": "{org}: el análisis antimalware ha encontrado una posible amenaza en un archivo de evidencia subido a Atesta. Atesta lo ha bloqueado y nadie puede descargarlo. Averigua quién lo subió y de dónde salió, revisa ese equipo y, si la evidencia sigue haciendo falta, sube una copia limpia. El archivo no se borra: queda bloqueado durante su periodo de retención."
+    },
     "scan_problem": {
       "subject": "Atesta: un escaneo no ha terminado",
       "body": "{org}: un escaneo de {provider} no ha terminado tras sus reintentos. Las evidencias automáticas de esa conexión no se actualizan hasta que se resuelva."

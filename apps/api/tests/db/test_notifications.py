@@ -59,6 +59,7 @@ def test_owners_and_admins_get_every_type_on_and_only_optional_ones_can_be_turne
     org, subs = org_with(client, superuser, adm="admin")
     expected = {
         "connection_alert": (True, False),
+        "evidence_malware": (True, False),  # evidence-malware-scanning spec: critical
         "incident_clock": (True, False),
         "scan_problem": (True, True),
         "due_digest": (True, True),

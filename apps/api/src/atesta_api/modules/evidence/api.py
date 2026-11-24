@@ -21,6 +21,9 @@ from atesta_api.modules.evidence.malware import (
     MALWARE_FOUND,
     SCAN_RESULTS,
     RecordedScan,
+    ScanEvent,
+    has_file_scan,
+    parse_scan_result,
     record_file_scan,
 )
 from atesta_api.modules.evidence.models import Evidence, EvidenceControl
@@ -319,9 +322,12 @@ __all__ = [
     "ObjectMissingError",
     "RecordedScan",
     "SCAN_RESULTS",
+    "ScanEvent",
     "S3EvidenceStore",
     "StoreUnavailableError",
     "carries_credential",
+    "has_file_scan",
+    "parse_scan_result",
     "record_attestation",
     "record_file_scan",
     "refuse_credential_link",

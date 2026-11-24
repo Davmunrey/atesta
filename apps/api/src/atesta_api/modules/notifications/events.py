@@ -1,8 +1,8 @@
 """Immediate notices from audit events (notifications spec PR 2; issue 386).
 
-Connections and scanning call queue_event in the transaction that records the event, so the
-job exists only if the event does. The job reads the event back by id: job arguments hold ids
-only (ADR-012 amendment 2).
+Connections, scanning and the worker's malware results (evidence-malware-scanning spec) call
+queue_event in the transaction that records the event, so the job exists only if the event does.
+The job reads the event back by id: job arguments hold ids only (ADR-012 amendment 2).
 """
 
 import uuid
@@ -23,7 +23,8 @@ TASK = "notify_event"
 QUEUE = "notifications"
 CONNECTION_ALERTS = {"connection.revoked": "revoked", "connection.over_privileged": "extra"}
 SCAN_PROBLEMS = frozenset({"scan.failed", "scan.blocked"})
-NOTIFIABLE = frozenset(CONNECTION_ALERTS) | SCAN_PROBLEMS
+EVIDENCE_MALWARE = "evidence.file_malware_found"
+NOTIFIABLE = frozenset(CONNECTION_ALERTS) | SCAN_PROBLEMS | {EVIDENCE_MALWARE}
 OWNERS_AND_ADMINS = frozenset({Role.OWNER, Role.ADMIN})
 
 
@@ -67,6 +68,11 @@ def handle_event(
             org=profile.name,
             provider=provider(details.get("provider")),
         )
+    elif event.action == EVIDENCE_MALWARE:  # no file name or title: rule 2
+        kind, key = Kind.EVIDENCE_MALWARE, f"event:{event.id}"
+        link = f"/app/activity?org={organization_id}"
+        subject = text(locale, "evidence_malware.subject")
+        body = text(locale, "evidence_malware.body", org=profile.name)
     else:
         if details.get("trigger") == "activation":
             return  # the admin is on the connections page, verifying
