@@ -165,8 +165,13 @@ def start_attempt(
     attempt: int,
     store: ScanStore,
     expected_root: Path,
+    m365_credential_ref: str | None = None,
 ) -> Started:
-    """Step 1: mark the scan running for this attempt and write its job file (ids, no secret)."""
+    """Step 1: mark the scan running for this attempt and write its job file (ids, no secret).
+
+    The job names the credential refs a Fargate run reads with its task role (issue 444): the
+    connection's for Google, the platform certificate's for M365 (the worker's setting).
+    """
     scan = _locked(session, scan_id)
     if scan.status not in ("queued", "running"):
         return Started(None, None)
@@ -206,6 +211,15 @@ def start_attempt(
     if activating and target.consented_by_oid is not None:
         data["admin_oid"] = target.consented_by_oid
     data.update(google)
+    refs = (
+        {"credential_ref": m365_credential_ref}
+        if scan.provider == "m365"
+        else {
+            "credential_ref": target.credential_ref,
+            "verifier_credential_ref": target.verifier_credential_ref,
+        }
+    )
+    data.update({name: ref for name, ref in refs.items() if ref is not None})
     prefix = output_prefix(organization_id, scan.id, attempt).removesuffix("out/")
     _write_job_file(store, prefix + JOB_FILE, json.dumps(data, sort_keys=True).encode())
     session.flush()

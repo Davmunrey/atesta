@@ -36,8 +36,8 @@ def test_only_dev_runners_exist_and_only_in_development(
         "ATESTA_SCAN_CREDENTIALS_DIR": str(tmp_path / "secrets"),
         "ATESTA_SCAN_IMAGE": "atesta-scanner:dev",
     }
-    with pytest.raises(ValueError, match="must be 'fixture' or 'docker'"):
-        config_from_env({**env, "ATESTA_SCAN_RUNNER": "fargate"})
+    with pytest.raises(ValueError, match="must be 'fixture', 'docker' or 'fargate'"):
+        config_from_env({**env, "ATESTA_SCAN_RUNNER": "ec2"})
     monkeypatch.setenv("ATESTA_ENV", "prod")
     with pytest.raises(RuntimeError, match="ATESTA_ENV"):
         config_from_env(env)
@@ -45,3 +45,48 @@ def test_only_dev_runners_exist_and_only_in_development(
     config = config_from_env(env)
     assert config is not None and config.timeout_seconds == 3600
     assert isinstance(config.runner, runner)
+
+
+FARGATE = {
+    "ATESTA_SCAN_RUNNER": "fargate",
+    "ATESTA_SCAN_BUCKET": "atesta-prod-evidence",
+    "ATESTA_SCAN_CLUSTER": "atesta-prod",
+    "ATESTA_SCAN_TASK_DEFINITION": "atesta-prod-scan",
+    "ATESTA_SCAN_SUBNETS": "subnet-a, subnet-b",
+    "ATESTA_SCAN_SECURITY_GROUP": "sg-scan",
+    "ATESTA_SCAN_ROLE_PREFIX": "arn:aws:iam::123456789012:role/atesta-scan/prod/",
+    "ATESTA_M365_CREDENTIAL_REF": (
+        "aws-sm:arn:aws:secretsmanager:eu-south-2:123456789012:secret:atesta/prod/m365-scanner-AbC123"
+    ),
+    "ATESTA_SCANNER_EXPECTED": "/opt/atesta/expected",
+    "AWS_DEFAULT_REGION": "eu-south-2",
+}
+
+
+def test_the_fargate_runner_runs_in_production_with_the_s3_store(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """issue 444: the one runner that is not dev-only."""
+    from atesta_api.modules.scanning.api import FargateRunner, S3ScanStore
+
+    monkeypatch.setenv("ATESTA_ENV", "prod")
+    config = config_from_env(FARGATE)
+    assert config is not None
+    assert isinstance(config.runner, FargateRunner) and isinstance(config.store, S3ScanStore)
+    assert config.m365_credential_ref == FARGATE["ATESTA_M365_CREDENTIAL_REF"]
+    assert config.runner.settings.subnets == ("subnet-a", "subnet-b")
+    assert config.runner.settings.timeout_seconds == 3600
+
+
+@pytest.mark.parametrize("missing", sorted(set(FARGATE) - {"AWS_DEFAULT_REGION"}))
+def test_a_missing_fargate_setting_is_named(missing: str) -> None:
+    if missing == "ATESTA_SCAN_RUNNER":
+        assert config_from_env({k: v for k, v in FARGATE.items() if k != missing}) is None
+        return
+    with pytest.raises(ValueError, match=missing):
+        config_from_env({k: v for k, v in FARGATE.items() if k != missing})
+
+
+def test_the_platform_certificate_ref_must_be_a_secrets_manager_ref() -> None:
+    with pytest.raises(ValueError, match="ATESTA_M365_CREDENTIAL_REF"):
+        config_from_env({**FARGATE, "ATESTA_M365_CREDENTIAL_REF": "local:m365-scanner"})
