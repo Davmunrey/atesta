@@ -37,7 +37,8 @@ TOKEN_ROUTES = {
     ("POST", "/api/v1/access-reviews"),
 }
 # Reached without a session: sign-in, the health check, and the routes that authenticate with
-# their own secret (training link, API key, unsubscribe link). Adding one is a reviewed change to this list.
+# their own secret (training link, API key, unsubscribe link). Adding one is a reviewed change
+# to this list.
 PUBLIC = {
     ("GET", "/health"),
     ("GET", "/auth/login"),
