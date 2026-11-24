@@ -354,7 +354,8 @@ and ring diagram. Every other criterion stays.
 - [ ] **Figures:** KPI suffixes are small through their own class, never by shrinking the figure.
       Bars and figures use a non-overshooting ease; the overshooting spring token is removed.
 - [ ] **Assistant launcher:** visible on ink and on paper. On phones it is compact and, where scroll
-      timelines and motion are available, it appears only once the hero has scrolled away.
+      timelines and motion are available, it stays faded until the hero has scrolled away. It never leaves the tab order, and focus
+      always shows it.
 
 **Unchanged budgets:** light only, 0 CSP hashes, WCAG 2.2 AA with axe at 375, 1280 and 1440 px,
 reduced motion respected, the bottom-right corner free for the assistant, at most 260 words of

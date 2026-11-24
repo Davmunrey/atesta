@@ -287,7 +287,7 @@ Every pair is checked by `tests/unit/contrast.test.ts`.
 - **Reveals:** headlines reveal with CSS view timelines, using only clip-path and transform. Without view timelines, the page rests complete.
 - **Count-up:** the overview's figures count up once; the document holds the final numbers. KPI suffixes ("de 73") are small through `.lv-of`, never by shrinking the figure.
 - **Phones and reduced motion:** a static page, one step per row, each with its own frame (beside it from 64rem). On public pages body text never breaks inside a word (`overflow-wrap: break-word`; the console keeps `anywhere` so long names can shrink their cell), and paragraphs use `text-wrap: pretty`.
-- **Free corner:** the bottom-right corner stays free for the assistant launcher. On phones it is the seal alone, and on the landing it waits until the hero has scrolled away where scroll timelines and motion are available.
+- **Free corner:** the bottom-right corner stays free for the assistant launcher. On phones it is the seal alone, and on the landing it stays faded (still focusable, shown on focus) until the hero has scrolled away, where scroll timelines and motion are available.
 - **Removed in A4:** the hero tabs, "Un año de ENS", the frameworks marquee and ring diagram, the stage counter.
 
 **Product frames.** Every product view on public pages sits in a frame: an ink bar carrying the mark,

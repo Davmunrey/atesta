@@ -99,14 +99,18 @@ test("the assistant launcher stays clear of the hero on a phone and shows on ink
   await page.goto("/");
   const launcher = page.locator(".assistant-launcher");
   const covers = await launcher.evaluate((el) => {
-    if (getComputedStyle(el).visibility === "hidden") return false;
+    if (getComputedStyle(el).opacity === "0") return false;
     const box = el.getBoundingClientRect();
     const hero = document.querySelector(".landing-hero")!.getBoundingClientRect();
     return box.top < hero.bottom && box.bottom > hero.top;
   });
   expect(covers).toBe(false);
+  // Keyboard users still reach it at the top of the page: focus shows it.
+  await launcher.focus();
+  await expect(launcher).toHaveCSS("opacity", "1");
+  await launcher.blur();
   await page.locator(".landing-close").scrollIntoViewIfNeeded();
-  await expect(launcher).toBeVisible();
+  await expect(launcher).toHaveCSS("opacity", "1");
   // On ink it keeps a paper keyline, so it does not disappear into the band.
   expect(await launcher.evaluate((el) => getComputedStyle(el).boxShadow)).toContain("244, 241, 234");
 });
