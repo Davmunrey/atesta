@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 
 from atesta_api.modules.compliance.api import due_items, incident_clocks, weekly_compliance
 from atesta_api.modules.connections.api import inactive_connection_count
+from atesta_api.modules.identity.api import expire_key_usage
 from atesta_api.modules.notifications.api import (
     WeeklyFacts,
     defer_daily,
@@ -42,6 +43,7 @@ MADRID = ZoneInfo("Europe/Madrid")
 SCAN_RETRIES = 3  # after 300, 600 and 900 s (scanner-connectors spec, Retries)
 RUNNER_ERROR_EXIT = 20  # a runner that raises counts as a failed engine run: transient
 scan_events = logging.getLogger("atesta.scan")
+retention_events = logging.getLogger("atesta.retention")
 
 
 def _report(event: Mapping[str, str | int | None] | None) -> None:
@@ -149,7 +151,9 @@ def notify_clock(organization_id: str, incident_id: str) -> None:
 
 
 def notify_daily(organization_id: str) -> None:
-    """08:00 in Madrid: the due digest, and on Monday the weekly summary; then re-arm."""
+    """The organization's daily job. 08:00 in Madrid: the due digest, and on Monday the weekly
+    summary; then re-arm. After that, in its own transaction, the key usage log loses the rows
+    older than 90 days (issue 353), so mail and retention never hold each other back."""
     org = uuid.UUID(organization_id)
     now = datetime.now(UTC)
     with org_session(organization_id) as session:
@@ -167,6 +171,15 @@ def notify_daily(organization_id: str) -> None:
                 )
                 send_weekly_summary(session, org, facts, now=now)
         defer_daily(session, org, now=now)
+    with org_session(organization_id) as session:
+        expired = expire_key_usage(session, org, now=now)
+    if expired:  # ids and counts only (rule 2), logged after the delete committed
+        retention_events.info(
+            json.dumps(
+                {"event": "key_usage.expired", "organization_id": organization_id, "rows": expired},
+                sort_keys=True,
+            )
+        )
 
 
 def make_blueprint() -> Blueprint:

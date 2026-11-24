@@ -44,3 +44,19 @@ def test_ends_with_a_smoke_check_of_headers_and_the_api() -> None:
     smoke = next(s["run"] for s in JOB["steps"] if s.get("name") == "Smoke")
     assert "content-security-policy" in smoke and "strict-transport-security" in smoke
     assert "/api/v1/me" in smoke and "401" in smoke
+
+
+def test_security_txt_is_uploaded_as_utf8_text() -> None:
+    """RFC 9116 section 3: text/plain with charset utf-8. `aws s3 sync` guesses no charset."""
+    upload = next(s["run"] for s in JOB["steps"] if s.get("name") == "Upload web")
+    sync, _, after = upload.partition('--exclude "_next/static/*"')
+    assert "security.txt" not in sync  # set after the sync, or the sync would overwrite it
+    assert "apps/web/out/.well-known/security.txt" in after
+    assert '--content-type "text/plain; charset=utf-8"' in after
+    assert after.index("security.txt") < after.index("create-invalidation")
+
+
+def test_smoke_reads_back_the_security_txt_content_type() -> None:
+    smoke = next(s["run"] for s in JOB["steps"] if s.get("name") == "Smoke")
+    assert "/.well-known/security.txt" in smoke
+    assert "charset=utf-8" in smoke

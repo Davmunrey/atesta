@@ -8,7 +8,7 @@ are checked with has_any_column_privilege.
 from sqlalchemy import Connection, Engine, text
 
 from atesta_api.platform.context import SETTING_NAMES
-from atesta_api.platform.tables import APPEND_ONLY, CATALOG
+from atesta_api.platform.tables import APPEND_ONLY, CATALOG, RETENTION_DAYS
 
 _PUBLIC = "SELECT c.oid, c.relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace"
 _CHECKS = {
@@ -40,6 +40,13 @@ _CHECKS = {
         " OR (c.relname = ANY(:catalog) AND (has_table_privilege(c.oid, 'INSERT, UPDATE, DELETE')"
         "   OR has_any_column_privilege(c.oid, 'INSERT, UPDATE'))))"
     ),
+    "can change a retention table, or delete from it without an age limit": (
+        f"{_PUBLIC} WHERE n.nspname = 'public' AND c.relname = ANY(:retention) AND ("  # noqa: S608 - constant SQL, no input
+        " has_table_privilege(c.oid, 'UPDATE') OR has_any_column_privilege(c.oid, 'UPDATE')"
+        " OR NOT EXISTS (SELECT 1 FROM pg_policy p WHERE p.polrelid = c.oid"
+        "   AND p.polname = 'retention' AND p.polcmd = 'd' AND NOT p.polpermissive"
+        "   AND 0 = ANY(p.polroles)))"
+    ),
     "has a privilege on alembic_version": (
         f"{_PUBLIC} WHERE n.nspname = 'public' AND c.relname = 'alembic_version'"  # noqa: S608 - constant SQL, no input
         " AND (has_table_privilege(c.oid, 'DELETE')"
@@ -56,7 +63,11 @@ _CHECKS = {
 
 
 def startup_problems(conn: Connection, *, require_tls: bool) -> list[str]:
-    params = {"append_only": sorted(APPEND_ONLY), "catalog": sorted(CATALOG)}
+    params = {
+        "append_only": sorted(APPEND_ONLY),
+        "catalog": sorted(CATALOG),
+        "retention": sorted(RETENTION_DAYS),
+    }
     problems = [
         f"runtime role {label}"
         for label, sql in _CHECKS.items()

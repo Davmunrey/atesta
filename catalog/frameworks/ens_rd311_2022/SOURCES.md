@@ -19,7 +19,8 @@ This pack cannot be scored, including when development draft visibility is enabl
   empty: the existing flat tag filter cannot decide ENS applicability correctly.
 - Source section and SHA-256 accompany each measure. Hash input is the normalized source
   record with keys `id`, `title_es`, `section`, `paragraphs`, `tables`, serialized as UTF-8
-  JSON with sorted keys, ensure_ascii=False and default Python JSON separators.
+  JSON with sorted keys, ensure_ascii=False and default Python JSON separators. "Source
+  records" below states how a record is built, and `source_records.json` holds all 73.
 - Diagrams and figures are not reproduced; consult BOE. Articles, Annex I categorization,
   Annex III audit, other annexes, technical instructions and applicable profiles are not
   separate assessed requirements in this first pack. The pack is therefore partial even
@@ -37,6 +38,57 @@ Legislative text is excluded from copyright under
 No copyrighted CCN-STIC guide, ISO standard or AICPA criteria are reproduced. The
 [CCN update notice dated 2026-06-02](https://www.ccn-cert.cni.es/es/seguridad-al-dia/novedades-ccn-cert/13155-el-ccn-actualiza-cuatro-guias-ccn-stic-de-su-serie-800-sobre-el-esquema-nacional-de-seguridad.html)
 is a review pointer, not a claim that those guides are incorporated into the pack.
+
+## Source records (issue 277)
+
+`source_records.json` holds the record behind each `source_sha256`, so every hash can be
+recomputed from this repository. `apps/api/devtools/ens_boe.py` rebuilds the records from the
+original BOE page and refuses any file whose SHA-256 is not the captured original above:
+
+```bash
+curl -sSL -o boe-a-2022-7191.html "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-7191"
+uv run python -m apps.api.devtools.ens_boe boe-a-2022-7191.html           # compare, exit 1 on a difference
+uv run python -m apps.api.devtools.ens_boe boe-a-2022-7191.html --write   # rewrite the records
+```
+
+How a record is built, in this order:
+
+1. **Blocks.** The page is read as paragraphs (`<p>` outside a table) and tables, in order.
+2. **Text.** Character references are decoded. The text inside an inline element (`<em>` is the
+   only one in Annex II) is trimmed and then joined to the text around it. Every run of
+   whitespace, including no-break and typographic spaces, becomes one space, and the ends are
+   trimmed.
+3. **Start.** A measure starts at its heading: section number, title, and the measure id in
+   brackets, as in "3.1 Política de seguridad [org.1].". These give `section`, `title_es` and
+   `id`; the brackets and the final full stop are not part of the title.
+4. **End.** It ends at the next measure heading, at a group heading such as
+   "4.1 Planificación [op.pl]." or at a centred heading (class `centro_cursiva`).
+5. **`paragraphs`.** Every paragraph of the measure, in order, as text. A paragraph with no text
+   (one that holds only a diagram) is left out.
+6. **`tables`.** A list of tables; a table is a list of rows; a row is a list of cell texts. An
+   empty cell is `""`. Column spans are not expanded.
+
+What the pack copies from a record (`derive()` in the same file): `title_es`, `section`,
+`official_text_es` (the paragraphs before "Aplicación de la medida", joined by a blank line),
+`applicability_es` (the rest, one per line), `selection_basis` and `selection_rules` (the first
+table). mp.info.6 lists its levels without that heading; its trailing level lines are the
+application clause.
+
+Known difference between a record and the pack text, listed in `CORRECTIONS` in the extractor:
+
+- **mp.s.2:** the BOE marks up `<em>web </em>deberán`. Step 2 joins it as "webdeberán", and the
+  hash was taken over that text. The pack shows "web deberán", as the page reads (issue 249).
+  The hash is unchanged. Re-hashing over the corrected text is a catalog content change and
+  waits for the owner.
+
+Checked on 2026-11-24 against a fresh download whose SHA-256 equals the captured original: all
+73 rebuilt hashes equal the pack's. The consolidated page was not used; its SHA-256 on that day
+no longer equalled the one captured above, as that line already warns.
+
+Tests in `apps/api/tests/test_ens_boe.py` run in CI without network access. They fail when a
+`source_sha256` is not the hash of its record, and when a copied field differs from its record
+without an entry in `CORRECTIONS`. They do not prove that the records came from the BOE page:
+that is what the command above shows, on a machine that can download it.
 
 ## Candidate mappings and configuration guidance
 

@@ -12,7 +12,7 @@ const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const OUT = join(ROOT, "out");
 const API = new URL(process.env.API_ORIGIN ?? "http://127.0.0.1:8000");
 const { policy } = JSON.parse(readFileSync(join(ROOT, "csp-policy.json"), "utf8"));
-const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".txt": "text/plain", ".svg": "image/svg+xml", ".ico": "image/x-icon", ".woff2": "font/woff2" };
+const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".txt": "text/plain; charset=utf-8", ".svg": "image/svg+xml", ".ico": "image/x-icon", ".woff2": "font/woff2" };
 
 function securityHeaders(path) {
   return {
