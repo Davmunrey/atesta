@@ -1,6 +1,6 @@
 # Dashboard and framework readiness
 
-Observed on 2026-11-24 at `main` `f1c06b387e464a5d7091b8ccd7bfc5d07cf8fb27`.
+Observed on 2026-11-24 at `main` `101560bc60db3b27434dae85232d48bb6d5a919a`.
 
 This is an inventory of what the repository implements. It is not an assessment of any
 customer, and merged code is not a deployed service: nothing runs in AWS yet
@@ -20,7 +20,7 @@ Verified on the local stack (fake Cognito, local Postgres, fixture scans). "Spec
 | ENS scope, self-assessment per measure, reviewer analysis, statement of applicability export | `requirement-register.md`, `test_requirement_register.py` | The organization records its own assessment. Atesta proposes applicability from the BOE tables; a person decides |
 | Framework detail: measure text, selection rules, expected evidence, guides, technical observations | `framework-detail.md`, `test_framework_detail.py` | A technical observation never makes a measure pass: every ENS measure keeps a manual control |
 | Evidence statements with optional HTTPS links, per common control | `control-evidence-statements.md`, `test_evidence.py`, `test_control_workspace.py` | A statement is a declaration. Atesta does not fetch or verify the link |
-| Evidence files through the API: upload, and download after an integrity check | `evidence-file-uploads.md`, `test_evidence_files.py`, `apps/api/tests/test_evidence_store.py` | No console screen yet (#400). Files are not scanned for malware (#401). The S3 store has not run against AWS |
+| Evidence files: upload beside a control, and download after an integrity check | `evidence-file-uploads.md`, `test_evidence_files.py`, `apps/api/tests/test_evidence_store.py`, `apps/web/tests/unit/evidence-upload.test.tsx` | Files are not scanned for malware (#401). The S3 store has not run against AWS |
 | Manual control review that cites its evidence | `manual-control-review.md`, `test_control_reviews.py` | A person approves; the AI and the scanner never do (ADR-005) |
 | Recorded routines: access reviews, policies, training acknowledgements, incident register with reporting deadlines | `recorded-routines.md`, `test_routines.py`, `test_routines_b.py` | Deadlines are computed from what the organization recorded |
 | Auditor dossier and monthly management report | `auditor-dossier.md`, `management-report.md`, `test_dossier.py`, `test_report.py` | Printed from recorded rows; no conformity statement |
@@ -69,8 +69,8 @@ when it names its reviewer.
 - **Hosted environment.** OpenTofu for dev and prod exists in `infra/` and is not applied. The
   owner postponed AWS until after the go/no-go of 2026-12-18 (`hosted-environment.md`).
   `docs/runbooks/deploy.md` is the path from no account to a running environment.
-- **Evidence files in the console.** The API takes and returns files (table above). The screen
-  to upload and download them is issue #400. Uploads are not scanned for malware (#401).
+- **Malware scanning of evidence files.** Uploaded files are stored and verified by hash, not
+  scanned (#401).
 - **Live tenant collection.** No customer or test tenant has been scanned end to end (Gate B).
   Google Workspace: the API prepares and verifies the connection and the scanner has its
   read-only verifier (#390, #398); the Connections page connects Microsoft 365 only (#365), so

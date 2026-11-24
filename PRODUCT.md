@@ -8,9 +8,9 @@ What exists today is listed in `docs/status/dashboard-readiness.md`, row by row,
 and the test behind each row. Read it before describing the product. In short:
 
 - **The working product is the organization's own record.** An organization sets its ENS scope,
-  assesses each measure itself, records evidence statements, manual reviews, access reviews,
-  policies, training and incidents, and prints a statement of applicability, an auditor dossier
-  and a monthly report. Roles are owner, admin, member and a time-boxed external auditor.
+  assesses each measure itself, records evidence statements and files, manual reviews, access
+  reviews, policies, training and incidents, and prints a statement of applicability, an auditor
+  dossier and a monthly report. Roles are owner, admin, member and a time-boxed external auditor.
 - **Automation is partial and says so.** Scans feed technical observations on common controls.
   Every ENS measure keeps a documentary control, so a scan alone never makes a measure pass, and
   a person approves every manual review (ADR-005). No generative AI model is called; the
@@ -24,7 +24,7 @@ and the test behind each row. Read it before describing the product. In short:
   proposal. Microsoft 365 can be connected from the web, on the local stack only.
 - **Not there yet.** Nothing is deployed to AWS. No customer tenant has been scanned. There is no
   payment provider, no operator portal, no device agent and no hosted MCP server. Evidence files
-  go through the API; their console screen is issue #400.
+  are not scanned for malware.
 
 Show only implemented actions and recorded data: no invented scores, scans or product states.
 Never say that a customer satisfies a framework: states read Superado / No superado and
