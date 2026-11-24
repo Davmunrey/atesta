@@ -41,13 +41,13 @@ it("turns both pages on in the site map, so menus link to them and never to a 40
   expect(PAGES.ens).toBe(true);
   expect(LINKS.map((l) => l.href)).toContain("/ens");
   const hrefs = PRODUCT.flatMap((g) => g.items.map((i) => i.href));
-  for (const anchor of ["autoevaluacion", "rutinas", "incidentes", "dossier", "asistente"]) expect(hrefs).toContain(`/producto#${anchor}`);
+  for (const anchor of ["autoevaluacion", "registros", "incidentes", "dossier", "asistente"]) expect(hrefs).toContain(`/producto#${anchor}`);
 });
 
 it("/producto has one section per capability at the menu anchors, each with a sample product view", () => {
   renderWithProviders(<Producto />);
   expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
-  for (const id of ["autoevaluacion", "rutinas", "incidentes", "dossier", "asistente", "api"]) {
+  for (const id of ["autoevaluacion", "registros", "incidentes", "dossier", "asistente", "api"]) {
     const section = document.getElementById(id);
     expect(section?.tagName, id).toBe("SECTION");
     expect(within(section as HTMLElement).getByRole("heading", { level: 2 })).toBeTruthy();

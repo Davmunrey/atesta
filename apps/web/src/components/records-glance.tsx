@@ -37,7 +37,7 @@ export function RecordsGlance({ org }: { org: Membership }) {
         const state = row.query.isPending || row.query.isError ? null : row.query.data.length === 0 ? "empty" : row.read();
         return <tr key={row.href}>
           <th scope="row"><Link href={row.href} className="text-link underline">{row.name}</Link></th>
-          <td data-label={t("glance.state")}>{state === null ? "—" : state === "empty" ? <Badge severity="pending">{t("glance.none")}</Badge> : <RecordBadge state={state} />}</td>
+          <td data-label={t("glance.state")}>{state === null ? "—" : state === "empty" ? <Badge state="recordsEmpty">{t("glance.none")}</Badge> : <RecordBadge state={state} />}</td>
           <td data-label={t("glance.summary")} className={state && state !== "empty" ? undefined : "text-muted"}>
             {row.query.isPending ? app("loading") : row.query.isError ? t("glance.failed") : state === "empty" ? row.empty : state ? sentence(state) : null}</td>
         </tr>;

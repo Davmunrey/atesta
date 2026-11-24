@@ -6,6 +6,19 @@ import { type Report, useReport } from "@/lib/api/report";
 import { type Membership, orgHome } from "@/lib/org";
 import { LoadError, Loading, PageHeader } from "./page-frame";
 
+/** Months offered in the picker, newest first. */
+const MONTHS_BACK = 24;
+
+/** The last months up to `latest` ("YYYY-MM"), as values. A select, not `<input type="month">`, so
+ *  the month reads in the interface language rather than the browser's (console-unification spec). */
+export function monthsUpTo(latest: string, count = MONTHS_BACK): string[] {
+  const [y, m] = latest.split("-").map(Number) as [number, number];
+  return Array.from({ length: count }, (_, i) => {
+    const d = new Date(Date.UTC(y, m - 1 - i, 1));
+    return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+  });
+}
+
 const DONE = ["measures_assessed", "assessments_reviewed", "evidence_by_people", "evidence_by_tools", "policies_approved",
   "access_reviews_closed", "trainings_closed", "incidents_recorded", "incidents_closed", "deadlines_met", "people_joined"] as const;
 
@@ -14,6 +27,8 @@ export function ReportView({ org, initialMonth }: { org: Membership; initialMont
   const t = useTranslations("report");
   const [month, setMonth] = useState(initialMonth);
   const monthId = useId();
+  const format = useFormatter();
+  const label = (value: string) => format.dateTime(new Date(`${value}-01T12:00:00Z`), { month: "long", year: "numeric", timeZone: "UTC" });
   const query = useReport(org.organization_id, month);
   const crumbs = [{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }];
   return <div className="dossier">
@@ -21,7 +36,9 @@ export function ReportView({ org, initialMonth }: { org: Membership; initialMont
       <PageHeader crumbs={crumbs} title={t("title")} description={t("intro")}
         actions={<button type="button" className="button-primary" onClick={() => window.print()} disabled={!query.data}>{t("print")}</button>} />
       <p className="routine-form"><span><label htmlFor={monthId}>{t("month")}</label>
-        <input id={monthId} type="month" value={month} max={initialMonth} onChange={(e) => e.target.value && setMonth(e.target.value)} /></span></p>
+        <select id={monthId} value={month} onChange={(e) => setMonth(e.target.value)}>
+          {monthsUpTo(initialMonth).map((m) => <option key={m} value={m}>{label(m)}</option>)}
+        </select></span></p>
     </div>
     {query.isPending ? <Loading label={t("loading")} /> : query.isError ? <LoadError error={query.error} onRetry={() => void query.refetch()} /> : <Body report={query.data} orgName={org.organization_name} />}
   </div>;

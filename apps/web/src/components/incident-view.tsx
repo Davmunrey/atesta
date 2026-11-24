@@ -6,7 +6,7 @@ import { type IncidentClock, useIncident, useIncidentUpdate } from "@/lib/api/ro
 import { localInput } from "./incidents-view";
 import { type Membership, orgHome, orgIncidents } from "@/lib/org";
 import { isContributor } from "@/lib/permissions";
-import { ClockBadge } from "./badge";
+import { Badge, ClockBadge } from "./badge";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { LoadError, Loading, PageHeader, Panel } from "./page-frame";
@@ -56,7 +56,7 @@ export function IncidentView({ org, incidentId }: { org: Membership; incidentId:
             <button type="button" className="dashboard-button" onClick={() => setConfirming(false)}>{t("cancel")}</button>
           </span>
           : <button type="button" className="dashboard-button" disabled={update.isPending} onClick={() => (unsent > 0 ? setConfirming(true) : close())}>{t("close")}</button>
-        : incident.closed_at ? <span className="badge" data-severity="done"><Icon name="done" />{t("closed")}</span> : null} />
+        : incident.closed_at ? <Badge state="incidentClosed">{t("closed")}</Badge> : null} />
     {update.isError ? <ErrorMessage error={update.error} /> : null}
     {update.isSuccess && !open ? <p role="status" className="notice"><Icon name="done" />{t("closedEvidence")}</p> : null}
     <Panel title={t("clocks")} description={t("clocksHelp")}>
@@ -104,11 +104,11 @@ function ClockStatus({ clock, time }: { clock: IncidentClock; time: (value: stri
   const t = useTranslations("routines.incidents");
   if (clock.state === "met" && clock.met_at) {
     return clock.late
-      ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("metLate", { time: time(clock.met_at) })}</span>
-      : <span className="badge" data-severity="done"><Icon name="done" />{t("met", { time: time(clock.met_at) })}</span>;
+      ? <Badge state="clockMetLate">{t("metLate", { time: time(clock.met_at) })}</Badge>
+      : <Badge state="clockMet">{t("met", { time: time(clock.met_at) })}</Badge>;
   }
   if ((clock.state === "overdue" || clock.state === "running") && clock.due_at) return <ClockBadge dueAt={clock.due_at} />;
-  if (clock.state === "overdue") return <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("late")}</span>;
-  if (clock.state === "running") return <span className="badge" data-severity="clock"><Icon name="pending" />{t("running")}</span>;
+  if (clock.state === "overdue") return <Badge state="clockOverdue">{t("late")}</Badge>;
+  if (clock.state === "running") return <Badge state="clockRunning">{t("running")}</Badge>;
   return <span className="text-sm text-muted">{t("waiting")}</span>;
 }

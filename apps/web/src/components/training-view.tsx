@@ -6,8 +6,8 @@ import { type FormEvent, useId, useState } from "react";
 import { type TrainingCampaign, useCreateTraining, useTrainingCampaigns } from "@/lib/api/routines";
 import { type Membership, orgHome, orgTrainingCampaign } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
+import { Badge } from "./badge";
 import { ErrorMessage } from "./error-message";
-import { Icon } from "./icons";
 import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { RecordSummary, useRecordStates } from "./record-summary";
 
@@ -21,7 +21,7 @@ export function TrainingView({ org }: { org: Membership }) {
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
     {list.data?.length ? <RecordSummary state={states.training(list.data)} /> : null}
-    <Panel title={t("list")}>
+    <Panel>
       {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
         : list.data.length === 0 ? <Empty>{t("empty")}</Empty>
         : <div className="table-region" role="region" aria-label={t("list")} tabIndex={0}><table className="w-full text-left">
@@ -42,12 +42,12 @@ export function CampaignState({ campaign }: { campaign: TrainingCampaign }) {
   const format = useFormatter();
   const day = (value: string) => format.dateTime(utcDay(value), { dateStyle: "medium", timeZone: "UTC" });
   if (campaign.closed_at) {
-    return <span className="badge" data-severity="done"><Icon name="done" />{t("closedOn", { date: format.dateTime(new Date(campaign.closed_at), { dateStyle: "medium" }) })}</span>;
+    return <Badge state="trainingClosed">{t("closedOn", { date: format.dateTime(new Date(campaign.closed_at), { dateStyle: "medium" }) })}</Badge>;
   }
   const ended = campaign.closes_on < new Date().toISOString().slice(0, 10);
   return ended
-    ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("ended", { date: day(campaign.closes_on) })}</span>
-    : <span className="badge" data-severity="pending"><Icon name="pending" />{t("closesOn", { date: day(campaign.closes_on) })}</span>;
+    ? <Badge state="trainingEnded">{t("ended", { date: day(campaign.closes_on) })}</Badge>
+    : <Badge state="trainingOpen">{t("closesOn", { date: day(campaign.closes_on) })}</Badge>;
 }
 
 function CreateCampaign({ orgId }: { orgId: string }) {

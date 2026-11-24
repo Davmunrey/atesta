@@ -6,8 +6,10 @@ import { useCreateOrg } from "@/lib/api/hooks";
 import { goTo } from "@/lib/navigation";
 import { orgHome } from "@/lib/org";
 import { ErrorMessage } from "./error-message";
+import { type Crumb, PageHeader, Panel } from "./page-frame";
 
-export function CreateOrgForm() {
+/** The new-organization form, on the console page grid (console-unification spec). */
+export function CreateOrgForm({ crumbs }: { crumbs?: Crumb[] }) {
   const t = useTranslations("createOrg");
   const create = useCreateOrg();
   const nameId = useId();
@@ -18,29 +20,15 @@ export function CreateOrgForm() {
     create.mutate(name, { onSuccess: (org) => goTo(orgHome(org.id)) });
   }
 
-  return (
-    <form onSubmit={onSubmit} className="flex max-w-md flex-col gap-3">
-      <h1 className="page-title">{t("title")}</h1>
-      <p className="text-muted">{t("help")}</p>
-      <label htmlFor={nameId} className="font-medium">
-        {t("name")}
-      </label>
-      <input
-        id={nameId}
-        name="name"
-        required
-        maxLength={200}
-        autoComplete="organization"
-        className="rounded-md border border-border bg-bg px-3 py-2"
-      />
-      {create.isError ? <ErrorMessage error={create.error} /> : null}
-      <button
-        type="submit"
-        disabled={create.isPending}
-        className="self-start rounded-md bg-accent px-4 py-2 font-medium text-accent-fg disabled:opacity-60"
-      >
-        {t("submit")}
-      </button>
-    </form>
-  );
+  return <>
+    <PageHeader crumbs={crumbs} title={t("title")} description={t("help")} />
+    <Panel>
+      <form onSubmit={onSubmit} className="routine-form">
+        <span><label htmlFor={nameId}>{t("name")}</label>
+          <input id={nameId} name="name" required maxLength={200} autoComplete="organization" /></span>
+        {create.isError ? <ErrorMessage error={create.error} /> : null}
+        <div className="form-actions"><button type="submit" disabled={create.isPending} className="button-primary">{t("submit")}</button></div>
+      </form>
+    </Panel>
+  </>;
 }

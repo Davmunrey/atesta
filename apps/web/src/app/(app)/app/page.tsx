@@ -11,12 +11,6 @@ export default function AppHome() {
   const t = useTranslations();
   const { memberships } = useMe();
   if (memberships.length === 0) return <CreateOrgForm />;
-  return (
-    <div className="flex flex-col gap-4">
-      <Portfolio memberships={memberships} />
-      <Link href="/app/new" className="dashboard-button action-link self-start">
-        {t("home.createAnother")}
-      </Link>
-    </div>
-  );
+  return <Portfolio memberships={memberships}
+    actions={<Link href="/app/new" className="dashboard-button action-link">{t("home.createAnother")}</Link>} />;
 }

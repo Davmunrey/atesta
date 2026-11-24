@@ -828,7 +828,7 @@ Error codes (ES and EN texts in the web i18n files): `connections.state_invalid`
 | M365 test tenant: paid Microsoft 365 Business Premium, not a trial, since a trial tenant cannot create the Atesta dev tenant (owner, 2026-11-23; the E5 developer sandbox needs Visual Studio or partner eligibility). Steps in `docs/runbooks/m365-test-tenant.md` | Owner | PR 9 live golden |
 | Cloud Partner Program account verified as PGA (D12) | Owner | First M365 customer |
 | Legal review of the Exchange and Teams module terms (D11) | Owner and counsel | PR 10 |
-| GCP organization, dedicated project, key-creation exemption | Owner | PR 11 |
+| GCP organization, dedicated project, key-creation exemption: `docs/runbooks/google-workspace.md` sections 0 to 2; per customer `scanner/runbooks/google_sa.sh create`, `rotate` every 90 days, `disable` at disconnect (owner, 2026-11-24: "Déjalo como runbook, lo ejecuto yo cuando pueda"; issue 421) | Owner | PR 11 |
 | Google Workspace test tenant with a super admin | Owner | PR 12 |
 
 ### Facts checked (2026-11-13)
