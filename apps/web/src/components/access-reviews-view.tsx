@@ -9,8 +9,7 @@ import { canReviewControls } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
-import { RecordSummary } from "./record-summary";
-import { reviewSummary } from "@/lib/summaries";
+import { RecordSummary, useRecordStates } from "./record-summary";
 
 /** Access reviews (recorded-routines spec): who keeps access, decided and recorded per account. */
 export function AccessReviewsView({ org }: { org: Membership }) {
@@ -18,13 +17,10 @@ export function AccessReviewsView({ org }: { org: Membership }) {
   const format = useFormatter();
   const list = useAccessReviews(org.organization_id);
   const admin = canReviewControls(org.role);
-  const s = useTranslations("summary.access");
-  const sum = list.data?.length ? reviewSummary(list.data, new Date().toISOString().slice(0, 10)) : null;
+  const states = useRecordStates();
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
-    {sum ? <RecordSummary lead={s("lead", { open: sum.open, pending: sum.pending })} figures={[
-      { label: s("total"), value: format.number(sum.total) }, { label: s("open"), value: format.number(sum.open), attention: sum.late > 0 },
-      { label: s("closed"), value: format.number(sum.closed) }, { label: s("pending"), value: format.number(sum.pending) }]} /> : null}
+    {list.data?.length ? <RecordSummary state={states.access(list.data)} /> : null}
     <Panel title={t("list")}>
       {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
         : list.data.length === 0 ? <Empty>{t("empty")}</Empty>

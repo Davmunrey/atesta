@@ -9,8 +9,7 @@ import { canReviewControls } from "@/lib/permissions";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
-import { RecordSummary } from "./record-summary";
-import { trainingSummary } from "@/lib/summaries";
+import { RecordSummary, useRecordStates } from "./record-summary";
 
 const utcDay = (day: string) => new Date(`${day}T00:00:00Z`);
 
@@ -18,14 +17,10 @@ const utcDay = (day: string) => new Date(`${day}T00:00:00Z`);
 export function TrainingView({ org }: { org: Membership }) {
   const t = useTranslations("routines.training");
   const list = useTrainingCampaigns(org.organization_id);
-  const s = useTranslations("summary.training");
-  const format = useFormatter();
-  const sum = list.data?.length ? trainingSummary(list.data) : null;
+  const states = useRecordStates();
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
-    {sum ? <RecordSummary lead={s("lead", { open: sum.open, acknowledged: sum.acknowledged })} figures={[
-      { label: s("total"), value: format.number(sum.total) }, { label: s("open"), value: format.number(sum.open) },
-      { label: s("acknowledged"), value: format.number(sum.acknowledged) }]} /> : null}
+    {list.data?.length ? <RecordSummary state={states.training(list.data)} /> : null}
     <Panel title={t("list")}>
       {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
         : list.data.length === 0 ? <Empty>{t("empty")}</Empty>

@@ -52,8 +52,9 @@ it("reads in English", async () => {
   stubApi({ [`GET ${base}`]: [200, [row({})]] });
   renderWithProviders(<IntegrationsView org={owner} />, "en");
   expect(await screen.findByText("Active until Jan 30, 2099")).toBeTruthy();
-  // Once in the token's row and once as the summary's last use (ui-polish spec).
-  expect(screen.getAllByText("Never")).toHaveLength(2);
+  // Only in the token's row: the last use is not a headline figure (console-unification spec).
+  expect(screen.getAllByText("Never")).toHaveLength(1);
+  expect(screen.getByText("At least one token is active.")).toBeTruthy();
 });
 
 it("asks for at least one permission and offers a read-only preset", async () => {

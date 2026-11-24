@@ -65,21 +65,12 @@ it("counts open measures per owner and flags only unfinished ones past their dat
   expect(register.items.map((i) => isOverdue(i, "2026-11-22"))).toEqual([false, true, false, false, false]);
 });
 
-it("hides the progress chart until two days of history exist", async () => {
+// Chart thresholds (7 days of change) are tested in records-pattern.test.tsx (console-unification spec).
+it("shows the figures as a ruled list while history is short", async () => {
   stubApi({ [`GET ${base}/register/history`]: [200, [{ day: "2026-11-20", assessed: 1, implemented: 1, not_applicable: 0 }]], [`GET ${base}/trend`]: [200, []] });
   renderWithProviders(<ProgressInsights orgId="primary" frameworkKey="synthetic_alpha" register={register} />);
-  expect(await screen.findByText(/al menos dos días distintos/)).toBeTruthy();
+  expect(await screen.findByText(/al menos 7 días distintos/)).toBeTruthy();
   expect(screen.getByText("2 / 5")).toBeTruthy();
-});
-
-it("plots implemented measures once history spans two days", async () => {
-  stubApi({ [`GET ${base}/register/history`]: [200, [
-    { day: "2026-11-20", assessed: 1, implemented: 0, not_applicable: 0 },
-    { day: "2026-11-21", assessed: 2, implemented: 1, not_applicable: 1 },
-  ]], [`GET ${base}/trend`]: [200, []] });
-  renderWithProviders(<ProgressInsights orgId="primary" frameworkKey="synthetic_alpha" register={register} />);
-  expect(await screen.findByRole("img", { name: /Medidas implantadas a lo largo del tiempo/ })).toBeTruthy();
-  expect(screen.queryByRole("img", { name: /Puntuación registrada/ })).toBeNull();
 });
 
 it("shows owners by email with their open measures, the unowned and the overdue", async () => {

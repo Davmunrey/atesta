@@ -217,10 +217,12 @@
   .insights-grid { display: grid; gap: 2rem; margin-top: 2rem; }
   @media (min-width: 75rem) { .insights-grid { grid-template-columns: minmax(0, 1.6fr) minmax(16rem, 1fr); } }
   .insights h2, .activity-subtitle { font-size: 1.25rem; font-weight: 500; }
+  .console .insights h2 { font-size: 1.0625rem; font-weight: 600; } /* the panel title size */
   .activity-subtitle { margin-top: 2rem; }
-  .stat-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin-block: 1rem; background: var(--color-border); border: 1px solid var(--color-border); border-radius: 0.375rem; overflow: hidden; }
+  /* Figures inside a panel are a ruled list, never a box in a box (console-unification spec). */
+  .stat-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.5rem; margin-block: 1rem; border-block: 1px solid var(--color-border-subtle); }
   @media (min-width: 40rem) { .insights:first-child .stat-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-  .stat-tiles > div { padding: 0.75rem 1rem; background: var(--color-bg); }
+  .stat-tiles > div { padding-block: 0.75rem; }
   .stat-tiles dt { font-size: 0.8125rem; color: var(--color-muted); }
   .stat-tiles dd { font-size: 1.375rem; font-weight: 600; }
   /* Charts keep their drawn proportions: never scaled past ~1.2x, so ticks stay at 12px-ish. */
