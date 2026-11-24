@@ -55,6 +55,25 @@ a key did, and nothing stops a runaway script from hammering the API.
   last 100 rows, newest first, and the count over the last 24 hours. Admins only; others get
   403, and non-members 404.
 
+**Retention of the usage log (#353)**
+- [ ] **90 days:** a usage row is deleted once it is older than 90 days. Nothing else deletes or
+  changes a row, apart from erasing the organization.
+- [ ] **Who deletes:** the organization's daily job, in that organization's context (reason
+  `job`). It runs after the day's notices, in its own transaction, so a mail failure does not
+  stop it and it never holds back a notice.
+- [ ] **The database sets the limit** (owner, 2026-11-24: "Job del worker, limitado por la BD";
+  ADR-012 amendment 9):
+  - `atesta_app` gains DELETE on `api_token_usage`, and on no other table;
+  - the restrictive policy `retention` (`FOR DELETE USING (at < now() - interval '90 days')`)
+    applies on top of `tenant_isolation`, so the runtime role cannot delete a younger row or
+    another organization's row, whatever the code asks;
+  - UPDATE stays refused.
+- [ ] **Startup guard:** the API and the worker refuse to start if the runtime role can UPDATE a
+  retention table, or if the table has no restrictive DELETE policy.
+- [ ] **Nothing else changes:** the rate limit reads the last 60 seconds and the admin view the
+  last 100 rows and the last 24 hours.
+- [ ] **Stated publicly:** the API reference says that Atesta keeps these records for 90 days.
+
 **Read routes for keys** (prefix `/api/v1`, no organization in the path, no query string)
 - [ ] `GET /api/v1/key`: the key's own name, prefix, scopes, limit and expiry. It needs no
   scope, but it is logged and counted.
@@ -104,8 +123,6 @@ a key did, and nothing stops a runaway script from hammering the API.
   key's rights never grow silently.
 - **Scan control** ("scan now"), connections, members, billing: no scope opens them (rule 1;
   owner decision 2026-11-23).
-- **Retention of the usage log:** deleting rows after 90 days is a follow-up job. Erasing an
-  organization deletes them already.
 - **OAuth for the hosted MCP server** (ADR-016).
 
 ## Design notes
@@ -116,7 +133,7 @@ a key did, and nothing stops a runaway script from hammering the API.
     list above;
   - gains `rate_limit_per_minute int`, CHECK 1 to 600, default 60;
   - the old `scope` column and its CHECK are dropped.
-- `api_token_usage` (tenant, RLS, append-only): `organization_id`, `id`, `token_id` (composite
+- `api_token_usage` (tenant, RLS; insert-only until a row is 90 days old, then deletable): `organization_id`, `id`, `token_id` (composite
   FK to `api_tokens`), `at`, `method`, `route`, `scope`. Indexed on
   `(organization_id, token_id, at)`, which the rate count uses.
 
@@ -155,6 +172,12 @@ a key did, and nothing stops a runaway script from hammering the API.
   - the rows hold the route template and scope only, never a body or an id from the path;
   - an admin sees them, a contributor gets 403, and another organization gets 404.
 - **Audit:** every token write emits its event with `via`, the key's id and its prefix.
+- **Retention (#353):**
+  - as `atesta_app`, a row of 89 days cannot be deleted and a row of 91 days can; no row can be
+    updated; another organization's old row is untouched;
+  - the daily job deletes the old rows of its organization only, and a second run deletes none;
+  - the rate limit and the admin view answer the same after it;
+  - the guard refuses a runtime role with UPDATE on the table, and a table without the policy.
 
 **Elsewhere**
 - **Route sweep:** the token routes are the reviewed public list, and every one refuses a

@@ -200,3 +200,38 @@ relayed by the coordinator (ADR-017, "Owner decisions"; #405).
     and refuses to start under `atesta_app`. The API refuses to start under `atesta_operator`.
 - **Why column grants and not SECURITY DEFINER functions or views:** the ban on SECURITY
   DEFINER functions above stands. ADR-017, "Database", gives the reasons.
+
+## Amendment 9 (proposed 2026-11-24, api-keys-v2 spec, issue 353)
+
+Status: proposed. The owner chose the substance on 2026-11-24, in the session that built it:
+"Job del worker, limitado por la BD". Accepting the amendment is the owner's.
+
+- **A third write class for tenant tables: retention tables.** Until now a tenant table was
+  either writable or append-only. A retention table is insert-only while a row is young, and
+  `atesta_app` may delete the row once it reaches the table's age limit. It can never update it.
+  - The closed list is `RETENTION_DAYS` in `platform/tables.py`. Today it holds one table:
+    `api_token_usage`, 90 days. It leaves the append-only list.
+  - Adding a table to the list needs this amendment updated in the same reviewed pull request.
+    Audit events, evidence and every other append-only table stay append-only.
+- **Grant:** `atesta_app` gains DELETE on `api_token_usage`, through `rls_v1.grant()`. No UPDATE.
+- **New named policy `retention`:** `AS RESTRICTIVE FOR DELETE USING (at < now() - interval
+  '90 days')`, for every role.
+  - A restrictive policy is ANDed with the permissive `tenant_isolation`. A DELETE by the
+    runtime role therefore reaches only rows of the current organization that are 90 days old.
+  - The limit is in the database, not in the job: a wrong date or a missing WHERE in the code
+    deletes nothing younger.
+  - `rls_v1.py` is unchanged. The standard tenant policy is the same; this is one more named
+    policy on one table, written in migration 0029.
+- **Who deletes:** each organization's daily job, in that organization's context with the reason
+  `job`. No new context reason, no new setting and no cross-tenant path.
+- **Guard and linter:**
+  - **Startup guard:** the runtime role is refused if it holds UPDATE (table or column) on a
+    retention table, or if the table has no restrictive DELETE policy named `retention` for
+    every role.
+  - **Schema snapshot:** the policy and the grant are in `schema_snapshot.json`, so a change to
+    the age limit is a reviewed diff.
+- **Unchanged:** erasing an organization still deletes these rows as `atesta_owner` (amendment 3),
+  and `atesta_operator` still reads only `organization_id` and `at` (amendment 8).
+- **Why not a job that runs as `atesta_owner`:** the worker would then hold a role that bypasses
+  RLS on every table. A narrow grant plus a restrictive policy keeps the worker on the runtime
+  role and gives it one new ability: deleting its organization's old usage rows.

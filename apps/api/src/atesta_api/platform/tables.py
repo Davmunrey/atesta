@@ -62,9 +62,11 @@ APPEND_ONLY = frozenset(
         "incidents",
         "incident_updates",
         "api_ingestions",
-        "api_token_usage",
     }
 )
+# ADR-012 amendment 9: insert-only until a row reaches this age in days, then atesta_app may
+# delete it. A restrictive DELETE policy named `retention` holds the limit in the database.
+RETENTION_DAYS = {"api_token_usage": 90}
 GLOBAL_IDENTITY = frozenset({"users"})
 # ADR-012 amendment 3: written only by the operator's erasure command, as atesta_owner. No RLS and
 # no privilege for atesta_app; the receipt outlives the organization it records.

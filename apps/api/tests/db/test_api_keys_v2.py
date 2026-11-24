@@ -258,7 +258,10 @@ def test_existing_keys_keep_exactly_evidence_write() -> None:
 
 @pytest.mark.parametrize(
     ("table", "expected"),
-    [("api_tokens", {"SELECT", "INSERT", "UPDATE"}), ("api_token_usage", {"SELECT", "INSERT"})],
+    [
+        ("api_tokens", {"SELECT", "INSERT", "UPDATE"}),
+        ("api_token_usage", {"SELECT", "INSERT", "DELETE"}),
+    ],  # DELETE: retention, issue 353
 )
 def test_usage_grants(superuser: Engine, table: str, expected: set[str]) -> None:
     with superuser.begin() as conn:

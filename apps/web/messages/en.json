@@ -1616,7 +1616,7 @@
       "query": "Never put it in the URL: a request with query parameters is refused.",
       "limit": "Each token has a limit of requests per minute. Over it, the response is 429 with a Retry-After header saying how many seconds to wait.",
       "language": "Error messages come in Spanish, or in English when the Accept-Language header asks for it.",
-      "records": "Atesta keeps the time, route and permission of each accepted request, never its content. Admins see it in Integrations."
+      "records": "Atesta keeps the time, route and permission of each accepted request, never its content, for 90 days; then it deletes them. Admins see it in Integrations."
     },
     "errors": {
       "title": "Errors",

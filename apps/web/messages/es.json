@@ -1616,7 +1616,7 @@
       "query": "Nunca lo pongas en la URL: una petición con parámetros de consulta se rechaza.",
       "limit": "Cada token tiene un límite de peticiones por minuto. Al superarlo, la respuesta es 429 con la cabecera Retry-After, que dice cuántos segundos esperar.",
       "language": "Los mensajes de error llegan en español, o en inglés si la cabecera Accept-Language lo pide.",
-      "records": "Atesta guarda la hora, la ruta y el permiso de cada petición aceptada, nunca su contenido. Los administradores lo ven en Integraciones."
+      "records": "Atesta guarda la hora, la ruta y el permiso de cada petición aceptada, nunca su contenido, durante 90 días; después lo borra. Los administradores lo ven en Integraciones."
     },
     "errors": {
       "title": "Errores",
