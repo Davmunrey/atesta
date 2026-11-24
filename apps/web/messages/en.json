@@ -643,7 +643,6 @@
       "not_applicable": "Do not apply"
     },
     "groupProgress": "{assessed} of {total, plural, one {# assessed} other {# assessed}}",
-    "guideAndText": "Guide and official text",
     "configurationAndEvidence": "Configuration, evidence and review ({count, plural, one {# control} other {# controls}})",
     "states": {
       "pending": "Pending",

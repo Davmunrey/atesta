@@ -10,6 +10,8 @@ import {
   useRecordScope, type AssessmentInput, type AxisValues, type Register, type RegisterItem,
 } from "@/lib/api/register-hooks";
 import { ErrorMessage } from "./error-message";
+import { useGuideReference } from "./expected-evidence";
+import { AssessmentFields, AssessmentIntro, AssessmentState } from "./measure-sheet";
 import { ScopeGuide } from "./scope-guide";
 import { Icon } from "./icons";
 
@@ -101,21 +103,12 @@ function ScopeStep({ register, orgId, frameworkKey, canEdit }: Ctx & { register:
 
 type TermLabel = (term: string) => { text: string; lang: string | undefined };
 type Profile = Register["profiles"][number];
-type GuideRef = Profile["refs"][number];
-
-/** Formats a guide reference the way expected evidence does: cited, never copied. */
-function useGuideRef() {
-  const t = useTranslations("expectedEvidence");
-  const format = useFormatter();
-  return (ref: GuideRef) => t("reference", { guide: ref.guide, section: ref.section, page: ref.page,
-    edition: format.dateTime(new Date(`${ref.edition}-01T00:00:00Z`), { month: "long", year: "numeric", timeZone: "UTC" }) });
-}
 
 /** A published compliance profile as a scope option (issue 227); proposals then come from it. */
 function ProfileChoice({ profiles, value, onChange }: { profiles: Profile[]; value: string; onChange: (v: string) => void }) {
   const t = useTranslations("register");
   const english = useLocale() === "en";
-  const cite = useGuideRef();
+  const cite = useGuideReference();
   const id = useId();
   const chosen = profiles.find((p) => p.key === value);
   return <div className="scope-profile">
@@ -171,17 +164,11 @@ export function AssessmentBadge({ item }: { item: RegisterItem | undefined }) {
   return <span className="assessment-badges">{overdue ? <span className="overdue-flag"><Icon name="overdue" size={14} />{t("overdue")}</span> : null}<StateBadge item={item} /></span>;
 }
 
-// Never colour alone (ui-polish spec): each state carries its own drawn icon beside the label.
-const STATE_ICON = { implemented: "done", partially_implemented: "partial", not_implemented: "missing", not_applicable: "notApplicable", pending: "pending" } as const;
-
+/** The person's decision, else "Pendiente" with the proposal as a hint. */
 export function StateBadge({ item }: { item: RegisterItem }) {
-  const t = useTranslations("register");
-  if (item.assessment) {
-    const state = item.assessment.applicability === "not_applicable" ? "not_applicable" : item.assessment.implementation;
-    return <span className="requirement-state" data-assessment={state}><Icon name={STATE_ICON[state]} size={16} />{t(`states.${state}`)}</span>;
-  }
-  return <span className="requirement-state" data-assessment="pending"><Icon name="pending" size={16} />{t("states.pending")}
-    {item.proposal.decision !== "undecided" ? <span className="proposal-hint"> · {t(`proposal.${item.proposal.decision}`)}</span> : null}</span>;
+  const a = item.assessment;
+  return a ? <AssessmentState state={a.applicability === "not_applicable" ? "not_applicable" : a.implementation} />
+    : <AssessmentState state="pending" hint={item.proposal.decision} />;
 }
 
 /** The organization's own assessment of one requirement; the API decides who may write. */
@@ -202,26 +189,12 @@ export function AssessmentForm({ item, orgId, frameworkKey, canEdit, canAssess =
   const differs = item.proposal.decision !== "undecided" && item.proposal.decision !== form.applicability;
   const needsJustification = form.applicability === "not_applicable" || differs;
   const submit = (e: FormEvent) => { e.preventDefault(); save.mutate({ code: item.code, body: form }, { onSuccess: () => setEditing(false) }); };
-  const cite = useGuideRef();
-  const { source, criterion } = item.proposal;
-  const proposal = item.proposal.decision === "undecided" ? t("proposalUndecided")
-    : source ? t.rich("proposalProfile", { decision: t(`proposal.${item.proposal.decision}`), rule: item.proposal.rule ?? "", reference: cite(source),
-      official: (chunks) => <span lang="es">{chunks}</span> })
-    : t.rich("proposalText", { decision: t(`proposal.${item.proposal.decision}`), rule: item.proposal.rule ?? "", level: item.proposal.level ?? "",
-      official: (chunks) => <span lang="es">{chunks}</span> });
   return <div className="assessment-card">
     <OwnerField item={item} orgId={orgId} frameworkKey={frameworkKey} canEdit={canEdit} />
     <AgentProposal item={item} orgId={orgId} frameworkKey={frameworkKey} canAssess={canAssess} />
-    <h3>{t("yourAssessment")}</h3>
-    <p className="text-sm text-muted">{proposal}{criterion ? <> {t("proposalCriterion", { reference: cite(criterion) })}</> : null}</p>
+    <AssessmentIntro proposal={item.proposal} />
     {a && !editing ? <>
-      <dl className="assessment-summary">
-        <div><dt>{t("applicability")}</dt><dd>{t(`proposal.${a.applicability}`)}</dd></div>
-        {a.applicability === "applies" ? <div><dt>{t("implementation")}</dt><dd>{t(`states.${a.implementation}`)}{a.regularly_reviewed ? ` · ${t("regularlyReviewed")}` : ""}</dd></div> : null}
-        {a.performed_by ? <div><dt>{t("performedBy")}</dt><dd>{a.performed_by}{a.performed_on ? ` · ${format.dateTime(new Date(a.performed_on), { dateStyle: "medium" })}` : ""}</dd></div> : null}
-        {a.justification ? <div><dt>{t("justification")}</dt><dd>{a.justification}</dd></div> : null}
-        {a.notes ? <div><dt>{t("notes")}</dt><dd>{a.notes}</dd></div> : null}
-      </dl>
+      <AssessmentFields value={a} dated={a.performed_on ? format.dateTime(new Date(a.performed_on), { dateStyle: "medium" }) : undefined} />
       <p className="text-sm text-muted">{t("recordedAt", { date: format.dateTime(new Date(a.recorded_at), { dateStyle: "medium", timeStyle: "short" }) })}</p>
       {canAssess ? <button className="dashboard-button" onClick={() => setEditing(true)}>{t("update")}</button> : null}
     </> : !canAssess ? <p className="text-sm text-muted">{t("pendingMember")}</p> : !editing && !a ? <button className="button-primary" onClick={() => setEditing(true)}>{t("assess")}</button>
@@ -264,14 +237,7 @@ function AgentProposal({ item, orgId, frameworkKey, canAssess }: { item: Registe
   return <section className="notice proposal-notice" aria-labelledby={heading}>
     <h4 id={heading}><Icon name="integrations" size={16} />{t("agentProposal")}</h4>
     <p className="text-sm text-muted">{t("agentProposalFrom", { name: p.token_name, date: format.dateTime(new Date(p.proposed_at), { dateStyle: "medium", timeStyle: "short" }) })} <span className="font-mono">{p.token_prefix}…</span></p>
-    <dl className="assessment-summary">
-      <div><dt>{t("applicability")}</dt><dd>{t(`proposal.${p.applicability}`)}</dd></div>
-      {p.applicability === "applies" ? <div><dt>{t("implementation")}</dt><dd>{t(`states.${p.implementation}`)}{p.regularly_reviewed ? ` · ${t("regularlyReviewed")}` : ""}</dd></div> : null}
-      {p.performed_by ? <div><dt>{t("performedBy")}</dt><dd>{p.performed_by}</dd></div> : null}
-      {p.justification ? <div><dt>{t("justification")}</dt><dd>{p.justification}</dd></div> : null}
-      {p.notes ? <div><dt>{t("notes")}</dt><dd>{p.notes}</dd></div> : null}
-      <div><dt>{t("agentRationale")}</dt><dd>{p.rationale}</dd></div>
-    </dl>
+    <AssessmentFields value={p}><div><dt>{t("agentRationale")}</dt><dd>{p.rationale}</dd></div></AssessmentFields>
     <p className="text-sm text-muted">{t("agentProposalHelp")}</p>
     {canAssess ? <div className="proposal-actions">
       <button type="button" className="button-primary" disabled={decide.isPending} onClick={() => decide.mutate({ id: p.id, verb: "confirm" })}>{t("confirmProposal")}</button>

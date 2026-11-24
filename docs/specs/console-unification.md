@@ -140,9 +140,40 @@ reviews, training, incidents and integrations.
 - [ ] **Report month:** the month picker reads in the interface language, not "November 2026".
 - [ ] **English:** EN strings stay complete and match.
 
+## Part 4: one measure view (#426)
+
+The landing and `/producto` show an ENS measure through the shared measure sheet (#403). The
+console now renders its measure detail through the same component, so the product has one
+measure view.
+
+- [ ] **One component, two modes:** `components/measure-sheet.tsx` renders every measure. The
+  *sample* mode is an open, static `article` for public pages. The *console* mode is the
+  register's disclosure row (`details.requirement-row`, `id="req-<code>"`). No other component
+  renders a measure's head, columns, state badge, recorded fields or official text.
+- [ ] **Same anatomy:** both modes show the code and title with the state, then two columns that
+  sit side by side from 48rem of the sheet's own width: the record ("Tu autoevaluación" with the
+  proposal from the official tables, then the guide's expected evidence) and the law (the official
+  text as a ruled quotation, `lang` set, and its source link).
+- [ ] **Shared parts:** the state badge (icon and label), the recorded fields and the proposal line
+  are one component each, used by the console form, the agent proposal and the public sample.
+  The expected evidence is one component with three variants: a disclosure in the console, open
+  in the sample (naming the Atesta team, never a person) and print in the dossier.
+- [ ] **Console behaviour kept:** the inline self-assessment form, owner and due date, the agent
+  proposal, the configurations with the evidence panel (statements and file upload) and the
+  manual review, role rules (contributors and auditors read-only), the `#req-<code>` deep link,
+  and the keyboard and screen-reader order. Recorded results (meaning and next step) stay with
+  the configurations when the register leads.
+- [ ] **No duplicates:** the "Guía y texto oficial" disclosure goes; its content is in the law
+  column. Dead markup, CSS and message keys are deleted.
+- [ ] **Public pages unchanged:** the landing hero and `/producto` look the same at 1440 and 390
+  (before and after screenshots, outside the repository).
+- [ ] **DESIGN.md** documents the component and its two modes under shared components.
+
 ## Tests
 
 | Area | Cases |
 |---|---|
 | Unit | countdown hours and days, running and past due; task order (clock, overdue, my week, the rest), and my later measures left out; overdue not double counted; getting started full, one line from 5 of 7, hidden at 7 of 7; Registros incidents row with a running clock; incident close asks for confirmation with open clocks; the records sentence lists only figures that need action and no tiles; chart thresholds (7 days); the shared severity map; members "Quitar" is a button; no vosotros or usted in console strings; month input localised |
 | e2e | home: the task list is the first region after the header at 390 and 1440; axe and no overflow as before |
+| Unit (part 4) | the console row is a `measure-sheet` with a record and a law column; the official text is a `blockquote` with `lang`; the sample and the console share the state badge, the proposal line and the recorded fields (same markup for the same data); no "Guía y texto oficial" disclosure; contributors and auditors stay read-only; the dossier's print variant and the sample's open variant of the expected evidence |
+| e2e (part 4) | the console row shows the record and the law side by side at 1280 and stacked at 375, with no overflow and no axe violations in light and dark; the landing hero keeps its measure sheet |

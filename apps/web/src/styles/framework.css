@@ -57,19 +57,18 @@
   .requirement-state[data-state="pass"] { color: var(--color-success); }
   .requirement-state[data-state="manual"] { color: var(--color-warning); }
   .requirement-body { padding: 0.25rem 0.25rem 2rem; }
-  .requirement-body > p, .control-description, .framework-catalog p { max-width: 72ch; }
-  .requirement-body h3 { margin-top: 1.25rem; margin-bottom: 0.375rem; font-weight: 500; }
-  .requirement-body > p + p { margin-top: 0.75rem; }
+  .requirement-body p, .control-description, .framework-catalog p { max-width: 72ch; }
+  .requirement-body h3, .measure-sheet-section { margin-top: 1.25rem; margin-bottom: 0.375rem; font-weight: 500; }
   .requirement-source { font-size: 0.875rem; overflow-wrap: anywhere; }
-  /* Measure sheet (DESIGN.md; landing-legal A4): a requirement row, open and static, as public pages
-     show it. From 48rem of its own width the record and the official text sit side by side. */
+  /* Measure sheet (DESIGN.md; console-unification part 4): one measure in the console (the register's
+     row) and on public pages (open and static). From 48rem of its own width the record and the
+     official text sit side by side. */
   .measure-sheet { container-type: inline-size; }
   .measure-sheet-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-border); }
   .measure-sheet-body { display: grid; column-gap: 3rem; }
-  .measure-sheet-section { margin-top: 1.25rem; margin-bottom: 0.375rem; font-weight: 500; }
   .measure-sheet .assessment-card { margin-bottom: 0; }
   .measure-sheet .expected-evidence { padding-bottom: 0.5rem; }
-  .measure-sheet-law .official-text { display: grid; gap: 0.75rem; max-width: 72ch; padding-left: 1rem; border-left: 1px solid var(--color-border); }
+  blockquote.official-text { display: grid; gap: 0.75rem; max-width: 72ch; padding-left: 1rem; border-left: 1px solid var(--color-border); }
   .measure-sheet-law .requirement-source { margin-top: 1rem; }
   @container (width >= 48rem) { .measure-sheet-body { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } }
   @container (width < 28rem) { .measure-sheet .assessment-summary div { grid-template-columns: minmax(0, 1fr); gap: 0.125rem; } }
@@ -178,7 +177,6 @@
   .form-row > span { display: grid; gap: 0.25rem; }
   .form-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem; }
   .assessment-card { padding-block: 0.5rem 1.25rem; border-block-end: 1px solid var(--color-border); margin-bottom: 1rem; }
-  .assessment-card h3 { font-weight: 500; }
   .assessment-summary { display: grid; gap: 0.5rem; margin-block: 0.75rem; }
   .assessment-summary div { display: grid; grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr); gap: 1rem; }
   .assessment-summary dt { font-size: 0.875rem; color: var(--color-muted); }

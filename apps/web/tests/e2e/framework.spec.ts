@@ -145,7 +145,7 @@ test("preparation exposes scope, missing work, official rules and configuration 
   await expect(page.getByText("Reviewed requirements and mappings are missing.")).toBeVisible();
   await expect(page.getByRole("table")).toContainText("BAJO");
   await page.locator("summary").getByText("Read full official text (Spanish)").click();
-  await expect(page.getByText(requirementGuidance.official_text_es)).toHaveAttribute("lang", "es");
+  await expect(page.locator("blockquote.official-text", { hasText: requirementGuidance.official_text_es })).toHaveAttribute("lang", "es");
 });
 
 test("an owner records a human review of a manual control, accessibly and within the CSP", async ({ page }) => {

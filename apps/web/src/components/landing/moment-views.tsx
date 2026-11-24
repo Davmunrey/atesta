@@ -4,17 +4,27 @@ import { useFormatter, useLocale, useTranslations } from "next-intl";
 import fixture from "@/content/landing-fixture.json";
 import type { HeroMeasure } from "@/lib/catalog/landing";
 import { Icon } from "../icons";
-import { MeasureSheet } from "../measure-sheet";
+import { ExpectedEvidence } from "../expected-evidence";
+import { AssessmentFields, AssessmentIntro, AssessmentState, MeasureSheet, OfficialText } from "../measure-sheet";
 import { ViewFrame } from "./view-frame";
 
 /** Product moments (landing-legal spec, L7): views of what the console ships. */
 
-/** One ENS measure as the console shows it (A4): the shared measure sheet in a product frame. The
- *  measure and its official text come from the catalog; the assessment is sample data. */
+/** One ENS measure as the console shows it (A4): the shared measure sheet, sample mode, in a product
+ *  frame. The measure, its proposal and official text come from the catalog; the assessment is sample
+ *  data. The excerpt's last paragraph is highlighted. */
 export function MeasureView({ measure }: { measure: HeroMeasure }) {
   const t = useTranslations("landing.view.hero");
+  const assessment = { applicability: "applies", implementation: "partially_implemented", notes: t("note") } as const;
   return <ViewFrame label={t("label")} context={fixture.organization}>
-    <div className="lv-body"><MeasureSheet measure={measure} assessment={{ implementation: "partially_implemented", owner: t("ownerValue"), notes: t("note") }} /></div>
+    <div className="lv-body"><MeasureSheet code={measure.code} title={measure.title} titleLang="es" source={measure.source}
+      state={<AssessmentState state={assessment.implementation} />}
+      record={<>
+        <div className="assessment-card"><AssessmentIntro heading={false} proposal={{ decision: "applies", rule: measure.rule, level: measure.level }} />
+          <AssessmentFields value={assessment} owner={t("ownerValue")} /></div>
+        <ExpectedEvidence variant="sample" evidence={{ items: measure.evidence, reviewed_by: null }} />
+      </>}
+      law={<><p className="measure-sheet-section">{t("excerpt")}</p><OfficialText text={measure.paragraphs} lang="es" highlightLast /></>} /></div>
   </ViewFrame>;
 }
 
