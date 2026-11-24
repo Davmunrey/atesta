@@ -1,8 +1,9 @@
 # Spec: operator portal
 
 - Issue: #396.
-- Status: draft (2026-11-24). It is proposed with ADR-017 and ADR-012 amendment 8, and is built
-  only after the owner accepts them.
+- Status: accepted (2026-11-24, #405). ADR-017 and ADR-012 amendment 8 are accepted. It is built
+  after the landing restructure and the console unification, because the `packages/ui` move
+  touches all of `apps/web`.
 - ADRs: ADR-017, ADR-012 (amendments 3 and 8), ADR-009 (amendments 2 and 3), ADR-008, ADR-007.
 - Builds on: `billing-entitlements.md`, `organization-closure.md`, `identity-auth.md`, `rbac.md`,
   `tenant-data-layer.md`, `notifications.md`, `web-shell.md`.
@@ -464,34 +465,39 @@ the service itself:
 - **Billing rows:** binary evidence and backups follow the organization-closure spec. This spec
   adds only billing rows.
 
-## Open questions for the owner
+## Owner answers (2026-11-24)
 
-1. **Default plan and trial:** which plan a self-onboarded organization gets until an operator
-   sets one. Today it is `business`, through `billing.api.DEFAULT_PLAN` (ADR-009 amendment 2).
-   Is there a trial period, how long, and what happens when it ends? For example: a reduced
-   plan, suspension, or nothing.
-2. **Network access to the portal:** no allowlist, an IP allowlist with AWS WAF, or private
-   access (ADR-017, "Network access").
-3. **Erasure approval rule:** two distinct admins (proposed). With a one-admin team that is
-   impossible. Options:
-   - wait for a second admin;
-   - a 72-hour cooling-off before the same admin can confirm (proposed fallback);
-   - the owner as the standing second approver.
-4. **Billing details after erasure:** must they, or part of them, be kept under Spanish tax law,
-   and for how long? This needs the owner's adviser; no period is assumed here. Invoices are
-   issued outside the app, so the records tax law requires may already live in the invoicing
-   system, and `billing_profiles` can be erased with the organization. Until answered, erasure
-   deletes them.
-5. **Operator read log for customers:** reads are in the operator trail only. Should customers
-   receive their organization's operator access log on request, or see reads in Activity?
-6. **Connection provider:** the portal shows connection status grouped by provider (`m365`,
-   `google_workspace`). Confirm, or limit it to status only.
-7. **Support and billing details:** support sees only the legal name and whether the billing
-   details are complete (proposed). Confirm, or grant full billing details.
-8. **Operator closures:** only an admin can cancel a closure the operator started (proposed).
-   Confirm that an owner cannot.
-9. **Support address:** the support email address shown to suspended customers. It depends on
-   the domain.
+The owner answered questions 1 to 3 on 2026-11-24, relayed by the coordinator. The coordinator
+set 5 to 9 to the proposed default and told the owner, who did not object. Question 4 is
+answered from the law below and stays open for the owner's tax adviser.
+
+1. **Trial:** a self-onboarded organization gets a 14-day trial with full access ("Prueba de 14
+   días"). When it ends, the organization becomes read-only until an operator sets a plan:
+   members can read and export, and every write gets 403 `billing.trial_ended`. The trial end
+   date is part of the organization metadata in the portal.
+2. **Network access:** open, protected by MFA ("Abierto con MFA"; ADR-017 option A).
+3. **Erasure with one admin:** a 72-hour cooling-off, cancellable, before the same admin can
+   confirm ("Espera de 72 h"). With two or more admins, a second admin approves.
+4. **Billing details after erasure (candidate, for the owner's adviser):** the retention duties
+   attach to the invoices and accounting records, which live in the owner's invoicing system,
+   not in Atesta:
+   - Reglamento de facturación (RD 1619/2012) art. 19: invoices are kept for the period of the
+     Ley General Tributaria (https://www.boe.es/buscar/act.php?id=BOE-A-2012-14696);
+   - Código de Comercio art. 30: books, correspondence and supporting documents for six years
+     (https://www.boe.es/buscar/act.php?id=BOE-A-1885-6627);
+   - LOPDGDD art. 32: data kept after a deletion request are blocked
+     (https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673).
+   Atesta's `billing_profiles` is a working copy, so erasure deletes it with the organization
+   (data minimisation). If the adviser says Atesta must keep it, it is blocked under LOPDGDD
+   art. 32, readable by no role, and destroyed when the period ends.
+5. **Operator reads:** customers see operator writes in Activity, not reads. The operator trail
+   keeps reads; a customer gets their organization's read log on request.
+6. **Connections:** status grouped by provider, as proposed.
+7. **Support and billing details:** support sees only the legal name and whether billing details
+   are complete, as proposed.
+8. **Operator closures:** only an operator admin can cancel a closure the operator started.
+9. **Support address:** hello@atesta.cloud, the public contact address, until a support address
+   exists.
 
 ## Design notes
 

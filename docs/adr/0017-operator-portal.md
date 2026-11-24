@@ -1,9 +1,9 @@
 # ADR-017: A separate operator portal manages customer organizations from their metadata only
 
-- Status: proposed (2026-11-24). The owner decided the substance on 2026-11-24, relayed by the
-  coordinator; accepting the ADR is the owner's call (AGENTS.md, "Owner decisions").
+- Status: accepted (2026-11-24, #405). The owner decided the substance and accepted the ADR on
+  2026-11-24, relayed by the coordinator ("Aceptar ambos").
 - Issue: #396. Spec: `docs/specs/operator-portal.md`.
-- Amends: ADR-012 (amendment 8, proposed with this ADR). Builds on ADR-001, ADR-007, ADR-008,
+- Amends: ADR-012 (amendment 8, accepted with this ADR). Builds on ADR-001, ADR-007, ADR-008,
   ADR-009 (amendments 2 and 3), ADR-012 (amendment 3) and the organization-closure spec.
 
 ## Context
@@ -171,7 +171,9 @@ stay as they are.
 | B. IP allowlist (proposed if staff have fixed egress addresses) | An AWS WAF web ACL on the admin distribution allows only listed addresses; everything else gets 403 at the edge | WAF is in AWS's ENS High scope (hosted-environment spec). A web ACL for CloudFront is created in us-east-1; it is configuration and holds no customer data. A staff member away from the listed networks cannot work |
 | C. Private access (VPN or AWS Verified Access) | The portal has no public endpoint | The most isolation, at the highest cost and setup. Availability in eu-south-2 is not checked |
 
-The ADR does not pick. Whatever the owner chooses, the portal enforces MFA and roles on its own.
+**Owner choice (2026-11-24): option A**, "Abierto con MFA". No allowlist and no private access;
+the portal relies on its own sign-in with MFA and on roles. Cognito throttling and the audit
+trail are the controls against password spraying.
 
 ### Database: one role, a closed list of columns, no content
 
@@ -215,8 +217,9 @@ The ADR does not pick. Whatever the owner chooses, the portal enforces MFA and r
   - **Columns:** legal name, tax ID, address, billing contact email.
   - **Who reads and writes:** `atesta_app` may only read it. The organization's owners see it,
     read-only, in the console.
-  - **Erasure** deletes it with the other tenant tables. Retention under Spanish tax law is an
-    open question for the owner's adviser.
+  - **Erasure** deletes it with the other tenant tables: the invoices that tax and commercial
+    law require keeping live in the owner's invoicing system (spec, "Owner answers", 4). The
+    owner's adviser confirms.
 - **Suspend and reactivate:** two new columns on `organizations`, `suspended_at` and
   `suspension_reason`, the latter a code from a closed list.
   - **While suspended,** `identity.api.require_member` refuses every route with 403
@@ -278,7 +281,7 @@ The ADR does not pick. Whatever the owner chooses, the portal enforces MFA and r
   - erasure requested, approved or cancelled.
 - **Which actions the customer does not see:** reads (list, detail views). They change nothing,
   and showing every support lookup would bury the events that matter. They are in the operator
-  trail. Whether customers may receive that log on request is an open question in the spec.
+  trail. A customer gets their organization's read log on request (spec, "Owner answers", 5).
 
 ### What is ruled out
 
@@ -311,7 +314,7 @@ The ADR does not pick. Whatever the owner chooses, the portal enforces MFA and r
   credential. A compromise of the operator service exposes metadata of every organization and the
   power to change plans, suspend and request closure, but no customer content and no erasure
   without a second admin. The spec's threat model lists the residual risks.
-- **ADR-012 changes** (amendment 8, proposed):
+- **ADR-012 changes** (amendment 8, accepted):
   - a second runtime role;
   - role-scoped named policies;
   - a new tenant table;
