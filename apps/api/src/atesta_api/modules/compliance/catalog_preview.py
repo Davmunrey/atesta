@@ -52,6 +52,11 @@ def import_preview(conn: Connection, catalog: Catalog) -> list[str]:
                             "coverage": pack.coverage.model_dump(mode="json")
                             if pack.coverage
                             else None,
+                            **(
+                                {"transposition": pack.transposition.model_dump(mode="json")}
+                                if pack.transposition
+                                else {}
+                            ),
                             "preview_fingerprint": fingerprint,
                         },
                         "catalog_version": fingerprint,
