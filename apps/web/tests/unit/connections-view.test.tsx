@@ -38,8 +38,19 @@ it("shows members the state and no action", async () => {
   renderWithProviders(<ConnectionsView org={membership("member")} />);
   const line = await screen.findByRole("row", { name: /Contoso M365/ });
   expect(within(line).getByText("Activa")).toBeTruthy();
-  expect(within(line).getAllByRole("button").map((b) => b.textContent)).toEqual(["Permisos que concedes"]); // no action
+  expect(within(line).queryAllByRole("button")).toHaveLength(0); // no action
+  expect(screen.getByText("Permisos que concedes").tagName).toBe("SUMMARY"); // reading is for everyone
   expect(screen.queryByRole("button", { name: "Añadir" })).toBeNull();
+});
+
+it.each([
+  ["active", "done"], ["verifying", "pending"], ["pending_setup", "pending"], ["incomplete", "missing"],
+  ["over_privileged", "overdue"], ["revoked", "overdue"],
+] as const)("draws the %s state with the shared severity (%s)", async (status, severity) => {
+  stubApi({ [`GET ${base}`]: [200, [conn({ status, consented: true, tenant_id: TENANT })]] });
+  renderWithProviders(<ConnectionsView org={membership("member")} />);
+  const line = await screen.findByRole("row", { name: /Contoso M365/ });
+  expect(line.querySelector(".badge")?.getAttribute("data-severity")).toBe(severity);
 });
 
 it("goes to Microsoft only when the API answers with Microsoft's sign-in URL", async () => {
@@ -81,15 +92,20 @@ it("asks before disconnecting, then disconnects", async () => {
     [`DELETE ${base}/c1`]: [200, conn({ status: "disconnected" })],
   });
   renderWithProviders(<ConnectionsView org={membership("owner")} />);
-  fireEvent.click(await screen.findByRole("button", { name: "Desconectar Contoso M365" }));
+  const ask = await screen.findByRole("button", { name: "Desconectar Contoso M365" });
+  expect(ask.className).toBe("dashboard-button"); // the members pattern (DESIGN.md, Buttons)
+  fireEvent.click(ask);
   expect(requests.some((r) => r.method === "DELETE")).toBe(false);
-  expect(screen.getByText(/¿Desconectar Contoso M365\?/)).toBeTruthy();
-  fireEvent.click(screen.getByRole("button", { name: "Sí, desconectar" }));
+  expect(screen.getByText(/¿Desconectar Contoso M365\?/).closest(".confirm-row")).toBeTruthy();
+  expect(screen.getByRole("button", { name: "Cancelar" }).className).toBe("dashboard-button");
+  const confirm = screen.getByRole("button", { name: "Sí, desconectar" });
+  expect(confirm.className).toBe("button-danger");
+  fireEvent.click(confirm);
   await vi.waitFor(() => { if (!requests.some((r) => r.method === "DELETE")) throw new Error("no DELETE"); });
 });
 
 it("lists exactly the read-only permissions the API expects, and what the last check found", async () => {
-  stubApi({
+  const requests = stubApi({
     [`GET ${base}`]: [200, [conn({ status: "over_privileged", consented: true, tenant_id: TENANT })]],
     [`GET ${base}/c1`]: [200, {
       ...conn({ status: "over_privileged", consented: true, tenant_id: TENANT }), google_client_id: null, google_verifier_client_id: null,
@@ -98,10 +114,12 @@ it("lists exactly the read-only permissions the API expects, and what the last c
     }],
   });
   renderWithProviders(<ConnectionsView org={membership("admin")} />);
-  const disclosure = await screen.findByRole("button", { name: "Permisos que concedes" });
-  expect(disclosure.getAttribute("aria-expanded")).toBe("false");
-  fireEvent.click(disclosure);
-  expect(disclosure.getAttribute("aria-expanded")).toBe("true");
+  const details = (await screen.findByText("Permisos que concedes")).closest("details")!;
+  expect(details.className).toContain("row-section"); // the shared disclosure (DESIGN.md)
+  expect(details.open).toBe(false);
+  expect(requests.some((r) => new URL(r.url).pathname === `${base}/c1`)).toBe(false); // fetched on open
+  details.open = true;
+  fireEvent(details, new Event("toggle"));
   expect(await screen.findByText("AuditLog.Read.All")).toBeTruthy();
   expect(screen.getByText("User.Read.All")).toBeTruthy();
   expect(screen.getByText(/2 permisos de Microsoft Graph, todos de solo lectura/)).toBeTruthy();

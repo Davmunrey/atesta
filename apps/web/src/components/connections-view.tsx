@@ -8,19 +8,21 @@ import {
 import { ApiError } from "@/lib/api/hooks";
 import { type Membership, orgHome } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
+import type { State } from "@/lib/severity";
+import { Badge } from "./badge";
 import { ErrorMessage } from "./error-message";
-import { Icon, type IconName } from "./icons";
+import { Icon } from "./icons";
 import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
 
-type Severity = "done" | "pending" | "missing" | "overdue";
-const SEVERITY: Record<string, [Severity, IconName]> = {
-  active: ["done", "done"],
-  verifying: ["pending", "pending"],
-  pending_setup: ["pending", "pending"],
-  pending_provisioning: ["pending", "pending"],
-  incomplete: ["missing", "missing"],
-  over_privileged: ["overdue", "overdue"],
-  revoked: ["overdue", "overdue"],
+/** Each status as a shared severity state (DESIGN.md, severity mapping; issue 397). */
+const STATE: Record<string, State> = {
+  active: "connectionActive",
+  verifying: "connectionWaiting",
+  pending_setup: "connectionWaiting",
+  pending_provisioning: "connectionWaiting",
+  incomplete: "connectionIncomplete",
+  over_privileged: "connectionOverPrivileged",
+  revoked: "connectionRevoked",
 };
 
 /** Microsoft 365 connections (web-connections spec, issue 365): connect, verify, scan, disconnect. */
@@ -55,22 +57,24 @@ function Row({ connection: c, org, admin, current, navigate }: { connection: Con
   const d = useTranslations("dashboard");
   const format = useFormatter();
   const [open, setOpen] = useState(false);
-  const detailId = useId();
-  const [severity, icon] = SEVERITY[c.status] ?? ["pending", "pending"];
   // Consented but not yet verified: the next step is Verificar, not connecting.
   const status = c.status === "pending_setup" && c.consented ? "pending_verification" : c.status;
   return <><tr aria-current={current ? "true" : undefined}>
     <td data-label={t("connection")}><span className="font-medium">{c.display_name}</span>
-      <span className="block text-sm text-muted">{d(`providers.${c.provider as "m365" | "google_workspace"}`)}</span>
-      {c.provider === "m365" ? <button type="button" className="disclosure-button" aria-expanded={open} aria-controls={detailId}
-        onClick={() => setOpen(!open)}>{t("permissions")}</button> : null}</td>
+      <span className="block text-sm text-muted">{d(`providers.${c.provider as "m365" | "google_workspace"}`)}</span></td>
     <td data-label={t("tenant")}>{c.tenant_id ? <span className="font-mono text-sm">{c.tenant_id}</span> : <span className="text-muted">{t("noTenant")}</span>}</td>
-    <td data-label={t("state")}><span className="badge" data-severity={severity}><Icon name={icon} />{t(`statuses.${status as "active"}`)}</span>
+    <td data-label={t("state")}><Badge state={STATE[c.status] ?? "connectionWaiting"}>{t(`statuses.${status as "active"}`)}</Badge>
       {c.status === "verifying" ? <span className="block text-sm text-muted">{t("verifyingNote")}</span> : null}</td>
     <td data-label={t("lastVerified")} className="tabular-nums">{c.verified_at ? format.dateTime(new Date(c.verified_at), { dateStyle: "medium", timeStyle: "short" }) : <span className="text-muted">{t("never")}</span>}</td>
     {admin ? <td data-label={t("actions")}><Actions connection={c} orgId={org.organization_id} navigate={navigate} /></td> : null}
   </tr>
-  {open ? <tr className="row-detail" id={detailId}><td colSpan={admin ? 5 : 4} data-label={t("permissions")}><Permissions orgId={org.organization_id} connection={c} /></td></tr> : null}
+  {/* The shared disclosure (DESIGN.md): fetched on first open, in a full-width row of its own. */}
+  <tr className="row-detail"><td colSpan={admin ? 5 : 4} data-label={t("permissions")}>
+    <details className="row-section" onToggle={(e) => { if (e.currentTarget.open) setOpen(true); }}>
+      <summary>{t("permissions")}</summary>
+      {open ? <Permissions orgId={org.organization_id} connection={c} /> : null}
+    </details>
+  </td></tr>
   </>;
 }
 
@@ -86,12 +90,12 @@ function Actions({ connection: c, orgId, navigate }: { connection: Connection; o
   const failed = [signIn, verify, scan, disconnect].find((m) => m.isError);
   const connect = (label: string, primary: boolean) => <button type="button" className={primary ? "button-primary" : "dashboard-button"} disabled={signIn.isPending}
     aria-label={label} onClick={() => signIn.mutate(c.id, { onSuccess: (url) => navigate(url) })}>{primary ? t("connect") : t("reconnect")}</button>;
-  if (confirming) {
-    return <span className="flex flex-wrap items-center gap-2" role="group" aria-label={t("confirmDisconnect", { name })}>
+  if (confirming) { // the members pattern (DESIGN.md, Buttons): question, danger action, Cancelar
+    return <span className="confirm-row">
       <span>{t("confirmDisconnect", { name })}</span>
-      <button type="button" className="rounded-md bg-danger px-3 py-1 text-danger-fg" disabled={disconnect.isPending}
+      <button type="button" className="button-danger" disabled={disconnect.isPending}
         onClick={() => disconnect.mutate(c.id, { onSettled: () => setConfirming(false) })}>{t("confirm")}</button>
-      <button type="button" className="underline" onClick={() => setConfirming(false)}>{t("cancel")}</button>
+      <button type="button" className="dashboard-button" onClick={() => setConfirming(false)}>{t("cancel")}</button>
     </span>;
   }
   return <>
@@ -102,7 +106,7 @@ function Actions({ connection: c, orgId, navigate }: { connection: Connection; o
         {connect(t("reconnectNamed", { name }), false)}
       </> : null}
       {c.status === "active" ? <button type="button" className="button-primary" disabled={scan.isPending} aria-label={t("scanNamed", { name })} onClick={() => scan.mutate(c.id)}>{t("scan")}</button> : null}
-      <button type="button" className="underline" aria-label={t("disconnectNamed", { name })} onClick={() => setConfirming(true)}>{t("disconnect")}</button>
+      <button type="button" className="dashboard-button" aria-label={t("disconnectNamed", { name })} onClick={() => setConfirming(true)}>{t("disconnect")}</button>
     </span>
     {scan.isSuccess ? <p className="text-sm text-muted" role="status">{t("scanQueued")}</p> : null}
     {failed ? <ErrorMessage error={failed.error} /> : null}
@@ -159,7 +163,7 @@ function Add({ orgId }: { orgId: string }) {
       {create.isError ? <ErrorMessage error={create.error} /> : null}
     </form>
     <ul className="provider-list">
-      <li><span className="font-medium">{d("providers.google_workspace")}</span> <span className="badge">{t("soon")}</span></li>
+      <li><span className="font-medium">{d("providers.google_workspace")}</span> <span className="tag">{t("soon")}</span></li>
     </ul>
   </Panel>;
 }

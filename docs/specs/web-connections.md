@@ -1,6 +1,6 @@
 # Spec: Connections screen (Microsoft 365)
 
-- Issues: #365 (screen), #366 (callback refusals). Part of #221.
+- Issues: #365 (screen), #366 (callback refusals), #397 (shared patterns). Part of #221.
 - Builds on: `scanner-connectors.md` (Microsoft 365 onboarding, steps 1 to 6), `console-shell.md`,
   `rbac.md`, `i18n-complete.md`, `claims-honesty.md`.
 - Status: draft
@@ -116,6 +116,26 @@ the admin selects Cancel on Microsoft's consent screen.
 - [ ] **Rendering.** Checked rendered at 1280 and 375 pixels, light and dark, before it is called
       done (AGENTS.md, Interface work). At 375 pixels the table stacks with `data-label`, as
       Integraciones does.
+
+## Shared console patterns (#397, owner 2026-11-24: "Align it all in the Google PR")
+
+The console unification (#413 to #415) left this screen out; its coherence test exempted it. It
+now uses the console's shared patterns, and the exemption is removed:
+
+- [ ] **State badges.** Each connection status is a `Badge` state from `lib/severity.ts`:
+  - `connectionActive` is `done`;
+  - `connectionWaiting` is `pending`: setup, verification pending, provisioning, verifying;
+  - `connectionIncomplete` is `missing`;
+  - `connectionOverPrivileged` and `connectionRevoked` are `overdue`.
+
+  No hand-drawn badge remains.
+- [ ] **Detail disclosure.** Each connection's detail is a native `details` in a full-width row under
+      it, styled as `row-section`. The first `toggle` fetches the detail. There is no custom
+      `aria-expanded` button.
+- [ ] **Codes.** Permission and scope lists use `var(--font-mono)` only.
+- [ ] **Selected row.** `tr[aria-current="true"]` sits with the shared data-table rules.
+- [ ] **Disconnect.** "Desconectar" is a `dashboard-button`. It opens a `confirm-row` that holds the
+      question, a `button-danger` "Sí, desconectar" and a `dashboard-button` "Cancelar", as Members does.
 
 ## Out of scope
 
