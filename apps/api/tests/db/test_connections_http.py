@@ -155,3 +155,32 @@ def test_the_detail_shows_the_last_verification_report(
         )
     shown = client.get(url, headers=auth(subs["owner"])).json()["last_verification"]
     assert shown == {"missing": ["Policy.Read.All"], "extra": [], "limits": ["x"]}
+
+
+def test_the_list_and_detail_say_whether_consent_is_recorded_and_for_which_tenant(
+    client: TestClient, superuser: Engine
+) -> None:
+    """web-connections spec (#365): the screen tells "connect" from "verify" by `consented`."""
+    org, subs = org_with(client, superuser, mem="member")
+    made = create(client, org, subs["owner"])
+    url = f"/api/v1/orgs/{org}/connections"
+    assert (made["consented"], made["tenant_id"]) == (False, None)
+    tenant, admin = "11111111-2222-4333-8444-555555555555", "66666666-7777-4888-8999-aaaaaaaaaaaa"
+    with superuser.begin() as conn:
+        conn.execute(
+            text("UPDATE connections SET ms_tenant_id = :t, consented_by_oid = :o WHERE id = :c"),
+            {"t": tenant, "o": admin, "c": made["id"]},
+        )
+    listed = client.get(url, headers=auth(subs["mem"]))
+    detail = client.get(f"{url}/{made['id']}", headers=auth(subs["mem"]))
+    for body in (listed.json()[0], detail.json()):
+        assert (body["consented"], body["tenant_id"]) == (True, tenant)
+    for response in (listed, detail):
+        assert admin not in response.text  # the consenting admin's object id never leaves
+    with superuser.begin() as conn:  # a verification pins the tenant: that one is shown
+        conn.execute(
+            text("UPDATE connections SET external_tenant_id = :t WHERE id = :c"),
+            {"t": "99999999-2222-4333-8444-555555555555", "c": made["id"]},
+        )
+    pinned = client.get(f"{url}/{made['id']}", headers=auth(subs["mem"])).json()
+    assert pinned["tenant_id"] == "99999999-2222-4333-8444-555555555555"

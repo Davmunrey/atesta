@@ -1893,6 +1893,8 @@ export interface components {
         ConnectionDetail: {
             /** Allowlist Version */
             allowlist_version: string | null;
+            /** Consented */
+            consented: boolean;
             /**
              * Created At
              * Format: date-time
@@ -1915,6 +1917,8 @@ export interface components {
             provider: string;
             /** Status */
             status: string;
+            /** Tenant Id */
+            tenant_id: string | null;
             /** Verified At */
             verified_at: string | null;
         };
@@ -1932,6 +1936,8 @@ export interface components {
         ConnectionOut: {
             /** Allowlist Version */
             allowlist_version: string | null;
+            /** Consented */
+            consented: boolean;
             /**
              * Created At
              * Format: date-time
@@ -1948,6 +1954,8 @@ export interface components {
             provider: string;
             /** Status */
             status: string;
+            /** Tenant Id */
+            tenant_id: string | null;
             /** Verified At */
             verified_at: string | null;
         };
@@ -2803,6 +2811,11 @@ export interface components {
         LinkIn: {
             /** Token */
             token: string;
+        };
+        /** M365SignInOut */
+        M365SignInOut: {
+            /** Authorize Url */
+            authorize_url: string;
         };
         /** MeOut */
         MeOut: {
@@ -4854,7 +4867,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["M365SignInOut"];
                 };
             };
             /** @description Validation Error */

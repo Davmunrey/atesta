@@ -41,5 +41,24 @@
   "dossier": {
     "catalog": "0b02f5fa6747a3c9",
     "generated": "2026-11-02"
+  },
+  "assistant": {
+    "code": "mp.info.6",
+    "title_es": "Copias de seguridad",
+    "items": [
+      {
+        "es": "Norma de copias de seguridad, coherente con el RPO del BIA.",
+        "en": "Backup rules, consistent with the BIA's RPO."
+      },
+      {
+        "es": "Copias configuradas y realizadas según la norma, con la gestión de sus errores.",
+        "en": "Backups configured and run as the rules say, with error handling."
+      },
+      {
+        "es": "Pruebas de restauración.",
+        "en": "Restore tests."
+      }
+    ],
+    "cite": "CCN-STIC 808 · 6.2.3.7 (mp.info.6) · p. 99"
   }
 }

@@ -63,7 +63,7 @@ function ReviewForm({ orgId, frameworkKey, controlKey, onDone }: { orgId: string
   const canPass = total > 0;
   const uncited = decision === "pass" && cited.size === 0;
   // One validation pass with the other fields: the browser blocks the submit and reports it here.
-  useEffect(() => { firstItem.current?.setCustomValidity(uncited ? t("evidenceRequired") : ""); }, [uncited, items, t]);
+  useEffect(() => { firstItem.current?.setCustomValidity(uncited ? t("evidenceRequired") : ""); }, [uncited, evidence.data, t]);
   const toggle = (itemId: string) => {
     const next = new Set(cited);
     if (!next.delete(itemId)) next.add(itemId);

@@ -36,6 +36,8 @@ class ConnectionOut(BaseModel):
     allowlist_version: str | None
     created_at: datetime
     verified_at: datetime | None
+    consented: bool  # Microsoft sign-in and admin consent recorded (web-connections spec)
+    tenant_id: str | None  # the pinned tenant, else the consented one; never the admin's oid
 
 
 class ExpectedAccess(BaseModel):
@@ -71,7 +73,17 @@ def _last_verification(connection: Connection) -> LastVerification | None:
 
 
 def _out(connection: Connection) -> ConnectionOut:
-    return ConnectionOut.model_validate(connection, from_attributes=True)
+    return ConnectionOut(
+        id=connection.id,
+        provider=connection.provider,
+        status=connection.status,
+        display_name=connection.display_name,
+        allowlist_version=connection.allowlist_version,
+        created_at=connection.created_at,
+        verified_at=connection.verified_at,
+        consented=bool(connection.ms_tenant_id and connection.consented_by_oid),
+        tenant_id=connection.external_tenant_id or connection.ms_tenant_id,
+    )
 
 
 def _expected(provider: str) -> ExpectedAccess:

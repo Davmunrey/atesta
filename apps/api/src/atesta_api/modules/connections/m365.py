@@ -5,6 +5,9 @@ row). The sign-in binds the connection to the Entra tenant of a real admin; the 
 is accepted only for that tenant, since Microsoft warns that its `tenant` can be forged. The
 callbacks receive Microsoft's query string; the server never logs it (uvicorn --no-access-log,
 #257; access-log redaction, #275), and nothing here logs a code or a token (rule 2).
+
+The callbacks are browser navigations, so a refusal redirects to the web connections page with
+one code from REFUSALS (web-connections spec, #366); nothing Microsoft sent is reflected.
 """
 
 import base64
@@ -14,6 +17,7 @@ import json
 import secrets
 import uuid
 from typing import Annotated, Any
+from urllib.parse import urlencode
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -39,6 +43,19 @@ from atesta_api.platform.db import DbSession
 
 COOKIE = "atesta_m365"
 COOKIE_SECONDS = 600
+REFUSALS = frozenset(
+    {
+        "connections.signin_invalid",
+        "connections.consent_denied",
+        "connections.tenant_mismatch",
+        "connections.microsoft_unavailable",
+        "connections.state_invalid",
+        "connections.not_found",
+        "identity.forbidden",
+        "identity.not_found",
+        "identity.access_expired",
+    }
+)
 
 api_router = APIRouter(prefix="/api/v1/orgs/{org_id}/connections", tags=["connections"])
 auth_router = APIRouter(prefix="/auth/m365", tags=["auth"])
@@ -71,6 +88,27 @@ def _seal(request: Request, response: Any, pending: dict[str, str]) -> None:
         httponly=True,
         samesite="lax",
     )
+
+
+def _page(request: Request, query: dict[str, str]) -> RedirectResponse:
+    """The web connections page, the single-use cookie deleted."""
+    web: str = request.app.state.web_base_url
+    response = RedirectResponse(f"{web}/app/connections?{urlencode(query)}", status_code=302)
+    response.delete_cookie(COOKIE, path="/auth", secure=True, httponly=True, samesite="lax")
+    return response
+
+
+def _refused(
+    request: Request, exc: HTTPException, connection: Connection | None
+) -> RedirectResponse:
+    """A refusal as a redirect; the org and connection only once the caller was checked."""
+    code = exc.detail.get("code") if isinstance(exc.detail, dict) else None
+    if code not in REFUSALS:
+        raise exc  # not a callback refusal: keep the API's answer
+    query = {"error": str(code)}
+    if connection is not None:
+        query = {"org": str(connection.organization_id), "connection": str(connection.id), **query}
+    return _page(request, query)
 
 
 def _opened(request: Request, state: str) -> dict[str, str]:
@@ -107,7 +145,7 @@ def _connection(
     return connection
 
 
-@api_router.post("/{connection_id}/m365/signin")
+@api_router.post("/{connection_id}/m365/signin", response_model=M365SignInOut)
 def start_signin(
     connection_id: uuid.UUID,
     request: Request,
@@ -147,17 +185,21 @@ def start_signin(
 def signin_callback(
     request: Request, caller: CurrentCaller, session: DbSession, code: str = "", state: str = ""
 ) -> RedirectResponse:
-    pending = _opened(request, state)
-    _connection(request, caller, session, pending)
-    identity = _identity(request)
+    connection: Connection | None = None
     try:
-        signed_in = identity.sign_in(
-            code=code, verifier=pending["verifier"], nonce=pending["nonce"]
-        )
-    except SignInError:
-        raise _error(400, "connections.signin_invalid") from None
-    except MicrosoftUnavailableError:
-        raise _error(503, "connections.microsoft_unavailable") from None
+        pending = _opened(request, state)
+        connection = _connection(request, caller, session, pending)
+        identity = _identity(request)
+        try:
+            signed_in = identity.sign_in(
+                code=code, verifier=pending["verifier"], nonce=pending["nonce"]
+            )
+        except SignInError:
+            raise _error(400, "connections.signin_invalid") from None
+        except MicrosoftUnavailableError:
+            raise _error(503, "connections.microsoft_unavailable") from None
+    except HTTPException as exc:
+        return _refused(request, exc, connection)
     consent_state = secrets.token_urlsafe(32)
     resealed = {
         **{k: pending[k] for k in ("org_id", "connection_id", "user_id")},
@@ -182,16 +224,20 @@ def consent_callback(  # noqa: PLR0913 - Microsoft's callback parameters
     admin_consent: str = "",
     error: str = "",
 ) -> RedirectResponse:
-    pending = _opened(request, state)
-    if "tid" not in pending:  # a sign-in cookie that never reached Microsoft's sign-in
-        raise _error(400, "connections.signin_invalid")
-    connection = _connection(request, caller, session, pending)
-    if error or admin_consent != "True":
-        raise _error(400, "connections.consent_denied")
-    if not hmac.compare_digest(tenant, pending["tid"]):
-        raise _error(409, "connections.tenant_mismatch")
-    if connection.external_tenant_id not in (None, pending["tid"]):  # the tenant pin holds
-        raise _error(409, "connections.tenant_mismatch")
+    connection: Connection | None = None
+    try:
+        pending = _opened(request, state)
+        if "tid" not in pending:  # a sign-in cookie that never reached Microsoft's sign-in
+            raise _error(400, "connections.signin_invalid")
+        connection = _connection(request, caller, session, pending)
+        if error or admin_consent != "True":
+            raise _error(400, "connections.consent_denied")
+        if not hmac.compare_digest(tenant, pending["tid"]):
+            raise _error(409, "connections.tenant_mismatch")
+        if connection.external_tenant_id not in (None, pending["tid"]):  # the tenant pin holds
+            raise _error(409, "connections.tenant_mismatch")
+    except HTTPException as exc:
+        return _refused(request, exc, connection)
     connection.ms_tenant_id = pending["tid"]
     connection.consented_by_oid = pending["oid"]
     session.flush()
@@ -204,8 +250,6 @@ def consent_callback(  # noqa: PLR0913 - Microsoft's callback parameters
         actor_user_id=caller.user_id,
         metadata={"provider": "m365"},
     )
-    web: str = request.app.state.web_base_url
-    target = f"{web}/app/connections?org={connection.organization_id}&connection={connection.id}"
-    response = RedirectResponse(target, status_code=302)
-    response.delete_cookie(COOKIE, path="/auth", secure=True, httponly=True, samesite="lax")
-    return response
+    return _page(
+        request, {"org": str(connection.organization_id), "connection": str(connection.id)}
+    )

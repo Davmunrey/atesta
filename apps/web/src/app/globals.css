@@ -5,6 +5,7 @@
 @import "../styles/console.css";
 @import "../styles/public.css";
 @import "../styles/landing.css";
+@import "../styles/pages.css";
 @import "../styles/assistant.css";
 
 @layer base {

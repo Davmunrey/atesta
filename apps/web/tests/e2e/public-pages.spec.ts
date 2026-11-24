@@ -7,7 +7,7 @@ import { expectPolished } from "./polish";
  * laptop width, under light and dark emulation. Public pages are light only (landing-legal spec,
  * L4), so dark emulation must still render the light theme. Each page shares one header.
  */
-const PAGES = ["/", "/cookies", "/aviso-legal", "/privacidad", "/invite", "/training", "/training#token=not-a-real-token", "/no-such-page"];
+const PAGES = ["/", "/producto", "/ens", "/cookies", "/aviso-legal", "/privacidad", "/invite", "/training", "/training#token=not-a-real-token", "/no-such-page"];
 
 test("every public page shares one frame and is polished at 375 and 1280 px, light and dark", async ({ page }) => {
   test.setTimeout(300_000);
