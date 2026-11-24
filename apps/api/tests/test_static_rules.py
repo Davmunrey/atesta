@@ -44,7 +44,9 @@ def test_only_db_module_creates_engines() -> None:
 
 
 def test_migrations_grant_only_through_rls_v1() -> None:
-    """rls_v1.grant() emits table-level grants to atesta_app only: no column or PUBLIC grants."""
+    """Migrations write no GRANT: it comes from a frozen, reviewed helper. rls_v1.grant() emits
+    table-level grants to atesta_app; queue_v1 and operator_v1 hold the rest (ADR-012
+    amendments 2 and 8), never a grant to PUBLIC."""
     versions = sorted((API / "migrations" / "versions").glob("*.py"))
     assert _hits(re.compile(r"\bGRANT\s", re.I), versions) == []
 

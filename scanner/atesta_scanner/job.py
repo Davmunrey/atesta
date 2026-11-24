@@ -22,9 +22,18 @@ _KEYS = frozenset(
 _VERSIONS = {"m365": frozenset({"m365-v1"}), "google_workspace": frozenset({"google-v1"})}
 _GOOGLE = frozenset({"google_subject", "google_service_accounts"})
 _ALLOWED = {  # (required, optional) keys beyond _KEYS
-    "m365": (frozenset(), frozenset({"admin_oid"})),
-    "google_workspace": (_GOOGLE, frozenset({"verified_since"})),
+    "m365": (frozenset(), frozenset({"admin_oid", "credential_ref"})),
+    "google_workspace": (
+        _GOOGLE,
+        frozenset({"verified_since", "credential_ref", "verifier_credential_ref"}),
+    ),
 }
+# A reference the wrapper reads in AWS (issue 444), never a secret: a Secrets Manager ARN in
+# eu-south-2, or a local file name (the local runner reads its own store and ignores it).
+_REF = re.compile(
+    r"aws-sm:arn:aws:secretsmanager:eu-south-2:[0-9]{12}:secret:[A-Za-z0-9/_+=.@-]{1,512}"
+    r"|local:[a-z0-9][a-z0-9-]{0,62}"
+)
 
 
 class JobError(ValueError):
@@ -46,6 +55,10 @@ class Job:
     google_subject: str | None = field(default=None, repr=False)
     google_service_accounts: tuple[str, ...] = ()
     verified_since: datetime | None = None
+    # Where the run's credential lives (issue 444): the scan key or certificate, and for a
+    # Google verify run the verifier key. The Fargate wrapper reads them with its task role.
+    credential_ref: str | None = None
+    verifier_credential_ref: str | None = None
 
 
 def _google(data: dict[str, Any]) -> dict[str, Any]:
@@ -110,6 +123,11 @@ def load_job(raw: bytes) -> Job:
     if version not in _VERSIONS[data["provider"]]:
         raise JobError("job allowlist version is not one of the provider's")
     google = _google(data) if data["provider"] == "google_workspace" else {}
+    refs = {
+        name: data[name] for name in ("credential_ref", "verifier_credential_ref") if name in data
+    }
+    if not all(isinstance(ref, str) and _REF.fullmatch(ref) for ref in refs.values()):
+        raise JobError("job credential refs are not references")
     return Job(
         *ids,
         attempt,
@@ -119,4 +137,6 @@ def load_job(raw: bytes) -> Job:
         version,
         admin_oid,
         **google,
+        credential_ref=refs.get("credential_ref"),
+        verifier_credential_ref=refs.get("verifier_credential_ref"),
     )

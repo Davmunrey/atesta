@@ -12,7 +12,7 @@ import re
 import subprocess
 from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 import httpx
 from atesta_core.manifest import build_manifest
@@ -52,6 +52,12 @@ _NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}")
 
 class OutputExistsError(FileExistsError):
     """Scan outputs are write-once."""
+
+
+class Sink(Protocol):
+    """Where a run's outputs go, write-once: a local folder, or S3 in AWS (issue 444)."""
+
+    def write(self, name: str, data: bytes) -> None: ...
 
 
 class DirectorySink:
@@ -143,7 +149,7 @@ def verify_job(job: Job, credential: Mapping[str, str], full: bool = True) -> di
 def _verified(
     job: Job,
     credential: Mapping[str, str],
-    sink: DirectorySink,
+    sink: Sink,
     verifier: Verifier | None,
     full: bool,
 ) -> tuple[ExitCode, dict[str, Any]]:
@@ -164,7 +170,7 @@ def _verified(
 def run_verification(
     job: Job,
     credential: Mapping[str, str],
-    sink: DirectorySink,
+    sink: Sink,
     verifier: Verifier | None = None,
 ) -> ExitCode:
     """Write the verification report; DONE only for `ok`. Fails closed (rule 1)."""
@@ -174,7 +180,7 @@ def run_verification(
 def run_scan(
     job: Job,
     credential: Mapping[str, str],
-    sink: DirectorySink,
+    sink: Sink,
     work: Path,
     executable: str = "prowler",
     verifier: Verifier | None = None,

@@ -121,6 +121,7 @@ grant list; nothing else is readable.
 | Organization id | `organizations.id` | all |
 | Language | `organizations.locale` | all |
 | Created | `organizations.created_at` | all |
+| Trial ends | `organizations.trial_ends_at` (owner answer 1); the trial has ended when that time has passed and the organization has no `subscriptions` row | all |
 | Last activity | `max(audit_events.occurred_at)` over actions not starting with `operator.` | all |
 | State | `active`; `suspended` when `suspended_at` is set; `closing` when `closure_requested_at` is set (both can hold) | all |
 | Suspended since, reason | `organizations.suspended_at`, `suspension_reason` | all |
@@ -546,6 +547,56 @@ answered from the law below and stays open for the owner's tax adviser.
   - **Credential:** it is the only scheduled holder of the migration credential.
   - **Schedule:** its schedule service in eu-south-2 is a candidate, checked at build time.
   - **Fallback:** the runbook command.
+- **Database layer (build step 2, #445).** Amended 2026-11-24 where this spec and ADR-012
+  amendment 8 were ambiguous or did not fit together; ADR-012 amendment 8 is updated to match.
+  - **Trial end:** `organizations.trial_ends_at`, NOT NULL, default `now() + interval '14 days'`,
+    so a new organization's trial ends 14 days after `created_at` (both take the transaction's
+    `now()`). Existing organizations take the default when the column is added: their trial ends
+    14 days after the migration runs, so none turns read-only the day enforcement ships, and the
+    operator has those days to set their plans. `atesta_operator` reads it and never writes it:
+    setting a plan is what ends the read-only state. Enforcement (`billing.trial_ended`) is build
+    step 3.
+  - **Closure origin is derived, not written:** `closure_origin` is a stored generated column,
+    `owner` when `closure_requested_by` (a person) is set and `operator` when it is not, and NULL
+    exactly when `closure_requested_at` is NULL. An owner's closure already records who asked; an
+    operator closure sets only `closure_requested_at`. Nobody holds a write on `closure_origin`,
+    and a CHECK (`closure_requested_by` only with `closure_requested_at`) means the operator
+    role, which cannot write `closure_requested_by`, cannot cancel an owner's closure.
+  - **`atesta_app` on `organizations`:** its table-level UPDATE becomes column-level UPDATE of
+    `name`, `locale`, `updated_at`, `closure_requested_at` and `closure_requested_by`, so the
+    customer role cannot lift a suspension or move a trial end, even through a bug.
+  - **Policy names:** a table has one policy per name, so `operator_write` is split into
+    `operator_insert` (`FOR INSERT`) and `operator_update` (`FOR UPDATE`). On `subscriptions`
+    the operator updates every listed column but `organization_id`, as on `billing_profiles`.
+  - **Customer trail from the operator role:** the standard `tenant_isolation` policy applies to
+    every role and calls `app_setting_uuid()`, which Postgres evaluates for the operator's
+    INSERT check. The role therefore gets EXECUTE on the two setting functions, and a second,
+    restrictive policy `operator_audit_only` holds the `operator.%` and no-actor rule even if
+    the role sets `app.organization_id` itself.
+  - **Billing details columns:** `legal_name`, `tax_id`, `address_line1`, `address_line2`,
+    `postal_code`, `city`, `region`, `country` (two capital letters), `contact_email`,
+    `updated_at`. Every field is optional in the table (NULL means not recorded; empty text is
+    refused); completeness is computed from `legal_name`, `tax_id`, `address_line1`,
+    `postal_code`, `city`, `region`, `country` and `contact_email`. Format rules stay in the
+    operator API (build step 4).
+  - **Erasure requests as data:** `requested_at` takes the database default (the role cannot
+    insert it); approval and cancellation each set a person and a time together; approval falls
+    within 7 days of the request; the approver differs from the requester, or approves at least
+    72 hours after the request (owner answer 3); an executed request was approved and not
+    cancelled, and links its receipt; at most one request per organization is open (neither
+    cancelled nor executed). Whether a self-approval is allowed at all (only when a single
+    enabled admin exists) depends on `operator_staff`, so the operator API checks it; creating
+    a request cancels an expired open one in the same transaction, by the same admin.
+  - **Operator trail columns:** staff id and role (both NULL only for `erasure.executed`, written
+    by the runner), action, organization id, target id, reason (at most 500 characters), request
+    id, scalar metadata. No organization foreign key, so it outlives erasure.
+  - **Where the models live:** `operator_staff` and `erasure_requests` in identity, which owns
+    erasure (and now declares `erasure_receipts` too); `operator_audit_events` in
+    `platform.audit`, next to the customer trail. The operator service reaches them through
+    `identity.api` and `platform.audit` (ADR-017, "Code boundaries").
+  - **Existing environments:** `atesta_owner` cannot create roles, so the bootstrap task runs
+    once more before the first deploy with migration 0033 (deploy runbook). Until then that
+    migration stops with an error and the running version stays.
 - **Rule 2:** the operator service's logs carry no billing values, reasons or search text. Its
   engine uses `hide_parameters=True`, as the API's does.
 

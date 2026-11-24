@@ -151,8 +151,8 @@ relayed by the coordinator (ADR-017, "Owner decisions"; #405).
 
   | Table | SELECT columns | Writes |
   | --- | --- | --- |
-  | `organizations` | `id`, `name`, `locale`, `created_at`, `closure_requested_at`, `closure_origin`, `suspended_at`, `suspension_reason` | UPDATE of `suspended_at`, `suspension_reason`, `closure_requested_at`, `closure_origin` |
-  | `subscriptions` | `organization_id`, `plan`, `addons`, `note`, `updated_at` | INSERT and UPDATE of the same columns |
+  | `organizations` | `id`, `name`, `locale`, `created_at`, `trial_ends_at`, `closure_requested_at`, `closure_origin`, `suspended_at`, `suspension_reason` | UPDATE of `suspended_at`, `suspension_reason`, `closure_requested_at` (`closure_origin` is generated) |
+  | `subscriptions` | `organization_id`, `plan`, `addons`, `note`, `updated_at` | INSERT of the same columns, UPDATE of all but `organization_id` |
   | `billing_profiles` (new) | every column | INSERT and UPDATE of every column but `organization_id` on UPDATE |
   | `memberships` | `organization_id`, `role` | none |
   | `invitations` | `organization_id`, `expires_at`, `accepted_at`, `revoked_at` | none |
@@ -169,12 +169,17 @@ relayed by the coordinator (ADR-017, "Owner decisions"; #405).
 - **New named policies, all scoped `TO atesta_operator`:**
   - `operator_metadata_read`: `FOR SELECT USING (true)`, on each table in the list above that
     has RLS.
-  - `operator_write`:
-    - on `subscriptions` and `billing_profiles`: `FOR INSERT WITH CHECK (true)` and
-      `FOR UPDATE USING (true) WITH CHECK (true)`;
-    - on `organizations`: `FOR UPDATE` only.
+  - `operator_insert` (`FOR INSERT WITH CHECK (true)`) and `operator_update`
+    (`FOR UPDATE USING (true) WITH CHECK (true)`) on `subscriptions` and `billing_profiles`;
+    `operator_update` only on `organizations`. (Accepted text said one `operator_write` policy;
+    a table holds one policy per name, so it is two. Amended with #445.)
   - `operator_audit_write` on `audit_events`: `FOR INSERT WITH CHECK (action LIKE 'operator.%'
     AND actor_user_id IS NULL)`. `actor_user_id` is also absent from the column grant.
+  - `operator_audit_only` on `audit_events`: the same check, `AS RESTRICTIVE`. The standard
+    `tenant_isolation` policy applies to every role and Postgres evaluates its
+    `app_setting_uuid()` call for the operator's INSERT check, so the role needs EXECUTE on the
+    two setting functions. The restrictive policy keeps the rule if the role ever sets
+    `app.organization_id` itself (#445).
   - These are the only writes that do not pass `tenant_isolation`. For `atesta_app`, nothing
     changes: the policies do not apply to it.
 - **New tenant table `billing_profiles`:** standard `tenant_isolation`, SELECT only for
@@ -184,7 +189,13 @@ relayed by the coordinator (ADR-017, "Owner decisions"; #405).
   - `suspended_at`, and `suspension_reason`, a text code held by a CHECK from a closed list; both
     NULL or both set;
   - `closure_origin` (`owner` or `operator`), NULL exactly when `closure_requested_at` is NULL.
-  - `atesta_app` gains no write grant on them.
+    It is a stored generated column: `owner` when `closure_requested_by` is set, `operator`
+    otherwise (#445);
+  - `trial_ends_at`, 14 days after creation (operator-portal spec, owner answer 1), read by the
+    operator role and written by no runtime role (#445).
+  - `atesta_app` gains no write grant on them. Its table-level UPDATE on `organizations` becomes
+    column-level UPDATE of `name`, `locale`, `updated_at`, `closure_requested_at` and
+    `closure_requested_by` (#445).
 - **New operator tables** (the class from amendment 3): no RLS, no `organization_id` foreign
   key, no privilege for `atesta_app`.
   - `operator_staff`: SELECT, INSERT, and UPDATE of role and `disabled_at`.
