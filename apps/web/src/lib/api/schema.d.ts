@@ -2476,12 +2476,20 @@ export interface components {
         /**
          * FileOut
          * @description An uploaded document (evidence-file-uploads spec). The storage key stays in the API.
+         *
+         *     scan_status: the malware scan (evidence-malware-scanning spec); only `no_threats_found`, or
+         *     `not_scanned` in local development, can be downloaded.
          */
         FileOut: {
             /** Media Type */
             media_type: string;
             /** Name */
             name: string;
+            /**
+             * Scan Status
+             * @enum {string}
+             */
+            scan_status: "pending" | "no_threats_found" | "threats_found" | "unsupported" | "access_denied" | "failed" | "not_scanned";
             /** Sha256 */
             sha256: string;
             /** Size Bytes */

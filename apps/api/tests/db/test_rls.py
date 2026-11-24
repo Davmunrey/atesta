@@ -102,6 +102,12 @@ INSERT INTO evidence_controls VALUES (:e, 'ctl.rls', :o);
 INSERT INTO evidence_statements (organization_id, evidence_id, submission_id,
   payload_hash, statement)
   VALUES (:o, :e, gen_random_uuid(), repeat('a', 64), 'Synthetic statement');
+WITH d AS (INSERT INTO evidence (id, organization_id, kind, title, storage_key, sha256,
+  media_type, size_bytes, source_type, created_by, collected_at)
+  VALUES (gen_random_uuid(), :o, 'document', 't', :o || '/evidence/f/a.pdf', repeat('b', 64),
+  'application/pdf', 1, 'upload', :u, now()) RETURNING id)
+INSERT INTO evidence_file_scans (organization_id, evidence_id, status)
+  SELECT :o, id, 'threats_found' FROM d;
 INSERT INTO score_snapshots (id, organization_id, framework_key, framework_version,
   catalog_version, scan_id, passed, failed, manual, not_applicable, requirement_results)
   VALUES (gen_random_uuid(), :o, 'fw_rls', '1', 'r1', gen_random_uuid(), 0, 0, 0, 0, '{}');
@@ -206,6 +212,7 @@ def test_every_rls_table_fails_closed_and_shows_one_tenant(
                 "evidence",
                 "evidence_controls",
                 "evidence_statements",
+                "evidence_file_scans",
                 "connections",
                 "scans",
                 "scan_check_results",

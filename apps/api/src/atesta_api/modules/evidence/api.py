@@ -17,6 +17,12 @@ from atesta_api.modules.evidence.links import (
     carries_credential,
     refuse_credential_link,
 )
+from atesta_api.modules.evidence.malware import (
+    MALWARE_FOUND,
+    SCAN_RESULTS,
+    RecordedScan,
+    record_file_scan,
+)
 from atesta_api.modules.evidence.models import Evidence, EvidenceControl
 from atesta_api.modules.evidence.store import (
     EvidenceStore,
@@ -309,11 +315,15 @@ __all__ = [
     "CredentialLinkError",
     "EvidenceStore",
     "LocalEvidenceStore",
+    "MALWARE_FOUND",
     "ObjectMissingError",
+    "RecordedScan",
+    "SCAN_RESULTS",
     "S3EvidenceStore",
     "StoreUnavailableError",
     "carries_credential",
     "record_attestation",
+    "record_file_scan",
     "refuse_credential_link",
     "store_from_env",
     "wire_evidence",

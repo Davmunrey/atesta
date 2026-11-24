@@ -76,6 +76,45 @@ class EvidenceControl(TenantMixin, Base):
     control_key: Mapped[str] = mapped_column(Text)  # validated through compliance.api
 
 
+SCAN_STATUSES = (
+    "no_threats_found",
+    "threats_found",
+    "unsupported",
+    "access_denied",
+    "failed",
+    "not_scanned",
+)
+
+
+class EvidenceFileScan(TenantMixin, Base):
+    """The malware scan result of one uploaded file (evidence-malware-scanning spec). Append-only:
+    the first result is final (D4); no row means the file is still pending."""
+
+    __tablename__ = "evidence_file_scans"
+    __table_args__ = (
+        PrimaryKeyConstraint("organization_id", "evidence_id"),
+        ForeignKeyConstraint(
+            ["organization_id", "evidence_id"],
+            ["evidence.organization_id", "evidence.id"],
+            ondelete="RESTRICT",
+        ),
+        CheckConstraint(
+            "status IN (" + ", ".join(f"'{s}'" for s in SCAN_STATUSES) + ")", name="status"
+        ),
+        CheckConstraint(
+            "object_version IS NULL OR length(object_version) BETWEEN 1 AND 1024",
+            name="object_version_length",
+        ),
+    )
+
+    evidence_id: Mapped[uuid.UUID]
+    status: Mapped[str] = mapped_column(Text)
+    object_version: Mapped[str | None] = mapped_column(Text)  # the S3 version GuardDuty read
+    recorded_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
 class EvidenceStatement(TenantMixin, Base):
     __tablename__ = "evidence_statements"
     __table_args__ = (

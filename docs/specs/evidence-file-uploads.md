@@ -72,8 +72,9 @@ they open is the file that was recorded.
 - [ ] **Where:** the evidence panel beside each control, next to "Registrar evidencia". "Subir
   archivo" appears only when `file_uploads.enabled` is true.
 - [ ] **Form:** a file and a title that defaults to the file name. The accepted types and the
-  size limit are stated before a file is chosen, from `file_uploads`, with the note that files
-  are not scanned for malware (D2) and that the record cannot be edited.
+  size limit are stated before a file is chosen, from `file_uploads`, with the note that each
+  file is analysed for malware before it can be downloaded (D2) and that the record cannot be
+  edited.
 - [ ] **Before sending:** a type outside the list, an empty file or a file over the limit is
   refused in the form with the API's own ES/EN text, and nothing is sent. The API still decides.
 - [ ] **Sending:** the form is busy while the file travels; a refusal shows the API's text and
@@ -96,15 +97,12 @@ they open is the file that was recorded.
   for 365 days (#263), so size and type have to be enforced before the bytes land, by the only
   writer. And at 25 MiB the API can carry the body. A direct multipart upload for larger files
   can be added later without changing the record.
-- **D2. No malware scanning in this increment (owner decides in #401).** Atesta never opens, renders
-  or parses an uploaded file. The allowlist leaves out everything that runs or scripts in a
-  browser or an office suite (executables, HTML, SVG, archives, macro-enabled formats), the
-  content must match its type, and downloads are attachments with `nosniff` and a sandbox policy.
-  What remains: a booby-trapped PDF or Office document that a member uploads reaches whoever
-  downloads it, an auditor included, exactly as it would by email. The screen says files are not
-  scanned. Scanning objects in the bucket (for example Amazon GuardDuty Malware Protection for
-  S3) is a follow-up that needs the owner's decision on cost and on its availability in
-  eu-south-2, which is not verified here.
+- **D2. Malware scanning (owner decision on #401, 2026-11-24).** Every uploaded file is scanned
+  by Amazon GuardDuty Malware Protection for S3 in eu-south-2, and a download is refused until
+  the file is known to be clean. The design, the statuses and the verified AWS facts are in
+  `evidence-malware-scanning.md`. This replaces the first increment's decision to ship without
+  scanning. Atesta still never opens, renders or parses an uploaded file, and the type allowlist
+  and the download headers stay as they are.
 - **D3. The submission id is the evidence id.** It avoids a table that would only map one to
   the other. The id is a random UUID chosen by the client; a collision with another
   organization's evidence id is answered as a conflict and reveals nothing readable.
@@ -122,7 +120,7 @@ they open is the file that was recorded.
   through the same integrity check.
 - Downloading scan outputs, and erasing an organization's files on closure (an owner step under
   Object Lock, hosted-environment spec).
-- Malware scanning (D2) and a per-organization storage quota.
+- A per-organization storage quota. Malware scanning moved to `evidence-malware-scanning.md` (D2).
 - Citing an uploaded file in a requirement assessment. A manual control review can already
   cite it, as it cites any evidence linked to its control; the requirement register accepts
   statements only (`compliance/register.py`), and widening that belongs to its own spec.
