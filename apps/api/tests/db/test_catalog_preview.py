@@ -91,3 +91,14 @@ def test_the_real_catalog_imports_and_reimports_with_signed_content(owner: Conne
         )
     )
     assert signed == "2026-11-23"
+    # The transposition record travels with its framework (transposition spec, #437).
+    pulled = owner.scalar(
+        text("SELECT attributes->'transposition'->>'pulled_on' FROM frameworks WHERE key = 'nis2'")
+    )
+    assert pulled == "2026-11-24"
+    assert (
+        owner.scalar(
+            text("SELECT attributes ? 'transposition' FROM frameworks WHERE key = 'gdpr_art32'")
+        )
+        is False
+    )

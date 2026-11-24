@@ -17,6 +17,7 @@ from atesta_api.modules.compliance.catalog_schema import (
     Pack,
     PackMetadata,
     Requirements,
+    Transposition,
 )
 
 
@@ -51,8 +52,10 @@ class Catalog:
         return [self.controls[key] for key in sorted(keys)]
 
     def fingerprint(self, pack: Pack) -> str:
+        # A pack without a transposition record keeps the fingerprint it had before records.
+        absent = set() if pack.transposition else {"transposition"}
         payload = {
-            "pack": pack.model_dump(mode="json"),
+            "pack": pack.model_dump(mode="json", exclude=absent),
             "controls": [c.model_dump(mode="json") for c in self.used_controls(pack)],
             "engine_version": self.engine_version,
         }
@@ -86,14 +89,21 @@ def read_catalog(root: Path, *, expected_checks: set[str], engine_version: str) 
         mappings = Mappings.model_validate(_yaml(directory / "mappings.yaml"))
         coverage_file = directory / "coverage.yaml"
         coverage = Coverage.model_validate(_yaml(coverage_file)) if coverage_file.exists() else None
+        record_file = directory / "transposition.yaml"
+        record = Transposition.model_validate(_yaml(record_file)) if record_file.exists() else None
         pack = Pack(
             metadata=metadata,
             **requirements.model_dump(),
             **mappings.model_dump(),
             coverage=coverage,
+            transposition=record,
         )
         if metadata.id != directory.name:
             raise ValueError("pack id must match its directory")
+        if record is not None and record.act not in metadata.source:
+            raise ValueError(
+                "the transposition record is not for the act named in the pack's source"
+            )
         _unique([r.id for r in pack.requirements], "requirement")
         _unique([f"{m.requirement_id}:{m.control_id}" for m in pack.mappings], "mapping")
         _unique(metadata.attributes.preparation_controls, "preparation control")

@@ -82,3 +82,64 @@ Annex II is covered by the 73 imported measures. Every other unit is excluded wi
   - the case of an incident still ongoing at the final report (23(4)(e)): a progress report then,
     and a final report within one month of handling the incident. That month starts from an
     event Atesta does not record. Notes cover it for now.
+
+## National transposition record (2026-11-24, nis2-transposition spec, #437)
+
+`transposition.yaml` lists, for each of the 27 Member States, the national measures notified to
+the Commission for Directive (EU) 2022/2555. It is context next to the pack, not requirements,
+and it is unsigned.
+
+- **Source:** the Publications Office SPARQL endpoint
+  `https://publications.europa.eu/webapi/rdf/sparql`. A measure belongs to the Directive when it
+  is linked to the Directive's work by
+  `cdm:measure_national_implementing_implements_resource_legal`. Only its CELEX number starting
+  with `72022L2555` is kept: a measure notified for several acts carries one CELEX per act.
+- **Pull:** 2026-11-24, 13:00 UTC, with
+  `uv run python -m apps.api.devtools.eu_nim 32022L2555`. Two consecutive pulls returned the same
+  response, SHA-256 `416dfe21b3fed1d251766686636d66676419488369268e66e083e5f6957dbbc1`. This
+  hash identifies that response, not future ones.
+- **Result:** 305 measures from 25 Member States. Spain (ESP) and Ireland (IRL) have none
+  listed: "no measure notified as of 2026-11-24". Counts per country are in the file.
+- **Copied as published:**
+  - titles, act types and national references, in the national language;
+  - the declaration code `NIM_DECLARTRS_CPL`, on the three Greek measures only. Atesta keeps
+    the code and does not interpret it;
+  - document and notification dates. Some notification dates predate the Directive (the
+    earliest is 2004-01-19, on Czech and Hungarian measures); they are kept as published.
+- **Links:** the national website the Member State gave, when it is HTTPS (64 measures);
+  otherwise the measure's Publications Office record,
+  `https://publications.europa.eu/resource/celex/<CELEX>` (241 measures).
+- **Not checked:**
+  - the EUR-Lex NIM page (`listing`), which answers automated clients with a challenge. It is
+    the same data for a human reader;
+  - whether any notified measure transposes the Directive completely or correctly;
+  - Commission infringement procedures.
+
+### Spain
+
+- **Notified measures:** none in the pull above.
+- **Consolidated Spanish law:** the BOE consolidated legislation open data API, full-text query
+  `texto:"2022/2555"`, on 2026-11-24, returned three texts. A local copy of the consolidated
+  corpus (leyabierta/leyes, BOE-derived, commit `73eefff`, 2026-11-23) gave the same three; it
+  was only a cross-check and nothing is copied from it.
+
+  | BOE id | Text | Where it cites the Directive |
+  | --- | --- | --- |
+  | `BOE-A-2024-8715` | Real Decreto 443/2024 (5G security scheme) | Article 28(1) |
+  | `BOE-A-2025-16214` | Orden PJC/845/2025 (national aerospace security strategy) | Chapter 3 and the annex glossary |
+  | `BOE-A-2026-16757` | Orden TES/804/2026 (ministry information security policy) | Preamble and annex |
+
+- **Quotes:** each reference quotes one paragraph from the BOE consolidated text
+  (`https://www.boe.es/datosabiertos/api/legislacion-consolidada/id/<BOE-ID>/texto`, latest
+  version of the block), whitespace normalized only. Captures on 2026-11-24, SHA-256:
+  - `BOE-A-2024-8715`: `419a209516d56d4bfddce9065a4cd1b9f765f52a76d85b0612542401e29a95fd`;
+  - `BOE-A-2025-16214`: `58cd05150eb8f5fc67b5814793164d43b80c695466b264f2eae37a8caba8dc20`;
+  - `BOE-A-2026-16757`: `0c9a3b8b0bdddccb3a92e7566e1b260c508f534d141e331fe874037def8ba886`.
+- **New laws not yet consolidated:** the BOE daily summaries
+  (`https://www.boe.es/datosabiertos/api/boe/sumario/<YYYYMMDD>`) from 2026-08-26 to 2026-11-24
+  (78 published days) list no item whose title mentions "ciberseguridad", "2022/2555" or "redes
+  y sistemas de información" other than contract notices, agreements, an INCIBE announcement
+  and a university syllabus. None is a transposing law.
+- **Authorities and CSIRTs:** none listed. No official source checked designates them for Spain
+  under the Directive. Article 28(2) of Real Decreto 443/2024 names INCIBE-CERT for 5G incident
+  response; that is not a designation under the Directive and is not recorded as one.

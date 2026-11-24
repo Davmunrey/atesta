@@ -1,5 +1,6 @@
 """Typed preview content; publishing a reviewed pack needs a separate release workflow."""
 
+import datetime
 from datetime import date
 from typing import Annotated, Literal, Self
 from urllib.parse import urlsplit
@@ -341,8 +342,132 @@ class Mappings(Content):
     mappings: list[MappingContent]
 
 
+# The Member States as the Publications Office names them (ISO 3166-1 alpha-3).
+EU_MEMBER_STATES = frozenset(
+    {
+        "AUT",
+        "BEL",
+        "BGR",
+        "CYP",
+        "CZE",
+        "DEU",
+        "DNK",
+        "ESP",
+        "EST",
+        "FIN",
+        "FRA",
+        "GRC",
+        "HRV",
+        "HUN",
+        "IRL",
+        "ITA",
+        "LTU",
+        "LUX",
+        "LVA",
+        "MLT",
+        "NLD",
+        "POL",
+        "PRT",
+        "ROU",
+        "SVK",
+        "SVN",
+        "SWE",
+    }
+)
+
+
+class NationalMeasure(Content):
+    """A national measure a Member State notified for the act, as the Publications Office lists
+    it. The title is official text in the national language; `declaration` is the published code,
+    kept verbatim and never interpreted."""
+
+    celex: Text
+    title: Text
+    act_type: Text | None = None
+    reference: Text | None = None
+    date: datetime.date
+    notified_on: datetime.date
+    url: Link
+    declaration: Text | None = None
+
+
+class MemberStateStatus(Content):
+    country: Annotated[str, StringConstraints(pattern=r"^[A-Z]{3}$")]
+    status: Literal["notified", "none_notified"]
+    measures: list[NationalMeasure]
+
+    @model_validator(mode="after")
+    def measures_match_status(self) -> Self:
+        if (self.status == "notified") != bool(self.measures):
+            raise ValueError("a notified status lists its measures, and only a notified one")
+        return self
+
+
+class NationalReference(Content):
+    """A national text that cites the act, with one paragraph quoted from its official
+    publication (rule 10)."""
+
+    id: Text
+    title: Text
+    url: Link
+    section: Text
+    quote_es: Text
+
+
+class Authority(Content):
+    """A competent authority or CSIRT, only as an official source names it."""
+
+    name: Text
+    role: Text
+    source: Link
+
+
+class NationalContext(Content):
+    """What official national sources say about the act, checked on a date. The summary is
+    Atesta's own words; references quote the official text."""
+
+    country: Annotated[str, StringConstraints(pattern=r"^[A-Z]{3}$")]
+    checked_on: date
+    sources: list[Link] = Field(min_length=1)
+    summary_es: Text
+    summary_en: Text
+    references: list[NationalReference] = Field(default_factory=list)
+    authorities: list[Authority] = Field(default_factory=list)
+
+
+class Transposition(Content):
+    """National measures notified for a directive, for exactly the 27 Member States, from one
+    pull of the Publications Office (transposition spec, #437). Context, never requirements; a
+    candidate until the owner signs it: the reviewer's name and the date, both or neither."""
+
+    act: Annotated[str, StringConstraints(pattern=r"^[0-9]{5}[A-Z][0-9]{4}$")]
+    source: Link
+    listing: Link
+    relation: Text
+    pulled_on: date
+    member_states: list[MemberStateStatus]
+    national_context: list[NationalContext] = Field(default_factory=list)
+    reviewed_by: Text | None = None
+    reviewed_on: date | None = None
+
+    @model_validator(mode="after")
+    def complete_and_signed_in_full(self) -> Self:
+        countries = [s.country for s in self.member_states]
+        if len(countries) != len(EU_MEMBER_STATES) or set(countries) != EU_MEMBER_STATES:
+            raise ValueError("a transposition record lists each of the 27 Member States once")
+        if any(m.notified_on > self.pulled_on for s in self.member_states for m in s.measures):
+            raise ValueError("a measure cannot be notified after the pull")
+        contexts = [c.country for c in self.national_context]
+        if len(contexts) != len(set(contexts)) or set(contexts) - EU_MEMBER_STATES:
+            raise ValueError("one national context per Member State")
+        if (self.reviewed_by is None) != (self.reviewed_on is None):
+            raise ValueError("a signed record names its reviewer and the review date")
+        return self
+
+
 class Pack(Content):
     metadata: PackMetadata
     requirements: list[RequirementContent]
     mappings: list[MappingContent]
     coverage: Coverage | None = None
+    transposition: Transposition | None = None

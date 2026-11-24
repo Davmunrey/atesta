@@ -6,7 +6,7 @@ not a claim that every organization needs every certification or that all regime
 | Pack | Actual content | Preparation controls | Assessments enabled |
 | --- | --- | --- | --- |
 | ENS | 73 Annex II measures; 78 candidate mappings; qualified review pending | 26 shared guides, including six technical examples | No |
-| NIS2 | 23 requirements from Art. 20, 21(1)-(4) and 23(1)-(4), official ES and EN; 37 candidate mappings; coverage ledger for all 46 articles and 3 annexes; Spanish transposition and Implementing Regulation (EU) 2024/2690 pending | 21 guides (preparation and mapped) | No |
+| NIS2 | 23 requirements from Art. 20, 21(1)-(4) and 23(1)-(4), official ES and EN; 37 candidate mappings; coverage ledger for all 46 articles and 3 annexes; national measures notified by the 27 Member States as context (none for Spain on 2026-11-24, unsigned); Spanish transposing law and Implementing Regulation (EU) 2024/2690 pending | 21 guides (preparation and mapped) | No |
 | ISO/IEC 27001:2022 | Scope/source template; licensed requirements not reproduced | 26 candidates | No |
 | GDPR Articles 32 to 34 | 14 requirements, official ES and EN (Art. 32 except para. 3, 33, 34(1)-(3)); 26 candidate mappings; coverage ledger for all 99 articles; LOPDGDD not imported | 19 guides (preparation and mapped) | No |
 | DORA | 22 requirements, one per article (Art. 5-14, 16-19, 23-30), official ES and EN; 47 candidate mappings; coverage ledger for all 64 articles; technical standards pending | 21 guides (preparation and mapped) | No |
