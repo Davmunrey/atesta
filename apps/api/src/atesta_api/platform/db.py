@@ -2,11 +2,12 @@
 
 import uuid
 from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Annotated, Any
 
 from fastapi import Depends
-from sqlalchemy import ForeignKey, MetaData, create_engine, pool
+from sqlalchemy import ForeignKey, MetaData, create_engine, pool, text
 from sqlalchemy.engine import URL, Engine, make_url
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
@@ -89,6 +90,24 @@ def get_db() -> Iterator[Session]:
         session.rollback()
         raise
     finally:
+        session.close()
+
+
+@contextmanager
+def read_only_transaction() -> Iterator[Session]:
+    """A separate transaction that cannot write and is always rolled back.
+
+    For identity's member reads only (ADR-012 amendment 10): the caller must enter a context
+    before any query, as with every session.
+    """
+    if _factory is None:
+        raise RuntimeError("database not configured")
+    session = _factory()
+    try:
+        session.execute(text("SET TRANSACTION READ ONLY"))
+        yield session
+    finally:
+        session.rollback()
         session.close()
 
 

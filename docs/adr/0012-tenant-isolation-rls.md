@@ -235,3 +235,31 @@ Status: proposed. The owner chose the substance on 2026-11-24, in the session th
 - **Why not a job that runs as `atesta_owner`:** the worker would then hold a role that bypasses
   RLS on every table. A narrow grant plus a restrictive policy keeps the worker on the runtime
   role and gives it one new ability: deleting its organization's old usage rows.
+
+## Amendment 10 (proposed 2026-11-24, consultancy-portfolio spec, issue 228)
+
+Status: proposed. The owner chose the substance on 2026-11-24, in the session that built it. The
+recommendation put to the owner was "Resumen de portfolio recorriendo las organizaciones una a
+una, sin consulta global", and the answer "sí a todo, empieza por #228". Accepting the amendment
+is the owner's.
+
+- **One request may read several organizations, one transaction each.** "Every request runs in
+  one transaction" (Consequences) gains one exception: the portfolio summary. After the request's
+  own transaction has authenticated the caller, the API opens one further transaction per
+  organization the caller belongs to, one at a time.
+- **Each of those transactions is an ordinary member read:**
+  - it enters the caller's user context, finds the caller's own membership of that organization
+    and applies the same rules as `require_member` (unknown organization, expired access);
+  - it then enters that organization's context with the reason `membership`;
+  - it is read-only (`SET TRANSACTION READ ONLY`) and always rolled back.
+- **What does not change:**
+  - no query sees tenant rows of two organizations: `enter_org_context` still refuses a second
+    organization in one transaction, and that refusal is what keeps the walk honest;
+  - no policy, grant, setting or context reason is added, so the schema snapshot is unchanged;
+  - only `identity.api` opens these transactions (`member_reads`), as it alone sets a context.
+- **Bounded.** The walk stops at 250 organizations per request and reports how many it left out,
+  so one person with many organizations cannot make a request of unbounded cost.
+- **Why not one cross-tenant query:** it would need either a policy that lets a member read
+  tenant rows outside the current context, on every table the summary touches, or a SECURITY
+  DEFINER function, which this ADR bans. Both widen what a forgotten filter can leak. The walk
+  costs more queries and keeps "a forgotten filter returns nothing".

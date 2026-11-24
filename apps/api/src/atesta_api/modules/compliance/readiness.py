@@ -50,8 +50,12 @@ class FrameworkReadiness(BaseModel):
 def readiness(
     member: Annotated[Member, Depends(require_member)], session: DbSession
 ) -> list[FrameworkReadiness]:
+    return organization_readiness(session, member.organization_id)
+
+
+def organization_readiness(session: Session, org: uuid.UUID) -> list[FrameworkReadiness]:
+    """Every active framework's counts for one organization (the portfolio reuses it)."""
     today = datetime.now().astimezone().date()
-    org = member.organization_id
     out: list[FrameworkReadiness] = []
     for framework in active_frameworks(session):
         found = framework_readiness(session, org, framework.key, framework.name, today)

@@ -34,7 +34,15 @@ from atesta_api.modules.identity.context import (
     enter_training_link_context,
     enter_user_context,
 )
-from atesta_api.modules.identity.deps import CurrentCaller, Member, require_member, require_role
+from atesta_api.modules.identity.deps import (
+    CurrentCaller,
+    Member,
+    OwnOrganization,
+    member_read,
+    own_organizations,
+    require_member,
+    require_role,
+)
 from atesta_api.modules.identity.invitations import QueryFreeRoute, normalize_email, token_hash
 from atesta_api.modules.identity.models import Role
 from atesta_api.modules.identity.org_profile import (
@@ -75,6 +83,7 @@ __all__ = [
     "CurrentCaller",
     "Member",
     "OrganizationProfile",
+    "OwnOrganization",
     "Recipient",
     "QueryFreeRoute",
     "Role",
@@ -89,8 +98,10 @@ __all__ = [
     "require_scope",
     "install_identity",
     "is_member",
+    "member_read",
     "normalize_email",
     "organization_profile",
+    "own_organizations",
     "person",
     "recipients",
     "router",
