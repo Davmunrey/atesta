@@ -5,6 +5,11 @@ packages:
   - packages/ui
 # Same 7-day cooldown as uv's exclude-newer (pnpm docs, dependency resolution settings).
 minimumReleaseAge: 10080
+# Supply-chain policy (pnpm docs, settings): transitive dependencies come only from the registry,
+# and an update that loses the trust evidence of an earlier version (provenance, a trusted
+# publisher) is refused.
+blockExoticSubdeps: true
+trustPolicy: no-downgrade
 # next-intl pulls these for its optional message extraction; prebuilt binaries, no install scripts.
 ignoredBuiltDependencies:
   - "@parcel/watcher"

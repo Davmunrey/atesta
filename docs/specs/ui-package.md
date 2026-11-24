@@ -16,7 +16,9 @@ copy it.
 
 - [ ] **One pnpm workspace at the root.** `pnpm-workspace.yaml` and the only `pnpm-lock.yaml` sit
   at the repository root and list `apps/web` and `packages/ui`. `minimumReleaseAge: 10080` and
-  `ignoredBuiltDependencies` are kept. No dependency is added and no version changes: the lock's
+  `ignoredBuiltDependencies` are kept. `blockExoticSubdeps: true` and `trustPolicy: no-downgrade`
+  are added: semgrep's pnpm rules require them once the workspace file lists packages, and the
+  lock already resolves every package from the registry. No dependency is added and no version changes: the lock's
   `packages` and `snapshots` sections are unchanged; only `importers` changes.
 - [ ] **The package.** `packages/ui` is `@atesta/ui`, private, shipped as TypeScript source and
   compiled by each app (`transpilePackages`). It exports, one entry each:

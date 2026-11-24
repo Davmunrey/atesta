@@ -39,10 +39,9 @@ export async function expectOk(call: Promise<{ error?: unknown; response: Respon
  *  hold one text per code its API returns (tested in the app). */
 export function messageKey(code: string | null, messages: object): string {
   if (code === null) return "errors.unknown";
-  let node: unknown = (messages as { errors?: unknown }).errors;
-  for (const part of code.split(".")) {
-    if (typeof node !== "object" || node === null || !Object.hasOwn(node, part)) return "errors.unknown";
-    node = (node as Record<string, unknown>)[part];
-  }
-  return typeof node === "string" ? `errors.${code}` : "errors.unknown";
+  // Own properties only, read as descriptors: "constructor" or "__proto__" never resolve.
+  const text = code.split(".").reduce<unknown>((node, part) =>
+    typeof node === "object" && node !== null ? Object.getOwnPropertyDescriptor(node, part)?.value : undefined,
+  Object.getOwnPropertyDescriptor(messages, "errors")?.value);
+  return typeof text === "string" ? `errors.${code}` : "errors.unknown";
 }
