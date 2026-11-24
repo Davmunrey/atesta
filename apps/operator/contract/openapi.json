@@ -134,6 +134,150 @@
         "title": "BillingFullOut",
         "type": "object"
       },
+      "BillingProfileIn": {
+        "description": "Every field as text, checked in code so a bad one names itself (`operator.invalid_field`).",
+        "properties": {
+          "address_line1": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address Line1"
+          },
+          "address_line2": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address Line2"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "contact_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Email"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "legal_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Name"
+          },
+          "postal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postal Code"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "tax_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tax Id"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "BillingProfileIn",
+        "type": "object"
+      },
+      "BillingProfileOut": {
+        "properties": {
+          "changed": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Changed",
+            "type": "array"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "changed",
+          "updated_at"
+        ],
+        "title": "BillingProfileOut",
+        "type": "object"
+      },
       "BillingSummaryOut": {
         "properties": {
           "complete": {
@@ -233,6 +377,18 @@
         ],
         "title": "ConnectionsOut",
         "type": "object"
+      },
+      "Feature": {
+        "description": "Framework-agnostic product features only.",
+        "enum": [
+          "daily_monitoring",
+          "evidence_export",
+          "policy_ai_review",
+          "questionnaire_autofill",
+          "trust_center"
+        ],
+        "title": "Feature",
+        "type": "string"
       },
       "HTTPValidationError": {
         "properties": {
@@ -528,6 +684,38 @@
         "title": "Plan",
         "type": "string"
       },
+      "PlanInfo": {
+        "properties": {
+          "connector_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Connector Limit"
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          }
+        },
+        "required": [
+          "plan",
+          "connector_limit",
+          "features"
+        ],
+        "title": "PlanInfo",
+        "type": "object"
+      },
       "PlanOut": {
         "properties": {
           "addons": {
@@ -568,6 +756,30 @@
           "default"
         ],
         "title": "PlanOut",
+        "type": "object"
+      },
+      "PlansOut": {
+        "properties": {
+          "addons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Addons",
+            "type": "array"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/PlanInfo"
+            },
+            "title": "Plans",
+            "type": "array"
+          }
+        },
+        "required": [
+          "plans",
+          "addons"
+        ],
+        "title": "PlansOut",
         "type": "object"
       },
       "ScansOut": {
@@ -614,6 +826,74 @@
           "closing"
         ],
         "type": "string"
+      },
+      "SubscriptionIn": {
+        "properties": {
+          "addons": {
+            "default": [],
+            "items": {
+              "maxLength": 100,
+              "type": "string"
+            },
+            "maxItems": 50,
+            "title": "Addons",
+            "type": "array"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Note",
+            "type": "string"
+          },
+          "plan": {
+            "maxLength": 50,
+            "title": "Plan",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plan",
+          "reason"
+        ],
+        "title": "SubscriptionIn",
+        "type": "object"
+      },
+      "SubscriptionOut": {
+        "properties": {
+          "addons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Addons",
+            "type": "array"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          },
+          "previous_plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Plan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "plan",
+          "previous_plan",
+          "addons"
+        ],
+        "title": "SubscriptionOut",
+        "type": "object"
       },
       "ValidationError": {
         "properties": {
@@ -888,6 +1168,195 @@
         "summary": "Organization Detail",
         "tags": [
           "organizations"
+        ]
+      }
+    },
+    "/api/v1/organizations/{org_id}/billing-profile": {
+      "get": {
+        "operationId": "get_billing_profile_api_v1_organizations__org_id__billing_profile_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingFullOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Billing Profile",
+        "tags": [
+          "billing"
+        ]
+      },
+      "put": {
+        "operationId": "put_billing_profile_api_v1_organizations__org_id__billing_profile_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingProfileIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Billing Profile",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/organizations/{org_id}/subscription": {
+      "put": {
+        "operationId": "put_subscription_api_v1_organizations__org_id__subscription_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Subscription",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/plans": {
+      "get": {
+        "description": "What the plan editor offers: plans with their limits and features, and every add-on.",
+        "operationId": "plans_api_v1_plans_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlansOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Plans",
+        "tags": [
+          "billing"
         ]
       }
     },

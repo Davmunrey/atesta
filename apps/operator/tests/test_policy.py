@@ -22,6 +22,7 @@ SPEC: dict[tuple[str, str], tuple[frozenset[str], bool]] = {
     ("GET", "/api/v1/me"): (frozenset({A, B, S}), False),
     ("GET", "/api/v1/organizations"): (frozenset({A, B, S}), False),
     ("GET", "/api/v1/organizations/{org_id}"): (frozenset({A, B, S}), False),
+    ("GET", "/api/v1/plans"): (frozenset({A, B}), False),  # the plan editor's options (#477)
     ("PUT", "/api/v1/organizations/{org_id}/subscription"): (frozenset({A, B}), False),
     ("GET", "/api/v1/organizations/{org_id}/billing-profile"): (frozenset({A, B}), False),
     ("PUT", "/api/v1/organizations/{org_id}/billing-profile"): (frozenset({A, B}), False),

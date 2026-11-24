@@ -300,6 +300,23 @@ Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
   - **Customer events from the operator role** go through `platform.audit.record_by_atesta`,
     which names no actor column (the role has no grant on it), and the operator trail through
     `record_operator`, both in the request's transaction with the same request id.
+- **Plan and billing details (#477):**
+  - **`GET /plans`** (admin, billing) is added: the plan editor's plans, their connector limits
+    and features, and every known add-on. The frameworks gained or lost in the editor's preview
+    are not in it yet (open for build step 5).
+  - **Plan note:** `PUT .../subscription` takes an optional `note` (at most 500 characters),
+    stored in `subscriptions.note`. The note is separate from the reason: `subscriptions` is the
+    customer's own row, so the note must hold nothing internal; the reason stays in the
+    operator trail.
+  - **Billing formats:** every field but `address_line2` is required; no leading or trailing
+    space and no control character; the table's length limits; `country` two capital letters.
+    For `country` ES, the tax ID follows Orden EHA/451/2008 (arts. 2 to 5) and RD 1065/2007
+    (arts. 19 and 20), with spaces, dots and hyphens ignored; no check digit is verified, as
+    those texts do not give the algorithm. The DNI's eight digits and the NIE's X, Y or Z plus
+    seven digits are candidates, not in those texts. Other countries: 2 to 20 letters or
+    digits. A bad field is 422 `operator.invalid_field` with `field`.
+  - **Reads:** `GET .../billing-profile` writes `billing_profile.viewed` to the operator trail.
+  - **No change, no event:** a billing write that changes no field records nothing.
 - **Local sign-in:** `uv run python apps/api/devtools/fake_cognito.py --staff` serves a fake staff
   pool on port 9001 with client id `local-operator`. Both fakes now put `auth_time` in access
   tokens and keep it across a refresh: Cognito documents it as the time the user "completed
