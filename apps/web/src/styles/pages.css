@@ -172,3 +172,32 @@
   @keyframes sec-draw-y { from { transform: scaleY(0); } }
   @keyframes sec-draw-x { from { transform: scaleX(0); } }
 }
+
+/* Existing subpages in the public style (A3, issue 384). */
+@layer components {
+  /* Docs code blocks: ink, mono, with a visible copy button and its status beside it. */
+  .policy-copy .code-example { display: block; margin-top: 1rem; padding: 1rem 1.25rem; border: 0; border-radius: var(--radius-md); background: var(--color-ink); color: var(--color-on-ink); line-height: 1.6; }
+  .policy-copy textarea.code-example { resize: vertical; }
+  .policy-copy .code-example:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+  /* Lists in docs and legal copy read as lists: markers, spacing, and room above the field label. */
+  .policy-copy :is(ul, ol) { display: grid; gap: 0.5rem; margin-top: 1rem; padding-left: 1.25rem; }
+  .policy-copy ol { list-style: decimal; }
+  .policy-copy ul { list-style: disc; }
+  .policy-copy li::marker { color: var(--color-muted); }
+  .policy-copy section > label { display: block; margin-top: 1.5rem; }
+  .copy { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.875rem; margin-top: 0.75rem; }
+  .copy-button { min-height: 2.75rem; padding: 0.5rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-panel); font-weight: 500; transition: border-color var(--duration-hover) var(--ease-soft); }
+  .copy-button:hover { border-color: var(--color-fg); }
+  .copy-button[data-state="done"] { border-color: var(--color-success); }
+  .copy-button[data-state="failed"] { border-color: var(--color-danger); }
+  .copy-status { font-size: 0.875rem; color: var(--color-muted); }
+
+  /* Single-message pages: one centred card with the seal and the highlighter tab. */
+  .public-card-page { flex: 1; display: grid; place-items: center; padding: clamp(3rem, 8vw, 6rem) 1.25rem; }
+  .public-card { position: relative; display: grid; align-content: start; gap: 1.25rem; width: min(100%, 38rem); padding: clamp(1.75rem, 5vw, 3rem); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-panel); }
+  .public-card::before { content: ""; position: absolute; top: -1px; left: clamp(1.75rem, 5vw, 3rem); width: 3rem; height: 4px; background: var(--color-accent); }
+  .public-card-seal { width: 2.5rem; height: 2.5rem; }
+  .public-card .page-title { font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem); }
+  .public-card-links { display: flex; flex-wrap: wrap; gap: 0 1.5rem; }
+  .public-card-links a { display: inline-flex; align-items: center; min-height: 2.75rem; text-decoration: underline; text-underline-offset: 0.2em; }
+}

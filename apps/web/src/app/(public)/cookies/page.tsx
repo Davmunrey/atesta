@@ -32,7 +32,7 @@ export default function CookiesPage() {
         <div className="policy-layout">
           <nav aria-label={t("index")} className="policy-index">
             <p className="font-medium">{t("index")}</p>
-            {SECTIONS.map((id) => <a key={id} href={`#${id}`} className="underline">{t(`${id}.title`, { brand: brand("name") })}</a>)}
+            {SECTIONS.map((id) => <a key={id} href={`#${id}`}>{t(`${id}.title`, { brand: brand("name") })}</a>)}
           </nav>
           <div className="policy-copy">
             <section id="inventory" aria-labelledby="inventory-title">
