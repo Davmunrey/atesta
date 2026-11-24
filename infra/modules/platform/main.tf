@@ -36,6 +36,18 @@ variable "worker_count" {
   type = number
 }
 
+variable "alert_email" {
+  description = "Address the alerts topic emails; the env passes its budget address."
+  type        = string
+  sensitive   = true
+}
+
+variable "scan_organizations" {
+  description = "Customers whose scan roles the owner applies: organization id => connectors (m365, google_workspace)."
+  type        = map(set(string))
+  default     = {}
+}
+
 module "kms" {
   source = "../kms"
   name   = var.name
@@ -169,6 +181,29 @@ resource "aws_secretsmanager_secret" "session_key" {
   kms_key_id  = module.kms.secrets_key_arn
 }
 
+# The platform's M365 scanner credential (issue 453): {AZURE_CLIENT_ID, M365_CERTIFICATE_CONTENT}
+# as JSON, the same keys as a local credential file, set by hand (deploy runbook). Only the
+# scan-m365 role of each customer reads it.
+resource "aws_secretsmanager_secret" "m365_scanner" {
+  name        = "atesta/${var.name}/m365/scanner"
+  description = "Atesta Scanner app credential (JSON), set by hand"
+  kms_key_id  = module.kms.secrets_key_arn
+}
+
+# Operational alerts (issue 453): the scan failure-rate alarm emails the owner. Encrypted with
+# the queues key, whose policy lets CloudWatch publish. Email subscriptions wait for a confirmation
+# click before they deliver.
+resource "aws_sns_topic" "alerts" {
+  name              = "${var.name}-alerts"
+  kms_master_key_id = module.kms.queues_key_arn
+}
+
+resource "aws_sns_topic_subscription" "alerts" {
+  topic_arn = aws_sns_topic.alerts.arn
+  protocol  = "email"
+  endpoint  = var.alert_email
+}
+
 # Evidence file uploads (#222): the services find the evidence bucket through these settings.
 # Later arguments win in merge(), so a hand-set value cannot point the API at another bucket.
 locals {
@@ -195,6 +230,8 @@ module "ecs" {
   evidence_key_arn      = module.kms.evidence_key_arn
   file_scan_queue_arn   = aws_sqs_queue.file_scans.arn
   queues_key_arn        = module.kms.queues_key_arn
+  m365_secret_arn       = aws_secretsmanager_secret.m365_scanner.arn
+  alert_topic_arn       = aws_sns_topic.alerts.arn
   certificate_arn       = var.edge.api_certificate_arn
   images                = var.images
   environment           = local.app_environment
@@ -214,6 +251,21 @@ module "ecs" {
     }
   }
   decrypt_key_arns = [module.kms.database_key_arn]
+}
+
+# One set of scan roles per customer (owner, 2026-11-24): listed in scan_organizations, applied
+# by the owner. They need the scan boundary, so they exist only once the services do.
+module "scan_org" {
+  source              = "../scan-org"
+  for_each            = var.images == null || var.edge == null ? {} : var.scan_organizations
+  name                = var.name
+  organization_id     = each.key
+  connectors          = each.value
+  boundary_arn        = module.ecs[0].scan_boundary_arn
+  evidence_bucket_arn = module.evidence.bucket_arn
+  evidence_key_arn    = module.kms.evidence_key_arn
+  secrets_key_arn     = module.kms.secrets_key_arn
+  m365_secret_arn     = aws_secretsmanager_secret.m365_scanner.arn
 }
 
 module "web" {

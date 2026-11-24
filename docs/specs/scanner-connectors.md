@@ -680,7 +680,7 @@ count reads the tenant's own scans through the `(organization_id, id)` index; no
 | Ids | `-e` with ids only | `containerOverrides.environment` with ids only. ECS overrides have no `secrets` member and are plain key-value pairs |
 | Credential | `LocalCredentialStore` file streamed to the container's stdin | Wrapper reads the secret with the task role |
 | Network | `atesta-scan` network whose only way out is an allowlisting proxy with the Fargate host list; `FixtureRunner` and `atesta-dev-scan` use `--network none` | No public IP. Egress only through an allowlisting proxy or AWS Network Firewall domain/SNI allowlist. M365: login.microsoftonline.com, graph.microsoft.com, management.azure.com (step 5d); from PR 10 outlook.office365.com and the Teams PowerShell endpoints. Google: oauth2.googleapis.com, admin.googleapis.com, cloudidentity.googleapis.com. AWS only through VPC endpoints in eu-south-2 (S3, Secrets Manager, KMS, CloudWatch Logs). Everything else denied and logged (host list: candidate) |
-| Tenant scoping | Mount `<root>/<org_id>/scans/<scan_id>/attempt-<n>/out/` read-write and that attempt's `job.json` read-only, nothing else | Task role per org and provider (`overrides.taskRoleArn`): `scan-m365-<org_id>` reads only the M365 certificate; `verify-gws-<org_id>` reads only that org's two Google keys; `scan-gws-<org_id>` reads only `atesta/<env>/google/<org_id>`. S3: PutObject only under `<org_id>/scans/*/attempt-*/out/*`, GetObject only `<org_id>/scans/*/attempt-*/job.json`; a bucket policy denies these roles PutObject without `s3:if-none-match` (multipart parts exempted with `s3:ObjectCreationOperation`), `s3:DeleteObject*`, `s3:PutObjectAcl` and any write to `*/job.json`; versioning on. Created with a permissions boundary. Three roles per org: 333 orgs per account by default (1,000 roles), 3,333 at most |
+| Tenant scoping | Mount `<root>/<org_id>/scans/<scan_id>/attempt-<n>/out/` read-write and that attempt's `job.json` read-only, nothing else | Task role per org and provider (`overrides.taskRoleArn`): `scan-m365-<org_id>` reads only the M365 certificate; `verify-gws-<org_id>` reads only that org's two Google keys; `scan-gws-<org_id>` reads only `atesta/<env>/google/<org_id>`. S3: PutObject only under `<org_id>/scans/*/attempt-*/out/*`, GetObject only `<org_id>/scans/*/attempt-*/job.json`; a bucket policy denies these roles and the worker PutObject under `*/scans/*` without `s3:if-none-match` (both write with one PutObject, so multipart parts are refused too), and denies these roles `s3:DeleteObject*`, ACL, retention, legal-hold and tagging writes and any write to `*/job.json`; versioning on. Created with a permissions boundary. Three roles per org: 333 orgs per account by default (1,000 roles), 3,333 at most |
 | Output | `LocalScanStore` | S3 under the tenant prefix, eu-south-2 |
 | Logs | Wrapper's own JSON lines only | Same, to CloudWatch in eu-south-2 |
 | Timeout | Kill the container | `StopTask` |
@@ -692,8 +692,9 @@ Owner decisions, 2026-11-24 ("A y A"):
   No Atesta process holds IAM write rights;
 - scan egress goes through an allowlisting proxy on Fargate, not AWS Network Firewall.
 
-Part 1 (issue 444) is the code below. Part 2 is the roles module, the proxy, the bucket policy,
-the worker's S3 rights and the alarm.
+Part 1 (issue 444) is the runner, the store and the wrapper's AWS mode. Part 2 is the worker's
+log handler (issue 452), the scan roles, storage rights and alert (issue 453), and the egress
+proxy (issue 454).
 
 - **Worker (`ATESTA_SCAN_RUNNER=fargate`).** It is allowed in every environment, and refuses a
   missing setting by its name. Its settings:
@@ -742,13 +743,86 @@ the worker's S3 rights and the alarm.
 - **job.json.** It gains `credential_ref`, and for Google `verifier_credential_ref`: `aws-sm:` or
   `local:` refs, never a secret. For M365 the ref is the platform's, from the worker's settings.
   The local runner ignores them, because it reads its own store.
-- **Limits.** Until part 2:
-  - the scan roles have no rights on the evidence bucket's KMS key;
-  - the worker role has no S3 rights on the scan prefix;
-  - scan egress is not yet behind the proxy.
+- **Limits.** How long ECS honours a `clientToken` after a worker restart is a candidate until
+  it is checked on the ECS idempotency page.
 
-  So nothing scans in AWS before part 2 is applied. How long ECS honours a `clientToken` after a worker
-  restart is a candidate until it is checked on the ECS idempotency page.
+#### Scan roles per customer (issue 453)
+
+- **Module `infra/modules/scan-org`.** It takes one organization id (a lowercase UUID) and its
+  connectors (`m365`, `google_workspace`). The platform applies it once per entry of
+  `scan_organizations`, which the owner sets in the environment's untracked tfvars, then applies.
+  It exists only once the services do, because it needs the scan boundary.
+- **Roles.** Each is `/atesta-scan/<env>/<kind>-<org>` with the `scan_boundary` boundary:
+
+  | Role | Secrets it reads |
+  |---|---|
+  | `scan-m365-<org>` | `atesta/<env>/m365/scanner`, the platform's one M365 app |
+  | `verify-gws-<org>` | `atesta/<env>/google/<org>-??????` and `atesta/<env>/google-verifier/<org>-??????` |
+  | `scan-gws-<org>` | `atesta/<env>/google/<org>-??????` |
+
+  Secrets Manager adds six characters to a name, and `??????` matches exactly those.
+- **Every role's own policy:**
+  - `PutObject` on `<bucket>/<org>/scans/*/attempt-*/out/*`;
+  - `GetObject` on `.../job.json`;
+  - `kms:Decrypt` on the secrets key through Secrets Manager only;
+  - `kms:Decrypt` and `kms:GenerateDataKey` on the evidence key through S3 only (`kms:ViaService`).
+- **Trust.** Only `ecs-tasks.amazonaws.com`, with `aws:SourceAccount` and `aws:SourceArn`
+  `arn:aws:ecs:<region>:<account>:*`. AWS documents that a cluster cannot be named there. Only the
+  worker may pass the roles (`iam:PassRole` on `atesta-scan/<env>/*`).
+- **Boundary.** `scan_boundary` adds the evidence key (Decrypt, GenerateDataKey) and keeps only
+  Decrypt on the secrets key.
+- **M365 credential.** Secret `atesta/<env>/m365/scanner`, encrypted with the secrets key and set
+  by hand (deploy runbook). It holds `{AZURE_CLIENT_ID, M365_CERTIFICATE_CONTENT}` as JSON, the
+  same keys as a local credential file. The worker names it in M365 job files
+  (`ATESTA_M365_CREDENTIAL_REF`).
+
+#### Scan storage rights (issue 453)
+
+- **The bucket policy** has three statements, each matched with `aws:PrincipalArn`:
+  - it denies `s3:PutObject` under `*/scans/*` without `s3:if-none-match` to the scan roles and
+    the worker (AWS, "Enforce conditional writes on Amazon S3 buckets");
+  - it denies the scan roles any write to `*/job.json`;
+  - it denies the scan roles deletes and ACL, retention, legal-hold and tagging writes.
+- **The worker's rights.** It may do the following and nothing else on the bucket:
+  - `PutObject` on `*/scans/*/attempt-*/job.json`;
+  - `GetObject` on `*/scans/*`;
+  - `ListBucket` where `s3:prefix` is like `*/scans/*`;
+  - the evidence key, through S3 only.
+
+  It never lists the whole bucket, because evidence keys carry document names.
+- **A missing key answers 403.** Without `s3:ListBucket` on the whole bucket, S3 answers a
+  missing key with 403, not 404 (AWS, `GetObject`, Permissions). So on `AccessDenied`,
+  `S3ScanStore.read` lists that exact key:
+  - absent means `FileNotFoundError`, as a local miss;
+  - present, or a refused list, means `ScanStoreUnavailableError`.
+- **Settings.**
+  - The worker gets `ATESTA_SCAN_RUNNER=fargate` and every setting `_fargate()` requires, from the
+    ecs module's own resources. The cluster is passed as its ARN, because the `RunScans`
+    condition compares ARNs. The API does not get them. `ATESTA_SCANNER_EXPECTED` comes from the
+    worker image.
+  - The scan task definition sets `ATESTA_SCAN_SOURCE=s3`, `ATESTA_SCAN_BUCKET` and
+    `AWS_DEFAULT_REGION`.
+- **Candidates until the first AWS scan:**
+  - a conditional write that finds the key answers 412 to a writer without a bucket-wide list;
+  - Object Lock accepts the SDK's default CRC32 checksum header in place of `Content-MD5` (AWS,
+    "Uploading objects to an Object Lock enabled bucket" names `x-amz-sdk-checksum-algorithm`).
+
+#### Failure-rate alert (issue 453)
+
+- **Events.** The worker writes its `atesta.*` events to stdout, one bare line each (issue 452).
+  Before, Python dropped every INFO record.
+- **Metrics.** Two metric filters on the worker log group count `scan.finished` events in
+  `Atesta/<env>`:
+  - `ScansFinished` counts every one;
+  - `ScansFailed` counts those with status `failed`.
+- **Alarm.** `<env>-scan-failure-rate` evaluates
+  `IF(FILL(finished, 0) >= 20, 100 * FILL(failed, 0) / FILL(finished, 0), 0) > 5` over one 86,400 s
+  period, and missing data does not breach.
+- **Notification.** The alarm notifies `<env>-alerts`, an SNS topic encrypted with the queues key.
+  That key's policy lets `cloudwatch.amazonaws.com` use it, as SNS documents for CloudWatch
+  alarms. The topic has an email subscription to the environment's budget address; the owner
+  confirms it once.
+- No query crosses tenants.
 
 ### Ingest
 

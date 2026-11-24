@@ -60,6 +60,16 @@ variable "file_scan_queue_arn" {
   type        = string
 }
 
+variable "m365_secret_arn" {
+  description = "The platform's M365 scanner credential, named in M365 job files (issue 453)."
+  type        = string
+}
+
+variable "alert_topic_arn" {
+  description = "Topic the scan failure-rate alarm notifies (issue 453)."
+  type        = string
+}
+
 variable "queues_key_arn" {
   description = "KMS key of that queue: receiving needs kms:Decrypt (AWS, SQS key management)."
   type        = string
@@ -121,6 +131,25 @@ locals {
   account         = data.aws_caller_identity.current.account_id
   region          = data.aws_region.current.region
   scan_family_arn = "arn:aws:ecs:${local.region}:${local.account}:task-definition/${var.name}-scan"
+  evidence_bucket = element(split(":", var.evidence_bucket_arn), 5) # arn:aws:s3:::<name>
+  # The Fargate runner's settings (issue 453): the worker alone gets them, built from this
+  # module's own resources. ATESTA_SCANNER_EXPECTED comes from the worker image.
+  scan_runner = {
+    ATESTA_SCAN_RUNNER          = "fargate"
+    ATESTA_SCAN_BUCKET          = local.evidence_bucket
+    ATESTA_SCAN_CLUSTER         = aws_ecs_cluster.this.arn # the RunScans condition compares ARNs
+    ATESTA_SCAN_TASK_DEFINITION = "${var.name}-scan"
+    ATESTA_SCAN_SUBNETS         = join(",", var.private_subnet_ids)
+    ATESTA_SCAN_SECURITY_GROUP  = aws_security_group.scan.id
+    ATESTA_SCAN_ROLE_PREFIX     = "arn:aws:iam::${local.account}:role/atesta-scan/${var.name}/"
+    ATESTA_M365_CREDENTIAL_REF  = "aws-sm:${var.m365_secret_arn}"
+  }
+  # The wrapper reads its job and writes its outputs in S3 (issue 444); never an override.
+  scan_environment = {
+    ATESTA_SCAN_SOURCE = "s3"
+    ATESTA_SCAN_BUCKET = local.evidence_bucket
+    AWS_DEFAULT_REGION = local.region
+  }
   # IAM needs the secret's own ARN, without a ":json-key::" suffix.
   secret_arns = distinct([
     for ref in concat(values(var.secrets.api), values(var.secrets.worker), values(var.secrets.migrate), values(var.secrets.bootstrap)) :
@@ -145,7 +174,7 @@ locals {
     worker = merge(local.locked, {
       mountPoints      = [{ sourceVolume = "tmp", containerPath = "/tmp" }]
       image            = var.images.worker
-      environment      = [for k, v in var.environment : { name = k, value = v }]
+      environment      = [for k, v in merge(var.environment, local.scan_runner) : { name = k, value = v }]
       secrets          = [for k, arn in var.secrets.worker : { name = k, valueFrom = arn }]
       logConfiguration = { logDriver = "awslogs", options = { "awslogs-group" = aws_cloudwatch_log_group.this["worker"].name, "awslogs-region" = local.region, "awslogs-stream-prefix" = "worker" } }
     })
@@ -174,6 +203,7 @@ locals {
         { sourceVolume = "home", containerPath = "/home/scanner" },
       ]
       image            = var.images.scan
+      environment      = [for k, v in local.scan_environment : { name = k, value = v }]
       logConfiguration = { logDriver = "awslogs", options = { "awslogs-group" = aws_cloudwatch_log_group.this["scan"].name, "awslogs-region" = local.region, "awslogs-stream-prefix" = "scan" } }
     })
   }
@@ -279,6 +309,39 @@ data "aws_iam_policy_document" "worker" {
     actions   = ["kms:Decrypt"]
     resources = [var.queues_key_arn]
   }
+  # Scan storage (issue 453): the worker writes each attempt's job file and reads outputs, and
+  # lists only scan prefixes: evidence keys carry document names. Without a bucket-wide list a
+  # missing key answers 403, which S3ScanStore settles by listing that key.
+  statement {
+    sid       = "WriteScanJobs"
+    actions   = ["s3:PutObject"]
+    resources = ["${var.evidence_bucket_arn}/*/scans/*/attempt-*/job.json"]
+  }
+  statement {
+    sid       = "ReadScanOutputs"
+    actions   = ["s3:GetObject"]
+    resources = ["${var.evidence_bucket_arn}/*/scans/*"]
+  }
+  statement {
+    sid       = "ListScanOutputs"
+    actions   = ["s3:ListBucket"]
+    resources = [var.evidence_bucket_arn]
+    condition {
+      test     = "StringLike"
+      variable = "s3:prefix"
+      values   = ["*/scans/*"]
+    }
+  }
+  statement {
+    sid       = "ScanStoreKey"
+    actions   = ["kms:Decrypt", "kms:GenerateDataKey"]
+    resources = [var.evidence_key_arn]
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values   = ["s3.${local.region}.amazonaws.com"]
+    }
+  }
   statement {
     sid     = "PassScanRoles"
     actions = ["iam:PassRole"]
@@ -340,7 +403,8 @@ resource "aws_iam_role_policy" "api" {
 
 # Permissions boundary for every per-org scan role (scanner-connectors spec, Runners): whatever
 # a role's own policy says, it can read only connector secrets of this environment, write scan
-# outputs and read job files under an organization prefix, and decrypt with the secrets key.
+# outputs and read job files under an organization prefix, decrypt with the secrets key, and use
+# the evidence key that encrypts those objects (issue 453).
 data "aws_iam_policy_document" "scan_boundary" {
   statement {
     sid       = "ConnectorSecrets"
@@ -358,9 +422,14 @@ data "aws_iam_policy_document" "scan_boundary" {
     resources = ["${var.evidence_bucket_arn}/*/scans/*/attempt-*/job.json"]
   }
   statement {
-    sid       = "Decrypt"
-    actions   = ["kms:Decrypt", "kms:GenerateDataKey"]
+    sid       = "SecretsKey"
+    actions   = ["kms:Decrypt"]
     resources = [var.secrets_key_arn]
+  }
+  statement {
+    sid       = "EvidenceKey"
+    actions   = ["kms:Decrypt", "kms:GenerateDataKey"]
+    resources = [var.evidence_key_arn]
   }
 }
 
@@ -457,6 +526,61 @@ resource "aws_ecs_service" "worker" {
     enable   = true
     rollback = true
   }
+}
+
+# --- Scan failure-rate alert (scanner-connectors spec; issue 453) ------------------------------
+# More than 5% of scans failed over 24 h, with at least 20 scans, counted from the worker's
+# scan.finished events (ids and codes only), never by a cross-tenant query.
+
+resource "aws_cloudwatch_log_metric_filter" "scans" {
+  for_each = {
+    ScansFinished = "{ $.event = \"scan.finished\" }"
+    ScansFailed   = "{ ($.event = \"scan.finished\") && ($.status = \"failed\") }"
+  }
+  name           = "${var.name}-${each.key}"
+  log_group_name = aws_cloudwatch_log_group.this["worker"].name
+  pattern        = each.value
+  metric_transformation {
+    name      = each.key
+    namespace = "Atesta/${var.name}"
+    value     = "1"
+    unit      = "Count"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "scan_failure_rate" {
+  alarm_name          = "${var.name}-scan-failure-rate"
+  alarm_description   = "More than 5% of scans failed over 24 h, with at least 20 scans."
+  comparison_operator = "GreaterThanThreshold"
+  threshold           = 5
+  evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [var.alert_topic_arn]
+  metric_query {
+    id          = "rate"
+    expression  = "IF(FILL(finished, 0) >= 20, 100 * FILL(failed, 0) / FILL(finished, 0), 0)"
+    label       = "Failed scans, percent"
+    return_data = true
+  }
+  metric_query {
+    id = "finished"
+    metric {
+      namespace   = "Atesta/${var.name}"
+      metric_name = "ScansFinished"
+      period      = 86400
+      stat        = "Sum"
+    }
+  }
+  metric_query {
+    id = "failed"
+    metric {
+      namespace   = "Atesta/${var.name}"
+      metric_name = "ScansFailed"
+      period      = 86400
+      stat        = "Sum"
+    }
+  }
+  depends_on = [aws_cloudwatch_log_metric_filter.scans]
 }
 
 output "cluster_arn" {

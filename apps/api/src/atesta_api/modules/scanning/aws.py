@@ -63,12 +63,23 @@ class S3ScanStore:
             response = self._client.get_object(Bucket=self._bucket, Key=key)
             data: bytes = response["Body"].read()
         except ClientError as error:
-            if _code(error) in ("NoSuchKey", "404"):
+            code = _code(error)
+            if code in ("NoSuchKey", "404") or (code == "AccessDenied" and not self._exists(key)):
                 raise FileNotFoundError("no scan output under that key") from None
-            raise ScanStoreUnavailableError(_code(error) or "s3 refused the read") from None
+            raise ScanStoreUnavailableError(code or "s3 refused the read") from None
         except BotoCoreError as error:
             raise ScanStoreUnavailableError(type(error).__name__) from None
         return data
+
+    def _exists(self, key: str) -> bool:
+        """Settle a 403 (issue 453). Without s3:ListBucket on the whole bucket, S3 answers 403
+        for a missing key; the worker may list only scan prefixes, since evidence keys carry
+        document names. Keys sort lexicographically, so the key itself would come first."""
+        try:
+            page = self._client.list_objects_v2(Bucket=self._bucket, Prefix=key, MaxKeys=1)
+        except ClientError as error:
+            raise ScanStoreUnavailableError(_code(error) or "s3 refused the list") from None
+        return [item["Key"] for item in page.get("Contents", [])] == [key]
 
     def list(self, prefix: str) -> list[str]:
         keys: list[str] = []

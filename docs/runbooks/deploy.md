@@ -88,6 +88,22 @@ rm /dev/shm/session-key
 On macOS, use a directory created with `mktemp -d` instead of `/dev/shm`, and remove it
 afterwards.
 
+**M365 scanner credential** (scanner-connectors spec, AWS runner; issue 453). The "Atesta
+Scanner" app's client id and its certificate go in `atesta/<env>/m365/scanner` as JSON, with the
+same keys as a local credential file. Write the file with `jq` in the tmpfs, never on the command
+line:
+
+```bash
+jq -n --arg id "<scanner app client id>" --rawfile cert /dev/shm/scanner.pem \
+  '{AZURE_CLIENT_ID: $id, M365_CERTIFICATE_CONTENT: ($cert | @base64)}' > /dev/shm/m365-scanner
+aws secretsmanager put-secret-value --secret-id atesta/atesta-dev/m365/scanner --secret-string file:///dev/shm/m365-scanner
+rm /dev/shm/m365-scanner /dev/shm/scanner.pem
+```
+
+Use the same encoding of `M365_CERTIFICATE_CONTENT` as your local credential file for that app.
+**Alerts.** The first apply subscribes the budget address to `<env>-alerts`. AWS emails a
+confirmation link to that address; click it once, or the scan failure-rate alarm reaches nobody.
+
 ## 5. GitHub environments
 
 1. In the repository settings, create the environments `dev` and `prod`:
@@ -199,17 +215,18 @@ handful of organizations, one scan a day each. Taxes are not included.
 | Public IPv4 addresses (NAT, load balancer) | $0.005 per hour each | 3: 10.95 | 4: 14.60 |
 | Application Load Balancer | $0.0252 per hour plus $0.008 per LCU-hour | about 0.5 LCU: 21.32 | about 1 LCU: 24.24 |
 | KMS keys | $1 per key-month (more after rotations) | 5: 5.00 | 5: 5.00 |
-| Secrets Manager | $0.40 per secret-month | 4: 1.60 | 9 (with connectors): 3.60 |
+| Secrets Manager | $0.40 per secret-month | 5: 2.00 | 10 (with connectors): 4.00 |
+| Scan failure-rate alert: 2 custom metrics, 1 alarm on 2 metrics | $0.30 per metric-month, $0.10 per alarm metric-month (CloudWatch file, publication `20261124145303`) | 0.80 | 0.80 |
 | CloudWatch Logs, custom and vended (flow logs, Postgres) | $0.57 per GB ingested, $0.03 per GB-month stored | about 5 GB: 3.30 | about 20 GB: 12.00 |
 | Container Insights metrics | $0.07 per metric-month | about 3.50 | about 4.00 |
 | S3, ECR, SES | $0.023 and $0.10 per GB-month; SES per message | about 2.00 | about 3.00 |
 | CloudFront | always-free tier: 1 TB and 10 M requests a month | 0 | 0 |
 | Malware scanning of the evidence bucket (below) | free tier: 1,000 objects and 1 GB a month | 0 | 0 |
-| **Total** | | **about 139** | **about 229** |
+| **Total** | | **about 140** | **about 230** |
 
-**Against the budget alerts.** Dev alerts at 150, 250 and 400, and its estimate (about 139)
+**Against the budget alerts.** Dev alerts at 150, 250 and 400, and its estimate (about 140)
 sits just under the first one. Prod alerts at 250, 350 and 450 (owner decision, #286), so the
-estimate (about 229, or about 255 with db.t4g.small Multi-AZ) raises at most the first alert.
+estimate (about 230, or about 256 with db.t4g.small Multi-AZ) raises at most the first alert.
 
 **What moves the total most:**
 - **NAT gateways** are about a quarter to a third of it. They stay: Cognito, Microsoft Graph and
@@ -247,3 +264,37 @@ files for GuardDuty (publication 2026-10-30), S3 (2026-11-21), SQS (2026-11-11) 
 - data transfer to the internet beyond CloudFront's free tier;
 - AWS Support plans;
 - Route 53, if the domain's DNS is hosted there.
+
+## 10. Scans for a new customer (owner only)
+
+Each customer's scan roles come from OpenTofu, applied by you (owner, 2026-11-24). No Atesta
+process can create IAM roles.
+
+1. Find the organization's id (a lowercase UUID) and its connectors: `m365`,
+   `google_workspace` or both.
+2. Add it to `scan_organizations` in the environment's untracked tfvars:
+
+   ```hcl
+   scan_organizations = {
+     "00000000-0000-4000-8000-000000000000" = ["m365", "google_workspace"]
+   }
+   ```
+
+3. Plan and apply. The plan must add only roles named
+   `atesta-scan/<env>/{scan-m365,verify-gws,scan-gws}-<org id>` and their inline policies.
+4. For Google Workspace, `scanner/runbooks/google_sa.sh` writes the two credential files
+   (`docs/runbooks/google-workspace.md`). Store each one as a secret under the secrets key, from
+   the file, and delete the files:
+
+   ```bash
+   aws secretsmanager create-secret --name "atesta/atesta-dev/google/<org id>" \
+     --kms-key-id alias/atesta-dev-secrets --secret-string "file://<store>/google-<org id>.json"
+   aws secretsmanager create-secret --name "atesta/atesta-dev/google-verifier/<org id>" \
+     --kms-key-id alias/atesta-dev-secrets --secret-string "file://<store>/google-verifier-<org id>.json"
+   ```
+
+   Then run `atesta-register-google` with `--credential-ref aws-sm:<first ARN>` and
+   `--verifier-credential-ref aws-sm:<second ARN>`. The database accepts only this
+   organization's own secret names.
+5. Removing a customer is the reverse: delete the entry and apply. The roles go, and the stored
+   scans stay under the evidence lock.

@@ -757,3 +757,244 @@ def test_the_apply_role_manages_only_malware_plans_and_its_own_queues_and_rules(
     assert statements["OwnRules"]["resources"] == [
         "arn:aws:events:*:${local.account}:rule/${var.name}-*"
     ]
+
+
+# --- scan roles per customer, scan storage and the failure-rate alert (#453) ---------------
+
+SCAN_ORG_FILE = load("modules/scan-org/main.tf")
+SCAN_ORG = resources("modules/scan-org/main.tf")
+SCAN_ORG_LOCALS = SCAN_ORG_FILE["locals"][0]
+SCAN_ORG_VARS = {k: v for b in SCAN_ORG_FILE["variable"] for k, v in b.items()}
+SCAN_ORG_DOCS = {
+    name: body
+    for block in SCAN_ORG_FILE["data"]
+    for kind, named in block.items()
+    if kind == "aws_iam_policy_document"
+    for name, body in named.items()
+}
+ECS_LOCALS = ECS_FILE["locals"][0]
+
+
+def test_scan_roles_are_per_org_bounded_and_trust_only_this_accounts_ecs_tasks() -> None:
+    role = SCAN_ORG["aws_iam_role.this"]
+    assert role["for_each"] == "${local.roles}"
+    assert role["name"] == "${each.key}-${var.organization_id}"
+    assert role["path"] == "/atesta-scan/${var.name}/"  # what the worker may pass
+    assert role["permissions_boundary"] == "${var.boundary_arn}"
+    (trust,) = SCAN_ORG_DOCS["trust"]["statement"]
+    assert trust["actions"] == ["sts:AssumeRole"]
+    assert trust["principals"] == [{"type": "Service", "identifiers": ["ecs-tasks.amazonaws.com"]}]
+    conditions = {c["variable"]: c for c in trust["condition"]}
+    assert conditions["aws:SourceAccount"]["values"] == ["${local.account}"]
+    assert conditions["aws:SourceArn"]["test"] == "ArnLike"
+    assert conditions["aws:SourceArn"]["values"] == [
+        "arn:aws:ecs:${local.region}:${local.account}:*"
+    ]
+    assert "[0-9a-f]{8}-" in SCAN_ORG_VARS["organization_id"]["validation"][0]["condition"]
+    allowed = SCAN_ORG_VARS["connectors"]["validation"][0]["condition"]
+    assert 'contains(["m365", "google_workspace"], c)' in allowed
+
+
+def test_each_scan_role_reads_only_its_own_credentials() -> None:
+    """D7: only the verify role holds the verifier key; M365 uses the platform's one app."""
+    kinds = SCAN_ORG_LOCALS["kinds"]
+    assert kinds == {
+        "scan-m365": {"connector": "m365", "secrets": ["${var.m365_secret_arn}"]},
+        "verify-gws": {
+            "connector": "google_workspace",
+            "secrets": ["${local.google}", "${local.google_verifier}"],
+        },
+        "scan-gws": {"connector": "google_workspace", "secrets": ["${local.google}"]},
+    }
+    # Secrets Manager appends exactly six characters to a name; nothing else may follow.
+    assert SCAN_ORG_LOCALS["google"].endswith(
+        ":secret:atesta/${var.name}/google/${var.organization_id}-??????"
+    )
+    assert SCAN_ORG_LOCALS["google_verifier"].endswith(
+        ":secret:atesta/${var.name}/google-verifier/${var.organization_id}-??????"
+    )
+    assert "if contains(var.connectors, role.connector)" in SCAN_ORG_LOCALS["roles"]
+
+
+def test_each_scan_role_writes_outputs_and_reads_its_job_under_its_own_org_only() -> None:
+    assert (
+        SCAN_ORG_LOCALS["prefix"]
+        == "${var.evidence_bucket_arn}/${var.organization_id}/scans/*/attempt-*"
+    )
+    document = SCAN_ORG_DOCS["this"]
+    assert document["for_each"] == "${local.roles}"
+    statements = {s["sid"]: s for s in document["statement"]}
+    assert set(statements) == {"Credential", "Outputs", "Job", "SecretsKey", "EvidenceKey"}
+    assert statements["Credential"]["actions"] == ["secretsmanager:GetSecretValue"]
+    assert statements["Credential"]["resources"] == "${each.value}"
+    assert statements["Outputs"]["actions"] == ["s3:PutObject"]
+    assert statements["Outputs"]["resources"] == ["${local.prefix}/out/*"]
+    assert statements["Job"]["actions"] == ["s3:GetObject"]
+    assert statements["Job"]["resources"] == ["${local.prefix}/job.json"]
+    for sid, key, service, actions in (
+        ("SecretsKey", "secrets", "secretsmanager", ["kms:Decrypt"]),
+        ("EvidenceKey", "evidence", "s3", ["kms:Decrypt", "kms:GenerateDataKey"]),
+    ):
+        assert statements[sid]["actions"] == actions, sid
+        assert statements[sid]["resources"] == [f"${{var.{key}_key_arn}}"], sid
+        (via,) = statements[sid]["condition"]
+        assert (via["variable"], via["values"]) == (
+            "kms:ViaService",
+            [f"{service}.${{local.region}}.amazonaws.com"],
+        ), sid
+    policy = SCAN_ORG["aws_iam_role_policy.this"]
+    assert policy["policy"] == "${data.aws_iam_policy_document.this[each.key].json}"
+
+
+def test_the_owner_lists_customers_and_the_platform_creates_their_roles() -> None:
+    platform = {k: v for m in PLATFORM_FILE["module"] for k, v in m.items()}
+    scan_org = platform["scan_org"]
+    assert scan_org["source"] == "../scan-org"
+    assert scan_org["for_each"] == (
+        "${var.images == null || var.edge == null ? {} : var.scan_organizations}"
+    )
+    assert scan_org["boundary_arn"] == "${module.ecs[0].scan_boundary_arn}"
+    assert scan_org["m365_secret_arn"] == "${aws_secretsmanager_secret.m365_scanner.arn}"
+    for env in ("dev", "prod"):
+        assert _modules(env)["platform"]["scan_organizations"] == "${var.scan_organizations}"
+        variables = {k: v for b in load(f"envs/{env}/main.tf")["variable"] for k, v in b.items()}
+        assert variables["scan_organizations"]["default"] == {}
+
+
+def test_the_m365_scanner_credential_is_a_hand_set_secret_under_the_scan_boundary() -> None:
+    secret = PLATFORM["aws_secretsmanager_secret.m365_scanner"]
+    assert secret["name"] == "atesta/${var.name}/m365/scanner"  # inside the boundary's prefix
+    assert secret["kms_key_id"] == "${module.kms.secrets_key_arn}"
+    assert not [k for k in PLATFORM if k.startswith("aws_secretsmanager_secret_version.")]
+
+
+def test_the_scan_boundary_adds_the_evidence_key_and_only_decrypts_secrets() -> None:
+    statements = {s["sid"]: s for s in ECS_POLICIES["scan_boundary"]["statement"]}
+    assert set(statements) == {
+        "ConnectorSecrets",
+        "ScanOutputs",
+        "ScanJobs",
+        "SecretsKey",
+        "EvidenceKey",
+    }
+    assert statements["SecretsKey"]["actions"] == ["kms:Decrypt"]
+    assert statements["SecretsKey"]["resources"] == ["${var.secrets_key_arn}"]
+    assert statements["EvidenceKey"]["actions"] == ["kms:Decrypt", "kms:GenerateDataKey"]
+    assert statements["EvidenceKey"]["resources"] == ["${var.evidence_key_arn}"]
+
+
+def test_scan_writers_write_once_and_scan_roles_never_delete_or_write_jobs() -> None:
+    """AWS, "Enforce conditional writes on Amazon S3 buckets": a Null condition on the key."""
+    locals_ = next(b for b in EVIDENCE_FILE["locals"] if "scan_roles" in b)
+    assert locals_["scan_roles"].endswith(":role/atesta-scan/${var.name}/*")
+    assert locals_["worker_role"].endswith(":role/${var.name}-worker")
+    statements = {s.get("sid"): s for s in EVIDENCE_DOCS["bucket"]["statement"]}
+
+    def who(statement: dict[str, Any]) -> list[str]:
+        (match,) = [c for c in statement["condition"] if c["variable"] == "aws:PrincipalArn"]
+        assert match["test"] == "ArnLike"
+        values: list[str] = match["values"]
+        return values
+
+    once = statements["DenyScanWritesWithoutIfNoneMatch"]
+    assert (once["effect"], once["actions"]) == ("Deny", ["s3:PutObject"])
+    assert once["resources"] == ["${aws_s3_bucket.this.arn}/*/scans/*"]
+    assert {"test": "Null", "variable": "s3:if-none-match", "values": ["true"]} in once["condition"]
+    assert who(once) == ["${local.scan_roles}", "${local.worker_role}"]
+    jobs = statements["DenyScanRolesJobWrites"]
+    assert (jobs["effect"], jobs["actions"]) == ("Deny", ["s3:PutObject"])
+    assert jobs["resources"] == ["${aws_s3_bucket.this.arn}/*/job.json"]
+    assert who(jobs) == ["${local.scan_roles}"]
+    metadata = statements["DenyScanRolesDeletesAndMetadata"]
+    assert metadata["effect"] == "Deny"
+    assert {"s3:DeleteObject", "s3:DeleteObjectVersion", "s3:PutObjectAcl"} <= set(
+        metadata["actions"]
+    )
+    assert {"s3:PutObjectRetention", "s3:PutObjectLegalHold", "s3:PutObjectTagging"} <= set(
+        metadata["actions"]
+    )
+    assert who(metadata) == ["${local.scan_roles}"]
+
+
+def test_the_worker_writes_jobs_and_reads_and_lists_only_scan_prefixes() -> None:
+    """Evidence keys carry document names, so the worker never lists the whole bucket."""
+    statements = {s["sid"]: s for s in ECS_POLICIES["worker"]["statement"]}
+    bucket = "${var.evidence_bucket_arn}"
+    assert statements["WriteScanJobs"]["actions"] == ["s3:PutObject"]
+    assert statements["WriteScanJobs"]["resources"] == [f"{bucket}/*/scans/*/attempt-*/job.json"]
+    assert statements["ReadScanOutputs"]["actions"] == ["s3:GetObject"]
+    assert statements["ReadScanOutputs"]["resources"] == [f"{bucket}/*/scans/*"]
+    listing = statements["ListScanOutputs"]
+    assert (listing["actions"], listing["resources"]) == (["s3:ListBucket"], [bucket])
+    assert listing["condition"] == [
+        {"test": "StringLike", "variable": "s3:prefix", "values": ["*/scans/*"]}
+    ]
+    key = statements["ScanStoreKey"]
+    assert key["actions"] == ["kms:Decrypt", "kms:GenerateDataKey"]
+    assert key["resources"] == ["${var.evidence_key_arn}"]
+    s3_actions = {a for s in statements.values() for a in s["actions"] if a.startswith("s3:")}
+    assert s3_actions == {"s3:PutObject", "s3:GetObject", "s3:ListBucket"}
+
+
+def test_the_worker_alone_gets_every_fargate_runner_setting() -> None:
+    from atesta_worker.scans import _FARGATE  # noqa: PLC0415 - the worker's own required list
+
+    runner = ECS_LOCALS["scan_runner"]
+    image_env = (INFRA.parent / "apps" / "Dockerfile").read_text()
+    assert "ATESTA_SCANNER_EXPECTED=/app/scanner/expected" in image_env
+    assert set(_FARGATE) - {"ATESTA_SCANNER_EXPECTED"} <= set(runner)
+    assert runner["ATESTA_SCAN_RUNNER"] == "fargate"
+    assert runner["ATESTA_SCAN_TASK_DEFINITION"] == "${var.name}-scan"
+    assert runner["ATESTA_SCAN_ROLE_PREFIX"] == (
+        "arn:aws:iam::${local.account}:role/atesta-scan/${var.name}/"
+    )
+    assert runner["ATESTA_M365_CREDENTIAL_REF"] == "aws-sm:${var.m365_secret_arn}"
+    assert "merge(var.environment, local.scan_runner)" in CONTAINERS["worker"]
+    for name in ("api", "migrate", "bootstrap"):
+        assert "scan_runner" not in CONTAINERS[name], name
+
+
+def test_the_scan_task_reads_its_job_from_s3_by_its_own_settings() -> None:
+    assert ECS_LOCALS["scan_environment"] == {
+        "ATESTA_SCAN_SOURCE": "s3",
+        "ATESTA_SCAN_BUCKET": "${local.evidence_bucket}",
+        "AWS_DEFAULT_REGION": "${local.region}",
+    }
+    assert "for k, v in local.scan_environment" in CONTAINERS["scan"]
+
+
+def test_the_failure_rate_alarm_counts_scan_finished_events_and_emails_the_owner() -> None:
+    """Spec: more than 5% failed over 24 h, at least 20 scans, from scan.finished events."""
+    filters = ECS["aws_cloudwatch_log_metric_filter.scans"]
+    assert filters["log_group_name"] == '${aws_cloudwatch_log_group.this["worker"].name}'
+    assert filters["for_each"] == {
+        "ScansFinished": '{ $.event = \\"scan.finished\\" }',
+        "ScansFailed": '{ ($.event = \\"scan.finished\\") && ($.status = \\"failed\\") }',
+    }
+    alarm = ECS["aws_cloudwatch_metric_alarm.scan_failure_rate"]
+    assert (alarm["comparison_operator"], alarm["threshold"]) == ("GreaterThanThreshold", 5)
+    assert alarm["evaluation_periods"] == 1
+    assert alarm["alarm_actions"] == ["${var.alert_topic_arn}"]
+    queries = {q["id"]: q for q in alarm["metric_query"]}
+    assert queries["rate"]["expression"] == (
+        "IF(FILL(finished, 0) >= 20, 100 * FILL(failed, 0) / FILL(finished, 0), 0)"
+    )
+    for name, metric in (("finished", "ScansFinished"), ("failed", "ScansFailed")):
+        (spec,) = queries[name]["metric"]
+        assert (spec["metric_name"], spec["period"], spec["stat"]) == (metric, 86400, "Sum")
+    topic = PLATFORM["aws_sns_topic.alerts"]
+    assert topic["kms_master_key_id"] == "${module.kms.queues_key_arn}"
+    subscription = PLATFORM["aws_sns_topic_subscription.alerts"]
+    assert (subscription["protocol"], subscription["endpoint"]) == ("email", "${var.alert_email}")
+    for env in ("dev", "prod"):
+        assert _modules(env)["platform"]["alert_email"] == "${var.budget_email}"
+    kms = {
+        n: b
+        for block in load("modules/kms/main.tf")["data"]
+        for k, named in block.items()
+        if k == "aws_iam_policy_document"
+        for n, b in named.items()
+    }
+    alarms = next(s for s in kms["queues"]["statement"] if s.get("sid") == "CloudWatchAlarmsUse")
+    assert alarms["principals"][0]["identifiers"] == ["cloudwatch.amazonaws.com"]
+    assert alarms["actions"] == ["kms:Decrypt", "kms:GenerateDataKey*"]

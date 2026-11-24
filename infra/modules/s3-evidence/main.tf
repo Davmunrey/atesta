@@ -134,6 +134,70 @@ data "aws_iam_policy_document" "bucket" {
       identifiers = ["*"]
     }
   }
+  # Scan storage is write-once (scanner-connectors spec, AWS runner; issue 453). The scan roles
+  # and the worker must send If-None-Match on every scan write, so no output or job file is ever
+  # replaced; multipart parts carry no conditional header, so they are refused too (both writers
+  # use one PutObject). AWS, "Enforce conditional writes on Amazon S3 buckets".
+  statement {
+    sid       = "DenyScanWritesWithoutIfNoneMatch"
+    effect    = "Deny"
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.this.arn}/*/scans/*"]
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "Null"
+      variable = "s3:if-none-match"
+      values   = ["true"]
+    }
+    condition {
+      test     = "ArnLike"
+      variable = "aws:PrincipalArn"
+      values   = [local.scan_roles, local.worker_role]
+    }
+  }
+  # A scan role writes only its outputs: never a job file, whatever its own policy says.
+  statement {
+    sid       = "DenyScanRolesJobWrites"
+    effect    = "Deny"
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.this.arn}/*/job.json"]
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "ArnLike"
+      variable = "aws:PrincipalArn"
+      values   = [local.scan_roles]
+    }
+  }
+  statement {
+    sid    = "DenyScanRolesDeletesAndMetadata"
+    effect = "Deny"
+    actions = [
+      "s3:DeleteObject",
+      "s3:DeleteObjectVersion",
+      "s3:PutObjectAcl",
+      "s3:PutObjectVersionAcl",
+      "s3:PutObjectRetention",
+      "s3:PutObjectLegalHold",
+      "s3:PutObjectTagging",
+      "s3:PutObjectVersionTagging",
+    ]
+    resources = ["${aws_s3_bucket.this.arn}/*"]
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "ArnLike"
+      variable = "aws:PrincipalArn"
+      values   = [local.scan_roles]
+    }
+  }
   # The scan tag is the API's read permission: nobody but GuardDuty's role may set it, on an
   # upload (PutObject with tags needs PutObjectTagging too) or afterwards (AWS, "Using tag-based
   # access control (TBAC) with Malware Protection for S3").
@@ -172,6 +236,9 @@ data "aws_iam_policy_document" "malware_scan_trust" {
 }
 
 locals {
+  # Role ARNs as aws:PrincipalArn reports them for an assumed role (the role, not the session).
+  scan_roles   = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/atesta-scan/${var.name}/*"
+  worker_role  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.name}-worker"
   managed_rule = "arn:aws:events:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:rule/DO-NOT-DELETE-AmazonGuardDutyMalwareProtectionS3*"
 }
 
