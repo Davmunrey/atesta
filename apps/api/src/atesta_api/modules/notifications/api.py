@@ -17,6 +17,17 @@ from atesta_api.modules.notifications.config import (
     mail_config_from_env,
 )
 from atesta_api.modules.notifications.deliveries import claim_delivery
+from atesta_api.modules.notifications.digest import (
+    DAILY_TASK,
+    DueItem,
+    WeeklyFacts,
+    defer_daily,
+    is_send_slot,
+    next_daily_run,
+    notice_days,
+    send_due_digest,
+    send_weekly_summary,
+)
 from atesta_api.modules.notifications.events import NOTIFIABLE, handle_event, queue_event
 from atesta_api.modules.notifications.kinds import CRITICAL, OPTIONAL, Kind, receivable
 from atesta_api.modules.notifications.mail import (
@@ -40,6 +51,9 @@ def install_notifications(app: FastAPI) -> None:
 
 __all__ = [
     "CRITICAL",
+    "DAILY_TASK",
+    "DueItem",
+    "WeeklyFacts",
     "NOTIFIABLE",
     "ClockTiming",
     "IncidentClocks",
@@ -57,14 +71,20 @@ __all__ = [
     "claim_delivery",
     "compose",
     "configure_mail",
+    "defer_daily",
     "due_milestones",
     "handle_event",
+    "is_send_slot",
     "install_notifications",
     "mail_config",
     "mail_config_from_env",
+    "next_daily_run",
+    "notice_days",
     "notices_due",
     "queue_event",
     "receivable",
     "schedule_clock_notices",
     "send_clock_notices",
+    "send_due_digest",
+    "send_weekly_summary",
 ]

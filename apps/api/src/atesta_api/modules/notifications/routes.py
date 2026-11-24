@@ -17,6 +17,7 @@ from atesta_api.modules.identity.api import (
     is_member,
     require_role,
 )
+from atesta_api.modules.notifications.digest import defer_daily
 from atesta_api.modules.notifications.kinds import CRITICAL, Kind, receivable
 from atesta_api.modules.notifications.models import NotificationPreference
 from atesta_api.modules.notifications.tokens import TokenError, UnsubscribeTokens
@@ -84,6 +85,8 @@ def _store(
 def read_preferences(
     member: Annotated[Member, Depends(require_role(Role.MEMBER))], session: DbSession
 ) -> list[PreferenceOut]:
+    # Organizations created before the daily chain existed get it here; a no-op otherwise.
+    defer_daily(session, member.organization_id, now=datetime.now(UTC))
     return _preferences(session, member)
 
 

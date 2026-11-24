@@ -263,7 +263,10 @@ def test_recording_assessments_never_changes_a_score(
             text("SELECT count(*) FROM score_snapshots WHERE organization_id = :o"), {"o": org}
         ).scalar_one()
         jobs = conn.execute(
-            text("SELECT count(*) FROM procrastinate_jobs WHERE args->>'organization_id' = :o"),
+            text(
+                "SELECT count(*) FROM procrastinate_jobs WHERE args->>'organization_id' = :o"
+                " AND queue_name <> 'notifications'"  # the org's daily notice chain
+            ),
             {"o": org},
         ).scalar_one()
     assert (snapshots, jobs) == (0, 0)

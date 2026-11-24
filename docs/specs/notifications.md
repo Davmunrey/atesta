@@ -161,9 +161,13 @@ email separately.
 ### PR 3: daily digest and weekly summary
 
 - [ ] **Daily chain.** One `notify_daily` chain per organization, deferred to 08:00
-      Europe/Madrid each day, the same pattern as `schedule_scan`.
-  - It is started at organization creation.
-  - A data migration starts it for organizations that already exist.
+      Europe/Madrid each day, the same pattern as `schedule_scan` (queueing lock
+      `daily:<organization>`).
+  - It is started at organization creation. Identity defers it by task name through the shared
+    kernel, without importing notifications.
+  - For organizations that already exist, it is restarted idempotently when someone opens their
+    notice preferences.
+  - A job that runs outside the 08:00 hour only re-arms itself.
 - [ ] **Due digest.** It collects the items whose date is exactly 30, 7 or 1 day after today in
       Europe/Madrid:
   - manual control reviews by `valid_until`;
@@ -171,8 +175,10 @@ email separately.
   - open access reviews by `due_on`;
   - assigned measures by the assignment's `due_on`.
 
-  These come from `compliance.api` functions shared with `routines_due` and `my_work`, never a
-  second implementation. One email per person and organization, keyed `<date>`.
+  These come from `compliance.api` (`due_items`). Owners and admins receive every item. A member
+  receives only the assignments that are theirs: control reviews, policies and access reviews
+  are organization-level and go to owners and admins. One email per person and organization,
+  keyed `<date>`, and none when nothing is due.
 - [ ] **Weekly summary.** On Monday the same job sends it, keyed `<ISO week>`. It contains:
   - each active framework's latest share of requirements passed, worded as `claims-honesty.md`
     requires;
@@ -182,7 +188,10 @@ email separately.
   - links into the app.
 
   The first Monday of a month adds the link to that month's management report. A week with
-  nothing new is still sent, and says so.
+  nothing new is still sent, and says so. Compliance supplies the scores and due counts
+  (`weekly_compliance`), scanning the scan counts (`scan_counts`), and connections the number
+  not active (`inactive_connection_count`). The worker composes them, so no module imports
+  another's internals.
 
 ### PR 4: infrastructure (owner applies)
 

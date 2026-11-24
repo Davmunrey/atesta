@@ -79,6 +79,26 @@
       "before_7d": "7 days left.",
       "before_1d": "1 day left.",
       "due": "The deadline has passed and is not recorded as met in Atesta."
+    },
+    "due_digest": {
+      "subject": "Atesta: {count} upcoming due dates",
+      "intro": "{org}: these are due in the coming days.",
+      "control_review": "Review of the control “{title}”: expires on {date}",
+      "policy_review": "Policy “{title}”: review on {date}",
+      "access_review": "Access review “{title}”: due on {date}",
+      "assignment": "Measure {title}: deadline on {date}"
+    },
+    "weekly": {
+      "subject": "Atesta: weekly summary",
+      "intro": "{org}: summary of the week.",
+      "quiet": "No changes this week: no scans, no connections with problems and nothing due soon.",
+      "score": "{percent} of requirements passed in the recorded checks",
+      "unscored": "no recorded results yet",
+      "not_an_assessment": "Note: this is not a conformity assessment.",
+      "scans": "Scans in the last 7 days: {ok} finished, {problems} with problems.",
+      "connections": "Connections that are not active: {count}.",
+      "due": "Due in the next 7 days: {soon}. Overdue: {overdue}.",
+      "report": "The monthly report is ready: {url}"
     }
   }
 }

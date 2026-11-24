@@ -27,9 +27,11 @@ from atesta_api.modules.identity.models import Membership, Role, User
 from atesta_api.modules.identity.org_profile import router as org_profile_router
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
+from atesta_api.platform.queue import defer
 from atesta_api.platform.tenancy import Organization
 
 router = APIRouter(prefix="/api/v1", tags=["identity"])
+DAILY_NOTICE_TASK = "notify_daily"  # notifications.api.DAILY_TASK; a test keeps them equal
 router.include_router(members_router)
 router.include_router(activity_router)
 router.include_router(closure_router)
@@ -120,5 +122,14 @@ def create_org(body: OrgIn, caller: CurrentCaller, session: DbSession) -> OrgOut
         target_type="organization",
         target_id=str(org_id),
         actor_user_id=caller.user_id,
+    )
+    # Start the organization's daily notice chain (notifications spec PR 3). By task name through
+    # the shared kernel: identity does not import the notifications module.
+    defer(
+        session,
+        DAILY_NOTICE_TASK,
+        queue="notifications",
+        queueing_lock=f"daily:{org_id}",
+        organization_id=str(org_id),
     )
     return OrgOut(id=org_id, name=body.name)

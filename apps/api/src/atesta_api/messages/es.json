@@ -79,6 +79,26 @@
       "before_7d": "Quedan 7 días.",
       "before_1d": "Queda 1 día.",
       "due": "El plazo ha vencido y no consta como cumplido en Atesta."
+    },
+    "due_digest": {
+      "subject": "Atesta: {count} vencimientos próximos",
+      "intro": "{org}: esto vence en los próximos días.",
+      "control_review": "Revisión del control «{title}»: caduca el {date}",
+      "policy_review": "Política «{title}»: revisión el {date}",
+      "access_review": "Revisión de accesos «{title}»: vence el {date}",
+      "assignment": "Medida {title}: fecha límite el {date}"
+    },
+    "weekly": {
+      "subject": "Atesta: resumen semanal",
+      "intro": "{org}: resumen de la semana.",
+      "quiet": "Sin cambios esta semana: no hay escaneos, conexiones con problemas ni vencimientos próximos.",
+      "score": "{percent} de requisitos superados en las comprobaciones registradas",
+      "unscored": "sin resultados registrados todavía",
+      "not_an_assessment": "Nota: no es una evaluación de conformidad.",
+      "scans": "Escaneos de los últimos 7 días: {ok} terminados, {problems} con problemas.",
+      "connections": "Conexiones que no están activas: {count}.",
+      "due": "Vencimientos en los próximos 7 días: {soon}. Vencidos: {overdue}.",
+      "report": "El informe mensual ya está disponible: {url}"
     }
   }
 }
