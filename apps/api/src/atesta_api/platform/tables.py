@@ -71,10 +71,12 @@ APPEND_ONLY = frozenset(
 # delete it. A restrictive DELETE policy named `retention` holds the limit in the database.
 RETENTION_DAYS = {"api_token_usage": 90}
 GLOBAL_IDENTITY = frozenset({"users"})
-# ADR-012 amendment 3: written only by the operator's erasure command, as atesta_owner. No RLS and
-# no privilege for atesta_app; the receipt outlives the organization it records.
-OPERATOR = frozenset({"erasure_receipts"})
-OPERATOR_APPEND_ONLY = frozenset({"erasure_receipts"})
+# ADR-012 amendments 3 and 8: no RLS, no organization_id foreign key, no privilege for
+# atesta_app. Receipts are written only by the erasure command, as atesta_owner; the other three
+# by the operator service as atesta_operator. All outlive the organization they record.
+OPERATOR_OWN = frozenset({"operator_staff", "operator_audit_events", "erasure_requests"})
+OPERATOR = frozenset({"erasure_receipts"}) | OPERATOR_OWN
+OPERATOR_APPEND_ONLY = frozenset({"erasure_receipts", "operator_audit_events"})
 # ADR-012 amendment 8: the closed list of columns atesta_operator may read, through column grants.
 # Every other table and column gives it nothing. Changing it needs that amendment and both
 # snapshots changed in the same reviewed pull request.

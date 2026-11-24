@@ -19,7 +19,7 @@ from sqlalchemy import (
     func,
     text,
 )
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from atesta_api.platform.db import Base, TenantMixin
@@ -176,3 +176,95 @@ class ApiTokenUsage(TenantMixin, Base):
     method: Mapped[str] = mapped_column(Text)
     route: Mapped[str] = mapped_column(Text)
     scope: Mapped[str | None] = mapped_column(Text)
+
+
+# Operator tables (ADR-012 amendments 3 and 8): no RLS, no privilege for atesta_app, no foreign
+# key to organizations, so they outlive an erased organization.
+STAFF_ROLES = "role IN ('admin', 'billing', 'support')"
+
+
+class OperatorStaff(Base):
+    """Operator-portal staff and their role (ADR-017). The account itself lives in Cognito."""
+
+    __tablename__ = "operator_staff"
+    __table_args__ = (CheckConstraint(STAFF_ROLES, name="role"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    cognito_sub: Mapped[str] = mapped_column(Text, unique=True)
+    email: Mapped[str] = mapped_column(Text)
+    role: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = _now()
+    disabled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class ErasureReceipt(Base):
+    """Row counts of an erased organization (organization-closure spec). Written as atesta_owner."""
+
+    __tablename__ = "erasure_receipts"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
+    organization_id: Mapped[uuid.UUID]
+    closure_requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    erased_at: Mapped[datetime] = _now()
+    note: Mapped[str] = mapped_column(Text)
+    row_counts: Mapped[dict[str, int]] = mapped_column(JSONB)
+
+
+class ErasureRequest(Base):
+    """An admin's request to erase a closed organization (operator-portal spec, "Erasure").
+
+    A second admin approves within 7 days; a sole admin may approve their own request after 72
+    hours (owner answer 3). Only the erasure runner, as atesta_owner, sets executed_at.
+    """
+
+    __tablename__ = "erasure_requests"
+    __table_args__ = (
+        CheckConstraint("(approved_by IS NULL) = (approved_at IS NULL)", name="approved_together"),
+        CheckConstraint(
+            "(cancelled_by IS NULL) = (cancelled_at IS NULL)", name="cancelled_together"
+        ),
+        CheckConstraint("(executed_at IS NULL) = (receipt_id IS NULL)", name="executed_together"),
+        CheckConstraint(
+            "executed_at IS NULL OR (approved_at IS NOT NULL AND cancelled_at IS NULL)",
+            name="executed_only_approved",
+        ),
+        CheckConstraint(
+            "approved_at IS NULL OR (approved_at >= requested_at"
+            " AND approved_at <= requested_at + interval '7 days')",
+            name="approval_window",
+        ),
+        CheckConstraint(
+            "approved_by IS NULL OR approved_by <> requested_by"
+            " OR approved_at >= requested_at + interval '72 hours'",
+            name="second_admin_or_cooling_off",
+        ),
+        CheckConstraint(
+            "approved_at IS NULL OR cancelled_at IS NULL OR approved_at <= cancelled_at",
+            name="not_approved_after_cancel",
+        ),
+        Index(
+            "ux_erasure_requests_open",
+            "organization_id",
+            unique=True,
+            postgresql_where=text("cancelled_at IS NULL AND executed_at IS NULL"),
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    organization_id: Mapped[uuid.UUID]
+    requested_by: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("operator_staff.id", ondelete="RESTRICT")
+    )
+    requested_at: Mapped[datetime] = _now()
+    approved_by: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("operator_staff.id", ondelete="RESTRICT")
+    )
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    cancelled_by: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("operator_staff.id", ondelete="RESTRICT")
+    )
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    executed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    receipt_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("erasure_receipts.id", ondelete="RESTRICT")
+    )

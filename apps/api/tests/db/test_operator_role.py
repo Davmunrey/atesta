@@ -8,7 +8,7 @@ import uuid
 from collections.abc import Iterator
 
 import pytest
-from atesta_api.platform.tables import OPERATOR_READ, table_classes
+from atesta_api.platform.tables import OPERATOR_OWN, OPERATOR_READ, table_classes
 from sqlalchemy import Connection, Engine, column, delete, insert, literal, select, table, text
 from sqlalchemy.exc import DBAPIError
 
@@ -16,7 +16,7 @@ from .conftest import ORG_A, ORG_B
 
 OP = "atesta_operator"
 # Every tenant, global, catalog, queue and operator table outside the closed list.
-NOT_LISTED = sorted(set(table_classes()) - set(OPERATOR_READ))
+NOT_LISTED = sorted(set(table_classes()) - set(OPERATOR_READ) - OPERATOR_OWN)
 ALL_PRIVILEGES = "SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER"
 
 
@@ -112,9 +112,10 @@ def test_the_role_is_a_plain_login_that_owns_nothing(superuser: Engine) -> None:
 
 
 def test_selectable_columns_are_exactly_the_closed_list(superuser: Engine) -> None:
-    """Every column the role can read is on the list."""
+    """Every column the role can read, outside its own operator tables, is on the list."""
     with superuser.connect() as conn:
         readable = _privileged_columns(conn, "SELECT")
+    readable = {t: cols for t, cols in readable.items() if t not in OPERATOR_OWN}
     assert readable == {t: set(cols) for t, cols in OPERATOR_READ.items()}
 
 
@@ -225,12 +226,19 @@ def test_the_role_cannot_name_an_actor_in_the_customer_trail(op: Connection) -> 
     [
         "UPDATE audit_events SET action = 'operator.x'",
         "DELETE FROM audit_events",
+        "UPDATE operator_audit_events SET reason = 'x'",
+        "DELETE FROM operator_audit_events",
         "DELETE FROM subscriptions",
         "DELETE FROM billing_profiles",
         "DELETE FROM organizations",
         "UPDATE organizations SET name = 'x'",
         "UPDATE organizations SET trial_ends_at = now()",
         "UPDATE organizations SET closure_requested_by = NULL",
+        "UPDATE erasure_requests SET executed_at = now()",
+        "INSERT INTO erasure_requests (organization_id, requested_by, requested_at)"
+        " VALUES (gen_random_uuid(), gen_random_uuid(), now())",
+        "UPDATE operator_staff SET email = 'x'",
+        "DELETE FROM operator_staff",
         "INSERT INTO erasure_receipts (id, organization_id, closure_requested_at, note, row_counts)"
         " VALUES (gen_random_uuid(), gen_random_uuid(), now(), '', '{}')",
     ],
@@ -313,6 +321,42 @@ def test_the_role_cannot_cancel_an_owner_closure(
     finally:
         with superuser.begin() as conn:
             conn.execute(text("DELETE FROM organizations WHERE id = :o"), {"o": org})
+
+
+def test_the_role_appends_to_its_own_trail(op: Connection) -> None:
+    staff = op.scalar(
+        text(
+            "INSERT INTO operator_staff (id, cognito_sub, email, role)"
+            " VALUES (gen_random_uuid(), 'staff-trail', 'a@atesta.test', 'admin') RETURNING id"
+        )
+    )
+    op.execute(
+        text(
+            "INSERT INTO operator_audit_events (id, staff_id, staff_role, action, organization_id,"
+            " reason, request_id) VALUES (gen_random_uuid(), :s, 'admin', 'organization.viewed',"
+            " :o, NULL, 'req-1')"
+        ),
+        {"s": staff, "o": ORG_A},
+    )
+    assert (
+        op.scalar(
+            text("SELECT count(*) FROM operator_audit_events WHERE staff_id = :s"), {"s": staff}
+        )
+        == 1
+    )
+
+
+@pytest.mark.parametrize("table", ["operator_staff", "operator_audit_events", "erasure_requests"])
+def test_the_app_role_has_no_privilege_on_operator_tables(superuser: Engine, table: str) -> None:
+    with superuser.connect() as conn:
+        held = conn.execute(
+            text(
+                "SELECT has_table_privilege('atesta_app', :t, :all),"
+                " has_any_column_privilege('atesta_app', :t, 'SELECT, INSERT, UPDATE, REFERENCES')"
+            ),
+            {"t": table, "all": ALL_PRIVILEGES},
+        ).one()
+    assert tuple(held) == (False, False)
 
 
 def test_the_app_role_only_reads_billing_profiles(superuser: Engine) -> None:
