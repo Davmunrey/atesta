@@ -18,6 +18,7 @@ ATESTA_OPERATOR_DATABASE_URL=postgresql+psycopg://atesta_operator:...@localhost:
 ATESTA_STAFF_COGNITO_REGION=eu-south-2 ATESTA_STAFF_COGNITO_USER_POOL_ID=local-staff \
 ATESTA_STAFF_COGNITO_APP_CLIENT_ID=local-operator ATESTA_STAFF_COGNITO_DOMAIN=localhost:9001 \
 ATESTA_STAFF_COGNITO_ISSUER=http://localhost:9001 ATESTA_STAFF_COGNITO_BASE_URL=http://localhost:9001 \
+ATESTA_OPERATOR_WEB_ORIGIN=http://localhost:3001 ATESTA_OPERATOR_SESSION_KEY="$(openssl rand -base64 32)" \
 uv run uvicorn atesta_operator.main:app --port 8001
 ```
 

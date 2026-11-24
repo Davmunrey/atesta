@@ -28,7 +28,12 @@ from atesta_api.modules.identity.api_tokens import (
     require_scope,
     token_labels,
 )
-from atesta_api.modules.identity.bff import SessionCrypto, SessionEndedError, session_ended_handler
+from atesta_api.modules.identity.bff import (
+    SessionCrypto,
+    SessionEndedError,
+    safe_return,
+    session_ended_handler,
+)
 from atesta_api.modules.identity.bff import router as auth_router
 from atesta_api.modules.identity.cognito import (
     AccessToken,
@@ -187,6 +192,7 @@ __all__ = [
     "TokenVerifier",
     "enabled_staff",
     "jwks_fetcher",
+    "safe_return",
     "PAGE_SIZE",
     "SUSPENSION_REASONS",
     "USAGE_RETENTION",

@@ -1,6 +1,7 @@
 """Staff authentication and authorization (ADR-017, "Staff identity"; spec, "API").
 
-- **Token:** an access token of the staff pool's app client, checked like the customer API's
+- **Token:** from the staff session cookie (`session.py`) or a bearer header; either way an
+  access token of the staff pool's app client, checked like the customer API's
   (issuer, `token_use`, `client_id`, scopes) and carrying `auth_time`. A customer-pool token has
   another issuer and app client, so it gets 401 `auth.invalid_token`.
 - **Staff row:** the role comes from `operator_staff`, never from the token. No enabled row is
@@ -23,11 +24,12 @@ from atesta_api.modules.identity.api import (
     enabled_staff,
 )
 from atesta_api.platform.db import DbSession
-from fastapi import Depends, HTTPException, Request
+from fastapi import Depends, HTTPException, Request, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from atesta_operator.errors import operator_error
 from atesta_operator.policy import POLICY, RECENT_SIGN_IN_SECONDS
+from atesta_operator.session import has_session, session_token
 
 _bearer = HTTPBearer(auto_error=False)
 
@@ -46,14 +48,19 @@ def _invalid() -> HTTPException:
 
 def authenticate(
     request: Request,
+    response: Response,
     session: DbSession,
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)],
 ) -> Staff:
-    if credentials is None:
-        raise _invalid()
     verifier: TokenVerifier = request.app.state.token_verifier
-    try:
-        token = verifier.verify(credentials.credentials)
+    try:  # a JWKS outage is a retryable 503 on both paths
+        if credentials is not None:
+            raw = credentials.credentials
+        elif has_session(request):
+            raw = session_token(request, response)
+        else:
+            raise _invalid()
+        token = verifier.verify(raw)
     except ProviderUnavailableError:
         raise HTTPException(503, detail={"code": "auth.provider_unavailable"}) from None
     except InvalidTokenError:

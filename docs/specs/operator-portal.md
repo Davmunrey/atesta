@@ -280,6 +280,15 @@ Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
   `apps/operator-web` (step 5) generates its client from there.
 - **Images:** the customer API image holds no `atesta_operator` (a Dockerfile test and CI's
   built-image check). The operator image itself comes with build step 6.
+- **Staff session (#471):** `/auth/login`, `/auth/callback` and `/auth/logout`, the console's
+  BFF pattern with its own key (`ATESTA_OPERATOR_SESSION_KEY`, refused when equal to
+  `ATESTA_SESSION_KEY`), origin (`ATESTA_OPERATOR_WEB_ORIGIN`) and cookie names (`atesta_op_*`).
+  Session cookies are host-only, HttpOnly, Secure and `SameSite=Strict`. The pending sign-in
+  cookie (state, nonce, PKCE verifier; no token) is `Lax` on `/auth` only, because the staff
+  pool's redirect back is a cross-site navigation that would not carry a Strict cookie. A third
+  sealed cookie holds the sign-in and last-use times: 30 minutes idle or 8 hours in total ends
+  the session (401 `auth.invalid_token`, cookies cleared). A bearer token is still accepted, for
+  tests and tools; its own expiry, set on the staff app client, bounds it.
 - **Local sign-in:** `uv run python apps/api/devtools/fake_cognito.py --staff` serves a fake staff
   pool on port 9001 with client id `local-operator`. Both fakes now put `auth_time` in access
   tokens and keep it across a refresh: Cognito documents it as the time the user "completed

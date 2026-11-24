@@ -99,7 +99,7 @@ def store_tokens(response: Response, crypto: SessionCrypto, tokens: TokenSet) ->
         set_cookie(response, REFRESH_COOKIE, sealed, SESSION_SECONDS)
 
 
-def _safe_return(target: str | None) -> str:
+def safe_return(target: str | None, fallback: str = "/app") -> str:
     """Only same-site absolute paths: no scheme, no '//' host, no backslash tricks.
 
     Whitespace and control characters are refused here, not left to the framework's encoding of
@@ -114,7 +114,7 @@ def _safe_return(target: str | None) -> str:
         and not any(ord(c) <= 0x20 or ord(c) == 0x7F for c in target)
     ):
         return target
-    return "/app"
+    return fallback
 
 
 def _error(status: int, code: str) -> HTTPException:
@@ -135,7 +135,7 @@ def login(request: Request, lang: str = "es", return_to: str | None = None) -> R
         state=state, nonce=nonce, challenge=challenge, lang="en" if lang == "en" else "es"
     )
     pending = json.dumps(
-        {"state": state, "nonce": nonce, "verifier": verifier, "return_to": _safe_return(return_to)}
+        {"state": state, "nonce": nonce, "verifier": verifier, "return_to": safe_return(return_to)}
     )
     response = RedirectResponse(url, status_code=302)
     crypto: SessionCrypto = request.app.state.session_crypto

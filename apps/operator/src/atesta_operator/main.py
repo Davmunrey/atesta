@@ -6,7 +6,12 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 import httpx
-from atesta_api.modules.identity.api import TokenVerifier, jwks_fetcher
+from atesta_api.modules.identity.api import (
+    CognitoOAuth,
+    SessionCrypto,
+    TokenVerifier,
+    jwks_fetcher,
+)
 from atesta_api.platform import db
 from atesta_api.platform.errors import install_error_handlers
 from atesta_api.platform.guard import assert_safe_runtime_role
@@ -15,7 +20,7 @@ from atesta_api.platform.logs import install_log_redaction
 from fastapi import FastAPI
 from sqlalchemy import Engine
 
-from atesta_operator import me
+from atesta_operator import me, session
 from atesta_operator.mfa import MfaConfigReader, assert_staff_pool_requires_mfa
 from atesta_operator.settings import Settings
 
@@ -42,9 +47,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = Settings.from_env()
     engine = startup(settings)
     with httpx.Client() as client:
-        app.state.token_verifier = TokenVerifier(
-            settings.cognito, jwks_fetcher(settings.cognito, client)
-        )
+        verifier = TokenVerifier(settings.cognito, jwks_fetcher(settings.cognito, client))
+        app.state.token_verifier = verifier
+        app.state.web_origin = settings.web_origin
+        app.state.session_crypto = SessionCrypto(settings.session_key)
+        app.state.oauth = CognitoOAuth(settings.cognito, client, verifier, settings.web_origin)
         yield
     engine.dispose()
 
@@ -58,6 +65,8 @@ def create_app() -> FastAPI:
     created = FastAPI(title="Atesta operator API", version="0.0.0", lifespan=lifespan)
     install_error_handlers(created)
     install_response_headers(created)
+    created.add_exception_handler(session.SessionEndedError, session.session_ended_handler)
+    created.include_router(session.router)
     created.include_router(me.router)
     created.add_api_route("/health", health, methods=["GET"])
     return created
