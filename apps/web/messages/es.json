@@ -320,7 +320,9 @@
     "myWork": "Mi trabajo",
     "auditorUntil": "Acceso de auditor, solo lectura, hasta el {date}",
     "settings": "Ajustes",
-    "closing": "Esta organización se cerrará y sus datos se borrarán el {date}. Exporta lo que necesites antes."
+    "closing": "Esta organización se cerrará y sus datos se borrarán el {date}. Exporta lo que necesites antes.",
+    "trialEnds": "Prueba de 14 días: termina el {date}.",
+    "trialEnded": "La prueba de 14 días terminó el {date}. La organización es de solo lectura: puedes consultar y exportar los datos. Para activar un plan, escribe a {email}."
   },
   "roles": {
     "owner": "Propietario",
@@ -835,10 +837,23 @@
       "assessment_proposal_rejected": "Rechazó la propuesta de un agente",
       "notification_preferences_changed": "Cambió sus avisos por email",
       "notification_unsubscribed": "Se dio de baja de un aviso por email",
-      "organization_locale_changed": "Cambió el idioma de los avisos de la organización"
+      "organization_locale_changed": "Cambió el idioma de los avisos de la organización",
+      "operator_plan_changed": "Cambió el plan",
+      "operator_billing_profile_updated": "Actualizó los datos de facturación",
+      "operator_suspended": "Suspendió la organización",
+      "operator_reactivated": "Reactivó la organización",
+      "operator_export_requested": "Pidió exportar los datos",
+      "operator_closure_started": "Inició el cierre de la organización",
+      "operator_closure_cancelled": "Canceló el cierre de la organización",
+      "operator_erasure_requested": "Solicitó borrar los datos",
+      "operator_erasure_approved": "Aprobó borrar los datos",
+      "operator_erasure_cancelled": "Canceló el borrado de los datos"
     },
     "day": "Día",
-    "unknown": "Otra acción"
+    "unknown": "Otra acción",
+    "actor": {
+      "atesta": "Equipo de Atesta"
+    }
   },
   "myWork": {
     "title": "Mi trabajo",
@@ -887,7 +902,23 @@
     "languageHelp": "Los avisos por email de esta organización llegan a todos en este idioma.",
     "languageLabel": "Idioma de los avisos por email",
     "languageSave": "Guardar el idioma",
-    "languageSaved": "Guardado. Los avisos llegarán en {language}."
+    "languageSaved": "Guardado. Los avisos llegarán en {language}.",
+    "closingByAtesta": "El cierre lo inició Atesta. Para cancelarlo, escribe a {email}.",
+    "billing": {
+      "title": "Datos de facturación",
+      "help": "Atesta los registra para emitir tus facturas. Para cambiarlos, escribe a {email}.",
+      "loading": "Cargando los datos de facturación…",
+      "empty": "Atesta aún no ha registrado tus datos de facturación.",
+      "notRecorded": "Sin registrar",
+      "legalName": "Razón social",
+      "taxId": "NIF",
+      "address": "Dirección",
+      "postalCode": "Código postal",
+      "city": "Ciudad",
+      "region": "Provincia o región",
+      "country": "País",
+      "contactEmail": "Email de facturación"
+    }
   },
   "cockpit": {
     "now": "Ahora",
@@ -2096,5 +2127,21 @@
   "deadline": {
     "left": "{unit, select, days {{value, plural, one {Queda # día} other {Quedan # días}}} other {{value, plural, one {Queda # h} other {Quedan # h}}}}",
     "past": "{unit, select, days {{value, plural, one {Vencido hace # día} other {Vencido hace # días}}} other {Vencido hace {value} h}}"
+  },
+  "suspended": {
+    "title": "Organización suspendida",
+    "body": "El acceso a {org} está en pausa desde el {date}. Tus datos se conservan: no se ha borrado ni cambiado nada.",
+    "member": "Para saber más, habla con la persona propietaria de la organización.",
+    "owner": "Motivo: {reason}. Para reactivarla, escribe a {email}.",
+    "reason": {
+      "non_payment": "pago pendiente",
+      "contract_ended": "contrato finalizado",
+      "customer_request": "a petición de tu organización",
+      "security_review": "revisión de seguridad",
+      "other": "otro motivo"
+    },
+    "ownerActions": "Mientras tanto puedes exportar los datos o cerrar la organización.",
+    "export": "Exportar los datos",
+    "closure": "Cerrar la organización"
   }
 }

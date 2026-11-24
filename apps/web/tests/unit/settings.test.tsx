@@ -38,7 +38,7 @@ it("asks for the exact name before requesting closure", async () => {
 it("shows the erase date and lets the owner cancel", async () => {
   const requests = stubApi({ "DELETE /api/v1/orgs/primary/closure": [204, null] });
   renderWithProviders(<SettingsView org={{ ...org, closure_erase_after: "2026-12-23T10:00:00Z" }} />);
-  expect(screen.getByRole("status").textContent).toBe("Cierre solicitado: los datos se borrarán el 23 de diciembre de 2026.");
+  expect(screen.getByText("Cierre solicitado: los datos se borrarán el 23 de diciembre de 2026.").getAttribute("role")).toBe("status");
   fireEvent.click(screen.getByRole("button", { name: "Cancelar el cierre" }));
   await vi.waitFor(() => { if (!requests.some((q) => q.method === "DELETE")) throw new Error("no delete"); });
 });

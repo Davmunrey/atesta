@@ -330,6 +330,21 @@ The console replaces every organization page with one full-page state, inside th
 - **Contact address:** `{email}` is the support address from configuration. It is an open
   question until the domain exists.
 
+**Console as built (build step 3, #464).** Amended 2026-11-24 where the text above was ambiguous
+or did not fit DESIGN.md:
+- **Voice:** `suspended.reason.customer_request` reads "a petición de tu organización". DESIGN.md
+  ("Voice") addresses the reader as "tú", never "vosotros", and a test holds it.
+- **Owners' billing details** show on the suspended page itself, read-only, so
+  `suspended.billing` ("Ver los datos de facturación") is not used. The closure link opens
+  Ajustes, which a suspended organization's owner can still reach (without the language panel,
+  whose save would be refused).
+- **Trial notices** use the console's notice row: owners and admins see "Prueba de 14 días:
+  termina el {date}." while it runs; everyone sees the read-only notice, in the overdue style,
+  once it has ended (`org.trialEnds`, `org.trialEnded`).
+- **Operator closure in Ajustes:** no cancel button; "El cierre lo inició Atesta. Para
+  cancelarlo, escribe a {email}." (`settings.closingByAtesta`), with the address from
+  `content/legal-entity.ts` (owner answer 9).
+
 **Service notices** (notifications module, `apps/api/src/atesta_api/messages`, ES and EN). They
 go to owners, and to admins where noted, and cannot be unsubscribed from, because they concern
 the service itself:
