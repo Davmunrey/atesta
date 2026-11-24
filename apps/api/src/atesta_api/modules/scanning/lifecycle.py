@@ -22,6 +22,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.connections.api import scan_target
+from atesta_api.modules.identity.api import is_suspended
 from atesta_api.modules.scanning.expected import ENGINE_VERSION
 from atesta_api.modules.scanning.ingest import ENGINE
 from atesta_api.modules.scanning.models import Scan
@@ -185,14 +186,15 @@ def scheduled_scan(
 ) -> Scan | None:
     """schedule_scan job: scan an active connection, then defer itself 24 h ahead.
 
-    Skipped when a scan is already queued or running; the chain goes on while the connection is
-    neither disconnected nor revoked, so a connection that recovers is scanned again.
+    Skipped when a scan is already queued or running, or while the organization is suspended;
+    the chain goes on while the connection is neither disconnected nor revoked, so a connection
+    that recovers, or an organization reactivated, is scanned again.
     """
     target = scan_target(session, organization_id, connection_id)
     if target is None or target.status in _UNSCHEDULED:
         return None
     scan = None
-    if target.active:
+    if target.active and not is_suspended(session, organization_id):
         try:
             scan = queue_scan(session, organization_id, connection_id, trigger="schedule")
         except AlreadyQueuedError:

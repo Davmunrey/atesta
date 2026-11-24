@@ -41,7 +41,13 @@ from atesta_api.modules.scanning.lifecycle import (
     scheduled_scan,
 )
 from atesta_api.modules.scanning.local import LocalCredentialStore, LocalDockerRunner
-from atesta_api.modules.scanning.queries import ScanSummary, recent_scans, scan_counts
+from atesta_api.modules.scanning.queries import (
+    ScanActivity,
+    ScanSummary,
+    recent_scans,
+    scan_activity,
+    scan_counts,
+)
 from atesta_api.modules.scanning.routes import router
 from atesta_api.modules.scanning.runners import (
     MANIFEST_FILE,
@@ -88,6 +94,7 @@ __all__ = [
     "ScanJob",
     "ScanRunner",
     "ScanNotFoundError",
+    "ScanActivity",
     "ScanSummary",
     "ScanStore",
     "ScanTransientError",
@@ -107,6 +114,7 @@ __all__ = [
     "powershell_checks",
     "queue_scan",
     "recent_scans",
+    "scan_activity",
     "scan_counts",
     "rescore_reviews",
     "router",

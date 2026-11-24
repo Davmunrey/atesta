@@ -1,10 +1,12 @@
-"""The organization's email language and the people notices go to (notifications spec PR 2).
+"""The organization's email language and the people notices go to (notifications spec PR 2),
+its trial and the owners' read-only billing details (operator-portal spec).
 
 Other modules read these through identity.api; only the owner changes the language.
 """
 
 import uuid
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends
@@ -12,8 +14,10 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from atesta_api.modules.identity.deps import Member, error, require_role
+from atesta_api.modules.billing.api import billing_profile, has_plan
+from atesta_api.modules.identity.deps import Member, error, require_member, require_role
 from atesta_api.modules.identity.models import Membership, Role, User
+from atesta_api.modules.identity.standing import standing
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 from atesta_api.platform.tenancy import Organization
@@ -87,3 +91,40 @@ def set_locale(
             metadata={"locale": body.locale},
         )
     return LocaleOut(locale=body.locale)
+
+
+class TrialOut(BaseModel):
+    ends_at: datetime | None  # null once the operator has set a plan
+    ended: bool  # read-only: the date has passed with no plan (owner answer 1)
+
+
+@router.get("/trial")
+def read_trial(member: Annotated[Member, Depends(require_member)], session: DbSession) -> TrialOut:
+    state = standing(session, member.organization_id)
+    planned = has_plan(session, member.organization_id)
+    return TrialOut(ends_at=None if planned else state.trial_ends_at, ended=state.trial_ended)
+
+
+class BillingProfileOut(BaseModel):
+    legal_name: str | None
+    tax_id: str | None
+    address_line1: str | None
+    address_line2: str | None
+    postal_code: str | None
+    city: str | None
+    region: str | None
+    country: str | None
+    contact_email: str | None
+    complete: bool
+    updated_at: datetime
+
+
+@router.get("/billing-profile")
+def read_billing_profile(
+    member: Annotated[Member, Depends(require_role(Role.OWNER))], session: DbSession
+) -> BillingProfileOut:
+    """Read-only: the operator records them (ADR-017); owners see them, even while suspended."""
+    details = billing_profile(session, member.organization_id)
+    if details is None:
+        raise error(404, "billing.no_profile")
+    return BillingProfileOut(**{n: getattr(details, n) for n in BillingProfileOut.model_fields})

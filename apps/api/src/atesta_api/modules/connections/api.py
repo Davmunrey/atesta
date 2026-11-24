@@ -7,6 +7,7 @@ import httpx
 from fastapi import FastAPI
 
 from atesta_api.modules.connections.entra import EntraSettings, EntraSignIn
+from atesta_api.modules.connections.health import ConnectionHealth, health_counts
 from atesta_api.modules.connections.m365 import api_router as m365_api_router
 from atesta_api.modules.connections.m365 import auth_router as m365_auth_router
 from atesta_api.modules.connections.routes import router
@@ -47,6 +48,7 @@ def wire_connections(app: FastAPI, client: httpx.Client) -> None:
 
 
 __all__ = [
+    "ConnectionHealth",
     "ConnectionStateError",
     "GoogleServiceAccounts",
     "ScanTarget",
@@ -59,6 +61,7 @@ __all__ = [
     "create_connection",
     "disconnect_connection",
     "get_connection",
+    "health_counts",
     "google_propagation_open",
     "install_connections",
     "list_connections",

@@ -47,7 +47,11 @@ class MembershipOut(BaseModel):
     role: Role
     access_expires_on: date | None = None
     closure_erase_after: datetime | None = None  # set while the organization is closing
+    closure_origin: Literal["owner", "operator"] | None = None  # operator-portal spec
     organization_locale: Literal["es", "en"] = "es"  # email language (notifications spec)
+    suspended: bool = False
+    suspended_at: datetime | None = None
+    suspension_reason: str | None = None  # owners only: the other roles read the generic text
 
 
 class MeOut(BaseModel):
@@ -84,6 +88,9 @@ def me(
             Membership.access_expires_at,
             Organization.closure_requested_at,
             Organization.locale,
+            Organization.closure_origin,
+            Organization.suspended_at,
+            Organization.suspension_reason,
         )
         .join(Organization, Organization.id == Membership.organization_id)
         .where(Membership.user_id == caller.user_id)
@@ -101,9 +108,17 @@ def me(
                 role=Role(r),
                 access_expires_on=end_date(x),
                 closure_erase_after=erase_after(c),
+                closure_origin=None
+                if origin is None
+                else "owner"
+                if origin == "owner"
+                else "operator",
                 organization_locale="en" if loc == "en" else "es",
+                suspended=since is not None,
+                suspended_at=since,
+                suspension_reason=reason if r == Role.OWNER else None,
             )
-            for o, n, r, x, c, loc in rows
+            for o, n, r, x, c, loc, origin, since, reason in rows
         ],
     )
 

@@ -43,6 +43,31 @@ from atesta_api.modules.identity.deps import (
     require_member,
     require_role,
 )
+from atesta_api.modules.identity.erasure_requests import (
+    ApprovedErasure,
+    approve_erasure,
+    cancel_erasure,
+    request_erasure,
+)
+from atesta_api.modules.identity.for_operator import (
+    PAGE_SIZE,
+    SUSPENSION_REASONS,
+    ApiKeyCounts,
+    OperatorError,
+    OrganizationFilters,
+    OrganizationMetadata,
+    OrganizationPage,
+    api_key_counts,
+    cancel_operator_closure,
+    invitation_counts,
+    last_activity,
+    member_counts,
+    organization_metadata,
+    organization_rows,
+    reactivate,
+    start_operator_closure,
+    suspend,
+)
 from atesta_api.modules.identity.invitations import QueryFreeRoute, normalize_email, token_hash
 from atesta_api.modules.identity.models import Role
 from atesta_api.modules.identity.org_profile import (
@@ -52,6 +77,7 @@ from atesta_api.modules.identity.org_profile import (
     recipients,
 )
 from atesta_api.modules.identity.routes import router
+from atesta_api.modules.identity.standing import is_suspended
 
 
 def wire_identity(app: FastAPI, client: httpx.Client) -> None:
@@ -75,7 +101,28 @@ def install_identity(app: FastAPI) -> None:
 
 
 __all__ = [
+    "PAGE_SIZE",
+    "SUSPENSION_REASONS",
     "USAGE_RETENTION",
+    "ApiKeyCounts",
+    "ApprovedErasure",
+    "OperatorError",
+    "OrganizationFilters",
+    "OrganizationMetadata",
+    "OrganizationPage",
+    "api_key_counts",
+    "approve_erasure",
+    "cancel_erasure",
+    "cancel_operator_closure",
+    "invitation_counts",
+    "last_activity",
+    "member_counts",
+    "organization_metadata",
+    "organization_rows",
+    "reactivate",
+    "request_erasure",
+    "start_operator_closure",
+    "suspend",
     "ApiCaller",
     "annotate_scopes",
     "ApiTokenCaller",
@@ -98,6 +145,7 @@ __all__ = [
     "require_scope",
     "install_identity",
     "is_member",
+    "is_suspended",
     "member_read",
     "normalize_email",
     "organization_profile",

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { type ReactNode, useDeferredValue, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
-import { useOverview } from "@/lib/api/hooks";
+import { useOverview, useTrial } from "@/lib/api/hooks";
 import { useSearch } from "@/lib/api/register-hooks";
 import { LOGOUT_URL } from "@/lib/auth";
 import { type Membership, orgAccessReviews, orgActivity, orgConnections, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgIncidents, orgIntegrations, orgMyWork, orgNotifications, orgPolicies, orgReport, orgSettings, orgTraining, selectOrg } from "@/lib/org";
@@ -14,6 +14,8 @@ import { Icon, type IconName } from "@atesta/ui/icons";
 import { LocaleSwitcher } from "@atesta/ui/locale-switcher";
 import { SiteFooter } from "./site-footer";
 import { BrandMark } from "./brand-mark";
+import { SuspendedView } from "./suspended-view";
+import { legalEntity } from "@/content/legal-entity";
 
 // A detail page lights up its list in the menu.
 const DETAIL_PAGES: Record<string, string> = {
@@ -84,6 +86,11 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const org = selectOrg(memberships, useSearchParams().get("org"));
   const inOrg = org !== null && ORG_PAGES.includes(pathname);
+  // A suspended organization (operator-portal spec): one page in place of every other, with no
+  // organization navigation; its owners keep Ajustes for export and closure.
+  const suspended = inOrg && Boolean(org.suspended);
+  const navigable = inOrg && !suspended;
+  const replaced = suspended && !(org.role === "owner" && pathname === "/app/settings");
   const collapsed = useSyncExternalStore(subscribeNav, readCollapsed, () => false);
   const desktop = useSyncExternalStore(subscribeMedia, isDesktop, () => true);
   const [drawer, setDrawer] = useState(false);
@@ -91,26 +98,26 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
   const navId = useId();
   const closeDrawer = () => { setDrawer(false); menuButton.current?.focus(); };
   const expanded = desktop ? !collapsed : drawer;
-  return <div className="console" data-nav={inOrg ? (collapsed ? "collapsed" : "expanded") : "none"} data-drawer={drawer ? "open" : "closed"}>
+  return <div className="console" data-nav={navigable ? (collapsed ? "collapsed" : "expanded") : "none"} data-drawer={drawer ? "open" : "closed"}>
     <a href="#main-content" className="skip-link">{c("skip")}</a>
     <header className="topbar">
-      {inOrg ? <button ref={menuButton} type="button" className="topbar-icon" aria-controls={navId} aria-expanded={expanded}
+      {navigable ? <button ref={menuButton} type="button" className="topbar-icon" aria-controls={navId} aria-expanded={expanded}
         aria-label={c(expanded ? "menuHide" : "menuShow")} title={c(expanded ? "menuHide" : "menuShow")}
         onClick={() => (desktop ? setCollapsed(!collapsed) : setDrawer(!drawer))}>
         <Icon name="menu" />
       </button> : null}
       <Link href="/app" className="topbar-brand" aria-label={brand("name")}><BrandMark /><span>{brand("name")}</span></Link>
       {org && inOrg ? <OrgSwitcher org={org} memberships={memberships} /> : null}
-      {org && inOrg ? <GlobalSearch org={org} /> : <span className="topbar-spacer" />}
-      <div className="topbar-end"><LocaleSwitcher compact /><AccountMenu org={org && inOrg && isContributor(org.role) ? org : null} /></div>
+      {org && navigable ? <GlobalSearch org={org} /> : <span className="topbar-spacer" />}
+      <div className="topbar-end"><LocaleSwitcher compact /><AccountMenu org={org && navigable && isContributor(org.role) ? org : null} /></div>
     </header>
     <div className="console-body">
-      {org && inOrg ? <SideNav id={navId} org={org} pathname={pathname} collapsed={desktop && collapsed} onNavigate={() => !desktop && setDrawer(false)} onEscape={closeDrawer} /> : null}
+      {org && navigable ? <SideNav id={navId} org={org} pathname={pathname} collapsed={desktop && collapsed} onNavigate={() => !desktop && setDrawer(false)} onEscape={closeDrawer} /> : null}
       {/* Pointer-only backdrop: keyboards close the drawer with Esc or the menu button. */}
       {drawer && !desktop ? <div className="drawer-scrim" aria-hidden="true" onClick={closeDrawer} /> : null}
       <div className="console-main">
         {org && inOrg ? <Notices org={org} /> : null}
-        <main id="main-content" tabIndex={-1} className="console-page">{children}</main>
+        <main id="main-content" tabIndex={-1} className="console-page">{org && replaced ? <SuspendedView org={org} /> : children}</main>
         <SiteFooter />
       </div>
     </div>
@@ -160,8 +167,16 @@ function OrgSwitcher({ org, memberships }: { org: Membership; memberships: Membe
 function Notices({ org }: { org: Membership }) {
   const t = useTranslations("org");
   const format = useFormatter();
-  if (!org.access_expires_on && !org.closure_erase_after) return null;
+  const trial = useTrial(org.organization_id, !org.suspended).data;
+  const day = (iso: string) => format.dateTime(new Date(iso), { dateStyle: "long" });
+  // The trial's end date is for owners and admins; the read-only state is for everyone.
+  const trialRunning = trial?.ends_at && !trial.ended && canReviewControls(org.role) ? trial.ends_at : null;
+  const trialEnded = trial?.ended && trial.ends_at ? trial.ends_at : null;
+  if (!org.access_expires_on && !org.closure_erase_after && !trialRunning && !trialEnded) return null;
   return <div className="notices">
+    {trialRunning ? <p className="notice" role="note"><Icon name="pending" />{t("trialEnds", { date: day(trialRunning) })}</p> : null}
+    {trialEnded ? <p className="notice" data-severity="overdue" role="note"><Icon name="overdue" />
+      {t("trialEnded", { date: day(trialEnded), email: legalEntity.email })}</p> : null}
     {org.access_expires_on ? <p className="notice" role="note"><Icon name="pending" />
       {t("auditorUntil", { date: format.dateTime(new Date(`${org.access_expires_on}T00:00:00Z`), { dateStyle: "long", timeZone: "UTC" }) })}</p> : null}
     {org.closure_erase_after ? <p className="notice" data-severity="overdue" role="note"><Icon name="overdue" />

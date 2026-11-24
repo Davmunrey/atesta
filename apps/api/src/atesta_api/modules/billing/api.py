@@ -8,8 +8,9 @@ Routes enforce them with the require_* checks (billing-entitlements spec).
 
 import os
 import uuid
-from collections.abc import Mapping
+from collections.abc import Collection, Mapping
 from dataclasses import dataclass
+from datetime import datetime
 from enum import StrEnum
 from functools import cache
 from pathlib import Path
@@ -17,10 +18,18 @@ from typing import Any, Literal
 
 import yaml
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import func, select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.billing.models import Subscription
+from atesta_api.modules.billing.profiles import (
+    BillingDetails,
+    BillingSummary,
+    billing_profile,
+    billing_summaries,
+    set_billing_profile,
+)
 
 
 class Plan(StrEnum):
@@ -170,6 +179,15 @@ def entitlements(session: Session, organization_id: uuid.UUID) -> Entitlements:
     return Entitlements(Plan(row.plan), frozenset(row.addons))
 
 
+def has_plan(session: Session, organization_id: uuid.UUID) -> bool:
+    """Whether the operator has set a plan: it ends the trial's read-only state (owner answer 1).
+    Read in the organization's own context."""
+    found = session.scalar(
+        select(Subscription.organization_id).where(Subscription.organization_id == organization_id)
+    )
+    return found is not None
+
+
 def _beyond_plan(limit: str) -> HTTPException:
     return HTTPException(status_code=403, detail={"code": "billing.plan_limit", "limit": limit})
 
@@ -191,3 +209,93 @@ def require_framework(session: Session, organization_id: uuid.UUID, framework_ke
     granted = entitlements(session, organization_id)
     if not has_framework(granted.plan, framework_key, addons=granted.addons):
         raise _beyond_plan("framework")
+
+
+# --- the operator service (operator-portal spec; an atesta_operator session, ADR-012 am. 8) ---
+
+
+class UnknownAddonError(ValueError):
+    """An add-on that is neither a feature nor a framework add-on in catalog/plans.yaml."""
+
+
+@dataclass(frozen=True, slots=True)
+class SubscriptionInfo:
+    plan: Plan
+    addons: frozenset[str]
+    note: str
+    updated_at: datetime
+
+
+def known_addons() -> frozenset[str]:
+    """Feature add-ons and the framework add-ons in catalog/plans.yaml."""
+    return frozenset(f.value for f in Feature) | frozenset(_grants()[1])
+
+
+def subscriptions_for(
+    session: Session, org_ids: Collection[uuid.UUID] | None
+) -> dict[uuid.UUID, SubscriptionInfo]:
+    """Rows only: an organization absent from the result has DEFAULT_PLAN. None reads all."""
+    query = select(
+        Subscription.organization_id,
+        Subscription.plan,
+        Subscription.addons,
+        Subscription.note,
+        Subscription.updated_at,
+    )
+    if org_ids is not None:
+        query = query.where(Subscription.organization_id.in_(org_ids))
+    return {
+        org: SubscriptionInfo(Plan(plan), frozenset(addons), note, at)
+        for org, plan, addons, note, at in session.execute(query)
+    }
+
+
+def set_subscription(
+    session: Session, organization_id: uuid.UUID, plan: Plan, addons: frozenset[str], note: str
+) -> Plan | None:
+    """Upsert the organization's plan; returns the previous one, None when it had no row. The
+    next customer request reads it through entitlements(), and a set plan ends the trial."""
+    unknown = sorted(addons - known_addons())
+    if unknown:
+        raise UnknownAddonError(unknown[0])
+    previous = session.scalar(
+        select(Subscription.plan)
+        .where(Subscription.organization_id == organization_id)
+        .with_for_update()
+    )
+    values = {"plan": plan.value, "addons": sorted(addons), "note": note}
+    session.execute(
+        insert(Subscription)
+        .values(organization_id=organization_id, **values)
+        .on_conflict_do_update(
+            index_elements=[Subscription.organization_id],
+            set_={**values, "updated_at": func.now()},
+        )
+    )
+    return None if previous is None else Plan(previous)
+
+
+__all__ = [
+    "DEFAULT_PLAN",
+    "BillingDetails",
+    "BillingSummary",
+    "Entitlements",
+    "Feature",
+    "Plan",
+    "SubscriptionInfo",
+    "UnknownAddonError",
+    "billing_profile",
+    "billing_summaries",
+    "connector_limit",
+    "entitlements",
+    "has_feature",
+    "has_framework",
+    "has_plan",
+    "known_addons",
+    "require_connector_slot",
+    "require_feature",
+    "require_framework",
+    "set_billing_profile",
+    "set_subscription",
+    "subscriptions_for",
+]

@@ -139,6 +139,22 @@ export function useActivity(orgId: string, days: 30 | 90, enabled = true) {
   });
 }
 
+/** The 14-day trial (operator-portal spec, owner answer 1): ends_at is null once a plan is set. */
+export function useTrial(orgId: string, enabled = true) {
+  return useQuery({
+    queryKey: ["trial", orgId], retry: false, enabled,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/trial", { params: { path: { org_id: orgId } } })),
+  });
+}
+
+/** Billing details the operator recorded (operator-portal spec): owners only, read-only. */
+export function useBillingProfile(orgId: string) {
+  return useQuery({
+    queryKey: ["billing-profile", orgId], retry: false,
+    queryFn: () => unwrap(api.GET("/api/v1/orgs/{org_id}/billing-profile", { params: { path: { org_id: orgId } } })),
+  });
+}
+
 /** Closure (organization-closure spec): the erase date reaches every member through /me. */
 export function useRequestClosure(orgId: string) {
   const client = useQueryClient();
