@@ -30,15 +30,22 @@ class ObjectMissingError(Exception):
 
 
 class EvidenceStore(Protocol):
+    # True when a malware scanner reports on every new object (evidence-malware-scanning spec).
+    scanned: bool
+
     def write(self, key: str, body: BinaryIO, *, sha256: str, media_type: str, size: int) -> None:
         """Store the whole body under the key. A repeated key is a new version."""
 
-    def read(self, key: str, max_bytes: int) -> bytes:
-        """At most max_bytes of the object, so a swapped-in huge object cannot fill memory."""
+    def read(self, key: str, max_bytes: int, version: str | None = None) -> bytes:
+        """At most max_bytes of the object (of that version, when given), so a swapped-in huge
+        object cannot fill memory."""
 
 
 class LocalEvidenceStore:
-    """A directory laid out like the bucket, for local development and tests."""
+    """A directory laid out like the bucket, for local development and tests. No scanner, and
+    one version per key: a given version is ignored."""
+
+    scanned = False
 
     def __init__(self, root: Path) -> None:
         require_dev("LocalEvidenceStore")
@@ -60,7 +67,7 @@ class LocalEvidenceStore:
         with path.open("wb") as handle:
             shutil.copyfileobj(body, handle, _CHUNK)
 
-    def read(self, key: str, max_bytes: int) -> bytes:
+    def read(self, key: str, max_bytes: int, version: str | None = None) -> bytes:
         try:
             with self._path(key).open("rb") as handle:
                 return handle.read(max_bytes)
@@ -73,7 +80,10 @@ class S3EvidenceStore:
 
     The SHA-256 goes with the write, so S3 refuses bytes that changed on the way; Object Lock
     also requires a checksum on every upload. Encryption and retention are the bucket's defaults.
+    GuardDuty Malware Protection scans every new object version in the bucket.
     """
+
+    scanned = True
 
     def __init__(self, bucket: str, client: Any) -> None:
         self._bucket = bucket
@@ -92,12 +102,15 @@ class S3EvidenceStore:
         except (BotoCoreError, ClientError) as error:
             raise StoreUnavailableError(type(error).__name__) from None
 
-    def read(self, key: str, max_bytes: int) -> bytes:
+    def read(self, key: str, max_bytes: int, version: str | None = None) -> bytes:
+        where = {"Bucket": self._bucket, "Key": key}
+        if version is not None:
+            where["VersionId"] = version
         try:
-            response = self._client.get_object(Bucket=self._bucket, Key=key)
+            response = self._client.get_object(**where)
             data: bytes = response["Body"].read(max_bytes)
         except ClientError as error:
-            if error.response.get("Error", {}).get("Code") == "NoSuchKey":
+            if error.response.get("Error", {}).get("Code") in ("NoSuchKey", "NoSuchVersion"):
                 raise ObjectMissingError from None
             raise StoreUnavailableError(type(error).__name__) from None
         except BotoCoreError as error:

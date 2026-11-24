@@ -125,6 +125,27 @@ def test_the_s3_store_reads_at_most_the_bytes_asked_for(s3: Any) -> None:
         )
 
 
+def test_the_s3_store_reads_the_scanned_version_when_one_is_given(s3: Any) -> None:
+    """evidence-malware-scanning spec D5: the version GuardDuty read is the one served."""
+    with Stubber(s3) as stub:
+        stub.add_response(
+            "get_object",
+            {"Body": StreamingBody(io.BytesIO(DATA), len(DATA))},
+            {"Bucket": BUCKET, "Key": KEY, "VersionId": "v-scanned"},
+        )
+        assert S3EvidenceStore(BUCKET, s3).read(KEY, len(DATA) + 1, version="v-scanned") == DATA
+        stub.assert_no_pending_responses()
+
+
+def test_only_the_s3_store_has_a_scanner(tmp_path: Path, dev: None, s3: Any) -> None:
+    """The local store never claims a scan ran (evidence-malware-scanning spec)."""
+    assert S3EvidenceStore(BUCKET, s3).scanned is True
+    local = LocalEvidenceStore(tmp_path / "evidence")
+    assert local.scanned is False
+    local.write(KEY, io.BytesIO(DATA), sha256=DIGEST, media_type="application/pdf", size=len(DATA))
+    assert local.read(KEY, 100, version="ignored-locally") == DATA
+
+
 def test_the_s3_store_tells_a_missing_object_from_an_outage(s3: Any) -> None:
     store = S3EvidenceStore(BUCKET, s3)
     with Stubber(s3) as stub:

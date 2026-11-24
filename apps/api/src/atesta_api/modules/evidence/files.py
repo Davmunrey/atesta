@@ -3,7 +3,8 @@
 The browser sends the file to the API, the only writer to the store. The type comes from the
 file name's extension and the content must match it; the SHA-256 recorded is the one computed
 here over the bytes received. Every download recomputes it before a byte is served (#263).
-Files are untrusted data: never executed, rendered or parsed (rule 5).
+Files are untrusted data: never executed, rendered or parsed (rule 5). A download is served only
+once the malware scanner said the file is clean (evidence-malware-scanning spec).
 """
 
 import hashlib
@@ -25,8 +26,9 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from atesta_api.modules.compliance.api import control_is_visible
 from atesta_api.modules.evidence.api import storage_key_for
-from atesta_api.modules.evidence.models import Evidence, EvidenceControl
-from atesta_api.modules.evidence.schemas import EvidenceOut, FileOut, FileUploads
+from atesta_api.modules.evidence.malware import NOT_SCANNED, PENDING, mark_not_scanned
+from atesta_api.modules.evidence.models import Evidence, EvidenceControl, EvidenceFileScan
+from atesta_api.modules.evidence.schemas import EvidenceOut, FileOut, FileUploads, ScanStatus
 from atesta_api.modules.evidence.store import (
     EvidenceStore,
     ObjectMissingError,
@@ -80,7 +82,7 @@ def file_uploads(request: Request) -> FileUploads:
     )
 
 
-def file_out(row: Evidence) -> FileOut | None:
+def file_out(row: Evidence, scan: EvidenceFileScan | None) -> FileOut | None:
     """The file of an uploaded document. Scan outputs keep their metadata private."""
     if row.source_type != "upload" or row.storage_key is None:
         return None
@@ -89,6 +91,16 @@ def file_out(row: Evidence) -> FileOut | None:
         media_type=row.media_type or "",
         size_bytes=row.size_bytes or 0,
         sha256=row.sha256 or "",
+        scan_status=cast(ScanStatus, scan.status if scan else PENDING),
+    )
+
+
+def scan_of(session: Session, row: Evidence) -> EvidenceFileScan | None:
+    return session.scalar(
+        select(EvidenceFileScan).where(
+            EvidenceFileScan.organization_id == row.organization_id,
+            EvidenceFileScan.evidence_id == row.id,
+        )
     )
 
 
@@ -130,7 +142,7 @@ def _measure(body: BinaryIO, kind: FileType) -> tuple[str, int]:
     return digest.hexdigest(), size
 
 
-def _output(row: Evidence) -> EvidenceOut:
+def _output(row: Evidence, scan: EvidenceFileScan | None) -> EvidenceOut:
     return EvidenceOut(
         id=row.id,
         kind=row.kind,
@@ -140,7 +152,7 @@ def _output(row: Evidence) -> EvidenceOut:
         collected_at=row.collected_at.astimezone(UTC),
         statement=None,
         reference_url=None,
-        file=file_out(row),
+        file=file_out(row, scan),
     )
 
 
@@ -187,7 +199,7 @@ def _record_upload(
     if existing is not None:
         if not _same_upload(session, existing, member, control_key, title, digest):
             raise _error(409, "evidence.submission_conflict")
-        return _output(existing), False
+        return _output(existing, scan_of(session, existing)), False
     key = storage_key_for(org, evidence_id, name)
     row = Evidence(
         id=evidence_id,
@@ -213,6 +225,8 @@ def _record_upload(
         store.write(key, upload.file, sha256=digest, media_type=kind.media_type, size=size)
     except StoreUnavailableError:
         raise _error(503, "evidence.storage_unavailable") from None
+    if not store.scanned:
+        mark_not_scanned(session, row)
     session.add(
         EvidenceControl(organization_id=org, evidence_id=evidence_id, control_key=control_key)
     )
@@ -226,7 +240,7 @@ def _record_upload(
         metadata={"control_key": control_key, "media_type": kind.media_type, "size_bytes": size},
     )
     session.refresh(row)
-    return _output(row), True
+    return _output(row, scan_of(session, row)), True
 
 
 def _visible(session: Session, control_key: str) -> None:
@@ -317,6 +331,33 @@ def _integrity_failure(session: Session, row: Evidence, member: Member, reason: 
     return JSONResponse({"detail": {"code": "evidence.file_integrity_failed"}}, status_code=409)
 
 
+def _refused_detail(status: str, store: EvidenceStore) -> dict[str, str] | None:
+    """Fail closed: only a clean result, or the development store's not_scanned, is served."""
+    if status == "no_threats_found" or (status == NOT_SCANNED and not store.scanned):
+        return None
+    if status == PENDING:
+        return {"code": "evidence.file_scan_pending"}
+    if status == "threats_found":
+        return {"code": "evidence.file_malware_found"}
+    return {"code": "evidence.file_not_scanned"}
+
+
+def _download_refused(
+    session: Session, row: Evidence, member: Member, status: str, detail: dict[str, str]
+) -> Response:
+    """Returned, not raised: the audit event must commit with the refusal."""
+    record(
+        session,
+        organization_id=row.organization_id,
+        action="evidence.file_download_refused",
+        target_type="evidence",
+        target_id=str(row.id),
+        actor_user_id=member.user_id,
+        metadata={"scan_status": status},
+    )
+    return JSONResponse({"detail": detail}, status_code=409)
+
+
 @router.get("/evidence/{evidence_id}/file", response_class=Response)
 def download_file(
     evidence_id: uuid.UUID,
@@ -337,8 +378,14 @@ def download_file(
     store = evidence_store(request)
     if store is None:
         raise _error(503, "evidence.storage_unavailable")
+    scan = scan_of(session, row)
+    status = scan.status if scan else PENDING
+    refused = _refused_detail(status, store)
+    if refused is not None:  # decided before a byte is read from the store
+        return _download_refused(session, row, member, status, refused)
+    version = scan.object_version if scan else None  # the version that was scanned (D5)
     try:
-        data = store.read(row.storage_key, row.size_bytes + 1)
+        data = store.read(row.storage_key, row.size_bytes + 1, version)
     except ObjectMissingError:
         return _integrity_failure(session, row, member, "missing")
     except StoreUnavailableError:

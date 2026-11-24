@@ -98,6 +98,7 @@ def test_upload_list_and_download_return_the_same_bytes(
         "media_type": "application/pdf",
         "size_bytes": len(PDF),
         "sha256": digest,
+        "scan_status": "not_scanned",  # the local store has no scanner
     }
     page = client.get(
         f"/api/v1/orgs/{org}/controls/{workspace}/evidence", headers=auth(subs["mem"])
