@@ -132,10 +132,10 @@ other than `<name>_id: str`.
 - **No named read policy and no new setting.** The token is sealed, not stored, so nothing is
   read before the organization is known.
 
-## Amendment 8 (proposed 2026-11-24, ADR-017, operator-portal spec)
+## Amendment 8 (accepted 2026-11-24, ADR-017, operator-portal spec)
 
-Status: proposed. The owner decided the substance on 2026-11-24, relayed by the coordinator
-(ADR-017, "Owner decisions"); accepting the amendment is the owner's call.
+Status: accepted. The owner decided the substance and accepted the amendment on 2026-11-24,
+relayed by the coordinator (ADR-017, "Owner decisions"; #405).
 
 - **Second runtime role, `atesta_operator`:** used only by the operator service (ADR-017).
   - **Attributes:** LOGIN, NOSUPERUSER, NOBYPASSRLS, owns nothing, member of no role.
