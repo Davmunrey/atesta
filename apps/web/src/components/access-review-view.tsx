@@ -4,6 +4,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useAccessReview, useCloseReview, useDecide } from "@/lib/api/routines";
 import { type Membership, orgAccessReviews, orgHome } from "@/lib/org";
 import { canReviewControls, isContributor } from "@/lib/permissions";
+import { Badge } from "./badge";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { LoadError, Loading, PageHeader, Panel } from "./page-frame";
@@ -27,7 +28,7 @@ export function AccessReviewView({ org, reviewId }: { org: Membership; reviewId:
       actions={open && canReviewControls(org.role)
         ? <button type="button" className="button-primary" disabled={review.pending > 0 || close.isPending} onClick={() => close.mutate()}
           title={review.pending > 0 ? t("closeBlocked", { count: review.pending }) : undefined}>{t("close")}</button>
-        : review.closed_at ? <span className="badge" data-severity="done"><Icon name="done" />{t("closedOn", { date: format.dateTime(new Date(review.closed_at), { dateStyle: "medium" }) })}</span> : null} />
+        : review.closed_at ? <Badge state="reviewClosed">{t("closedOn", { date: format.dateTime(new Date(review.closed_at), { dateStyle: "medium" }) })}</Badge> : null} />
     {open && review.pending > 0 ? <p className="text-sm text-muted">{t("closeBlocked", { count: review.pending })}</p> : null}
     {decide.isError ? <ErrorMessage error={decide.error} /> : null}
     {close.isError ? <ErrorMessage error={close.error} /> : null}

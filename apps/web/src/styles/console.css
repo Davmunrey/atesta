@@ -92,7 +92,7 @@
   .key-figure { padding-inline: 0.06em; background-image: linear-gradient(var(--color-accent), var(--color-accent)); background-repeat: no-repeat; background-position: 0 90%; background-size: 100% 0.5em; }
   @media (prefers-color-scheme: dark) { .key-figure { background-image: none; color: var(--color-accent); } }
   @media print { .key-figure { background-image: none; color: inherit; } }
-  .page-description { color: var(--color-muted); }
+  .page-description { max-width: 72ch; color: var(--color-muted); }
   .page-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
   /* Panels: lighter paper on the page, a subtle border, a header. Never nested. */
@@ -148,7 +148,10 @@
   .routine-form { display: grid; gap: 1rem; }
   @media (min-width: 48rem) { .routine-form { grid-template-columns: repeat(3, minmax(0, 1fr)); } .routine-form-wide, .routine-form > .form-actions, .routine-form > [role="alert"] { grid-column: 1 / -1; } }
   .routine-form > span { display: grid; gap: 0.375rem; min-width: 0; }
-  .routine-form :is(input, textarea) { min-width: 0; padding: 0.5rem 0.75rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-bg); color: var(--color-fg); }
+  /* The shared field (DESIGN.md, fields): inputs, selects and textareas in console forms look alike. */
+  .routine-form :is(input, textarea, select), .field { min-width: 0; padding: 0.5rem 0.75rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-bg); color: var(--color-fg); caret-color: var(--color-link); }
+  /* Placeholders from the muted token: 7.0:1 light, 9.3:1 dark on the field's bg (contrast test, muted on bg). */
+  .console-page :is(input, textarea)::placeholder { color: var(--color-muted); opacity: 1; }
   .routine-form textarea { font-family: var(--font-mono); font-size: 0.875rem; }
   .decision-group { display: flex; flex-wrap: wrap; gap: 0.375rem; }
   .decision-group button[aria-pressed="true"] { background: var(--color-accent); color: var(--color-accent-fg); border-color: var(--color-fg); }
@@ -156,7 +159,8 @@
   .policy-list > li { padding-block: 0.875rem; border-bottom: 1px solid var(--color-border-subtle); }
   .policy-list > li:last-child { border-bottom: 0; }
   .policy-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 0.75rem 1rem; }
-  @media (max-width: 40rem) { .policy-row { grid-template-columns: minmax(0, 1fr); } }
+  /* On phones a row's action keeps its own width, leaving the launcher's corner free. */
+  @media (max-width: 40rem) { .policy-row { grid-template-columns: minmax(0, 1fr); } .policy-row > button { justify-self: start; } }
   .policy-list .routine-form { margin-top: 1rem; padding: 1rem; border-radius: var(--radius-md); background: var(--color-surface); }
 }
 
@@ -237,6 +241,13 @@
 }
 /* Focus and anchors never land under the sticky top bar (WCAG 2.4.11). */
 html { scroll-padding-top: 4.5rem; }
+/* The assistant launcher floats bottom-right and does not move (console-unification spec). The
+   console keeps room for it instead: focus scrolls clear of it, and on phones the page ends below
+   it, so it never covers a primary button such as "Registrar aprobación". */
+html:has(.console):has(.assistant-launcher) { scroll-padding-bottom: 5rem; }
+@media (max-width: 40rem) {
+  body:has(.assistant-launcher) .console-page { padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)); }
+}
 /* Links that stand alone as actions (not inside running text) are full-height targets. */
 .action-link, .preparation-jumps a, .policy-index a { display: inline-flex; align-items: center; min-height: 2.75rem; }
 @media (max-width: 40rem), (pointer: coarse) {

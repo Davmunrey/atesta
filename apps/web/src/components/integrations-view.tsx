@@ -6,6 +6,7 @@ import { type FormEvent, useId, useState } from "react";
 import { type ApiToken, curlExample, RATE_LIMITS, type Scope, SCOPES, useApiTokens, useApiTokenUsage, useCreateApiToken, useRevokeApiToken } from "@/lib/api/tokens";
 import { evidenceTemplate, type TemplateFormat, USE_CASES, type UseCase } from "@/lib/evidence-templates";
 import { type Membership, orgHome } from "@/lib/org";
+import { Badge } from "./badge";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
@@ -47,9 +48,9 @@ function TokenRow({ token, orgId }: { token: ApiToken; orgId: string }) {
       <span className="block text-sm text-muted">{[...token.scopes.map((s) => t(`scopeShort.${s as Scope}`)), t("perMinute", { count: token.rate_limit_per_minute })].join(" · ")}</span>
       <Usage token={token} orgId={orgId} /></td>
     <td data-label={t("lastUsed")} className="tabular-nums">{token.last_used_at ? format.dateTime(new Date(token.last_used_at), { dateStyle: "medium", timeStyle: "short" }) : <span className="text-muted">{t("never")}</span>}</td>
-    <td data-label={t("state")}>{token.revoked_at ? <span className="badge" data-severity="missing"><Icon name="missing" />{t("revokedOn", { date: day(token.revoked_at) })}</span>
-      : expired ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("expiredOn", { date: day(token.expires_at) })}</span>
-      : <span className="badge" data-severity="done"><Icon name="done" />{t("activeUntil", { date: day(token.expires_at) })}</span>}</td>
+    <td data-label={t("state")}>{token.revoked_at ? <Badge state="tokenRevoked">{t("revokedOn", { date: day(token.revoked_at) })}</Badge>
+      : expired ? <Badge state="tokenExpired">{t("expiredOn", { date: day(token.expires_at) })}</Badge>
+      : <Badge state="tokenActive">{t("activeUntil", { date: day(token.expires_at) })}</Badge>}</td>
     <td data-label={t("actions")}>{token.revoked_at ? null : <button type="button" className="dashboard-button" disabled={revoke.isPending}
       aria-label={t("revokeNamed", { name: token.name })} onClick={() => revoke.mutate(token.id)}>{t("revoke")}</button>}
       {revoke.isError ? <ErrorMessage error={revoke.error} /> : null}</td>

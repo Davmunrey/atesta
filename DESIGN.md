@@ -171,7 +171,7 @@ The frontmatter records the reused hierarchy. Dashboard titles reduce to (2rem) 
 
 ## Layout
 
-The application header and workspace share a centered maximum width of (80rem). Default horizontal padding is (2rem), reducing to (1.25rem) at widths up to (40rem). At (64rem), the organization context becomes a (14rem) left rail with a (3.5rem) gap and a vertical divider; below this, the selector and wrapping navigation sit above the page.
+Every console page, the portfolio (`/app`) and `/app/new` included, is the page header followed by panels on the page grid (console-unification spec). Page descriptions are bounded at 72ch, like other supporting copy. The assistant launcher keeps its bottom-right corner: the console keeps a bottom scroll padding so focus clears it, pads the page end on phones, and phone row actions keep their own width instead of running under it. The application header and workspace share a centered maximum width of (80rem). Default horizontal padding is (2rem), reducing to (1.25rem) at widths up to (40rem). At (64rem), the organization context becomes a (14rem) left rail with a (3.5rem) gap and a vertical divider; below this, the selector and wrapping navigation sit above the page.
 
 The dashboard starts as one column with a (2.5rem) section gap. At (75rem), the ledger and supporting summary use `minmax(0, 1.6fr) minmax(16rem, 1fr)` with a (2rem) gap. Result counts use two columns, expanding to four from (40rem). Names and provenance wrap rather than forcing the page wider. The toolbar keeps refresh beside its explanatory text.
 
@@ -187,9 +187,9 @@ Controls and navigation use the small radius; shared primary actions and the col
 
 ## Components
 
-**Buttons.** Shared primary actions use highlighter fill, medium rounding and medium-weight text. Destructive actions use the danger pair. Dashboard refresh, retry and clear-search controls use a bordered paper surface, small rounding and a surface-colored hover. Buttons, inputs and selects have a minimum height of (2.75rem). Disabled buttons retain their label with (0.6) opacity and a non-interactive cursor. Primary hover underlines text; keyboard focus uses the shared outline.
+**Buttons.** Shared primary actions use highlighter fill, medium rounding and medium-weight text. Destructive actions use the danger pair (`.button-danger`), and the control that asks for one ("Quitar", "Cerrar el incidente" with notices unsent) is a bordered `dashboard-button` followed by an inline confirmation (`.confirm-row`): the question, the danger action, then "Cancelar". Dashboard refresh, retry and clear-search controls use a bordered paper surface, small rounding and a surface-colored hover. Buttons, inputs and selects have a minimum height of (2.75rem). Disabled buttons retain their label with (0.6) opacity and a non-interactive cursor. Primary hover underlines text; keyboard focus uses the shared outline.
 
-**Fields.** Search and organization selection use a one-pixel border, paper background and small rounding. Labels remain visible above the field. Search spans its available width; its caret uses the link color. Shared administration inputs use medium rounding. Error messages use danger text and a danger border with an alert role.
+**Fields.** Search and organization selection use a one-pixel border, paper background and small rounding. Labels remain visible above the field. Search spans its available width; its caret uses the link color. Fields in console forms, selects included, share one style (`.routine-form` fields and `.field`): one-pixel border, paper background, small rounding, link-coloured caret. A select is never left with the browser's default look. Placeholders inside the page use `muted` (7.0:1 on light `bg`, 9.3:1 on dark). Month pickers are selects labelled in the interface language, not `<input type="month">`, which follows the browser's language. Error messages use danger text and a danger border with an alert role.
 
 **Navigation.** Organization links wrap horizontally on small screens and form a vertical rail on desktop. Current location uses the highlighter pair and medium weight, with `aria-current="page"`; hover uses the supporting surface. A visible-on-focus skip link reaches the main content.
 
@@ -210,7 +210,7 @@ Otherwise a muted sentence or the table stands in for it.
 
 **State badges.** Every recorded state shows a drawn icon beside its label: done (circle check), partial (half-ruled circle), missing (triangle), not applicable (slashed circle), pending (clock). Colour reinforces, never carries, the state.
 
-**Severity mapping (console-unification spec, 2026-11-24).** This table is the one source for how urgent a state looks. `Badge` and `ClockBadge` (`components/badge.tsx`) draw it; no page sets a badge's colour or icon by hand.
+**Severity mapping (console-unification spec, 2026-11-24).** This table is the one source for how urgent a state looks. `Badge` and `ClockBadge` (`components/badge.tsx`) draw it from the state names in `lib/severity.ts` (`policyUnapproved`, `reviewLate`, `tokenRevoked`…); no console page sets a badge's colour or icon by hand, and a test fails if one does.
 
 | Severity | Icon | Colour | Label | Used for |
 |---|---|---|---|---|
@@ -358,6 +358,10 @@ highlighter, with one motion language. Honest facts replace logos and testimonia
 - **Easings:** `--ease-decisive` (in-out) for entrances and stage changes, `--ease-soft` (out) for
   hovers, `--ease-entrance` (out) for figures and bars. Nothing overshoots (A4): the spring token is gone.
 - **Durations:** 180 ms hover, 600 ms stage, 900–1400 ms entrances.
+
+## Voice
+
+Console and public copy address the reader as "tú", never "vosotros" or "usted" (owner decision 2026-11-24). Plain statements over slogans and triads. "Responsable de medidas" names whoever owns a measure; "encargado" stays reserved for the GDPR processor.
 
 ## Do's and Don'ts
 

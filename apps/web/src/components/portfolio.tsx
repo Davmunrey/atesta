@@ -8,7 +8,9 @@ import { unwrap } from "@/lib/api/hooks";
 import type { Readiness } from "@/lib/api/register-hooks";
 import type { DueItem } from "@/lib/api/routines";
 import { type Membership, orgHome } from "@/lib/org";
-import { Icon } from "./icons";
+import type { ReactNode } from "react";
+import { Badge } from "./badge";
+import { PageHeader, Panel } from "./page-frame";
 
 type Row = {
   org: Membership;
@@ -50,7 +52,7 @@ export function byUrgency(a: Row, b: Row): number {
  * The portfolio (consultancy-portfolio spec). Each organization is read through its own endpoints,
  * in its own tenant context, so there is no cross-tenant query (ADR-012). Counts only (ADR-005).
  */
-export function Portfolio({ memberships }: { memberships: Membership[] }) {
+export function Portfolio({ memberships, actions }: { memberships: Membership[]; actions?: ReactNode }) {
   const t = useTranslations("portfolio");
   const r = useTranslations("roles");
   const format = useFormatter();
@@ -72,14 +74,14 @@ export function Portfolio({ memberships }: { memberships: Membership[] }) {
   const loaded = rows.filter((x) => x.ready);
   const withOverdue = loaded.filter((x) => x.overdue + x.pendingOverdue > 0).length;
   const notStarted = loaded.filter((x) => x.started === 0).length;
-  return <section className="panel-grid" aria-labelledby="portfolio-title">
-    <h1 id="portfolio-title" className="page-title">{t("title")}</h1>
-    <ul className="portfolio-summary" aria-label={t("summary")}>
+  // On the console page grid: the page header, then the register in a panel (console-unification spec).
+  return <div className="panel-grid">
+    <PageHeader title={t("title")} actions={actions} description={<ul className="portfolio-summary" aria-label={t("summary")}>
       <li>{t("organizations", { count: memberships.length })}</li>
       <li data-severity={withOverdue > 0 ? "overdue" : undefined}>{t("withOverdue", { count: withOverdue })}</li>
       <li>{t("notStarted", { count: notStarted })}</li>
-    </ul>
-    <div className="table-region" role="region" aria-label={t("title")} tabIndex={0}><table className="w-full text-left">
+    </ul>} />
+    <Panel><div className="table-region" role="region" aria-label={t("title")} tabIndex={0}><table className="w-full text-left">
       <thead><tr>
         <th scope="col">{t("organization")}</th><th scope="col">{t("assessed")}</th><th scope="col">{t("overdue")}</th>
         <th scope="col">{t("routines")}</th><th scope="col">{t("lastAssessed")}</th>
@@ -91,11 +93,11 @@ export function Portfolio({ memberships }: { memberships: Membership[] }) {
           : !x.ready ? <td colSpan={4} data-label={t("assessed")} className="text-muted">{t("loading")}</td>
           : <>
             <td data-label={t("assessed")} className="tabular-nums">{x.started === 0 ? t("notStartedCell") : t("ofTotal", { assessed: x.assessed, total: x.total })}</td>
-            <td data-label={t("overdue")} className="tabular-nums">{x.overdue > 0 ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{format.number(x.overdue)}</span> : format.number(0)}</td>
+            <td data-label={t("overdue")} className="tabular-nums">{x.overdue > 0 ? <Badge state="measureOverdue">{format.number(x.overdue)}</Badge> : format.number(0)}</td>
             <td data-label={t("routines")} className="tabular-nums">{x.pending === 0 ? t("noRoutines") : x.pendingOverdue > 0 ? t("pendingWithOverdue", { count: x.pending, overdue: x.pendingOverdue }) : t("pending", { count: x.pending })}</td>
             <td data-label={t("lastAssessed")} className="tabular-nums">{x.last ? format.dateTime(new Date(x.last), { dateStyle: "medium" }) : t("never")}</td>
           </>}
       </tr>)}</tbody>
-    </table></div>
-  </section>;
+    </table></div></Panel>
+  </div>;
 }
