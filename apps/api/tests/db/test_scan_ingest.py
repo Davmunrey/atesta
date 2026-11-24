@@ -127,12 +127,19 @@ def rows(session: Session, table: str, scan_id: uuid.UUID) -> list[tuple[Any, ..
     return [tuple(r) for r in session.execute(ROWS[table], {"id": scan_id})]
 
 
+NOTICE_KEYS = ("connection_id", "trigger")  # for the notice job (notifications spec PR 2)
+
+
 def audit(session: Session, scan_id: uuid.UUID) -> list[tuple[Any, ...]]:
+    """Each scan event, without the keys only the notice job reads (checked once, below)."""
     query = text(
         "SELECT action, metadata FROM audit_events WHERE target_type = 'scan'"
         " AND target_id = :id ORDER BY occurred_at"
     )
-    return [tuple(r) for r in session.execute(query, {"id": str(scan_id)})]
+    rows = session.execute(query, {"id": str(scan_id)}).all()
+    for _, details in rows:
+        assert all(key in details for key in NOTICE_KEYS), details
+    return [(a, {k: v for k, v in d.items() if k not in NOTICE_KEYS}) for a, d in rows]
 
 
 JOBS = text(

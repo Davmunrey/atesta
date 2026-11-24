@@ -1,6 +1,8 @@
 import type { components } from "@/lib/api/schema";
 
-export type Membership = components["schemas"]["MembershipOut"];
+type MembershipOut = components["schemas"]["MembershipOut"];
+/** The API always sends organization_locale; it is optional here so fixtures and older caches stay valid. */
+export type Membership = Omit<MembershipOut, "organization_locale"> & { organization_locale?: MembershipOut["organization_locale"] };
 
 /** The membership named in the URL; null when absent or not one of the user's orgs. */
 export function selectOrg(memberships: Membership[], requested: string | null): Membership | null {

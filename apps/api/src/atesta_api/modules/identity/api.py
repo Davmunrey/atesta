@@ -35,6 +35,12 @@ from atesta_api.modules.identity.context import (
 from atesta_api.modules.identity.deps import CurrentCaller, Member, require_member, require_role
 from atesta_api.modules.identity.invitations import QueryFreeRoute, normalize_email, token_hash
 from atesta_api.modules.identity.models import Role
+from atesta_api.modules.identity.org_profile import (
+    OrganizationProfile,
+    Recipient,
+    organization_profile,
+    recipients,
+)
 from atesta_api.modules.identity.routes import router
 
 
@@ -65,6 +71,8 @@ __all__ = [
     "ContextReason",
     "CurrentCaller",
     "Member",
+    "OrganizationProfile",
+    "Recipient",
     "QueryFreeRoute",
     "Role",
     "ensure_dev_organization",
@@ -78,7 +86,9 @@ __all__ = [
     "install_identity",
     "is_member",
     "normalize_email",
+    "organization_profile",
     "person",
+    "recipients",
     "router",
     "token_hash",
     "token_labels",

@@ -4,7 +4,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { PageHeader, Panel } from "./page-frame";
 import { orgHome as homeOf } from "@/lib/org";
 import { useId, useState } from "react";
-import { useCancelClosure, useRequestClosure } from "@/lib/api/hooks";
+import { useCancelClosure, useRequestClosure, useSetOrganizationLocale } from "@/lib/api/hooks";
 import type { Membership } from "@/lib/org";
 import { ErrorMessage } from "./error-message";
 
@@ -21,6 +21,8 @@ export function SettingsView({ org }: { org: Membership }) {
   const day = (iso: string) => format.dateTime(new Date(iso), { dateStyle: "long" });
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("crumb") }]} title={t("title", { org: org.organization_name })} />
+
+    <LanguagePanel org={org} />
 
     <Panel title={t("exportTitle")} className="panel-flow">
       <p className="text-muted">{t("exportHelp")}</p>
@@ -45,4 +47,29 @@ export function SettingsView({ org }: { org: Membership }) {
       </>}
     </Panel>
   </div>;
+}
+
+type Locale = "es" | "en";
+const LANGUAGES: Record<Locale, string> = { es: "Español", en: "English" };
+
+/** The organization's email language (notifications spec PR 2): owner only, like the rest. */
+function LanguagePanel({ org }: { org: Membership }) {
+  const t = useTranslations("settings");
+  const id = useId();
+  const save = useSetOrganizationLocale(org.organization_id);
+  const [locale, setLocale] = useState<Locale>(org.organization_locale ?? "es");
+  return <Panel title={t("languageTitle")} className="panel-flow">
+    <p className="text-muted">{t("languageHelp")}</p>
+    <form className="flex flex-wrap items-end gap-3" onSubmit={(e) => { e.preventDefault(); save.mutate(locale); }}>
+      <span className="flex flex-col gap-1">
+        <label htmlFor={`${id}-locale`}>{t("languageLabel")}</label>
+        <select id={`${id}-locale`} value={locale} onChange={(e) => setLocale(e.target.value as Locale)}>
+          {(Object.keys(LANGUAGES) as Locale[]).map((l) => <option key={l} value={l} lang={l}>{LANGUAGES[l]}</option>)}
+        </select>
+      </span>
+      <button type="submit" className="dashboard-button" disabled={save.isPending}>{t("languageSave")}</button>
+    </form>
+    {save.isSuccess ? <p role="status">{t("languageSaved", { language: LANGUAGES[save.data.locale] })}</p> : null}
+    {save.isError ? <ErrorMessage error={save.error} /> : null}
+  </Panel>;
 }

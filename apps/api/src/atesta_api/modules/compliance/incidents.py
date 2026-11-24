@@ -22,6 +22,11 @@ from atesta_api.modules.compliance.scoring import active_frameworks
 from atesta_api.modules.compliance.text import filled
 from atesta_api.modules.evidence.api import record_attestation
 from atesta_api.modules.identity.api import Member, Role, person, require_member, require_role
+from atesta_api.modules.notifications.api import (
+    ClockTiming,
+    IncidentClocks,
+    schedule_clock_notices,
+)
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 from atesta_api.platform.i18n import Locale, message
@@ -280,6 +285,48 @@ def open_incidents(session: Session, org: uuid.UUID) -> list[IncidentOut]:
 type Via = Mapping[str, str] | None  # an API key's audit metadata (api-keys-v2 spec)
 
 
+def _timings(out: IncidentOut, defs: list[ClockDef]) -> list[ClockTiming]:
+    hours = {d.rule.ref: d.rule.hours for d in defs}
+    return [ClockTiming(ref=c.ref, due_at=c.due_at, hours=hours.get(c.ref)) for c in out.clocks]
+
+
+def _schedule_notices(
+    session: Session, org: uuid.UUID, out: IncidentOut, defs: list[ClockDef]
+) -> None:
+    """Email owners and admins at each clock's milestones (notifications spec PR 2)."""
+    if out.closed_at is None:
+        schedule_clock_notices(session, org, out.id, _timings(out, defs), now=datetime.now(UTC))
+
+
+def incident_clocks(
+    session: Session, org: uuid.UUID, incident_id: uuid.UUID
+) -> IncidentClocks | None:
+    """One incident's clocks for the notify_clock job, recomputed at run time."""
+    incident = session.scalar(
+        select(Incident).where(Incident.organization_id == org, Incident.id == incident_id)
+    )
+    if incident is None:
+        return None
+    defs = clock_defs(session)
+    out = _out(incident, _updates(session, org, [incident_id]), defs)
+    timings = {t.ref: t for t in _timings(out, defs)}
+    return IncidentClocks(
+        incident_id=incident.id,
+        title=incident.title,
+        closed=out.closed_at is not None,
+        clocks=[
+            IncidentClocks.Clock(
+                timing=timings[c.ref],
+                state=c.state,
+                title_es=c.title_es,
+                title_en=c.title_en,
+                framework_name=c.framework_name,
+            )
+            for c in out.clocks
+        ],
+    )
+
+
 @router.post("/incidents", status_code=201)
 def create_incident(
     body: IncidentIn,
@@ -320,7 +367,10 @@ def record_incident(
             **(via or {}),
         },
     )
-    return _out(incident, updates, clock_defs(session))
+    defs = clock_defs(session)
+    out = _out(incident, updates, defs)
+    _schedule_notices(session, org, out, defs)
+    return out
 
 
 def _classify(
@@ -536,4 +586,5 @@ def add_incident_update(
         actor_user_id=author,
         metadata={**({"clock": body.clock} if body.clock else {}), **(via or {})},
     )
+    _schedule_notices(session, org, after, defs)
     return after

@@ -825,7 +825,8 @@
       "assessment_proposal_confirmed": "Confirmó la propuesta de un agente",
       "assessment_proposal_rejected": "Rechazó la propuesta de un agente",
       "notification_preferences_changed": "Cambió sus avisos por email",
-      "notification_unsubscribed": "Se dio de baja de un aviso por email"
+      "notification_unsubscribed": "Se dio de baja de un aviso por email",
+      "organization_locale_changed": "Cambió el idioma de los avisos de la organización"
     },
     "day": "Día",
     "unknown": "Otra acción"
@@ -870,7 +871,12 @@
     "closeAction": "Cerrar la organización",
     "closing": "Cierre solicitado: los datos se borrarán el {date}.",
     "cancelAction": "Cancelar el cierre",
-    "crumb": "Ajustes"
+    "crumb": "Ajustes",
+    "languageTitle": "Idioma de los avisos",
+    "languageHelp": "Los avisos por email de esta organización llegan a todos en este idioma.",
+    "languageLabel": "Idioma de los avisos por email",
+    "languageSave": "Guardar el idioma",
+    "languageSaved": "Guardado. Los avisos llegarán en {language}."
   },
   "cockpit": {
     "summary": "{framework}: {assessed} de {total, plural, one {# medida evaluada} other {# medidas evaluadas}}, {implemented, plural, one {# implantada} other {# implantadas}}.",

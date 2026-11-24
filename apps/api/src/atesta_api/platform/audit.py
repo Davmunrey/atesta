@@ -42,23 +42,24 @@ def record(
     actor_user_id: uuid.UUID | None = None,
     request_id: str | None = None,
     metadata: Mapping[str, Scalar] | None = None,
-) -> None:
-    """Record one event. Scalar metadata only, so no blob (token, document) can slip in."""
+) -> uuid.UUID:
+    """Record one event and return its id. Scalar metadata only, so no blob can slip in."""
     if not _ACTION.fullmatch(action):
         raise ValueError(f"audit action must be a dotted code, got {action!r}")
     details = dict(metadata or {})
     for key, value in details.items():
         if not isinstance(key, str) or not (value is None or isinstance(value, str | int | bool)):
             raise TypeError(f"audit metadata must map str to scalars, bad key {key!r}")
-    session.add(
-        AuditEvent(
-            organization_id=organization_id,
-            actor_user_id=actor_user_id,
-            action=action,
-            target_type=target_type,
-            target_id=target_id,
-            details=details,
-            request_id=request_id,
-        )
+    event = AuditEvent(
+        id=uuid.uuid4(),
+        organization_id=organization_id,
+        actor_user_id=actor_user_id,
+        action=action,
+        target_type=target_type,
+        target_id=target_id,
+        details=details,
+        request_id=request_id,
     )
+    session.add(event)
     session.flush()
+    return event.id

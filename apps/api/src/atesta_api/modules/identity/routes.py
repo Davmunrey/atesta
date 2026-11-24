@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import date, datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
@@ -24,6 +24,7 @@ from atesta_api.modules.identity.invitations import accept_router
 from atesta_api.modules.identity.invitations import router as invitations_router
 from atesta_api.modules.identity.members import router as members_router
 from atesta_api.modules.identity.models import Membership, Role, User
+from atesta_api.modules.identity.org_profile import router as org_profile_router
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 from atesta_api.platform.tenancy import Organization
@@ -35,6 +36,7 @@ router.include_router(closure_router)
 router.include_router(invitations_router)
 router.include_router(accept_router)
 router.include_router(api_tokens_router)
+router.include_router(org_profile_router)
 
 
 class MembershipOut(BaseModel):
@@ -43,6 +45,7 @@ class MembershipOut(BaseModel):
     role: Role
     access_expires_on: date | None = None
     closure_erase_after: datetime | None = None  # set while the organization is closing
+    organization_locale: Literal["es", "en"] = "es"  # email language (notifications spec)
 
 
 class MeOut(BaseModel):
@@ -78,6 +81,7 @@ def me(
             Membership.role,
             Membership.access_expires_at,
             Organization.closure_requested_at,
+            Organization.locale,
         )
         .join(Organization, Organization.id == Membership.organization_id)
         .where(Membership.user_id == caller.user_id)
@@ -95,8 +99,9 @@ def me(
                 role=Role(r),
                 access_expires_on=end_date(x),
                 closure_erase_after=erase_after(c),
+                organization_locale="en" if loc == "en" else "es",
             )
-            for o, n, r, x, c in rows
+            for o, n, r, x, c, loc in rows
         ],
     )
 

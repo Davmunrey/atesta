@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 
 from atesta_api.modules.connections.models import Connection
 from atesta_api.modules.connections.service import ConnectionStateError
+from atesta_api.modules.notifications.api import queue_event
 from atesta_api.platform.audit import record
 from atesta_api.platform.devenv import require_dev
 
@@ -87,7 +88,7 @@ def record_verification(
         "limits": list(report.limits),
     }
     action = "verified" if report.verdict == "ok" else report.verdict
-    record(
+    event_id = record(
         session,
         organization_id=organization_id,
         action=f"connection.{action}",
@@ -100,5 +101,6 @@ def record_verification(
             "extra": len(report.extra),
         },
     )
+    queue_event(session, organization_id, event_id, f"connection.{action}")  # notifications spec
     session.flush()
     return connection.status

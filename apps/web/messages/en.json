@@ -825,7 +825,8 @@
       "assessment_proposal_confirmed": "Confirmed an agent's proposal",
       "assessment_proposal_rejected": "Rejected an agent's proposal",
       "notification_preferences_changed": "Changed their email notices",
-      "notification_unsubscribed": "Unsubscribed from an email notice"
+      "notification_unsubscribed": "Unsubscribed from an email notice",
+      "organization_locale_changed": "Changed the organization's notice language"
     },
     "day": "Day",
     "unknown": "Other action"
@@ -870,7 +871,12 @@
     "closeAction": "Close the organization",
     "closing": "Closure requested: the data will be erased on {date}.",
     "cancelAction": "Cancel the closure",
-    "crumb": "Settings"
+    "crumb": "Settings",
+    "languageTitle": "Notice language",
+    "languageHelp": "This organization's email notices reach everyone in this language.",
+    "languageLabel": "Email notice language",
+    "languageSave": "Save the language",
+    "languageSaved": "Saved. Notices will arrive in {language}."
   },
   "cockpit": {
     "summary": "{framework}: {assessed} of {total, plural, one {# measure assessed} other {# measures assessed}}, {implemented} implemented.",

@@ -23,6 +23,7 @@ from sqlalchemy.orm import Session
 from atesta_api.modules.compliance.api import active_control_checks
 from atesta_api.modules.connections.api import scan_target
 from atesta_api.modules.evidence.api import ScanOutputFile, register_scan_output
+from atesta_api.modules.notifications.api import queue_event
 from atesta_api.modules.scanning.error_codes import OUTPUT_INVALID, TENANT_MISMATCH
 from atesta_api.modules.scanning.expected import exclusions, expected_checks
 from atesta_api.modules.scanning.models import Finding, Scan, ScanCheckResult
@@ -87,14 +88,20 @@ def _insert(
 def _finish(session: Session, scan: Scan, status: str, metadata: Mapping[str, str | int]) -> str:
     scan.status = status
     scan.finished_at = func.now()
-    record(
+    event_id = record(
         session,
         organization_id=scan.organization_id,
         action=f"scan.{status}",
         target_type="scan",
         target_id=str(scan.id),
-        metadata={"provider": scan.provider, **metadata},
+        metadata={
+            "provider": scan.provider,
+            "connection_id": str(scan.connection_id),
+            "trigger": scan.trigger,
+            **metadata,
+        },
     )
+    queue_event(session, scan.organization_id, event_id, f"scan.{status}")  # notifications spec
     session.flush()
     return status
 

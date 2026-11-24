@@ -1,6 +1,10 @@
 """Public interface of the compliance module."""
 
+import uuid
+from typing import TYPE_CHECKING
+
 from fastapi import FastAPI
+from sqlalchemy.orm import Session
 
 from atesta_api.modules.compliance.catalog import read_catalog
 from atesta_api.modules.compliance.catalog_preview import import_preview
@@ -18,6 +22,19 @@ from atesta_api.modules.compliance.scoring import (
     snapshot_chain_tip,
     snapshot_framework,
 )
+
+if TYPE_CHECKING:
+    from atesta_api.modules.notifications.api import IncidentClocks
+
+
+def incident_clocks(
+    session: Session, org: uuid.UUID, incident_id: uuid.UUID
+) -> "IncidentClocks | None":
+    """One incident's reporting clocks, for the notify_clock job (notifications spec PR 2)."""
+    # Lazy, like the routers below: incidents imports module APIs initialized after this one.
+    from atesta_api.modules.compliance.incidents import incident_clocks as read  # noqa: PLC0415 - see above
+
+    return read(session, org, incident_id)
 
 
 def install_compliance(app: FastAPI) -> None:
@@ -65,6 +82,7 @@ __all__ = [
     "control_is_active",
     "control_is_visible",
     "include_drafts",
+    "incident_clocks",
     "import_preview",
     "install_compliance",
     "load_catalog_fixture",

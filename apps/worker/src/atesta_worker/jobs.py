@@ -4,7 +4,10 @@ import json
 import logging
 import uuid
 from collections.abc import Mapping
+from datetime import UTC, datetime
 
+from atesta_api.modules.compliance.api import incident_clocks
+from atesta_api.modules.notifications.api import handle_event, send_clock_notices
 from atesta_api.modules.scanning.api import (
     ScanNotFoundError,
     ScanTransientError,
@@ -116,6 +119,22 @@ def rescore_reviews(organization_id: str) -> None:
         rescore_org(session, uuid.UUID(organization_id))
 
 
+def notify_event(organization_id: str, event_id: str) -> None:
+    """Email owners and admins about one audit event (notifications spec PR 2)."""
+    with org_session(organization_id) as session:
+        handle_event(
+            session, uuid.UUID(organization_id), uuid.UUID(event_id), now=datetime.now(UTC)
+        )
+
+
+def notify_clock(organization_id: str, incident_id: str) -> None:
+    """Email the incident clock milestones owed now; recomputed, so a met clock sends nothing."""
+    with org_session(organization_id) as session:
+        view = incident_clocks(session, uuid.UUID(organization_id), uuid.UUID(incident_id))
+        if view is not None:
+            send_clock_notices(session, uuid.UUID(organization_id), view, now=datetime.now(UTC))
+
+
 def make_blueprint() -> Blueprint:
     """A fresh blueprint per app: Procrastinate renames task objects when an app adds them.
 
@@ -141,4 +160,7 @@ def make_blueprint() -> Blueprint:
     )
     run = blueprint.task(name="run_scan", queue="scans", retry=scan_retry, pass_context=True)
     run(run_scan)
+    # Each delivery is claimed once, so a retried notification job never emails twice.
+    blueprint.task(name="notify_event", queue="notifications", retry=transient)(notify_event)
+    blueprint.task(name="notify_clock", queue="notifications", retry=transient)(notify_clock)
     return blueprint

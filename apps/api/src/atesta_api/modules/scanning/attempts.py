@@ -25,6 +25,7 @@ from atesta_api.modules.connections.api import (
     record_verification,
     scan_target,
 )
+from atesta_api.modules.notifications.api import queue_event
 from atesta_api.modules.scanning.error_codes import (
     BLOCKED_CODES,
     CONNECTION_NOT_ACTIVE,
@@ -85,14 +86,20 @@ def _locked(session: Session, scan_id: uuid.UUID) -> Scan:
 
 def _end(session: Session, scan: Scan, status: str, error_code: str | None) -> Event:
     scan.status, scan.error_code, scan.finished_at = status, error_code, func.now()
-    record(
+    event_id = record(
         session,
         organization_id=scan.organization_id,
         action=f"scan.{status}",
         target_type="scan",
         target_id=str(scan.id),
-        metadata={"provider": scan.provider, "error_code": error_code},
+        metadata={
+            "provider": scan.provider,
+            "error_code": error_code,
+            "connection_id": str(scan.connection_id),
+            "trigger": scan.trigger,
+        },
     )
+    queue_event(session, scan.organization_id, event_id, f"scan.{status}")  # notifications spec
     session.flush()
     session.refresh(scan)
     return finished_event(scan)

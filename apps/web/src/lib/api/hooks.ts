@@ -172,6 +172,16 @@ export function useRequestClosure(orgId: string) {
   });
 }
 
+/** The organization's email language (notifications spec PR 2); owner only. */
+export function useSetOrganizationLocale(orgId: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (locale: "es" | "en") =>
+      unwrap(api.PUT("/api/v1/orgs/{org_id}/locale", { params: { path: { org_id: orgId } }, body: { locale } })),
+    onSuccess: () => client.invalidateQueries({ queryKey: ME }),
+  });
+}
+
 export function useCancelClosure(orgId: string) {
   const client = useQueryClient();
   return useMutation({

@@ -132,3 +132,27 @@ def test_build_app_installs_log_redaction(monkeypatch: pytest.MonkeyPatch) -> No
     assert record.exc_info is None
     assert record.exc_text is not None and "ana@example.com" not in record.exc_text
     assert "builtins.ValueError" in record.exc_text
+
+
+def test_notification_jobs_are_registered_with_ids_only() -> None:
+    """notifications spec PR 2 (issue 386): one job per audit event, one per incident."""
+    tasks = make_blueprint().tasks
+    assert {"notify_event", "notify_clock"} <= set(tasks)
+    assert non_id_parameters([tasks["notify_event"], tasks["notify_clock"]]) == []
+    assert tasks["notify_event"].queue == tasks["notify_clock"].queue == "notifications"
+
+
+def test_the_worker_configures_mail_only_when_every_setting_is_present(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: object
+) -> None:
+    from atesta_api.modules.notifications.api import mail_config_from_env
+
+    assert mail_config_from_env({"ATESTA_MAIL_DIR": str(tmp_path)}) is None
+    full = {
+        "ATESTA_MAIL_DIR": str(tmp_path),
+        "ATESTA_MAIL_FROM": "avisos@example.com",
+        "ATESTA_WEB_BASE_URL": "https://app.example.com/",
+    }
+    config = mail_config_from_env(full)
+    assert config is not None and config.web_base_url == "https://app.example.com"
+    assert config.tokens is None  # no key: optional email is not sent
