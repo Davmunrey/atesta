@@ -90,17 +90,16 @@ afterwards.
 
 **M365 scanner credential** (scanner-connectors spec, AWS runner; issue 453). The "Atesta
 Scanner" app's client id and its certificate go in `atesta/<env>/m365/scanner` as JSON, with the
-same keys as a local credential file. Write the file with `jq` in the tmpfs, never on the command
-line:
+same keys as a local credential file. `M365_CERTIFICATE_CONTENT` is the passwordless PFX in
+base64 on one line. Write the files in the tmpfs, never on the command line:
 
 ```bash
-jq -n --arg id "<scanner app client id>" --rawfile cert /dev/shm/scanner.pem \
-  '{AZURE_CLIENT_ID: $id, M365_CERTIFICATE_CONTENT: ($cert | @base64)}' > /dev/shm/m365-scanner
+openssl base64 -A -in /dev/shm/scanner.pfx > /dev/shm/scanner.b64
+jq -n --arg id "<scanner app client id>" --rawfile cert /dev/shm/scanner.b64 \
+  '{AZURE_CLIENT_ID: $id, M365_CERTIFICATE_CONTENT: $cert}' > /dev/shm/m365-scanner
 aws secretsmanager put-secret-value --secret-id atesta/atesta-dev/m365/scanner --secret-string file:///dev/shm/m365-scanner
-rm /dev/shm/m365-scanner /dev/shm/scanner.pem
+rm /dev/shm/m365-scanner /dev/shm/scanner.b64 /dev/shm/scanner.pfx
 ```
-
-Use the same encoding of `M365_CERTIFICATE_CONTENT` as your local credential file for that app.
 **Alerts.** The first apply subscribes the budget address to `<env>-alerts`. AWS emails a
 confirmation link to that address; click it once, or the scan failure-rate alarm reaches nobody.
 
