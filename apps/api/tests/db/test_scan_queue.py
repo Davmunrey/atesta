@@ -88,6 +88,10 @@ def test_the_scan_target_holds_ids_and_references_never_a_secret(db_rollback: Se
         "google_subject_email": None,
         "ms_tenant_id": None,  # bound at sign-in (#314); ids only, never a secret
         "consented_by_oid": None,
+        "primary_domain": None,  # Google only (issue 398)
+        "google_unique_id": None,
+        "google_verifier_unique_id": None,
+        "verified_at": None,
     }
     assert target.active
 

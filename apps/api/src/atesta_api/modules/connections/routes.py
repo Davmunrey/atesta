@@ -40,6 +40,16 @@ class ConnectionOut(BaseModel):
     tenant_id: str | None  # the pinned tenant, else the consented one; never the admin's oid
 
 
+class GoogleSubjectIn(BaseModel):
+    """The super admin Atesta reads as; the primary domain only when it differs (issue 398)."""
+
+    email: Annotated[str, StringConstraints(strip_whitespace=True, min_length=3, max_length=254)]
+    primary_domain: (
+        Annotated[str, StringConstraints(strip_whitespace=True, min_length=3, max_length=253)]
+        | None
+    ) = None
+
+
 class ExpectedAccess(BaseModel):
     """Exactly what the customer grants: the allowlist of the connection's version."""
 
@@ -147,6 +157,32 @@ def get_connection(
         expected_access=_expected(connection.provider),
         last_verification=_last_verification(connection),
     )
+
+
+@router.put("/{connection_id}/google")
+def set_google_subject(
+    connection_id: uuid.UUID,
+    body: GoogleSubjectIn,
+    member: Annotated[Member, Depends(require_role(Role.ADMIN))],
+    session: DbSession,
+) -> ConnectionOut:
+    """Onboarding step 3 for Google: who Atesta reads as. Never logged or audited (rule 2)."""
+    try:
+        connection = service.set_google_subject(
+            session,
+            member.organization_id,
+            connection_id,
+            email=body.email,
+            primary_domain=body.primary_domain,
+            user_id=member.user_id,
+        )
+    except service.GoogleSubjectError:
+        raise _error(422, "connections.google_subject_invalid") from None
+    except service.ConnectionStateError:
+        raise _error(409, "connections.state_invalid") from None
+    if connection is None:
+        raise _error(404, "connections.not_found")
+    return _out(connection)
 
 
 @router.delete("/{connection_id}")

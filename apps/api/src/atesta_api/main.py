@@ -9,7 +9,7 @@ from fastapi import FastAPI
 
 from atesta_api.modules.compliance.api import include_drafts, install_compliance
 from atesta_api.modules.connections.api import install_connections, wire_connections
-from atesta_api.modules.evidence.api import install_evidence
+from atesta_api.modules.evidence.api import install_evidence, wire_evidence
 from atesta_api.modules.identity.api import install_identity, wire_identity
 from atesta_api.modules.notifications.api import install_notifications
 from atesta_api.modules.scanning.api import router as scanning_router
@@ -24,6 +24,7 @@ from atesta_api.platform.logs import install_log_redaction
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Configure the database and Cognito; refuse to start on unsafe config or DB role."""
     include_drafts()  # raises on ATESTA_CATALOG_INCLUDE_DRAFTS outside a dev ATESTA_ENV
+    wire_evidence(app)  # raises on an unknown store, or a local one outside a dev ATESTA_ENV
     sslmode = os.environ.get("ATESTA_DB_SSLMODE", "verify-full")
     engine = db.make_engine(os.environ["ATESTA_DATABASE_URL"], sslmode=sslmode)
     assert_safe_runtime_role(engine, require_tls=sslmode != "disable")

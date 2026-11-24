@@ -63,7 +63,7 @@ def test_statement_retry_pagination_and_audit(
     headers = auth(subs["mem"])
     empty = client.get(base + "/evidence", headers=headers)
     assert empty.status_code == 200
-    assert empty.json() == {"total": 0, "items": []}
+    assert (empty.json()["total"], empty.json()["items"]) == (0, [])
     payload = statement(title="  Synthetic policy  ")
     first = client.post(base + "/evidence", headers=headers, json=payload)
     assert first.status_code == 201, first.text

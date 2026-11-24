@@ -112,6 +112,16 @@ resource "aws_secretsmanager_secret" "session_key" {
   kms_key_id  = module.kms.secrets_key_arn
 }
 
+# Evidence file uploads (#222): the services find the evidence bucket through these settings.
+# Later arguments win in merge(), so a hand-set value cannot point the API at another bucket.
+locals {
+  app_environment = merge(var.app_environment, {
+    ATESTA_EVIDENCE_STORE  = "s3"
+    ATESTA_EVIDENCE_BUCKET = module.evidence.bucket_name
+    AWS_DEFAULT_REGION     = data.aws_region.current.region
+  })
+}
+
 module "ecs" {
   source                = "../ecs"
   count                 = var.images == null || var.edge == null ? 0 : 1
@@ -124,9 +134,10 @@ module "ecs" {
   logs_key_arn          = module.kms.logs_key_arn
   secrets_key_arn       = module.kms.secrets_key_arn
   evidence_bucket_arn   = module.evidence.bucket_arn
+  evidence_key_arn      = module.kms.evidence_key_arn
   certificate_arn       = var.edge.api_certificate_arn
   images                = var.images
-  environment           = var.app_environment
+  environment           = local.app_environment
   api_count             = var.api_count
   worker_count          = var.worker_count
   secrets = {
@@ -189,6 +200,7 @@ output "mail_dns_records" {
 }
 
 data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
 
 # Everything the deploy workflow (.github/workflows/deploy.yml) reads, in one output.
 output "deploy" {

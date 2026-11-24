@@ -452,6 +452,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/connections/{connection_id}/google": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set Google Subject
+         * @description Onboarding step 3 for Google: who Atesta reads as. Never logged or audited (rule 2).
+         */
+        put: operations["set_google_subject_api_v1_orgs__org_id__connections__connection_id__google_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/connections/{connection_id}/m365/signin": {
         parameters: {
             query?: never;
@@ -524,6 +544,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/controls/{control_key}/evidence/files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload File
+         * @description Authentication first, then the declared length, and only then the body.
+         */
+        post: operations["upload_file_api_v1_orgs__org_id__controls__control_key__evidence_files_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/controls/{control_key}/reviews": {
         parameters: {
             query?: never;
@@ -536,6 +576,23 @@ export interface paths {
         put?: never;
         /** Record Review */
         post: operations["record_review_api_v1_orgs__org_id__controls__control_key__reviews_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orgs/{org_id}/evidence/{evidence_id}/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download File */
+        get: operations["download_file_api_v1_orgs__org_id__evidence__evidence_id__file_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2360,6 +2417,7 @@ export interface components {
             created_at: string;
             /** Created By */
             created_by: string | null;
+            file?: components["schemas"]["FileOut"] | null;
             /**
              * Id
              * Format: uuid
@@ -2376,6 +2434,7 @@ export interface components {
         };
         /** EvidencePage */
         EvidencePage: {
+            file_uploads: components["schemas"]["FileUploads"];
             /** Items */
             items: components["schemas"]["EvidenceOut"][];
             /** Total */
@@ -2413,6 +2472,32 @@ export interface components {
             /** Es */
             es: string;
             ref: components["schemas"]["GuideReference"];
+        };
+        /**
+         * FileOut
+         * @description An uploaded document (evidence-file-uploads spec). The storage key stays in the API.
+         */
+        FileOut: {
+            /** Media Type */
+            media_type: string;
+            /** Name */
+            name: string;
+            /** Sha256 */
+            sha256: string;
+            /** Size Bytes */
+            size_bytes: number;
+        };
+        /**
+         * FileUploads
+         * @description What the upload form may offer: nothing when no store is configured.
+         */
+        FileUploads: {
+            /** Enabled */
+            enabled: boolean;
+            /** Extensions */
+            extensions: string[];
+            /** Max Bytes */
+            max_bytes: number;
         };
         /** FindingOut */
         FindingOut: {
@@ -2554,6 +2639,16 @@ export interface components {
         };
         /** @enum {string} */
         GapState: "not_assessed" | "not_implemented" | "partially_implemented";
+        /**
+         * GoogleSubjectIn
+         * @description The super admin Atesta reads as; the primary domain only when it differs (issue 398).
+         */
+        GoogleSubjectIn: {
+            /** Email */
+            email: string;
+            /** Primary Domain */
+            primary_domain?: string | null;
+        };
         /** GroupHeading */
         GroupHeading: {
             /** Prefix */
@@ -4882,6 +4977,42 @@ export interface operations {
             };
         };
     };
+    set_google_subject_api_v1_orgs__org_id__connections__connection_id__google_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                connection_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GoogleSubjectIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     start_signin_api_v1_orgs__org_id__connections__connection_id__m365_signin_post: {
         parameters: {
             query?: never;
@@ -5049,6 +5180,48 @@ export interface operations {
             };
         };
     };
+    upload_file_api_v1_orgs__org_id__controls__control_key__evidence_files_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                control_key: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                    /** Format: uuid */
+                    submission_id: string;
+                    title: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_reviews_api_v1_orgs__org_id__controls__control_key__reviews_get: {
         parameters: {
             query?: never;
@@ -5105,6 +5278,36 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ReviewOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_file_api_v1_orgs__org_id__evidence__evidence_id__file_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                evidence_id: string;
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

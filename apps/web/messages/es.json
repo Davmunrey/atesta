@@ -221,7 +221,8 @@
       "signin_invalid": "El inicio de sesión con Microsoft no es válido o ha caducado. Vuelve a empezar la conexión desde Atesta.",
       "consent_denied": "No se concedió el consentimiento de administrador en Microsoft, así que la conexión no avanza. Vuelve a intentarlo con una cuenta de administrador global o de administrador de roles con privilegios.",
       "tenant_mismatch": "Microsoft devolvió un inquilino distinto del de tu inicio de sesión, o de este enlace. No se ha guardado nada; vuelve a empezar con una cuenta del inquilino correcto.",
-      "microsoft_unavailable": "No podemos contactar con Microsoft en este momento, o la conexión con Microsoft 365 aún no está disponible aquí. Inténtalo de nuevo más tarde."
+      "microsoft_unavailable": "No podemos contactar con Microsoft en este momento, o la conexión con Microsoft 365 aún no está disponible aquí. Inténtalo de nuevo más tarde.",
+      "google_subject_invalid": "Escribe el correo de un superadministrador de Google Workspace, como admin@tuempresa.es. Si está en un dominio secundario, indica también el dominio principal."
     },
     "identity": {
       "already_member": "Esta persona ya es miembro de la organización.",
@@ -251,6 +252,14 @@
     },
     "evidence": {
       "control_not_found": "Este control ya no está disponible. Recarga el catálogo.",
+      "file_content_mismatch": "El contenido no corresponde al tipo de archivo que indica su extensión. Comprueba el archivo y vuelve a subirlo.",
+      "file_empty": "El archivo está vacío. Elige un archivo con contenido.",
+      "file_integrity_failed": "El archivo guardado ya no coincide con el que se registró, así que no se entrega. El intento ha quedado en el registro de actividad. Contacta con soporte.",
+      "file_not_found": "No encontramos ese archivo, o no tienes acceso.",
+      "file_too_large": "El archivo supera el límite de 25 MB. Redúcelo o divídelo antes de subirlo.",
+      "file_type_not_allowed": "Ese tipo de archivo no se admite. Sube un PDF, PNG, JPG, TXT, CSV, DOCX o XLSX.",
+      "length_required": "El navegador no ha indicado el tamaño del archivo. Vuelve a intentarlo.",
+      "storage_unavailable": "Ahora mismo no se pueden guardar ni leer archivos. No se ha registrado nada; vuelve a intentarlo en unos minutos.",
       "submission_conflict": "Este envío ya se registró con otros datos. Recarga las evidencias antes de continuar."
     },
     "scanning": {
@@ -750,9 +759,14 @@
       "framework_assessment_reviewed": "Registró la revisión del responsable de seguridad",
       "framework_applicability_exported": "Exportó la declaración de aplicabilidad",
       "control_reviewed": "Revisó un control",
+      "evidence_file_downloaded": "Descargó un archivo de evidencia",
+      "evidence_file_integrity_failed": "Descarga bloqueada: el archivo no coincide con el registrado",
+      "evidence_file_uploaded": "Subió un archivo de evidencia",
       "evidence_statement_recorded": "Registró una evidencia",
       "connection_created": "Creó una conexión",
-      "connection_verification_requested": "Solicitó verificar una conexión de Microsoft 365",
+      "connection_verification_requested": "Solicitó verificar una conexión",
+      "connection_provisioned": "Atesta preparó las cuentas de servicio de Google Workspace",
+      "connection_google_subject_set": "Indicó el superadministrador de Google Workspace",
       "connection_consent_granted": "Concedió el consentimiento de Microsoft 365",
       "connection_disconnected": "Desconectó una conexión",
       "scan_requested": "Solicitó un análisis",

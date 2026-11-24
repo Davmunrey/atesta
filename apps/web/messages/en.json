@@ -221,7 +221,8 @@
       "signin_invalid": "The Microsoft sign-in is not valid or has expired. Start the connection again from Atesta.",
       "consent_denied": "Admin consent was not granted in Microsoft, so the connection cannot continue. Try again with a Global Administrator or Privileged Role Administrator account.",
       "tenant_mismatch": "Microsoft returned a tenant different from your sign-in, or from this link. Nothing was saved; start again with an account in the right tenant.",
-      "microsoft_unavailable": "We cannot reach Microsoft right now, or the Microsoft 365 connection is not available here yet. Try again later."
+      "microsoft_unavailable": "We cannot reach Microsoft right now, or the Microsoft 365 connection is not available here yet. Try again later.",
+      "google_subject_invalid": "Enter the email of a Google Workspace super admin, such as admin@yourcompany.com. If it is on a secondary domain, also enter the primary domain."
     },
     "identity": {
       "already_member": "This person is already a member of the organization.",
@@ -251,6 +252,14 @@
     },
     "evidence": {
       "control_not_found": "This control is no longer available. Reload the catalog.",
+      "file_content_mismatch": "The content does not match the file type its extension names. Check the file and upload it again.",
+      "file_empty": "The file is empty. Choose a file with content.",
+      "file_integrity_failed": "The stored file no longer matches the one that was recorded, so it is not served. The attempt is in the activity log. Contact support.",
+      "file_not_found": "We could not find that file, or you do not have access.",
+      "file_too_large": "The file is over the 25 MB limit. Reduce or split it before uploading.",
+      "file_type_not_allowed": "That file type is not accepted. Upload a PDF, PNG, JPG, TXT, CSV, DOCX or XLSX.",
+      "length_required": "The browser did not state the file's size. Try again.",
+      "storage_unavailable": "Files cannot be stored or read right now. Nothing was recorded; try again in a few minutes.",
       "submission_conflict": "This submission was already recorded with different data. Reload the evidence before continuing."
     },
     "scanning": {
@@ -750,9 +759,14 @@
       "framework_assessment_reviewed": "Recorded the security officer review",
       "framework_applicability_exported": "Exported the statement of applicability",
       "control_reviewed": "Reviewed a control",
+      "evidence_file_downloaded": "Downloaded an evidence file",
+      "evidence_file_integrity_failed": "Download blocked: the file does not match the one recorded",
+      "evidence_file_uploaded": "Uploaded an evidence file",
       "evidence_statement_recorded": "Recorded evidence",
       "connection_created": "Created a connection",
-      "connection_verification_requested": "Requested a Microsoft 365 connection verification",
+      "connection_verification_requested": "Requested a connection verification",
+      "connection_provisioned": "Atesta prepared the Google Workspace service accounts",
+      "connection_google_subject_set": "Named the Google Workspace super admin",
       "connection_consent_granted": "Granted Microsoft 365 consent",
       "connection_disconnected": "Disconnected a connection",
       "scan_requested": "Requested a scan",

@@ -1,5 +1,6 @@
 """Public interface of the evidence module. Planned: store_evidence, build_pack."""
 
+import os
 import re
 import uuid
 from collections.abc import Iterable, Sequence
@@ -17,16 +18,31 @@ from atesta_api.modules.evidence.links import (
     refuse_credential_link,
 )
 from atesta_api.modules.evidence.models import Evidence, EvidenceControl
+from atesta_api.modules.evidence.store import (
+    EvidenceStore,
+    LocalEvidenceStore,
+    ObjectMissingError,
+    S3EvidenceStore,
+    StoreUnavailableError,
+    store_from_env,
+)
 
 _UNSAFE = re.compile(r"[^A-Za-z0-9_.-]+")
 
 
 def install_evidence(app: FastAPI) -> None:
+    from atesta_api.modules.evidence.files import router as files_router
     from atesta_api.modules.evidence.ingest import router as ingest_router
     from atesta_api.modules.evidence.routes import router
 
     app.include_router(router)
+    app.include_router(files_router)
     app.include_router(ingest_router)
+
+
+def wire_evidence(app: FastAPI) -> None:
+    """The file store named by the environment; without one, uploads are disabled."""
+    app.state.evidence_store = store_from_env(os.environ)
 
 
 def statements_in_org(
@@ -291,7 +307,14 @@ def register_scan_output(
 
 __all__ = [
     "CredentialLinkError",
+    "EvidenceStore",
+    "LocalEvidenceStore",
+    "ObjectMissingError",
+    "S3EvidenceStore",
+    "StoreUnavailableError",
     "carries_credential",
     "record_attestation",
     "refuse_credential_link",
+    "store_from_env",
+    "wire_evidence",
 ]
