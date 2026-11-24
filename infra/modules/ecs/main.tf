@@ -2,8 +2,8 @@
 # private subnets (the API service and its load balancer are in api.tf); migrations run as a one-off task; each scan attempt is one RunTask of the scan
 # task definition with the per-org, per-provider role passed by the worker (overrides.taskRoleArn).
 # Secrets reach containers only through ECS secrets from Secrets Manager; images are pinned by
-# digest. The scan egress allowlist (scanner-connectors spec, Runners) is not built yet: the scan
-# security group allows HTTPS out only, and the allowlisting proxy comes with the Fargate runner.
+# digest. Scan tasks reach the internet only through the egress proxy, an Envoy service whose
+# allowlist is infra/egress/envoy.yaml, and AWS only through the VPC endpoints (issue 454).
 
 terraform {
   required_providers {
@@ -60,14 +60,24 @@ variable "file_scan_queue_arn" {
   type        = string
 }
 
+variable "m365_secret_arn" {
+  description = "The platform's M365 scanner credential, named in M365 job files (issue 453)."
+  type        = string
+}
+
+variable "alert_topic_arn" {
+  description = "Topic the scan failure-rate alarm notifies (issue 453)."
+  type        = string
+}
+
 variable "queues_key_arn" {
   description = "KMS key of that queue: receiving needs kms:Decrypt (AWS, SQS key management)."
   type        = string
 }
 
 variable "images" {
-  description = "Image references for api, worker and scan, pinned by digest."
-  type        = object({ api = string, worker = string, scan = string })
+  description = "Image references for api, worker, scan and the egress proxy, pinned by digest."
+  type        = object({ api = string, worker = string, scan = string, egress = string })
   validation {
     condition     = alltrue([for image in values(var.images) : can(regex("@sha256:[0-9a-f]{64}$", image))])
     error_message = "Pin every image by digest (repository@sha256:...)."
@@ -109,6 +119,22 @@ variable "worker_count" {
   default = 1
 }
 
+variable "egress_count" {
+  description = "Egress proxy tasks: one in dev, one per zone in prod."
+  type        = number
+  default     = 1
+}
+
+variable "endpoints_security_group_id" {
+  description = "The VPC interface endpoints' group (network module): scan tasks may reach it."
+  type        = string
+}
+
+variable "s3_prefix_list_id" {
+  description = "S3's gateway prefix list (network module): scan tasks read and write S3 by it."
+  type        = string
+}
+
 variable "log_retention_days" {
   type    = number
   default = 365
@@ -121,6 +147,29 @@ locals {
   account         = data.aws_caller_identity.current.account_id
   region          = data.aws_region.current.region
   scan_family_arn = "arn:aws:ecs:${local.region}:${local.account}:task-definition/${var.name}-scan"
+  evidence_bucket = element(split(":", var.evidence_bucket_arn), 5) # arn:aws:s3:::<name>
+  # The Fargate runner's settings (issue 453): the worker alone gets them, built from this
+  # module's own resources. ATESTA_SCANNER_EXPECTED comes from the worker image.
+  scan_runner = {
+    ATESTA_SCAN_RUNNER          = "fargate"
+    ATESTA_SCAN_BUCKET          = local.evidence_bucket
+    ATESTA_SCAN_CLUSTER         = aws_ecs_cluster.this.arn # the RunScans condition compares ARNs
+    ATESTA_SCAN_TASK_DEFINITION = "${var.name}-scan"
+    ATESTA_SCAN_SUBNETS         = join(",", var.private_subnet_ids)
+    ATESTA_SCAN_SECURITY_GROUP  = aws_security_group.scan.id
+    ATESTA_SCAN_ROLE_PREFIX     = "arn:aws:iam::${local.account}:role/atesta-scan/${var.name}/"
+    ATESTA_M365_CREDENTIAL_REF  = "aws-sm:${var.m365_secret_arn}"
+  }
+  # The wrapper reads its job and writes its outputs in S3 (issue 444); never an override.
+  scan_environment = {
+    ATESTA_SCAN_SOURCE = "s3"
+    ATESTA_SCAN_BUCKET = local.evidence_bucket
+    AWS_DEFAULT_REGION = local.region
+    # Issue 454: provider APIs through the proxy; AWS SDK calls go to the VPC endpoints and the
+    # S3 gateway directly. The credentials endpoint is plain HTTP, which HTTPS_PROXY never takes.
+    HTTPS_PROXY = "http://${aws_service_discovery_service.egress.name}.${aws_service_discovery_private_dns_namespace.this.name}:3128"
+    NO_PROXY    = "amazonaws.com,169.254.170.2"
+  }
   # IAM needs the secret's own ARN, without a ":json-key::" suffix.
   secret_arns = distinct([
     for ref in concat(values(var.secrets.api), values(var.secrets.worker), values(var.secrets.migrate), values(var.secrets.bootstrap)) :
@@ -145,7 +194,7 @@ locals {
     worker = merge(local.locked, {
       mountPoints      = [{ sourceVolume = "tmp", containerPath = "/tmp" }]
       image            = var.images.worker
-      environment      = [for k, v in var.environment : { name = k, value = v }]
+      environment      = [for k, v in merge(var.environment, local.scan_runner) : { name = k, value = v }]
       secrets          = [for k, arn in var.secrets.worker : { name = k, valueFrom = arn }]
       logConfiguration = { logDriver = "awslogs", options = { "awslogs-group" = aws_cloudwatch_log_group.this["worker"].name, "awslogs-region" = local.region, "awslogs-stream-prefix" = "worker" } }
     })
@@ -174,13 +223,21 @@ locals {
         { sourceVolume = "home", containerPath = "/home/scanner" },
       ]
       image            = var.images.scan
+      environment      = [for k, v in local.scan_environment : { name = k, value = v }]
       logConfiguration = { logDriver = "awslogs", options = { "awslogs-group" = aws_cloudwatch_log_group.this["scan"].name, "awslogs-region" = local.region, "awslogs-stream-prefix" = "scan" } }
+    })
+    # The scan egress proxy (issue 454): no secrets, no settings, no AWS rights.
+    egress = merge(local.locked, {
+      mountPoints      = [{ sourceVolume = "tmp", containerPath = "/tmp" }]
+      image            = var.images.egress
+      portMappings     = [{ containerPort = 3128, protocol = "tcp" }]
+      logConfiguration = { logDriver = "awslogs", options = { "awslogs-group" = aws_cloudwatch_log_group.this["egress"].name, "awslogs-region" = local.region, "awslogs-stream-prefix" = "egress" } }
     })
   }
 }
 
 resource "aws_cloudwatch_log_group" "this" {
-  for_each          = toset(["api", "worker", "migrate", "scan"])
+  for_each          = toset(["api", "worker", "migrate", "scan", "egress"])
   name              = "/atesta/${var.name}/${each.key}"
   retention_in_days = var.log_retention_days
   kms_key_id        = var.logs_key_arn
@@ -279,6 +336,39 @@ data "aws_iam_policy_document" "worker" {
     actions   = ["kms:Decrypt"]
     resources = [var.queues_key_arn]
   }
+  # Scan storage (issue 453): the worker writes each attempt's job file and reads outputs, and
+  # lists only scan prefixes: evidence keys carry document names. Without a bucket-wide list a
+  # missing key answers 403, which S3ScanStore settles by listing that key.
+  statement {
+    sid       = "WriteScanJobs"
+    actions   = ["s3:PutObject"]
+    resources = ["${var.evidence_bucket_arn}/*/scans/*/attempt-*/job.json"]
+  }
+  statement {
+    sid       = "ReadScanOutputs"
+    actions   = ["s3:GetObject"]
+    resources = ["${var.evidence_bucket_arn}/*/scans/*"]
+  }
+  statement {
+    sid       = "ListScanOutputs"
+    actions   = ["s3:ListBucket"]
+    resources = [var.evidence_bucket_arn]
+    condition {
+      test     = "StringLike"
+      variable = "s3:prefix"
+      values   = ["*/scans/*"]
+    }
+  }
+  statement {
+    sid       = "ScanStoreKey"
+    actions   = ["kms:Decrypt", "kms:GenerateDataKey"]
+    resources = [var.evidence_key_arn]
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values   = ["s3.${local.region}.amazonaws.com"]
+    }
+  }
   statement {
     sid     = "PassScanRoles"
     actions = ["iam:PassRole"]
@@ -340,7 +430,8 @@ resource "aws_iam_role_policy" "api" {
 
 # Permissions boundary for every per-org scan role (scanner-connectors spec, Runners): whatever
 # a role's own policy says, it can read only connector secrets of this environment, write scan
-# outputs and read job files under an organization prefix, and decrypt with the secrets key.
+# outputs and read job files under an organization prefix, decrypt with the secrets key, and use
+# the evidence key that encrypts those objects (issue 453).
 data "aws_iam_policy_document" "scan_boundary" {
   statement {
     sid       = "ConnectorSecrets"
@@ -358,9 +449,14 @@ data "aws_iam_policy_document" "scan_boundary" {
     resources = ["${var.evidence_bucket_arn}/*/scans/*/attempt-*/job.json"]
   }
   statement {
-    sid       = "Decrypt"
-    actions   = ["kms:Decrypt", "kms:GenerateDataKey"]
+    sid       = "SecretsKey"
+    actions   = ["kms:Decrypt"]
     resources = [var.secrets_key_arn]
+  }
+  statement {
+    sid       = "EvidenceKey"
+    actions   = ["kms:Decrypt", "kms:GenerateDataKey"]
+    resources = [var.evidence_key_arn]
   }
 }
 
@@ -389,16 +485,76 @@ resource "aws_vpc_security_group_egress_rule" "app_db" {
 
 resource "aws_security_group" "scan" {
   name        = "${var.name}-scan"
-  description = "Scan tasks: no inbound, HTTPS out only"
+  description = "Scan tasks: no inbound; out only to the egress proxy, VPC endpoints and S3"
   vpc_id      = var.vpc_id
 }
 
-resource "aws_vpc_security_group_egress_rule" "scan_https" {
+# Scan egress (issue 454): the proxy for provider APIs, the interface endpoints for the image,
+# logs and secrets, S3's gateway for job files and outputs. Nothing reaches 0.0.0.0/0. Security
+# groups do not filter Amazon DNS (AWS, "Security groups"), a limit the spec records.
+resource "aws_vpc_security_group_egress_rule" "scan_proxy" {
+  security_group_id            = aws_security_group.scan.id
+  referenced_security_group_id = aws_security_group.egress.id
+  ip_protocol                  = "tcp"
+  from_port                    = 3128
+  to_port                      = 3128
+}
+
+resource "aws_vpc_security_group_egress_rule" "scan_endpoints" {
+  security_group_id            = aws_security_group.scan.id
+  referenced_security_group_id = var.endpoints_security_group_id
+  ip_protocol                  = "tcp"
+  from_port                    = 443
+  to_port                      = 443
+}
+
+resource "aws_vpc_security_group_egress_rule" "scan_s3" {
   security_group_id = aws_security_group.scan.id
+  prefix_list_id    = var.s3_prefix_list_id
+  ip_protocol       = "tcp"
+  from_port         = 443
+  to_port           = 443
+}
+
+resource "aws_security_group" "egress" {
+  name        = "${var.name}-egress"
+  description = "Scan egress proxy: CONNECT from scan tasks, HTTPS out"
+  vpc_id      = var.vpc_id
+}
+
+resource "aws_vpc_security_group_ingress_rule" "egress_from_scans" {
+  security_group_id            = aws_security_group.egress.id
+  referenced_security_group_id = aws_security_group.scan.id
+  ip_protocol                  = "tcp"
+  from_port                    = 3128
+  to_port                      = 3128
+}
+
+resource "aws_vpc_security_group_egress_rule" "egress_https" {
+  security_group_id = aws_security_group.egress.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "tcp"
   from_port         = 443
   to_port           = 443
+}
+
+# Scan tasks find the proxy by name: egress.<env>.internal, one A record per running task.
+resource "aws_service_discovery_private_dns_namespace" "this" {
+  name = "${var.name}.internal"
+  vpc  = var.vpc_id
+}
+
+resource "aws_service_discovery_service" "egress" {
+  name = "egress"
+  dns_config {
+    namespace_id   = aws_service_discovery_private_dns_namespace.this.id
+    routing_policy = "MULTIVALUE"
+    dns_records {
+      type = "A"
+      ttl  = 10
+    }
+  }
+  health_check_custom_config {}
 }
 
 # --- Tasks and services ---------------------------------------------------------------------
@@ -442,6 +598,45 @@ resource "aws_ecs_task_definition" "scan" {
   }
 }
 
+# The egress proxy (issue 454): Envoy, with no task role, pulled and logged by the scan execution
+# role. ECS keeps its Cloud Map records current.
+resource "aws_ecs_task_definition" "egress" {
+  family                   = "${var.name}-egress"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "256"
+  memory                   = "512"
+  execution_role_arn       = aws_iam_role.scan_execution.arn
+  container_definitions    = jsonencode([merge(local.containers.egress, { name = "egress", essential = true })])
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "X86_64"
+  }
+  volume {
+    name = "tmp"
+  }
+}
+
+resource "aws_ecs_service" "egress" {
+  name            = "${var.name}-egress"
+  cluster         = aws_ecs_cluster.this.id
+  task_definition = aws_ecs_task_definition.egress.arn
+  desired_count   = var.egress_count
+  launch_type     = "FARGATE"
+  network_configuration {
+    subnets          = var.private_subnet_ids
+    security_groups  = [aws_security_group.egress.id]
+    assign_public_ip = false
+  }
+  service_registries {
+    registry_arn = aws_service_discovery_service.egress.arn
+  }
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
+}
+
 resource "aws_ecs_service" "worker" {
   name            = "${var.name}-worker"
   cluster         = aws_ecs_cluster.this.id
@@ -457,6 +652,61 @@ resource "aws_ecs_service" "worker" {
     enable   = true
     rollback = true
   }
+}
+
+# --- Scan failure-rate alert (scanner-connectors spec; issue 453) ------------------------------
+# More than 5% of scans failed over 24 h, with at least 20 scans, counted from the worker's
+# scan.finished events (ids and codes only), never by a cross-tenant query.
+
+resource "aws_cloudwatch_log_metric_filter" "scans" {
+  for_each = {
+    ScansFinished = "{ $.event = \"scan.finished\" }"
+    ScansFailed   = "{ ($.event = \"scan.finished\") && ($.status = \"failed\") }"
+  }
+  name           = "${var.name}-${each.key}"
+  log_group_name = aws_cloudwatch_log_group.this["worker"].name
+  pattern        = each.value
+  metric_transformation {
+    name      = each.key
+    namespace = "Atesta/${var.name}"
+    value     = "1"
+    unit      = "Count"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "scan_failure_rate" {
+  alarm_name          = "${var.name}-scan-failure-rate"
+  alarm_description   = "More than 5% of scans failed over 24 h, with at least 20 scans."
+  comparison_operator = "GreaterThanThreshold"
+  threshold           = 5
+  evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [var.alert_topic_arn]
+  metric_query {
+    id          = "rate"
+    expression  = "IF(FILL(finished, 0) >= 20, 100 * FILL(failed, 0) / FILL(finished, 0), 0)"
+    label       = "Failed scans, percent"
+    return_data = true
+  }
+  metric_query {
+    id = "finished"
+    metric {
+      namespace   = "Atesta/${var.name}"
+      metric_name = "ScansFinished"
+      period      = 86400
+      stat        = "Sum"
+    }
+  }
+  metric_query {
+    id = "failed"
+    metric {
+      namespace   = "Atesta/${var.name}"
+      metric_name = "ScansFailed"
+      period      = 86400
+      stat        = "Sum"
+    }
+  }
+  depends_on = [aws_cloudwatch_log_metric_filter.scans]
 }
 
 output "cluster_arn" {

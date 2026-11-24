@@ -331,7 +331,7 @@ def test_every_container_is_locked_down_and_logs_to_its_own_group() -> None:
     assert locked["readonlyRootFilesystem"] is True and locked["privileged"] is False
     assert locked["user"] == "10001"
     assert locked["linuxParameters"]["capabilities"]["drop"] == ["ALL"]
-    assert set(CONTAINERS) == {"api", "worker", "migrate", "bootstrap", "scan"}
+    assert set(CONTAINERS) == {"api", "worker", "migrate", "bootstrap", "scan", "egress"}
     for name, container in CONTAINERS.items():
         assert container.startswith("${merge(local.locked, {"), name
         assert 'logDriver = "awslogs"' in container, name
@@ -356,7 +356,7 @@ def test_images_are_pinned_by_digest_and_registries_are_immutable() -> None:
     rule = ECS_VARS["images"]["validation"][0]["condition"]
     assert "@sha256:[0-9a-f]{64}$" in rule
     repos = resources("modules/ecr/main.tf")["aws_ecr_repository.this"]
-    assert repos["for_each"] == '${toset(["api", "worker", "scan"])}'
+    assert repos["for_each"] == '${toset(["api", "worker", "scan", "egress"])}'
     assert repos["image_tag_mutability"] == "IMMUTABLE"
     assert repos["image_scanning_configuration"] == [{"scan_on_push": True}]
     assert repos["encryption_configuration"][0]["encryption_type"] == "KMS"
@@ -375,13 +375,26 @@ def test_services_run_on_fargate_in_private_subnets_and_roll_back() -> None:
     assert task["network_mode"] == "awsvpc" and task["requires_compatibilities"] == ["FARGATE"]
 
 
-def test_one_scan_task_definition_with_no_baked_role_and_https_only_egress() -> None:
+def test_one_scan_task_definition_with_no_baked_role_and_no_way_out_but_the_proxy() -> None:
+    """Issue 454: the proxy, the VPC endpoints and S3's gateway; never 0.0.0.0/0."""
     scan = ECS["aws_ecs_task_definition.scan"]
     assert "task_role_arn" not in scan  # ADR-004: the worker passes the per-org role per run
     assert (scan["cpu"], scan["memory"]) == ("2048", "4096")  # scanner-connectors D13
-    egress = [k for k in ECS if k.startswith("aws_vpc_security_group_egress_rule.scan")]
-    assert egress == ["aws_vpc_security_group_egress_rule.scan_https"]
-    assert ECS["aws_vpc_security_group_egress_rule.scan_https"]["from_port"] == 443
+    rules = {
+        k.removeprefix("aws_vpc_security_group_egress_rule."): v
+        for k, v in ECS.items()
+        if k.startswith("aws_vpc_security_group_egress_rule.scan")
+    }
+    assert set(rules) == {"scan_proxy", "scan_endpoints", "scan_s3"}
+    assert all(r["security_group_id"] == "${aws_security_group.scan.id}" for r in rules.values())
+    assert not [r for r in rules.values() if "cidr_ipv4" in r or "cidr_ipv6" in r]
+    proxy, endpoints, s3 = rules["scan_proxy"], rules["scan_endpoints"], rules["scan_s3"]
+    assert proxy["referenced_security_group_id"] == "${aws_security_group.egress.id}"
+    assert (proxy["from_port"], proxy["to_port"]) == (3128, 3128)
+    assert endpoints["referenced_security_group_id"] == "${var.endpoints_security_group_id}"
+    assert s3["prefix_list_id"] == "${var.s3_prefix_list_id}"
+    for rule in (endpoints, s3):
+        assert (rule["from_port"], rule["to_port"]) == (443, 443)
     assert not [k for k in ECS if k.startswith("aws_vpc_security_group_ingress_rule.scan")]
 
 
@@ -757,3 +770,347 @@ def test_the_apply_role_manages_only_malware_plans_and_its_own_queues_and_rules(
     assert statements["OwnRules"]["resources"] == [
         "arn:aws:events:*:${local.account}:rule/${var.name}-*"
     ]
+
+
+# --- scan roles per customer, scan storage and the failure-rate alert (#453) ---------------
+
+SCAN_ORG_FILE = load("modules/scan-org/main.tf")
+SCAN_ORG = resources("modules/scan-org/main.tf")
+SCAN_ORG_LOCALS = SCAN_ORG_FILE["locals"][0]
+SCAN_ORG_VARS = {k: v for b in SCAN_ORG_FILE["variable"] for k, v in b.items()}
+SCAN_ORG_DOCS = {
+    name: body
+    for block in SCAN_ORG_FILE["data"]
+    for kind, named in block.items()
+    if kind == "aws_iam_policy_document"
+    for name, body in named.items()
+}
+ECS_LOCALS = ECS_FILE["locals"][0]
+
+
+def test_scan_roles_are_per_org_bounded_and_trust_only_this_accounts_ecs_tasks() -> None:
+    role = SCAN_ORG["aws_iam_role.this"]
+    assert role["for_each"] == "${local.roles}"
+    assert role["name"] == "${each.key}-${var.organization_id}"
+    assert role["path"] == "/atesta-scan/${var.name}/"  # what the worker may pass
+    assert role["permissions_boundary"] == "${var.boundary_arn}"
+    (trust,) = SCAN_ORG_DOCS["trust"]["statement"]
+    assert trust["actions"] == ["sts:AssumeRole"]
+    assert trust["principals"] == [{"type": "Service", "identifiers": ["ecs-tasks.amazonaws.com"]}]
+    conditions = {c["variable"]: c for c in trust["condition"]}
+    assert conditions["aws:SourceAccount"]["values"] == ["${local.account}"]
+    assert conditions["aws:SourceArn"]["test"] == "ArnLike"
+    assert conditions["aws:SourceArn"]["values"] == [
+        "arn:aws:ecs:${local.region}:${local.account}:*"
+    ]
+    assert "[0-9a-f]{8}-" in SCAN_ORG_VARS["organization_id"]["validation"][0]["condition"]
+    allowed = SCAN_ORG_VARS["connectors"]["validation"][0]["condition"]
+    assert 'contains(["m365", "google_workspace"], c)' in allowed
+
+
+def test_each_scan_role_reads_only_its_own_credentials() -> None:
+    """D7: only the verify role holds the verifier key; M365 uses the platform's one app."""
+    kinds = SCAN_ORG_LOCALS["kinds"]
+    assert kinds == {
+        "scan-m365": {"connector": "m365", "secrets": ["${var.m365_secret_arn}"]},
+        "verify-gws": {
+            "connector": "google_workspace",
+            "secrets": ["${local.google}", "${local.google_verifier}"],
+        },
+        "scan-gws": {"connector": "google_workspace", "secrets": ["${local.google}"]},
+    }
+    # Secrets Manager appends exactly six characters to a name; nothing else may follow.
+    assert SCAN_ORG_LOCALS["google"].endswith(
+        ":secret:atesta/${var.name}/google/${var.organization_id}-??????"
+    )
+    assert SCAN_ORG_LOCALS["google_verifier"].endswith(
+        ":secret:atesta/${var.name}/google-verifier/${var.organization_id}-??????"
+    )
+    assert "if contains(var.connectors, role.connector)" in SCAN_ORG_LOCALS["roles"]
+
+
+def test_each_scan_role_writes_outputs_and_reads_its_job_under_its_own_org_only() -> None:
+    assert (
+        SCAN_ORG_LOCALS["prefix"]
+        == "${var.evidence_bucket_arn}/${var.organization_id}/scans/*/attempt-*"
+    )
+    document = SCAN_ORG_DOCS["this"]
+    assert document["for_each"] == "${local.roles}"
+    statements = {s["sid"]: s for s in document["statement"]}
+    assert set(statements) == {"Credential", "Outputs", "Job", "SecretsKey", "EvidenceKey"}
+    assert statements["Credential"]["actions"] == ["secretsmanager:GetSecretValue"]
+    assert statements["Credential"]["resources"] == "${each.value}"
+    assert statements["Outputs"]["actions"] == ["s3:PutObject"]
+    assert statements["Outputs"]["resources"] == ["${local.prefix}/out/*"]
+    assert statements["Job"]["actions"] == ["s3:GetObject"]
+    assert statements["Job"]["resources"] == ["${local.prefix}/job.json"]
+    for sid, key, service, actions in (
+        ("SecretsKey", "secrets", "secretsmanager", ["kms:Decrypt"]),
+        ("EvidenceKey", "evidence", "s3", ["kms:Decrypt", "kms:GenerateDataKey"]),
+    ):
+        assert statements[sid]["actions"] == actions, sid
+        assert statements[sid]["resources"] == [f"${{var.{key}_key_arn}}"], sid
+        (via,) = statements[sid]["condition"]
+        assert (via["variable"], via["values"]) == (
+            "kms:ViaService",
+            [f"{service}.${{local.region}}.amazonaws.com"],
+        ), sid
+    policy = SCAN_ORG["aws_iam_role_policy.this"]
+    assert policy["policy"] == "${data.aws_iam_policy_document.this[each.key].json}"
+
+
+def test_the_owner_lists_customers_and_the_platform_creates_their_roles() -> None:
+    platform = {k: v for m in PLATFORM_FILE["module"] for k, v in m.items()}
+    scan_org = platform["scan_org"]
+    assert scan_org["source"] == "../scan-org"
+    assert scan_org["for_each"] == (
+        "${var.images == null || var.edge == null ? {} : var.scan_organizations}"
+    )
+    assert scan_org["boundary_arn"] == "${module.ecs[0].scan_boundary_arn}"
+    assert scan_org["m365_secret_arn"] == "${aws_secretsmanager_secret.m365_scanner.arn}"
+    for env in ("dev", "prod"):
+        assert _modules(env)["platform"]["scan_organizations"] == "${var.scan_organizations}"
+        variables = {k: v for b in load(f"envs/{env}/main.tf")["variable"] for k, v in b.items()}
+        assert variables["scan_organizations"]["default"] == {}
+
+
+def test_the_m365_scanner_credential_is_a_hand_set_secret_under_the_scan_boundary() -> None:
+    secret = PLATFORM["aws_secretsmanager_secret.m365_scanner"]
+    assert secret["name"] == "atesta/${var.name}/m365/scanner"  # inside the boundary's prefix
+    assert secret["kms_key_id"] == "${module.kms.secrets_key_arn}"
+    assert not [k for k in PLATFORM if k.startswith("aws_secretsmanager_secret_version.")]
+
+
+def test_the_scan_boundary_adds_the_evidence_key_and_only_decrypts_secrets() -> None:
+    statements = {s["sid"]: s for s in ECS_POLICIES["scan_boundary"]["statement"]}
+    assert set(statements) == {
+        "ConnectorSecrets",
+        "ScanOutputs",
+        "ScanJobs",
+        "SecretsKey",
+        "EvidenceKey",
+    }
+    assert statements["SecretsKey"]["actions"] == ["kms:Decrypt"]
+    assert statements["SecretsKey"]["resources"] == ["${var.secrets_key_arn}"]
+    assert statements["EvidenceKey"]["actions"] == ["kms:Decrypt", "kms:GenerateDataKey"]
+    assert statements["EvidenceKey"]["resources"] == ["${var.evidence_key_arn}"]
+
+
+def test_scan_writers_write_once_and_scan_roles_never_delete_or_write_jobs() -> None:
+    """AWS, "Enforce conditional writes on Amazon S3 buckets": a Null condition on the key."""
+    locals_ = next(b for b in EVIDENCE_FILE["locals"] if "scan_roles" in b)
+    assert locals_["scan_roles"].endswith(":role/atesta-scan/${var.name}/*")
+    assert locals_["worker_role"].endswith(":role/${var.name}-worker")
+    statements = {s.get("sid"): s for s in EVIDENCE_DOCS["bucket"]["statement"]}
+
+    def who(statement: dict[str, Any]) -> list[str]:
+        (match,) = [c for c in statement["condition"] if c["variable"] == "aws:PrincipalArn"]
+        assert match["test"] == "ArnLike"
+        values: list[str] = match["values"]
+        return values
+
+    once = statements["DenyScanWritesWithoutIfNoneMatch"]
+    assert (once["effect"], once["actions"]) == ("Deny", ["s3:PutObject"])
+    assert once["resources"] == ["${aws_s3_bucket.this.arn}/*/scans/*"]
+    assert {"test": "Null", "variable": "s3:if-none-match", "values": ["true"]} in once["condition"]
+    assert who(once) == ["${local.scan_roles}", "${local.worker_role}"]
+    jobs = statements["DenyScanRolesJobWrites"]
+    assert (jobs["effect"], jobs["actions"]) == ("Deny", ["s3:PutObject"])
+    assert jobs["resources"] == ["${aws_s3_bucket.this.arn}/*/job.json"]
+    assert who(jobs) == ["${local.scan_roles}"]
+    metadata = statements["DenyScanRolesDeletesAndMetadata"]
+    assert metadata["effect"] == "Deny"
+    assert {"s3:DeleteObject", "s3:DeleteObjectVersion", "s3:PutObjectAcl"} <= set(
+        metadata["actions"]
+    )
+    assert {"s3:PutObjectRetention", "s3:PutObjectLegalHold", "s3:PutObjectTagging"} <= set(
+        metadata["actions"]
+    )
+    assert who(metadata) == ["${local.scan_roles}"]
+
+
+def test_the_worker_writes_jobs_and_reads_and_lists_only_scan_prefixes() -> None:
+    """Evidence keys carry document names, so the worker never lists the whole bucket."""
+    statements = {s["sid"]: s for s in ECS_POLICIES["worker"]["statement"]}
+    bucket = "${var.evidence_bucket_arn}"
+    assert statements["WriteScanJobs"]["actions"] == ["s3:PutObject"]
+    assert statements["WriteScanJobs"]["resources"] == [f"{bucket}/*/scans/*/attempt-*/job.json"]
+    assert statements["ReadScanOutputs"]["actions"] == ["s3:GetObject"]
+    assert statements["ReadScanOutputs"]["resources"] == [f"{bucket}/*/scans/*"]
+    listing = statements["ListScanOutputs"]
+    assert (listing["actions"], listing["resources"]) == (["s3:ListBucket"], [bucket])
+    assert listing["condition"] == [
+        {"test": "StringLike", "variable": "s3:prefix", "values": ["*/scans/*"]}
+    ]
+    key = statements["ScanStoreKey"]
+    assert key["actions"] == ["kms:Decrypt", "kms:GenerateDataKey"]
+    assert key["resources"] == ["${var.evidence_key_arn}"]
+    s3_actions = {a for s in statements.values() for a in s["actions"] if a.startswith("s3:")}
+    assert s3_actions == {"s3:PutObject", "s3:GetObject", "s3:ListBucket"}
+
+
+def test_the_worker_alone_gets_every_fargate_runner_setting() -> None:
+    from atesta_worker.scans import _FARGATE  # noqa: PLC0415 - the worker's own required list
+
+    runner = ECS_LOCALS["scan_runner"]
+    image_env = (INFRA.parent / "apps" / "Dockerfile").read_text()
+    assert "ATESTA_SCANNER_EXPECTED=/app/scanner/expected" in image_env
+    assert set(_FARGATE) - {"ATESTA_SCANNER_EXPECTED"} <= set(runner)
+    assert runner["ATESTA_SCAN_RUNNER"] == "fargate"
+    assert runner["ATESTA_SCAN_TASK_DEFINITION"] == "${var.name}-scan"
+    assert runner["ATESTA_SCAN_ROLE_PREFIX"] == (
+        "arn:aws:iam::${local.account}:role/atesta-scan/${var.name}/"
+    )
+    assert runner["ATESTA_M365_CREDENTIAL_REF"] == "aws-sm:${var.m365_secret_arn}"
+    assert "merge(var.environment, local.scan_runner)" in CONTAINERS["worker"]
+    for name in ("api", "migrate", "bootstrap"):
+        assert "scan_runner" not in CONTAINERS[name], name
+
+
+def test_the_scan_task_reads_its_job_from_s3_by_its_own_settings() -> None:
+    environment = ECS_LOCALS["scan_environment"]
+    assert {k: environment[k] for k in ("ATESTA_SCAN_SOURCE", "ATESTA_SCAN_BUCKET")} == {
+        "ATESTA_SCAN_SOURCE": "s3",
+        "ATESTA_SCAN_BUCKET": "${local.evidence_bucket}",
+    }
+    assert environment["AWS_DEFAULT_REGION"] == "${local.region}"
+    assert not {k for k in environment if "SECRET" in k or "TOKEN" in k}
+    assert "for k, v in local.scan_environment" in CONTAINERS["scan"]
+
+
+def test_the_failure_rate_alarm_counts_scan_finished_events_and_emails_the_owner() -> None:
+    """Spec: more than 5% failed over 24 h, at least 20 scans, from scan.finished events."""
+    filters = ECS["aws_cloudwatch_log_metric_filter.scans"]
+    assert filters["log_group_name"] == '${aws_cloudwatch_log_group.this["worker"].name}'
+    assert filters["for_each"] == {
+        "ScansFinished": '{ $.event = \\"scan.finished\\" }',
+        "ScansFailed": '{ ($.event = \\"scan.finished\\") && ($.status = \\"failed\\") }',
+    }
+    alarm = ECS["aws_cloudwatch_metric_alarm.scan_failure_rate"]
+    assert (alarm["comparison_operator"], alarm["threshold"]) == ("GreaterThanThreshold", 5)
+    assert alarm["evaluation_periods"] == 1
+    assert alarm["alarm_actions"] == ["${var.alert_topic_arn}"]
+    queries = {q["id"]: q for q in alarm["metric_query"]}
+    assert queries["rate"]["expression"] == (
+        "IF(FILL(finished, 0) >= 20, 100 * FILL(failed, 0) / FILL(finished, 0), 0)"
+    )
+    for name, metric in (("finished", "ScansFinished"), ("failed", "ScansFailed")):
+        (spec,) = queries[name]["metric"]
+        assert (spec["metric_name"], spec["period"], spec["stat"]) == (metric, 86400, "Sum")
+    topic = PLATFORM["aws_sns_topic.alerts"]
+    assert topic["kms_master_key_id"] == "${module.kms.queues_key_arn}"
+    subscription = PLATFORM["aws_sns_topic_subscription.alerts"]
+    assert (subscription["protocol"], subscription["endpoint"]) == ("email", "${var.alert_email}")
+    for env in ("dev", "prod"):
+        assert _modules(env)["platform"]["alert_email"] == "${var.budget_email}"
+    kms = {
+        n: b
+        for block in load("modules/kms/main.tf")["data"]
+        for k, named in block.items()
+        if k == "aws_iam_policy_document"
+        for n, b in named.items()
+    }
+    alarms = next(s for s in kms["queues"]["statement"] if s.get("sid") == "CloudWatchAlarmsUse")
+    assert alarms["principals"][0]["identifiers"] == ["cloudwatch.amazonaws.com"]
+    assert alarms["actions"] == ["kms:Decrypt", "kms:GenerateDataKey*"]
+
+
+# --- scan egress: Envoy proxy and VPC endpoints (#454) ---------------------------------------
+
+WORKFLOWS = INFRA.parent / ".github" / "workflows"
+
+
+def test_the_proxy_takes_connects_from_scan_tasks_only_and_sends_https_out() -> None:
+    inbound = ECS["aws_vpc_security_group_ingress_rule.egress_from_scans"]
+    assert inbound["security_group_id"] == "${aws_security_group.egress.id}"
+    assert inbound["referenced_security_group_id"] == "${aws_security_group.scan.id}"
+    assert (inbound["from_port"], inbound["to_port"]) == (3128, 3128)
+    ingress = [k for k in ECS if k.startswith("aws_vpc_security_group_ingress_rule.egress")]
+    assert ingress == ["aws_vpc_security_group_ingress_rule.egress_from_scans"]
+    out = ECS["aws_vpc_security_group_egress_rule.egress_https"]
+    assert out["security_group_id"] == "${aws_security_group.egress.id}"
+    assert (out["cidr_ipv4"], out["from_port"], out["to_port"]) == ("0.0.0.0/0", 443, 443)
+
+
+def test_the_proxy_runs_privately_with_no_task_role_behind_a_private_dns_name() -> None:
+    task = ECS["aws_ecs_task_definition.egress"]
+    assert "task_role_arn" not in task  # Envoy calls no AWS API
+    assert task["execution_role_arn"] == "${aws_iam_role.scan_execution.arn}"  # pull, logs
+    assert (task["cpu"], task["memory"]) == ("256", "512")
+    service = ECS["aws_ecs_service.egress"]
+    assert service["desired_count"] == "${var.egress_count}"
+    network = service["network_configuration"][0]
+    assert network["assign_public_ip"] is False
+    assert network["subnets"] == "${var.private_subnet_ids}"
+    assert network["security_groups"] == ["${aws_security_group.egress.id}"]
+    assert service["service_registries"][0]["registry_arn"] == (
+        "${aws_service_discovery_service.egress.arn}"
+    )
+    assert service["deployment_circuit_breaker"][0] == {"enable": True, "rollback": True}
+    namespace = ECS["aws_service_discovery_private_dns_namespace.this"]
+    assert (namespace["name"], namespace["vpc"]) == ("${var.name}.internal", "${var.vpc_id}")
+    discovery = ECS["aws_service_discovery_service.egress"]["dns_config"][0]
+    assert discovery["dns_records"] == [{"type": "A", "ttl": 10}]
+    assert '"egress"' in str(ECS["aws_cloudwatch_log_group.this"]["for_each"])
+    assert "var.images.egress" in CONTAINERS["egress"]
+    assert "containerPort = 3128" in CONTAINERS["egress"]
+    assert "secrets" not in CONTAINERS["egress"] and "environment" not in CONTAINERS["egress"]
+    platform = {k: v for m in PLATFORM_FILE["module"] for k, v in m.items()}
+    assert platform["ecs"]["egress_count"] == "${var.nat_per_az ? 2 : 1}"
+
+
+def test_the_scan_task_goes_through_the_proxy_except_to_aws() -> None:
+    environment = ECS_LOCALS["scan_environment"]
+    assert environment["HTTPS_PROXY"] == (
+        "http://${aws_service_discovery_service.egress.name}."
+        "${aws_service_discovery_private_dns_namespace.this.name}:3128"
+    )
+    assert environment["NO_PROXY"] == "amazonaws.com,169.254.170.2"
+    assert "HTTP_PROXY" not in environment  # the credentials endpoint is plain HTTP
+
+
+def test_interface_endpoints_carry_image_pulls_logs_and_secrets() -> None:
+    """AWS, "Amazon ECR interface VPC endpoints": Fargate 1.4.0+ pulls through the task's ENI."""
+    endpoint = NETWORK["aws_vpc_endpoint.interface"]
+    assert endpoint["for_each"] == '${toset(["ecr.api", "ecr.dkr", "logs", "secretsmanager"])}'
+    assert endpoint["vpc_endpoint_type"] == "Interface"
+    assert endpoint["private_dns_enabled"] is True
+    assert endpoint["subnet_ids"] == "${local.endpoint_subnets}"
+    assert endpoint["security_group_ids"] == ["${aws_security_group.endpoints.id}"]
+    network_file = load("modules/network/main.tf")
+    (subnets,) = [b["endpoint_subnets"] for b in network_file["locals"] if "endpoint_subnets" in b]
+    assert subnets == "${var.nat_per_az ? aws_subnet.private[*].id : [aws_subnet.private[0].id]}"
+    inbound = NETWORK["aws_vpc_security_group_ingress_rule.endpoints_https"]
+    assert (inbound["cidr_ipv4"], inbound["from_port"], inbound["to_port"]) == (
+        "${var.cidr}",
+        443,
+        443,
+    )
+    outputs = {k: v for b in network_file["output"] for k, v in b.items()}
+    assert outputs["s3_prefix_list_id"]["value"] == "${aws_vpc_endpoint.s3.prefix_list_id}"
+    assert outputs["endpoints_security_group_id"]["value"] == "${aws_security_group.endpoints.id}"
+
+
+def test_every_image_variable_includes_the_egress_proxy() -> None:
+    expected = "${object({api = string, worker = string, scan = string, egress = string})}"
+    assert ECS_VARS["images"]["type"] == expected
+    for path in ("modules/platform/main.tf", "envs/dev/main.tf", "envs/prod/main.tf"):
+        variables = {k: v for b in load(path)["variable"] for k, v in b.items()}
+        assert variables["images"]["type"] == expected, path
+
+
+def test_ci_validates_the_allowlist_and_tests_it_as_ecs_runs_it() -> None:
+    ci = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())
+    steps = [s.get("run", "") for s in ci["jobs"]["images"]["steps"]]
+    (proxy,) = [r for r in steps if "infra/egress/Dockerfile" in r]
+    assert "--mode validate" in proxy
+    assert "--read-only" in proxy and "--user 10001" in proxy and "--cap-drop ALL" in proxy
+    assert 'test "$allowed" = 200' in proxy
+    assert 'test "$denied" = 403' in proxy and 'test "$plain" = 403' in proxy
+
+
+def test_the_deploy_builds_and_pins_the_egress_image() -> None:
+    deploy = (WORKFLOWS / "deploy.yml").read_text()
+    assert "docker build -f infra/egress/Dockerfile" in deploy
+    assert '--arg egress "$(digest "$egress:$tag")"' in deploy
+    assert "egress: $egress" in deploy

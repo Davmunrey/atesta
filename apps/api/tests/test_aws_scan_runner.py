@@ -75,7 +75,9 @@ def test_reads_a_missing_key_as_not_found_and_other_failures_as_unavailable() ->
             {"Bucket": BUCKET, "Key": KEY},
         )
         stub.add_client_error("get_object", service_error_code="NoSuchKey", http_status_code=404)
-        stub.add_client_error("get_object", service_error_code="AccessDenied", http_status_code=403)
+        stub.add_client_error(
+            "get_object", service_error_code="InternalError", http_status_code=500
+        )
         store = S3ScanStore(BUCKET, s3)
         assert store.read(KEY) == b"{}"
         with pytest.raises(FileNotFoundError):
@@ -84,6 +86,42 @@ def test_reads_a_missing_key_as_not_found_and_other_failures_as_unavailable() ->
             store.read(KEY)
         assert KEY not in str(error.value)  # an error never echoes a key
         assert isinstance(error.value, OSError)  # callers treat it as an unreadable output
+        stub.assert_no_pending_responses()
+
+
+def _denied_then_listed(stub: Any, keys: list[str]) -> None:
+    stub.add_client_error("get_object", service_error_code="AccessDenied", http_status_code=403)
+    stub.add_response(
+        "list_objects_v2",
+        {"Contents": [{"Key": k} for k in keys], "IsTruncated": False},
+        {"Bucket": BUCKET, "Prefix": KEY, "MaxKeys": 1},
+    )
+
+
+def test_a_403_is_not_found_when_the_scan_prefix_lists_no_such_key() -> None:
+    """Issue 453: without s3:ListBucket on the whole bucket, S3 answers 403 for a missing key.
+
+    The worker may list only scan prefixes (evidence keys carry document names), so a 403 is
+    settled by listing that key: absent is not found, present is a real refusal.
+    """
+    s3 = client("s3")
+    with Stubber(s3) as stub:
+        _denied_then_listed(stub, [])
+        _denied_then_listed(stub, [KEY + ".other"])  # a longer key under the same prefix
+        _denied_then_listed(stub, [KEY])
+        store = S3ScanStore(BUCKET, s3)
+        for _ in range(2):
+            with pytest.raises(FileNotFoundError):
+                store.read(KEY)
+        with pytest.raises(ScanStoreUnavailableError):
+            store.read(KEY)
+        stub.add_client_error("get_object", service_error_code="AccessDenied", http_status_code=403)
+        stub.add_client_error(
+            "list_objects_v2", service_error_code="AccessDenied", http_status_code=403
+        )
+        with pytest.raises(ScanStoreUnavailableError):
+            store.read(KEY)
+        stub.assert_no_pending_responses()
 
 
 def test_lists_every_page_under_a_prefix() -> None:
