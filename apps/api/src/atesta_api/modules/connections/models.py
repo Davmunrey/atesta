@@ -51,6 +51,13 @@ def _google_ref(column: str, name: str) -> str:
     )
 
 
+# OAuth client ids and IAM uniqueIds of the org's scan and verifier service accounts (issue 398).
+GOOGLE_IDS = (
+    "google_client_id",
+    "google_verifier_client_id",
+    "google_unique_id",
+    "google_verifier_unique_id",
+)
 CONNECTION_CHECKS = {
     "provider": "provider IN ('m365', 'google_workspace')",
     "status": "status IN (" + ", ".join(f"'{s}'" for s in STATUSES) + ")",
@@ -71,10 +78,17 @@ CONNECTION_CHECKS = {
     "m365_tenant_guid": f"provider <> 'm365' OR external_tenant_id ~ {_GUID}",
     "ms_tenant_guid": f"ms_tenant_id ~ {_GUID}",
     "active_has_tenant": "status <> 'active' OR external_tenant_id IS NOT NULL",
+    "google_ids_numeric": " AND ".join(
+        f"({c} IS NULL OR {c} ~ '^[0-9]{{6,30}}$')" for c in GOOGLE_IDS
+    ),
+    "m365_no_google": (
+        "provider <> 'm365' OR num_nonnulls("
+        + ", ".join(GOOGLE_IDS)
+        + ", google_subject_email) = 0"
+    ),
     "active_google_complete": (
         "provider <> 'google_workspace' OR status <> 'active' OR num_nulls(credential_ref,"
-        " verifier_credential_ref, google_client_id, google_verifier_client_id,"
-        " google_subject_email) = 0"
+        " verifier_credential_ref, " + ", ".join(GOOGLE_IDS) + ", google_subject_email) = 0"
     ),
 }
 
@@ -108,6 +122,9 @@ class Connection(TenantMixin, Base):
     credential_ref: Mapped[str | None] = mapped_column(Text)
     google_verifier_client_id: Mapped[str | None] = mapped_column(Text)
     verifier_credential_ref: Mapped[str | None] = mapped_column(Text)
+    google_unique_id: Mapped[str | None] = mapped_column(Text)
+    google_verifier_unique_id: Mapped[str | None] = mapped_column(Text)
+    verifying_since: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     granted: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default=text("'{}'::jsonb"))
     verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

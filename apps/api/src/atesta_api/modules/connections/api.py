@@ -12,6 +12,7 @@ from atesta_api.modules.connections.m365 import auth_router as m365_auth_router
 from atesta_api.modules.connections.routes import router
 from atesta_api.modules.connections.service import (
     ConnectionStateError,
+    GoogleServiceAccounts,
     ScanTarget,
     active_connection_ids,
     begin_verification,
@@ -19,8 +20,10 @@ from atesta_api.modules.connections.service import (
     disconnect_connection,
     ended_connection_ids,
     get_connection,
+    google_propagation_open,
     inactive_connection_count,
     list_connections,
+    register_google_client,
     scan_target,
 )
 from atesta_api.modules.connections.verification import (
@@ -45,6 +48,7 @@ def wire_connections(app: FastAPI, client: httpx.Client) -> None:
 
 __all__ = [
     "ConnectionStateError",
+    "GoogleServiceAccounts",
     "ScanTarget",
     "TenantMismatchError",
     "VerificationReport",
@@ -55,9 +59,11 @@ __all__ = [
     "create_connection",
     "disconnect_connection",
     "get_connection",
+    "google_propagation_open",
     "install_connections",
     "list_connections",
     "record_verification",
+    "register_google_client",
     "router",
     "scan_target",
     "wire_connections",

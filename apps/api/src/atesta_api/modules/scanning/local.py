@@ -91,8 +91,7 @@ class LocalDockerRunner:
         self._image, self._m365_ref = image, m365_credential_ref
         self._timeout, self._network, self._docker = timeout_seconds, network, docker
 
-    def _credential(self, job: ScanJob) -> bytes | None:
-        ref = self._m365_ref if job.provider == "m365" else job.credential_ref
+    def _read(self, ref: str | None) -> bytes | None:
         if ref is None:
             return None
         try:
@@ -100,20 +99,45 @@ class LocalDockerRunner:
         except (OSError, ValueError):  # never echo the file or its contents
             return None
 
+    def _verify_credential(self, job: ScanJob) -> bytes | None:
+        """Both Google keys for the verify run (D7): the scan secret and the verifier secret."""
+        parts = [self._read(job.credential_ref), self._read(job.verifier_credential_ref)]
+        merged: dict[str, object] = {}
+        for part in parts:
+            try:
+                data = json.loads(part) if part is not None else None
+            except ValueError:
+                data = None
+            if not isinstance(data, dict) or merged.keys() & data.keys():
+                return None
+            merged.update(data)
+        return json.dumps(merged).encode()
+
     def run(self, job: ScanJob) -> int:
-        credential = self._credential(job)
-        if credential is None:
+        """M365: one `scan` run. Google: a `verify` run with both keys, then a `scan` run with
+        the scan key only, into the same out/ (issue 398); each run has the full timeout."""
+        if job.provider != "google_workspace":
+            credential = self._read(self._m365_ref)
+            return (
+                CREDENTIAL_UNAVAILABLE if credential is None else self._run(job, "scan", credential)
+            )
+        verify, scan = self._verify_credential(job), self._read(job.credential_ref)
+        if verify is None or scan is None:
             return CREDENTIAL_UNAVAILABLE
+        verified = self._run(job, "verify", verify)
+        return verified if verified != 0 else self._run(job, "scan", scan)
+
+    def _run(self, job: ScanJob, mode: str, credential: bytes) -> int:
         out = self._root / output_prefix(job.organization_id, job.scan_id, job.attempt)
         job_file = out.parent / JOB_FILE
         out.mkdir(parents=True, exist_ok=True)
         out.chmod(0o777)  # the container's user 10001 writes here; dev machines only
-        name = f"atesta-scan-{job.scan_id}-{job.attempt}"
+        name = f"atesta-scan-{job.scan_id}-{job.attempt}" + ("-verify" if mode == "verify" else "")
         argv = [
             *(self._docker, "run", "-i", "--rm", "--name", name, *_HARDENING),
             *("--network", self._network),
             *("-v", f"{job_file}:/job/job.json:ro", "-v", f"{out}:/output:rw"),
-            *(self._image, "scan"),
+            *(self._image, mode),
         ]
         try:
             done = subprocess.run(  # noqa: S603 - fixed argv, no shell, ids from the database

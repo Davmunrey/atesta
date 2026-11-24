@@ -221,7 +221,8 @@
       "signin_invalid": "El inicio de sesión con Microsoft no es válido o ha caducado. Vuelve a empezar la conexión desde Atesta.",
       "consent_denied": "No se concedió el consentimiento de administrador en Microsoft, así que la conexión no avanza. Vuelve a intentarlo con una cuenta de administrador global o de administrador de roles con privilegios.",
       "tenant_mismatch": "Microsoft devolvió un inquilino distinto del de tu inicio de sesión, o de este enlace. No se ha guardado nada; vuelve a empezar con una cuenta del inquilino correcto.",
-      "microsoft_unavailable": "No podemos contactar con Microsoft en este momento, o la conexión con Microsoft 365 aún no está disponible aquí. Inténtalo de nuevo más tarde."
+      "microsoft_unavailable": "No podemos contactar con Microsoft en este momento, o la conexión con Microsoft 365 aún no está disponible aquí. Inténtalo de nuevo más tarde.",
+      "google_subject_invalid": "Escribe el correo de un superadministrador de Google Workspace, como admin@tuempresa.es. Si está en un dominio secundario, indica también el dominio principal."
     },
     "identity": {
       "already_member": "Esta persona ya es miembro de la organización.",
@@ -751,7 +752,9 @@
       "control_reviewed": "Revisó un control",
       "evidence_statement_recorded": "Registró una evidencia",
       "connection_created": "Creó una conexión",
-      "connection_verification_requested": "Solicitó verificar una conexión de Microsoft 365",
+      "connection_verification_requested": "Solicitó verificar una conexión",
+      "connection_provisioned": "Atesta preparó las cuentas de servicio de Google Workspace",
+      "connection_google_subject_set": "Indicó el superadministrador de Google Workspace",
       "connection_consent_granted": "Concedió el consentimiento de Microsoft 365",
       "connection_disconnected": "Desconectó una conexión",
       "scan_requested": "Solicitó un análisis",
