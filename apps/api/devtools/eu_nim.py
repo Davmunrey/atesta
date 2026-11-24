@@ -14,10 +14,9 @@ import hashlib
 import json
 import re
 import sys
-import urllib.parse
-import urllib.request
 from typing import Any
 
+import httpx
 import yaml
 from atesta_api.modules.compliance.catalog_schema import EU_MEMBER_STATES
 
@@ -82,11 +81,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("celex")
     args = parser.parse_args()
-    url = f"{ENDPOINT}?{urllib.parse.urlencode({'query': query(args.celex)})}"
-    accept = {"Accept": "application/sparql-results+json"}
-    request = urllib.request.Request(url, headers=accept)  # noqa: S310 - fixed HTTPS endpoint
-    with urllib.request.urlopen(request, timeout=120) as response:  # noqa: S310 - same
-        body = response.read()
+    response = httpx.get(
+        ENDPOINT,
+        params={"query": query(args.celex)},
+        headers={"Accept": "application/sparql-results+json"},
+        timeout=120,
+    )
+    response.raise_for_status()
+    body = response.content
     print(f"sha256 {hashlib.sha256(body).hexdigest()}", file=sys.stderr)
     states = member_states(json.loads(body)["results"]["bindings"])
     yaml.safe_dump({"member_states": states}, sys.stdout, allow_unicode=True, sort_keys=False)
