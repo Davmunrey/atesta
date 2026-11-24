@@ -11,8 +11,7 @@ import { ErrorMessage } from "./error-message";
 import { ClockBadge } from "./badge";
 import { Icon } from "./icons";
 import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
-import { RecordSummary } from "./record-summary";
-import { incidentSummary } from "@/lib/summaries";
+import { RecordSummary, useRecordStates } from "./record-summary";
 
 /** The value of a datetime-local input for a moment, in the browser's time zone. */
 export function localInput(at: Date): string {
@@ -25,13 +24,10 @@ export function IncidentsView({ org }: { org: Membership }) {
   const format = useFormatter();
   const list = useIncidents(org.organization_id);
   const time = (value: string) => format.dateTime(new Date(value), { dateStyle: "medium", timeStyle: "short" });
-  const s = useTranslations("summary.incidents");
-  const sum = list.data?.length ? incidentSummary(list.data) : null;
+  const states = useRecordStates();
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
-    {sum ? <RecordSummary lead={s("lead", { open: sum.open, overdue: sum.overdue, running: sum.running })} figures={[
-      { label: s("open"), value: format.number(sum.open) }, { label: s("closed"), value: format.number(sum.closed) },
-      { label: s("overdue"), value: format.number(sum.overdue), attention: sum.overdue > 0 }]} /> : null}
+    {list.data?.length ? <RecordSummary state={states.incidents(list.data)} /> : null}
     <Panel title={t("list")}>
       {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
         : list.data.length === 0 ? <Empty>{t("empty")}</Empty>

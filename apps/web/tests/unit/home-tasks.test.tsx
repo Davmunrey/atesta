@@ -129,7 +129,7 @@ it("never calls incidents up to date while a notification clock runs", async () 
   await vi.waitFor(() => { if (!row.textContent?.includes("plazo")) throw new Error("loading"); });
   expect(row.textContent).not.toContain("Al día");
   expect(within(row).getByText("Quedan 32 h").closest(".badge")?.getAttribute("data-severity")).toBe("clock");
-  expect(row.textContent).toContain("1 incidente abierto, 1 con un aviso por enviar en plazo.");
+  expect(row.textContent).toContain("1 incidente con un aviso por enviar en plazo.");
 });
 
 const incident = {

@@ -11,6 +11,8 @@ import { ColumnChart } from "./charts";
 import { activityLabel, activityTarget } from "@/lib/activity";
 
 const PERIODS = [30, 90] as const;
+/** Days with activity before the chart says more than the table (console-unification spec). */
+const CHART_MIN_DAYS = 7;
 
 /** Who did what (insights spec): daily counts and the latest events. Admins and owners only. */
 export function ActivityView({ org }: { org: Membership }) {
@@ -27,8 +29,8 @@ export function ActivityView({ org }: { org: Membership }) {
     {query.isPending ? <Loading label={t("loading")} />
       : query.isError ? <LoadError error={query.error} onRetry={() => void query.refetch()} />
       : <div className={`panel-grid${query.isFetching ? " is-refetching" : ""}`}>
-        <Panel><ColumnChart title={t("perDay")} periodLabel={t("day")} valueLabel={t("events")} tableLabel={t("showTable")}
-          points={query.data.daily.map((d) => ({ label: format.dateTime(new Date(`${d.day}T00:00:00`), { day: "numeric", month: "short" }), value: d.count }))} /></Panel>
+        {query.data.daily.filter((d) => d.count > 0).length < CHART_MIN_DAYS ? null : <Panel><ColumnChart title={t("perDay")} periodLabel={t("day")} valueLabel={t("events")} tableLabel={t("showTable")}
+          points={query.data.daily.map((d) => ({ label: format.dateTime(new Date(`${d.day}T00:00:00`), { day: "numeric", month: "short" }), value: d.count }))} /></Panel>}
         <Panel title={t("latest")}>
         {query.data.events.length === 0 ? <Empty>{t("empty")}</Empty> : <div className="table-region" role="region" aria-label={t("latest")} tabIndex={0}><table className="activity-table">
           <thead><tr><th scope="col">{t("when")}</th><th scope="col">{t("who")}</th><th scope="col">{t("what")}</th></tr></thead>

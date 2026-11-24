@@ -55,6 +55,9 @@
 
 ## Executive summary on records pages (#240)
 
+> Superseded on 2026-11-24 by the records-page pattern in `console-unification.md` (#410): one
+> sentence with only the figures that need action; the KPI strip below is gone.
+
 **Every records page**
 
 Policies, access reviews, training, incidents and integrations each open with:

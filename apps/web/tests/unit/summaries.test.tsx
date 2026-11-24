@@ -1,13 +1,10 @@
 // @vitest-environment jsdom
-import { cleanup, screen, within } from "@testing-library/react";
+import { cleanup } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
-import { PoliciesView } from "@/components/policies-view";
 import { incidentSummary, policySummary, reviewSummary, tokenSummary, trainingSummary } from "@/lib/summaries";
-import { renderWithProviders, stubApi } from "./render";
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 const today = "2026-11-23";
-const owner = { organization_id: "primary", organization_name: "Synthetic Team", role: "owner" as const, access_expires_on: null, closure_erase_after: null };
 const approval = (on: string) => ({ version: "1.0", approver_name: "Comité", approved_on: on, sha256: null, recorded_at: `${on}T00:00:00Z` });
 const policy = (id: string, latest: string | null, next: string | null) => ({ id, title: id, location_url: "https://example.com/p", review_months: 12, created_at: "2026-01-01T00:00:00Z", latest: latest ? approval(latest) : null, next_review_on: next });
 
@@ -40,18 +37,4 @@ it("counts active tokens, revoked or expired ones, and the latest use", () => {
   const token = (id: string, revoked: boolean, expires: string, used: string | null) => ({ id, name: id, prefix: "atesta_x", scopes: ["evidence:write"], rate_limit_per_minute: 60, read_only: false, created_at: "2026-11-01T00:00:00Z", created_by_email: "a@example.test", expires_at: expires, revoked_at: revoked ? "2026-11-10T00:00:00Z" : null, last_used_at: used });
   expect(tokenSummary([token("a", false, "2027-01-01T00:00:00Z", "2026-11-20T10:00:00Z"), token("b", true, "2027-01-01T00:00:00Z", "2026-11-22T10:00:00Z"), token("c", false, "2026-11-01T00:00:00Z", null)], new Date(`${today}T12:00:00Z`)))
     .toEqual({ active: 1, inactive: 2, lastUsed: "2026-11-22T10:00:00Z" });
-});
-
-it("opens the policies page with a sentence and figures for management, before the register and the form", async () => {
-  vi.setSystemTime(new Date(`${today}T12:00:00Z`));
-  stubApi({ "GET /api/v1/orgs/primary/policies": [200, [policy("Política de copias", "2025-01-10", "2026-01-10"), policy("Política de uso", null, null), policy("Política de seguridad", "2026-06-01", "2027-06-01")]] });
-  renderWithProviders(<PoliciesView org={owner} />);
-  const summary = await screen.findByRole("region", { name: "Resumen" });
-  expect(within(summary).getByText("2 políticas necesitan atención.")).toBeTruthy();
-  const figures = within(summary).getAllByRole("term").map((dt) => `${dt.textContent}: ${dt.nextElementSibling?.textContent}`);
-  expect(figures).toEqual(["Políticas: 3", "Aprobadas y al día: 1", "Revisión vencida: 1", "Sin aprobar: 1"]);
-  expect(within(summary).getAllByText("Requiere acción")).toHaveLength(2);
-  const order = [...document.querySelectorAll("main, .panel-grid > *")].map((el) => el.getAttribute("aria-label") ?? el.querySelector("h2")?.textContent).filter(Boolean);
-  expect(order.indexOf("Registro de políticas")).toBeLessThan(order.indexOf("Nueva política"));
-  vi.useRealTimers();
 });

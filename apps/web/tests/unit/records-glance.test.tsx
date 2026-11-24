@@ -27,9 +27,9 @@ it("lists policies, access reviews, training and incidents in order, each with a
   await vi.waitFor(() => { if (within(table).queryAllByText("Cargando…").length > 0) throw new Error("still loading"); });
   const rows = within(table).getAllByRole("row").slice(1).map((row) => [...row.querySelectorAll("th, td")].map((cell) => cell.textContent));
   expect(rows).toEqual([
-    ["Políticas", "Requiere acción", "1 política necesita atención."],
+    ["Políticas", "Requiere acción", "1 política sin aprobar."],
     ["Revisiones de acceso", "Sin registros", "Aún no hay revisiones de acceso."],
-    ["Formación", "Al día", "1 formación abierta. 1 confirmación registrada."],
+    ["Formación", "Al día", "Las formaciones abiertas están en plazo."],
     ["Incidentes", "—", "No se pudo cargar."],
   ]);
   expect(within(table).getByRole("link", { name: "Políticas" }).getAttribute("href")).toBe("/app/policies?org=primary");

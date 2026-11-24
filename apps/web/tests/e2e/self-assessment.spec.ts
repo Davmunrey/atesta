@@ -62,10 +62,9 @@ test("an admin scopes, assesses and exports the self-assessment, accessibly at e
     return route.fulfill({ status: 201, json: saved });
   });
 
-  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha/register/history", (route) => route.fulfill({ json: [
-    { day: "2026-11-20", assessed: 1, implemented: 0, not_applicable: 0 },
-    { day: "2026-11-21", assessed: 2, implemented: 1, not_applicable: 0 },
-  ] }));
+  // Seven days of change: the trend chart earns its place (console-unification spec).
+  await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha/register/history", (route) => route.fulfill({ json:
+    Array.from({ length: 7 }, (_, i) => ({ day: `2026-11-${String(15 + i).padStart(2, "0")}`, assessed: i + 1, implemented: i, not_applicable: 0 })) }));
   await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha/trend", (route) => route.fulfill({ json: [] }));
   await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
   await expect(page.getByRole("heading", { name: "Autoevaluación de tu organización" })).toBeVisible();
