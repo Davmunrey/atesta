@@ -50,6 +50,11 @@ variable "evidence_bucket_arn" {
   type = string
 }
 
+variable "evidence_key_arn" {
+  description = "KMS key of the evidence bucket: the API encrypts uploads and decrypts downloads."
+  type        = string
+}
+
 variable "images" {
   description = "Image references for api, worker and scan, pinned by digest."
   type        = object({ api = string, worker = string, scan = string })
@@ -277,6 +282,28 @@ resource "aws_iam_role_policy" "worker" {
 resource "aws_iam_role" "api" {
   name               = "${var.name}-api"
   assume_role_policy = data.aws_iam_policy_document.ecs_tasks.json
+}
+
+# Evidence file uploads (evidence-file-uploads spec): the API is the only writer of uploaded
+# documents. It may put and get objects under <organization_id>/evidence/ and nothing else in the
+# bucket: no delete, no list, no scan outputs. SSE-KMS needs kms:GenerateDataKey to write and
+# kms:Decrypt to read (AWS, "Using server-side encryption with AWS KMS keys").
+data "aws_iam_policy_document" "api" {
+  statement {
+    sid       = "EvidenceFiles"
+    actions   = ["s3:GetObject", "s3:PutObject"]
+    resources = ["${var.evidence_bucket_arn}/*/evidence/*"]
+  }
+  statement {
+    sid       = "EvidenceKey"
+    actions   = ["kms:Decrypt", "kms:GenerateDataKey"]
+    resources = [var.evidence_key_arn]
+  }
+}
+
+resource "aws_iam_role_policy" "api" {
+  role   = aws_iam_role.api.id
+  policy = data.aws_iam_policy_document.api.json
 }
 
 # Permissions boundary for every per-org scan role (scanner-connectors spec, Runners): whatever
