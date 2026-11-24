@@ -14,9 +14,10 @@ from .conftest import ORG_A, ORG_B
 INSERT = text(
     "INSERT INTO connections (id, organization_id, provider, status, display_name,"
     " external_tenant_id, ms_tenant_id, credential_ref, verifier_credential_ref, google_client_id,"
-    " google_verifier_client_id, google_subject_email, granted, created_by, revoked_at) VALUES"
-    " (:id, :org, :provider, :status, :name, :tenant, :ms_tenant, :ref, :verifier_ref, :client,"
-    " :verifier_client, :subject, CAST(:granted AS jsonb), :by, :revoked)"
+    " google_verifier_client_id, google_unique_id, google_verifier_unique_id, google_subject_email,"
+    " granted, created_by, revoked_at) VALUES (:id, :org, :provider, :status, :name, :tenant,"
+    " :ms_tenant, :ref, :verifier_ref, :client, :verifier_client, :unique, :verifier_unique,"
+    " :subject, CAST(:granted AS jsonb), :by, :revoked)"
 )
 TENANT = "11111111-1111-4111-8111-111111111111"
 ARN = "aws-sm:arn:aws:secretsmanager:eu-south-2:123456789012:secret:atesta/dev"
@@ -35,6 +36,8 @@ def m365(**overrides: Any) -> dict[str, Any]:
         "verifier_ref": None,
         "client": None,
         "verifier_client": None,
+        "unique": None,
+        "verifier_unique": None,
         "subject": None,
         "granted": "{}",
         "by": uuid.uuid4(),
@@ -53,6 +56,8 @@ def google(**overrides: Any) -> dict[str, Any]:
         "verifier_ref": f"local:google-verifier-{ORG_A}",
         "client": "111111111111111111111",
         "verifier_client": "222222222222222222222",
+        "unique": "333333333333333333333",  # IAM uniqueIds (issue 398)
+        "verifier_unique": "444444444444444444444",
         "subject": "admin@contoso.example",
     }
     return m365(**{**active, **overrides})

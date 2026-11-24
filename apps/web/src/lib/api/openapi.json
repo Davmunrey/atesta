@@ -3254,6 +3254,35 @@
         ],
         "type": "string"
       },
+      "GoogleSubjectIn": {
+        "description": "The super admin Atesta reads as; the primary domain only when it differs (issue 398).",
+        "properties": {
+          "email": {
+            "maxLength": 254,
+            "minLength": 3,
+            "title": "Email",
+            "type": "string"
+          },
+          "primary_domain": {
+            "anyOf": [
+              {
+                "maxLength": 253,
+                "minLength": 3,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Domain"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "GoogleSubjectIn",
+        "type": "object"
+      },
       "GroupHeading": {
         "additionalProperties": false,
         "properties": {
@@ -8606,6 +8635,75 @@
           }
         ],
         "summary": "Get Connection",
+        "tags": [
+          "connections"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/connections/{connection_id}/google": {
+      "put": {
+        "description": "Onboarding step 3 for Google: who Atesta reads as. Never logged or audited (rule 2).",
+        "operationId": "set_google_subject_api_v1_orgs__org_id__connections__connection_id__google_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "connection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Connection Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleSubjectIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Google Subject",
         "tags": [
           "connections"
         ]

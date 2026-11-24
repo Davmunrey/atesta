@@ -42,6 +42,8 @@ from atesta_scanner.verify_m365 import report, verify_m365
 
 OCSF_FILE, LOG_FILE, MANIFEST_FILE = "prowler.ocsf.json", "prowler.log", "manifest.json"
 VERIFICATION_FILE = "verification.json"  # read by the worker on exit 10 (record_verification)
+# A Google scan run follows the verify run into the same write-once out/ (issue 398).
+SCAN_VERIFICATION_FILE = "scan-verification.json"
 # (job, credential, full): `full` is False in a scan run, where Google re-checks steps 1 and 2
 # with the scan key only (D7); M365 always runs every step.
 type Verifier = Callable[[Job, Mapping[str, str], bool], dict[str, Any]]
@@ -149,7 +151,9 @@ def _verified(
         result = (verifier or verify_job)(job, credential, full)
     except TokenUnavailableError:
         return ExitCode.CREDENTIAL_UNAVAILABLE, {}
-    sink.write(VERIFICATION_FILE, json.dumps(result, sort_keys=True).encode())
+    scan_run = not full and job.provider == "google_workspace"
+    name = SCAN_VERIFICATION_FILE if scan_run else VERIFICATION_FILE
+    sink.write(name, json.dumps(result, sort_keys=True).encode())
     if result["verdict"] == "ok":
         return ExitCode.DONE, result
     if result["verdict"] == "transient":

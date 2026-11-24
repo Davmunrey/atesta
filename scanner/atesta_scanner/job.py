@@ -6,6 +6,13 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
+from atesta_core.connectors.google import (
+    is_customer_id,
+    is_domain,
+    is_service_account_id,
+    is_subject_email,
+)
+
 from atesta_scanner.invocation import prowler_argv
 
 _UUID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
@@ -18,14 +25,6 @@ _ALLOWED = {  # (required, optional) keys beyond _KEYS
     "m365": (frozenset(), frozenset({"admin_oid"})),
     "google_workspace": (_GOOGLE, frozenset({"verified_since"})),
 }
-# Google usernames are letters, digits, dashes, underscores, apostrophes and periods; the domain
-# is a DNS name. Nothing else reaches the users.get path or Prowler's environment.
-_EMAIL = re.compile(
-    r"[A-Za-z0-9._'+-]{1,64}@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}"
-)
-_CUSTOMER = re.compile(r"C[0-9A-Za-z]{4,20}")
-_DOMAIN = re.compile(r"(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}")
-_UNIQUE_ID = re.compile(r"[0-9]{6,30}")
 
 
 class JobError(ValueError):
@@ -51,17 +50,17 @@ class Job:
 
 def _google(data: dict[str, Any]) -> dict[str, Any]:
     subject, accounts = data["google_subject"], data["google_service_accounts"]
-    if not (isinstance(subject, str) and len(subject) <= 254 and _EMAIL.fullmatch(subject)):
+    if not (isinstance(subject, str) and is_subject_email(subject)):
         raise JobError("job google_subject is not an email")
     if not (
         isinstance(accounts, list)
         and len(accounts) == 2
         and len(set(accounts)) == 2
-        and all(isinstance(a, str) and _UNIQUE_ID.fullmatch(a) for a in accounts)
+        and all(isinstance(a, str) and is_service_account_id(a) for a in accounts)
     ):
         raise JobError("job google_service_accounts must be two numeric ids")
     tenant = data["tenant"]
-    if not (isinstance(tenant, str) and (_CUSTOMER.fullmatch(tenant) or _DOMAIN.fullmatch(tenant))):
+    if not (isinstance(tenant, str) and (is_customer_id(tenant) or is_domain(tenant))):
         raise JobError("job google tenant is neither a customer id nor a domain")
     since = data.get("verified_since")
     if since is not None:

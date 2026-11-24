@@ -262,7 +262,8 @@
       "signin_invalid": "The Microsoft sign-in is not valid or has expired. Start the connection again from Atesta.",
       "consent_denied": "Admin consent was not granted in Microsoft, so the connection cannot continue. Try again with a Global Administrator or Privileged Role Administrator account.",
       "tenant_mismatch": "Microsoft returned a tenant different from your sign-in, or from this link. Nothing was saved; start again with an account in the right tenant.",
-      "microsoft_unavailable": "We cannot reach Microsoft right now, or the Microsoft 365 connection is not available here yet. Try again later."
+      "microsoft_unavailable": "We cannot reach Microsoft right now, or the Microsoft 365 connection is not available here yet. Try again later.",
+      "google_subject_invalid": "Enter the email of a Google Workspace super admin, such as admin@yourcompany.com. If it is on a secondary domain, also enter the primary domain."
     },
     "identity": {
       "already_member": "This person is already a member of the organization.",
@@ -792,7 +793,9 @@
       "control_reviewed": "Reviewed a control",
       "evidence_statement_recorded": "Recorded evidence",
       "connection_created": "Created a connection",
-      "connection_verification_requested": "Requested a Microsoft 365 connection verification",
+      "connection_verification_requested": "Requested a connection verification",
+      "connection_provisioned": "Atesta prepared the Google Workspace service accounts",
+      "connection_google_subject_set": "Named the Google Workspace super admin",
       "connection_consent_granted": "Granted Microsoft 365 consent",
       "connection_disconnected": "Disconnected a connection",
       "scan_requested": "Requested a scan",
