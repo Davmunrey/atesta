@@ -53,7 +53,8 @@
     "footer": {
       "why": "Atesta sends you this notice because of your role in the organization. It holds only titles, dates and links; the details are in the app.",
       "optional": "To stop this type of notice: {url}",
-      "critical": "This is a security notice for owners and admins; it cannot be turned off."
+      "critical": "This is a security notice for owners and admins; it cannot be turned off.",
+      "service": "This notice is about your Atesta service, for owners and admins; it cannot be turned off."
     },
     "open": "Open it in Atesta: {url}",
     "connection_alert": {
@@ -103,6 +104,24 @@
       "connections": "Connections that are not active: {count}.",
       "due": "Due in the next 7 days: {soon}. Overdue: {overdue}.",
       "report": "The monthly report is ready: {url}"
+    },
+    "service": {
+      "organization_suspended": {
+        "subject": "Atesta: {org} is suspended",
+        "body": "Access to {org} has been paused since {date}. Your data is kept: nothing has been deleted or changed. To find out more or reactivate it, write to {email}."
+      },
+      "organization_reactivated": {
+        "subject": "Atesta: {org} is active again",
+        "body": "Access to {org} has been restored. Everything is as it was before the suspension."
+      },
+      "export_requested": {
+        "subject": "Atesta asks you to export {org}'s data",
+        "body": "Atesta asks you to export {org}'s data. You can do it in Settings, Export the data. The Atesta team receives no copy. If you have questions, write to {email}."
+      },
+      "closure_started_by_operator": {
+        "subject": "Atesta: the closure of {org} has started",
+        "body": "Atesta has started the closure of {org}. The data will be erased from {date}; until then you can export it in Settings. If you did not expect this closure, write to {email}."
+      }
     }
   },
   "standing": {

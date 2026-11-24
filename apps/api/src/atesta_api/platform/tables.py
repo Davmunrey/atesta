@@ -98,6 +98,9 @@ OPERATOR_READ: dict[str, frozenset[str]] = {
         "erasure_receipts": "id organization_id closure_requested_at erased_at row_counts",
     }.items()
 }
+# ADR-012 amendment 12: the service notice outbox. No RLS, ids and a kind only: atesta_operator
+# inserts (no read), and the worker, as atesta_app, reads it and marks rows sent.
+OUTBOX = frozenset({"service_notices"})
 CATALOG = frozenset(
     {"frameworks", "requirements", "controls", "checks", "control_checks", "mappings"}
 )
@@ -121,6 +124,7 @@ def class_sets(extra_tenant: frozenset[str] = frozenset()) -> dict[str, frozense
         "catalog": CATALOG,
         "queue": QUEUE,
         "operator": OPERATOR,
+        "outbox": OUTBOX,
     }
 
 

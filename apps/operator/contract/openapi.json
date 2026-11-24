@@ -2195,6 +2195,58 @@
         ]
       }
     },
+    "/api/v1/organizations/{org_id}/export-request": {
+      "post": {
+        "description": "Ask the owners to export: an email and an Activity event. No data goes to staff.",
+        "operationId": "post_export_request_api_v1_organizations__org_id__export_request_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Post Export Request",
+        "tags": [
+          "actions"
+        ]
+      }
+    },
     "/api/v1/organizations/{org_id}/subscription": {
       "put": {
         "operationId": "put_subscription_api_v1_organizations__org_id__subscription_put",

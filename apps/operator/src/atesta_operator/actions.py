@@ -1,5 +1,7 @@
 """Admin actions on an organization (operator-portal spec, "Screens" 6 to 8; ADR-017, "What staff
-can do"): suspend and reactivate, the operator closure, and erasure requests.
+can do"): suspend and reactivate, the export request, the operator closure, and erasure requests.
+Suspension, reactivation, the export request and the operator closure each queue their service
+notice in the same transaction (ADR-012 amendment 12).
 
 Suspend, closure and erasure take the organization's exact name, typed (422
 `operator.name_mismatch`), and a recent sign-in (`policy.POLICY`). The module functions hold the
@@ -23,6 +25,7 @@ from atesta_api.modules.identity.api import (
     start_operator_closure,
     suspend,
 )
+from atesta_api.modules.notifications.api import ServiceNoticeKind, queue_service_notice
 from atesta_api.platform.db import DbSession
 from fastapi import APIRouter, Response
 from pydantic import BaseModel, Field
@@ -91,6 +94,7 @@ def post_suspension(
         since = suspend(session, org_id, body.reason_code)
     except OperatorError as error:
         raise refusal(error) from None
+    queue_service_notice(session, org_id, ServiceNoticeKind.ORGANIZATION_SUSPENDED)
     trail.write(
         session,
         staff,
@@ -116,11 +120,34 @@ def delete_suspension(
         reactivate(session, org_id)
     except OperatorError as error:
         raise refusal(error) from None
+    queue_service_notice(session, org_id, ServiceNoticeKind.ORGANIZATION_REACTIVATED)
     trail.write(
         session,
         staff,
         request_id,
         "operator.reactivated",
+        organization_id=org_id,
+        reason=body.reason,
+    )
+    return Response(status_code=204)
+
+
+@router.post("/organizations/{org_id}/export-request", status_code=204)
+def post_export_request(
+    org_id: uuid.UUID,
+    body: ReasonIn,
+    staff: CurrentStaff,
+    session: DbSession,
+    request_id: trail.RequestId,
+) -> Response:
+    """Ask the owners to export: an email and an Activity event. No data goes to staff."""
+    _confirmed(session, org_id, None)
+    queue_service_notice(session, org_id, ServiceNoticeKind.EXPORT_REQUESTED)
+    trail.write(
+        session,
+        staff,
+        request_id,
+        "operator.export_requested",
         organization_id=org_id,
         reason=body.reason,
     )
@@ -140,6 +167,7 @@ def post_closure(
         erase_after = start_operator_closure(session, org_id)
     except OperatorError as error:
         raise refusal(error) from None
+    queue_service_notice(session, org_id, ServiceNoticeKind.CLOSURE_STARTED_BY_OPERATOR)
     trail.write(
         session,
         staff,

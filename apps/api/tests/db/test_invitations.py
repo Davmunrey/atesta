@@ -199,3 +199,53 @@ def test_non_ascii_invitation_email_is_rejected(
         headers=auth(subs["owner"]),
     )
     assert response.status_code == 422
+
+
+# --- standing at acceptance (owner decision, 2026-11-24, #474) ---------------------------------
+
+
+def test_an_invitation_to_a_suspended_organization_is_refused(
+    client: TestClient, superuser: Engine
+) -> None:
+    """The person sees the suspension notice; the invitation stays open for after reactivation."""
+    org, subs = org_with(client, superuser)
+    guest = new_sub()
+    token = token_of(invite(client, org, subs["owner"], f"{guest}@example.com")["accept_link"])
+    with superuser.begin() as conn:
+        conn.execute(
+            text(
+                "UPDATE organizations SET suspended_at = now(), suspension_reason = 'non_payment'"
+                " WHERE id = :o"
+            ),
+            {"o": org},
+        )
+    assert accept(client, guest, token) == (403, "identity.organization_suspended")
+    with superuser.begin() as conn:
+        conn.execute(
+            text("UPDATE organizations SET suspended_at = NULL, suspension_reason = NULL"
+                 " WHERE id = :o"),
+            {"o": org},
+        )  # fmt: skip
+    assert accept(client, guest, token) == (200, "member")
+
+
+def test_after_the_trial_an_invitation_is_accepted_and_the_member_is_read_only(
+    client: TestClient, superuser: Engine
+) -> None:
+    org, subs = org_with(client, superuser)
+    guest = new_sub()
+    token = token_of(invite(client, org, subs["owner"], f"{guest}@example.com")["accept_link"])
+    with superuser.begin() as conn:
+        conn.execute(
+            text(
+                "UPDATE organizations SET created_at = now() - interval '20 days',"
+                " trial_ends_at = now() - interval '6 days' WHERE id = :o"
+            ),
+            {"o": org},
+        )
+    assert accept(client, guest, token) == (200, "member")
+    read = client.get(f"/api/v1/orgs/{org}/trial", headers=auth(guest))
+    assert read.status_code == 200 and read.json()["ended"] is True
+    write = client.put(f"/api/v1/orgs/{org}/locale", json={"locale": "en"}, headers=auth(guest))
+    assert write.status_code == 403
+    assert write.json()["detail"]["code"] == "billing.trial_ended"
