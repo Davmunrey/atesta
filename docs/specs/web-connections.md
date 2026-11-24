@@ -1,6 +1,7 @@
-# Spec: Connections screen (Microsoft 365)
+# Spec: Connections screen (Microsoft 365 and Google Workspace)
 
-- Issues: #365 (screen), #366 (callback refusals), #397 (shared patterns). Part of #221.
+- Issues: #365 (screen), #366 (callback refusals), #397 (shared patterns), #425 (Google
+  Workspace). Part of #221.
 - Builds on: `scanner-connectors.md` (Microsoft 365 onboarding, steps 1 to 6), `console-shell.md`,
   `rbac.md`, `i18n-complete.md`, `claims-honesty.md`.
 - Status: draft
@@ -137,9 +138,77 @@ now uses the console's shared patterns, and the exemption is removed:
 - [ ] **Disconnect.** "Desconectar" is a `dashboard-button`. It opens a `confirm-row` that holds the
       question, a `button-danger` "Sí, desconectar" and a `dashboard-button` "Cancelar", as Members does.
 
+## Google Workspace (#425)
+
+Owner decisions, 2026-11-24:
+- "Ambos para el piloto": both Microsoft 365 and Google Workspace go into the pilot;
+- "After the unification pass": this screen waited for the console unification;
+- "Existing admin + domain from the email": the screen recommends an existing super admin, and the
+  primary domain comes from the email.
+
+### API
+
+- [ ] `ConnectionOut` adds:
+  - `google_subject_set`: a super admin is named;
+  - `primary_domain`: Google's primary domain, or null.
+
+  The email itself is never returned (rule 2 spirit: the customer typed it once).
+
+### Web
+
+- [ ] **Add.** One form adds either provider, with a provider select (`.routine-form` field) and an
+      optional name. An empty name takes the provider's name. "Próximamente" is removed.
+- [ ] **Account column.** It is named "Tenant o dominio" and shows:
+  - Microsoft 365: the tenant id, as before;
+  - Google: the pinned customer id, or before the first verification the primary domain.
+- [ ] **"Acceso en Google Workspace" disclosure**, for Google rows:
+  1. **Authorize Atesta in Google.** The path in the Admin console: Seguridad, Acceso y control de
+     datos, Controles de API, Gestionar la delegación de todo el dominio, Añadir nueva. Then the
+     two entries. Each entry has its client ID and its exact comma-separated scope string, in
+     mono, each with a `CopyButton`. While `pending_provisioning`, a sentence says Atesta is
+     preparing the read-only accounts and shows them here when ready.
+  2. **The super admin Atesta reads as.** This appears while provisioning or onboarding. A form
+     takes an email, with a checkbox "Está en un dominio secundario" that reveals a primary domain
+     field. It recommends an existing super admin, and says that:
+     - Google records Atesta's reads as that user;
+     - delegation reaches every user's data within the read-only scopes;
+     - suspending the user or removing the role stops scans;
+     - a new account costs a licence and adds a super admin.
+
+     Once saved, the step reads "Superadministrador indicado (dominio <domain>)", and the form
+     stays available to change it.
+  3. **The last verification's missing and extra items**, as for Microsoft 365.
+- [ ] **Actions by state** for Google rows (admins and owners):
+
+  | State | Primary action | Secondary |
+  |---|---|---|
+  | `pending_provisioning` | (none: waiting for Atesta) | Desconectar |
+  | Onboarding, provisioned, no super admin named | (none: the disclosure asks for the super admin) | Desconectar |
+  | Onboarding, provisioned, super admin named | Verificar | Desconectar |
+  | `verifying` | (none; Google may take up to 24 hours, and Atesta checks every hour) | Desconectar |
+  | `active` | Escanear ahora | Desconectar |
+
+- [ ] **Disconnect.** The confirmation names the Google step: delete Atesta's two delegation
+      entries in the Admin console.
+- [ ] **i18n.** Every string is in ES and EN and uses "tú". Scope strings and ids are data and stay
+      untranslated.
+- [ ] **Rendering.** Checked at 1280 and 375 pixels, light and dark.
+
+### Tests
+
+- Web unit tests:
+  - Google actions by state;
+  - the disclosure shows both client IDs and scope strings with copy buttons;
+  - the super admin form sends `PUT .../google` with or without `primary_domain`;
+  - the add form posts the chosen provider;
+  - the badges come from the severity mapping;
+  - disconnect uses the confirm row.
+- The consistency test drops its exemption for this file.
+- API test: `google_subject_set` and `primary_domain` appear, and the email never does.
+
 ## Out of scope
 
-- Google Workspace onboarding (scanner-connectors PR 11) and its screen.
+- The owner runbooks (#421) and the AWS key store.
 - The Global Reader step and the PowerShell services (scanner-connectors step 5, PR 10).
 - The Puesta en marcha step (owner decision above).
 - Scan findings on this page; the overview's scan history stays where it is.

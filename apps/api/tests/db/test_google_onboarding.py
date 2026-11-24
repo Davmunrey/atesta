@@ -397,9 +397,19 @@ def test_an_admin_names_the_super_admin_and_starts_verification(
         422,
         "connections.google_subject_invalid",
     )
+    assert (connection["google_subject_set"], connection["primary_domain"]) == (False, None)
     done = client.put(url + "/google", json=body, headers=auth(subs["owner"]))
     assert done.status_code == 200 and done.json()["status"] == "pending_provisioning"
-    assert SUBJECT not in done.text  # the list and detail never echo the email
+    # The screen shows that a super admin is named and the domain (issue 425), never the email.
+    assert (done.json()["google_subject_set"], done.json()["primary_domain"]) == (
+        True,
+        "example.es",
+    )
+    listed = client.get(f"/api/v1/orgs/{org}/connections", headers=auth(subs["mem"]))
+    detail = client.get(url, headers=auth(subs["mem"]))
+    for response in (done, listed, detail):
+        assert SUBJECT not in response.text
+    assert detail.json()["google_subject_set"] is True
     assert events(superuser, org, "connection.google_subject_set") == 1
     early = client.post(url + "/verify", headers=auth(subs["owner"]))
     assert (early.status_code, early.json()["detail"]["code"]) == (

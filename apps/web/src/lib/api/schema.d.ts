@@ -1979,6 +1979,8 @@ export interface components {
             expected_access: components["schemas"]["ExpectedAccess"];
             /** Google Client Id */
             google_client_id: string | null;
+            /** Google Subject Set */
+            google_subject_set: boolean;
             /** Google Verifier Client Id */
             google_verifier_client_id: string | null;
             /**
@@ -1987,6 +1989,8 @@ export interface components {
              */
             id: string;
             last_verification: components["schemas"]["LastVerification"] | null;
+            /** Primary Domain */
+            primary_domain: string | null;
             /** Provider */
             provider: string;
             /** Status */
@@ -2019,11 +2023,15 @@ export interface components {
             created_at: string;
             /** Display Name */
             display_name: string;
+            /** Google Subject Set */
+            google_subject_set: boolean;
             /**
              * Id
              * Format: uuid
              */
             id: string;
+            /** Primary Domain */
+            primary_domain: string | null;
             /** Provider */
             provider: string;
             /** Status */

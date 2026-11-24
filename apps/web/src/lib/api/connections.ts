@@ -67,6 +67,12 @@ export function useVerify(orgId: string) {
   return useAction(orgId, (id: string) => unwrap(api.POST("/api/v1/orgs/{org_id}/connections/{connection_id}/verify", one(orgId, id))));
 }
 
+/** Google onboarding step 3: the super admin Atesta reads as (web-connections spec, issue 425). */
+export function useSetGoogleSubject(orgId: string) {
+  return useAction(orgId, ({ id, ...body }: { id: string } & components["schemas"]["GoogleSubjectIn"]) =>
+    unwrap(api.PUT("/api/v1/orgs/{org_id}/connections/{connection_id}/google", { ...one(orgId, id), body })));
+}
+
 export function useScanNow(orgId: string) {
   return useAction(orgId, (id: string) => unwrap(api.POST("/api/v1/orgs/{org_id}/connections/{connection_id}/scans", one(orgId, id))));
 }
