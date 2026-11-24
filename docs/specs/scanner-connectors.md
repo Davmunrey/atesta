@@ -289,7 +289,7 @@ allowlist.
 | Connector | Credential | Where it lives | Who reads it |
 |---|---|---|---|
 | M365 | One Atesta certificate (passwordless PFX) for the multi-tenant "Atesta Scanner" app | AWS: Secrets Manager in eu-south-2 under a customer-managed KMS key. Local: `LocalCredentialStore` | M365 verify and scan tasks only, at start |
-| M365 sign-in | Credential of the "Atesta Sign-in" app (`openid profile` only, no application permissions, grants nothing in customer tenants) | API secret store | API, for the code exchange |
+| M365 sign-in | One certificate (passwordless PFX) for the "Atesta Sign-in" app (`openid profile` only, no application permissions, grants nothing in customer tenants); no client secret (issue 363) | AWS: Secrets Manager in eu-south-2, as `ATESTA_M365_SIGNIN_CERTIFICATE` | API, to sign the code exchange |
 | Google scan | One service account JSON key per Atesta org, in Atesta's dedicated GCP project | Same stores as M365, `atesta/<env>/google/<org_id>` | That org's Google verify and scan tasks |
 | Google verifier (D7) | One more service account key per org, client ID authorized only for `admin.reports.audit.readonly` | `atesta/<env>/google-verifier/<org_id>` | That org's Google verify task only |
 
@@ -326,13 +326,32 @@ property lock on, redirect URI `/auth/m365/consent-callback`) and "Atesta Sign-i
 `/auth/m365/signin-callback`). Redirect URIs are https, fixed and exactly registered; per-request
 data travels only in the sealed cookie.
 
-The Sign-in app redeems codes as a confidential web client, with PKCE and a client secret:
-Microsoft documents `client_secret` as "required for confidential web apps" (OAuth 2.0
-authorization code flow, read 2026-11-23, #314). Its secret can only redeem sign-in codes for an
-app with no permissions, so it is a secret, not a certificate. It is held in Secrets Manager,
-passed to the API as `ATESTA_M365_SIGNIN_CLIENT_SECRET` and rotated at least every 180 days; the
-Scanner app stays certificate only. With `ATESTA_M365_SIGNIN_CLIENT_ID`, the secret and
-`ATESTA_M365_SCANNER_CLIENT_ID` unset, onboarding answers 503 `connections.microsoft_unavailable`.
+The Sign-in app redeems codes as a confidential web client, with PKCE and a certificate
+credential (issue 363). Microsoft: "Client secrets are less secure than certificate or federated
+credentials and therefore should not be used in production environments" (Add credentials to
+your application, read 2026-11-23). Neither app holds a client secret.
+
+- **Credential:** a passwordless PFX with one RSA key of at least 2048 bits and its certificate,
+  base64-encoded, the same format as the Scanner app's. It is held in Secrets Manager and passed
+  to the API as `ATESTA_M365_SIGNIN_CERTIFICATE`. Only the public certificate is uploaded to the
+  app registration.
+- **Token request:** `client_secret` is replaced by `client_assertion_type=
+  urn:ietf:params:oauth:client-assertion-type:jwt-bearer` and `client_assertion`, a JWT signed
+  with the key (Facts checked, issue 363):
+  - header: `alg` PS256, `typ` JWT, `x5t#S256` (SHA-256 thumbprint of the certificate's DER);
+  - claims: `aud` the token endpoint the request goes to, `iss` and `sub` the Sign-in client
+    id, a fresh `jti` (UUID), `iat`, `nbf` now and `exp` five minutes later.
+  - One assertion per sign-in; none is cached, stored or logged (rule 2).
+- **Fail closed:**
+  - `ATESTA_M365_SIGNIN_CLIENT_ID`, the certificate or `ATESTA_M365_SCANNER_CLIENT_ID` unset:
+    onboarding answers 503 `connections.microsoft_unavailable`.
+  - A certificate that cannot be read, holds no RSA key or has a key under 2048 bits: the API
+    refuses to start. The error names the variable, never its content.
+  - `ATESTA_M365_SIGNIN_CLIENT_SECRET` still set: the API refuses to start, so a leftover
+    secret is noticed and deleted, in the task definition and in Entra.
+  - An expired certificate: 503, and Microsoft is not called.
+- **Rotation:** yearly, with two certificates registered while the secret changes over
+  (`docs/runbooks/m365-test-tenant.md`).
 
 1. An org admin creates the connection: `pending_setup`.
 2. `POST /api/v1/orgs/{org_id}/connections/{id}/m365/signin` seals {org_id, connection_id,
@@ -685,6 +704,71 @@ count reads the tenant's own scans through the `(organization_id, id)` index; no
 | Logs | Wrapper's own JSON lines only | Same, to CloudWatch in eu-south-2 |
 | Timeout | Kill the container | `StopTask` |
 
+### AWS runner (issue 237)
+
+Owner decisions, 2026-11-24 ("A y A"):
+- each customer's scan roles come from an OpenTofu module that the owner applies per customer.
+  No Atesta process holds IAM write rights;
+- scan egress goes through an allowlisting proxy on Fargate, not AWS Network Firewall.
+
+Part 1 (issue 444) is the code below. Part 2 is the roles module, the proxy, the bucket policy,
+the worker's S3 rights and the alarm.
+
+- **Worker (`ATESTA_SCAN_RUNNER=fargate`).** It is allowed in every environment, and refuses a
+  missing setting by its name. Its settings:
+  - `ATESTA_SCAN_BUCKET`: the evidence bucket, whose existing layout holds the scans;
+  - `ATESTA_SCAN_CLUSTER` and `ATESTA_SCAN_TASK_DEFINITION`;
+  - `ATESTA_SCAN_SUBNETS` (comma-separated) and `ATESTA_SCAN_SECURITY_GROUP`;
+  - `ATESTA_SCAN_ROLE_PREFIX` (`arn:aws:iam::<account>:role/atesta-scan/<env>/`);
+  - `ATESTA_M365_CREDENTIAL_REF`, the platform certificate's `aws-sm:` ref;
+  - `ATESTA_SCAN_TIMEOUT_SECONDS`.
+- **`S3ScanStore`.**
+  - `write` is `PutObject` with `IfNoneMatch: *`. A 412 becomes `OutputExistsError`, and a 409
+    (a concurrent write) is retried by the job.
+  - `read` and `list` (`ListObjectsV2`, every page) follow the local store.
+  - The bucket's default KMS key encrypts the objects.
+  - No error carries a key or a body.
+- **`FargateRunner`.** Each container run is one `RunTask` of the scan task definition:
+  - **What runs:** Google runs `verify` and then `scan`, and the scan never starts after a
+    non-zero verify. M365 runs `scan`.
+  - **Overrides:**
+    - `taskRoleArn` is `<role prefix><kind>-<org>`, where the kind is `scan-m365`, `verify-gws`
+      or `scan-gws`;
+    - the scan container gets `command` = the mode and `environment` = `ATESTA_ORGANIZATION_ID`,
+      `ATESTA_SCAN_ID` and `ATESTA_SCAN_ATTEMPT`. Those ids are all it receives.
+  - **Placement:** `launchType` is `FARGATE`, in private subnets, without a public IP.
+  - **Idempotency:** `clientToken` is `<scan>-<attempt>-<mode>` (at most 64 characters, ECS
+    idempotency), so a redelivered job reuses its task.
+- **Waiting for the task.**
+  - The runner polls `DescribeTasks` every 15 s until the task is `STOPPED`, and returns the exit
+    code of the `scan` container.
+  - No exit code means the task never ran the wrapper (`stopCode` `TaskFailedToStart`): exit 20,
+    transient.
+  - At the attempt timeout the runner calls `StopTask` and returns 21. Each run of a Google
+    attempt has the full timeout.
+- **Wrapper, S3 source (`ATESTA_SCAN_SOURCE=s3`).** It is set on the scan task definition, never
+  by an override.
+  - **Paths:** the attempt prefix is built from the three id variables and `ATESTA_SCAN_BUCKET`.
+  - **Job:** it reads `job.json` with `GetObject`.
+  - **Credentials:** it reads them with `GetSecretValue` for the job's refs:
+    - `credential_ref` for a scan run;
+    - `credential_ref` and `verifier_credential_ref` for a Google verify run.
+
+    Each secret is the same `{variable: value}` JSON as a local credential file, and the two
+    Google secrets are merged.
+  - **Outputs:** it writes them write-once under `out/`.
+  - **Errors:** a secret it may not read is exit 11. No error names a value.
+- **job.json.** It gains `credential_ref`, and for Google `verifier_credential_ref`: `aws-sm:` or
+  `local:` refs, never a secret. For M365 the ref is the platform's, from the worker's settings.
+  The local runner ignores them, because it reads its own store.
+- **Limits.** Until part 2:
+  - the scan roles have no rights on the evidence bucket's KMS key;
+  - the worker role has no S3 rights on the scan prefix;
+  - scan egress is not yet behind the proxy.
+
+  So nothing scans in AWS before part 2 is applied. How long ECS honours a `clientToken` after a worker
+  restart is a candidate until it is checked on the ECS idempotency page.
+
 ### Ingest
 
 1. Read `manifest.json` from the `out/` of the attempt that exited 0; check the sha256 and size of
@@ -887,6 +971,17 @@ Error codes (ES and EN texts in the web i18n files): `connections.state_invalid`
 | Docker bind mounts keep host ownership unless userns remapping is configured ("file ownership must be pre-arranged"); uid 10001 cannot read a 0600 file owned by another uid | https://docs.docker.com/engine/security/userns-remap/; local `setpriv --reuid=10001` test (no Docker daemon in the sandbox) |
 | Web routes live under `/api/v1`; CloudFront sends `/api/*` and `/auth/*` to the API; the BFF login keeps its pending state in a sealed cookie | `origin/main:docs/specs/web-shell.md`; identity module `routes.py`, `bff.py` (branch `claude/brave-franklin-e60jws-26`) |
 
+### Facts checked for the sign-in certificate (2026-11-24, issue 363)
+
+| Fact | Source |
+|---|---|
+| Client secrets "should not be used in production environments"; a certificate is recommended before production | https://learn.microsoft.com/en-us/entra/identity-platform/how-to-add-credentials (read 2026-11-23) |
+| A client assertion can be used wherever a client secret would be; in the authorization code flow `client_secret` is replaced by `client_assertion_type` (fixed value `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`) and `client_assertion` | https://learn.microsoft.com/en-us/entra/identity-platform/certificate-credentials, "Using a client assertion"; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow, "Request an access token with a certificate credential" (both read 2026-11-24) |
+| Assertion header: `alg` "should be PS256", `typ` JWT, `x5t#S256` the base64url SHA-256 thumbprint of the certificate's DER encoding. Claims: `aud` (the token endpoint), `exp` ("5-10 minutes after nbf at most"), `iss` and `sub` the client id, `jti` a GUID, `nbf`, `iat`. Signature with PSS padding | https://learn.microsoft.com/en-us/entra/identity-platform/certificate-credentials, "Assertion format" (read 2026-11-24) |
+| Microsoft's own library signs with PS256 and `x5t#S256`, sets `aud` to the authority's token endpoint and encodes the thumbprint with `base64.urlsafe_b64encode`, padding kept | MSAL for Python 1.39.0, `msal/application.py` lines 980 to 993 and `msal/oauth2cli/assertion.py` lines 18 to 19 and 95 (read 2026-11-24) |
+
+Not verified against Entra: no live tenant exists yet. The dev golden test closes it (Candidates).
+
 ### Engine bump to 5.52.0 (2026-11-23, issue #243)
 
 The facts above cite Prowler 5.49.0, where they were read. Moving the pin re-checked each one that
@@ -923,6 +1018,7 @@ not, unless the row says so.
 | `DeviceManagementServiceConfig.Read.All` is the right permission for `GET /deviceManagement` (Microsoft page returned 404) | Live golden M365 |
 | `GET /servicePrincipals/{id}/oauth2PermissionGrants` succeeds app-only with `DelegatedPermissionGrant.Read.All` (Microsoft lists only `Directory.Read.All`) | Live golden M365 onboarding; if it fails, D2 must add `Directory.Read.All` because the verifier needs it |
 | A Graph-only scan completes without the Exchange and Teams modules (failed connects only log) | Live golden M365 (PR 9) |
+| Entra accepts the Sign-in app's `client_assertion` on the `organizations` token endpoint, with that endpoint as `aud` and the thumbprint encoded as MSAL does (issue 363) | Live golden M365 onboarding |
 | `transitiveMemberOf` shows directory roles and role-assignable groups (5c); ARM issues an app-only token to the scanner app and lists no subscription without a role (5d) | Live golden M365 |
 | Global Reader can run `Get-ServicePrincipal` and `Get-ManagementRoleAssignment` app-only (5b) | Live golden M365 in PR 10, with a positive test: assign "Application Mail.Read" to the test tenant's scanner service principal and expect `over_privileged` |
 | Global Reader is enough for the Teams `Get-Cs*` cmdlets; Teams works without `application_access` | Live golden M365 (PR 10) |

@@ -79,6 +79,7 @@ def _attempt(organization_id: str, scan_id: str, *, attempt: int, final: bool) -
             attempt=attempt,
             store=config.store,
             expected_root=config.expected_root,
+            m365_credential_ref=config.m365_credential_ref,
         )
     _report(started.finished)
     if started.job is None:

@@ -3,7 +3,7 @@ name = "atesta-scanner"
 version = "0.0.0"
 description = "Atesta scan wrapper around the pinned Prowler engine (scanner-connectors spec)"
 requires-python = ">=3.13"
-dependencies = ["atesta-core", "cryptography>=50", "httpx>=0.27"]
+dependencies = ["atesta-core", "boto3>=1.40", "cryptography>=50", "httpx>=0.27"]
 
 [project.scripts]
 atesta-scan = "atesta_scanner.__main__:main"

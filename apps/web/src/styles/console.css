@@ -19,10 +19,6 @@
   .topbar-search-icon { position: absolute; left: 0.625rem; top: 50%; translate: 0 -50%; width: 1.125rem; height: 1.125rem; color: var(--color-topbar-muted); pointer-events: none; }
   .topbar-kbd { position: absolute; right: 0.5rem; top: 50%; translate: 0 -50%; padding: 0 0.375rem; border: 1px solid var(--color-topbar-muted); border-radius: var(--radius-sm); color: var(--color-topbar-muted); font-family: var(--font-sans); font-size: 0.8125rem; line-height: 1.5; }
   .topbar-end { display: flex; align-items: center; gap: 0.75rem; margin-left: auto; }
-  .topbar-locale { display: flex; gap: 0.125rem; }
-  .topbar-locale button { min-width: 2.25rem; min-height: 2.25rem; border-radius: var(--radius-sm); color: var(--color-topbar-muted); font-size: 0.8125rem; font-weight: 500; cursor: pointer; }
-  .topbar-locale button:hover { background: var(--color-topbar-field); color: var(--color-topbar-fg); }
-  .topbar-locale button[aria-pressed="true"] { color: var(--color-topbar-fg); text-decoration: underline; text-decoration-color: var(--color-accent); text-decoration-thickness: 2px; text-underline-offset: 0.3em; }
   .topbar .account-trigger { width: 2.25rem; height: 2.25rem; background: var(--color-topbar-field); border-color: var(--color-topbar-muted); color: var(--color-topbar-fg); }
   .account-menu { top: 3.75rem; right: 1rem; }
 
@@ -66,11 +62,10 @@
     .topbar { gap: 0.375rem; padding-inline: 0.375rem 0.5rem; }
     .topbar-end { gap: 0.25rem; }
     .topbar-search input { padding-right: 0.5rem; }
-    .topbar-locale button { min-width: 2rem; }
   }
   @media (prefers-reduced-motion: no-preference) { .sidenav { transition: translate 200ms ease-out, visibility 200ms; } }
 
-  /* Page: breadcrumbs, header, content. */
+  /* Page: content and notices (the header and breadcrumbs are in packages/ui). */
   .console-main { min-width: 0; display: flex; flex-direction: column; }
   .console-page { flex: 1; width: 100%; max-width: 90rem; margin-inline: auto; padding: 1.5rem 2rem 4rem; }
   @media (max-width: 40rem) { .console-page { padding: 1rem 1rem 3rem; } }
@@ -78,54 +73,17 @@
   .notices { display: grid; gap: 0.5rem; max-width: 90rem; width: 100%; margin-inline: auto; padding: 1rem 2rem 0; }
   .notice { display: flex; align-items: center; gap: 0.625rem; padding: 0.75rem 1rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-panel); font-size: 0.875rem; }
   .notice[data-severity="overdue"] { color: var(--color-danger); border-color: var(--color-danger); }
-  .breadcrumbs ol { display: flex; flex-wrap: wrap; gap: 0.375rem; font-size: 0.8125rem; color: var(--color-muted); }
-  .breadcrumbs li + li::before { content: "/"; margin-right: 0.375rem; color: var(--color-border); }
-  .breadcrumbs a { color: var(--color-link); text-decoration: underline; text-underline-offset: 0.2em; }
-  .page-header { display: grid; gap: 0.5rem; margin-bottom: 1.5rem; }
-  .page-header-row { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; }
-  .page-header-text { display: grid; gap: 0.375rem; min-width: 0; max-width: 72ch; }
-  .page-header .page-title { font-size: 2rem; margin: 0; }
-  /* The highlighter tab under every console page title, as on the landing's section dividers. */
-  .page-header .page-title::after { content: ""; display: block; width: 3rem; height: 4px; margin-top: 0.625rem; background: var(--color-accent); }
   /* One key figure per page: the highlighter band behind ink in light mode; in dark mode light text
      on yellow fails contrast, so the figure is set in the accent instead. */
   .key-figure { padding-inline: 0.06em; background-image: linear-gradient(var(--color-accent), var(--color-accent)); background-repeat: no-repeat; background-position: 0 90%; background-size: 100% 0.5em; }
   @media (prefers-color-scheme: dark) { .key-figure { background-image: none; color: var(--color-accent); } }
   @media print { .key-figure { background-image: none; color: inherit; } }
-  .page-description { max-width: 72ch; color: var(--color-muted); }
-  .page-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-
-  /* Panels: lighter paper on the page, a subtle border, a header. Never nested. */
-  .panel { min-width: 0; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-panel); }
-  .panel-header { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: 0.5rem 1rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--color-border-subtle); }
-  .panel-title { font-size: 1.0625rem; font-weight: 600; }
-  .panel-description { margin-top: 0.125rem; font-size: 0.8125rem; color: var(--color-muted); }
-  .panel-body { padding: 1rem 1.25rem 1.25rem; min-width: 0; }
-  .panel-actions { display: flex; gap: 0.5rem; }
-  /* Prose panels (settings): paragraphs, forms and actions keep a steady gap. */
-  .panel-flow .panel-body > * + * { margin-top: 0.75rem; }
-  .panel-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
-  @media (min-width: 75rem) {
-    .panel-grid-main { grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr); align-items: start; }
-    .panel-grid-halves { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
-  }
 
   /* Records-page pattern (console-unification spec): one sentence led by the state badge, then
      the register. Only figures that need action appear, inline; no tiles. */
   .record-summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.625rem; max-width: 72ch; font-weight: 500; }
   .record-summary .badge { align-self: center; }
 
-  /* Status badges: icon plus text, never colour alone. */
-  .badge { display: inline-flex; align-items: center; gap: 0.3125rem; font-size: 0.8125rem; font-weight: 500; white-space: nowrap; }
-  .badge svg { width: 1rem; height: 1rem; }
-  .badge[data-severity="overdue"] { color: var(--color-danger); }
-  .badge[data-severity="missing"] { color: var(--color-warning); }
-  .badge[data-severity="pending"] { color: var(--color-muted); }
-
-  /* Tables in panels: a header row on the surface, ruled rows, hover. */
-  .panel table thead th { background: var(--color-surface); font-size: 0.8125rem; font-weight: 500; color: var(--color-muted); }
-  .panel table tbody tr:hover { background: var(--color-surface); }
-  .panel .table-region { padding: 0; }
   /* Lists that open a panel body lose their own top rule: the panel header already draws one. */
   .panel-body > .attention-list:first-child, .panel-body .framework-ledger, .panel-body > .cockpit-list:first-child { border-top: 0; margin-top: 0; }
   .panel-body .framework-row:last-child { border-bottom: 0; }
@@ -148,14 +106,13 @@
   .routine-form { display: grid; gap: 1rem; }
   @media (min-width: 48rem) { .routine-form { grid-template-columns: repeat(3, minmax(0, 1fr)); } .routine-form-wide, .routine-form > .form-actions, .routine-form > [role="alert"] { grid-column: 1 / -1; } }
   .routine-form > span { display: grid; gap: 0.375rem; min-width: 0; }
-  /* The shared field (DESIGN.md, fields): inputs, selects and textareas in console forms look alike. */
-  .routine-form :is(input, textarea, select), .field { min-width: 0; padding: 0.5rem 0.75rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-bg); color: var(--color-fg); caret-color: var(--color-link); }
+  /* Console form controls look like the shared field (`.field`, packages/ui; DESIGN.md, fields). */
+  .routine-form :is(input, textarea, select) { min-width: 0; padding: 0.5rem 0.75rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-bg); color: var(--color-fg); caret-color: var(--color-link); }
   /* Placeholders from the muted token: 7.0:1 light, 9.3:1 dark on the field's bg (contrast test, muted on bg). */
   .console-page :is(input, textarea)::placeholder { color: var(--color-muted); opacity: 1; }
   .routine-form textarea { font-family: var(--font-mono); font-size: 0.875rem; }
   .decision-group { display: flex; flex-wrap: wrap; gap: 0.375rem; }
   .decision-group button[aria-pressed="true"] { background: var(--color-accent); color: var(--color-accent-fg); border-color: var(--color-fg); }
-  .badge[data-severity="done"] { color: var(--color-success); }
   .policy-list > li { padding-block: 0.875rem; border-bottom: 1px solid var(--color-border-subtle); }
   .policy-list > li:last-child { border-bottom: 0; }
   .policy-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 0.75rem 1rem; }
@@ -163,10 +120,6 @@
   @media (max-width: 40rem) { .policy-row { grid-template-columns: minmax(0, 1fr); } .policy-row > button { justify-self: start; } }
   .policy-list .routine-form { margin-top: 1rem; padding: 1rem; border-radius: var(--radius-md); background: var(--color-surface); }
 }
-
-/* Loading, error and empty states (ui-polish spec): one look on every page. */
-.state-loading, .state-empty { color: var(--color-muted); }
-.state-error { display: grid; gap: 0.75rem; justify-items: start; }
 
 /* Recorded routines, part B: the one-time link, checkboxes in forms, the incident timeline. */
 .link-once { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; margin-top: 1rem; min-width: 0; }
@@ -202,12 +155,12 @@
   .topbar, .sidenav, .site-footer, .dossier-toolbar, footer { display: none !important; }
   .console-body, .console-main, .console-page { display: block !important; margin: 0 !important; padding: 0 !important; }
   .dossier-section + .dossier-section { break-before: page; }
-  .table-region { overflow: visible !important; }
   /* Forms record; paper reads (issue 345): the incident page prints its record, not its forms. */
   .classify-block, .routine-form { display: none !important; }
   .dossier a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8125rem; }
 }
-.dossier th, .dossier td { padding: 0.375rem 0.5rem; vertical-align: top; }
+/* :where lets a stacked data table's cell padding (packages/ui) win on phones. */
+.dossier :where(th, td) { padding: 0.375rem 0.5rem; vertical-align: top; }
 .dossier td.font-mono { white-space: nowrap; }
 .portfolio-summary { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-weight: 600; }
 .portfolio-summary [data-severity="overdue"] { color: var(--color-danger, inherit); }
@@ -224,27 +177,6 @@
 .getting-started li svg { flex: none; margin-top: 0.2rem; }
 .getting-started li[data-done="true"] svg { color: var(--color-success, inherit); }
 
-/* Data tables, any width: the row a page returned to (aria-current) is marked, and a row's detail
-   row (a full-width `row-detail` holding a disclosure) belongs to the row above it. */
-tr[aria-current="true"] { background: var(--color-surface); }
-tr.row-detail > td { padding-top: 0; }
-
-/* Phones (ui-polish spec, phones). Unlayered on purpose: these win over spacing utilities.
-   Data tables stack by their own width (modern-web-guidance responsive-table): one block per
-   row, each cell named by its data-label; the hidden header row is not read twice. */
-.table-region { container-type: inline-size; }
-@container (width < 36rem) {
-  .table-region table { display: block; min-width: 0; }
-  .table-region thead { display: none; }
-  .table-region tbody, .table-region tr { display: block; }
-  .table-region tr { padding-block: 0.75rem; }
-  .table-region tr + tr { border-top: 1px solid var(--color-border-subtle); }
-  .table-region tr + tr.row-detail { border-top: 0; padding-top: 0; }
-  .table-region td { display: block; max-width: none; padding: 0.125rem 0; border: 0; white-space: normal; overflow-wrap: anywhere; }
-  .table-region td:empty { display: none; }
-  .table-region td + td { margin-top: 0.375rem; }
-  .table-region td[data-label]:not(:first-child)::before { content: attr(data-label); display: block; font-size: 0.8125rem; font-weight: 400; color: var(--color-muted); }
-}
 /* Focus and anchors never land under the sticky top bar (WCAG 2.4.11). */
 html { scroll-padding-top: 4.5rem; }
 /* The assistant launcher floats bottom-right and does not move (console-unification spec). The
@@ -257,16 +189,9 @@ html:has(.console):has(.assistant-launcher) { scroll-padding-bottom: 5rem; }
 /* Links that stand alone as actions (not inside running text) are full-height targets. */
 .action-link, .preparation-jumps a, .policy-index a { display: inline-flex; align-items: center; min-height: 2.75rem; }
 @media (max-width: 40rem), (pointer: coarse) {
-  /* 16px fields: iOS zooms the page into anything smaller. */
-  input, select, textarea, .topbar-search input { font-size: 1rem; }
-  /* 44px targets for controls outside running text. */
-  button, select, input:not([type="checkbox"], [type="radio"]), summary, .topbar-icon, .topbar-locale button, .topbar .account-trigger { min-height: 2.75rem; }
-  .topbar-icon, .topbar .account-trigger { min-width: 2.75rem; }
-  /* Checkboxes and radios: 24px boxes (WCAG 2.5.8); their labels widen the target. */
-  input:is([type="checkbox"], [type="radio"]) { width: 1.5rem; height: 1.5rem; min-height: 0; }
-  summary { padding-block: 0.5rem; }
-  .breadcrumbs li { display: flex; align-items: center; }
-  .breadcrumbs a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  /* The top bar's own controls follow the shared phone rules (packages/ui): 16px, 44px targets. */
+  .topbar-search input { font-size: 1rem; }
+  .topbar-icon, .topbar .account-trigger { min-height: 2.75rem; min-width: 2.75rem; }
 }
 
 /* Connections (web-connections spec): badges wrap, and the permission lists are codes. */
