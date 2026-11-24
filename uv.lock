@@ -237,6 +237,7 @@ version = "0.0.0"
 source = { editable = "scanner" }
 dependencies = [
     { name = "atesta-core" },
+    { name = "boto3" },
     { name = "cryptography" },
     { name = "httpx" },
 ]
@@ -244,6 +245,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "atesta-core", editable = "packages/core" },
+    { name = "boto3", specifier = ">=1.40" },
     { name = "cryptography", specifier = ">=50" },
     { name = "httpx", specifier = ">=0.27" },
 ]

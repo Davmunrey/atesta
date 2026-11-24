@@ -11,6 +11,7 @@ from atesta_api.modules.scanning.attempts import (
     finished_event,
     start_attempt,
 )
+from atesta_api.modules.scanning.aws import FargateRunner, FargateSettings, S3ScanStore
 from atesta_api.modules.scanning.devscan import run_fixture_scan
 from atesta_api.modules.scanning.error_codes import SCAN_ERROR_CODES
 from atesta_api.modules.scanning.expected import (
@@ -75,10 +76,13 @@ __all__ = [
     "ConnectionNotActiveError",
     "ConnectionNotFoundError",
     "DailyLimitError",
+    "FargateRunner",
+    "FargateSettings",
     "FixtureRunner",
     "LocalCredentialStore",
     "LocalDockerRunner",
     "LocalScanStore",
+    "S3ScanStore",
     "Outcome",
     "OutputExistsError",
     "ScanJob",

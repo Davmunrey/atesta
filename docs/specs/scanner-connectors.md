@@ -704,6 +704,71 @@ count reads the tenant's own scans through the `(organization_id, id)` index; no
 | Logs | Wrapper's own JSON lines only | Same, to CloudWatch in eu-south-2 |
 | Timeout | Kill the container | `StopTask` |
 
+### AWS runner (issue 237)
+
+Owner decisions, 2026-11-24 ("A y A"):
+- each customer's scan roles come from an OpenTofu module that the owner applies per customer.
+  No Atesta process holds IAM write rights;
+- scan egress goes through an allowlisting proxy on Fargate, not AWS Network Firewall.
+
+Part 1 (issue 444) is the code below. Part 2 is the roles module, the proxy, the bucket policy,
+the worker's S3 rights and the alarm.
+
+- **Worker (`ATESTA_SCAN_RUNNER=fargate`).** It is allowed in every environment, and refuses a
+  missing setting by its name. Its settings:
+  - `ATESTA_SCAN_BUCKET`: the evidence bucket, whose existing layout holds the scans;
+  - `ATESTA_SCAN_CLUSTER` and `ATESTA_SCAN_TASK_DEFINITION`;
+  - `ATESTA_SCAN_SUBNETS` (comma-separated) and `ATESTA_SCAN_SECURITY_GROUP`;
+  - `ATESTA_SCAN_ROLE_PREFIX` (`arn:aws:iam::<account>:role/atesta-scan/<env>/`);
+  - `ATESTA_M365_CREDENTIAL_REF`, the platform certificate's `aws-sm:` ref;
+  - `ATESTA_SCAN_TIMEOUT_SECONDS`.
+- **`S3ScanStore`.**
+  - `write` is `PutObject` with `IfNoneMatch: *`. A 412 becomes `OutputExistsError`, and a 409
+    (a concurrent write) is retried by the job.
+  - `read` and `list` (`ListObjectsV2`, every page) follow the local store.
+  - The bucket's default KMS key encrypts the objects.
+  - No error carries a key or a body.
+- **`FargateRunner`.** Each container run is one `RunTask` of the scan task definition:
+  - **What runs:** Google runs `verify` and then `scan`, and the scan never starts after a
+    non-zero verify. M365 runs `scan`.
+  - **Overrides:**
+    - `taskRoleArn` is `<role prefix><kind>-<org>`, where the kind is `scan-m365`, `verify-gws`
+      or `scan-gws`;
+    - the scan container gets `command` = the mode and `environment` = `ATESTA_ORGANIZATION_ID`,
+      `ATESTA_SCAN_ID` and `ATESTA_SCAN_ATTEMPT`. Those ids are all it receives.
+  - **Placement:** `launchType` is `FARGATE`, in private subnets, without a public IP.
+  - **Idempotency:** `clientToken` is `<scan>-<attempt>-<mode>` (at most 64 characters, ECS
+    idempotency), so a redelivered job reuses its task.
+- **Waiting for the task.**
+  - The runner polls `DescribeTasks` every 15 s until the task is `STOPPED`, and returns the exit
+    code of the `scan` container.
+  - No exit code means the task never ran the wrapper (`stopCode` `TaskFailedToStart`): exit 20,
+    transient.
+  - At the attempt timeout the runner calls `StopTask` and returns 21. Each run of a Google
+    attempt has the full timeout.
+- **Wrapper, S3 source (`ATESTA_SCAN_SOURCE=s3`).** It is set on the scan task definition, never
+  by an override.
+  - **Paths:** the attempt prefix is built from the three id variables and `ATESTA_SCAN_BUCKET`.
+  - **Job:** it reads `job.json` with `GetObject`.
+  - **Credentials:** it reads them with `GetSecretValue` for the job's refs:
+    - `credential_ref` for a scan run;
+    - `credential_ref` and `verifier_credential_ref` for a Google verify run.
+
+    Each secret is the same `{variable: value}` JSON as a local credential file, and the two
+    Google secrets are merged.
+  - **Outputs:** it writes them write-once under `out/`.
+  - **Errors:** a secret it may not read is exit 11. No error names a value.
+- **job.json.** It gains `credential_ref`, and for Google `verifier_credential_ref`: `aws-sm:` or
+  `local:` refs, never a secret. For M365 the ref is the platform's, from the worker's settings.
+  The local runner ignores them, because it reads its own store.
+- **Limits.** Until part 2:
+  - the scan roles have no rights on the evidence bucket's KMS key;
+  - the worker role has no S3 rights on the scan prefix;
+  - scan egress is not yet behind the proxy.
+
+  So nothing scans in AWS before part 2 is applied. How long ECS honours a `clientToken` after a worker
+  restart is a candidate until it is checked on the ECS idempotency page.
+
 ### Ingest
 
 1. Read `manifest.json` from the `out/` of the attempt that exited 0; check the sha256 and size of

@@ -299,6 +299,10 @@ def test_the_activation_job_pins_the_primary_domain_and_names_the_subject(
     assert data["google_subject"] == SUBJECT
     assert data["google_service_accounts"] == ["333333333333333333333", "444444444444444444444"]
     assert "verified_since" not in data and "admin_oid" not in data
+    assert (data["credential_ref"], data["verifier_credential_ref"]) == (
+        f"local:google-{ORG_A}",
+        f"local:google-verifier-{ORG_A}",
+    )  # issue 444: what a Fargate run reads with its task role
     assert load_job(raw).google_subject == SUBJECT  # the wrapper accepts it
 
 
