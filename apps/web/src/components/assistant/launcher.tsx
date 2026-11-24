@@ -12,14 +12,16 @@ const Panel = lazy(() => import("./panel"));
  * The assistant's launcher (assistant spec): a button fixed at the bottom right and a non-modal
  * `<dialog popover="auto">` (modern-web-guidance, dialog rule 2). The page stays usable, Esc and
  * the close button dismiss it, and the browser returns focus to the launcher. The panel, the
- * engine and the index load on first open only.
+ * engine and the index load on first open only. `invite` adds an inline button that opens the same
+ * dialog, for pages that point a visitor to the assistant (the 404, issue 384).
  */
-export function AssistantLauncher({ surface, orgId }: { surface: Surface; orgId?: string | null }) {
+export function AssistantLauncher({ surface, orgId, invite }: { surface: Surface; orgId?: string | null; invite?: string }) {
   const t = useTranslations("assistant");
   const id = useId().replace(/:/g, "");
   const [opens, setOpens] = useState(0);
   return (
     <>
+      {invite ? <button type="button" className="landing-cta" popoverTarget={`assistant-${id}`}>{invite}</button> : null}
       <button type="button" className="assistant-launcher" popoverTarget={`assistant-${id}`}>
         <BrandMark />
         <span>{t("open")}</span>

@@ -395,7 +395,10 @@
   },
   "notFound": {
     "title": "This page does not exist.",
-    "home": "Back to the start"
+    "home": "Back to the start",
+    "body": "The link may be mistyped, or the page may have moved.",
+    "ask": "Ask the assistant",
+    "also": "Or go back to a page you know:"
   },
   "framework": {
     "back": "Back to overview",
@@ -1709,7 +1712,8 @@
       "install": "Install the atesta-mcp server on the computer where the agent runs. It is not publicly distributed yet: for now, Atesta provides it to pilot customers only.",
       "config": "Add it to your MCP client's configuration with the token in env, as the <link>official MCP documentation</link> explains. For example:",
       "configLabel": "Client configuration",
-      "secret": "The token is a secret: keep it only in that configuration, and revoke it in Integrations when it is no longer needed."
+      "secret": "The token is a secret: keep it only in that configuration, and revoke it in Integrations when it is no longer needed.",
+      "copy": "Copy configuration"
     },
     "hosted": {
       "title": "Hosted server",
@@ -1824,7 +1828,11 @@
     "customers": {
       "title": "Organizations using Atesta"
     },
-    "onThisPage": "On this page"
+    "onThisPage": "On this page",
+    "copy": {
+      "done": "Copied",
+      "failed": "Could not copy"
+    }
   },
   "producto": {
     "title": "What Atesta does, <hl>screen by screen</hl>",
