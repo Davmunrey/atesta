@@ -135,6 +135,16 @@ test("the policy blocks an injected inline script", async ({ page }) => {
   expect(await page.evaluate(() => (window as unknown as { pwned?: boolean }).pwned)).toBeUndefined();
 });
 
+test("security.txt is served where RFC 9116 says, as UTF-8 text, and has not expired", async ({ request }) => {
+  const response = await request.get("/.well-known/security.txt");
+  expect(response.status()).toBe(200);
+  expect(response.headers()["content-type"]).toBe("text/plain; charset=utf-8");
+  const body = await response.text();
+  expect(body).toContain("Contact: mailto:security@atesta.cloud\n");
+  const expires = /^Expires: (.+)$/m.exec(body)?.[1];
+  expect(new Date(expires!).getTime()).toBeGreaterThan(Date.now());
+});
+
 test("security headers on every page; no referrer from /invite, /training or /unsubscribe", async ({ request }) => {
   for (const path of ["/", "/app", "/invite", "/training", "/unsubscribe", "/no-such-page"]) {
     const response = await request.get(path);

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "node scripts/assistant-index.ts && next dev",
-    "build": "node scripts/assistant-index.ts && next build && node scripts/csp.ts",
+    "build": "node scripts/assistant-index.ts && next build && node scripts/csp.ts && node scripts/security-txt.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
