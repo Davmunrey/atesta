@@ -598,13 +598,25 @@
     "upload": "Subir archivo",
     "file": "Archivo",
     "fileHelp": "{types}. Hasta {size}.",
-    "notScanned": "Atesta guarda el archivo tal cual y no lo analiza en busca de malware. Sube solo documentos de origen conocido.",
+    "scanned": "Atesta analiza cada archivo en busca de malware antes de que se pueda descargar.",
     "uploading": "Subiendo…",
     "uploaded": "Archivo subido. La revisión se decide por separado.",
     "fileDetails": "{type} · {size}",
     "download": "Descargar",
     "downloadFile": "Descargar {name}",
-    "downloading": "Descargando…"
+    "downloading": "Descargando…",
+    "scan": {
+      "pending": "En análisis",
+      "clean": "Sin amenazas detectadas",
+      "blocked": "Bloqueado: posible malware",
+      "failed": "No se pudo analizar",
+      "devUnscanned": "Sin analizar (entorno de desarrollo)"
+    },
+    "scanHelp": {
+      "pending": "Atesta está buscando malware en el archivo. Podrás descargarlo cuando termine el análisis, normalmente en unos minutos.",
+      "blocked": "Nadie puede descargarlo. Averigua de dónde salió y revisa el equipo de quien lo subió; si la evidencia sigue haciendo falta, sube una copia limpia. El archivo no se borra: queda bloqueado.",
+      "failed": "No se entrega sin análisis. Si está protegido con contraseña, sube una copia sin contraseña."
+    }
   },
   "register": {
     "title": "Autoevaluación de tu organización",

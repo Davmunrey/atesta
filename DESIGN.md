@@ -223,6 +223,13 @@ Otherwise a muted sentence or the table stands in for it.
 A running clock is never `pending`, and nothing that has a running clock reads "Al día". Countdowns
 read the deadline the API computed; hours below 72 h, days from there.
 
+An uploaded evidence file's malware scan uses the same table (evidence-malware-scanning spec):
+- being scanned: `pending` ("En análisis");
+- blocked as possible malware: `overdue`;
+- could not be scanned: `missing`;
+- no threats found: `done`.
+Only `done` and the development store's "Sin analizar" offer "Descargar".
+
 **Records-page pattern (console-unification spec, replaces the record summary of #240).** Policies, access reviews, training, incidents and integrations share one pattern, drawn by `RecordSummary` (`components/record-summary.tsx`) and nothing else:
 - **Sentence:** one line, led by the register's state badge ("Requiere acción", a clock's countdown, or "Al día"). It names only the figures that need action, inline: "1 política con la revisión vencida y 1 política sin aprobar."
 - **Nothing to do:** the sentence says why, with no figure.

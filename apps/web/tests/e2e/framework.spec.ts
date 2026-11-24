@@ -182,7 +182,7 @@ test("an owner records a human review of a manual control, accessibly and within
   expect(csp).toEqual([]);
 });
 
-test("a member uploads an evidence file and downloads it, verified by the API", async ({ page }) => {
+test("a member uploads an evidence file, sees its malware scan and downloads it once clean", async ({ page }) => {
   const csp: string[] = [];
   page.on("console", (message) => { if (message.text().includes("Content Security Policy")) csp.push(message.text()); });
   const org = await createOrganization(page);
@@ -190,13 +190,15 @@ test("a member uploads an evidence file and downloads it, verified by the API", 
   const stored = {
     id: "44444444-4444-4444-8444-444444444444", kind: "document", title: "Política de acceso", statement: null, reference_url: null,
     created_by: null, created_at: "2026-11-24T09:00:00Z", collected_at: "2026-11-24T09:00:00Z",
-    file: { name: "politica-de-acceso.pdf", media_type: "application/pdf", size_bytes: 345_678, sha256: "a".repeat(64) },
+    file: { name: "politica-de-acceso.pdf", media_type: "application/pdf", size_bytes: 345_678, sha256: "a".repeat(64), scan_status: "pending" },
   };
+  const scan = (scan_status: string) => ({ ...stored, file: { ...stored.file, scan_status } });
+  let status = "pending";
   const bytes = Buffer.from("%PDF-1.7\n%synthetic policy\n%%EOF\n");
   let saved = false;
   let tampered = false;
   await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha", (route) => route.fulfill({ json: withManualControl(null) }));
-  await page.route("**/api/v1/orgs/*/controls/ctl.paper/evidence*", (route) => route.fulfill({ json: { total: saved ? 1 : 0, items: saved ? [stored] : [], file_uploads: uploads } }));
+  await page.route("**/api/v1/orgs/*/controls/ctl.paper/evidence*", (route) => route.fulfill({ json: { total: saved ? 1 : 0, items: saved ? [scan(status)] : [], file_uploads: uploads } }));
   await page.route("**/api/v1/orgs/*/controls/ctl.paper/evidence/files", (route) => {
     const sent = route.request().postData() ?? "";
     expect(route.request().headers()["content-type"]).toContain("multipart/form-data; boundary=");
@@ -209,15 +211,19 @@ test("a member uploads an evidence file and downloads it, verified by the API", 
   await page.route("**/api/v1/orgs/*/evidence/*/file", (route) => tampered
     ? route.fulfill({ status: 409, json: { detail: { code: "evidence.file_integrity_failed" } } })
     : route.fulfill({ body: bytes, contentType: "application/pdf", headers: { "content-disposition": 'attachment; filename="politica-de-acceso.pdf"' } }));
-  await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
   const control = page.locator("article").filter({ hasText: "ctl.paper" });
-  await page.locator("details.requirement-row").filter({ hasText: "ctl.paper" }).locator("summary").click();
-  await control.getByRole("button", { name: "Ver evidencias" }).click();
+  const openEvidence = async () => {
+    await page.goto(`/app/framework?org=${org}&framework=synthetic_alpha`);
+    await page.locator("details.requirement-row").filter({ hasText: "ctl.paper" }).locator("summary").click();
+    await control.getByRole("button", { name: "Ver evidencias" }).click();
+  };
+  await openEvidence();
   await control.getByRole("button", { name: "Subir archivo" }).press("Enter");
   await expect(control.getByLabel("Archivo")).toBeFocused();
   await expect(control.getByText("PDF, PNG, JPG, TXT, CSV, DOCX o XLSX. Hasta 25 MB.")).toBeVisible();
   await control.getByLabel("Archivo").setInputFiles({ name: "politica-de-acceso.pdf", mimeType: "application/pdf", buffer: bytes });
   await expect(control.getByLabel("Nombre de la evidencia")).toHaveValue("politica-de-acceso");
+  await expect(control.getByText("Atesta analiza cada archivo en busca de malware antes de que se pueda descargar.")).toBeVisible();
   await control.getByLabel("Nombre de la evidencia").fill("Política de acceso");
   for (const colorScheme of ["light", "dark"] as const) {
     await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
@@ -232,10 +238,28 @@ test("a member uploads an evidence file and downloads it, verified by the API", 
   const item = control.locator(".evidence-list li").filter({ hasText: "Política de acceso" });
   await expect(item.getByText("politica-de-acceso.pdf")).toBeVisible();
   await expect(item.getByText("PDF · 338 kB")).toBeVisible();
+  // evidence-malware-scanning spec: no download until GuardDuty's result says the file is clean.
+  await expect(item.getByText("En análisis")).toBeVisible();
+  await expect(item.getByRole("button", { name: /^Descargar/ })).toHaveCount(0);
   for (const width of [375, 1280]) {
     await page.setViewportSize({ width, height: 900 });
-    await expectPolished(page, `uploaded file dark ${width}`);
+    await expectPolished(page, `uploaded file pending dark ${width}`);
   }
+  status = "threats_found";
+  await openEvidence();
+  await expect(item.getByText("Bloqueado: posible malware")).toBeVisible();
+  await expect(item.getByText(/Nadie puede descargarlo/)).toBeVisible();
+  await expect(item.getByRole("button", { name: /^Descargar/ })).toHaveCount(0);
+  for (const colorScheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
+    for (const width of [375, 1280]) {
+      await page.setViewportSize({ width, height: 900 });
+      await expectPolished(page, `blocked file ${colorScheme} ${width}`);
+    }
+  }
+  status = "no_threats_found";
+  await openEvidence();
+  await expect(item.getByText("Sin amenazas detectadas")).toBeVisible();
   const download = page.waitForEvent("download");
   await item.getByRole("button", { name: "Descargar politica-de-acceso.pdf" }).click();
   expect((await download).suggestedFilename()).toBe("politica-de-acceso.pdf");

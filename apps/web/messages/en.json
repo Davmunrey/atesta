@@ -598,13 +598,25 @@
     "upload": "Upload file",
     "file": "File",
     "fileHelp": "{types}. Up to {size}.",
-    "notScanned": "Atesta stores the file as it is and does not scan it for malware. Upload only documents from a known source.",
+    "scanned": "Atesta scans each file for malware before it can be downloaded.",
     "uploading": "Uploading…",
     "uploaded": "File uploaded. The review is decided separately.",
     "fileDetails": "{type} · {size}",
     "download": "Download",
     "downloadFile": "Download {name}",
-    "downloading": "Downloading…"
+    "downloading": "Downloading…",
+    "scan": {
+      "pending": "Being scanned",
+      "clean": "No threats found",
+      "blocked": "Blocked: possible malware",
+      "failed": "Could not be scanned",
+      "devUnscanned": "Not scanned (development environment)"
+    },
+    "scanHelp": {
+      "pending": "Atesta is scanning the file for malware. You can download it when the scan finishes, usually within a few minutes.",
+      "blocked": "Nobody can download it. Find out where it came from and check the computer of whoever uploaded it; if the evidence is still needed, upload a clean copy. The file is not deleted: it stays blocked.",
+      "failed": "It is not served without a scan. If it is password-protected, upload a copy without a password."
+    }
   },
   "register": {
     "title": "Your organization's self-assessment",
