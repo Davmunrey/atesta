@@ -406,6 +406,24 @@
         "title": "ActivityEvent",
         "type": "object"
       },
+      "AgentClient": {
+        "properties": {
+          "client_id": {
+            "title": "Client Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "name"
+        ],
+        "title": "AgentClient",
+        "type": "object"
+      },
       "Applicability": {
         "enum": [
           "applies",
@@ -1997,6 +2015,17 @@
       },
       "CreatedToken": {
         "properties": {
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
           "created_at": {
             "format": "date-time",
             "title": "Created At",
@@ -2014,6 +2043,15 @@
           "id": {
             "format": "uuid",
             "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "default": "key",
+            "enum": [
+              "key",
+              "oauth"
+            ],
+            "title": "Kind",
             "type": "string"
           },
           "last_used_at": {
@@ -3536,6 +3574,45 @@
           "email"
         ],
         "title": "GoogleSubjectIn",
+        "type": "object"
+      },
+      "GrantIn": {
+        "properties": {
+          "client_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Client Id",
+            "type": "string"
+          },
+          "expires_in_days": {
+            "maximum": 365.0,
+            "minimum": 1.0,
+            "title": "Expires In Days",
+            "type": "integer"
+          },
+          "rate_limit_per_minute": {
+            "default": 60,
+            "maximum": 600.0,
+            "minimum": 1.0,
+            "title": "Rate Limit Per Minute",
+            "type": "integer"
+          },
+          "scopes": {
+            "items": {
+              "$ref": "#/components/schemas/Scope"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Scopes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "client_id",
+          "expires_in_days",
+          "scopes"
+        ],
+        "title": "GrantIn",
         "type": "object"
       },
       "GroupHeading": {
@@ -7197,6 +7274,17 @@
       },
       "TokenOut": {
         "properties": {
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
           "created_at": {
             "format": "date-time",
             "title": "Created At",
@@ -7214,6 +7302,15 @@
           "id": {
             "format": "uuid",
             "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "default": "key",
+            "enum": [
+              "key",
+              "oauth"
+            ],
+            "title": "Kind",
             "type": "string"
           },
           "last_used_at": {
@@ -8530,6 +8627,118 @@
           }
         ],
         "summary": "Read Activity",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/agent-clients": {
+      "get": {
+        "description": "The approved clients an admin may grant; empty while OAuth is off.",
+        "operationId": "list_agent_clients_api_v1_orgs__org_id__agent_clients_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AgentClient"
+                  },
+                  "title": "Response List Agent Clients Api V1 Orgs  Org Id  Agent Clients Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Agent Clients",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/agent-grants": {
+      "post": {
+        "description": "The caller lets one approved client act for them in this organization: the consent.\n\nA grant is an API key without a secret (ADR-016 amendment 1): it is found by the digest of\nthe issuer, the client and the person, which the hosted server derives from a verified token.",
+        "operationId": "create_agent_grant_api_v1_orgs__org_id__agent_grants_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Agent Grant",
         "tags": [
           "identity"
         ]

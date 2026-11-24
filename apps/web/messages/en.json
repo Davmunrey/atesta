@@ -243,7 +243,10 @@
       "api_token_scope": "This token does not have the permission needed.",
       "api_token_rate_limited": "This token has gone over its limit of requests per minute. Wait a moment.",
       "organization_suspended": "This organization is suspended.",
-      "closure_by_operator": "Atesta started this closure: only Atesta can cancel it."
+      "closure_by_operator": "Atesta started this closure: only Atesta can cancel it.",
+      "agent_client_unknown": "That agent is not on the list of approved agents.",
+      "agent_grant_exists": "You already have an active authorization for that agent in this organization. Revoke it before creating another.",
+      "agent_oauth_off": "Connecting agents with sign-in is not available yet."
     },
     "request": {
       "error": "The request could not be completed. Try again.",
@@ -847,7 +850,9 @@
       "operator_closure_cancelled": "Cancelled the organization's closure",
       "operator_erasure_requested": "Requested erasing the data",
       "operator_erasure_approved": "Approved erasing the data",
-      "operator_erasure_cancelled": "Cancelled erasing the data"
+      "operator_erasure_cancelled": "Cancelled erasing the data",
+      "agent_grant_created": "Authorized an AI agent",
+      "agent_grant_revoked": "Revoked an AI agent's authorization"
     },
     "day": "Day",
     "unknown": "Other action",

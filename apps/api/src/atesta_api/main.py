@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from atesta_api.modules.compliance.api import include_drafts, install_compliance
 from atesta_api.modules.connections.api import install_connections, wire_connections
 from atesta_api.modules.evidence.api import install_evidence, wire_evidence
-from atesta_api.modules.identity.api import install_identity, wire_identity
+from atesta_api.modules.identity.api import agent_access, install_identity, wire_identity
 from atesta_api.modules.notifications.api import install_notifications
 from atesta_api.modules.scanning.api import router as scanning_router
 from atesta_api.platform import db
@@ -68,7 +68,9 @@ def mount_remote_mcp(app: FastAPI) -> None:
 
     hosts = [h.strip() for h in os.environ.get("ATESTA_MCP_ALLOWED_HOSTS", "").split(",")]
     origin = os.environ.get("ATESTA_WEB_ORIGIN", "").rstrip("/")
-    gated, run = remote_app(app, [h for h in hosts if h], [origin] if origin else [])
+    gated, run = remote_app(
+        app, [h for h in hosts if h], [origin] if origin else [], agent_access(app)
+    )
     app.mount("/mcp", gated)
     app.state.mcp_session_manager = run
 

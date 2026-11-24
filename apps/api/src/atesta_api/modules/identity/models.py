@@ -113,7 +113,10 @@ _SCOPE_LIST = ", ".join(f"'{s}'" for s in SCOPES)
 
 class ApiToken(TenantMixin, Base):
     """An API key for a customer's own tools and agents (api-keys-v2 spec). Only the SHA-256
-    is kept, indexed and not unique: tenant unique keys lead with organization_id."""
+    is kept, indexed and not unique: tenant unique keys lead with organization_id.
+
+    A row of kind `oauth` is an agent's grant (mcp-oauth spec): no secret exists, and the
+    SHA-256 is of the verified issuer, client id and person (ADR-016 amendment 1)."""
 
     __tablename__ = "api_tokens"
     __table_args__ = (
@@ -128,12 +131,20 @@ class ApiToken(TenantMixin, Base):
         CheckConstraint("rate_limit_per_minute BETWEEN 1 AND 600", name="rate_limit_range"),
         CheckConstraint("expires_at > created_at", name="expires_after_creation"),
         CheckConstraint("(revoked_at IS NULL) = (revoked_by IS NULL)", name="revoked_together"),
+        CheckConstraint("kind IN ('key', 'oauth')", name="kind"),
+        CheckConstraint(
+            "(kind = 'oauth') = (oauth_client_id IS NOT NULL)"
+            " AND (oauth_client_id IS NULL OR oauth_client_id ~ '^[A-Za-z0-9_+.-]{1,128}$')",
+            name="oauth_client",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(Text)
     prefix: Mapped[str] = mapped_column(Text)
     token_sha256: Mapped[str] = mapped_column(Text, index=True)
+    kind: Mapped[str] = mapped_column(Text, server_default="key")
+    oauth_client_id: Mapped[str | None] = mapped_column(Text)
     scopes: Mapped[list[str]] = mapped_column(
         ARRAY(Text), server_default=text("'{evidence:write}'::text[]")
     )

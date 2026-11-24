@@ -111,3 +111,109 @@ the official sources on 2026-11-23:
 - **Remote and OAuth:** hosted clients that support only OAuth cannot use the remote server
   until the OAuth amendment lands. Clients that accept a header, and the local stdio server,
   can.
+
+## Amendment 1 (proposed 2026-11-24, issue 354, spec `docs/specs/mcp-oauth.md`)
+
+Status: proposed. The owner chose the substance on 2026-11-24, in the session that built it. The
+three recommendations put to the owner were "Cognito como servidor de autorización del MCP
+alojado", "Solo admins conectan agentes, con concesión revocable guardada en Atesta" and "Lista
+cerrada de clientes aprobados al principio", and the answer "sí a todo". Accepting the amendment
+is the owner's.
+
+### Context
+
+Some hosted agents add a remote MCP server by URL only and authenticate with OAuth. The hosted
+server takes an Atesta API key today. Facts checked on 2026-11-24:
+
+- **MCP authorization, revision 2026-07-28**
+  (<https://modelcontextprotocol.io/specification/latest/basic/authorization>):
+  - an MCP server is an OAuth 2.1 resource server and MUST implement Protected Resource Metadata
+    (RFC 9728), which names its authorization server;
+  - a 401 carries `WWW-Authenticate: Bearer resource_metadata="..."`;
+  - clients MUST send the `resource` parameter (RFC 8707) with the server's canonical URI, and
+    the server MUST accept only tokens issued for itself and never pass a token on;
+  - a client gets its client id by one of three ways: Client ID Metadata Documents,
+    pre-registration, or Dynamic Client Registration (deprecated, kept for compatibility).
+- **Amazon Cognito user pools**, developer guide:
+  - "Resource binding": with managed login and the authorization code grant, a `resource`
+    parameter becomes the `aud` claim of the access token (RFC 8707)
+    (<https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-define-resource-servers.html>);
+  - "Using dynamic client registration with MCP clients" describes a user pool protecting an MCP
+    server: a resource server whose identifier is the MCP server's URL, custom scopes that
+    belong to it, and public clients with PKCE
+    (<https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-dynamic-client-registration.html>);
+  - the user pool is an OIDC issuer with a discovery document
+    (<https://docs.aws.amazon.com/cognito/latest/developerguide/federation-endpoints.html>).
+
+### Decision
+
+- **Authorization server: the Cognito user pool that already signs people in.** Atesta issues no
+  token and runs no authorization server. The pool stays in the EU (ADR-007).
+- **Resource: the hosted MCP server**, at the URL in `ATESTA_MCP_RESOURCE_URL`. In Cognito it is
+  a resource server with that URL as its identifier and one scope, `agent`.
+- **Discovery:** the API serves Protected Resource Metadata at
+  `/.well-known/oauth-protected-resource/mcp` and `/.well-known/oauth-protected-resource`. A 401
+  from `/mcp` points to it.
+- **A token is accepted only when all of this holds:** RS256 signature by the pool's keys, the
+  pool as issuer, not expired, `token_use` is `access`, `aud` is exactly the resource URL,
+  `client_id` is an approved client and the scope includes `agent`.
+  - A web session token has no such `aud`, so it never opens `/mcp`. An MCP token has another
+    `client_id`, so it never opens the web session.
+  - The token is used at `/mcp` only. It is never forwarded: the server hands the verified
+    identity to the API in-process (no token passthrough).
+- **The token says who; Atesta says what.** A token proves a person at an approved client. What
+  that agent may do comes from a grant recorded in Atesta:
+  - **Who grants:** an owner or admin, for themself, in one organization. That is the consent.
+  - **What it holds:** the approved client, explicit scopes from the same five as keys (none by
+    default), a rate limit per minute and an expiry of at most 365 days.
+  - **When it works:** while it is not revoked or expired, and only while that person is still
+    an owner or admin of that organization.
+  - **Revocation:** any owner or admin of the organization, at once. The next request is
+    refused whatever the token's remaining life.
+  - **One organization per person and client.** If the same person has an active grant for the
+    same client in two organizations, the request is refused until one is revoked.
+- **A grant is an API key without a secret.** It is a row of `api_tokens` of kind `oauth`. Its
+  lookup value is the SHA-256 of the issuer, the client id and the person's `sub`, so it is
+  found through the existing `api_token_read` policy and the organization is entered with the
+  existing reason `api_token`. Scopes, the rate limit, the usage log, tenancy and audit are then
+  the ones of keys, in the same code. ADR-012 gains no table, policy, setting or reason
+  (amendment 11 records the two new columns).
+- **Clients: a closed list.** `ATESTA_MCP_OAUTH_CLIENTS` names each approved client id. Each is
+  pre-registered in the user pool by the owner as a public client with PKCE. No Dynamic Client
+  Registration and no Client ID Metadata Documents for now.
+- **Off by default.** OAuth is on only with `ATESTA_MCP_REMOTE=1`, the resource URL and at least
+  one approved client. The hosted server itself stays off until AWS is live. API keys keep
+  working at `/mcp` beside OAuth.
+
+### Not chosen
+
+- **An authorization server of our own:** token issuance, consent screens and key rotation are
+  security-critical code Atesta would have to keep. Cognito already holds the accounts and MFA.
+- **Open Dynamic Client Registration:** any program could register a client in the pool. It is
+  the path Cognito documents for MCP and the one that lets a hosted agent connect with the URL
+  alone, so it is the first thing to revisit, behind a WAF rate limit, once the closed list
+  proves too narrow.
+- **Scopes in the token:** Cognito scopes belong to the pool, not to an organization. A grant in
+  Atesta is per organization, revocable at once and audited with the rest.
+- **One resource URL per organization:** it would bind the organization into the token's `aud`,
+  but Cognito ties custom scopes to one resource server identifier, and the documented setup is
+  one identifier per MCP server.
+
+### Candidates (not verified: no AWS environment exists yet)
+
+Each closes in the first live test of the hosted server, before OAuth is offered to a customer.
+
+| Candidate | If it fails |
+|---|---|
+| The pool's discovery document carries what MCP clients require (PKCE methods, the registration-free flow) | Clients refuse to start the flow; OAuth stays off and keys remain the way in |
+| An access token from managed login has `aud` equal to the `resource` sent, and the scope reads `<resource URL>/agent` | The validation rule is adjusted to what Cognito really emits, in a reviewed change |
+| Each agent product accepts a pre-registered client id | That product waits for Dynamic Client Registration |
+
+### Consequences
+
+- An agent connected by OAuth has the rights of its grant: the same scopes and limits as a key,
+  and never more than an admin chose.
+- When a person leaves, or stops being an admin, their agents stop with them.
+- Usage and audit name the grant like a key, and the person who granted it answers for it.
+- The owner pre-registers each agent product in Cognito; a new product is a configuration
+  change, not code.

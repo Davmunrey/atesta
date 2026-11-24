@@ -243,7 +243,10 @@
       "api_token_scope": "Este token no tiene el permiso que hace falta.",
       "api_token_rate_limited": "Este token ha superado su límite de peticiones por minuto. Espera un momento.",
       "organization_suspended": "Esta organización está suspendida.",
-      "closure_by_operator": "El cierre lo inició Atesta: solo Atesta puede cancelarlo."
+      "closure_by_operator": "El cierre lo inició Atesta: solo Atesta puede cancelarlo.",
+      "agent_client_unknown": "Ese agente no está en la lista de agentes aprobados.",
+      "agent_grant_exists": "Ya tienes una autorización activa para ese agente en esta organización. Revócala antes de crear otra.",
+      "agent_oauth_off": "La conexión de agentes con inicio de sesión todavía no está disponible."
     },
     "request": {
       "error": "No se ha podido completar la solicitud. Vuelve a intentarlo.",
@@ -847,7 +850,9 @@
       "operator_closure_cancelled": "Canceló el cierre de la organización",
       "operator_erasure_requested": "Solicitó borrar los datos",
       "operator_erasure_approved": "Aprobó borrar los datos",
-      "operator_erasure_cancelled": "Canceló el borrado de los datos"
+      "operator_erasure_cancelled": "Canceló el borrado de los datos",
+      "agent_grant_created": "Autorizó un agente de IA",
+      "agent_grant_revoked": "Revocó la autorización de un agente de IA"
     },
     "day": "Día",
     "unknown": "Otra acción",
