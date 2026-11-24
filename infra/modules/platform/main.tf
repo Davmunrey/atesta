@@ -152,7 +152,7 @@ module "ecr" {
 # Services come up once images are pushed (pinned by digest) and the edge certificates exist;
 # until then images and edge stay null and only the base layer is planned.
 variable "images" {
-  type    = object({ api = string, worker = string, scan = string })
+  type    = object({ api = string, worker = string, scan = string, egress = string })
   default = null
 }
 
@@ -232,6 +232,7 @@ module "ecs" {
   queues_key_arn        = module.kms.queues_key_arn
   m365_secret_arn       = aws_secretsmanager_secret.m365_scanner.arn
   alert_topic_arn       = aws_sns_topic.alerts.arn
+  egress_count          = var.nat_per_az ? 2 : 1
   certificate_arn       = var.edge.api_certificate_arn
   images                = var.images
   environment           = local.app_environment
@@ -251,6 +252,9 @@ module "ecs" {
     }
   }
   decrypt_key_arns = [module.kms.database_key_arn]
+
+  endpoints_security_group_id = module.network.endpoints_security_group_id
+  s3_prefix_list_id           = module.network.s3_prefix_list_id
 }
 
 # One set of scan roles per customer (owner, 2026-11-24): listed in scan_organizations, applied

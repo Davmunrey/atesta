@@ -101,7 +101,7 @@ output "cognito_domain" {
 # decides. images, edge and mail_domain stay null until images are pushed and the owner has a
 # domain and certificates (docs/runbooks/deploy.md); until then only the base layer is planned.
 variable "images" {
-  type    = object({ api = string, worker = string, scan = string })
+  type    = object({ api = string, worker = string, scan = string, egress = string })
   default = null
 }
 

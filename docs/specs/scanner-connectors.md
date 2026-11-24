@@ -698,7 +698,7 @@ count reads the tenant's own scans through the `(organization_id, id)` index; no
 | Start | `docker run -i --rm --user 10001 --read-only --tmpfs /work --tmpfs /home/scanner --cap-drop ALL --security-opt no-new-privileges --cpus 2 --memory 4g --network atesta-scan` | One `RunTask` per run, task definition pinned to the image digest |
 | Ids | `-e` with ids only | `containerOverrides.environment` with ids only. ECS overrides have no `secrets` member and are plain key-value pairs |
 | Credential | `LocalCredentialStore` file streamed to the container's stdin | Wrapper reads the secret with the task role |
-| Network | `atesta-scan` network whose only way out is an allowlisting proxy with the Fargate host list; `FixtureRunner` and `atesta-dev-scan` use `--network none` | No public IP. Egress only through an allowlisting proxy or AWS Network Firewall domain/SNI allowlist. M365: login.microsoftonline.com, graph.microsoft.com, management.azure.com (step 5d); from PR 10 outlook.office365.com and the Teams PowerShell endpoints. Google: oauth2.googleapis.com, admin.googleapis.com, cloudidentity.googleapis.com. AWS only through VPC endpoints in eu-south-2 (S3, Secrets Manager, KMS, CloudWatch Logs). Everything else denied and logged (host list: candidate) |
+| Network | `atesta-scan` network whose only way out is an allowlisting proxy with the Fargate host list; `FixtureRunner` and `atesta-dev-scan` use `--network none` | No public IP. Egress only through the Envoy allowlisting proxy (issue 454; owner, 2026-11-24: a proxy, not AWS Network Firewall). M365: login.microsoftonline.com, graph.microsoft.com, management.azure.com (step 5d); from PR 10 outlook.office365.com and the Teams PowerShell endpoints. Google: oauth2.googleapis.com, admin.googleapis.com, cloudidentity.googleapis.com. AWS only through VPC endpoints in eu-south-2: the S3 gateway, and interface endpoints for ECR, Secrets Manager and CloudWatch Logs. KMS is called by S3 and Secrets Manager, never by the task. Everything else denied and logged (host list: candidate until the live golden test) |
 | Tenant scoping | Mount `<root>/<org_id>/scans/<scan_id>/attempt-<n>/out/` read-write and that attempt's `job.json` read-only, nothing else | Task role per org and provider (`overrides.taskRoleArn`): `scan-m365-<org_id>` reads only the M365 certificate; `verify-gws-<org_id>` reads only that org's two Google keys; `scan-gws-<org_id>` reads only `atesta/<env>/google/<org_id>`. S3: PutObject only under `<org_id>/scans/*/attempt-*/out/*`, GetObject only `<org_id>/scans/*/attempt-*/job.json`; a bucket policy denies these roles and the worker PutObject under `*/scans/*` without `s3:if-none-match` (both write with one PutObject, so multipart parts are refused too), and denies these roles `s3:DeleteObject*`, ACL, retention, legal-hold and tagging writes and any write to `*/job.json`; versioning on. Created with a permissions boundary. Three roles per org: 333 orgs per account by default (1,000 roles), 3,333 at most |
 | Output | `LocalScanStore` | S3 under the tenant prefix, eu-south-2 |
 | Logs | Wrapper's own JSON lines only | Same, to CloudWatch in eu-south-2 |
@@ -825,6 +825,55 @@ proxy (issue 454).
   - a conditional write that finds the key answers 412 to a writer without a bucket-wide list;
   - Object Lock accepts the SDK's default CRC32 checksum header in place of `Content-MD5` (AWS,
     "Uploading objects to an Object Lock enabled bucket" names `x-amz-sdk-checksum-algorithm`).
+
+#### Scan egress (issue 454)
+
+- **Proxy.** Envoy runs from its distroless image, pinned by digest, as the ECS service
+  `<env>-egress` (`infra/egress/`):
+  - its allowlist is `infra/egress/envoy.yaml`, and the hosts are the Network row above;
+  - it terminates HTTP/1.1 CONNECT on port 3128;
+  - each allowed `<host>:443` tunnels to a fixed `LOGICAL_DNS` cluster of that same host and
+    port;
+  - every other request, CONNECT or plain HTTP, gets 403;
+  - there is no admin interface, no dynamic forward proxy and no original-destination cluster,
+    so a client never chooses where a tunnel goes;
+  - TLS stays end to end;
+  - its access log carries the CONNECT authority, the response code and flags, bytes and
+    duration, never a path.
+
+  Envoy is Apache-2.0. Squid and HAProxy are GPL (rule 4).
+- **Service.**
+  - 1 task in dev, 2 in prod, in the private subnets, with no task role.
+  - The scan execution role pulls it and ships its logs.
+  - Scan tasks reach it as `egress.<env>.internal`, a Cloud Map private DNS name with one A record
+    per task and a TTL of 10 s.
+- **Scan task settings:**
+  - `HTTPS_PROXY=http://egress.<env>.internal:3128`;
+  - `NO_PROXY=amazonaws.com,169.254.170.2`. AWS SDK calls go straight to the endpoints and the S3
+    gateway, and the credentials endpoint is plain HTTP, which `HTTPS_PROXY` never takes.
+- **Security groups:**
+  - the scan group may reach only the proxy (3128), the interface endpoints (443) and the S3
+    prefix list (443), and never `0.0.0.0/0`;
+  - the proxy group takes 3128 from the scan group only and sends 443 out through NAT.
+- **Interface endpoints.** Fargate pulls the image and ships the logs through the task's own
+  network interface, and it does not use the container's proxy (AWS, "Amazon ECR interface VPC
+  endpoints"; "Fargate task networking"). So the VPC gets interface endpoints for `ecr.api`,
+  `ecr.dkr`, `logs` and `secretsmanager`:
+  - private DNS is on, and 443 is open from the VPC CIDR;
+  - there is one zone in dev and two in prod;
+  - every task in the VPC uses them.
+- **CI.** The images job builds the proxy image and runs `envoy --mode validate`. It then runs
+  the container as ECS does: read-only root, user 10001, no capabilities. It checks:
+  - `login.microsoftonline.com` gets a 200 CONNECT;
+  - `example.com` gets a 403 CONNECT;
+  - plain HTTP gets a 403.
+- **Limits:**
+  - Security groups do not filter Amazon DNS (AWS, "Security groups"). A compromised scan could
+    still tunnel data out in DNS queries until a Route 53 Resolver DNS Firewall exists.
+  - Whether pwsh (.NET), MSAL, httpx and httplib2 inside Prowler all honour `HTTPS_PROXY` is a
+    candidate until the live golden test (#300). A client that ignores it fails closed: it
+    cannot leave the VPC.
+  - Adding the PowerShell hosts (PR 10) means a virtual host and a cluster in `envoy.yaml`.
 
 #### Failure-rate alert (issue 453)
 

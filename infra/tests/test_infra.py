@@ -331,7 +331,7 @@ def test_every_container_is_locked_down_and_logs_to_its_own_group() -> None:
     assert locked["readonlyRootFilesystem"] is True and locked["privileged"] is False
     assert locked["user"] == "10001"
     assert locked["linuxParameters"]["capabilities"]["drop"] == ["ALL"]
-    assert set(CONTAINERS) == {"api", "worker", "migrate", "bootstrap", "scan"}
+    assert set(CONTAINERS) == {"api", "worker", "migrate", "bootstrap", "scan", "egress"}
     for name, container in CONTAINERS.items():
         assert container.startswith("${merge(local.locked, {"), name
         assert 'logDriver = "awslogs"' in container, name
@@ -356,7 +356,7 @@ def test_images_are_pinned_by_digest_and_registries_are_immutable() -> None:
     rule = ECS_VARS["images"]["validation"][0]["condition"]
     assert "@sha256:[0-9a-f]{64}$" in rule
     repos = resources("modules/ecr/main.tf")["aws_ecr_repository.this"]
-    assert repos["for_each"] == '${toset(["api", "worker", "scan"])}'
+    assert repos["for_each"] == '${toset(["api", "worker", "scan", "egress"])}'
     assert repos["image_tag_mutability"] == "IMMUTABLE"
     assert repos["image_scanning_configuration"] == [{"scan_on_push": True}]
     assert repos["encryption_configuration"][0]["encryption_type"] == "KMS"
@@ -375,13 +375,26 @@ def test_services_run_on_fargate_in_private_subnets_and_roll_back() -> None:
     assert task["network_mode"] == "awsvpc" and task["requires_compatibilities"] == ["FARGATE"]
 
 
-def test_one_scan_task_definition_with_no_baked_role_and_https_only_egress() -> None:
+def test_one_scan_task_definition_with_no_baked_role_and_no_way_out_but_the_proxy() -> None:
+    """Issue 454: the proxy, the VPC endpoints and S3's gateway; never 0.0.0.0/0."""
     scan = ECS["aws_ecs_task_definition.scan"]
     assert "task_role_arn" not in scan  # ADR-004: the worker passes the per-org role per run
     assert (scan["cpu"], scan["memory"]) == ("2048", "4096")  # scanner-connectors D13
-    egress = [k for k in ECS if k.startswith("aws_vpc_security_group_egress_rule.scan")]
-    assert egress == ["aws_vpc_security_group_egress_rule.scan_https"]
-    assert ECS["aws_vpc_security_group_egress_rule.scan_https"]["from_port"] == 443
+    rules = {
+        k.removeprefix("aws_vpc_security_group_egress_rule."): v
+        for k, v in ECS.items()
+        if k.startswith("aws_vpc_security_group_egress_rule.scan")
+    }
+    assert set(rules) == {"scan_proxy", "scan_endpoints", "scan_s3"}
+    assert all(r["security_group_id"] == "${aws_security_group.scan.id}" for r in rules.values())
+    assert not [r for r in rules.values() if "cidr_ipv4" in r or "cidr_ipv6" in r]
+    proxy, endpoints, s3 = rules["scan_proxy"], rules["scan_endpoints"], rules["scan_s3"]
+    assert proxy["referenced_security_group_id"] == "${aws_security_group.egress.id}"
+    assert (proxy["from_port"], proxy["to_port"]) == (3128, 3128)
+    assert endpoints["referenced_security_group_id"] == "${var.endpoints_security_group_id}"
+    assert s3["prefix_list_id"] == "${var.s3_prefix_list_id}"
+    for rule in (endpoints, s3):
+        assert (rule["from_port"], rule["to_port"]) == (443, 443)
     assert not [k for k in ECS if k.startswith("aws_vpc_security_group_ingress_rule.scan")]
 
 
@@ -955,11 +968,13 @@ def test_the_worker_alone_gets_every_fargate_runner_setting() -> None:
 
 
 def test_the_scan_task_reads_its_job_from_s3_by_its_own_settings() -> None:
-    assert ECS_LOCALS["scan_environment"] == {
+    environment = ECS_LOCALS["scan_environment"]
+    assert {k: environment[k] for k in ("ATESTA_SCAN_SOURCE", "ATESTA_SCAN_BUCKET")} == {
         "ATESTA_SCAN_SOURCE": "s3",
         "ATESTA_SCAN_BUCKET": "${local.evidence_bucket}",
-        "AWS_DEFAULT_REGION": "${local.region}",
     }
+    assert environment["AWS_DEFAULT_REGION"] == "${local.region}"
+    assert not {k for k in environment if "SECRET" in k or "TOKEN" in k}
     assert "for k, v in local.scan_environment" in CONTAINERS["scan"]
 
 
@@ -998,3 +1013,104 @@ def test_the_failure_rate_alarm_counts_scan_finished_events_and_emails_the_owner
     alarms = next(s for s in kms["queues"]["statement"] if s.get("sid") == "CloudWatchAlarmsUse")
     assert alarms["principals"][0]["identifiers"] == ["cloudwatch.amazonaws.com"]
     assert alarms["actions"] == ["kms:Decrypt", "kms:GenerateDataKey*"]
+
+
+# --- scan egress: Envoy proxy and VPC endpoints (#454) ---------------------------------------
+
+WORKFLOWS = INFRA.parent / ".github" / "workflows"
+
+
+def test_the_proxy_takes_connects_from_scan_tasks_only_and_sends_https_out() -> None:
+    inbound = ECS["aws_vpc_security_group_ingress_rule.egress_from_scans"]
+    assert inbound["security_group_id"] == "${aws_security_group.egress.id}"
+    assert inbound["referenced_security_group_id"] == "${aws_security_group.scan.id}"
+    assert (inbound["from_port"], inbound["to_port"]) == (3128, 3128)
+    ingress = [k for k in ECS if k.startswith("aws_vpc_security_group_ingress_rule.egress")]
+    assert ingress == ["aws_vpc_security_group_ingress_rule.egress_from_scans"]
+    out = ECS["aws_vpc_security_group_egress_rule.egress_https"]
+    assert out["security_group_id"] == "${aws_security_group.egress.id}"
+    assert (out["cidr_ipv4"], out["from_port"], out["to_port"]) == ("0.0.0.0/0", 443, 443)
+
+
+def test_the_proxy_runs_privately_with_no_task_role_behind_a_private_dns_name() -> None:
+    task = ECS["aws_ecs_task_definition.egress"]
+    assert "task_role_arn" not in task  # Envoy calls no AWS API
+    assert task["execution_role_arn"] == "${aws_iam_role.scan_execution.arn}"  # pull, logs
+    assert (task["cpu"], task["memory"]) == ("256", "512")
+    service = ECS["aws_ecs_service.egress"]
+    assert service["desired_count"] == "${var.egress_count}"
+    network = service["network_configuration"][0]
+    assert network["assign_public_ip"] is False
+    assert network["subnets"] == "${var.private_subnet_ids}"
+    assert network["security_groups"] == ["${aws_security_group.egress.id}"]
+    assert service["service_registries"][0]["registry_arn"] == (
+        "${aws_service_discovery_service.egress.arn}"
+    )
+    assert service["deployment_circuit_breaker"][0] == {"enable": True, "rollback": True}
+    namespace = ECS["aws_service_discovery_private_dns_namespace.this"]
+    assert (namespace["name"], namespace["vpc"]) == ("${var.name}.internal", "${var.vpc_id}")
+    discovery = ECS["aws_service_discovery_service.egress"]["dns_config"][0]
+    assert discovery["dns_records"] == [{"type": "A", "ttl": 10}]
+    assert '"egress"' in str(ECS["aws_cloudwatch_log_group.this"]["for_each"])
+    assert "var.images.egress" in CONTAINERS["egress"]
+    assert "containerPort = 3128" in CONTAINERS["egress"]
+    assert "secrets" not in CONTAINERS["egress"] and "environment" not in CONTAINERS["egress"]
+    platform = {k: v for m in PLATFORM_FILE["module"] for k, v in m.items()}
+    assert platform["ecs"]["egress_count"] == "${var.nat_per_az ? 2 : 1}"
+
+
+def test_the_scan_task_goes_through_the_proxy_except_to_aws() -> None:
+    environment = ECS_LOCALS["scan_environment"]
+    assert environment["HTTPS_PROXY"] == (
+        "http://${aws_service_discovery_service.egress.name}."
+        "${aws_service_discovery_private_dns_namespace.this.name}:3128"
+    )
+    assert environment["NO_PROXY"] == "amazonaws.com,169.254.170.2"
+    assert "HTTP_PROXY" not in environment  # the credentials endpoint is plain HTTP
+
+
+def test_interface_endpoints_carry_image_pulls_logs_and_secrets() -> None:
+    """AWS, "Amazon ECR interface VPC endpoints": Fargate 1.4.0+ pulls through the task's ENI."""
+    endpoint = NETWORK["aws_vpc_endpoint.interface"]
+    assert endpoint["for_each"] == '${toset(["ecr.api", "ecr.dkr", "logs", "secretsmanager"])}'
+    assert endpoint["vpc_endpoint_type"] == "Interface"
+    assert endpoint["private_dns_enabled"] is True
+    assert endpoint["subnet_ids"] == "${local.endpoint_subnets}"
+    assert endpoint["security_group_ids"] == ["${aws_security_group.endpoints.id}"]
+    network_file = load("modules/network/main.tf")
+    (subnets,) = [b["endpoint_subnets"] for b in network_file["locals"] if "endpoint_subnets" in b]
+    assert subnets == "${var.nat_per_az ? aws_subnet.private[*].id : [aws_subnet.private[0].id]}"
+    inbound = NETWORK["aws_vpc_security_group_ingress_rule.endpoints_https"]
+    assert (inbound["cidr_ipv4"], inbound["from_port"], inbound["to_port"]) == (
+        "${var.cidr}",
+        443,
+        443,
+    )
+    outputs = {k: v for b in network_file["output"] for k, v in b.items()}
+    assert outputs["s3_prefix_list_id"]["value"] == "${aws_vpc_endpoint.s3.prefix_list_id}"
+    assert outputs["endpoints_security_group_id"]["value"] == "${aws_security_group.endpoints.id}"
+
+
+def test_every_image_variable_includes_the_egress_proxy() -> None:
+    expected = "${object({api = string, worker = string, scan = string, egress = string})}"
+    assert ECS_VARS["images"]["type"] == expected
+    for path in ("modules/platform/main.tf", "envs/dev/main.tf", "envs/prod/main.tf"):
+        variables = {k: v for b in load(path)["variable"] for k, v in b.items()}
+        assert variables["images"]["type"] == expected, path
+
+
+def test_ci_validates_the_allowlist_and_tests_it_as_ecs_runs_it() -> None:
+    ci = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())
+    steps = [s.get("run", "") for s in ci["jobs"]["images"]["steps"]]
+    (proxy,) = [r for r in steps if "infra/egress/Dockerfile" in r]
+    assert "--mode validate" in proxy
+    assert "--read-only" in proxy and "--user 10001" in proxy and "--cap-drop ALL" in proxy
+    assert 'test "$allowed" = 200' in proxy
+    assert 'test "$denied" = 403' in proxy and 'test "$plain" = 403' in proxy
+
+
+def test_the_deploy_builds_and_pins_the_egress_image() -> None:
+    deploy = (WORKFLOWS / "deploy.yml").read_text()
+    assert "docker build -f infra/egress/Dockerfile" in deploy
+    assert '--arg egress "$(digest "$egress:$tag")"' in deploy
+    assert "egress: $egress" in deploy
