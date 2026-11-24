@@ -78,7 +78,8 @@
   .ens-group > summary:hover { color: var(--color-link); }
   .ens-count { font-size: 0.875rem; font-weight: 400; color: var(--color-muted); }
   .ens-table { margin-bottom: 1.5rem; }
-  .ens-table table { width: 100%; min-width: 42rem; border-collapse: collapse; font-size: 0.9375rem; font-variant-numeric: tabular-nums; }
+  /* The width below which the table scrolls is the shared data table's (packages/ui). */
+  .ens-table table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; font-variant-numeric: tabular-nums; }
   .table-region.ens-table :is(th, td) { padding: 0 0.75rem; border-bottom: 1px solid var(--color-border-subtle); text-align: left; vertical-align: middle; }
   .table-region.ens-table td { padding-block: 0.5rem; }
   .table-region.ens-table thead th { padding-block: 0.625rem; font-size: 0.8125rem; font-weight: 500; color: var(--color-muted); white-space: nowrap; }
@@ -96,7 +97,7 @@
   @keyframes page-rise { from { transform: translateY(2.5rem); clip-path: inset(0 0 14% 0 round var(--radius-lg)); } }
 }
 
-/* Narrow tables stack like every console table (console.css, unlayered). These overrides sit outside
+/* Narrow tables stack like every console table (packages/ui, unlayered). These overrides sit outside
    the layer too, so they can win: the code and title head each row, and the three category rules
    sit side by side. */
 @container (width < 36rem) {

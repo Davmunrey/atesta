@@ -19,10 +19,15 @@ const ORG = "primary";
 const owner = { organization_id: ORG, organization_name: "Acme", role: "owner" as const, access_expires_on: null, closure_erase_after: null };
 const src = join(__dirname, "../../src");
 const css = (name: string) => readFileSync(join(src, "styles", name), "utf8");
+// The shared component rules live in the UI package (ui-package spec, #441).
+const shared = readFileSync(join(__dirname, "../../../../packages/ui/src/styles/components.css"), "utf8");
 const components = join(src, "components");
 
 it("styles selects in forms like every other field", () => {
-  expect(css("console.css")).toMatch(/\.routine-form :is\(input, textarea, select\), \.field \{[^}]*border: 1px solid var\(--color-border\)/);
+  const field = shared.match(/\n {2}\.field \{([^}]*)\}/)![1]!;
+  expect(field).toMatch(/border: 1px solid var\(--color-border\)/);
+  // Console form controls carry the shared field's declarations, so the two never drift apart.
+  expect(css("console.css").match(/\.routine-form :is\(input, textarea, select\) \{([^}]*)\}/)![1]).toBe(field);
 });
 
 it("draws every console badge from the one severity mapping", () => {
@@ -58,7 +63,7 @@ it("does not repeat the page title on the register panel", async () => {
 
 it("bounds page descriptions, takes placeholders from the muted token and keeps room for the assistant", () => {
   const console_ = css("console.css");
-  expect(console_).toMatch(/\.page-description \{ max-width: 72ch;/);
+  expect(shared).toMatch(/\.page-description \{ max-width: 72ch;/);
   expect(console_).toMatch(/\.console-page :is\(input, textarea\)::placeholder \{ color: var\(--color-muted\);/);
   expect(console_).toMatch(/body:has\(\.assistant-launcher\) \.console-page \{ padding-bottom:/);
   expect(console_).toMatch(/html:has\(\.console\):has\(\.assistant-launcher\) \{ scroll-padding-bottom:/);

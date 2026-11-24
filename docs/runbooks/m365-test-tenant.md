@@ -7,9 +7,9 @@ Anything not yet tried in a real tenant is marked **candidate**.
 
 ## Rules for this runbook
 
-- **No secret leaves its place.** The Sign-in client secret goes from the Entra portal straight
-  into AWS Secrets Manager. The scanner's private key is generated inside AWS and never leaves it.
-  Neither goes into a chat, an issue, a pull request, the repository, a note or a screenshot.
+- **No secret leaves its place.** Both apps authenticate with a certificate, and neither has a
+  client secret (#363). Each private key is generated inside AWS and never leaves it. It never
+  goes into a chat, an issue, a pull request, the repository, a note or a screenshot.
 - **No callback URL is copied.** After Microsoft redirects back, the address bar holds a one-time
   `code` and a `state`. Do not paste it anywhere; report the screen you see instead.
 - **Read-only.** The scanner app lists only the generated read permissions (AGENTS.md rule 1).
@@ -85,16 +85,17 @@ no application permissions (spec step 3).
    unticked.
 4. **API permissions:** Microsoft adds the delegated Microsoft Graph `User.Read` to every new
    registration. Remove it from the list, which must end **empty**. `openid profile` is requested at sign-in and needs no entry here.
-5. **Certificates & secrets > Client secrets > New client secret.**
-   - Do this step **during the infrastructure session**, with the Secrets Manager console open in
-     eu-south-2.
-   - Description: `dev-<yyyy-mm>`. Expires: **Custom, 180 days** (the spec's rotation; Microsoft
-     caps secrets at 24 months and recommends under 12).
-   - The **Value** is shown once. Paste it straight into the Secrets Manager secret that the
-     session creates for `ATESTA_M365_SIGNIN_CLIENT_SECRET`, then leave the page. Never copy it
-     anywhere else.
-   - Why a secret here and not a certificate: this app has no permissions, and a secret can only
-     redeem its sign-in codes. Before the first customer it moves to a certificate (#363).
+5. **Certificates & secrets > Certificates > Upload certificate:**
+   - Upload the **public** certificate (`.cer`, `.pem` or `.crt`) that the infrastructure session
+     generates inside AWS for this app: its own key, not the scanner's. The key is RSA, at least
+     2048 bits, and the certificate lasts one year at most.
+   - Its private key, a passwordless PFX in base64, stays in Secrets Manager. Only the API reads
+     it, as `ATESTA_M365_SIGNIN_CERTIFICATE`.
+   - Description: `dev-<yyyy-mm>`. Record the **Thumbprint** and the expiry date; neither is
+     secret.
+   - Check that **Client secrets** and **Federated credentials** both show 0. Microsoft says
+     client secrets "should not be used in production environments", so this app never gets one
+     (#363). The API refuses to start if `ATESTA_M365_SIGNIN_CLIENT_SECRET` is still set.
 6. **Authentication > App instance property lock > Configure:** **Enable property lock** and
    **All properties** must be ticked. Since June 2026 it is on by default for new apps; check it
    anyway, then **Save**.
@@ -148,7 +149,8 @@ permissions and authenticates to Graph with a certificate only.
 | Value | Secret | Goes to | When |
 |---|---|---|---|
 | Sign-in Application (client) ID | No | API task variable `ATESTA_M365_SIGNIN_CLIENT_ID` | Infrastructure session |
-| Sign-in client secret Value | **Yes** | Secrets Manager, read by the API as `ATESTA_M365_SIGNIN_CLIENT_SECRET` | Infrastructure session, typed only into the console |
+| Sign-in private key (PFX) | **Yes** | Generated in AWS; Secrets Manager, read by the API as `ATESTA_M365_SIGNIN_CERTIFICATE` | Infrastructure session; never exported |
+| Sign-in certificate thumbprint and expiry | No | Owner's operations notes, for the yearly rotation | After step 3.5 |
 | Scanner Application (client) ID | No | API task variable `ATESTA_M365_SCANNER_CLIENT_ID`, and `AZURE_CLIENT_ID` in the scanner credential secret | Infrastructure session |
 | Scanner private key (PFX) | **Yes** | Generated in AWS; `M365_CERTIFICATE_CONTENT` in the scanner credential secret | Infrastructure session; never exported |
 | Scanner certificate thumbprint and expiry | No | Owner's operations notes, for the yearly rotation with two overlapping certificates | After step 4.6 |
@@ -165,7 +167,7 @@ Until all three `ATESTA_M365_*` values are set, onboarding answers 503
 | Supported account types | Multiple Entra ID tenants | Multiple Entra ID tenants |
 | Redirect URIs (Web) | exactly `.../auth/m365/signin-callback` | exactly `.../auth/m365/consent-callback` |
 | API permissions | none | 20 Application, 0 Delegated |
-| Credentials | 1 client secret, at most 180 days | 1 certificate, 0 secrets, 0 federated |
+| Credentials | 1 certificate, 0 secrets, 0 federated | 1 certificate, 0 secrets, 0 federated |
 | App instance property lock | on, all properties | on, all properties |
 
 ## 7. The first onboarding (live golden of #331)
@@ -185,12 +187,29 @@ Until all three `ATESTA_M365_*` values are set, onboarding answers 503
    `connections.incomplete_permissions`, `connections.consent_denied` or
    `scanning.tenant_mismatch`. Never send a URL, a token or a screenshot of the address bar.
 
-## 8. Undo
+## 8. Rotate the Sign-in certificate (yearly, or at once if the key may be exposed)
+
+An app registration can hold several certificates, so the old one keeps working while the new
+one is put in place.
+
+1. In the infrastructure session, generate a new key and certificate for the Sign-in app inside
+   AWS. Do not replace the current secret value yet.
+2. In Atesta dev, upload the new **public** certificate (section 3, step 5). The list now shows
+   two certificates.
+3. Put the new PFX in the Secrets Manager secret and replace the API tasks, so they read it.
+4. Start a Microsoft 365 connection in dev and sign in. It must reach the consent screen.
+5. Delete the old certificate in Entra, and the old secret version in Secrets Manager.
+
+If the certificate expires first, onboarding answers 503 `connections.microsoft_unavailable` and
+Microsoft is never called. Existing connections and scans go on: they use the Scanner app's
+certificate, which has its own rotation.
+
+## 9. Undo
 
 - **Revoke as a customer would:** in the test tenant, go to **Entra ID > Enterprise apps >
   Atesta Scanner (dev) > Properties > Delete**. It can be restored for 30 days. Atesta marks the
   connection `revoked` at its next verification.
-- **Retire a credential:** in Atesta dev, delete the secret or the certificate under
+- **Retire a credential:** in Atesta dev, delete the certificate under
   **Certificates & secrets**, and delete its Secrets Manager entry in the same session.
 - **Drop the dev tenant:** select **Delete directory** on its Overview page, once no app is in
   use.
@@ -214,6 +233,7 @@ Until all three `ATESTA_M365_*` values are set, onboarding answers 503
 | `User.Read` is added automatically to a new registration; permissions can be removed | https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-configure-app-access-web-apis (2025-01-27) |
 | Manifest editor under Manifest; `requiredResourceAccess` holds `resourceAppId` and `resourceAccess` `{id, type}` | https://learn.microsoft.com/en-us/entra/identity-platform/reference-microsoft-graph-app-manifest (2025-02-03) |
 | Certificates upload as .cer, .pem or .crt and show a thumbprint. Secrets last at most 24 months, under 12 recommended, and "should not be used in production environments"; the Value is shown once | https://learn.microsoft.com/en-us/entra/identity-platform/how-to-add-credentials (2026-11-17) |
+| An app registration can hold several certificates at once ("The keyCredentials property is multi-valued, so you may upload multiple certificates for richer key management") | https://learn.microsoft.com/en-us/entra/identity-platform/certificate-credentials (read 2026-11-24) |
 | Property lock: Authentication > App instance property lock; "Since June 2026 ... Enabled by default for new applications" | https://learn.microsoft.com/en-us/entra/identity-platform/howto-configure-app-instance-property-locks (2026-10-02) |
 | Business plans are designed for up to 300 users | https://learn.microsoft.com/en-us/office365/servicedescriptions/office-365-platform-service-description/office-365-plan-options (2025-07-18) |
 | The E5 developer sandbox is only for Visual Studio Pro or Enterprise subscribers and some partner programs, hence a paid tenant | Microsoft 365 Developer Program FAQ, read in session on 2026-11-23 (issue #362) |
