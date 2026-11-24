@@ -6,11 +6,11 @@ import { type FormEvent, useId, useState } from "react";
 import { type ApiToken, curlExample, RATE_LIMITS, type Scope, SCOPES, useApiTokens, useApiTokenUsage, useCreateApiToken, useRevokeApiToken } from "@/lib/api/tokens";
 import { evidenceTemplate, type TemplateFormat, USE_CASES, type UseCase } from "@/lib/evidence-templates";
 import { type Membership, orgHome } from "@/lib/org";
+import { Badge } from "./badge";
 import { ErrorMessage } from "./error-message";
 import { Icon } from "./icons";
 import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
-import { RecordSummary } from "./record-summary";
-import { tokenSummary } from "@/lib/summaries";
+import { RecordSummary, useRecordStates } from "./record-summary";
 
 const EXPIRIES = [30, 90, 180, 365] as const;
 
@@ -18,15 +18,10 @@ const EXPIRIES = [30, 90, 180, 365] as const;
 export function IntegrationsView({ org }: { org: Membership }) {
   const t = useTranslations("integrations");
   const list = useApiTokens(org.organization_id);
-  const s = useTranslations("summary");
-  const format = useFormatter();
-  const sum = list.data?.length ? tokenSummary(list.data, new Date()) : null;
+  const states = useRecordStates();
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
-    {sum ? <RecordSummary lead={s("tokens.lead", { active: sum.active })} figures={[
-      { label: s("tokens.active"), value: format.number(sum.active), attention: sum.active === 0 },
-      { label: s("tokens.inactive"), value: format.number(sum.inactive) },
-      { label: s("tokens.lastUsed"), value: sum.lastUsed ? format.dateTime(new Date(sum.lastUsed), { dateStyle: "medium" }) : s("never") }]} /> : null}
+    {list.data?.length ? <RecordSummary state={states.tokens(list.data)} /> : null}
     <p className="text-sm">{t.rich("docs", { api: (c) => <Link href="/docs/api" className="underline">{c}</Link>, mcp: (c) => <Link href="/docs/mcp" className="underline">{c}</Link> })}</p>
     <Panel title={t("list")}>
       {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
@@ -53,9 +48,9 @@ function TokenRow({ token, orgId }: { token: ApiToken; orgId: string }) {
       <span className="block text-sm text-muted">{[...token.scopes.map((s) => t(`scopeShort.${s as Scope}`)), t("perMinute", { count: token.rate_limit_per_minute })].join(" · ")}</span>
       <Usage token={token} orgId={orgId} /></td>
     <td data-label={t("lastUsed")} className="tabular-nums">{token.last_used_at ? format.dateTime(new Date(token.last_used_at), { dateStyle: "medium", timeStyle: "short" }) : <span className="text-muted">{t("never")}</span>}</td>
-    <td data-label={t("state")}>{token.revoked_at ? <span className="badge" data-severity="missing"><Icon name="missing" />{t("revokedOn", { date: day(token.revoked_at) })}</span>
-      : expired ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("expiredOn", { date: day(token.expires_at) })}</span>
-      : <span className="badge" data-severity="done"><Icon name="done" />{t("activeUntil", { date: day(token.expires_at) })}</span>}</td>
+    <td data-label={t("state")}>{token.revoked_at ? <Badge state="tokenRevoked">{t("revokedOn", { date: day(token.revoked_at) })}</Badge>
+      : expired ? <Badge state="tokenExpired">{t("expiredOn", { date: day(token.expires_at) })}</Badge>
+      : <Badge state="tokenActive">{t("activeUntil", { date: day(token.expires_at) })}</Badge>}</td>
     <td data-label={t("actions")}>{token.revoked_at ? null : <button type="button" className="dashboard-button" disabled={revoke.isPending}
       aria-label={t("revokeNamed", { name: token.name })} onClick={() => revoke.mutate(token.id)}>{t("revoke")}</button>}
       {revoke.isError ? <ErrorMessage error={revoke.error} /> : null}</td>

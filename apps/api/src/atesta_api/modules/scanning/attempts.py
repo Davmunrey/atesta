@@ -20,8 +20,10 @@ from sqlalchemy.orm import Session
 
 from atesta_api.modules.connections.api import (
     ConnectionStateError,
+    ScanTarget,
     TenantMismatchError,
     VerificationReport,
+    google_propagation_open,
     record_verification,
     scan_target,
 )
@@ -35,7 +37,12 @@ from atesta_api.modules.scanning.error_codes import (
 )
 from atesta_api.modules.scanning.expected import exclusions
 from atesta_api.modules.scanning.ingest import ScanNotFoundError
-from atesta_api.modules.scanning.lifecycle import SCHEDULE_EVERY_SECONDS, defer_schedule
+from atesta_api.modules.scanning.lifecycle import (
+    SCHEDULE_EVERY_SECONDS,
+    AlreadyQueuedError,
+    defer_schedule,
+    queue_scan,
+)
 from atesta_api.modules.scanning.models import Scan
 from atesta_api.modules.scanning.runners import (
     JOB_FILE,
@@ -51,6 +58,17 @@ INGEST_TASK = "atesta:ingest_scan"  # the worker's namespaced name; a worker tes
 DONE = 0
 VERIFICATION_REFUSED = 10  # the only permanent wrapper exit (scanner/atesta_scanner/exits.py)
 VERIFICATION_FILE = "verification.json"  # the wrapper's report, beside the attempt's output
+SCAN_VERIFICATION_FILE = "scan-verification.json"  # a Google scan run's own check (issue 398)
+# Google: an activation that only waits for Google to propagate the delegation is retried.
+PROPAGATING = frozenset(
+    {
+        "scan_client_not_authorized",
+        "verifier_client_not_authorized",
+        "scan_client_authorization_event",
+        "verifier_client_authorization_event",
+    }
+)
+PROPAGATION_RETRY_SECONDS = 3600
 
 type Event = Mapping[str, str | int | None]
 
@@ -155,15 +173,26 @@ def start_attempt(
     target = scan_target(session, organization_id, scan.connection_id)
     # Onboarding (#331): the activation scan verifies a `verifying` connection, pins the tenant
     # bound at sign-in and names the consenting admin for the binding check (step 6).
+    # Google (issue 398): before the first `ok` the pin is the customer's primary domain.
     activating = target is not None and target.verifying and scan.trigger == "activation"
     tenant = None if target is None else target.external_tenant_id
     if activating and target is not None and tenant is None:
-        tenant = target.ms_tenant_id
+        tenant = target.ms_tenant_id if target.provider == "m365" else target.primary_domain
     if target is None or not (target.active or activating) or tenant is None:
+        return Started(None, _end(session, scan, "blocked", CONNECTION_NOT_ACTIVE))
+    google = _google_fields(target) if target.provider == "google_workspace" else {}
+    if google is None:
         return Started(None, _end(session, scan, "blocked", CONNECTION_NOT_ACTIVE))
     scan.status, scan.attempts, scan.error_code = "running", attempt, None
     scan.started_at = func.now()
-    job = ScanJob(organization_id, scan.id, attempt, scan.provider, target.credential_ref)
+    job = ScanJob(
+        organization_id,
+        scan.id,
+        attempt,
+        scan.provider,
+        target.credential_ref,
+        target.verifier_credential_ref,
+    )
     excluded = sorted(exclusions(expected_root, scan.provider))
     data: dict[str, object] = {
         "organization_id": str(organization_id),
@@ -176,20 +205,48 @@ def start_attempt(
     }
     if activating and target.consented_by_oid is not None:
         data["admin_oid"] = target.consented_by_oid
+    data.update(google)
     prefix = output_prefix(organization_id, scan.id, attempt).removesuffix("out/")
     _write_job_file(store, prefix + JOB_FILE, json.dumps(data, sort_keys=True).encode())
     session.flush()
     return Started(job, None)
 
 
-def _verification(store: ScanStore | None, job: ScanJob) -> VerificationReport | None:
+def _google_fields(target: ScanTarget) -> dict[str, object] | None:
+    """What a Google run needs besides ids (scanner-connectors spec, Google verifier contract).
+
+    The subject is the customer's super admin: it goes to the job file the container reads,
+    never to a log, an override or a job argument (rule 2). None while anything is missing.
+    """
+    accounts = [target.google_unique_id, target.google_verifier_unique_id]
+    if target.google_subject_email is None or None in accounts:
+        return None
+    fields: dict[str, object] = {
+        "google_subject": target.google_subject_email,
+        "google_service_accounts": accounts,
+    }
+    if target.verified_at is not None:  # re-read the audit log from the last `ok`
+        fields["verified_since"] = target.verified_at.isoformat()
+    return fields
+
+
+def _verification(
+    store: ScanStore | None, job: ScanJob, exit_code: int
+) -> VerificationReport | None:
     """The wrapper's report for this attempt; None when absent or not what the wrapper writes.
 
-    Untrusted output (rule 5): only these fields are read, each as text.
+    A Google attempt holds two (issue 398): the verify run's, recorded on exit 0, and the scan
+    run's own check, which wins on exit 10 because it refused later. Untrusted output (rule 5):
+    only these fields are read, each as text.
     """
     if store is None:
         return None
-    key = output_prefix(job.organization_id, job.scan_id, job.attempt) + VERIFICATION_FILE
+    prefix = output_prefix(job.organization_id, job.scan_id, job.attempt)
+    key = prefix + VERIFICATION_FILE
+    if exit_code == VERIFICATION_REFUSED and job.provider == "google_workspace":
+        with contextlib.suppress(OSError):
+            store.read(prefix + SCAN_VERIFICATION_FILE)
+            key = prefix + SCAN_VERIFICATION_FILE
     try:
         data = json.loads(store.read(key))
         tenant = data["tenant_id"]
@@ -228,7 +285,9 @@ def finish_attempt(
     scan = _locked(session, job.scan_id)
     if scan.status != "running" or scan.attempts != job.attempt:
         return Outcome(scan.status, False, None)  # a stale attempt
-    report = _verification(store, job) if exit_code in (DONE, VERIFICATION_REFUSED) else None
+    report = (
+        _verification(store, job, exit_code) if exit_code in (DONE, VERIFICATION_REFUSED) else None
+    )
     if exit_code == DONE:
         if report is not None and report.verdict == "ok":
             try:
@@ -255,6 +314,19 @@ def finish_attempt(
         return Outcome("collected", False, None)
     if exit_code == VERIFICATION_REFUSED:
         code = None
+        if report is not None and _propagating(session, scan, report):
+            # Google may take 24 h to reach every user: nothing is recorded, the connection
+            # stays verifying and the activation runs again in an hour (issue 398).
+            finished = _end(session, scan, "blocked", BLOCKED_CODES["incomplete"])
+            with contextlib.suppress(AlreadyQueuedError):
+                queue_scan(
+                    session,
+                    scan.organization_id,
+                    scan.connection_id,
+                    trigger="activation",
+                    delay_seconds=PROPAGATION_RETRY_SECONDS,
+                )
+            return Outcome("blocked", False, finished)
         if report is not None and report.verdict in BLOCKED_CODES:
             _record(session, scan, report)
             code = BLOCKED_CODES[report.verdict]
@@ -265,6 +337,17 @@ def finish_attempt(
     scan.error_code = error_code
     session.flush()
     return Outcome("running", True, None)
+
+
+def _propagating(session: Session, scan: Scan, report: VerificationReport) -> bool:
+    """An activation refused only because Google has not yet propagated the delegation."""
+    if scan.trigger != "activation" or scan.provider != "google_workspace":
+        return False
+    if report.verdict != "incomplete" or not report.missing:
+        return False
+    if not set(report.missing) <= PROPAGATING:
+        return False
+    return google_propagation_open(session, scan.organization_id, scan.connection_id)
 
 
 def abandon_scan(session: Session, scan_id: uuid.UUID) -> Event | None:

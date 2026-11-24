@@ -5,26 +5,20 @@ import { type FormEvent, useId, useState } from "react";
 import { type Policy, sha256Of, useApprovePolicy, useCreatePolicy, usePolicies } from "@/lib/api/routines";
 import { type Membership, orgHome } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
+import { Badge } from "./badge";
 import { ErrorMessage } from "./error-message";
-import { Icon } from "./icons";
 import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
-import { RecordSummary } from "./record-summary";
-import { policySummary } from "@/lib/summaries";
+import { RecordSummary, useRecordStates } from "./record-summary";
 
 /** Policies (recorded-routines spec): where each lives, its approved version and when it is due. */
 export function PoliciesView({ org }: { org: Membership }) {
   const t = useTranslations("routines.policies");
   const list = usePolicies(org.organization_id);
   const admin = canReviewControls(org.role);
-  const s = useTranslations("summary.policies");
-  const format = useFormatter();
-  const sum = list.data?.length ? policySummary(list.data, new Date().toISOString().slice(0, 10)) : null;
+  const states = useRecordStates();
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
-    {sum ? <RecordSummary lead={s("lead", { attention: sum.overdue + sum.unapproved })} figures={[
-      { label: s("total"), value: format.number(sum.total) }, { label: s("current"), value: format.number(sum.current) },
-      { label: s("overdue"), value: format.number(sum.overdue), attention: sum.overdue > 0 },
-      { label: s("unapproved"), value: format.number(sum.unapproved), attention: sum.unapproved > 0 }]} /> : null}
+    {list.data?.length ? <RecordSummary state={states.policies(list.data)} /> : null}
     <Panel title={t("list")}>
       {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
         : list.data.length === 0 ? <Empty>{t("empty")}</Empty>
@@ -37,13 +31,13 @@ export function PoliciesView({ org }: { org: Membership }) {
 function Status({ policy }: { policy: Policy }) {
   const t = useTranslations("routines.policies");
   const format = useFormatter();
-  if (!policy.latest || !policy.next_review_on) return <span className="badge" data-severity="missing"><Icon name="missing" />{t("unapproved")}</span>;
+  if (!policy.latest || !policy.next_review_on) return <Badge state="policyUnapproved">{t("unapproved")}</Badge>;
   const due = new Date(`${policy.next_review_on}T00:00:00Z`);
   const date = format.dateTime(due, { dateStyle: "medium", timeZone: "UTC" });
   const today = new Date().toISOString().slice(0, 10);
   return policy.next_review_on < today
-    ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("reviewOverdue", { date })}</span>
-    : <span className="badge" data-severity="done"><Icon name="done" />{t("reviewBy", { date })}</span>;
+    ? <Badge state="policyReviewOverdue">{t("reviewOverdue", { date })}</Badge>
+    : <Badge state="policyCurrent">{t("reviewBy", { date })}</Badge>;
 }
 
 function PolicyRow({ policy, orgId, admin }: { policy: Policy; orgId: string; admin: boolean }) {

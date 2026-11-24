@@ -12,7 +12,7 @@ import type { HeroMeasure } from "@/lib/catalog/landing";
 /** One section per capability, at the anchors the header menus use (A3, issue 377). */
 const SECTIONS: [id: string, key: string, View: ComponentType<{ measure: HeroMeasure }>][] = [
   ["autoevaluacion", "assess", MeasureView],
-  ["rutinas", "routines", RecordsView],
+  ["registros", "routines", RecordsView],
   ["incidentes", "incidents", IncidentView],
   ["dossier", "dossier", DossierView],
   ["asistente", "assistant", AssistantView],

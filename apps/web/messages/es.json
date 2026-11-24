@@ -221,7 +221,8 @@
       "signin_invalid": "El inicio de sesión con Microsoft no es válido o ha caducado. Vuelve a empezar la conexión desde Atesta.",
       "consent_denied": "No se concedió el consentimiento de administrador en Microsoft, así que la conexión no avanza. Vuelve a intentarlo con una cuenta de administrador global o de administrador de roles con privilegios.",
       "tenant_mismatch": "Microsoft devolvió un inquilino distinto del de tu inicio de sesión, o de este enlace. No se ha guardado nada; vuelve a empezar con una cuenta del inquilino correcto.",
-      "microsoft_unavailable": "No podemos contactar con Microsoft en este momento, o la conexión con Microsoft 365 aún no está disponible aquí. Inténtalo de nuevo más tarde."
+      "microsoft_unavailable": "No podemos contactar con Microsoft en este momento, o la conexión con Microsoft 365 aún no está disponible aquí. Inténtalo de nuevo más tarde.",
+      "google_subject_invalid": "Escribe el correo de un superadministrador de Google Workspace, como admin@tuempresa.es. Si está en un dominio secundario, indica también el dominio principal."
     },
     "identity": {
       "already_member": "Esta persona ya es miembro de la organización.",
@@ -251,6 +252,14 @@
     },
     "evidence": {
       "control_not_found": "Este control ya no está disponible. Recarga el catálogo.",
+      "file_content_mismatch": "El contenido no corresponde al tipo de archivo que indica su extensión. Comprueba el archivo y vuelve a subirlo.",
+      "file_empty": "El archivo está vacío. Elige un archivo con contenido.",
+      "file_integrity_failed": "El archivo guardado ya no coincide con el que se registró, así que no se entrega. El intento ha quedado en el registro de actividad. Contacta con soporte.",
+      "file_not_found": "No encontramos ese archivo, o no tienes acceso.",
+      "file_too_large": "El archivo supera el límite de 25 MB. Redúcelo o divídelo antes de subirlo.",
+      "file_type_not_allowed": "Ese tipo de archivo no se admite. Sube un PDF, PNG, JPG, TXT, CSV, DOCX o XLSX.",
+      "length_required": "El navegador no ha indicado el tamaño del archivo. Vuelve a intentarlo.",
+      "storage_unavailable": "Ahora mismo no se pueden guardar ni leer archivos. No se ha registrado nada; vuelve a intentarlo en unos minutos.",
       "submission_conflict": "Este envío ya se registró con otros datos. Recarga las evidencias antes de continuar."
     },
     "scanning": {
@@ -362,7 +371,7 @@
   "framework": {
     "back": "Volver al resumen",
     "loading": "Cargando requisitos…",
-    "intro": "Qué está comprobado, qué falta y cómo avanzar.",
+    "intro": "Los requisitos del marco y el estado de cada uno en tu organización.",
     "development": "Entorno de desarrollo. Los marcos sintéticos son ejemplos, no evaluaciones normativas.",
     "recordedScore": "Puntuación registrada:",
     "unassessed": "Todavía no hay una evaluación registrada para este marco.",
@@ -560,7 +569,7 @@
   "evidence": {
     "show": "Ver evidencias",
     "hide": "Ocultar evidencias",
-    "boundary": "Declaraciones y referencias aportadas por el equipo. No validan documentos ni aprueban el control.",
+    "boundary": "Declaraciones, referencias y archivos aportados por el equipo. Atesta no valida su contenido ni aprueba el control.",
     "saved": "Evidencia registrada. La revisión se decide por separado.",
     "loading": "Cargando evidencias…",
     "retry": "Reintentar",
@@ -582,7 +591,17 @@
     "immutable": "El registro se conserva en el historial. Para corregirlo, añade una nueva evidencia que explique el cambio.",
     "saving": "Guardando…",
     "save": "Guardar evidencia",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "upload": "Subir archivo",
+    "file": "Archivo",
+    "fileHelp": "{types}. Hasta {size}.",
+    "notScanned": "Atesta guarda el archivo tal cual y no lo analiza en busca de malware. Sube solo documentos de origen conocido.",
+    "uploading": "Subiendo…",
+    "uploaded": "Archivo subido. La revisión se decide por separado.",
+    "fileDetails": "{type} · {size}",
+    "download": "Descargar",
+    "downloadFile": "Descargar {name}",
+    "downloading": "Descargando…"
   },
   "register": {
     "title": "Autoevaluación de tu organización",
@@ -667,7 +686,7 @@
     "exportDossier": "Abrir el dossier para el auditor",
     "profile": "Perfil de cumplimiento",
     "profileNone": "Ninguno: proponer según la categoría y los niveles",
-    "profileHelp": "Si adoptáis un perfil publicado, Atesta propone cada medida según su declaración de aplicabilidad en lugar de las tablas por categoría.",
+    "profileHelp": "Si adoptas un perfil publicado, Atesta propone cada medida según su declaración de aplicabilidad en lugar de las tablas por categoría.",
     "profileSources": "Fuentes: {refs}.",
     "profileCandidate": "Selección extraída por Atesta de la guía citada, pendiente de revisión cualificada.",
     "profileAdopted": "Perfil adoptado: {title}.",
@@ -675,8 +694,8 @@
     "proposalCriterion": "La guía da criterios propios para esta medida: {reference}.",
     "guide": {
       "title": "Valorar el sistema paso a paso",
-      "candidate": "Pasos redactados por Atesta a partir de la guía citada, pendientes de revisión cualificada. La valoración es vuestra.",
-      "reviewed": "Pasos redactados por Atesta a partir de la guía citada y revisados por {name}. La valoración es vuestra.",
+      "candidate": "Pasos redactados por Atesta a partir de la guía citada, pendientes de revisión cualificada. La valoración es tuya.",
+      "reviewed": "Pasos redactados por Atesta a partir de la guía citada y revisados por {name}. La valoración es tuya.",
       "addInformation": "Añadir un tipo de información",
       "addService": "Añadir un servicio",
       "name": {
@@ -708,17 +727,18 @@
     "notApplicable": "No aplican",
     "pending": "Pendientes",
     "implementedOverTime": "Medidas implantadas a lo largo del tiempo",
-    "historyHelp": "La gráfica aparece cuando haya autoevaluaciones en al menos dos días distintos.",
+    "historyHelp": "La evolución aparece cuando el registro haya cambiado en al menos 7 días distintos.",
     "scoreOverTime": "Puntuación registrada a lo largo del tiempo",
     "score": "Puntuación",
     "showTable": "Ver los datos en una tabla",
-    "owners": "Encargados",
+    "owners": "Responsables de medidas",
     "unowned": "Pendientes sin responsable",
     "overdue": "Vencidas",
     "openByOwner": "Medidas abiertas por responsable",
     "noOwners": "Todavía no hay medidas asignadas. Asigna un responsable desde cada medida.",
     "formerMember": "Antiguo miembro",
-    "day": "Día"
+    "day": "Día",
+    "oneOwner": "{email} tiene {count, plural, one {la única medida abierta asignada} other {las # medidas abiertas asignadas}}."
   },
   "activity": {
     "title": "Actividad",
@@ -749,9 +769,14 @@
       "framework_assessment_reviewed": "Registró la revisión del responsable de seguridad",
       "framework_applicability_exported": "Exportó la declaración de aplicabilidad",
       "control_reviewed": "Revisó un control",
+      "evidence_file_downloaded": "Descargó un archivo de evidencia",
+      "evidence_file_integrity_failed": "Descarga bloqueada: el archivo no coincide con el registrado",
+      "evidence_file_uploaded": "Subió un archivo de evidencia",
       "evidence_statement_recorded": "Registró una evidencia",
       "connection_created": "Creó una conexión",
-      "connection_verification_requested": "Solicitó verificar una conexión de Microsoft 365",
+      "connection_verification_requested": "Solicitó verificar una conexión",
+      "connection_provisioned": "Atesta preparó las cuentas de servicio de Google Workspace",
+      "connection_google_subject_set": "Indicó el superadministrador de Google Workspace",
       "connection_consent_granted": "Concedió el consentimiento de Microsoft 365",
       "connection_disconnected": "Desconectó una conexión",
       "scan_requested": "Solicitó un análisis",
@@ -796,7 +821,7 @@
   "myWork": {
     "title": "Mi trabajo",
     "intro": "Las medidas que tienes asignadas, por fecha límite.",
-    "empty": "No tienes medidas asignadas. Un administrador puede asignártelas desde el registro de cada marco.",
+    "empty": "No tienes medidas asignadas. Quien administra la organización las asigna desde el registro de cada marco.",
     "framework": "Marco",
     "measure": "Medida",
     "due": "Fecha límite",
@@ -805,7 +830,9 @@
     "overdue": "Vencida",
     "pending": "Sin evaluar",
     "loading": "Cargando…",
-    "open": "Abrir {code}"
+    "open": "Abrir {code}",
+    "emptyAdmin": "No tienes medidas asignadas.",
+    "assign": "Asigna medidas desde Marcos"
   },
   "coverage": {
     "title": "Cobertura de la fuente oficial",
@@ -998,7 +1025,7 @@
       "closesOn": "Termina el {date}",
       "ended": "Terminó el {date}; ciérrala",
       "create": "Nueva formación",
-      "createHelp": "El enlace se muestra una sola vez. Compártelo tú, por correo o en vuestro chat; Atesta no envía correos.",
+      "createHelp": "El enlace se muestra una sola vez. Compártelo por correo o por el chat de tu equipo; Atesta no envía correos.",
       "campaignTitle": "Nombre de la formación",
       "material": "Enlace al material (https)",
       "closes": "Fecha de cierre",
@@ -1019,7 +1046,7 @@
     },
     "incidents": {
       "title": "Incidentes",
-      "intro": "Registra cada incidente y cuándo tuvisteis constancia. Atesta calcula los plazos de notificación de los marcos activos; decidir si hay que notificar es cosa vuestra.",
+      "intro": "Registra cada incidente y cuándo tuviste constancia. Atesta calcula los plazos de notificación de los marcos activos; decidir si hay que notificar te corresponde a ti.",
       "loading": "Cargando…",
       "list": "Incidentes",
       "empty": "No hay incidentes registrados.",
@@ -1031,15 +1058,15 @@
       "next": "Próximo plazo: {time}",
       "noClocks": "Sin plazos",
       "create": "Registrar un incidente",
-      "createHelp": "Indica cuándo tuvisteis constancia del incidente: los plazos cuentan desde ese momento.",
+      "createHelp": "Indica cuándo tuviste constancia del incidente: los plazos cuentan desde ese momento.",
       "incidentTitle": "Descripción breve",
       "awareAt": "Constancia del incidente",
       "significant": "Incidente significativo",
-      "significantHelp": "Según la definición del marco que os aplique.",
+      "significantHelp": "Según la definición del marco que te aplique.",
       "personalData": "Afecta a datos personales",
       "record": "Registrar",
       "clocks": "Plazos de notificación",
-      "clocksHelp": "Plazos tomados de los marcos activos. Marca cada aviso cuando lo hayáis enviado.",
+      "clocksHelp": "Plazos tomados de los marcos activos. Marca cada aviso cuando lo hayas enviado.",
       "clock": "Plazo",
       "source": "Fuente",
       "due": "Vencimiento",
@@ -1069,12 +1096,12 @@
       "criteriaSource": "Ver en la fuente oficial",
       "sentWhich": ": «{clock}»",
       "classifiedAt": "Clasificado como significativo",
-      "classifiedHelp": "Cuándo lo clasificasteis como significativo (grave). Algunos plazos cuentan desde ese momento, como la notificación inicial de DORA.",
+      "classifiedHelp": "Cuándo lo clasificaste como significativo (grave). Algunos plazos cuentan desde ese momento, como la notificación inicial de DORA.",
       "classified": "clasificado como significativo el {time}",
       "classificationMissing": "falta cuándo se clasificó como significativo",
       "classify": "Registrar la clasificación",
       "classifyTitle": "Clasificación como significativo",
-      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registréis.",
+      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registres.",
       "closeConfirm": "{count, plural, one {Queda # aviso sin enviar. ¿Cerrar igualmente?} other {Quedan # avisos sin enviar. ¿Cerrar igualmente?}}",
       "closeAnyway": "Cerrar",
       "cancel": "Cancelar"
@@ -1097,7 +1124,7 @@
   },
   "integrations": {
     "title": "Integraciones",
-    "intro": "Tokens para que vuestras herramientas (CI, copias, escáneres) y vuestros agentes de IA trabajen con Atesta. Cada token tiene solo los permisos que elijáis y un límite de peticiones por minuto.",
+    "intro": "Tokens para que tus herramientas (CI, copias, escáneres) y tus agentes de IA trabajen con Atesta. Cada token tiene solo los permisos que elijas y un límite de peticiones por minuto.",
     "loading": "Cargando…",
     "list": "Tokens",
     "empty": "Aún no hay tokens.",
@@ -1107,7 +1134,7 @@
     "days": "{count, plural, one {# día} other {# días}}",
     "add": "Crear el token",
     "create": "Nuevo token",
-    "createHelp": "El token se muestra una sola vez. Guárdalo como secreto en vuestra herramienta; Atesta solo conserva su huella.",
+    "createHelp": "El token se muestra una sola vez. Guárdalo como secreto en tu herramienta; Atesta solo conserva su huella.",
     "tokenTitle": "Token creado",
     "tokenHelp": "Cópialo ahora: no se volverá a mostrar.",
     "tokenLabel": "Token de API",
@@ -1127,7 +1154,7 @@
     "rateLimit": "Límite de peticiones",
     "perMinute": "{count, plural, one {# por minuto} other {# por minuto}}",
     "scopes": "Permisos",
-    "scopesHelp": "Marca solo lo que la herramienta necesita. Leer no permite escribir. Ningún permiso lanza escaneos ni toca vuestros sistemas.",
+    "scopesHelp": "Marca solo lo que la herramienta necesita. Leer no permite escribir. Ningún permiso lanza escaneos ni toca tus sistemas.",
     "scopeGroup": {
       "read": "Leer",
       "write": "Escribir"
@@ -1137,14 +1164,14 @@
       "incidents:read": "Leer los incidentes y sus plazos de notificación",
       "evidence:write": "Registrar evidencias",
       "assessment:propose": "Proponer autoevaluaciones (una persona las confirma o las rechaza)",
-      "routines:write": "Registrar rutinas: incidentes, formaciones y revisiones de acceso"
+      "routines:write": "Escribir registros periódicos: incidentes, formaciones y revisiones de acceso"
     },
     "scopeShort": {
       "compliance:read": "Leer el cumplimiento",
       "incidents:read": "Leer los incidentes",
       "evidence:write": "Registrar evidencias",
       "assessment:propose": "Proponer autoevaluaciones",
-      "routines:write": "Registrar rutinas"
+      "routines:write": "Escribir registros periódicos"
     },
     "readOnlyPreset": "Marcar solo lectura",
     "readOnly": "Solo lectura",
@@ -1202,7 +1229,7 @@
     "title": "Dossier para el auditor",
     "frameworks": "Marcos",
     "loading": "Preparando el dossier…",
-    "intro": "Todo lo que pide el auditor en un solo documento: resumen para dirección, aplicabilidad, evidencias por requisito y rutinas. Imprímelo o guárdalo en PDF desde el navegador.",
+    "intro": "El dossier reúne el resumen para dirección, la aplicabilidad, las evidencias de cada requisito y los registros periódicos. Imprímelo o guárdalo en PDF desde el navegador.",
     "print": "Imprimir o guardar en PDF",
     "coverKicker": "Dossier de preparación de auditoría",
     "organization": "Organización",
@@ -1232,8 +1259,8 @@
     "review": "Revisión del responsable de seguridad",
     "reviewBy": "{name} ({role}), {date}.",
     "noReview": "Sin revisión registrada.",
-    "routinesState": "Rutinas pendientes",
-    "routinesClear": "No hay rutinas pendientes.",
+    "routinesState": "Registros periódicos pendientes",
+    "routinesClear": "No hay registros periódicos pendientes.",
     "pending": {
       "policiesDue": "{count, plural, one {# política por revisar} other {# políticas por revisar}}",
       "policiesUnapproved": "{count, plural, one {# política sin aprobar} other {# políticas sin aprobar}}",
@@ -1263,7 +1290,7 @@
       "scan": "Escaneo",
       "upload": "Documento"
     },
-    "routines": "Rutinas registradas (últimos 12 meses)",
+    "routines": "Registros periódicos (últimos 12 meses)",
     "policies": "Políticas",
     "accessReviews": "Revisiones de acceso cerradas",
     "trainings": "Formaciones cerradas",
@@ -1287,7 +1314,7 @@
     "organization": "Organización",
     "assessed": "Medidas evaluadas",
     "overdue": "Medidas vencidas",
-    "routines": "Rutinas pendientes",
+    "routines": "Registros pendientes",
     "lastAssessed": "Última evaluación",
     "frameworks": "{count, plural, =0 {ningún marco en curso} one {# marco en curso} other {# marcos en curso}}",
     "ofTotal": "{assessed} de {total, plural, one {#} other {#}}",
@@ -1323,10 +1350,10 @@
       },
       "routine": {
         "title": "Haz una revisión de accesos o una formación",
-        "help": "Cada rutina cerrada deja una evidencia fechada."
+        "help": "Cada registro cerrado deja una evidencia fechada."
       },
       "tool": {
-        "title": "Conecta una herramienta para registrar evidencias solas",
+        "title": "Conecta una herramienta que registre evidencias por ti",
         "help": "Copias de seguridad, despliegues o análisis envían la evidencia con un token."
       },
       "dossier": {
@@ -1373,11 +1400,9 @@
     "notCertification": "Este informe reúne lo registrado por la organización en Atesta. No es una certificación ni una evaluación de conformidad."
   },
   "summary": {
-    "label": "Resumen",
-    "never": "Nunca",
     "glance": {
       "title": "Registros",
-      "help": "Lo que pide una auditoría, de un vistazo. Cada fila enlaza a su registro.",
+      "help": "Lo que pide una auditoría. Cada fila enlaza a su registro.",
       "record": "Registro",
       "state": "Estado",
       "summary": "Resumen",
@@ -1385,37 +1410,31 @@
       "failed": "No se pudo cargar."
     },
     "policies": {
-      "lead": "{attention, plural, =0 {Todas las políticas están aprobadas y al día.} one {# política necesita atención.} other {# políticas necesitan atención.}}",
-      "total": "Políticas",
-      "current": "Aprobadas y al día",
-      "overdue": "Revisión vencida",
-      "unapproved": "Sin aprobar"
+      "overdue": "{count, plural, one {# política con la revisión vencida} other {# políticas con la revisión vencida}}",
+      "unapproved": "{count, plural, one {# política sin aprobar} other {# políticas sin aprobar}}",
+      "calm": "Todas las políticas están aprobadas y al día."
     },
     "access": {
-      "lead": "{open, plural, =0 {No hay revisiones abiertas.} one {# revisión abierta} other {# revisiones abiertas}}{open, plural, =0 {} other {{pending, plural, =0 {, con todas las cuentas decididas.} one {, con # cuenta por decidir.} other {, con # cuentas por decidir.}}}}",
-      "total": "Revisiones",
-      "open": "Abiertas",
-      "closed": "Cerradas",
-      "pending": "Cuentas por decidir"
+      "pending": "{count, plural, one {# cuenta por decidir} other {# cuentas por decidir}}",
+      "late": "{count, plural, one {# revisión fuera de plazo} other {# revisiones fuera de plazo}}",
+      "calm": "No hay revisiones abiertas.",
+      "calmOpen": "Todas las cuentas de las revisiones abiertas están decididas."
     },
     "training": {
-      "lead": "{open, plural, =0 {No hay formaciones abiertas.} one {# formación abierta.} other {# formaciones abiertas.}} {acknowledged, plural, =0 {Aún no hay confirmaciones.} one {# confirmación registrada.} other {# confirmaciones registradas.}}",
-      "total": "Formaciones",
-      "open": "Abiertas",
-      "acknowledged": "Confirmaciones"
+      "late": "{count, plural, one {# formación terminada sin cerrar} other {# formaciones terminadas sin cerrar}}",
+      "calm": "No hay formaciones abiertas.",
+      "calmOpen": "Las formaciones abiertas están en plazo."
     },
     "incidents": {
-      "lead": "{open, plural, =0 {No hay incidentes abiertos.} one {# incidente abierto} other {# incidentes abiertos}}{open, plural, =0 {} other {{overdue, plural, =0 {{running, plural, =0 {, sin avisos pendientes.} one {, # con un aviso por enviar en plazo.} other {, # con avisos por enviar en plazo.}}} one {, # con avisos vencidos.} other {, # con avisos vencidos.}}}}",
-      "open": "Abiertos",
-      "closed": "Cerrados",
-      "overdue": "Con avisos vencidos"
+      "overdue": "{count, plural, one {# incidente con avisos vencidos} other {# incidentes con avisos vencidos}}",
+      "running": "{count, plural, one {# incidente con un aviso por enviar en plazo} other {# incidentes con avisos por enviar en plazo}}",
+      "calm": "Ningún incidente abierto tiene avisos pendientes."
     },
     "tokens": {
-      "lead": "{active, plural, =0 {Ningún token activo: ninguna herramienta puede registrar evidencias.} one {# token activo.} other {# tokens activos.}}",
-      "active": "Tokens activos",
-      "inactive": "Revocados o caducados",
-      "lastUsed": "Último uso"
-    }
+      "none": "Ningún token activo: ninguna herramienta puede registrar evidencias",
+      "calm": "Hay al menos un token activo."
+    },
+    "needs": "{list}."
   },
   "expectedEvidence": {
     "title": "Evidencias que propone la guía ({count, plural, one {# elemento} other {# elementos}})",
@@ -1598,7 +1617,7 @@
   },
   "apiDocs": {
     "title": "Referencia de la API",
-    "intro": "Las rutas que pueden llamar vuestras herramientas y agentes de IA con un token de Integraciones. Cada token llega solo a lo que permiten sus permisos y solo a vuestra organización.",
+    "intro": "Las rutas que pueden llamar tus herramientas y agentes de IA con un token de Integraciones. Cada token llega solo a lo que permiten sus permisos y solo a tu organización.",
     "mcpLink": "Guía para agentes de IA (MCP)",
     "index": "En esta página",
     "noScope": "Sin permiso específico",
@@ -1612,7 +1631,7 @@
     "no": "No",
     "basics": {
       "title": "Lo básico",
-      "key": "Envía el token en la cabecera Authorization, en cada petición, a la dirección de vuestro Atesta:",
+      "key": "Envía el token en la cabecera Authorization, en cada petición, a la dirección de tu Atesta:",
       "query": "Nunca lo pongas en la URL: una petición con parámetros de consulta se rechaza.",
       "limit": "Cada token tiene un límite de peticiones por minuto. Al superarlo, la respuesta es 429 con la cabecera Retry-After, que dice cuántos segundos esperar.",
       "language": "Los mensajes de error llegan en español, o en inglés si la cabecera Accept-Language lo pide.",
@@ -1652,19 +1671,19 @@
   },
   "mcpGuide": {
     "title": "Guía para agentes de IA (MCP)",
-    "intro": "Conecta un agente de IA compatible con MCP (Model Context Protocol) a Atesta para que lea vuestro estado y registre el trabajo de cada día, con los permisos que elijáis.",
+    "intro": "Conecta un agente de IA compatible con MCP (Model Context Protocol) a Atesta para que lea tu estado y registre el trabajo de cada día, con los permisos que elijas.",
     "apiLink": "Referencia de la API",
     "index": "En esta página",
     "what": {
       "title": "Qué puede hacer un agente",
-      "body": "Con el servidor MCP de Atesta, un agente puede responder qué falta en un marco y qué vence este mes, leer el texto oficial de una medida con su cita, registrar evidencias, proponer autoevaluaciones y registrar incidentes, formaciones y revisiones de acceso. Cada acción es una llamada a la API con vuestro token."
+      "body": "Con el servidor MCP de Atesta, un agente puede responder qué falta en un marco y qué vence este mes, leer el texto oficial de una medida con su cita, registrar evidencias, proponer autoevaluaciones y registrar incidentes, formaciones y revisiones de acceso. Cada acción es una llamada a la API con tu token."
     },
     "safety": {
       "title": "Qué no puede hacer",
       "scopes": "Solo lo que permite su token. Un token de solo lectura no escribe nada, y ningún token llega a otra organización.",
       "proposals": "No decide si una medida está implantada. Una autoevaluación de un agente es una propuesta: queda pendiente hasta que una persona la confirma en la aplicación, y entonces se registra a su nombre.",
       "data": "Lo que lee de Atesta le llega marcado como datos. El texto que escribieron personas (títulos, notas, evidencias) nunca se le presenta como instrucciones.",
-      "systems": "No toca vuestros sistemas: no lanza escaneos ni cambia conexiones. Cada escritura queda en la actividad con el token y el administrador que lo creó."
+      "systems": "No toca tus sistemas: no lanza escaneos ni cambia conexiones. Cada escritura queda en la actividad con el token y el administrador que lo creó."
     },
     "setup": {
       "title": "Conectar un agente en tu equipo",
@@ -1677,7 +1696,7 @@
     },
     "hosted": {
       "title": "Servidor alojado",
-      "body": "El servidor alojado aún no está disponible. Cuando lo esté, atenderá en la dirección de vuestro Atesta seguida de /mcp y pedirá el token en la cabecera Authorization: Bearer. Los clientes que solo se conectan con OAuth todavía no podrán usarlo."
+      "body": "El servidor alojado aún no está disponible. Cuando lo esté, atenderá en la dirección de tu Atesta seguida de /mcp y pedirá el token en la cabecera Authorization: Bearer. Los clientes que solo se conectan con OAuth todavía no podrán usarlo."
     },
     "tools": {
       "title": "Herramientas",
@@ -1724,7 +1743,7 @@
           "desc": "73 medidas con su texto oficial"
         },
         "routines": {
-          "title": "Rutinas",
+          "title": "Registros periódicos",
           "desc": "Políticas, accesos y formación"
         },
         "incidents": {
@@ -1783,7 +1802,7 @@
       "p3": "La decisión es siempre de una persona"
     },
     "routines": {
-      "title": "Rutinas que no se pierden",
+      "title": "Políticas, revisiones de acceso y formación",
       "body": "Políticas con su fecha de revisión, revisiones de acceso y formaciones con la confirmación de cada persona. Atesta reúne lo que vence en una sola lista.",
       "p1": "Políticas y su próxima revisión",
       "p2": "Revisiones de acceso registradas",

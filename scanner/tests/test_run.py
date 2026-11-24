@@ -423,6 +423,9 @@ def test_a_google_scan_sets_the_subject_from_the_job_and_pins_the_verified_custo
         job, SCAN_KEY, DirectorySink(output), work, executable, verdict_for("C0fixture1")
     )
     assert got == ExitCode.DONE
+    # The verify run already wrote verification.json into this write-once out/ (issue 398).
+    assert run_module.SCAN_VERIFICATION_FILE in files(tmp_path)
+    assert VERIFICATION_FILE not in files(tmp_path)
     log = (output / "prowler.log").read_text()
     assert "GOOGLEWORKSPACE_DELEGATED_USER" in log and "ATESTA_GOOGLE_VERIFIER" not in log
     other = tmp_path / "other"

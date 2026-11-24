@@ -106,7 +106,9 @@ def queue_scan(
     *,
     trigger: Trigger,
     requested_by: uuid.UUID | None = None,
+    delay_seconds: int | None = None,
 ) -> Scan:
+    """delay_seconds holds the run back, as Google's propagation retry does (issue 398)."""
     target = scan_target(session, organization_id, connection_id)
     if target is None:
         raise ConnectionNotFoundError(str(connection_id))
@@ -147,6 +149,7 @@ def queue_scan(
         RUN_TASK,
         queue="scans",
         lock=scan_lock(scan.provider, connection_id),
+        schedule_in_seconds=delay_seconds,
         organization_id=str(organization_id),
         scan_id=str(scan.id),
     )

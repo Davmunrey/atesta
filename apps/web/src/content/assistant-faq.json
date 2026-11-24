@@ -7,7 +7,7 @@
       "id": "what",
       "question": { "es": "¿Qué es Atesta?", "en": "What is Atesta?" },
       "answer": {
-        "es": "Atesta ayuda a pymes a preparar y mantener la auditoría del ENS (RD 311/2022): el texto oficial de cada medida, vuestra autoevaluación, los registros que pide un auditor y un dossier listo para firmar.",
+        "es": "Atesta ayuda a pymes a preparar y mantener la auditoría del ENS (RD 311/2022): el texto oficial de cada medida, tu autoevaluación, los registros que pide un auditor y un dossier listo para firmar.",
         "en": "Atesta helps SMEs prepare for and keep up with the ENS audit (RD 311/2022): the official text of each measure, your self-assessment, the records an auditor asks for and a dossier ready to sign."
       },
       "keywords": ["producto", "product", "plataforma", "platform"]
@@ -43,7 +43,7 @@
       "id": "connect",
       "question": { "es": "¿Se conecta a Microsoft 365 o Google Workspace?", "en": "Does it connect to Microsoft 365 or Google Workspace?" },
       "answer": {
-        "es": "Próximamente. La conexión pedirá solo permisos de lectura: Atesta nunca cambia la configuración de vuestros sistemas.",
+        "es": "Próximamente. La conexión pedirá solo permisos de lectura: Atesta nunca cambia la configuración de tus sistemas.",
         "en": "Coming soon. The connection will ask for read-only permissions only: Atesta never changes your systems' settings."
       },
       "keywords": ["conectar", "connect", "conector", "connector", "escaneo", "scan", "Microsoft", "Google", "lectura", "read-only"]
@@ -52,7 +52,7 @@
       "id": "decides",
       "question": { "es": "¿Quién decide si una medida está implantada?", "en": "Who decides whether a measure is implemented?" },
       "answer": {
-        "es": "Vosotros. Cada medida la valora una persona de vuestra organización; ningún asistente ni modelo de IA decide si una medida está implantada.",
+        "es": "Tú y tu equipo. Cada medida la valora una persona de tu organización; ningún asistente ni modelo de IA decide si una medida está implantada.",
         "en": "You do. A person in your organization assesses each measure; no assistant or AI model decides whether a measure is implemented."
       },
       "keywords": ["autoevaluación", "self-assessment", "implantado", "implemented", "decide", "IA", "AI"]

@@ -61,7 +61,7 @@ export function MembersView({ org }: { org: Membership }) {
                       setAuditorFor(null);
                       changeRole.mutate({ userId: m.user_id, role });
                     }}
-                    className="rounded-md border border-border bg-bg px-2 py-1"
+                    className="field"
                   >
                     {ROLES.map((role) => (
                       <option key={role} value={role}>
@@ -79,10 +79,10 @@ export function MembersView({ org }: { org: Membership }) {
                     changeRole.mutate({ userId: m.user_id, role: "auditor", accessExpiresOn: until }, { onSuccess: () => setAuditorFor(null) });
                   }}>
                     <label className="flex flex-col gap-1 text-sm">{t("members.accessUntil", { email: m.email })}
-                      <input name="until" type="date" required min={range.min} max={range.max} className="rounded-md border border-border bg-bg px-2 py-1" />
+                      <input name="until" type="date" required min={range.min} max={range.max} className="field" />
                     </label>
-                    <button type="submit" disabled={changeRole.isPending} className="rounded-md bg-accent px-3 py-1 text-accent-fg">{t("members.apply")}</button>
-                    <button type="button" onClick={() => setAuditorFor(null)} className="underline">{t("members.cancel")}</button>
+                    <button type="submit" disabled={changeRole.isPending} className="button-primary">{t("members.apply")}</button>
+                    <button type="button" onClick={() => setAuditorFor(null)} className="dashboard-button">{t("members.cancel")}</button>
                   </form>
                 ) : m.access_expires_on ? (
                   <span className="ml-2 text-sm text-muted">
@@ -92,21 +92,21 @@ export function MembersView({ org }: { org: Membership }) {
               </td>
               <td data-label={t("members.actions")} className="py-2">
                 {!canRemove(org.role, m.role) ? null : confirming === m.user_id ? (
-                  <span className="flex flex-wrap items-center gap-2">
+                  <span className="confirm-row">
                     <span>{t("members.confirmRemove", { email: m.email })}</span>
                     <button
                       type="button"
                       onClick={() => remove.mutate(m.user_id, { onSettled: () => setConfirming(null) })}
-                      className="rounded-md bg-danger px-3 py-1 text-danger-fg"
+                      className="button-danger"
                     >
                       {t("members.confirm")}
                     </button>
-                    <button type="button" onClick={() => setConfirming(null)} className="underline">
+                    <button type="button" onClick={() => setConfirming(null)} className="dashboard-button">
                       {t("members.cancel")}
                     </button>
                   </span>
                 ) : (
-                  <button type="button" onClick={() => setConfirming(m.user_id)} className="underline">
+                  <button type="button" onClick={() => setConfirming(m.user_id)} className="dashboard-button">
                     {t("members.remove")}
                   </button>
                 )}

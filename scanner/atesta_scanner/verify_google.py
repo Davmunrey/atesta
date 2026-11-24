@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 from typing import Any, Protocol
 from urllib.parse import quote
 
+from atesta_core.connectors.google import is_customer_id
 from atesta_core.connectors.readonly import GoogleGrants, check_google, google_allowlist
 
 from atesta_scanner.entra_token import TokenTransientError
@@ -29,7 +30,6 @@ ROLE_ASSIGNMENTS = DIRECTORY + "customer/my_customer/roleassignments"
 REPORTS = "admin/reports/v1/activity/users/all/applications/admin"
 AUTHORIZE, REMOVE = "AUTHORIZE_API_CLIENT_ACCESS", "REMOVE_API_CLIENT_ACCESS"
 OVERLAP = timedelta(hours=1)  # admin log events lag a few minutes (spec)
-CUSTOMER_ID = re.compile(r"C[0-9A-Za-z]{4,20}")
 
 # Verifier limits (spec): recorded in every report, shown in onboarding.
 GOOGLE_LIMITS = (
@@ -103,7 +103,7 @@ def _identity(directory: GoogleReader, target: GoogleTarget) -> tuple[str, list[
     tenant_id = directory.get(CUSTOMER)["id"]
     if not isinstance(tenant_id, str) or not tenant_id:
         raise TypeError("customer without an id")
-    pinned = CUSTOMER_ID.fullmatch(target.tenant) is not None
+    pinned = is_customer_id(target.tenant)
     missing = ["customer_pin"] if pinned and tenant_id != target.tenant else []
     verified, primary = set(), set()
     for domain in directory.get(DOMAINS).get("domains", []):

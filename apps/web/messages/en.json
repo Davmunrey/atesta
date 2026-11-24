@@ -221,7 +221,8 @@
       "signin_invalid": "The Microsoft sign-in is not valid or has expired. Start the connection again from Atesta.",
       "consent_denied": "Admin consent was not granted in Microsoft, so the connection cannot continue. Try again with a Global Administrator or Privileged Role Administrator account.",
       "tenant_mismatch": "Microsoft returned a tenant different from your sign-in, or from this link. Nothing was saved; start again with an account in the right tenant.",
-      "microsoft_unavailable": "We cannot reach Microsoft right now, or the Microsoft 365 connection is not available here yet. Try again later."
+      "microsoft_unavailable": "We cannot reach Microsoft right now, or the Microsoft 365 connection is not available here yet. Try again later.",
+      "google_subject_invalid": "Enter the email of a Google Workspace super admin, such as admin@yourcompany.com. If it is on a secondary domain, also enter the primary domain."
     },
     "identity": {
       "already_member": "This person is already a member of the organization.",
@@ -251,6 +252,14 @@
     },
     "evidence": {
       "control_not_found": "This control is no longer available. Reload the catalog.",
+      "file_content_mismatch": "The content does not match the file type its extension names. Check the file and upload it again.",
+      "file_empty": "The file is empty. Choose a file with content.",
+      "file_integrity_failed": "The stored file no longer matches the one that was recorded, so it is not served. The attempt is in the activity log. Contact support.",
+      "file_not_found": "We could not find that file, or you do not have access.",
+      "file_too_large": "The file is over the 25 MB limit. Reduce or split it before uploading.",
+      "file_type_not_allowed": "That file type is not accepted. Upload a PDF, PNG, JPG, TXT, CSV, DOCX or XLSX.",
+      "length_required": "The browser did not state the file's size. Try again.",
+      "storage_unavailable": "Files cannot be stored or read right now. Nothing was recorded; try again in a few minutes.",
       "submission_conflict": "This submission was already recorded with different data. Reload the evidence before continuing."
     },
     "scanning": {
@@ -362,7 +371,7 @@
   "framework": {
     "back": "Back to overview",
     "loading": "Loading requirements…",
-    "intro": "What is checked, what is missing and how to proceed.",
+    "intro": "The framework's requirements and where each stands in your organization.",
     "development": "Development environment. Synthetic frameworks are examples, not regulatory assessments.",
     "recordedScore": "Recorded score:",
     "unassessed": "There is no recorded assessment for this framework yet.",
@@ -560,7 +569,7 @@
   "evidence": {
     "show": "View evidence",
     "hide": "Hide evidence",
-    "boundary": "Statements and references provided by the team. They do not verify documents or approve the control.",
+    "boundary": "Statements, references and files provided by the team. Atesta does not validate their content or approve the control.",
     "saved": "Evidence recorded. The review is decided separately.",
     "loading": "Loading evidence…",
     "retry": "Retry",
@@ -582,7 +591,17 @@
     "immutable": "This record stays in the history. To correct it, add new evidence explaining the change.",
     "saving": "Saving…",
     "save": "Save evidence",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "upload": "Upload file",
+    "file": "File",
+    "fileHelp": "{types}. Up to {size}.",
+    "notScanned": "Atesta stores the file as it is and does not scan it for malware. Upload only documents from a known source.",
+    "uploading": "Uploading…",
+    "uploaded": "File uploaded. The review is decided separately.",
+    "fileDetails": "{type} · {size}",
+    "download": "Download",
+    "downloadFile": "Download {name}",
+    "downloading": "Downloading…"
   },
   "register": {
     "title": "Your organization's self-assessment",
@@ -708,17 +727,18 @@
     "notApplicable": "Do not apply",
     "pending": "Pending",
     "implementedOverTime": "Measures implemented over time",
-    "historyHelp": "The chart appears once self-assessments exist on at least two different days.",
+    "historyHelp": "The trend appears once the register has changed on at least 7 different days.",
     "scoreOverTime": "Recorded score over time",
     "score": "Score",
     "showTable": "Show the data as a table",
-    "owners": "Owners",
+    "owners": "Measure owners",
     "unowned": "Open without an owner",
     "overdue": "Overdue",
     "openByOwner": "Open measures by owner",
     "noOwners": "No measure has an owner yet. Assign one from each measure.",
     "formerMember": "Former member",
-    "day": "Day"
+    "day": "Day",
+    "oneOwner": "{email} holds {count, plural, one {the only open assigned measure} other {all # open assigned measures}}."
   },
   "activity": {
     "title": "Activity",
@@ -749,9 +769,14 @@
       "framework_assessment_reviewed": "Recorded the security officer review",
       "framework_applicability_exported": "Exported the statement of applicability",
       "control_reviewed": "Reviewed a control",
+      "evidence_file_downloaded": "Downloaded an evidence file",
+      "evidence_file_integrity_failed": "Download blocked: the file does not match the one recorded",
+      "evidence_file_uploaded": "Uploaded an evidence file",
       "evidence_statement_recorded": "Recorded evidence",
       "connection_created": "Created a connection",
-      "connection_verification_requested": "Requested a Microsoft 365 connection verification",
+      "connection_verification_requested": "Requested a connection verification",
+      "connection_provisioned": "Atesta prepared the Google Workspace service accounts",
+      "connection_google_subject_set": "Named the Google Workspace super admin",
       "connection_consent_granted": "Granted Microsoft 365 consent",
       "connection_disconnected": "Disconnected a connection",
       "scan_requested": "Requested a scan",
@@ -796,7 +821,7 @@
   "myWork": {
     "title": "My work",
     "intro": "The measures assigned to you, by due date.",
-    "empty": "No measures are assigned to you. An administrator can assign them from each framework's register.",
+    "empty": "No measures are assigned to you. Whoever administers the organization assigns them from each framework's register.",
     "framework": "Framework",
     "measure": "Measure",
     "due": "Due date",
@@ -805,7 +830,9 @@
     "overdue": "Overdue",
     "pending": "Not assessed",
     "loading": "Loading…",
-    "open": "Open {code}"
+    "open": "Open {code}",
+    "emptyAdmin": "No measures are assigned to you.",
+    "assign": "Assign measures from Frameworks"
   },
   "coverage": {
     "title": "Coverage of the official source",
@@ -998,7 +1025,7 @@
       "closesOn": "Ends on {date}",
       "ended": "Ended on {date}; close it",
       "create": "New training",
-      "createHelp": "The link is shown only once. Share it yourself, by email or in your chat; Atesta sends no email.",
+      "createHelp": "The link is shown only once. Share it by email or in your team's chat; Atesta sends no email.",
       "campaignTitle": "Training name",
       "material": "Link to the material (https)",
       "closes": "Closing date",
@@ -1137,14 +1164,14 @@
       "incidents:read": "Read incidents and their reporting deadlines",
       "evidence:write": "Record evidence",
       "assessment:propose": "Propose self-assessments (a person confirms or rejects them)",
-      "routines:write": "Record routines: incidents, training and access reviews"
+      "routines:write": "Write recurring records: incidents, training and access reviews"
     },
     "scopeShort": {
       "compliance:read": "Read compliance",
       "incidents:read": "Read incidents",
       "evidence:write": "Record evidence",
       "assessment:propose": "Propose self-assessments",
-      "routines:write": "Record routines"
+      "routines:write": "Write recurring records"
     },
     "readOnlyPreset": "Tick read-only",
     "readOnly": "Read-only",
@@ -1202,7 +1229,7 @@
     "title": "Auditor dossier",
     "frameworks": "Frameworks",
     "loading": "Preparing the dossier…",
-    "intro": "Everything the auditor asks for in one document: management summary, applicability, evidence by requirement and routines. Print it or save it as PDF from the browser.",
+    "intro": "The dossier holds the management summary, the applicability, the evidence for each requirement and the recurring records. Print it or save it as PDF from the browser.",
     "print": "Print or save as PDF",
     "coverKicker": "Audit preparation dossier",
     "organization": "Organization",
@@ -1232,8 +1259,8 @@
     "review": "Security officer review",
     "reviewBy": "{name} ({role}), {date}.",
     "noReview": "No review recorded.",
-    "routinesState": "Pending routines",
-    "routinesClear": "No routines are pending.",
+    "routinesState": "Pending recurring records",
+    "routinesClear": "No recurring records are pending.",
     "pending": {
       "policiesDue": "{count, plural, one {# policy to review} other {# policies to review}}",
       "policiesUnapproved": "{count, plural, one {# policy not approved} other {# policies not approved}}",
@@ -1263,7 +1290,7 @@
       "scan": "Scan",
       "upload": "Document"
     },
-    "routines": "Recorded routines (last 12 months)",
+    "routines": "Recurring records (last 12 months)",
     "policies": "Policies",
     "accessReviews": "Closed access reviews",
     "trainings": "Closed trainings",
@@ -1287,7 +1314,7 @@
     "organization": "Organization",
     "assessed": "Measures assessed",
     "overdue": "Overdue measures",
-    "routines": "Pending routines",
+    "routines": "Pending records",
     "lastAssessed": "Last assessment",
     "frameworks": "{count, plural, =0 {no framework in progress} one {# framework in progress} other {# frameworks in progress}}",
     "ofTotal": "{assessed} of {total, plural, one {#} other {#}}",
@@ -1323,10 +1350,10 @@
       },
       "routine": {
         "title": "Run an access review or a training",
-        "help": "Each closed routine leaves dated evidence."
+        "help": "Each closed record leaves dated evidence."
       },
       "tool": {
-        "title": "Connect a tool that records evidence by itself",
+        "title": "Connect a tool that records evidence for you",
         "help": "Backups, deployments or scans send the evidence with a token."
       },
       "dossier": {
@@ -1373,11 +1400,9 @@
     "notCertification": "This report gathers what the organization recorded in Atesta. It is not a certification or a conformity assessment."
   },
   "summary": {
-    "label": "Summary",
-    "never": "Never",
     "glance": {
       "title": "Records",
-      "help": "What an audit asks for, at a glance. Each row links to its record.",
+      "help": "What an audit asks for. Each row links to its record.",
       "record": "Record",
       "state": "State",
       "summary": "Summary",
@@ -1385,37 +1410,31 @@
       "failed": "Could not load."
     },
     "policies": {
-      "lead": "{attention, plural, =0 {Every policy is approved and up to date.} one {# policy needs attention.} other {# policies need attention.}}",
-      "total": "Policies",
-      "current": "Approved and up to date",
-      "overdue": "Review overdue",
-      "unapproved": "Not approved"
+      "overdue": "{count, plural, one {# policy past its review date} other {# policies past their review date}}",
+      "unapproved": "{count, plural, one {# policy not approved} other {# policies not approved}}",
+      "calm": "Every policy is approved and up to date."
     },
     "access": {
-      "lead": "{open, plural, =0 {No open reviews.} one {# open review} other {# open reviews}}{open, plural, =0 {} other {{pending, plural, =0 {, every account decided.} one {, # account still to decide.} other {, # accounts still to decide.}}}}",
-      "total": "Reviews",
-      "open": "Open",
-      "closed": "Closed",
-      "pending": "Accounts to decide"
+      "pending": "{count, plural, one {# account to decide} other {# accounts to decide}}",
+      "late": "{count, plural, one {# review past its date} other {# reviews past their date}}",
+      "calm": "No open reviews.",
+      "calmOpen": "Every account in the open reviews is decided."
     },
     "training": {
-      "lead": "{open, plural, =0 {No open trainings.} one {# open training.} other {# open trainings.}} {acknowledged, plural, =0 {No confirmations yet.} one {# confirmation recorded.} other {# confirmations recorded.}}",
-      "total": "Trainings",
-      "open": "Open",
-      "acknowledged": "Confirmations"
+      "late": "{count, plural, one {# training ended and not closed} other {# trainings ended and not closed}}",
+      "calm": "No open trainings.",
+      "calmOpen": "The open trainings are within their dates."
     },
     "incidents": {
-      "lead": "{open, plural, =0 {No open incidents.} one {# open incident} other {# open incidents}}{open, plural, =0 {} other {{overdue, plural, =0 {{running, plural, =0 {, no notices pending.} other {, # with a notice due within its deadline.}}} other {, # with overdue notices.}}}}",
-      "open": "Open",
-      "closed": "Closed",
-      "overdue": "With overdue notices"
+      "overdue": "{count, plural, one {# incident with overdue notices} other {# incidents with overdue notices}}",
+      "running": "{count, plural, one {# incident with a notice due within its deadline} other {# incidents with notices due within their deadlines}}",
+      "calm": "No open incident has a notice pending."
     },
     "tokens": {
-      "lead": "{active, plural, =0 {No active token: no tool can record evidence.} one {# active token.} other {# active tokens.}}",
-      "active": "Active tokens",
-      "inactive": "Revoked or expired",
-      "lastUsed": "Last used"
-    }
+      "none": "No active token: no tool can record evidence",
+      "calm": "At least one token is active."
+    },
+    "needs": "{list}."
   },
   "expectedEvidence": {
     "title": "Evidence the guide proposes ({count, plural, one {# item} other {# items}})",
@@ -1724,7 +1743,7 @@
           "desc": "73 measures with their official text"
         },
         "routines": {
-          "title": "Routines",
+          "title": "Recurring records",
           "desc": "Policies, access and training"
         },
         "incidents": {
@@ -1783,7 +1802,7 @@
       "p3": "A person always makes the decision"
     },
     "routines": {
-      "title": "Routines that do not slip",
+      "title": "Policies, access reviews and training",
       "body": "Policies with their review date, access reviews and training with each person's confirmation. Atesta gathers what falls due in one list.",
       "p1": "Policies and their next review",
       "p2": "Recorded access reviews",

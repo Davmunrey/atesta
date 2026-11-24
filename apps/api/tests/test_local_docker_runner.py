@@ -201,17 +201,76 @@ def test_forwarded_events_keep_only_allowed_keys_of_the_right_shape(
     assert "example.com" not in caplog.text and "Failing row" not in caplog.text
 
 
-def test_a_google_scan_reads_its_own_orgs_credential(
+GOOGLE_SCAN = {"GOOGLEWORKSPACE_CREDENTIALS_CONTENT": "scan-key"}
+GOOGLE_VERIFIER = {"ATESTA_GOOGLE_VERIFIER_CREDENTIALS_CONTENT": "verifier-key"}
+GOOGLE_JOB = ScanJob(
+    ORG,
+    SCAN,
+    1,
+    "google_workspace",
+    credential_ref=f"local:google-{ORG}",
+    verifier_credential_ref=f"local:google-verifier-{ORG}",
+)
+
+
+def secret(credentials: LocalCredentialStore, name: str, body: object) -> None:
+    path = credentials.root / f"{name}.json"
+    path.write_text(json.dumps(body))
+    path.chmod(0o600)
+
+
+def test_a_google_attempt_verifies_with_both_keys_then_scans_with_the_scan_key_only(
     tmp_path: Path, store: LocalScanStore, credentials: LocalCredentialStore, docker: Path
 ) -> None:
-    ref = f"local:google-{ORG}"
-    path = credentials.root / f"google-{ORG}.json"
-    path.write_text('{"GOOGLE_APPLICATION_CREDENTIALS_JSON": "{}"}')
-    path.chmod(0o600)
-    job = ScanJob(ORG, SCAN, 1, "google_workspace", credential_ref=ref)
-    assert runner(store, credentials, docker).run(job) == 0
-    [call] = calls(tmp_path)
-    assert json.loads(str(call["stdin"])) == {"GOOGLE_APPLICATION_CREDENTIALS_JSON": "{}"}
+    """D7, issue 398: only the verify run ever holds the verifier key."""
+    secret(credentials, f"google-{ORG}", GOOGLE_SCAN)
+    secret(credentials, f"google-verifier-{ORG}", GOOGLE_VERIFIER)
+    assert runner(store, credentials, docker).run(GOOGLE_JOB) == 0
+    verify, scan = calls(tmp_path)
+    assert verify["argv"][-2:] == ["atesta-scanner:dev", "verify"]
+    assert verify["argv"][4] == f"atesta-scan-{SCAN}-1-verify"
+    assert json.loads(str(verify["stdin"])) == {**GOOGLE_SCAN, **GOOGLE_VERIFIER}
+    assert scan["argv"][-2:] == ["atesta-scanner:dev", "scan"]
+    assert json.loads(str(scan["stdin"])) == GOOGLE_SCAN
+    # Same hardening and the same attempt's mounts for both runs.
+    assert verify["argv"][5:-1] == scan["argv"][5:-1]
+
+
+def test_a_google_scan_never_runs_after_a_refused_verification(
+    tmp_path: Path,
+    store: LocalScanStore,
+    credentials: LocalCredentialStore,
+    docker: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    secret(credentials, f"google-{ORG}", GOOGLE_SCAN)
+    secret(credentials, f"google-verifier-{ORG}", GOOGLE_VERIFIER)
+    monkeypatch.setenv("FAKE_DOCKER_MODE", "10")
+    assert runner(store, credentials, docker).run(GOOGLE_JOB) == 10
+    assert [c["argv"][-1] for c in calls(tmp_path)] == ["verify"]
+
+
+@pytest.mark.parametrize(
+    "problem", ["no_verifier_secret", "overlapping_names", "not_an_object", "no_verifier_ref"]
+)
+def test_an_unusable_google_key_pair_is_exit_11_and_docker_never_runs(
+    tmp_path: Path,
+    store: LocalScanStore,
+    credentials: LocalCredentialStore,
+    docker: Path,
+    problem: str,
+) -> None:
+    secret(credentials, f"google-{ORG}", GOOGLE_SCAN)
+    job = GOOGLE_JOB
+    if problem == "overlapping_names":
+        secret(credentials, f"google-verifier-{ORG}", {**GOOGLE_VERIFIER, **GOOGLE_SCAN})
+    elif problem == "not_an_object":
+        secret(credentials, f"google-verifier-{ORG}", ["verifier-key"])
+    elif problem == "no_verifier_ref":
+        secret(credentials, f"google-verifier-{ORG}", GOOGLE_VERIFIER)
+        job = ScanJob(ORG, SCAN, 1, "google_workspace", credential_ref=f"local:google-{ORG}")
+    assert runner(store, credentials, docker).run(job) == 11
+    assert not (tmp_path / "calls.jsonl").exists()
 
 
 @pytest.mark.parametrize(

@@ -6,11 +6,10 @@ import { type FormEvent, useId, useState } from "react";
 import { type TrainingCampaign, useCreateTraining, useTrainingCampaigns } from "@/lib/api/routines";
 import { type Membership, orgHome, orgTrainingCampaign } from "@/lib/org";
 import { canReviewControls } from "@/lib/permissions";
+import { Badge } from "./badge";
 import { ErrorMessage } from "./error-message";
-import { Icon } from "./icons";
 import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
-import { RecordSummary } from "./record-summary";
-import { trainingSummary } from "@/lib/summaries";
+import { RecordSummary, useRecordStates } from "./record-summary";
 
 const utcDay = (day: string) => new Date(`${day}T00:00:00Z`);
 
@@ -18,15 +17,11 @@ const utcDay = (day: string) => new Date(`${day}T00:00:00Z`);
 export function TrainingView({ org }: { org: Membership }) {
   const t = useTranslations("routines.training");
   const list = useTrainingCampaigns(org.organization_id);
-  const s = useTranslations("summary.training");
-  const format = useFormatter();
-  const sum = list.data?.length ? trainingSummary(list.data) : null;
+  const states = useRecordStates();
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: t("title") }]} title={t("title")} description={t("intro")} />
-    {sum ? <RecordSummary lead={s("lead", { open: sum.open, acknowledged: sum.acknowledged })} figures={[
-      { label: s("total"), value: format.number(sum.total) }, { label: s("open"), value: format.number(sum.open) },
-      { label: s("acknowledged"), value: format.number(sum.acknowledged) }]} /> : null}
-    <Panel title={t("list")}>
+    {list.data?.length ? <RecordSummary state={states.training(list.data)} /> : null}
+    <Panel>
       {list.isPending ? <Loading label={t("loading")} /> : list.isError ? <LoadError error={list.error} onRetry={() => void list.refetch()} />
         : list.data.length === 0 ? <Empty>{t("empty")}</Empty>
         : <div className="table-region" role="region" aria-label={t("list")} tabIndex={0}><table className="w-full text-left">
@@ -47,12 +42,12 @@ export function CampaignState({ campaign }: { campaign: TrainingCampaign }) {
   const format = useFormatter();
   const day = (value: string) => format.dateTime(utcDay(value), { dateStyle: "medium", timeZone: "UTC" });
   if (campaign.closed_at) {
-    return <span className="badge" data-severity="done"><Icon name="done" />{t("closedOn", { date: format.dateTime(new Date(campaign.closed_at), { dateStyle: "medium" }) })}</span>;
+    return <Badge state="trainingClosed">{t("closedOn", { date: format.dateTime(new Date(campaign.closed_at), { dateStyle: "medium" }) })}</Badge>;
   }
   const ended = campaign.closes_on < new Date().toISOString().slice(0, 10);
   return ended
-    ? <span className="badge" data-severity="overdue"><Icon name="overdue" />{t("ended", { date: day(campaign.closes_on) })}</span>
-    : <span className="badge" data-severity="pending"><Icon name="pending" />{t("closesOn", { date: day(campaign.closes_on) })}</span>;
+    ? <Badge state="trainingEnded">{t("ended", { date: day(campaign.closes_on) })}</Badge>
+    : <Badge state="trainingOpen">{t("closesOn", { date: day(campaign.closes_on) })}</Badge>;
 }
 
 function CreateCampaign({ orgId }: { orgId: string }) {
