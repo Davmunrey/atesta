@@ -9,6 +9,27 @@ is cut; nobody edits this file in a feature pull request.
 See [changes/](changes/) for merged changes not yet released. Changes before this changelog
 existed are recorded in the merged pull requests up to #110.
 
+## v2026.11.3 (2026-11-24)
+
+### Added
+
+- **A Connections page connects Microsoft 365 from the web.** (#365) Admins add a tenant, connect it with Microsoft, verify it and scan it, and see exactly which read-only permissions they grant. Members see each connection's status. Google Workspace is listed as coming soon.
+- **Two new public pages: /producto and /ens.** (#377) /producto walks through each capability (self-assessment, routines, incidents, dossier, assistant, API and MCP) with its sample product view. /ens explains the three categories, embeds the assistant's own category chooser with its citations, and lists all 73 measures with their BOE links and per-category rules, read straight from the catalog pack. The header and footer now link to both.
+- **Each person chooses which email notices they receive, and can unsubscribe in one click.** (#379) Security notices about connections and incident deadlines stay on. Atesta does not send email yet; the sending comes in the next steps of #223.
+- **Two more public pages: /seguridad and /consultoras.** (#381) /seguridad shows what Atesta can and cannot touch, where data is designed to live (AWS eu-south-2, with its two declared exceptions), what is kept and what never is, and what holds each rule; it says plainly that hosting is not live. /consultoras shows many clients under one sign-in, each an isolated organization, with a sample portfolio view. Neither page claims certifications, customers or partners.
+- **Owners and admins get an email when a connection loses its access or gains too many permissions, when a scan does not finish, and at each incident reporting deadline.** (#386) Emails are written in the organization's language, which the owner sets in Ajustes. Atesta still sends nothing until the email service is set up.
+- **A daily digest lists what falls due in 30, 7 and 1 day, and owners and admins get a weekly summary every Monday.** (#388) Members only see their own assigned measures. The summary shows recorded results, scans, connections and due dates, and on the first Monday of the month links the monthly report. Atesta still sends nothing until the email service is set up.
+- **The scanner can now verify a Google Workspace connection read-only.** (#390) It checks that each of the organisation's two service accounts holds exactly its read-only scopes and no admin role, that the delegated user is a super admin of the customer's own domain, and that the customer has not removed access. Google connections still cannot be set up from the app until the onboarding screen ships.
+
+### Changed
+
+- **Docs, legal and single-message pages now match the public site.** (#384) The docs and legal pages share a compact "En esta página" index that stays below the header, docs code blocks are set in ink with a copy button for the MCP configuration, and steps read as numbered lists. Invitation, training, unsubscribe and "page not found" show their message in a centred card with the seal; the not-found page explains what happened, links to the main pages and opens the assistant.
+
+### Fixed
+
+- **Cancelling Microsoft's consent screen, or any refused sign-in, now returns to the connections page with a clear message.** (#366) Before, the admin was left on a raw API response. Only a fixed error code travels in the address; nothing Microsoft sent is reflected.
+- **The control review form no longer recomputes its evidence check on every render.** (#367) The web app's lint now reports no warning.
+
 ## v2026.11.2 (2026-11-24)
 
 ### Added
