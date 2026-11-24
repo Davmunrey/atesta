@@ -69,10 +69,22 @@ they open is the file that was recorded.
   get objects only under `*/evidence/*` of the evidence bucket and use the evidence key.
 
 **Screen (#400, second pull request)**
-- [ ] The evidence panel beside each control offers "Subir archivo" to members when uploads are
-  enabled: file, title (defaults to the file name), the limits stated before choosing, progress,
-  and the API's ES/EN text on refusal. Each uploaded item shows name, type, size and a download
-  link; an integrity failure is shown as such, never as a missing file.
+- [ ] **Where:** the evidence panel beside each control, next to "Registrar evidencia". "Subir
+  archivo" appears only when `file_uploads.enabled` is true.
+- [ ] **Form:** a file and a title that defaults to the file name. The accepted types and the
+  size limit are stated before a file is chosen, from `file_uploads`, with the note that files
+  are not scanned for malware (D2) and that the record cannot be edited.
+- [ ] **Before sending:** a type outside the list, an empty file or a file over the limit is
+  refused in the form with the API's own ES/EN text, and nothing is sent. The API still decides.
+- [ ] **Sending:** the form is busy while the file travels; a refusal shows the API's text and
+  keeps the input; a retry of the same file and title reuses its `submission_id`.
+- [ ] **List:** an uploaded item shows its file name, type and size, and a "Descargar" button.
+  The download asks the API, which verifies the file first; an integrity failure is shown as
+  such beside the item, never as a missing file.
+- [ ] **One product:** the form and the list reuse the panel's existing form, buttons, messages
+  and tokens (DESIGN.md); the file picker is the native control, as on the policies and access
+  review screens. Checked in the rendered app at 1280 and 375 pixels, light and dark, with the
+  polish bar (`tests/e2e/polish.ts`) and no CSP violation.
 
 ## Decisions
 
@@ -168,4 +180,7 @@ they open is the file that was recorded.
   stubber, no network).
 - **Configuration and infra:** each `ATESTA_EVIDENCE_STORE` value; the API role's policy names
   only `*/evidence/*` and the evidence key.
+- **Web (#400):** unit tests for each criterion above with a stubbed API; one browser test that
+  uploads through the real file chooser, checks the multipart body carries the file name, downloads
+  the file, and shows an integrity failure, at 375 and 1280 pixels in light and dark.
 - **Not covered here:** a real S3 bucket, Object Lock and KMS, which need the hosted environment.
