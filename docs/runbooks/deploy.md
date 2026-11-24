@@ -198,17 +198,18 @@ handful of organizations, one scan a day each. Taxes are not included.
 | NAT gateway | $0.048 per hour plus $0.048 per GB | 1 gateway, 20 GB: 36.00 | 2 gateways, 50 GB: 72.48 |
 | Public IPv4 addresses (NAT, load balancer) | $0.005 per hour each | 3: 10.95 | 4: 14.60 |
 | Application Load Balancer | $0.0252 per hour plus $0.008 per LCU-hour | about 0.5 LCU: 21.32 | about 1 LCU: 24.24 |
-| KMS keys | $1 per key-month (more after rotations) | 4: 4.00 | 4: 4.00 |
+| KMS keys | $1 per key-month (more after rotations) | 5: 5.00 | 5: 5.00 |
 | Secrets Manager | $0.40 per secret-month | 4: 1.60 | 9 (with connectors): 3.60 |
 | CloudWatch Logs, custom and vended (flow logs, Postgres) | $0.57 per GB ingested, $0.03 per GB-month stored | about 5 GB: 3.30 | about 20 GB: 12.00 |
 | Container Insights metrics | $0.07 per metric-month | about 3.50 | about 4.00 |
 | S3, ECR, SES | $0.023 and $0.10 per GB-month; SES per message | about 2.00 | about 3.00 |
 | CloudFront | always-free tier: 1 TB and 10 M requests a month | 0 | 0 |
-| **Total** | | **about 138** | **about 228** |
+| Malware scanning of the evidence bucket (below) | free tier: 1,000 objects and 1 GB a month | 0 | 0 |
+| **Total** | | **about 139** | **about 229** |
 
-**Against the budget alerts.** Dev alerts at 150, 250 and 400, and its estimate (about 138)
+**Against the budget alerts.** Dev alerts at 150, 250 and 400, and its estimate (about 139)
 sits just under the first one. Prod alerts at 250, 350 and 450 (owner decision, #286), so the
-estimate (about 228, or about 254 with db.t4g.small Multi-AZ) raises at most the first alert.
+estimate (about 229, or about 255 with db.t4g.small Multi-AZ) raises at most the first alert.
 
 **What moves the total most:**
 - **NAT gateways** are about a quarter to a third of it. They stay: Cognito, Microsoft Graph and
@@ -217,6 +218,28 @@ estimate (about 228, or about 254 with db.t4g.small Multi-AZ) raises at most the
 - **The database class.** micro is the code's default; measure before production.
 - **Flow log volume.** It is billed at $0.57 per GB. If it grows, keep ALL traffic, but send it
   to S3 instead of CloudWatch.
+
+**Malware scanning** (evidence-malware-scanning spec). Prices from the eu-south-2 Price List
+files for GuardDuty (publication 2026-10-30), S3 (2026-11-21), SQS (2026-11-11) and EventBridge
+(2026-11-18), read on 2026-11-24:
+- **GuardDuty Malware Protection for S3:** each account and Region gets 1,000 objects and 1 GB
+  scanned free a month. Beyond that, $0.000242 per object and $0.1005 per GB. Example: 10,000
+  objects and 10 GB in a month cost 9,000 × 0.000242 + 9 × 0.1005 = $3.08.
+- **What is scanned:** every new object version in the bucket. Uploaded evidence is at most
+  25 MB a file; scan outputs are scanned too, a few files per scan (spec D2).
+- **Tags:** GuardDuty's result tag is billed at $0.0065 per 10,000 tags a month, and every
+  locked object keeps its tag.
+- **S3 calls:** the scan role's GET and tagging requests are billed at $0.004 per 10,000 GET
+  and $0.0053 per 1,000 PUT.
+- **SQS and the KMS key:** one poll a minute is about 43,000 requests a month, inside the free
+  million. The queues key is the fifth KMS key above.
+- **EventBridge:** S3 events ingested for the managed rule are billed under EventBridge pricing
+  (GuardDuty, "Pricing and usage cost for Malware Protection for S3"). The price list shows
+  $1.00 per million custom events. Which usage type applies to these events is not confirmed,
+  so read it as a candidate. At pilot volume it rounds to 0.
+- **Open work, not built:** alarms on the dead-letter queue (`<env>-file-scans-dead`) and on the
+  plan's status events. Until they exist, check the queue's depth and the plan's status in the
+  GuardDuty console after each deploy.
 
 **Not included:**
 - Cognito Essentials (free up to its monthly active user allowance; check the Cognito pricing

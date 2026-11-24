@@ -114,6 +114,29 @@ data "aws_iam_policy_document" "apply" {
     actions   = ["s3:*"]
     resources = ["arn:aws:s3:::${var.name}-*", "arn:aws:s3:::${var.name}-*/*"]
   }
+  # Malware scanning (evidence-malware-scanning spec): the evidence bucket's plan, the results
+  # queue and its rule. CreateMalwareProtectionPlan also needs iam:PassRole on the scan role,
+  # which OwnIam covers (AWS, "Enabling Malware Protection for S3 for your bucket").
+  statement {
+    sid = "MalwareProtectionPlans"
+    actions = [
+      "guardduty:CreateMalwareProtectionPlan", "guardduty:GetMalwareProtectionPlan",
+      "guardduty:UpdateMalwareProtectionPlan", "guardduty:DeleteMalwareProtectionPlan",
+      "guardduty:ListMalwareProtectionPlans", "guardduty:TagResource", "guardduty:UntagResource",
+      "guardduty:ListTagsForResource",
+    ]
+    resources = ["*"]
+  }
+  statement {
+    sid       = "OwnQueues"
+    actions   = ["sqs:*"]
+    resources = ["arn:aws:sqs:*:${local.account}:${var.name}-*"]
+  }
+  statement {
+    sid       = "OwnRules"
+    actions   = ["events:*"]
+    resources = ["arn:aws:events:*:${local.account}:rule/${var.name}-*"]
+  }
   statement {
     sid       = "OwnSecrets"
     actions   = ["secretsmanager:*"]

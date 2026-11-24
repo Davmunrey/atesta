@@ -143,6 +143,7 @@ def test_every_key_rotates_and_waits_before_deletion() -> None:
         "aws_kms_key.evidence",
         "aws_kms_key.secrets",
         "aws_kms_key.logs",
+        "aws_kms_key.queues",
     }
     for name, key in keys.items():
         assert key["enable_key_rotation"] is True, name
@@ -570,12 +571,23 @@ def test_budget_alerts_are_150_250_400_in_dev_and_250_350_450_in_prod() -> None:
 # --- evidence file uploads (evidence-file-uploads spec, #222) -------------------------------
 
 
-def test_the_api_may_only_put_and_get_uploaded_evidence() -> None:
+def test_the_api_may_only_put_uploaded_evidence_and_read_it_once_scanned_clean() -> None:
+    """evidence-malware-scanning spec: the read is bound to GuardDuty's tag on that version."""
     statements = {s["sid"]: s for s in ECS_POLICIES["api"]["statement"]}
-    assert set(statements) == {"EvidenceFiles", "EvidenceKey"}
-    files = statements["EvidenceFiles"]
-    assert files["actions"] == ["s3:GetObject", "s3:PutObject"]  # no delete, no list
-    assert files["resources"] == ["${var.evidence_bucket_arn}/*/evidence/*"]  # not scan outputs
+    assert set(statements) == {"EvidenceUploads", "EvidenceReadsWhenClean", "EvidenceKey"}
+    uploads, reads = statements["EvidenceUploads"], statements["EvidenceReadsWhenClean"]
+    assert uploads["actions"] == ["s3:PutObject"]  # no delete, no list, no tagging
+    assert reads["actions"] == ["s3:GetObject", "s3:GetObjectVersion"]
+    for statement in (uploads, reads):  # not scan outputs
+        assert statement["resources"] == ["${var.evidence_bucket_arn}/*/evidence/*"]
+    assert "condition" not in uploads
+    assert reads["condition"] == [
+        {
+            "test": "StringEquals",
+            "variable": "s3:ExistingObjectTag/GuardDutyMalwareScanStatus",
+            "values": ["NO_THREATS_FOUND"],
+        }
+    ]
     key = statements["EvidenceKey"]
     assert key["actions"] == ["kms:Decrypt", "kms:GenerateDataKey"]
     assert key["resources"] == ["${var.evidence_key_arn}"]
@@ -599,3 +611,149 @@ def test_the_platform_points_the_services_at_the_evidence_bucket() -> None:
     assert "AWS_DEFAULT_REGION" in environment  # boto3 takes its region from this variable
     # Later arguments win in merge(): a hand-set value cannot point the API at another bucket.
     assert environment.startswith("${merge(var.app_environment, {")
+
+
+# --- malware scanning (evidence-malware-scanning spec, #430) ---------------------------------
+
+EVIDENCE_FILE = load("modules/s3-evidence/main.tf")
+EVIDENCE_DOCS = {
+    name: body
+    for block in EVIDENCE_FILE["data"]
+    for kind, named in block.items()
+    if kind == "aws_iam_policy_document"
+    for name, body in named.items()
+}
+PLATFORM_FILE = load("modules/platform/main.tf")
+PLATFORM = resources("modules/platform/main.tf")
+PLATFORM_DOCS = {
+    name: body
+    for block in PLATFORM_FILE.get("data", [])
+    for kind, named in block.items()
+    if kind == "aws_iam_policy_document"
+    for name, body in named.items()
+}
+
+
+def test_guardduty_scans_the_whole_evidence_bucket_and_tags_each_result() -> None:
+    """Prefixes are literal (at most 5) and keys start with the organization id (spec D2)."""
+    plan = EVIDENCE["aws_guardduty_malware_protection_plan.evidence"]
+    assert plan["role"] == "${aws_iam_role.malware_scan.arn}"
+    bucket = plan["protected_resource"][0]["s3_bucket"][0]
+    assert bucket == {"bucket_name": "${aws_s3_bucket.this.id}"}
+    assert plan["actions"][0]["tagging"][0]["status"] == "ENABLED"
+    assert "${aws_iam_role_policy.malware_scan}" in plan["depends_on"]
+
+
+def test_the_scan_role_follows_the_aws_template_for_this_bucket_only() -> None:
+    trust = EVIDENCE_DOCS["malware_scan_trust"]["statement"][0]
+    assert trust["actions"] == ["sts:AssumeRole"]
+    assert trust["principals"][0]["identifiers"] == [
+        "malware-protection-plan.guardduty.amazonaws.com"
+    ]
+    statements = {s["sid"]: s for s in EVIDENCE_DOCS["malware_scan"]["statement"]}
+    assert set(statements) == {
+        "AllowManagedRuleToSendS3EventsToGuardDuty",
+        "AllowGuardDutyToMonitorEventBridgeManagedRule",
+        "AllowPostScanTag",
+        "AllowEnableS3EventBridgeEvents",
+        "AllowPutValidationObject",
+        "AllowCheckBucketOwnership",
+        "AllowMalwareScan",
+        "AllowDecryptForMalwareScan",
+    }
+    for statement in statements.values():
+        assert "*" not in statement["resources"] and "*" not in statement["actions"]
+    objects = "${aws_s3_bucket.this.arn}/*"
+    assert statements["AllowMalwareScan"]["resources"] == [objects]
+    assert statements["AllowPostScanTag"]["resources"] == [objects]
+    assert statements["AllowPutValidationObject"]["resources"] == [
+        "${aws_s3_bucket.this.arn}/malware-protection-resource-validation-object"
+    ]
+    kms = statements["AllowDecryptForMalwareScan"]
+    assert kms["resources"] == ["${var.kms_key_arn}"]
+    assert kms["condition"][0]["variable"] == "kms:ViaService"
+    rule = statements["AllowManagedRuleToSendS3EventsToGuardDuty"]
+    assert rule["condition"][0]["values"] == ["malware-protection-plan.guardduty.amazonaws.com"]
+
+
+def test_only_the_scan_role_may_write_the_scan_tag() -> None:
+    bucket = {s["sid"]: s for s in EVIDENCE_DOCS["bucket"]["statement"]}
+    deny = bucket["DenyScanTagWritesButGuardDuty"]
+    assert deny["effect"] == "Deny"
+    assert deny["actions"] == ["s3:PutObject", "s3:PutObjectTagging", "s3:PutObjectVersionTagging"]
+    assert deny["principals"][0] == {"type": "*", "identifiers": ["*"]}
+    conditions = {c["variable"]: c for c in deny["condition"]}
+    assert conditions["s3:RequestObjectTagKeys"]["test"] == "ForAnyValue:StringEquals"
+    assert conditions["s3:RequestObjectTagKeys"]["values"] == ["GuardDutyMalwareScanStatus"]
+    assert conditions["aws:PrincipalArn"]["test"] == "ArnNotEquals"
+    assert conditions["aws:PrincipalArn"]["values"] == ["${aws_iam_role.malware_scan.arn}"]
+
+
+def test_the_queue_key_lets_eventbridge_encrypt_messages() -> None:
+    kms = {
+        name: body
+        for block in load("modules/kms/main.tf")["data"]
+        for kind, named in block.items()
+        if kind == "aws_iam_policy_document"
+        for name, body in named.items()
+    }
+    statement = next(s for s in kms["queues"]["statement"] if s.get("sid") == "EventBridgeUse")
+    assert statement["actions"] == ["kms:Decrypt", "kms:GenerateDataKey"]
+    assert statement["principals"][0]["identifiers"] == ["events.amazonaws.com"]
+    assert KMS["aws_kms_key.queues"]["policy"] == "${data.aws_iam_policy_document.queues.json}"
+
+
+def test_scan_results_reach_an_encrypted_queue_with_a_dead_letter_queue() -> None:
+    rule = PLATFORM["aws_cloudwatch_event_rule.file_scans"]
+    pattern = rule["event_pattern"]
+    assert '"aws.guardduty"' in pattern
+    assert '"GuardDuty Malware Protection Object Scan Result"' in pattern
+    assert "module.evidence.malware_protection_plan_arn" in pattern
+    target = PLATFORM["aws_cloudwatch_event_target.file_scans"]
+    assert target["arn"] == "${aws_sqs_queue.file_scans.arn}"
+    queue, dead = PLATFORM["aws_sqs_queue.file_scans"], PLATFORM["aws_sqs_queue.file_scans_dead"]
+    for q in (queue, dead):
+        assert q["kms_master_key_id"] == "${module.kms.queues_key_arn}"
+    assert dead["message_retention_seconds"] == 1209600  # 14 days
+    assert "maxReceiveCount = 10" in queue["redrive_policy"]
+    allow = PLATFORM_DOCS["file_scans_queue"]["statement"][0]
+    assert allow["actions"] == ["sqs:SendMessage"]
+    assert allow["principals"][0]["identifiers"] == ["events.amazonaws.com"]
+    assert allow["condition"][0]["test"] == "ArnEquals"
+    assert allow["condition"][0]["values"] == ["${aws_cloudwatch_event_rule.file_scans.arn}"]
+
+
+def test_the_worker_may_only_drain_the_scan_queue() -> None:
+    statements = {s["sid"]: s for s in ECS_POLICIES["worker"]["statement"]}
+    drain = statements["DrainFileScans"]
+    assert drain["actions"] == [
+        "sqs:ReceiveMessage",
+        "sqs:DeleteMessage",
+        "sqs:ChangeMessageVisibility",
+    ]
+    assert drain["resources"] == ["${var.file_scan_queue_arn}"]
+    assert statements["FileScanKey"]["actions"] == ["kms:Decrypt"]
+    assert statements["FileScanKey"]["resources"] == ["${var.queues_key_arn}"]
+    platform = {k: v for m in PLATFORM_FILE["module"] for k, v in m.items()}
+    assert platform["ecs"]["file_scan_queue_arn"] == "${aws_sqs_queue.file_scans.arn}"
+    (environment,) = [
+        b["app_environment"] for b in PLATFORM_FILE["locals"] if "app_environment" in b
+    ]
+    assert "ATESTA_FILE_SCAN_QUEUE_URL = aws_sqs_queue.file_scans.url" in environment
+
+
+def test_the_apply_role_manages_only_malware_plans_and_its_own_queues_and_rules() -> None:
+    oidc = load("modules/github-oidc/main.tf")
+    apply = next(
+        d["aws_iam_policy_document"]["apply"]
+        for d in oidc["data"]
+        if "apply" in d.get("aws_iam_policy_document", {})
+    )
+    statements = {s.get("sid"): s for s in apply["statement"]}
+    plans = statements["MalwareProtectionPlans"]
+    assert all(a.startswith("guardduty:") for a in plans["actions"])
+    assert "guardduty:*" not in plans["actions"]
+    assert statements["OwnQueues"]["resources"] == ["arn:aws:sqs:*:${local.account}:${var.name}-*"]
+    assert statements["OwnRules"]["resources"] == [
+        "arn:aws:events:*:${local.account}:rule/${var.name}-*"
+    ]

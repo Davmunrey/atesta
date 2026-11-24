@@ -54,6 +54,7 @@ AI output (prompt injection); customer data processed outside the EU.
 | Locked, audited, cooled-down dependencies | ADR-006, ADR-013 | `.github/workflows/ci.yml` job `security` (pip-audit on the exported lock and the scanner requirements, semgrep), `apps/api/tests/test_ci_workflow.py`, `.github/dependabot.yml` (7-day cooldown) |
 | No GPL or AGPL in the web bundle or the Python dependencies; LGPL only where listed | rule 4, ADR-006 | `apps/web/scripts/check-licenses.ts` (CI job `web`), `apps/api/devtools/python_licenses.py` (CI job `python`), `apps/api/tests/test_python_licenses.py` |
 | Strict Content Security Policy for the static web | web-shell spec | `apps/web/scripts/csp.ts`, run by `pnpm build` in CI |
+| Uploaded evidence files are served only after GuardDuty Malware Protection for S3 reports them clean; a file with possible malware is blocked, kept under Object Lock, and owners and admins are told | evidence-malware-scanning spec, #401 | `apps/api/tests/db/test_evidence_malware.py`, `apps/api/tests/db/test_file_scan_job.py`, `apps/api/tests/test_malware_events.py`; the API role reads only versions tagged `NO_THREATS_FOUND` and only the scan role may write that tag (`infra/tests/test_infra.py`) |
 
 ## Trusted inputs and accepted gaps
 
@@ -70,7 +71,8 @@ for a control.
 | Catalog packs (frameworks, controls, mappings) | Trusted once the owner releases them after qualified review | `catalog/`, each pack's `SOURCES.md`; loaded as `atesta_owner`, read-only to the app role (ADR-012); release is an owner decision (GOVERNANCE.md) |
 | Sign-in tokens | Trusted after signature, issuer and audience checks against Cognito's JWKS | `identity/cognito.py`, `apps/api/tests/db/test_bff.py` |
 | Evidence statements and their links | Customer content: untrusted, never fetched, rendered as text | `evidence/links.py` refuses a link whose query or fragment carries a credential on every path into evidence: the web form, the ingestion API, policies, training campaigns, and `record_attestation` (#256; `apps/api/tests/db/test_ingestion.py`, `test_routines.py`, `test_routines_b.py`, `test_control_workspace.py`) |
-| Uploaded evidence files | Customer content: untrusted, never executed, rendered or parsed (rule 5) | `evidence/files.py`: the API is the only writer to the store; the type comes from the extension allowlist and the content must match it; size is counted, not declared; the SHA-256 is computed over the bytes received and recomputed before every download, which is refused and audited on a mismatch (#222, #263); downloads are attachments with `nosniff` and a sandbox policy (`apps/api/tests/db/test_evidence_files.py`) |
+| Uploaded evidence files | Customer content: untrusted, never executed, rendered or parsed (rule 5) | `evidence/files.py`: the API is the only writer to the store; the type comes from the extension allowlist and the content must match it; size is counted, not declared; the SHA-256 is computed over the bytes received and recomputed before every download, which is refused and audited on a mismatch (#222, #263); a download waits for a clean malware scan of the version it reads (#401); downloads are attachments with `nosniff` and a sandbox policy (`apps/api/tests/db/test_evidence_files.py`, `test_evidence_malware.py`) |
+| GuardDuty malware scan results from the worker's queue | Untrusted until checked | `evidence/malware.py` `parse_scan_result`: the configured bucket and the uploaded-file key shape only; the result is recorded only for that exact key of that organization, under RLS, and the first result is final; an unknown status counts as failed (`apps/api/tests/test_malware_events.py`, `apps/api/tests/db/test_file_scan_job.py`) |
 | API tokens for evidence ingestion | Write-only, stored as a sha256 | `identity/api_tokens.py`; a token in a query string is refused before parsing (`QueryFreeRoute`, `apps/api/tests/db/test_ingestion.py`) |
 | Device agent reports | Evidence noise at worst: a device credential reads nothing | `docs/security/device-agent-threat-model.md`, including its own residual risks |
 
@@ -95,9 +97,11 @@ for a control.
 - **Local Docker runner (development only).** The attempt's `out/` folder is opened to the
   container's user 10001 (`scanning/local.py`); `LocalDockerRunner` refuses to start outside a
   development `ATESTA_ENV`.
-- **Uploaded files are not scanned for malware.** A booby-trapped PDF or Office document that a
-  member uploads reaches whoever downloads it, as it would by email. Atesta never opens the file,
-  and the allowlist leaves out formats that run or script (#401 holds the decision on scanning).
+- **Malware scanning has the limits of its scanner.** GuardDuty reports a file it cannot scan
+  (password-protected, over its quotas) as unsupported, and Atesta then refuses the download;
+  it cannot catch a threat its engine does not know. The local development stack has no scanner
+  and marks files `not_scanned`. Results that cannot be placed wait in a dead-letter queue that
+  nothing alarms on yet (evidence-malware-scanning spec, Out of scope).
 - **Evidence lock in governance mode.** Stored evidence is retained 365 days under S3 Object
   Lock in governance mode, and the bucket policy denies the bypass to every principal (#263).
   Whoever can change that policy can still lift the lock; compliance mode would close this and

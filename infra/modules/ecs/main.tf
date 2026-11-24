@@ -55,6 +55,16 @@ variable "evidence_key_arn" {
   type        = string
 }
 
+variable "file_scan_queue_arn" {
+  description = "Queue of GuardDuty malware scan results the worker drains (evidence-malware-scanning spec)."
+  type        = string
+}
+
+variable "queues_key_arn" {
+  description = "KMS key of that queue: receiving needs kms:Decrypt (AWS, SQS key management)."
+  type        = string
+}
+
 variable "images" {
   description = "Image references for api, worker and scan, pinned by digest."
   type        = object({ api = string, worker = string, scan = string })
@@ -260,6 +270,16 @@ data "aws_iam_policy_document" "worker" {
     resources = ["arn:aws:ecs:${local.region}:${local.account}:task/${var.name}/*"]
   }
   statement {
+    sid       = "DrainFileScans"
+    actions   = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:ChangeMessageVisibility"]
+    resources = [var.file_scan_queue_arn]
+  }
+  statement {
+    sid       = "FileScanKey"
+    actions   = ["kms:Decrypt"]
+    resources = [var.queues_key_arn]
+  }
+  statement {
     sid     = "PassScanRoles"
     actions = ["iam:PassRole"]
     resources = [
@@ -286,13 +306,25 @@ resource "aws_iam_role" "api" {
 
 # Evidence file uploads (evidence-file-uploads spec): the API is the only writer of uploaded
 # documents. It may put and get objects under <organization_id>/evidence/ and nothing else in the
-# bucket: no delete, no list, no scan outputs. SSE-KMS needs kms:GenerateDataKey to write and
-# kms:Decrypt to read (AWS, "Using server-side encryption with AWS KMS keys").
+# bucket: no delete, no list, no tagging, no scan outputs. It reads a version only once GuardDuty
+# tagged it clean (evidence-malware-scanning spec), so a bug in the API's own status check still
+# serves nothing unscanned. SSE-KMS needs kms:GenerateDataKey to write and kms:Decrypt to read
+# (AWS, "Using server-side encryption with AWS KMS keys").
 data "aws_iam_policy_document" "api" {
   statement {
-    sid       = "EvidenceFiles"
-    actions   = ["s3:GetObject", "s3:PutObject"]
+    sid       = "EvidenceUploads"
+    actions   = ["s3:PutObject"]
     resources = ["${var.evidence_bucket_arn}/*/evidence/*"]
+  }
+  statement {
+    sid       = "EvidenceReadsWhenClean"
+    actions   = ["s3:GetObject", "s3:GetObjectVersion"]
+    resources = ["${var.evidence_bucket_arn}/*/evidence/*"]
+    condition {
+      test     = "StringEquals"
+      variable = "s3:ExistingObjectTag/GuardDutyMalwareScanStatus"
+      values   = ["NO_THREATS_FOUND"]
+    }
   }
   statement {
     sid       = "EvidenceKey"
