@@ -536,6 +536,38 @@ answered from the law below and stays open for the owner's tax adviser.
   - **scanning:** `scan_counts(session, org_ids, since)`.
   - **notifications:** `queue_service_notice(session, org_id, kind)`.
   - The API-key counts come from identity, which owns `api_tokens`.
+- **Module functions as built (build step 3, #461, #462).** Amended 2026-11-24 where the list
+  above was ambiguous or did not fit the code:
+  - **Refusals:** the functions raise `identity.api.OperatorError` with a bare code
+    (`not_found`, `already_suspended`, `not_suspended`, `closure_exists`, `closure_by_owner`,
+    `no_closure`, `erasure_pending`, `same_approver`, `cooling_off`, `erasure_expired`,
+    `erasure_approved`, `erasure_cancelled`, `erasure_executed`). The operator API maps each to
+    `operator.<code>` and its status; `cooling_off` and `erasure_approved` are 409s the API
+    table above did not name. `billing.api.UnknownAddonError` becomes `operator.invalid_plan`.
+  - **List filters across modules:** `organization_rows` takes `OrganizationFilters(state,
+    within, exclude, sort)`. The plan, health and billing filters are other modules' data, so
+    the operator service turns them into id sets (`within`, `exclude`) from
+    `subscriptions_for(session, None)`, `health_counts(session, None)` and
+    `billing_summaries(session, None)`, where `None` reads every organization. Search and sort,
+    including by last activity, stay in identity.
+  - **Added:** `identity.api_key_counts(session, org_ids, since)` (active keys, calls since);
+    `identity.request_erasure`, `approve_erasure` and `cancel_erasure`, which hold the two rules
+    the database cannot (a requester approves only as the sole enabled admin; a new request
+    cancels an expired, unapproved one); `billing.billing_summaries(session, org_ids)` (legal
+    name and completeness, what support sees) and `billing.known_addons()`.
+  - **Renamed:** `scanning.scan_activity(session, org_ids, since)`, because `scan_counts` already
+    exists for one organization (weekly summary).
+  - **Connection health:** a fourth value, `pending`, when no connection needs attention but one
+    is still being set up or verified (`pending_provisioning`, `pending_setup`, `verifying`):
+    neither "OK" nor "needs attention" fits it.
+  - **Audit trails are not written by these functions:** they return what the trails need
+    (`suspended_at`, the erase date, the previous plan, the changed billing field names), and
+    the operator service writes the customer event and the operator trail row in the same
+    transaction.
+  - **Open: `notifications.queue_service_notice` is not built.** Deferring a job inserts into
+    the Procrastinate tables, and ADR-012 amendment 8's closed list gives `atesta_operator` no
+    privilege on them. Service notices need either an amendment granting the role the defer
+    path for one queue, or another trigger; the owner decides.
 - **Composition:** the operator service composes these results per page of 50 organizations. At
   the expected number of organizations, this is a handful of grouped queries per page, not one
   per organization.

@@ -43,6 +43,25 @@ from atesta_api.modules.identity.deps import (
     require_member,
     require_role,
 )
+from atesta_api.modules.identity.for_operator import (
+    PAGE_SIZE,
+    SUSPENSION_REASONS,
+    ApiKeyCounts,
+    OperatorError,
+    OrganizationFilters,
+    OrganizationMetadata,
+    OrganizationPage,
+    api_key_counts,
+    cancel_operator_closure,
+    invitation_counts,
+    last_activity,
+    member_counts,
+    organization_metadata,
+    organization_rows,
+    reactivate,
+    start_operator_closure,
+    suspend,
+)
 from atesta_api.modules.identity.invitations import QueryFreeRoute, normalize_email, token_hash
 from atesta_api.modules.identity.models import Role
 from atesta_api.modules.identity.org_profile import (
@@ -75,7 +94,24 @@ def install_identity(app: FastAPI) -> None:
 
 
 __all__ = [
+    "PAGE_SIZE",
+    "SUSPENSION_REASONS",
     "USAGE_RETENTION",
+    "ApiKeyCounts",
+    "OperatorError",
+    "OrganizationFilters",
+    "OrganizationMetadata",
+    "OrganizationPage",
+    "api_key_counts",
+    "cancel_operator_closure",
+    "invitation_counts",
+    "last_activity",
+    "member_counts",
+    "organization_metadata",
+    "organization_rows",
+    "reactivate",
+    "start_operator_closure",
+    "suspend",
     "ApiCaller",
     "annotate_scopes",
     "ApiTokenCaller",
