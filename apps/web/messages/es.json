@@ -371,7 +371,7 @@
   "framework": {
     "back": "Volver al resumen",
     "loading": "Cargando requisitos…",
-    "intro": "Qué está comprobado, qué falta y cómo avanzar.",
+    "intro": "Los requisitos del marco y el estado de cada uno en tu organización.",
     "development": "Entorno de desarrollo. Los marcos sintéticos son ejemplos, no evaluaciones normativas.",
     "recordedScore": "Puntuación registrada:",
     "unassessed": "Todavía no hay una evaluación registrada para este marco.",
@@ -676,7 +676,7 @@
     "exportDossier": "Abrir el dossier para el auditor",
     "profile": "Perfil de cumplimiento",
     "profileNone": "Ninguno: proponer según la categoría y los niveles",
-    "profileHelp": "Si adoptáis un perfil publicado, Atesta propone cada medida según su declaración de aplicabilidad en lugar de las tablas por categoría.",
+    "profileHelp": "Si adoptas un perfil publicado, Atesta propone cada medida según su declaración de aplicabilidad en lugar de las tablas por categoría.",
     "profileSources": "Fuentes: {refs}.",
     "profileCandidate": "Selección extraída por Atesta de la guía citada, pendiente de revisión cualificada.",
     "profileAdopted": "Perfil adoptado: {title}.",
@@ -684,8 +684,8 @@
     "proposalCriterion": "La guía da criterios propios para esta medida: {reference}.",
     "guide": {
       "title": "Valorar el sistema paso a paso",
-      "candidate": "Pasos redactados por Atesta a partir de la guía citada, pendientes de revisión cualificada. La valoración es vuestra.",
-      "reviewed": "Pasos redactados por Atesta a partir de la guía citada y revisados por {name}. La valoración es vuestra.",
+      "candidate": "Pasos redactados por Atesta a partir de la guía citada, pendientes de revisión cualificada. La valoración es tuya.",
+      "reviewed": "Pasos redactados por Atesta a partir de la guía citada y revisados por {name}. La valoración es tuya.",
       "addInformation": "Añadir un tipo de información",
       "addService": "Añadir un servicio",
       "name": {
@@ -721,7 +721,7 @@
     "scoreOverTime": "Puntuación registrada a lo largo del tiempo",
     "score": "Puntuación",
     "showTable": "Ver los datos en una tabla",
-    "owners": "Encargados",
+    "owners": "Responsables de medidas",
     "unowned": "Pendientes sin responsable",
     "overdue": "Vencidas",
     "openByOwner": "Medidas abiertas por responsable",
@@ -811,7 +811,7 @@
   "myWork": {
     "title": "Mi trabajo",
     "intro": "Las medidas que tienes asignadas, por fecha límite.",
-    "empty": "No tienes medidas asignadas. Un administrador puede asignártelas desde el registro de cada marco.",
+    "empty": "No tienes medidas asignadas. Quien administra la organización las asigna desde el registro de cada marco.",
     "framework": "Marco",
     "measure": "Medida",
     "due": "Fecha límite",
@@ -820,7 +820,9 @@
     "overdue": "Vencida",
     "pending": "Sin evaluar",
     "loading": "Cargando…",
-    "open": "Abrir {code}"
+    "open": "Abrir {code}",
+    "emptyAdmin": "No tienes medidas asignadas.",
+    "assign": "Asigna medidas desde Marcos"
   },
   "coverage": {
     "title": "Cobertura de la fuente oficial",
@@ -1013,7 +1015,7 @@
       "closesOn": "Termina el {date}",
       "ended": "Terminó el {date}; ciérrala",
       "create": "Nueva formación",
-      "createHelp": "El enlace se muestra una sola vez. Compártelo tú, por correo o en vuestro chat; Atesta no envía correos.",
+      "createHelp": "El enlace se muestra una sola vez. Compártelo por correo o por el chat de tu equipo; Atesta no envía correos.",
       "campaignTitle": "Nombre de la formación",
       "material": "Enlace al material (https)",
       "closes": "Fecha de cierre",
@@ -1034,7 +1036,7 @@
     },
     "incidents": {
       "title": "Incidentes",
-      "intro": "Registra cada incidente y cuándo tuvisteis constancia. Atesta calcula los plazos de notificación de los marcos activos; decidir si hay que notificar es cosa vuestra.",
+      "intro": "Registra cada incidente y cuándo tuviste constancia. Atesta calcula los plazos de notificación de los marcos activos; decidir si hay que notificar te corresponde a ti.",
       "loading": "Cargando…",
       "list": "Incidentes",
       "empty": "No hay incidentes registrados.",
@@ -1046,15 +1048,15 @@
       "next": "Próximo plazo: {time}",
       "noClocks": "Sin plazos",
       "create": "Registrar un incidente",
-      "createHelp": "Indica cuándo tuvisteis constancia del incidente: los plazos cuentan desde ese momento.",
+      "createHelp": "Indica cuándo tuviste constancia del incidente: los plazos cuentan desde ese momento.",
       "incidentTitle": "Descripción breve",
       "awareAt": "Constancia del incidente",
       "significant": "Incidente significativo",
-      "significantHelp": "Según la definición del marco que os aplique.",
+      "significantHelp": "Según la definición del marco que te aplique.",
       "personalData": "Afecta a datos personales",
       "record": "Registrar",
       "clocks": "Plazos de notificación",
-      "clocksHelp": "Plazos tomados de los marcos activos. Marca cada aviso cuando lo hayáis enviado.",
+      "clocksHelp": "Plazos tomados de los marcos activos. Marca cada aviso cuando lo hayas enviado.",
       "clock": "Plazo",
       "source": "Fuente",
       "due": "Vencimiento",
@@ -1084,12 +1086,12 @@
       "criteriaSource": "Ver en la fuente oficial",
       "sentWhich": ": «{clock}»",
       "classifiedAt": "Clasificado como significativo",
-      "classifiedHelp": "Cuándo lo clasificasteis como significativo (grave). Algunos plazos cuentan desde ese momento, como la notificación inicial de DORA.",
+      "classifiedHelp": "Cuándo lo clasificaste como significativo (grave). Algunos plazos cuentan desde ese momento, como la notificación inicial de DORA.",
       "classified": "clasificado como significativo el {time}",
       "classificationMissing": "falta cuándo se clasificó como significativo",
       "classify": "Registrar la clasificación",
       "classifyTitle": "Clasificación como significativo",
-      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registréis.",
+      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registres.",
       "closeConfirm": "{count, plural, one {Queda # aviso sin enviar. ¿Cerrar igualmente?} other {Quedan # avisos sin enviar. ¿Cerrar igualmente?}}",
       "closeAnyway": "Cerrar",
       "cancel": "Cancelar"
@@ -1112,7 +1114,7 @@
   },
   "integrations": {
     "title": "Integraciones",
-    "intro": "Tokens para que vuestras herramientas (CI, copias, escáneres) y vuestros agentes de IA trabajen con Atesta. Cada token tiene solo los permisos que elijáis y un límite de peticiones por minuto.",
+    "intro": "Tokens para que tus herramientas (CI, copias, escáneres) y tus agentes de IA trabajen con Atesta. Cada token tiene solo los permisos que elijas y un límite de peticiones por minuto.",
     "loading": "Cargando…",
     "list": "Tokens",
     "empty": "Aún no hay tokens.",
@@ -1122,7 +1124,7 @@
     "days": "{count, plural, one {# día} other {# días}}",
     "add": "Crear el token",
     "create": "Nuevo token",
-    "createHelp": "El token se muestra una sola vez. Guárdalo como secreto en vuestra herramienta; Atesta solo conserva su huella.",
+    "createHelp": "El token se muestra una sola vez. Guárdalo como secreto en tu herramienta; Atesta solo conserva su huella.",
     "tokenTitle": "Token creado",
     "tokenHelp": "Cópialo ahora: no se volverá a mostrar.",
     "tokenLabel": "Token de API",
@@ -1142,7 +1144,7 @@
     "rateLimit": "Límite de peticiones",
     "perMinute": "{count, plural, one {# por minuto} other {# por minuto}}",
     "scopes": "Permisos",
-    "scopesHelp": "Marca solo lo que la herramienta necesita. Leer no permite escribir. Ningún permiso lanza escaneos ni toca vuestros sistemas.",
+    "scopesHelp": "Marca solo lo que la herramienta necesita. Leer no permite escribir. Ningún permiso lanza escaneos ni toca tus sistemas.",
     "scopeGroup": {
       "read": "Leer",
       "write": "Escribir"
@@ -1217,7 +1219,7 @@
     "title": "Dossier para el auditor",
     "frameworks": "Marcos",
     "loading": "Preparando el dossier…",
-    "intro": "Todo lo que pide el auditor en un solo documento: resumen para dirección, aplicabilidad, evidencias por requisito y rutinas. Imprímelo o guárdalo en PDF desde el navegador.",
+    "intro": "El dossier reúne el resumen para dirección, la aplicabilidad, las evidencias de cada requisito y las rutinas. Imprímelo o guárdalo en PDF desde el navegador.",
     "print": "Imprimir o guardar en PDF",
     "coverKicker": "Dossier de preparación de auditoría",
     "organization": "Organización",
@@ -1341,7 +1343,7 @@
         "help": "Cada rutina cerrada deja una evidencia fechada."
       },
       "tool": {
-        "title": "Conecta una herramienta para registrar evidencias solas",
+        "title": "Conecta una herramienta que registre evidencias por ti",
         "help": "Copias de seguridad, despliegues o análisis envían la evidencia con un token."
       },
       "dossier": {
@@ -1390,7 +1392,7 @@
   "summary": {
     "glance": {
       "title": "Registros",
-      "help": "Lo que pide una auditoría, de un vistazo. Cada fila enlaza a su registro.",
+      "help": "Lo que pide una auditoría. Cada fila enlaza a su registro.",
       "record": "Registro",
       "state": "Estado",
       "summary": "Resumen",
@@ -1605,7 +1607,7 @@
   },
   "apiDocs": {
     "title": "Referencia de la API",
-    "intro": "Las rutas que pueden llamar vuestras herramientas y agentes de IA con un token de Integraciones. Cada token llega solo a lo que permiten sus permisos y solo a vuestra organización.",
+    "intro": "Las rutas que pueden llamar tus herramientas y agentes de IA con un token de Integraciones. Cada token llega solo a lo que permiten sus permisos y solo a tu organización.",
     "mcpLink": "Guía para agentes de IA (MCP)",
     "index": "En esta página",
     "noScope": "Sin permiso específico",
@@ -1619,7 +1621,7 @@
     "no": "No",
     "basics": {
       "title": "Lo básico",
-      "key": "Envía el token en la cabecera Authorization, en cada petición, a la dirección de vuestro Atesta:",
+      "key": "Envía el token en la cabecera Authorization, en cada petición, a la dirección de tu Atesta:",
       "query": "Nunca lo pongas en la URL: una petición con parámetros de consulta se rechaza.",
       "limit": "Cada token tiene un límite de peticiones por minuto. Al superarlo, la respuesta es 429 con la cabecera Retry-After, que dice cuántos segundos esperar.",
       "language": "Los mensajes de error llegan en español, o en inglés si la cabecera Accept-Language lo pide.",
@@ -1659,19 +1661,19 @@
   },
   "mcpGuide": {
     "title": "Guía para agentes de IA (MCP)",
-    "intro": "Conecta un agente de IA compatible con MCP (Model Context Protocol) a Atesta para que lea vuestro estado y registre el trabajo de cada día, con los permisos que elijáis.",
+    "intro": "Conecta un agente de IA compatible con MCP (Model Context Protocol) a Atesta para que lea tu estado y registre el trabajo de cada día, con los permisos que elijas.",
     "apiLink": "Referencia de la API",
     "index": "En esta página",
     "what": {
       "title": "Qué puede hacer un agente",
-      "body": "Con el servidor MCP de Atesta, un agente puede responder qué falta en un marco y qué vence este mes, leer el texto oficial de una medida con su cita, registrar evidencias, proponer autoevaluaciones y registrar incidentes, formaciones y revisiones de acceso. Cada acción es una llamada a la API con vuestro token."
+      "body": "Con el servidor MCP de Atesta, un agente puede responder qué falta en un marco y qué vence este mes, leer el texto oficial de una medida con su cita, registrar evidencias, proponer autoevaluaciones y registrar incidentes, formaciones y revisiones de acceso. Cada acción es una llamada a la API con tu token."
     },
     "safety": {
       "title": "Qué no puede hacer",
       "scopes": "Solo lo que permite su token. Un token de solo lectura no escribe nada, y ningún token llega a otra organización.",
       "proposals": "No decide si una medida está implantada. Una autoevaluación de un agente es una propuesta: queda pendiente hasta que una persona la confirma en la aplicación, y entonces se registra a su nombre.",
       "data": "Lo que lee de Atesta le llega marcado como datos. El texto que escribieron personas (títulos, notas, evidencias) nunca se le presenta como instrucciones.",
-      "systems": "No toca vuestros sistemas: no lanza escaneos ni cambia conexiones. Cada escritura queda en la actividad con el token y el administrador que lo creó."
+      "systems": "No toca tus sistemas: no lanza escaneos ni cambia conexiones. Cada escritura queda en la actividad con el token y el administrador que lo creó."
     },
     "setup": {
       "title": "Conectar un agente en tu equipo",
@@ -1684,7 +1686,7 @@
     },
     "hosted": {
       "title": "Servidor alojado",
-      "body": "El servidor alojado aún no está disponible. Cuando lo esté, atenderá en la dirección de vuestro Atesta seguida de /mcp y pedirá el token en la cabecera Authorization: Bearer. Los clientes que solo se conectan con OAuth todavía no podrán usarlo."
+      "body": "El servidor alojado aún no está disponible. Cuando lo esté, atenderá en la dirección de tu Atesta seguida de /mcp y pedirá el token en la cabecera Authorization: Bearer. Los clientes que solo se conectan con OAuth todavía no podrán usarlo."
     },
     "tools": {
       "title": "Herramientas",

@@ -5,7 +5,9 @@ import { Empty, LoadError, Loading, PageHeader, Panel } from "./page-frame";
 import { orgHome as homeOf } from "@/lib/org";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { isMyWorkOverdue, useMyWork } from "@/lib/api/register-hooks";
-import { type Membership, orgFramework } from "@/lib/org";
+import { type Membership, orgFramework, orgFrameworks } from "@/lib/org";
+import { canReviewControls } from "@/lib/permissions";
+import { Badge } from "./badge";
 
 /** Mi trabajo (rbac spec): what the signed-in person has to do, soonest first. */
 export function MyWorkView({ org }: { org: Membership }) {
@@ -20,7 +22,10 @@ export function MyWorkView({ org }: { org: Membership }) {
     <Panel>
     {query.isPending ? <Loading label={t("loading")} />
       : query.isError ? <LoadError error={query.error} onRetry={() => void query.refetch()} />
-      : query.data.length === 0 ? <Empty>{t("empty")}</Empty>
+      // Role-correct: whoever can assign gets the way to do it (console-unification spec).
+      : query.data.length === 0 ? (canReviewControls(org.role)
+        ? <Empty>{t("emptyAdmin")} <Link href={orgFrameworks(org.organization_id)} className="text-link underline">{t("assign")}</Link></Empty>
+        : <Empty>{t("empty")}</Empty>)
       : <div className="table-region" role="region" aria-label={t("title")} tabIndex={0}>
         <table className="w-full text-left">
           <thead className="text-sm text-muted"><tr>
@@ -41,7 +46,7 @@ export function MyWorkView({ org }: { org: Membership }) {
                 </td>
                 <td data-label={t("framework")} className="py-3 pr-4 whitespace-nowrap">{item.framework_name}</td>
                 <td data-label={t("due")} className="py-3 pr-4 whitespace-nowrap">{item.due_on ? format.dateTime(new Date(`${item.due_on}T00:00:00Z`), { dateStyle: "medium", timeZone: "UTC" }) : t("noDue")}
-                  {overdue ? <> <span className="requirement-state" data-state="fail">{t("overdue")}</span></> : null}</td>
+                  {overdue ? <> <Badge state="measureOverdue">{t("overdue")}</Badge></> : null}</td>
                 <td data-label={t("state")} className="py-3">{state ? states(state) : t("pending")}</td>
               </tr>;
             })}

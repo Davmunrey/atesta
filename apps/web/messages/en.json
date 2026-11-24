@@ -371,7 +371,7 @@
   "framework": {
     "back": "Back to overview",
     "loading": "Loading requirements…",
-    "intro": "What is checked, what is missing and how to proceed.",
+    "intro": "The framework's requirements and where each stands in your organization.",
     "development": "Development environment. Synthetic frameworks are examples, not regulatory assessments.",
     "recordedScore": "Recorded score:",
     "unassessed": "There is no recorded assessment for this framework yet.",
@@ -721,7 +721,7 @@
     "scoreOverTime": "Recorded score over time",
     "score": "Score",
     "showTable": "Show the data as a table",
-    "owners": "Owners",
+    "owners": "Measure owners",
     "unowned": "Open without an owner",
     "overdue": "Overdue",
     "openByOwner": "Open measures by owner",
@@ -811,7 +811,7 @@
   "myWork": {
     "title": "My work",
     "intro": "The measures assigned to you, by due date.",
-    "empty": "No measures are assigned to you. An administrator can assign them from each framework's register.",
+    "empty": "No measures are assigned to you. Whoever administers the organization assigns them from each framework's register.",
     "framework": "Framework",
     "measure": "Measure",
     "due": "Due date",
@@ -820,7 +820,9 @@
     "overdue": "Overdue",
     "pending": "Not assessed",
     "loading": "Loading…",
-    "open": "Open {code}"
+    "open": "Open {code}",
+    "emptyAdmin": "No measures are assigned to you.",
+    "assign": "Assign measures from Frameworks"
   },
   "coverage": {
     "title": "Coverage of the official source",
@@ -1013,7 +1015,7 @@
       "closesOn": "Ends on {date}",
       "ended": "Ended on {date}; close it",
       "create": "New training",
-      "createHelp": "The link is shown only once. Share it yourself, by email or in your chat; Atesta sends no email.",
+      "createHelp": "The link is shown only once. Share it by email or in your team's chat; Atesta sends no email.",
       "campaignTitle": "Training name",
       "material": "Link to the material (https)",
       "closes": "Closing date",
@@ -1217,7 +1219,7 @@
     "title": "Auditor dossier",
     "frameworks": "Frameworks",
     "loading": "Preparing the dossier…",
-    "intro": "Everything the auditor asks for in one document: management summary, applicability, evidence by requirement and routines. Print it or save it as PDF from the browser.",
+    "intro": "The dossier holds the management summary, the applicability, the evidence for each requirement and the routines. Print it or save it as PDF from the browser.",
     "print": "Print or save as PDF",
     "coverKicker": "Audit preparation dossier",
     "organization": "Organization",
@@ -1341,7 +1343,7 @@
         "help": "Each closed routine leaves dated evidence."
       },
       "tool": {
-        "title": "Connect a tool that records evidence by itself",
+        "title": "Connect a tool that records evidence for you",
         "help": "Backups, deployments or scans send the evidence with a token."
       },
       "dossier": {
@@ -1390,7 +1392,7 @@
   "summary": {
     "glance": {
       "title": "Records",
-      "help": "What an audit asks for, at a glance. Each row links to its record.",
+      "help": "What an audit asks for. Each row links to its record.",
       "record": "Record",
       "state": "State",
       "summary": "Summary",

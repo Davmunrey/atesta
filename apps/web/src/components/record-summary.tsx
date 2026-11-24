@@ -44,7 +44,7 @@ export function useRecordStates() {
 export function RecordBadge({ state }: { state: RecordState }) {
   const c = useTranslations("console.kpi");
   if (state.clock) return <ClockBadge dueAt={state.clock} />;
-  return state.needs.length > 0 ? <Badge severity="overdue">{c("act")}</Badge> : <Badge severity="done">{c("clear")}</Badge>;
+  return state.needs.length > 0 ? <Badge state="recordsAct">{c("act")}</Badge> : <Badge state="recordsClear">{c("clear")}</Badge>;
 }
 
 /** The sentence: the figures that need action, inline, or why nothing does. */
