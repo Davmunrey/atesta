@@ -48,5 +48,12 @@
     "invalid": "The API key is not valid, has been revoked or has expired.",
     "scope": "This API key does not have the {scope} permission. Create a key with that permission in Integrations.",
     "rate_limited": "This API key has gone over its limit of requests per minute. Try again in {seconds} s."
+  },
+  "notifications": {
+    "footer": {
+      "why": "Atesta sends you this notice because of your role in the organization. It holds only titles, dates and links; the details are in the app.",
+      "optional": "To stop this type of notice: {url}",
+      "critical": "This is a security notice for owners and admins; it cannot be turned off."
+    }
   }
 }

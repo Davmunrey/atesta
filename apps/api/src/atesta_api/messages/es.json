@@ -48,5 +48,12 @@
     "invalid": "La clave de API no es válida, se ha revocado o ha caducado.",
     "scope": "Esta clave de API no tiene el permiso {scope}. Crea una clave con ese permiso en Integraciones.",
     "rate_limited": "Esta clave de API ha superado su límite de peticiones por minuto. Vuelve a intentarlo en {seconds} s."
+  },
+  "notifications": {
+    "footer": {
+      "why": "Atesta te envía este aviso por tu papel en la organización. Solo incluye títulos, fechas y enlaces; los detalles están en la aplicación.",
+      "optional": "Para dejar de recibir este tipo de aviso: {url}",
+      "critical": "Es un aviso de seguridad para propietarios y administradores; no se puede desactivar."
+    }
   }
 }

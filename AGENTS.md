@@ -17,7 +17,7 @@ framework. Atesta builds evidence packs for auditors.
 - Python 3.13 backend: FastAPI modular monolith in `apps/api`, jobs in `apps/worker`.
 - Next.js + TypeScript UI in `apps/web`, typed client generated from the OpenAPI spec.
 - Modules in `apps/api/src/atesta_api/modules/`: identity, connections, scanning, compliance,
-  evidence, ai, billing. Modules talk ONLY through their `api.py`. Enforced by `lint-imports`.
+  evidence, ai, billing, notifications (ADR-008 amendment 1). Modules talk ONLY through their `api.py`. Enforced by `lint-imports`.
 - Pure domain logic lives in `packages/core` (no I/O, fully unit-tested).
 - AI = RAG with citations and guardrails (ADR-010). AI never decides pass/fail (ADR-005).
 - Everything runs in AWS eu-south-2; EU-only exceptions are listed in ADR-007 (amendment 1).

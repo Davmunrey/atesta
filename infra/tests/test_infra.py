@@ -475,12 +475,12 @@ def test_the_distribution_routes_api_and_private_pages_and_forces_https() -> Non
     default = dist["default_cache_behavior"][0]
     assert default["viewer_protocol_policy"] == "redirect-to-https"
     behaviors = {b["path_pattern"]: b for b in dist["ordered_cache_behavior"]}
-    assert set(behaviors) == {"/api/*", "/auth/*", "/invite*", "/training*"}
+    assert set(behaviors) == {"/api/*", "/auth/*", "/invite*", "/training*", "/unsubscribe*"}
     assert "custom_error_response" not in dist  # would rewrite the API's own error responses
     for path in ("/api/*", "/auth/*"):
         assert behaviors[path]["target_origin_id"] == "api", path
         assert behaviors[path]["viewer_protocol_policy"] == "https-only", path
-    for path in ("/invite*", "/training*"):
+    for path in ("/invite*", "/training*", "/unsubscribe*"):  # tokens in the URL
         policy = behaviors[path]["response_headers_policy_id"]
         assert policy == "${aws_cloudfront_response_headers_policy.no_referrer.id}", path
     assert dist["viewer_certificate"][0]["minimum_protocol_version"] == "TLSv1.2_2021"

@@ -275,3 +275,10 @@ tr[aria-current="true"] { background: var(--color-surface); }
   .routine-form input[type="checkbox"] { width: 1.125rem; height: 1.125rem; }
 }
 @media (pointer: coarse) { .routine-form input[type="checkbox"] { width: 1.5rem; height: 1.5rem; } }
+
+/* Email notices (notifications spec): one native checkbox per type, its explanation beside it. */
+.preference-list { display: grid; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.preference-row { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 0.75rem; padding-block: 0.75rem; border-bottom: 1px solid var(--color-border-subtle); }
+.preference-row:last-child { border-bottom: 0; }
+.preference-row input[type="checkbox"] { flex: none; width: 1.125rem; height: 1.125rem; min-height: 0; margin: 0.1875rem 0 0; accent-color: var(--color-link); }
+@media (pointer: coarse) { .preference-row input[type="checkbox"] { width: 1.5rem; height: 1.5rem; margin-top: 0; } }

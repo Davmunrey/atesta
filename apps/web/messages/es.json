@@ -303,6 +303,12 @@
       "output_invalid": "El resultado del escaneo no era válido y se descartó. No se guardó ningún dato de este intento.",
       "tenant_mismatch": "El resultado del escaneo pertenecía a otro inquilino y se descartó. Revisa a qué inquilino apunta la conexión.",
       "timeout": "El escaneo superó el tiempo máximo y se detuvo."
+    },
+    "notifications": {
+      "not_optional": "Este aviso es de seguridad y no se puede desactivar.",
+      "not_available": "Tu papel en la organización no recibe este aviso.",
+      "link_invalid": "El enlace no es válido o ha caducado (dura 60 días). Puedes cambiar tus avisos dentro de la aplicación.",
+      "unavailable": "Los avisos por email no están disponibles ahora mismo. Inténtalo más tarde."
     }
   },
   "app": {
@@ -312,7 +318,8 @@
     "signOut": "Cerrar sesión",
     "signedInAs": "Sesión iniciada como {email}",
     "account": "Cuenta",
-    "signedInLabel": "Sesión iniciada como"
+    "signedInLabel": "Sesión iniciada como",
+    "notificationsLink": "Avisos por email"
   },
   "home": {
     "title": "Tus organizaciones",
@@ -816,7 +823,9 @@
       "training_closed": "Cerró una formación",
       "assessment_proposal_created": "Un agente propuso una autoevaluación",
       "assessment_proposal_confirmed": "Confirmó la propuesta de un agente",
-      "assessment_proposal_rejected": "Rechazó la propuesta de un agente"
+      "assessment_proposal_rejected": "Rechazó la propuesta de un agente",
+      "notification_preferences_changed": "Cambió sus avisos por email",
+      "notification_unsubscribed": "Se dio de baja de un aviso por email"
     },
     "day": "Día",
     "unknown": "Otra acción"
@@ -1938,5 +1947,44 @@
     "addButton": "Añadir",
     "soon": "Próximamente",
     "chooseOrg": "Elige una organización"
+  },
+  "notifications": {
+    "title": "Avisos por email",
+    "intro": "Elige qué avisos de {org} te llegan por email. Solo incluyen títulos, fechas y enlaces; los detalles están en la aplicación.",
+    "notYetSending": "Atesta aún no envía estos avisos. Tus preferencias se aplicarán en cuanto empiece.",
+    "types": "Tipos de aviso",
+    "loading": "Cargando…",
+    "locked": "Siempre activo: es un aviso de seguridad.",
+    "kinds": {
+      "connection_alert": {
+        "name": "Conexión revocada o con permisos de más",
+        "help": "Atesta deja de ver tu tenant, o la aplicación tiene más acceso del que debe."
+      },
+      "incident_clock": {
+        "name": "Plazos de notificación de incidentes",
+        "help": "Cuando empieza un plazo, como la alerta temprana de 24 horas de NIS2, 6 horas antes de que venza y si vence."
+      },
+      "scan_problem": {
+        "name": "Escaneos fallidos o bloqueados",
+        "help": "Las evidencias automáticas dejan de actualizarse hasta que se resuelva."
+      },
+      "due_digest": {
+        "name": "Vencimientos próximos",
+        "help": "Un resumen diario cuando algo vence en 30, 7 o 1 día: revisiones de controles, políticas, revisiones de acceso y medidas asignadas."
+      },
+      "weekly_summary": {
+        "name": "Resumen semanal",
+        "help": "Los lunes a las 8:00: resultados, escaneos, conexiones y vencimientos. El primer lunes de cada mes incluye el enlace al informe mensual."
+      }
+    }
+  },
+  "unsubscribe": {
+    "title": "Dejar de recibir un aviso",
+    "loading": "Cargando…",
+    "body": "Confirma para dejar de recibir este tipo de aviso de Atesta. Puedes volver a activarlo en «Avisos por email», dentro de la aplicación.",
+    "confirm": "Confirmar la baja",
+    "done": "Hecho: ya no recibirás «{kind}».",
+    "again": "Puedes volver a activarlo en «Avisos por email», dentro de la aplicación.",
+    "missing": "El enlace no está completo. Ábrelo de nuevo desde el correo."
   }
 }

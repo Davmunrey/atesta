@@ -3946,6 +3946,17 @@
         "title": "KeyOut",
         "type": "object"
       },
+      "Kind": {
+        "enum": [
+          "connection_alert",
+          "incident_clock",
+          "scan_problem",
+          "due_digest",
+          "weekly_summary"
+        ],
+        "title": "Kind",
+        "type": "string"
+      },
       "LastVerification": {
         "description": "What the last verification found missing or extra, and what it cannot read.",
         "properties": {
@@ -4811,6 +4822,45 @@
           "next_review_on"
         ],
         "title": "PolicyOut",
+        "type": "object"
+      },
+      "PreferenceIn": {
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/Kind"
+          }
+        },
+        "required": [
+          "kind",
+          "enabled"
+        ],
+        "title": "PreferenceIn",
+        "type": "object"
+      },
+      "PreferenceOut": {
+        "properties": {
+          "can_disable": {
+            "title": "Can Disable",
+            "type": "boolean"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/Kind"
+          }
+        },
+        "required": [
+          "kind",
+          "enabled",
+          "can_disable"
+        ],
+        "title": "PreferenceOut",
         "type": "object"
       },
       "PreparationControl": {
@@ -6785,6 +6835,18 @@
           "framework_version"
         ],
         "title": "TrendPoint",
+        "type": "object"
+      },
+      "UnsubscribedOut": {
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/Kind"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "UnsubscribedOut",
         "type": "object"
       },
       "UpdateIn": {
@@ -10623,6 +10685,118 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/notifications/preferences": {
+      "get": {
+        "operationId": "read_preferences_api_v1_orgs__org_id__notifications_preferences_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PreferenceOut"
+                  },
+                  "title": "Response Read Preferences Api V1 Orgs  Org Id  Notifications Preferences Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Preferences",
+        "tags": [
+          "notifications"
+        ]
+      },
+      "put": {
+        "operationId": "change_preference_api_v1_orgs__org_id__notifications_preferences_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreferenceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PreferenceOut"
+                  },
+                  "title": "Response Change Preference Api V1 Orgs  Org Id  Notifications Preferences Put",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Change Preference",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/overview": {
       "get": {
         "operationId": "overview_api_v1_orgs__org_id__overview_get",
@@ -11673,6 +11847,50 @@
         "summary": "Read Link",
         "tags": [
           "compliance"
+        ]
+      }
+    },
+    "/api/v1/unsubscribe": {
+      "post": {
+        "description": "RFC 8058 one-click: a POST from the mail provider, nobody signed in.",
+        "operationId": "unsubscribe_api_v1_unsubscribe_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnsubscribedOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unsubscribe",
+        "tags": [
+          "notifications"
         ]
       }
     },

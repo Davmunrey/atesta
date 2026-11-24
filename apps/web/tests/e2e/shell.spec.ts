@@ -135,15 +135,15 @@ test("the policy blocks an injected inline script", async ({ page }) => {
   expect(await page.evaluate(() => (window as unknown as { pwned?: boolean }).pwned)).toBeUndefined();
 });
 
-test("security headers on every page; no referrer from /invite or /training", async ({ request }) => {
-  for (const path of ["/", "/app", "/invite", "/training", "/no-such-page"]) {
+test("security headers on every page; no referrer from /invite, /training or /unsubscribe", async ({ request }) => {
+  for (const path of ["/", "/app", "/invite", "/training", "/unsubscribe", "/no-such-page"]) {
     const response = await request.get(path);
     const headers = response.headers();
     expect(headers["content-security-policy"], path).toContain("frame-ancestors 'none'");
     expect(headers["content-security-policy"], path).not.toContain("unsafe-inline");
     expect(headers["x-content-type-options"], path).toBe("nosniff");
     expect(headers["strict-transport-security"], path).toContain("max-age=");
-    expect(headers["referrer-policy"], path).toBe(["/invite", "/training"].includes(path) ? "no-referrer" : "same-origin");
+    expect(headers["referrer-policy"], path).toBe(["/invite", "/training", "/unsubscribe"].includes(path) ? "no-referrer" : "same-origin");
   }
   expect((await request.get("/no-such-page")).status()).toBe(404);
 });

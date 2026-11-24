@@ -11,6 +11,7 @@ from atesta_api.modules.compliance.api import include_drafts, install_compliance
 from atesta_api.modules.connections.api import install_connections, wire_connections
 from atesta_api.modules.evidence.api import install_evidence
 from atesta_api.modules.identity.api import install_identity, wire_identity
+from atesta_api.modules.notifications.api import install_notifications
 from atesta_api.modules.scanning.api import router as scanning_router
 from atesta_api.platform import db
 from atesta_api.platform.errors import install_error_handlers
@@ -51,6 +52,7 @@ def create_app() -> FastAPI:
     install_compliance(created)
     install_evidence(created)
     install_connections(created)
+    install_notifications(created)
     created.include_router(scanning_router)
     created.add_api_route("/health", health, methods=["GET"])
     if os.environ.get("ATESTA_MCP_REMOTE") == "1":
