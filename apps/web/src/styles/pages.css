@@ -105,3 +105,70 @@
   .ens-table tbody th a { min-height: 2.75rem; }
   .ens-table td + td { margin-top: 0; }
 }
+
+/* /seguridad and /consultoras (A3, issue 381). */
+@layer components {
+  .page-status { max-width: 54ch; margin-top: 1.5rem; padding: 0.75rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-panel); font-size: 0.9375rem; }
+  @media (min-width: 64rem) {
+    .page-hero.page-hero-wide { grid-template-columns: minmax(0, 1fr); align-items: start; }
+    :is(.sec-split, #guardamos) { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; }
+  }
+
+  /* What Atesta can touch: three nodes joined by labelled one-way edges, drawn as the figure enters.
+     The edges run down on a phone and across from 64rem. There is no edge back: no write path. */
+  .sec-diagram { margin: 0; display: grid; gap: 1.5rem; view-timeline: --sec-diagram block; }
+  .sec-flow { display: grid; }
+  .sec-node { display: grid; align-content: start; gap: 0.5rem; padding: 1.25rem 1.5rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-panel); }
+  .sec-node-title { display: flex; align-items: center; gap: 0.625rem; font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; line-height: 1.15; }
+  .sec-node-note { color: var(--color-muted); }
+  .sec-node-ink { border-color: var(--color-ink); background: var(--color-ink); color: var(--color-on-ink); }
+  .sec-node-ink .sec-node-note { color: var(--color-on-ink-muted); }
+  .sec-seal { width: 1.75rem; height: 1.75rem; }
+  .sec-systems { display: grid; gap: 0.5rem; }
+  .sec-systems li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.5rem; }
+  .sec-systems .landing-soon { margin-left: 0; }
+  .sec-edge { position: relative; display: flex; align-items: center; min-height: 4.5rem; padding-left: 2.75rem; font-size: 0.875rem; font-weight: 500; }
+  .sec-edge::before { content: ""; position: absolute; top: 0.25rem; bottom: 0.25rem; left: 1.5rem; width: 2px; background: var(--color-fg); transform-origin: top; }
+  .sec-edge::after { content: ""; position: absolute; bottom: 0.3rem; left: calc(1.5rem - 0.3rem + 1px); width: 0.6rem; height: 0.6rem; border-right: 2px solid var(--color-fg); border-bottom: 2px solid var(--color-fg); transform: rotate(45deg); }
+  @media (min-width: 64rem) {
+    .sec-flow { grid-template-columns: minmax(0, 1fr) 10rem minmax(0, 1fr) 10rem minmax(0, 1fr); }
+    .sec-edge { min-height: 0; padding: 0 0.75rem; }
+    .sec-edge span { position: absolute; inset-inline: 0.75rem; bottom: calc(50% + 0.75rem); text-align: center; }
+    .sec-edge::before { top: 50%; bottom: auto; left: 0.5rem; right: 0.5rem; width: auto; height: 2px; transform-origin: left; }
+    .sec-edge::after { top: calc(50% - 0.3rem + 1px); bottom: auto; left: auto; right: 0.55rem; transform: rotate(-45deg); }
+  }
+  .sec-never { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border: 1px dashed var(--color-border); border-radius: var(--radius-md); font-weight: 500; }
+  .sec-never::before { content: ""; flex: none; width: 2.5rem; height: 2px; background: repeating-linear-gradient(90deg, var(--color-danger) 0 6px, transparent 6px 10px); }
+
+  .sec-lists { display: grid; gap: 2rem; }
+  @media (min-width: 40rem) { .sec-lists { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .sec-list-title { margin-bottom: 0.875rem; font-size: 1.125rem; font-weight: 600; }
+  .sec-never-list li::before { background: var(--color-fg); height: 2px; }
+
+  .sec-rules { display: grid; border-bottom: 1px solid var(--color-border-subtle); }
+  .sec-rules > div { display: grid; gap: 0.375rem 3rem; padding-block: 1.25rem; border-top: 1px solid var(--color-border-subtle); }
+  @media (min-width: 48rem) { .sec-rules > div { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); } }
+  .sec-rules dt { font-size: 1.125rem; font-weight: 600; }
+  .sec-rules dd { max-width: 60ch; color: var(--color-muted); }
+  .sec-report { max-width: 48ch; color: var(--color-on-ink-muted); font-size: 1.125rem; }
+
+  /* The sample portfolio keeps the console's table, quieter inside a product frame. */
+  .portfolio-sample table { width: 100%; font-size: 0.9375rem; font-variant-numeric: tabular-nums; }
+  .table-region.portfolio-sample :is(th, td) { padding: 0.75rem 0.75rem 0.75rem 0; border-bottom: 1px solid var(--color-border-subtle); text-align: left; }
+  .portfolio-sample thead th { font-size: 0.8125rem; font-weight: 500; color: var(--color-muted); }
+  .portfolio-sample tbody th { font-weight: 600; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports ((animation-timeline: view()) and (animation-range: entry)) {
+      .sec-edge::before { animation: sec-draw-y linear both; animation-timeline: --sec-diagram; animation-range: entry 30% cover 45%; }
+      @media (min-width: 64rem) { .sec-edge::before { animation-name: sec-draw-x; } }
+    }
+    /* The portfolio is in the hero, in view on load: its rows fill client by client, once. */
+    .portfolio-sample tbody tr { animation: landing-rise 700ms var(--ease-decisive) 250ms both; }
+    .portfolio-sample tbody tr:nth-child(2) { animation-delay: 400ms; }
+    .portfolio-sample tbody tr:nth-child(3) { animation-delay: 550ms; }
+    .portfolio-sample tbody tr:nth-child(4) { animation-delay: 700ms; }
+  }
+  @keyframes sec-draw-y { from { transform: scaleY(0); } }
+  @keyframes sec-draw-x { from { transform: scaleX(0); } }
+}

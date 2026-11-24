@@ -60,5 +60,47 @@
       }
     ],
     "cite": "CCN-STIC 808 · 6.2.3.7 (mp.info.6) · p. 99"
-  }
+  },
+  "portfolio": [
+    {
+      "name": "Transportes Ejemplo S.A.",
+      "started": true,
+      "assessed": 31,
+      "total": 73,
+      "overdue": 5,
+      "pending": 4,
+      "pendingOverdue": 2,
+      "last": "2026-11-02"
+    },
+    {
+      "name": "Ingeniería Ejemplo S.L.",
+      "started": true,
+      "assessed": 58,
+      "total": 73,
+      "overdue": 2,
+      "pending": 3,
+      "pendingOverdue": 1,
+      "last": "2026-11-20"
+    },
+    {
+      "name": "Clínica Ejemplo S.L.",
+      "started": true,
+      "assessed": 73,
+      "total": 73,
+      "overdue": 0,
+      "pending": 0,
+      "pendingOverdue": 0,
+      "last": "2026-11-18"
+    },
+    {
+      "name": "Software Ejemplo S.L.",
+      "started": false,
+      "assessed": 0,
+      "total": 73,
+      "overdue": 0,
+      "pending": 0,
+      "pendingOverdue": 0,
+      "last": null
+    }
+  ]
 }
