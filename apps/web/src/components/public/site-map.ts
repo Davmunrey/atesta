@@ -2,7 +2,7 @@
  * The public site's map (landing-legal amendment A3, issue 371). A page appears in the header and
  * footer only once it exists; each page batch flips its own flag, so no link ever lands on a 404.
  */
-export const PAGES = { producto: true, ens: true, seguridad: false, consultoras: false } as const;
+export const PAGES = { producto: true, ens: true, seguridad: true, consultoras: true } as const;
 
 export type MenuItem = { key: "assess" | "routines" | "incidents" | "dossier" | "assistant" | "api" | "apiRef" | "mcp"; href: string };
 

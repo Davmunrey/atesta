@@ -1986,5 +1986,87 @@
     "done": "Done: you will no longer receive “{kind}”.",
     "again": "You can turn it back on in Email notices, inside the app.",
     "missing": "The link is incomplete. Open it again from the email."
+  },
+  "seguridad": {
+    "title": "What Atesta can touch, <hl>and what it cannot</hl>",
+    "sub": "Atesta reads the security settings of your systems and keeps your evidence. Here is how, rule by rule, and what holds each rule.",
+    "status": "Atesta is not in production yet. This page describes how it is designed; we will update it when it is.",
+    "diagram": {
+      "label": "What Atesta can touch",
+      "systems": "Your systems",
+      "read": "Read only",
+      "scanner": "One isolated container per scan",
+      "scannerNote": "It checks its permissions before starting; one too many and it does not scan.",
+      "strip": "Results, without your resources' data",
+      "atesta": "Atesta",
+      "atestaNote": "Measures, evidence, records and audit",
+      "write": "No write permissions: Atesta cannot create, change or delete anything in your systems."
+    },
+    "region": {
+      "title": "Where your data lives",
+      "body": "Atesta is designed to be deployed in AWS eu-south-2 (Aragón): every database and all compute in Spain. There are two exceptions, and we declare them: sign-in emails leave from Paris, inside the EU, and AWS's CloudFront network carries requests encrypted, without storing them."
+    },
+    "data": {
+      "title": "What we keep and what we do not",
+      "stored": "We keep",
+      "s1": "Who you are and which organizations you belong to",
+      "s2": "The consent details of each connection",
+      "s3": "Scan results, without the resources' data",
+      "s4": "Evidence, reviews and the audit log",
+      "never": "We never keep",
+      "n1": "Passwords to your systems",
+      "n2": "Credentials with write permissions",
+      "n3": "The contents of your documents in logs",
+      "retention": "The retention and offboarding policy will be published before the first customer."
+    },
+    "rules": {
+      "title": "What holds each rule",
+      "body": "Automated tests run on every code change; if one fails, the change does not go in.",
+      "rule": "Rule",
+      "how": "What holds it",
+      "readonly": {
+        "name": "Read only",
+        "how": "The scanner's permissions are compared with a closed list before every scan. One too many and the scan does not start."
+      },
+      "isolation": {
+        "name": "Each organization, isolated",
+        "how": "PostgreSQL filters every row by organization (RLS). Without an organization, the database returns nothing."
+      },
+      "secrets": {
+        "name": "No secrets in logs",
+        "how": "Scanner logs are scrubbed of secrets, and the session travels in an encrypted cookie that is never logged."
+      },
+      "audit": {
+        "name": "Audit log",
+        "how": "Every action is recorded as it happens, and the record cannot be changed or deleted."
+      },
+      "ai": {
+        "name": "No AI decides",
+        "how": "A measure's status changes only through a deterministic check or a person's approval. It is a design rule (ADR-005)."
+      }
+    },
+    "report": {
+      "title": "Seen a security flaw?",
+      "body": "Write to {email} without technical details and we will point you to a private channel. Please do not publish it."
+    }
+  },
+  "consultoras": {
+    "title": "All your clients, <hl>each in its own space</hl>",
+    "sub": "For consultancies and IT teams preparing the ENS for several companies: one sign-in, one organization per client and a portfolio that tells you where to look first.",
+    "how": "How work with several clients runs",
+    "p1": {
+      "title": "Each client, isolated",
+      "body": "Each client is its own organization. Its data never mixes with another's, not even in the database."
+    },
+    "p2": {
+      "title": "A role for each person",
+      "body": "You invite the client's people as owners, admins or members, and the external auditor with an end date."
+    },
+    "p3": {
+      "title": "One dossier per client",
+      "body": "Each organization produces its own dossier, with its name, ready for its management."
+    },
+    "view": "Portfolio: your organizations at a glance",
+    "close": "Prepare your clients with Atesta."
   }
 }

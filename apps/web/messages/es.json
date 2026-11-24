@@ -1986,5 +1986,87 @@
     "done": "Hecho: ya no recibirás «{kind}».",
     "again": "Puedes volver a activarlo en «Avisos por email», dentro de la aplicación.",
     "missing": "El enlace no está completo. Ábrelo de nuevo desde el correo."
+  },
+  "seguridad": {
+    "title": "Lo que Atesta puede tocar, <hl>y lo que no</hl>",
+    "sub": "Atesta lee la configuración de seguridad de tus sistemas y guarda tus evidencias. Aquí está cómo lo hace, regla a regla, y qué sostiene cada regla.",
+    "status": "Atesta aún no está en producción. Esta página describe cómo está diseñada; la actualizaremos cuando lo esté.",
+    "diagram": {
+      "label": "Qué puede tocar Atesta",
+      "systems": "Tus sistemas",
+      "read": "Solo lectura",
+      "scanner": "Un contenedor aislado por escaneo",
+      "scannerNote": "Comprueba sus permisos antes de empezar; si sobra uno, no escanea.",
+      "strip": "Resultados, sin los datos de tus recursos",
+      "atesta": "Atesta",
+      "atestaNote": "Medidas, evidencias, registros y auditoría",
+      "write": "Sin permisos de escritura: Atesta no puede crear, cambiar ni borrar nada en tus sistemas."
+    },
+    "region": {
+      "title": "Dónde están tus datos",
+      "body": "Atesta está diseñada para desplegarse en AWS eu-south-2 (Aragón): todas las bases de datos y todo el cálculo, en España. Hay dos excepciones, y las declaramos: los correos de acceso salen de París, dentro de la UE, y la red CloudFront de AWS transporta las peticiones cifradas, sin guardarlas."
+    },
+    "data": {
+      "title": "Qué guardamos y qué no",
+      "stored": "Guardamos",
+      "s1": "Quién eres y a qué organizaciones perteneces",
+      "s2": "Los datos del consentimiento de cada conexión",
+      "s3": "Resultados de escaneo, sin los datos de los recursos",
+      "s4": "Evidencias, revisiones y el registro de auditoría",
+      "never": "Nunca guardamos",
+      "n1": "Contraseñas de tus sistemas",
+      "n2": "Credenciales con permisos de escritura",
+      "n3": "El contenido de tus documentos en los registros",
+      "retention": "La política de conservación y de baja se publicará antes del primer cliente."
+    },
+    "rules": {
+      "title": "Cómo se sostiene cada regla",
+      "body": "Las pruebas automáticas se ejecutan en cada cambio del código; si una falla, el cambio no entra.",
+      "rule": "Regla",
+      "how": "Qué la sostiene",
+      "readonly": {
+        "name": "Solo lectura",
+        "how": "Los permisos del escáner se comparan con una lista cerrada antes de cada escaneo. Si sobra uno, el escaneo no empieza."
+      },
+      "isolation": {
+        "name": "Cada organización, aislada",
+        "how": "PostgreSQL filtra cada fila por organización (RLS). Sin organización, la base de datos no devuelve nada."
+      },
+      "secrets": {
+        "name": "Ningún secreto en los registros",
+        "how": "Los registros del escáner se limpian de secretos, y la sesión viaja en una cookie cifrada que nunca se registra."
+      },
+      "audit": {
+        "name": "Registro de auditoría",
+        "how": "Cada acción se registra a la vez que ocurre, y el registro no se puede modificar ni borrar."
+      },
+      "ai": {
+        "name": "Ninguna IA decide",
+        "how": "El estado de una medida solo cambia por una comprobación determinista o por la aprobación de una persona. Es una regla de diseño (ADR-005)."
+      }
+    },
+    "report": {
+      "title": "¿Has visto un fallo de seguridad?",
+      "body": "Escríbenos a {email} sin detalles técnicos y te indicaremos un canal privado. Por favor, no lo publiques."
+    }
+  },
+  "consultoras": {
+    "title": "Todos tus clientes, <hl>cada uno en su espacio</hl>",
+    "sub": "Para consultoras y equipos de TI que preparan el ENS de varias empresas: un solo acceso, una organización por cliente y una cartera que dice dónde mirar primero.",
+    "how": "Cómo se trabaja con varios clientes",
+    "p1": {
+      "title": "Cada cliente, aislado",
+      "body": "Cada cliente es una organización propia. Sus datos no se mezclan con los de otro, tampoco en la base de datos."
+    },
+    "p2": {
+      "title": "Un rol para cada persona",
+      "body": "Invitas a la gente del cliente como propietaria, administradora o colaboradora, y al auditor externo con fecha de fin."
+    },
+    "p3": {
+      "title": "Un dossier por cliente",
+      "body": "Cada organización saca su propio dossier, con su nombre, listo para su dirección."
+    },
+    "view": "Cartera: tus organizaciones de un vistazo",
+    "close": "Prepara a tus clientes con Atesta."
   }
 }

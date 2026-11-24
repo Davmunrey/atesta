@@ -240,6 +240,37 @@ A3, /producto and /ens (#377):
 - [ ] **Flags on:** `PAGES.producto` and `PAGES.ens` are on. The header and footer link to both
       pages, and the e2e public-pages sweep covers them.
 
+A3, /seguridad and /consultoras (#381):
+
+**/seguridad**
+- [ ] **Not live yet:** the page says plainly that hosting is not live. The region reads
+      "diseñada para desplegarse en AWS eu-south-2 (Aragón)" (owner, 23/11/2026).
+- [ ] **What Atesta can touch:** a plain diagram with a text equivalent.
+      - Your systems (Microsoft 365 and Google Workspace, both "Próximamente") go, read only, to
+        one isolated scan container, then to Atesta.
+      - No write path exists.
+- [ ] **Residency:** the ADR-007 exceptions are named: sign-in email from Paris (EU), and
+      CloudFront transit, encrypted and never stored.
+- [ ] **Stored and never stored:** as SECURITY.md "Data handling" lists them. Retention is
+      "published before the first customer".
+- [ ] **How each rule holds:** read-only grants checked before every scan; Postgres RLS that
+      returns nothing without a tenant; secrets scrubbed from logs; append-only audit events; no
+      AI decides (ADR-005, a design rule).
+- [ ] **No overclaiming:** no certification, pentest result or figure Atesta does not have.
+      Statements about AWS name AWS as their subject.
+
+**/consultoras**
+- [ ] **One sign-in, many clients:** each client is an isolated organization, and an external
+      auditor's access carries an expiry date (rbac spec).
+- [ ] **Portfolio view:** a sample portfolio labelled "Datos de ejemplo", using the console's own
+      column names. Its rows rise one after another on a view timeline, and are static under
+      reduced motion.
+- [ ] **No partner or customer claims.**
+
+**Site map**
+- [ ] **Flags on:** `PAGES.seguridad` and `PAGES.consultoras` are on, and the e2e sweep covers
+      both.
+
 Legal pages (Spanish is the binding version)
 
 - [ ] Until the owner supplies the identity and a lawyer reviews the texts, both pages open with a
