@@ -22,7 +22,7 @@ from atesta_api.platform.audit import record
 from atesta_api.platform.context import TenantContext
 from atesta_api.platform.tenancy import set_tenant_context
 from fastapi.testclient import TestClient
-from sqlalchemy import Engine, text
+from sqlalchemy import Engine, column, func, select, table, text
 from sqlalchemy.orm import Session
 
 from .conftest import auth
@@ -169,10 +169,12 @@ def test_reactivation_leaves_every_row_unchanged(client: TestClient, superuser: 
                     " AND c.relnamespace = 'public'::regnamespace"
                 )
             ).scalars()
+            owned = column("organization_id") == uuid.UUID(org)
             return {
                 name: conn.execute(
-                    text(f'SELECT count(*) FROM "{name}" WHERE organization_id = :o'),  # noqa: S608
-                    {"o": org},
+                    select(func.count())
+                    .select_from(table(name, column("organization_id")))
+                    .where(owned)
                 ).scalar_one()
                 for name in tables
             }
