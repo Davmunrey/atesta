@@ -5,6 +5,7 @@ from atesta_api.platform.tables import (
     GLOBAL_IDENTITY,
     OPERATOR,
     OPERATOR_APPEND_ONLY,
+    OPERATOR_OWN,
     OPERATOR_READ,
     RETENTION_DAYS,
     TENANT,
@@ -35,8 +36,10 @@ def test_the_operator_column_list_names_classified_metadata_tables_only() -> Non
     assert set(OPERATOR_READ) <= set(table_classes())
     assert set(OPERATOR_READ) <= TENANT | {TENANT_ROOT} | OPERATOR
     assert not set(OPERATOR_READ) & GLOBAL_IDENTITY
+    assert not set(OPERATOR_READ) & OPERATOR_OWN
     assert all(OPERATOR_READ.values())
 
 
-def test_operator_append_only_tables_are_operator_tables() -> None:
+def test_operator_own_and_append_only_tables_are_operator_tables() -> None:
+    assert OPERATOR_OWN <= OPERATOR
     assert OPERATOR_APPEND_ONLY <= OPERATOR

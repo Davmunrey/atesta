@@ -5,7 +5,7 @@ import uuid
 from collections.abc import Mapping
 from datetime import datetime
 
-from sqlalchemy import DateTime, Text, func, text
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Text, func, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, Session, mapped_column
 
@@ -29,6 +29,43 @@ class AuditEvent(TenantMixin, Base):
     request_id: Mapped[str | None] = mapped_column(Text)
     occurred_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class OperatorAuditEvent(Base):
+    """The operator trail (ADR-017, "Audit"): every staff write and read, append-only.
+
+    An operator table (ADR-012 amendment 8): no RLS, no privilege for atesta_app, and no foreign
+    key to organizations, so it outlives erasure. Billing values are never stored, only field
+    names; the staff id and role are NULL only for the erasure runner's `erasure.executed`.
+    """
+
+    __tablename__ = "operator_audit_events"
+    __table_args__ = (
+        CheckConstraint("(staff_id IS NULL) = (staff_role IS NULL)", name="staff_together"),
+        CheckConstraint(
+            "staff_id IS NOT NULL OR action = 'erasure.executed'", name="staff_unless_runner"
+        ),
+        CheckConstraint("staff_role IN ('admin', 'billing', 'support')", name="staff_role"),
+        CheckConstraint(r"action ~ '^[a-z][a-z_]*(\.[a-z][a-z_]*)+$'", name="action"),
+        CheckConstraint("length(reason) BETWEEN 1 AND 500", name="reason"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    occurred_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    staff_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("operator_staff.id", ondelete="RESTRICT"), index=True
+    )
+    staff_role: Mapped[str | None] = mapped_column(Text)
+    action: Mapped[str] = mapped_column(Text)
+    organization_id: Mapped[uuid.UUID | None] = mapped_column(index=True)
+    target_id: Mapped[str | None] = mapped_column(Text)
+    reason: Mapped[str | None] = mapped_column(Text)
+    request_id: Mapped[str | None] = mapped_column(Text)
+    details: Mapped[dict[str, Scalar]] = mapped_column(
+        "metadata", JSONB, server_default=text("'{}'::jsonb")
     )
 
 

@@ -1076,6 +1076,54 @@
    "SELECT"
   ],
   [
+   "erasure_requests",
+   "",
+   "atesta_operator",
+   "SELECT"
+  ],
+  [
+   "erasure_requests",
+   "approved_at",
+   "atesta_operator",
+   "UPDATE"
+  ],
+  [
+   "erasure_requests",
+   "approved_by",
+   "atesta_operator",
+   "UPDATE"
+  ],
+  [
+   "erasure_requests",
+   "cancelled_at",
+   "atesta_operator",
+   "UPDATE"
+  ],
+  [
+   "erasure_requests",
+   "cancelled_by",
+   "atesta_operator",
+   "UPDATE"
+  ],
+  [
+   "erasure_requests",
+   "id",
+   "atesta_operator",
+   "INSERT"
+  ],
+  [
+   "erasure_requests",
+   "organization_id",
+   "atesta_operator",
+   "INSERT"
+  ],
+  [
+   "erasure_requests",
+   "requested_by",
+   "atesta_operator",
+   "INSERT"
+  ],
+  [
    "invitations",
    "accepted_at",
    "atesta_operator",
@@ -1110,6 +1158,30 @@
    "role",
    "atesta_operator",
    "SELECT"
+  ],
+  [
+   "operator_audit_events",
+   "",
+   "atesta_operator",
+   "INSERT,SELECT"
+  ],
+  [
+   "operator_staff",
+   "",
+   "atesta_operator",
+   "INSERT,SELECT"
+  ],
+  [
+   "operator_staff",
+   "disabled_at",
+   "atesta_operator",
+   "UPDATE"
+  ],
+  [
+   "operator_staff",
+   "role",
+   "atesta_operator",
+   "UPDATE"
   ],
   [
    "organizations",

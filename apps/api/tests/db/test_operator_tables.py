@@ -1,7 +1,8 @@
 """Data rules of the operator-portal columns and tables (operator-portal spec, #445).
 
-Trial end, suspension and closure origin on organizations, and billing details. Run as superuser
-in a rolled back transaction: these are constraints, so they hold for every role.
+Trial end, suspension and closure origin on organizations; billing details; erasure requests with
+the two-admin rule, the 72-hour cooling-off and the 7-day window. Run as superuser in a rolled
+back transaction: these are constraints, so they hold for every role.
 """
 
 import os
@@ -109,6 +110,148 @@ def test_billing_details_refuse_blank_and_malformed_values(
     with pytest.raises(IntegrityError, match="ck_billing_profiles"), su.begin_nested():
         values = {"organization_id": org, field: value}
         su.execute(insert(table("billing_profiles", *(column(c) for c in values))).values(values))
+
+
+def _staff(conn: Connection, role: str = "admin") -> uuid.UUID:
+    staff = uuid.uuid4()
+    conn.execute(
+        text("INSERT INTO operator_staff (id, cognito_sub, email, role) VALUES (:i, :s, :e, :r)"),
+        {"i": staff, "s": f"sub-{staff}", "e": f"{staff}@atesta.test", "r": role},
+    )
+    return staff
+
+
+def _request(conn: Connection, by: uuid.UUID, ago: str = "0 hours") -> uuid.UUID:
+    request = uuid.uuid4()
+    conn.execute(
+        text(
+            "INSERT INTO erasure_requests (id, organization_id, requested_by, requested_at)"
+            " VALUES (:i, :o, :b, now() - CAST(:ago AS interval))"
+        ),
+        {"i": request, "o": uuid.uuid4(), "b": by, "ago": ago},
+    )
+    return request
+
+
+APPROVE = "UPDATE erasure_requests SET approved_by = :a, approved_at = now() WHERE id = :i"
+
+
+def test_staff_roles_are_a_closed_list(su: Connection) -> None:
+    for role in ("admin", "billing", "support"):
+        _staff(su, role)
+    with pytest.raises(IntegrityError, match="ck_operator_staff_role"), su.begin_nested():
+        _staff(su, "owner")
+
+
+def test_a_second_admin_approves_at_once(su: Connection) -> None:
+    request = _request(su, _staff(su))
+    su.execute(text(APPROVE), {"a": _staff(su), "i": request})
+
+
+def test_the_requester_cannot_approve_within_72_hours(su: Connection) -> None:
+    admin = _staff(su)
+    request = _request(su, admin, "71 hours")
+    _refused(su, "second_admin_or_cooling_off", APPROVE, a=admin, i=request)
+
+
+def test_the_requester_approves_after_the_72_hour_cooling_off(su: Connection) -> None:
+    admin = _staff(su)
+    su.execute(text(APPROVE), {"a": admin, "i": _request(su, admin, "73 hours")})
+
+
+def test_approval_after_7_days_is_refused(su: Connection) -> None:
+    request = _request(su, _staff(su), "8 days")
+    _refused(su, "approval_window", APPROVE, a=_staff(su), i=request)
+
+
+def test_approval_and_cancellation_record_a_person_and_a_time(su: Connection) -> None:
+    request = _request(su, _staff(su))
+    _refused(
+        su,
+        "approved_together",
+        "UPDATE erasure_requests SET approved_at = now() WHERE id = :i",
+        i=request,
+    )
+    _refused(
+        su,
+        "cancelled_together",
+        "UPDATE erasure_requests SET cancelled_by = requested_by WHERE id = :i",
+        i=request,
+    )
+
+
+def test_a_cancelled_request_cannot_be_approved(su: Connection) -> None:
+    request = _request(su, _staff(su))
+    su.execute(
+        text(
+            "UPDATE erasure_requests SET cancelled_by = requested_by,"
+            " cancelled_at = now() - interval '1 minute' WHERE id = :i"
+        ),
+        {"i": request},
+    )
+    _refused(su, "not_approved_after_cancel", APPROVE, a=_staff(su), i=request)
+
+
+def test_only_an_approved_live_request_is_executed_with_its_receipt(su: Connection) -> None:
+    request = _request(su, _staff(su))
+    receipt = uuid.uuid4()
+    su.execute(
+        text(
+            "INSERT INTO erasure_receipts (id, organization_id, closure_requested_at, note,"
+            " row_counts) VALUES (:r, gen_random_uuid(), now(), '', '{}')"
+        ),
+        {"r": receipt},
+    )
+    execute = "UPDATE erasure_requests SET executed_at = now(), receipt_id = :r WHERE id = :i"
+    _refused(su, "executed_only_approved", execute, r=receipt, i=request)
+    su.execute(text(APPROVE), {"a": _staff(su), "i": request})
+    _refused(
+        su,
+        "executed_together",
+        "UPDATE erasure_requests SET executed_at = now() WHERE id = :i",
+        i=request,
+    )
+    su.execute(text(execute), {"r": receipt, "i": request})
+
+
+def test_one_open_request_per_organization(su: Connection) -> None:
+    admin = _staff(su)
+    first = _request(su, admin)
+    org = su.scalar(
+        text("SELECT organization_id FROM erasure_requests WHERE id = :i"), {"i": first}
+    )
+    insert = (
+        "INSERT INTO erasure_requests (id, organization_id, requested_by)"
+        " VALUES (gen_random_uuid(), :o, :b)"
+    )
+    _refused(su, "ux_erasure_requests_open", insert, o=org, b=admin)
+    su.execute(
+        text(
+            "UPDATE erasure_requests SET cancelled_by = requested_by, cancelled_at = now()"
+            " WHERE id = :i"
+        ),
+        {"i": first},
+    )
+    su.execute(text(insert), {"o": org, "b": admin})
+
+
+def test_the_operator_trail_names_staff_except_for_the_erasure_runner(su: Connection) -> None:
+    insert = (
+        "INSERT INTO operator_audit_events (id, staff_id, staff_role, action)"
+        " VALUES (gen_random_uuid(), :s, :r, :a)"
+    )
+    su.execute(text(insert), {"s": None, "r": None, "a": "erasure.executed"})
+    _refused(su, "staff_unless_runner", insert, s=None, r=None, a="operator.suspended")
+    _refused(su, "staff_together", insert, s=_staff(su), r=None, a="operator.suspended")
+    _refused(
+        su,
+        "ck_operator_audit_events_reason",
+        insert.replace("action)", "action, reason)").replace(":a)", ":a, :x)"),
+        s=None,
+        r=None,
+        a="erasure.executed",
+        x="x" * 501,
+    )
 
 
 def test_existing_organizations_get_a_trial_from_the_migration_and_keep_their_closure(

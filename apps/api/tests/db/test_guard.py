@@ -177,6 +177,14 @@ def test_the_operator_service_refuses_the_app_role(app_url: URL) -> None:
     ("grant", "undo"),
     [
         (
+            "GRANT UPDATE (reason) ON operator_audit_events TO atesta_operator",
+            "REVOKE UPDATE (reason) ON operator_audit_events FROM atesta_operator",
+        ),
+        (
+            "GRANT DELETE ON operator_audit_events TO atesta_operator",
+            "REVOKE DELETE ON operator_audit_events FROM atesta_operator",
+        ),
+        (
             "GRANT UPDATE (note) ON erasure_receipts TO atesta_operator",
             "REVOKE UPDATE (note) ON erasure_receipts FROM atesta_operator",
         ),
