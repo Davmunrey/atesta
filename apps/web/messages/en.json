@@ -1333,6 +1333,7 @@
     "organizations": "{count, plural, one {# organization} other {# organizations}}",
     "withOverdue": "{count, plural, one {# with something overdue} other {# with something overdue}}",
     "notStarted": "{count, plural, one {# not started} other {# not started}}",
+    "notShown": "{count, plural, one {# more organization not shown} other {# more organizations not shown}}",
     "organization": "Organization",
     "assessed": "Measures assessed",
     "overdue": "Overdue measures",

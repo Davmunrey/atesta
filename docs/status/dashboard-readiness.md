@@ -24,7 +24,7 @@ Verified on the local stack (fake Cognito, local Postgres, fixture scans). "Spec
 | Manual control review that cites its evidence | `manual-control-review.md`, `test_control_reviews.py` | A person approves; the AI and the scanner never do (ADR-005) |
 | Recorded routines: access reviews, policies, training acknowledgements, incident register with reporting deadlines | `recorded-routines.md`, `test_routines.py`, `test_routines_b.py` | Deadlines are computed from what the organization recorded |
 | Auditor dossier and monthly management report | `auditor-dossier.md`, `management-report.md`, `test_dossier.py`, `test_report.py` | Printed from recorded rows; no conformity statement |
-| Portfolio for people in several organizations | `consultancy-portfolio.md`, `apps/web/tests/e2e/portfolio.spec.ts` | The summary is computed in the browser, one request per organization (#228) |
+| Portfolio for people in several organizations | `consultancy-portfolio.md`, `test_portfolio.py`, `apps/web/tests/e2e/portfolio.spec.ts` | One request; the API reads each organization in its own context, at most 250 per request (ADR-012 amendment 10, proposed) |
 | Activity log, assignments, "Mi trabajo" | `insights.md`, `rbac.md`, `test_audit.py`, `test_rbac.py` | Audit events are append-only |
 | API keys with scopes, a rate limit and a usage log | `api-keys-v2.md`, `test_api_keys_v2.py`, `test_key_reads.py`, `test_key_writes.py` | A key reaches only its own organization |
 | Evidence ingestion API and ready-made scripts | `evidence-ingestion-api.md`, `test_ingestion.py` | Statements only; a link that is a credential is refused |

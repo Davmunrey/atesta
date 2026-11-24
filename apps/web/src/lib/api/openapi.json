@@ -5089,6 +5089,112 @@
         "title": "PolicyOut",
         "type": "object"
       },
+      "PortfolioOut": {
+        "properties": {
+          "not_shown": {
+            "title": "Not Shown",
+            "type": "integer"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/PortfolioRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rows",
+          "not_shown"
+        ],
+        "title": "PortfolioOut",
+        "type": "object"
+      },
+      "PortfolioRow": {
+        "properties": {
+          "organization_id": {
+            "format": "uuid",
+            "title": "Organization Id",
+            "type": "string"
+          },
+          "organization_name": {
+            "title": "Organization Name",
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PortfolioSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "organization_id",
+          "organization_name",
+          "role",
+          "summary"
+        ],
+        "title": "PortfolioRow",
+        "type": "object"
+      },
+      "PortfolioSummary": {
+        "properties": {
+          "assessed": {
+            "title": "Assessed",
+            "type": "integer"
+          },
+          "frameworks_in_progress": {
+            "title": "Frameworks In Progress",
+            "type": "integer"
+          },
+          "last_assessed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Assessed At"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "integer"
+          },
+          "pending": {
+            "title": "Pending",
+            "type": "integer"
+          },
+          "pending_overdue": {
+            "title": "Pending Overdue",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "frameworks_in_progress",
+          "assessed",
+          "total",
+          "overdue",
+          "pending",
+          "pending_overdue",
+          "last_assessed_at"
+        ],
+        "title": "PortfolioSummary",
+        "type": "object"
+      },
       "PreferenceIn": {
         "properties": {
           "enabled": {
@@ -12385,6 +12491,32 @@
           }
         ],
         "summary": "Close Campaign",
+        "tags": [
+          "compliance"
+        ]
+      }
+    },
+    "/api/v1/portfolio": {
+      "get": {
+        "operationId": "read_portfolio_api_v1_portfolio_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Portfolio",
         "tags": [
           "compliance"
         ]

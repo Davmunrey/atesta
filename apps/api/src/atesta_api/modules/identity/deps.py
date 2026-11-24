@@ -1,7 +1,8 @@
 """Request authentication and membership checks (identity-auth spec, Request flow)."""
 
 import uuid
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Annotated
@@ -34,7 +35,8 @@ from atesta_api.modules.identity.context import (
     enter_user_context,
 )
 from atesta_api.modules.identity.models import Membership, Role, User
-from atesta_api.platform.db import DbSession
+from atesta_api.platform.db import DbSession, read_only_transaction
+from atesta_api.platform.tenancy import Organization
 
 _bearer = HTTPBearer(auto_error=False)
 RANK = {Role.AUDITOR: -1, Role.MEMBER: 0, Role.ADMIN: 1, Role.OWNER: 2}
@@ -173,9 +175,16 @@ def require_member(
     The auditor rules live here so that no endpoint can forget them (rbac spec): access ends
     at the end date, and an auditor never writes, whatever the route.
     """
+    return _enter_as_member(session, org_id, caller.user_id, writing=request.method in _WRITES)
+
+
+def _enter_as_member(
+    session: Session, org_id: uuid.UUID, user_id: uuid.UUID, *, writing: bool
+) -> Member:
+    """The one membership check: found, not expired, and an auditor only reads."""
     row = session.execute(
         select(Membership.role, Membership.access_expires_at).where(
-            Membership.organization_id == org_id, Membership.user_id == caller.user_id
+            Membership.organization_id == org_id, Membership.user_id == user_id
         )
     ).first()
     if row is None:
@@ -183,10 +192,43 @@ def require_member(
     role, expires_at = Role(row.role), row.access_expires_at
     if expires_at is not None and expires_at <= datetime.now(UTC):
         raise error(403, "identity.access_expired")
-    if role == Role.AUDITOR and request.method in _WRITES:
+    if role == Role.AUDITOR and writing:
         raise error(403, "identity.forbidden")
     enter_org_context(session, org_id, ContextReason.MEMBERSHIP)
-    return Member(user_id=caller.user_id, organization_id=org_id, role=role)
+    return Member(user_id=user_id, organization_id=org_id, role=role)
+
+
+@dataclass(frozen=True, slots=True)
+class OwnOrganization:
+    organization_id: uuid.UUID
+    name: str
+    role: Role
+
+
+def own_organizations(session: Session, user_id: uuid.UUID) -> list[OwnOrganization]:
+    """The caller's organizations by name, read in the caller's own user context."""
+    found = session.execute(
+        select(Membership.organization_id, Organization.name, Membership.role)
+        .join(Organization, Organization.id == Membership.organization_id)
+        .where(Membership.user_id == user_id)
+        .order_by(Organization.name, Membership.organization_id)
+    ).all()
+    return [OwnOrganization(org, name, Role(role)) for org, name, role in found]
+
+
+@contextmanager
+def member_read(
+    subject: str, user_id: uuid.UUID, org_id: uuid.UUID
+) -> Iterator[tuple[Session, Member]]:
+    """One organization read as its member, in its own read-only transaction.
+
+    ADR-012 amendment 10: the same check as `require_member`, in a transaction of its own, so
+    a request can read the caller's organizations one after another and no query sees two.
+    Raises what `require_member` raises: 404 for a non-member, 403 once access has expired.
+    """
+    with read_only_transaction() as session:
+        enter_user_context(session, subject, user_id)
+        yield session, _enter_as_member(session, org_id, user_id, writing=False)
 
 
 def require_role(minimum: Role) -> Callable[[Member], Member]:

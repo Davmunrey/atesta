@@ -1312,6 +1312,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/portfolio": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Portfolio */
+        get: operations["read_portfolio_api_v1_portfolio_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/training-campaigns": {
         parameters: {
             query?: never;
@@ -3292,6 +3309,42 @@ export interface components {
             review_months: number;
             /** Title */
             title: string;
+        };
+        /** PortfolioOut */
+        PortfolioOut: {
+            /** Not Shown */
+            not_shown: number;
+            /** Rows */
+            rows: components["schemas"]["PortfolioRow"][];
+        };
+        /** PortfolioRow */
+        PortfolioRow: {
+            /**
+             * Organization Id
+             * Format: uuid
+             */
+            organization_id: string;
+            /** Organization Name */
+            organization_name: string;
+            role: components["schemas"]["Role"];
+            summary: components["schemas"]["PortfolioSummary"] | null;
+        };
+        /** PortfolioSummary */
+        PortfolioSummary: {
+            /** Assessed */
+            assessed: number;
+            /** Frameworks In Progress */
+            frameworks_in_progress: number;
+            /** Last Assessed At */
+            last_assessed_at: string | null;
+            /** Overdue */
+            overdue: number;
+            /** Pending */
+            pending: number;
+            /** Pending Overdue */
+            pending_overdue: number;
+            /** Total */
+            total: number;
         };
         /** PreferenceIn */
         PreferenceIn: {
@@ -6995,6 +7048,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_portfolio_api_v1_portfolio_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioOut"];
                 };
             };
         };
