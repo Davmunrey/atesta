@@ -17,7 +17,7 @@ function PortfolioView() {
   const format = useFormatter();
   return <ViewFrame label={page("view")} context={t("title")}>
     <div className="lv-body">
-      <div className="table-region portfolio-sample" role="region" tabIndex={0} aria-label={t("title")}>
+      <div className="table-region public-table portfolio-sample" role="region" tabIndex={0} aria-label={t("title")}>
         <table>
           <thead><tr>
             <th scope="col">{t("organization")}</th><th scope="col">{t("assessed")}</th><th scope="col">{t("overdue")}</th>

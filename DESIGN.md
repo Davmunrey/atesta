@@ -229,7 +229,15 @@ No KPI strip, team chart, activity feed or scan list: their pages are in the nav
 
 **Records at a glance.** When work is underway, the overview has a "Registros" table, in the fixed order policies, access reviews, training, incidents. Each row links to its page, writes its state as a badge ("Requiere acción", "Al día" or "Sin registros") and repeats the lead sentence of that page's record summary. While an incident's notification clock runs, the incidents row shows the `clock` severity with its countdown, never "Al día". A row that is loading or failed says so and claims no state.
 
-**Landing.** The public landing is light only, on the public content column (73.5rem plus 1.25rem gutters, which the header and footer share). The ENS headline is set in the display face up to 6rem and never moves, because it is the LCP; only its highlighter stroke draws. After the hero come the problem, four steps (the connect step tagged "Próximamente" until it ships), the product moments, the frameworks and the consultancy line; see Brand system. The product's own overview, drawn from the landing fixture in an ink-topped frame, is the argument. Three product moments follow, each a display headline beside one view of what the console ships (L7): a measure's official text and self-assessment, the records, the dossier. They share the content column, with hairline dividers. The page closes on an ink band with the yellow CTA. Motion is CSS only: the view rises once, its bar fills, its rows arrive, and everything rests by about 2 s. No shadows, no stock imagery, no eyebrow labels.
+**Landing (landing-legal A4, #393).** The public landing is light only, on the public content column (73.5rem plus 1.25rem gutters, which the header and footer share). It tells the story once:
+- **Hero:** the ENS headline in the display face up to 5rem (it never moves, because it is the LCP; only its highlighter stroke draws), one line and the request. Below it, one ENS measure in a product frame, as the measure sheet.
+- **Then:** the problem; "Cómo funciona" on ink (assess, records, incidents, dossier, then connect tagged "Próximamente", with no frame); the other frameworks as one mapping table; the consultancy line; the closing ink band, with a hairline seam above the ink footer.
+- **Sample data:** one "Datos de ejemplo" per section, never one per frame. The official text is not sample data.
+- **Motion:** CSS only. The frame rises once, then the clause is highlighted; everything rests by about 2 s. No shadows, no stock imagery, no eyebrow labels, no tabs, no marquee.
+
+**Measure sheet (shared, `components/measure-sheet.tsx`).** One requirement row as the console shows it, open and static, for public pages (the landing's hero, `/producto`) and for any console view that needs it read-only. It reuses the console's classes and message keys (framework-detail.tsx): code and title with the assessment state, "Tu autoevaluación" with the proposal from the official tables and the recorded fields, the guide's expected evidence, then the official text (Spanish, `lang="es"`) and its source link. On public pages the review line names the Atesta team, never a person. From 48rem of its own width the record and the official text sit side by side. Its measure comes from the catalog at build time (`lib/catalog/landing.ts`).
+
+**Mapping table (shared, `components/framework-mapping.tsx`).** One common control and the requirement it answers in each framework, from signed mappings only, the reviewer's name omitted. A `table-region` data table with the `public-table` look (the portfolio sample uses it too): it stacks by its own width on a phone. References link to the official source and stay in the source's language.
 
 **Activity.** Audit actions read as sentences in ES and EN; an action without a label reads "Otra acción", database ids are never shown, readable targets (framework keys, requirement codes) stay in mono.
 
@@ -255,20 +263,20 @@ face.
 
 **Signature motif: the highlighter stroke.** One motif, used in four places only:
 - the key phrase of the hero headline, as a band behind the lower half of the letters;
-- the lead figure of the hero's overview (measures assessed);
+- the clause of the hero's measure sheet that the section is about (A4), and the overview's lead figure (measures assessed);
 - the 3rem × 4px tab on every section divider;
 - the 3rem × 3px tab under the ink bar of every product frame.
 
 It never marks state; status keeps its icon and label. On load it draws once, left to right; reduced
 motion shows it drawn.
 
-**Ink band.** One full-bleed ink section per page ("Cómo funciona" on the landing), besides the closing band: paper text, yellow step numbers (`--color-cta`), muted text in `--color-on-ink-muted`, focus rings in the CTA yellow. From 80rem the hero is one viewport, with the headline left (up to 5rem) and the overview frame right, running past the fold.
+**Ink band.** One full-bleed ink section per page ("Cómo funciona" on the landing), besides the closing band: paper text, yellow step numbers (`--color-cta`), muted text in `--color-on-ink-muted`, focus rings in the CTA yellow. The closing band ends on a hairline in `--color-on-ink-muted`, so it never merges with the ink footer. The assistant launcher keeps a 2px paper keyline, so it stays visible on ink.
 
 **Type scale (public pages).**
 
 | Role | Face | Size |
 |---|---|---|
-| Hero headline | Newsreader 500 | up to 6rem, tracking -0.04em, at most 14ch |
+| Hero headline | Newsreader 500 | up to 5rem, tracking -0.04em, at most 16ch |
 | Section titles | Newsreader 500 | up to 4.5rem, at most 16ch |
 | Statements | Newsreader 400 | up to 1.75rem, at most 44ch |
 | Text and UI | IBM Plex Sans | 1rem, 1.25rem for step titles |
@@ -297,12 +305,12 @@ Every pair is checked by `tests/unit/contrast.test.ts`.
 - **Key figure:** one per page, the home's measures assessed (on the lead framework's line). In light mode it gets the band behind ink. In dark mode it is set in the accent yellow with no band, because light text on yellow fails contrast. In print it is plain.
 
 **Scrollytelling (#356, landing-legal amendment A2).** On wide screens with motion allowed:
-- **Pinned steps:** "Cómo funciona" pins one product frame beside the steps. The frame shows the stage of the step in view (IntersectionObserver, no scroll-jacking), with a mono "02 / 04" counter and a 3px highlighter progress bar. Stages crossfade. Inactive step titles dim by colour, never by opacity, so contrast holds.
-- **Reveals:** headlines and the year timeline reveal with CSS view timelines, using only clip-path and transform. Without view timelines, the page rests complete.
-- **Count-up:** the hero figures count up once; the document holds the final numbers.
-- **Marquee:** the frameworks strip is a 40 s marquee with a visible pause button. It is the one exception to the five-second rule.
-- **Phones and reduced motion:** a static page; each step carries its own frame.
-- **Free corner:** the bottom-right corner stays free for the assistant launcher.
+- **Pinned steps:** "Cómo funciona" pins one product frame beside the steps. The frame shows the stage of the step in view (IntersectionObserver, no scroll-jacking); the active step's rule turns yellow. No counter and no progress bar (A4). Stages crossfade. Inactive step titles dim by colour, never by opacity, so contrast holds.
+- **Reveals:** headlines reveal with CSS view timelines, using only clip-path and transform. Without view timelines, the page rests complete.
+- **Count-up:** the overview's figures count up once; the document holds the final numbers. KPI suffixes ("de 73") are small through `.lv-of`, never by shrinking the figure.
+- **Phones and reduced motion:** a static page, one step per row, each with its own frame (beside it from 64rem). On public pages body text never breaks inside a word (`overflow-wrap: break-word`; the console keeps `anywhere` so long names can shrink their cell), and paragraphs use `text-wrap: pretty`.
+- **Free corner:** the bottom-right corner stays free for the assistant launcher. On phones it is the seal alone, and on the landing it stays faded (still focusable, shown on focus) until the hero has scrolled away, where scroll timelines and motion are available.
+- **Removed in A4:** the hero tabs, "Un año de ENS", the frameworks marquee and ring diagram, the stage counter.
 
 **Product frames.** Every product view on public pages sits in a frame: an ink bar carrying the mark,
 the context and a "Datos de ejemplo" label while the fixture is illustrative.
@@ -320,20 +328,22 @@ highlighter, with one motion language. Honest facts replace logos and testimonia
     never under reduced motion.
   - Panels are disclosure buttons with `aria-expanded`; Esc and an outside click close them.
 - **Footer:** an ink band with the lockup, "Preparación de auditorías. No certifica
-  cumplimiento.", four columns (Producto, Recursos, Empresa, Legal) and the proof strip.
+  cumplimiento.", four columns (Producto, Recursos, Empresa, Legal). No proof strip (owner, 24/11/2026).
 - **Links:** public pages link with plain anchors, so each navigation is a document load. That
   lets cross-document View Transitions morph the lockup and the page title. Reduced motion or no
   support: a normal load.
 
 **Honest proof**
-- **Proof strip:** five true facts, each a short serif lead with one plain line. No person's name
-  appears on a public page; the reviewer is "el equipo de Atesta".
+- **No proof strip:** the owner removed it on 24/11/2026 (landing-legal amendment A5). Facts
+  stay where they belong: the BOE text on the landing and /ens, read-only access, hosting and the
+  AI rule on /seguridad. No person's name appears on a public page; the reviewer is "el equipo de
+  Atesta".
 - **Customer logos:** a data file (`content/customers.json`) whose entries need a written-permission
   reference. The section does not render while the file is empty.
 
 **Motion tokens**
 - **Easings:** `--ease-decisive` (in-out) for entrances and stage changes, `--ease-soft` (out) for
-  hovers, `--spring` (slight overshoot) for figures and bars.
+  hovers, `--ease-entrance` (out) for figures and bars. Nothing overshoots (A4): the spring token is gone.
 - **Durations:** 180 ms hover, 600 ms stage, 900–1400 ms entrances.
 
 ## Do's and Don'ts

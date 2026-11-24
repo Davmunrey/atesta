@@ -32,12 +32,6 @@
       "state": "pending"
     }
   ],
-  "measure": {
-    "code": "op.acc.6",
-    "title_es": "Mecanismo de autenticación (usuarios de la organización)",
-    "excerpt_es": "[op.acc.6.4] Las credenciales se cambiarán con una periodicidad marcada por la política de seguridad de la organización.",
-    "level": "MEDIA"
-  },
   "dossier": {
     "catalog": "0b02f5fa6747a3c9",
     "generated": "2026-11-02"
