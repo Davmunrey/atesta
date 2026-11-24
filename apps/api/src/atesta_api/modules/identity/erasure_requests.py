@@ -27,7 +27,7 @@ from sqlalchemy.orm import Session
 
 from atesta_api.modules.identity.closure import GRACE
 from atesta_api.modules.identity.for_operator import OperatorError
-from atesta_api.modules.identity.models import ErasureRequest, OperatorStaff
+from atesta_api.modules.identity.models import ErasureReceipt, ErasureRequest, OperatorStaff
 from atesta_api.platform.tenancy import Organization
 
 # Compared with the database clock, as the erasure_requests CHECKs are.
@@ -189,3 +189,32 @@ def latest_erasure(session: Session, org_id: uuid.UUID) -> ErasureStatus | None:
         .limit(1)
     ).one_or_none()
     return None if row is None else ErasureStatus(*row)
+
+
+@dataclass(frozen=True, slots=True)
+class ReceiptRow:
+    id: uuid.UUID
+    organization_id: uuid.UUID
+    closure_requested_at: datetime
+    erased_at: datetime
+    rows: int
+
+
+def erasure_receipts(session: Session, page: int, size: int) -> tuple[list[ReceiptRow], int]:
+    """Receipts of erased organizations, newest first: ids, dates and the total rows erased.
+    No name: erasure removed it (spec, "Screens" 9)."""
+    found = session.execute(
+        select(
+            ErasureReceipt.id,
+            ErasureReceipt.organization_id,
+            ErasureReceipt.closure_requested_at,
+            ErasureReceipt.erased_at,
+            ErasureReceipt.row_counts,
+        )
+        .order_by(ErasureReceipt.erased_at.desc(), ErasureReceipt.id)
+        .limit(size)
+        .offset((max(page, 1) - 1) * size)
+    ).all()
+    total = session.scalar(select(func.count()).select_from(ErasureReceipt)) or 0
+    rows = [ReceiptRow(r[0], r[1], r[2], r[3], sum(int(n) for n in r[4].values())) for r in found]
+    return rows, int(total)

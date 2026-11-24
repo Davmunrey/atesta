@@ -20,7 +20,7 @@ from atesta_api.platform.logs import install_log_redaction
 from fastapi import FastAPI
 from sqlalchemy import Engine
 
-from atesta_operator import actions, billing, me, organizations, session
+from atesta_operator import actions, admin, billing, me, organizations, session
 from atesta_operator.mfa import MfaConfigReader, assert_staff_pool_requires_mfa
 from atesta_operator.settings import Settings
 
@@ -71,6 +71,7 @@ def create_app() -> FastAPI:
     created.include_router(organizations.router)
     created.include_router(billing.router)
     created.include_router(actions.router)
+    created.include_router(admin.router)
     created.add_api_route("/health", health, methods=["GET"])
     return created
 

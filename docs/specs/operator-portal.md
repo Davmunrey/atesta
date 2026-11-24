@@ -326,6 +326,14 @@ Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
     back. The path parameter is `{erasure_id}` (`request_id` is the trail's request id).
   - **Detail:** `erasure` is the organization's latest request (`pending`, `approved`,
     `cancelled` or `executed`, with `requested_by_me` and the receipt id), for screen 8.
+- **Staff, trail and receipts (#480):**
+  - **Staff:** `PATCH /staff/{staff_id}` can also re-enable (`disabled: false`), recorded as
+    `staff.enabled`. Staff changes go to the operator trail only, with `role` and
+    `previous_role`. Through the API `operator.last_admin` cannot arise alone (the acting admin
+    is enabled and cannot change their own row), but `identity.api.change_staff` locks the
+    enabled admins and refuses it, for two admins demoting each other at once.
+  - **Trail and receipts:** `GET /operator-events` returns each row's reason and metadata;
+    `GET /erasure-receipts` returns ids, dates and the total rows erased, 50 per page.
 - **Local sign-in:** `uv run python apps/api/devtools/fake_cognito.py --staff` serves a fake staff
   pool on port 9001 with client id `local-operator`. Both fakes now put `auth_time` in access
   tokens and keep it across a refresh: Cognito documents it as the time the user "completed
