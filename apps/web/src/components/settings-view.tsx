@@ -8,6 +8,8 @@ import { useCancelClosure, useRequestClosure, useSetOrganizationLocale } from "@
 import type { Membership } from "@/lib/org";
 import { ErrorMessage } from "@atesta/ui/error-message";
 import type { Locale } from "@atesta/ui/i18n/locale";
+import { legalEntity } from "@/content/legal-entity";
+import { BillingDetails } from "./billing-details";
 
 /** Owner settings (organization-closure spec): take the data, or close the organization. */
 export function SettingsView({ org }: { org: Membership }) {
@@ -23,7 +25,9 @@ export function SettingsView({ org }: { org: Membership }) {
   return <div className="panel-grid">
     <PageHeader crumbs={[{ label: org.organization_name, href: homeOf(org.organization_id) }, { label: t("crumb") }]} title={t("title", { org: org.organization_name })} />
 
-    <LanguagePanel org={org} />
+    {org.suspended ? null : <LanguagePanel org={org} />}
+
+    <BillingDetails orgId={org.organization_id} />
 
     <Panel title={t("exportTitle")} className="panel-flow">
       <p className="text-muted">{t("exportHelp")}</p>
@@ -33,8 +37,10 @@ export function SettingsView({ org }: { org: Membership }) {
     <Panel title={t("closeTitle")} className="danger-zone panel-flow">
       {closing ? <>
         <p role="status">{t("closing", { date: day(closing) })}</p>
-        {cancel.isError ? <ErrorMessage error={cancel.error} /> : null}
-        <p><button type="button" className="dashboard-button" disabled={cancel.isPending} onClick={() => cancel.mutate()}>{t("cancelAction")}</button></p>
+        {org.closure_origin === "operator" ? <p className="text-muted">{t("closingByAtesta", { email: legalEntity.email })}</p> : <>
+          {cancel.isError ? <ErrorMessage error={cancel.error} /> : null}
+          <p><button type="button" className="dashboard-button" disabled={cancel.isPending} onClick={() => cancel.mutate()}>{t("cancelAction")}</button></p>
+        </>}
       </> : <>
         <p className="text-muted">{t("closeHelp")}</p>
         <form className="flex flex-wrap items-end gap-3" onSubmit={(e) => { e.preventDefault(); request.mutate(typed); }}>
