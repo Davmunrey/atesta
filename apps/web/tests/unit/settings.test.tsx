@@ -42,3 +42,15 @@ it("shows the erase date and lets the owner cancel", async () => {
   fireEvent.click(screen.getByRole("button", { name: "Cancelar el cierre" }));
   await vi.waitFor(() => { if (!requests.some((q) => q.method === "DELETE")) throw new Error("no delete"); });
 });
+
+it("lets the owner choose the language of the organization's email", async () => {
+  const requests = stubApi({ "PUT /api/v1/orgs/primary/locale": [200, { locale: "en" }] });
+  renderWithProviders(<SettingsView org={{ ...org, organization_locale: "es" }} />);
+  const select = screen.getByLabelText("Idioma de los avisos por email") as HTMLSelectElement;
+  expect(select.value).toBe("es");
+  fireEvent.change(select, { target: { value: "en" } });
+  fireEvent.click(screen.getByRole("button", { name: "Guardar el idioma" }));
+  await vi.waitFor(() => { if (!requests.some((r) => r.method === "PUT")) throw new Error("no PUT"); });
+  expect(await requests.find((r) => r.method === "PUT")!.clone().json()).toEqual({ locale: "en" });
+  expect(await screen.findByText("Guardado. Los avisos llegarán en English.")).toBeTruthy();
+});

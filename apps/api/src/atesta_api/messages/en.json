@@ -54,6 +54,31 @@
       "why": "Atesta sends you this notice because of your role in the organization. It holds only titles, dates and links; the details are in the app.",
       "optional": "To stop this type of notice: {url}",
       "critical": "This is a security notice for owners and admins; it cannot be turned off."
+    },
+    "open": "Open it in Atesta: {url}",
+    "connection_alert": {
+      "revoked": {
+        "subject": "Atesta: a connection lost its access",
+        "body": "{org}: Atesta no longer has access to a {provider} connection. Consent may have been revoked or the app deleted in the tenant. Meanwhile its automated evidence is not refreshed."
+      },
+      "extra": {
+        "subject": "Atesta: a connection has too many permissions",
+        "body": "{org}: a {provider} connection holds more permissions than the read-only ones Atesta needs. Atesta does not scan it until they are removed."
+      }
+    },
+    "scan_problem": {
+      "subject": "Atesta: a scan did not finish",
+      "body": "{org}: a {provider} scan did not finish after its retries. That connection's automated evidence is not refreshed until it is fixed."
+    },
+    "incident_clock": {
+      "subject": "Atesta: an incident reporting deadline",
+      "incident": "{org} · Incident: {title}",
+      "clock": "Deadline: {clock} ({framework}), due {due} (Madrid time).",
+      "start": "The deadline has started.",
+      "before_6h": "6 hours left.",
+      "before_7d": "7 days left.",
+      "before_1d": "1 day left.",
+      "due": "The deadline has passed and is not recorded as met in Atesta."
     }
   }
 }

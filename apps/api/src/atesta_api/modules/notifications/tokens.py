@@ -10,6 +10,7 @@ import binascii
 import json
 import os
 import uuid
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import date, timedelta
 
@@ -41,8 +42,8 @@ class UnsubscribeTokens:
         self._aead = AESGCM(key)
 
     @classmethod
-    def from_env(cls) -> "UnsubscribeTokens | None":
-        raw = os.environ.get("ATESTA_NOTIFICATIONS_KEY")
+    def from_env(cls, env: Mapping[str, str] = os.environ) -> "UnsubscribeTokens | None":
+        raw = env.get("ATESTA_NOTIFICATIONS_KEY")
         return cls(base64.b64decode(raw)) if raw else None
 
     def issue(

@@ -4005,6 +4005,37 @@
         "title": "LinkIn",
         "type": "object"
       },
+      "Locale": {
+        "enum": [
+          "es",
+          "en"
+        ],
+        "type": "string"
+      },
+      "LocaleIn": {
+        "properties": {
+          "locale": {
+            "$ref": "#/components/schemas/Locale"
+          }
+        },
+        "required": [
+          "locale"
+        ],
+        "title": "LocaleIn",
+        "type": "object"
+      },
+      "LocaleOut": {
+        "properties": {
+          "locale": {
+            "$ref": "#/components/schemas/Locale"
+          }
+        },
+        "required": [
+          "locale"
+        ],
+        "title": "LocaleOut",
+        "type": "object"
+      },
       "M365SignInOut": {
         "properties": {
           "authorize_url": {
@@ -4304,6 +4335,15 @@
           "organization_id": {
             "format": "uuid",
             "title": "Organization Id",
+            "type": "string"
+          },
+          "organization_locale": {
+            "default": "es",
+            "enum": [
+              "es",
+              "en"
+            ],
+            "title": "Organization Locale",
             "type": "string"
           },
           "organization_name": {
@@ -10459,6 +10499,65 @@
         ],
         "summary": "Revoke Invitation",
         "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/locale": {
+      "put": {
+        "operationId": "set_locale_api_v1_orgs__org_id__locale_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocaleIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocaleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Locale",
+        "tags": [
+          "identity",
           "identity"
         ]
       }

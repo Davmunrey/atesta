@@ -899,6 +899,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/locale": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set Locale */
+        put: operations["set_locale_api_v1_orgs__org_id__locale_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/members": {
         parameters: {
             query?: never;
@@ -2812,6 +2829,16 @@ export interface components {
             /** Token */
             token: string;
         };
+        /** @enum {string} */
+        Locale: "es" | "en";
+        /** LocaleIn */
+        LocaleIn: {
+            locale: components["schemas"]["Locale"];
+        };
+        /** LocaleOut */
+        LocaleOut: {
+            locale: components["schemas"]["Locale"];
+        };
         /** M365SignInOut */
         M365SignInOut: {
             /** Authorize Url */
@@ -2897,6 +2924,12 @@ export interface components {
              * Format: uuid
              */
             organization_id: string;
+            /**
+             * Organization Locale
+             * @default es
+             * @enum {string}
+             */
+            organization_locale: "es" | "en";
             /** Organization Name */
             organization_name: string;
             role: components["schemas"]["Role"];
@@ -5866,6 +5899,41 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_locale_api_v1_orgs__org_id__locale_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LocaleIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocaleOut"];
+                };
             };
             /** @description Validation Error */
             422: {

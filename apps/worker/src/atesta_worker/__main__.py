@@ -2,6 +2,7 @@
 
 import os
 
+from atesta_api.modules.notifications.api import configure_mail, mail_config_from_env
 from atesta_api.platform.db import make_engine
 from atesta_api.platform.guard import assert_safe_runtime_role
 
@@ -17,6 +18,7 @@ def main() -> None:
     assert_safe_runtime_role(engine, require_tls=sslmode != "disable")
     context.configure(engine)
     configure_scans(config_from_env(os.environ))
+    configure_mail(mail_config_from_env(os.environ))  # none configured: nothing is sent
     build_app(url, sslmode).run_worker()
 
 

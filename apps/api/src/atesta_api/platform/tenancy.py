@@ -6,7 +6,7 @@ Only the identity module may import this module (ADR-012, import-linter).
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, Text, func, text
+from sqlalchemy import CheckConstraint, DateTime, Text, func, text
 from sqlalchemy.orm import Mapped, Session, mapped_column
 
 from atesta_api.platform.context import SETTING_NAMES, TenantContext
@@ -15,9 +15,11 @@ from atesta_api.platform.db import Base
 
 class Organization(Base):
     __tablename__ = "organizations"
+    __table_args__ = (CheckConstraint("locale IN ('es', 'en')", name="locale"),)
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(Text)
+    locale: Mapped[str] = mapped_column(Text, server_default="es")  # notifications spec PR 2
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()

@@ -166,3 +166,23 @@ def test_a_local_credential_reference_is_refused_outside_development(
     monkeypatch.setenv("ATESTA_ENV", "prod")
     with pytest.raises(RuntimeError, match="dev-only"):
         record_verification(db_rollback, ORG_A, made.id, report("ok", tenant="C0abc"))
+
+
+def notify_jobs(session: Session) -> list[str]:
+    """notify_event jobs this transaction queued, by the action of the event they name."""
+    query = text(
+        "SELECT a.action FROM procrastinate_jobs j JOIN audit_events a"
+        " ON a.id = (j.args->>'event_id')::uuid"
+        " WHERE j.task_name = 'notify_event' AND j.args->>'organization_id' = :o ORDER BY j.id"
+    )
+    return list(session.execute(query, {"o": str(ORG_A)}).scalars())
+
+
+def test_a_revoked_or_over_privileged_connection_queues_a_notice_and_ok_does_not(
+    db_rollback: Session, connection_id: uuid.UUID
+) -> None:
+    """notifications spec PR 2 (issue 386): the job exists only if the event does."""
+    record_verification(db_rollback, ORG_A, connection_id, report("ok"))
+    record_verification(db_rollback, ORG_A, connection_id, report("over_privileged", extra=["x"]))
+    record_verification(db_rollback, ORG_A, connection_id, report("revoked"))
+    assert notify_jobs(db_rollback) == ["connection.over_privileged", "connection.revoked"]

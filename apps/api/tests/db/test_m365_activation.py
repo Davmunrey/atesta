@@ -203,3 +203,19 @@ def test_an_admin_verifies_a_consented_connection_once(
     assert events(superuser, org, "connection.verification_requested") == 1
     again = client.post(path, headers=auth(subs["owner"]))
     assert code_of(again) == (409, "connections.state_invalid")  # already verifying
+
+
+def test_a_blocked_activation_scan_names_its_connection_and_trigger_for_notices(
+    db_rollback: Session, store: LocalScanStore
+) -> None:
+    """notifications spec PR 2 (issue 386): the event carries what the notice job needs."""
+    connection_id, job = activation(db_rollback, store)
+    report(store, job, "incomplete", missing=["consenting_admin_role"])
+    finish_attempt(db_rollback, job, 10, final=False, store=store)
+    query = text(
+        "SELECT a.metadata FROM procrastinate_jobs j JOIN audit_events a"
+        " ON a.id = (j.args->>'event_id')::uuid"
+        " WHERE j.task_name = 'notify_event' AND a.action = 'scan.blocked' AND a.target_id = :s"
+    )
+    [details] = db_rollback.execute(query, {"s": str(job.scan_id)}).scalars().all()
+    assert (details["connection_id"], details["trigger"]) == (str(connection_id), "activation")

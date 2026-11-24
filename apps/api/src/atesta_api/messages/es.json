@@ -54,6 +54,31 @@
       "why": "Atesta te envía este aviso por tu papel en la organización. Solo incluye títulos, fechas y enlaces; los detalles están en la aplicación.",
       "optional": "Para dejar de recibir este tipo de aviso: {url}",
       "critical": "Es un aviso de seguridad para propietarios y administradores; no se puede desactivar."
+    },
+    "open": "Ábrelo en Atesta: {url}",
+    "connection_alert": {
+      "revoked": {
+        "subject": "Atesta: una conexión ha perdido el acceso",
+        "body": "{org}: Atesta ya no tiene acceso a una conexión de {provider}. Puede que se revocara el consentimiento o se borrara la aplicación en el tenant. Mientras tanto, sus evidencias automáticas no se actualizan."
+      },
+      "extra": {
+        "subject": "Atesta: una conexión tiene permisos de más",
+        "body": "{org}: una conexión de {provider} tiene más permisos de los de solo lectura que Atesta necesita. Atesta no la escanea hasta que se retiren."
+      }
+    },
+    "scan_problem": {
+      "subject": "Atesta: un escaneo no ha terminado",
+      "body": "{org}: un escaneo de {provider} no ha terminado tras sus reintentos. Las evidencias automáticas de esa conexión no se actualizan hasta que se resuelva."
+    },
+    "incident_clock": {
+      "subject": "Atesta: plazo de notificación de un incidente",
+      "incident": "{org} · Incidente: {title}",
+      "clock": "Plazo: {clock} ({framework}), vence el {due} (hora de Madrid).",
+      "start": "El plazo ha empezado a contar.",
+      "before_6h": "Quedan 6 horas.",
+      "before_7d": "Quedan 7 días.",
+      "before_1d": "Queda 1 día.",
+      "due": "El plazo ha vencido y no consta como cumplido en Atesta."
     }
   }
 }

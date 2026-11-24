@@ -2,7 +2,22 @@
 
 from fastapi import FastAPI
 
+from atesta_api.modules.notifications.clocks import (
+    ClockTiming,
+    IncidentClocks,
+    due_milestones,
+    notices_due,
+    schedule_clock_notices,
+    send_clock_notices,
+)
+from atesta_api.modules.notifications.config import (
+    MailConfig,
+    configure_mail,
+    mail_config,
+    mail_config_from_env,
+)
 from atesta_api.modules.notifications.deliveries import claim_delivery
+from atesta_api.modules.notifications.events import NOTIFIABLE, handle_event, queue_event
 from atesta_api.modules.notifications.kinds import CRITICAL, OPTIONAL, Kind, receivable
 from atesta_api.modules.notifications.mail import (
     FileMailer,
@@ -25,6 +40,10 @@ def install_notifications(app: FastAPI) -> None:
 
 __all__ = [
     "CRITICAL",
+    "NOTIFIABLE",
+    "ClockTiming",
+    "IncidentClocks",
+    "MailConfig",
     "OPTIONAL",
     "FileMailer",
     "Kind",
@@ -37,6 +56,15 @@ __all__ = [
     "UnsubscribeTokens",
     "claim_delivery",
     "compose",
+    "configure_mail",
+    "due_milestones",
+    "handle_event",
     "install_notifications",
+    "mail_config",
+    "mail_config_from_env",
+    "notices_due",
+    "queue_event",
     "receivable",
+    "schedule_clock_notices",
+    "send_clock_notices",
 ]

@@ -39,6 +39,10 @@ Asked and answered in session; quoted where the answer chose a listed option.
 | Language | The organization's, the same for every recipient (owner, 2026-11-24). Organizations gain a language, ES by default, that the owner sets in Ajustes (PR 2) |
 | Critical email content | Only what happened and a link to the page that resolves it, never repair steps in the email ("Solo qué pasó + enlace a Conexiones") |
 | Weekly summary with nothing new | Sent anyway, saying that nothing changed (owner, 2026-11-24) |
+| Who changes the language | The owner only, in Ajustes. Claude's recommended option, taken under the owner's "Adelante" (2026-11-24) |
+| Language of new members | The organization's language is used only for email for now; seeding new members' app language from it is a follow-up. Recommended option, same "Adelante" |
+| Scan notices | Only for a scan's final failure, at most one per connection and day (Europe/Madrid). Activation scans are excluded: the admin is on the connections page. Recommended option, same "Adelante" |
+| Incident clock milestones | Proportional. A clock of up to 72 hours is notified at its start, 6 hours before it is due and when it is due. A longer clock is notified at its start, 7 days and 1 day before, and when it is due. Recommended option, same "Adelante" |
 | New module | ADR-008 amendment 1: module `notifications` (accepted in session) |
 | Unsubscribe without signing in | ADR-012 amendment 7: context reason `unsubscribe_link` (accepted in session) |
 
@@ -50,8 +54,8 @@ receive every type by default and can turn off each non-critical type.
 | Type | Trigger | Recipients | Can be turned off |
 |---|---|---|---|
 | `connection_alert` | Audit events `connection.revoked`, `connection.over_privileged` | Owners, admins | No |
-| `incident_clock` | A reporting clock of an open incident starts running, is 6 hours from its due time, or becomes overdue | Owners, admins | No |
-| `scan_problem` | Audit events `scan.failed`, `scan.blocked` | Owners, admins | Yes |
+| `incident_clock` | A reporting clock of an open incident reaches a milestone (see Owner decisions) | Owners, admins | No |
+| `scan_problem` | Audit events `scan.failed`, `scan.blocked` of a non-activation scan, once per connection and day | Owners, admins | Yes |
 | `due_digest` | Daily at 08:00 Europe/Madrid, when at least one item hits 30, 7 or 1 day before its date | Owners and admins: every item. Members: items of their assigned measures | Yes |
 | `weekly_summary` | Monday 08:00 Europe/Madrid | Owners, admins | Yes |
 
