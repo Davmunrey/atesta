@@ -50,8 +50,65 @@ module "network" {
 
 module "evidence" {
   source      = "../s3-evidence"
+  name        = var.name
   bucket_name = "${var.name}-evidence-${data.aws_caller_identity.current.account_id}"
   kms_key_arn = module.kms.evidence_key_arn
+}
+
+# Malware scan results (evidence-malware-scanning spec): GuardDuty publishes each result of the
+# evidence bucket's plan to the default event bus; this rule puts them on an encrypted queue the
+# worker drains every minute. A message the worker cannot place (its upload has not committed)
+# comes back after the visibility timeout and, after 10 receives, waits 14 days in the
+# dead-letter queue.
+resource "aws_sqs_queue" "file_scans_dead" {
+  name                      = "${var.name}-file-scans-dead"
+  kms_master_key_id         = module.kms.queues_key_arn
+  message_retention_seconds = 1209600
+}
+
+resource "aws_sqs_queue" "file_scans" {
+  name                       = "${var.name}-file-scans"
+  kms_master_key_id          = module.kms.queues_key_arn
+  visibility_timeout_seconds = 300
+  message_retention_seconds  = 345600
+  redrive_policy             = jsonencode({ deadLetterTargetArn = aws_sqs_queue.file_scans_dead.arn, maxReceiveCount = 10 })
+}
+
+resource "aws_cloudwatch_event_rule" "file_scans" {
+  name        = "${var.name}-file-scans"
+  description = "GuardDuty malware scan results of the evidence bucket, to the worker's queue"
+  event_pattern = jsonencode({
+    source        = ["aws.guardduty"]
+    "detail-type" = ["GuardDuty Malware Protection Object Scan Result"]
+    resources     = [module.evidence.malware_protection_plan_arn]
+  })
+}
+
+resource "aws_cloudwatch_event_target" "file_scans" {
+  rule = aws_cloudwatch_event_rule.file_scans.name
+  arn  = aws_sqs_queue.file_scans.arn
+}
+
+# Only this rule may send (AWS, "Using resource-based policies for Amazon EventBridge", SQS).
+data "aws_iam_policy_document" "file_scans_queue" {
+  statement {
+    actions   = ["sqs:SendMessage"]
+    resources = [aws_sqs_queue.file_scans.arn]
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_cloudwatch_event_rule.file_scans.arn]
+    }
+  }
+}
+
+resource "aws_sqs_queue_policy" "file_scans" {
+  queue_url = aws_sqs_queue.file_scans.id
+  policy    = data.aws_iam_policy_document.file_scans_queue.json
 }
 
 # The API, worker and migration tasks share this group: the only clients of the database.
@@ -116,9 +173,10 @@ resource "aws_secretsmanager_secret" "session_key" {
 # Later arguments win in merge(), so a hand-set value cannot point the API at another bucket.
 locals {
   app_environment = merge(var.app_environment, {
-    ATESTA_EVIDENCE_STORE  = "s3"
-    ATESTA_EVIDENCE_BUCKET = module.evidence.bucket_name
-    AWS_DEFAULT_REGION     = data.aws_region.current.region
+    ATESTA_EVIDENCE_STORE      = "s3"
+    ATESTA_EVIDENCE_BUCKET     = module.evidence.bucket_name
+    ATESTA_FILE_SCAN_QUEUE_URL = aws_sqs_queue.file_scans.url
+    AWS_DEFAULT_REGION         = data.aws_region.current.region
   })
 }
 
@@ -135,6 +193,8 @@ module "ecs" {
   secrets_key_arn       = module.kms.secrets_key_arn
   evidence_bucket_arn   = module.evidence.bucket_arn
   evidence_key_arn      = module.kms.evidence_key_arn
+  file_scan_queue_arn   = aws_sqs_queue.file_scans.arn
+  queues_key_arn        = module.kms.queues_key_arn
   certificate_arn       = var.edge.api_certificate_arn
   images                = var.images
   environment           = local.app_environment
