@@ -82,7 +82,7 @@ test("framework register supports navigation, guidance, filters, locales and res
   await page.route("**/api/v1/orgs/*/overview", (route) => route.fulfill({ json: overview }));
   await page.route("**/api/v1/orgs/*/frameworks/synthetic_alpha", (route) => route.fulfill({ json: framework }));
   await createOrganization(page);
-  await page.getByRole("link", { name: "Ver requisitos y configuración" }).first().click();
+  await page.getByRole("region", { name: "Marcos" }).getByRole("link", { name: "Synthetic Alpha" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Synthetic Alpha");
   await expect(page.getByRole("navigation", { name: "Secciones de la organización" }).getByRole("link", { name: "Marcos" })).toHaveAttribute("aria-current", "page");
   const row = page.locator("details.requirement-row").filter({ hasText: "R1" });

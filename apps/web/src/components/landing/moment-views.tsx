@@ -2,21 +2,19 @@
 
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import fixture from "@/content/landing-fixture.json";
+import type { HeroMeasure } from "@/lib/catalog/landing";
 import { Icon } from "../icons";
+import { MeasureSheet } from "../measure-sheet";
 import { ViewFrame } from "./view-frame";
 
-/** Product moments (landing-legal spec, L7): views of what the console ships, from the fixture. */
-export function MeasureView() {
-  const t = useTranslations("landing.view.measure");
-  const m = fixture.measure;
-  return <ViewFrame label={t("label")}>
-    <div className="lv-body">
-      <p className="lv-title"><span className="lv-code">{m.code}</span> <strong lang="es">{m.title_es}</strong></p>
-      <div className="lm-official"><p className="lm-label">{t("official")}</p><p lang="es">{m.excerpt_es}</p></div>
-      <div className="lm-assessment"><p className="lm-label">{t("assessment")}</p>
-        <p>{t("decision", { level: m.level })} · <span className="badge" data-severity="partial"><Icon name="partial" />{t("implementation")}</span></p>
-        <p className="lv-legend">{t("owner")}</p></div>
-    </div>
+/** Product moments (landing-legal spec, L7): views of what the console ships. */
+
+/** One ENS measure as the console shows it (A4): the shared measure sheet in a product frame. The
+ *  measure and its official text come from the catalog; the assessment is sample data. */
+export function MeasureView({ measure }: { measure: HeroMeasure }) {
+  const t = useTranslations("landing.view.hero");
+  return <ViewFrame label={t("label")} context={fixture.organization}>
+    <div className="lv-body"><MeasureSheet measure={measure} assessment={{ implementation: "partially_implemented", owner: t("ownerValue"), notes: t("note") }} /></div>
   </ViewFrame>;
 }
 
@@ -47,24 +45,17 @@ export function DossierView() {
   </ViewFrame>;
 }
 
-/** The incident stage (A3, issue 373): its deadline with a bar that fills once (no ticking
- *  clock, so nothing keeps moving) and a timestamped log that settles in. */
+/** The incident stage (A4): an ENS incident record and its notes. RD 311/2022, art. 33.7 asks a
+ *  provider of public entities to notify INCIBE-CERT and sets no deadline in hours, so the view
+ *  shows no clock; NIS2 and GDPR clocks are the console's, from their packs. */
+const LOG = [["09:40", "log1"], ["09:55", "log2"], ["10:05", "log3"], ["11:20", "log4"]] as const;
+
 export function IncidentView() {
   const t = useTranslations("landing.view.incident");
   return <ViewFrame label={t("label")}>
     <div className="lv-body li-incident">
       <p><strong>{t("title")}</strong><span className="lv-legend li-meta">{t("meta")}</span></p>
-      <div className="li-clock">
-        <span className="lv-legend">{t("deadline")}</span>
-        <span className="badge" data-severity="pending"><Icon name="pending" />{t("state")}</span>
-        <span className="li-due">{t("due")}</span>
-        <span className="li-bar" aria-hidden="true"><span /></span>
-      </div>
-      <ol className="li-log">
-        <li><span className="lv-code">09:40</span><span>{t("log1")}</span></li>
-        <li><span className="lv-code">09:42</span><span>{t("log2")}</span></li>
-        <li><span className="lv-code">10:05</span><span>{t("log3")}</span></li>
-      </ol>
+      <ol className="li-log">{LOG.map(([time, key]) => <li key={key}><span className="lv-code">{time}</span><span>{t(key)}</span></li>)}</ol>
       <p className="li-source">{t("source")}</p>
     </div>
   </ViewFrame>;

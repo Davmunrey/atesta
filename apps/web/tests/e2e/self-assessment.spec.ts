@@ -160,12 +160,12 @@ test("the dashboard cockpit says where we stand, what needs attention and who do
   await page.route("**/api/v1/orgs/*/overview", (route) => route.fulfill({ json: overview }));
   await page.route("**/api/v1/orgs/*/readiness", (route) => route.fulfill({ json: readiness }));
   await page.reload();
-  await expect(page.getByText(/Synthetic Alpha: 6 de 10 medidas evaluadas, 4 implantadas\./)).toBeVisible();
   const now = page.getByRole("region", { name: "Ahora" });
   await expect(now.getByRole("link", { name: "2 medidas con fecha límite vencida en Synthetic Alpha" })).toHaveAttribute("href", `/app/framework?org=${org}&framework=synthetic_alpha`);
-  await expect(page.getByText("6 de 10 evaluadas · 4 implantadas · 1 en parte · 1 sin implantar · 0 no aplican")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Tu trabajo" })).toBeVisible();
-  for (const width of [375, 1280]) {
+  // The task list is the first region after the header; progress is stated once, on the framework line.
+  expect(await page.locator("main section.panel").first().evaluate((el) => el.classList.contains("attention"))).toBe(true);
+  await expect(page.getByRole("region", { name: "Marcos" }).getByRole("listitem").filter({ hasText: "Synthetic Alpha" })).toHaveText("Synthetic Alpha6 de 10 medidas evaluadas · 4 implantadas");
+  for (const width of [375, 390, 1280, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}`).toBe(true);
     await expectAccessible(page, `cockpit ${width}`);

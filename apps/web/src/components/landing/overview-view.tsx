@@ -22,8 +22,8 @@ export function OverviewView() {
     <div className="lv-body">
       <p className="lv-title"><strong>{fixture.framework}</strong> <span>{t("category", { category: fixture.category })}</span></p>
       <dl className="lv-kpis">
-        <div><dt>{kpi("assessed")}</dt><dd><mark className="hl lv-figure"><CountUp value={c.assessed} /></mark> <span>{kpi("ofTotal", { total: c.total })}</span></dd></div>
-        <div><dt>{kpi("implemented")}</dt><dd><CountUp value={c.implemented} /> <span>{kpi("ofTotal", { total: c.total })}</span></dd></div>
+        <div><dt>{kpi("assessed")}</dt><dd><mark className="hl lv-figure"><CountUp value={c.assessed} /></mark> <span className="lv-of">{kpi("ofTotal", { total: c.total })}</span></dd></div>
+        <div><dt>{kpi("implemented")}</dt><dd><CountUp value={c.implemented} /> <span className="lv-of">{kpi("ofTotal", { total: c.total })}</span></dd></div>
         <div><dt>{kpi("overdue")}</dt><dd><CountUp value={c.overdue} /></dd><dd className="lv-state" data-severity="overdue"><Icon name="overdue" width={16} height={16} />{kpi("act")}</dd></div>
         <div><dt>{kpi("unowned")}</dt><dd><CountUp value={c.unowned} /></dd><dd className="lv-state" data-severity="overdue"><Icon name="overdue" width={16} height={16} />{kpi("act")}</dd></div>
       </dl>

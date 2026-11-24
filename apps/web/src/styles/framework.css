@@ -57,6 +57,18 @@
   .requirement-body h3 { margin-top: 1.25rem; margin-bottom: 0.375rem; font-weight: 500; }
   .requirement-body > p + p { margin-top: 0.75rem; }
   .requirement-source { font-size: 0.875rem; overflow-wrap: anywhere; }
+  /* Measure sheet (DESIGN.md; landing-legal A4): a requirement row, open and static, as public pages
+     show it. From 48rem of its own width the record and the official text sit side by side. */
+  .measure-sheet { container-type: inline-size; }
+  .measure-sheet-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-border); }
+  .measure-sheet-body { display: grid; column-gap: 3rem; }
+  .measure-sheet-section { margin-top: 1.25rem; margin-bottom: 0.375rem; font-weight: 500; }
+  .measure-sheet .assessment-card { margin-bottom: 0; }
+  .measure-sheet .expected-evidence { padding-bottom: 0.5rem; }
+  .measure-sheet-law .official-text { display: grid; gap: 0.75rem; max-width: 72ch; padding-left: 1rem; border-left: 1px solid var(--color-border); }
+  .measure-sheet-law .requirement-source { margin-top: 1rem; }
+  @container (width >= 48rem) { .measure-sheet-body { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } }
+  @container (width < 28rem) { .measure-sheet .assessment-summary div { grid-template-columns: minmax(0, 1fr); gap: 0.125rem; } }
   .control-guides { margin-top: 1.5rem; }
   .control-guide { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-border); }
   .control-heading { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; justify-content: space-between; }
@@ -129,6 +141,12 @@
   .button-primary { min-height: 2.75rem; border-radius: var(--radius-md, 0.375rem); background: var(--color-accent); color: var(--color-accent-fg); padding: 0.5rem 1rem; font-weight: 500; }
   .button-primary:hover { text-decoration: underline; }
   .button-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+  /* Destructive actions (DESIGN.md, buttons): the danger pair, same size and radius as the primary. */
+  .button-danger { min-height: 2.75rem; border-radius: var(--radius-md, 0.375rem); background: var(--color-danger); color: var(--color-danger-fg); padding: 0.5rem 1rem; font-weight: 500; }
+  .button-danger:hover { text-decoration: underline; }
+  .button-danger:disabled { opacity: 0.6; cursor: not-allowed; }
+  /* An inline confirmation: the question, then confirm and cancel. */
+  .confirm-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; }
   .self-assessment { margin-top: 2rem; padding: 1.5rem; background: var(--color-surface); border-radius: 0.375rem; }
   .self-assessment h2 { font-size: 1.25rem; font-weight: 500; }
   .assessment-steps { list-style: none; counter-reset: step; display: grid; gap: 0; margin-top: 1.25rem; }

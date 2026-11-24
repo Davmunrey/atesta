@@ -28,3 +28,17 @@ Accepting the amendment is the owner's call.
 - **Grants:** a plan in `catalog/plans.yaml` may be `all`, every framework.
 
 See `docs/specs/billing-entitlements.md`.
+
+## Amendment 3 (accepted 2026-11-24, #394): no payment gateway, customers are invoiced
+Status: accepted. The owner decided on 2026-11-24 ("No va a haber pasarela de pago, va a ser todo
+facturación"), relayed by the coordinator.
+
+- **No gateway:** Atesta integrates no payment gateway or card processor (no Stripe). The app
+  never collects or stores payment details.
+- **Invoicing:** customers are invoiced outside the app, by the legal entity, under its own
+  invoicing obligations. Prices stay out of the public repository.
+- **Plans:** the operator sets an organization's plan in `subscriptions` (amendment 2) once the
+  contract is agreed. The app only reads it, and every access check still goes through the
+  entitlements service.
+- **Consequence:** no payment provider joins the subprocessor list, and no billing webhook or
+  public billing endpoint exists.

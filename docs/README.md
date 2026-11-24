@@ -38,6 +38,7 @@ Start with the question you have.
 | [ADR-014: A read-only device agent that reports posture and never acts](adr/0014-device-agent.md) | proposed (2026-11-23) |
 | [ADR-015: The repository is public](adr/0015-public-repository.md) | proposed (2026-11-23) |
 | [ADR-016: An MCP server lets AI agents work with Atesta through scoped API keys](adr/0016-mcp-server-for-ai-agents.md) | accepted (2026-11-23) |
+| [ADR-017: A separate operator portal manages customer organizations from their metadata only](adr/0017-operator-portal.md) | proposed (2026-11-24) |
 
 ## Feature specs
 
@@ -65,6 +66,7 @@ Start with the question you have.
 - [management-report](specs/management-report.md)
 - [manual-control-review](specs/manual-control-review.md)
 - [mcp-server](specs/mcp-server.md)
+- [operator-portal](specs/operator-portal.md)
 - [organization-closure](specs/organization-closure.md)
 - [organization-shell-design](specs/organization-shell-design.md)
 - [public-api-docs](specs/public-api-docs.md)

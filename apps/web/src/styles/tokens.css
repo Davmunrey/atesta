@@ -39,10 +39,10 @@
 
   --spacing: 0.25rem;
 
-  /* Motion language (DESIGN.md "Public site", A3): decisive entrances, soft hovers, springy figures. */
+  /* Motion language (DESIGN.md "Public site", A3): decisive entrances, soft hovers. Nothing
+     overshoots (A4): figures and bars settle on their real value. */
   --ease-decisive: cubic-bezier(0.7, 0, 0.2, 1);
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
 @media (prefers-color-scheme: dark) {

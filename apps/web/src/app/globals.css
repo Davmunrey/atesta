@@ -20,7 +20,11 @@
   button:disabled, select:disabled { cursor: not-allowed; opacity: 0.6; }
   a { text-underline-offset: 0.2em; }
   a:hover { text-decoration-thickness: 2px; }
+  /* The console lets long unbroken names shrink their grid cell (min-content), so it keeps `anywhere`.
+     Public pages break a word only when it cannot fit on its own line (landing-legal A4). */
   h1, h2, p, li { overflow-wrap: anywhere; }
+  .landing :is(h1, h2, p, li) { overflow-wrap: break-word; }
+  p { text-wrap: pretty; }
 
   :focus-visible {
     outline: 2px solid var(--color-focus);

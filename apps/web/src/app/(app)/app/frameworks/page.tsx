@@ -7,6 +7,7 @@ import { useMe } from "@/components/auth-gate";
 import { ErrorMessage } from "@/components/error-message";
 import { FrameworkLedger } from "@/components/framework-ledger";
 import { LoadError, Loading, PageHeader } from "@/components/page-frame";
+import { ScanHistory } from "@/components/scan-history";
 import { ApiError, useOverview } from "@/lib/api/hooks";
 import { useReadiness } from "@/lib/api/register-hooks";
 import { orgHome, selectOrg } from "@/lib/org";
@@ -25,7 +26,11 @@ function Frameworks() {
     <PageHeader crumbs={[{ label: org.organization_name, href: orgHome(org.organization_id) }, { label: c("frameworks") }]}
       title={c("frameworks")} description={c("frameworksPage")} />
     {overview.isError ? <LoadError error={overview.error} onRetry={() => void overview.refetch()} />
-      : overview.data ? <FrameworkLedger frameworks={overview.data.frameworks} orgId={org.organization_id} readiness={readiness.data ?? []} headless />
+      : overview.data ? <div className="panel-grid">
+        <FrameworkLedger frameworks={overview.data.frameworks} orgId={org.organization_id} readiness={readiness.data ?? []} headless />
+        {/* The latest scans moved here from the home (console-unification spec). */}
+        {overview.data.scans.length > 0 || overview.data.evidence_count > 0 ? <ScanHistory scans={overview.data.scans} evidenceCount={overview.data.evidence_count} /> : null}
+      </div>
       : <Loading />}
   </>;
 }

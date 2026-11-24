@@ -6,10 +6,11 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import { useAccessReviews, useIncidents, usePolicies, useTrainingCampaigns } from "@/lib/api/routines";
 import { type Membership, orgAccessReviews, orgIncidents, orgPolicies, orgTraining } from "@/lib/org";
 import { incidentSummary, overdueTrainings, policySummary, reviewSummary, trainingSummary } from "@/lib/summaries";
+import { ClockBadge } from "./badge";
 import { Icon } from "./icons";
 import { Panel } from "./page-frame";
 
-type Row = { name: string; href: string; query: UseQueryResult<unknown[]>; empty: string; read: () => { attention: boolean; lead: string } };
+type Row = { name: string; href: string; query: UseQueryResult<unknown[]>; empty: string; read: () => { attention: boolean; lead: string; clock?: string | null } };
 
 /** Records at a glance (ui-polish spec, issue 287): the records an auditor asks for, in a fixed
  *  order, each with its state written out and the sentence its own page leads with. */
@@ -39,7 +40,8 @@ export function RecordsGlance({ org }: { org: Membership }) {
     } },
     { name: r("incidents.title"), href: orgIncidents(id), query: incidents, empty: r("incidents.empty"), read: () => {
       const s = incidentSummary(incidents.data ?? []);
-      return { attention: s.overdue > 0, lead: t("incidents.lead", { open: s.open, overdue: s.overdue }) };
+      // Never "Al día" while a notification clock runs (console-unification spec).
+      return { attention: s.overdue > 0, clock: s.overdue > 0 ? null : s.nextDue, lead: t("incidents.lead", { open: s.open, overdue: s.overdue, running: s.running }) };
     } },
   ];
   return <Panel title={t("glance.title")} description={t("glance.help")}>
@@ -51,6 +53,7 @@ export function RecordsGlance({ org }: { org: Membership }) {
           <th scope="row"><Link href={row.href} className="text-link underline">{row.name}</Link></th>
           <td data-label={t("glance.state")}>{state === null ? "—" : state === "empty"
             ? <span className="badge" data-severity="pending"><Icon name="pending" />{t("glance.none")}</span>
+            : state.clock ? <ClockBadge dueAt={state.clock} />
             : <span className="badge" data-severity={state.attention ? "overdue" : "done"}><Icon name={state.attention ? "overdue" : "done"} />{kpi(state.attention ? "act" : "clear")}</span>}</td>
           <td data-label={t("glance.summary")} className={state && state !== "empty" ? undefined : "text-muted"}>
             {row.query.isPending ? app("loading") : row.query.isError ? t("glance.failed") : state === "empty" ? row.empty : state?.lead}</td>

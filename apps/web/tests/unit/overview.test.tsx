@@ -2,7 +2,9 @@
 import { cleanup, fireEvent, screen, within } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { useState } from "react";
+import { FrameworkLedger } from "@/components/framework-ledger";
 import { OverviewDashboard } from "@/components/overview-dashboard";
+import { ScanHistory } from "@/components/scan-history";
 import { emptyOverview, overview } from "../fixtures/overview";
 import { renderWithProviders, stubApi } from "./render";
 
@@ -12,8 +14,12 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 it("links to the requirement register with organization and framework context", async () => {
   stubApi({ [path]: [200, overview] });
   renderWithProviders(<OverviewDashboard orgId="primary" />);
-  const link = (await screen.findAllByRole("link", { name: "Ver requisitos y configuración" }))[0];
-  expect(link!.getAttribute("href")).toBe("/app/framework?org=primary&framework=synthetic_alpha");
+  const link = await screen.findByRole("link", { name: "Synthetic Alpha" });
+  expect(link.getAttribute("href")).toBe("/app/framework?org=primary&framework=synthetic_alpha");
+  cleanup();
+  // The Marcos page keeps the full ledger (console-unification spec moved it off the home).
+  renderWithProviders(<FrameworkLedger frameworks={overview.frameworks} orgId="primary" headless />);
+  expect(screen.getAllByRole("link", { name: "Ver requisitos y configuración" })[0]!.getAttribute("href")).toBe("/app/framework?org=primary&framework=synthetic_alpha");
 });
 
 it("explains an empty organization without inventing a score or scan action", async () => {
@@ -27,8 +33,8 @@ it("explains an empty organization without inventing a score or scan action", as
 });
 
 it("distinguishes zero, unscored and missing snapshots, retaining recorded provenance", async () => {
-  stubApi({ [path]: [200, overview] });
-  renderWithProviders(<OverviewDashboard orgId="primary" />);
+  renderWithProviders(<><FrameworkLedger frameworks={overview.frameworks} orgId="primary" headless />
+    <ScanHistory scans={overview.scans} evidenceCount={overview.evidence_count} /></>);
   const alpha = (await screen.findByText("Synthetic Alpha")).closest("details")!;
   expect(screen.getByText("0 %")).toBeTruthy();
   expect(screen.getByText("Sin puntuación")).toBeTruthy();
@@ -38,7 +44,12 @@ it("distinguishes zero, unscored and missing snapshots, retaining recorded prove
   expect(within(alpha).getByText("Organización completa")).toBeTruthy();
   expect(screen.getByText("7 de 10 comprobaciones evaluadas")).toBeTruthy();
   expect(screen.getByText("Bloqueado")).toBeTruthy();
-  expect(screen.getByText("Entorno de desarrollo")).toBeTruthy();
+  cleanup();
+  stubApi({ [path]: [200, overview] });
+  renderWithProviders(<OverviewDashboard orgId="primary" />);
+  expect(await screen.findByText("Entorno de desarrollo")).toBeTruthy();
+  expect(screen.getByText(/^Último análisis: 66,7/)).toBeTruthy();
+  expect(screen.getByText("Último análisis sin puntuación")).toBeTruthy();
 });
 
 it("offers search only once there are more frameworks than a glance covers", async () => {
@@ -50,8 +61,7 @@ it("offers search only once there are more frameworks than a glance covers", asy
 
 it("filters frameworks and clears an empty result", async () => {
   const extra = Array.from({ length: 5 }, (_, i) => ({ ...overview.frameworks[3]!, key: `synthetic_extra_${i}`, name: `Synthetic Extra ${i}` }));
-  stubApi({ [path]: [200, { ...overview, frameworks: [...overview.frameworks, ...extra] }] });
-  renderWithProviders(<OverviewDashboard orgId="primary" />);
+  renderWithProviders(<FrameworkLedger frameworks={[...overview.frameworks, ...extra]} orgId="primary" headless />);
   const input = await screen.findByRole("searchbox", { name: "Buscar marco" });
   fireEvent.change(input, { target: { value: " ALPHA " } });
   expect(screen.queryByText("Synthetic Beta")).toBeNull();
