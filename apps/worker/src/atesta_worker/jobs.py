@@ -4,10 +4,21 @@ import json
 import logging
 import uuid
 from collections.abc import Mapping
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
+from zoneinfo import ZoneInfo
 
-from atesta_api.modules.compliance.api import incident_clocks
-from atesta_api.modules.notifications.api import handle_event, send_clock_notices
+from atesta_api.modules.compliance.api import due_items, incident_clocks, weekly_compliance
+from atesta_api.modules.connections.api import inactive_connection_count
+from atesta_api.modules.notifications.api import (
+    WeeklyFacts,
+    defer_daily,
+    handle_event,
+    is_send_slot,
+    notice_days,
+    send_clock_notices,
+    send_due_digest,
+    send_weekly_summary,
+)
 from atesta_api.modules.scanning.api import (
     ScanNotFoundError,
     ScanTransientError,
@@ -15,6 +26,7 @@ from atesta_api.modules.scanning.api import (
     ended_event,
     finish_attempt,
     ingest_collected,
+    scan_counts,
     scheduled_scan,
     start_attempt,
 )
@@ -26,6 +38,7 @@ from sqlalchemy.exc import OperationalError
 from atesta_worker.context import org_session
 from atesta_worker.scans import scan_config
 
+MADRID = ZoneInfo("Europe/Madrid")
 SCAN_RETRIES = 3  # after 300, 600 and 900 s (scanner-connectors spec, Retries)
 RUNNER_ERROR_EXIT = 20  # a runner that raises counts as a failed engine run: transient
 scan_events = logging.getLogger("atesta.scan")
@@ -135,6 +148,27 @@ def notify_clock(organization_id: str, incident_id: str) -> None:
             send_clock_notices(session, uuid.UUID(organization_id), view, now=datetime.now(UTC))
 
 
+def notify_daily(organization_id: str) -> None:
+    """08:00 in Madrid: the due digest, and on Monday the weekly summary; then re-arm."""
+    org = uuid.UUID(organization_id)
+    now = datetime.now(UTC)
+    with org_session(organization_id) as session:
+        if is_send_slot(now):  # a chain started at another hour only re-arms
+            today = now.astimezone(MADRID).date()
+            send_due_digest(session, org, due_items(session, org, notice_days(today)), now=now)
+            if today.weekday() == 0:
+                week = weekly_compliance(session, org, today=today)
+                facts = WeeklyFacts(
+                    frameworks=week.frameworks,
+                    scans=scan_counts(session, org, since=now - timedelta(days=7)),
+                    inactive_connections=inactive_connection_count(session),
+                    due_soon=week.due_soon,
+                    overdue=week.overdue,
+                )
+                send_weekly_summary(session, org, facts, now=now)
+        defer_daily(session, org, now=now)
+
+
 def make_blueprint() -> Blueprint:
     """A fresh blueprint per app: Procrastinate renames task objects when an app adds them.
 
@@ -163,4 +197,6 @@ def make_blueprint() -> Blueprint:
     # Each delivery is claimed once, so a retried notification job never emails twice.
     blueprint.task(name="notify_event", queue="notifications", retry=transient)(notify_event)
     blueprint.task(name="notify_clock", queue="notifications", retry=transient)(notify_clock)
+    # A lost daily job would end the chain: transient database errors retry, as schedule_scan.
+    blueprint.task(name="notify_daily", queue="notifications", retry=transient)(notify_daily)
     return blueprint

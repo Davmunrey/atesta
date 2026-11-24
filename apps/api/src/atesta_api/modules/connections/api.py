@@ -19,6 +19,7 @@ from atesta_api.modules.connections.service import (
     disconnect_connection,
     ended_connection_ids,
     get_connection,
+    inactive_connection_count,
     list_connections,
     scan_target,
 )
@@ -48,6 +49,7 @@ __all__ = [
     "TenantMismatchError",
     "VerificationReport",
     "active_connection_ids",
+    "inactive_connection_count",
     "begin_verification",
     "ended_connection_ids",
     "create_connection",

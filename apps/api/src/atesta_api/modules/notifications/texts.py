@@ -27,6 +27,16 @@ def when(moment: datetime, locale: Locale) -> str:
     return f"{month} {local.day}, {local.year}, {clock}"
 
 
+def day(value: date, locale: Locale) -> str:
+    """A date alone: "23 dic 2026" or "Dec 23, 2026"."""
+    month = _MONTHS[locale][value.month - 1]
+    return (
+        f"{value.day} {month} {value.year}"
+        if locale == "es"
+        else f"{month} {value.day}, {value.year}"
+    )
+
+
 def text(locale: Locale, key: str, **values: str) -> str:
     return message(locale, f"notifications.{key}").format(**values)
 

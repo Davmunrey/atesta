@@ -8,7 +8,7 @@ service accounts. A removed connection becomes `disconnected`, never deleted.
 import uuid
 from dataclasses import dataclass
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.connections.models import Connection
@@ -98,6 +98,12 @@ def disconnect_connection(session: Session, connection_id: uuid.UUID) -> Connect
     session.flush()
     session.refresh(connection)
     return connection
+
+
+def inactive_connection_count(session: Session) -> int:
+    """Connections that need attention: neither active nor disconnected (weekly summary)."""
+    query = select(func.count()).where(Connection.status.not_in(("active", "disconnected")))
+    return int(session.scalar(query.select_from(Connection)) or 0)
 
 
 def active_connection_ids(session: Session) -> list[uuid.UUID]:

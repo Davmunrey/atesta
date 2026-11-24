@@ -344,6 +344,7 @@ def test_a_recorded_review_queues_a_rescore_of_its_org(
             text(
                 "SELECT task_name, queue_name, args FROM procrastinate_jobs"
                 " WHERE args ->> 'organization_id' = :o"
+                " AND queue_name <> 'notifications'"  # the org's daily notice chain
             ),
             {"o": org},
         ).all()

@@ -137,9 +137,10 @@ def test_build_app_installs_log_redaction(monkeypatch: pytest.MonkeyPatch) -> No
 def test_notification_jobs_are_registered_with_ids_only() -> None:
     """notifications spec PR 2 (issue 386): one job per audit event, one per incident."""
     tasks = make_blueprint().tasks
-    assert {"notify_event", "notify_clock"} <= set(tasks)
-    assert non_id_parameters([tasks["notify_event"], tasks["notify_clock"]]) == []
-    assert tasks["notify_event"].queue == tasks["notify_clock"].queue == "notifications"
+    names = ("notify_event", "notify_clock", "notify_daily")  # notify_daily: PR 3, issue 388
+    assert set(names) <= set(tasks)
+    assert non_id_parameters([tasks[n] for n in names]) == []
+    assert {tasks[n].queue for n in names} == {"notifications"}
 
 
 def test_the_worker_configures_mail_only_when_every_setting_is_present(

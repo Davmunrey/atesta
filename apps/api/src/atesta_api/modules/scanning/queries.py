@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.scanning.models import Scan
@@ -21,6 +21,16 @@ class ScanSummary(BaseModel):
     evaluated_checks: int
     queued_at: datetime
     finished_at: datetime | None
+
+
+def scan_counts(session: Session, organization_id: uuid.UUID, *, since: datetime) -> dict[str, int]:
+    """Scans queued since a moment, by status (weekly summary, notifications spec PR 3)."""
+    rows = session.execute(
+        select(Scan.status, func.count())
+        .where(Scan.organization_id == organization_id, Scan.queued_at >= since)
+        .group_by(Scan.status)
+    ).all()
+    return {str(status): int(count) for status, count in rows}
 
 
 def recent_scans(session: Session, organization_id: uuid.UUID) -> list[ScanSummary]:
