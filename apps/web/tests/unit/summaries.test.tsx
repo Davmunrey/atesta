@@ -30,7 +30,10 @@ it("counts open trainings and every confirmation", () => {
 
 it("counts open incidents and overdue notices of open incidents only", () => {
   const incident = (id: string, overdue: number, closed: boolean) => ({ id, title: id, aware_at: "2026-11-20T00:00:00Z", created_at: "2026-11-20T00:00:00Z", closed_at: closed ? "2026-11-21T00:00:00Z" : null, next_due_at: null, overdue, personal_data: false, significant: false });
-  expect(incidentSummary([incident("a", 1, false), incident("b", 0, false), incident("c", 2, true)])).toEqual({ open: 2, closed: 1, overdue: 1 });
+  expect(incidentSummary([incident("a", 1, false), incident("b", 0, false), incident("c", 2, true)])).toEqual({ open: 2, closed: 1, overdue: 1, running: 0, nextDue: null });
+  const running = (id: string, due: string) => ({ ...incident(id, 0, false), next_due_at: due });
+  expect(incidentSummary([running("d", "2026-11-26T10:00:00Z"), running("e", "2026-11-25T10:00:00Z"), incident("f", 1, false)]))
+    .toMatchObject({ open: 3, overdue: 1, running: 2, nextDue: "2026-11-25T10:00:00Z" });
 });
 
 it("counts active tokens, revoked or expired ones, and the latest use", () => {

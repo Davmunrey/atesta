@@ -83,7 +83,8 @@ const incident = {
 it("shows each reporting deadline from pack content and marks one as sent", async () => {
   const requests = stubApi({ [`GET ${base}/incidents/i1`]: [200, incident], [`POST ${base}/incidents/i1/updates`]: [201, incident] });
   renderWithProviders(<IncidentView org={owner} incidentId="i1" />);
-  expect(await screen.findByText("Vencido")).toBeTruthy();
+  // An overdue clock says by how much (console-unification spec).
+  expect(await screen.findByText(/^Vencido hace \d+ (h|días?)$/)).toBeTruthy();
   expect(screen.getByText("Enviado el 22 nov 2026, 8:00")).toBeTruthy();
   expect(screen.getByText("Empieza con el aviso anterior")).toBeTruthy();
   expect(screen.getByText("Aviso enviado: Notificación del incidente")).toBeTruthy();

@@ -882,15 +882,13 @@
     "languageSaved": "Saved. Notices will arrive in {language}."
   },
   "cockpit": {
-    "summary": "{framework}: {assessed} of {total, plural, one {# measure assessed} other {# measures assessed}}, {implemented} implemented.",
-    "summaryAttention": "{count, plural, one {# item needs attention.} other {# items need attention.}}",
-    "summaryCalm": "Nothing urgent.",
     "now": "Now",
     "calm": "Nothing urgent. Next step:",
     "severity": {
       "overdue": "Overdue",
       "missing": "Missing",
-      "pending": "Pending"
+      "pending": "Pending",
+      "clock": "Legal deadline"
     },
     "attention": {
       "overdue": "{count, plural, one {# measure past its due date} other {# measures past their due date}} in {framework}",
@@ -906,7 +904,9 @@
         "incident_clock": "{clock} ({framework}) for the incident “{title}”: {when}",
         "clockOverdue": "was due on {time}",
         "clockRunning": "due on {time}"
-      }
+      },
+      "overdueOthers": "{count, plural, one {# more measure past its due date} other {# more measures past their due date}} in {framework}",
+      "mineOverdue": "was due on {date}"
     },
     "step": {
       "scope": "Define the scope of {framework}",
@@ -915,18 +915,14 @@
       "export": "Export the statement of applicability of {framework}"
     },
     "counts": "{assessed} of {total} assessed · {implemented} implemented · {partial} partially · {notImplemented} not implemented · {notApplicable, plural, one {# does not apply} other {# do not apply}}",
-    "yourWork": "Your work",
-    "yourWorkEmpty": "You have no open measures assigned.",
     "noDue": "No date",
     "allMyWork": "See everything in My work",
-    "team": "Team",
-    "teamChart": "Open measures per person",
-    "teamEmpty": "No measures are assigned yet.",
-    "formerMember": "Former member",
-    "recent": "Recent activity",
-    "recentEmpty": "No activity in the last 30 days.",
-    "system": "System",
-    "allActivity": "See all activity"
+    "frameworks": "Frameworks",
+    "allFrameworks": "See all frameworks",
+    "line": "<key>{assessed}</key> of {total, plural, one {# measure assessed} other {# measures assessed}} · {implemented} implemented",
+    "lineScore": "Latest scan: {score}",
+    "lineUnscored": "Latest scan without a score",
+    "lineNotStarted": "Not assessed"
   },
   "console": {
     "skip": "Skip to content",
@@ -1119,7 +1115,10 @@
       "classificationMissing": "the time it was classified as significant is missing",
       "classify": "Record the classification",
       "classifyTitle": "Classification as significant",
-      "classificationMissingNotice": "This incident is significant, but the time it was classified is missing. Deadlines that run from classification show only their outer limit until you record it."
+      "classificationMissingNotice": "This incident is significant, but the time it was classified is missing. Deadlines that run from classification show only their outer limit until you record it.",
+      "closeConfirm": "{count, plural, one {# notice not sent yet. Close anyway?} other {# notices not sent yet. Close anyway?}}",
+      "closeAnyway": "Close",
+      "cancel": "Cancel"
     }
   },
   "trainingLink": {
@@ -1375,7 +1374,8 @@
         "title": "Record the review and open the {framework} dossier",
         "help": "The security officer reviews; management reads the summary and signs."
       }
-    }
+    },
+    "line": "{done} of {total, plural, other {#}}"
   },
   "report": {
     "title": "Monthly report",
@@ -1446,7 +1446,7 @@
       "acknowledged": "Confirmations"
     },
     "incidents": {
-      "lead": "{open, plural, =0 {No open incidents.} one {# open incident} other {# open incidents}}{open, plural, =0 {} other {{overdue, plural, =0 {, no notices overdue.} one {, # with overdue notices.} other {, # with overdue notices.}}}}",
+      "lead": "{open, plural, =0 {No open incidents.} one {# open incident} other {# open incidents}}{open, plural, =0 {} other {{overdue, plural, =0 {{running, plural, =0 {, no notices pending.} other {, # with a notice due within its deadline.}}} other {, # with overdue notices.}}}}",
       "open": "Open",
       "closed": "Closed",
       "overdue": "With overdue notices"
@@ -2082,5 +2082,9 @@
     },
     "view": "Portfolio: your organizations at a glance",
     "close": "Prepare your clients with Atesta."
+  },
+  "deadline": {
+    "left": "{unit, select, days {{value, plural, one {# day left} other {# days left}}} other {{value} h left}}",
+    "past": "{unit, select, days {{value, plural, one {Overdue by # day} other {Overdue by # days}}} other {Overdue by {value} h}}"
   }
 }

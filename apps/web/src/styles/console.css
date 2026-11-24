@@ -221,6 +221,13 @@
 .portfolio-summary [data-severity="overdue"] { color: var(--color-danger, inherit); }
 
 .getting-started { display: grid; gap: 0.75rem; }
+/* From five of seven steps the checklist is one line (console-unification spec). */
+.getting-started-line { display: flex; flex-wrap: wrap; align-items: center; gap: 0 0.375rem; color: var(--color-muted); }
+/* Home: one ruled line per framework, name and state. */
+.framework-lines li { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.25rem 1rem; padding-block: 0.75rem; border-bottom: 1px solid var(--color-border-subtle); }
+.framework-lines li:first-child { padding-top: 0; }
+.framework-lines li:last-child { border-bottom: 0; padding-bottom: 0; }
+.framework-line-state { color: var(--color-muted); font-variant-numeric: tabular-nums; }
 .getting-started li { display: flex; gap: 0.625rem; align-items: flex-start; }
 .getting-started li svg { flex: none; margin-top: 0.2rem; }
 .getting-started li[data-done="true"] svg { color: var(--color-success, inherit); }

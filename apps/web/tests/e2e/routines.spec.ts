@@ -94,6 +94,7 @@ test("a training link is confirmed without an account, and an incident is record
   await page.getByRole("button", { name: "Añadir la anotación" }).click();
   await expect(page.getByText("Contraseña cambiada y sesiones revocadas.")).toBeVisible();
   await expectSound(page, "incident");
+  // No pack here runs a clock, so closing needs no confirmation (console-unification spec; unit-tested with one).
   await page.getByRole("button", { name: "Cerrar el incidente" }).click();
   await expect(page.getByText("Incidente cerrado. La evidencia se ha registrado en el control de gestión de incidentes.")).toBeVisible();
 });

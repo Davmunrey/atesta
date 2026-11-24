@@ -38,6 +38,8 @@ test("recorded-result design supports filters, keyboard disclosure, both locales
   const many = { ...overview, frameworks: [...overview.frameworks, ...Array.from({ length: 5 }, (_, i) => ({ ...overview.frameworks[3]!, key: `synthetic_extra_${i}`, name: `Synthetic Extra ${i}` }))] };
   await page.route("**/api/v1/orgs/*/overview", (route) => route.fulfill({ json: many }));
   await createOrganization(page);
+  // The ledger and the latest scans live on the Marcos page; the home lists tasks (console-unification spec).
+  await page.getByRole("navigation", { name: "Secciones de la organización" }).getByRole("link", { name: "Marcos", exact: true }).click();
   await expect(page.locator(".evidence-count")).toHaveCSS("font-size", "32px");
   const row = page.locator("details").filter({ hasText: "Synthetic Alpha" });
   await expect(row).toHaveJSProperty("open", true);
