@@ -173,6 +173,9 @@ On a fresh pooled connection, startup fails if the runtime role:
   `has_any_column_privilege`, which `has_table_privilege` does not see;
 - holds UPDATE on a retention table, or the table lacks its restrictive DELETE policy
   `retention` (ADR-012 amendment 9);
+- is not the service's own role: `atesta_app` for the API and the worker, `atesta_operator`
+  for the operator service, so each refuses the other's credential (ADR-012 amendment 8). The
+  operator trails (`operator_audit_events`, `erasure_receipts`) count as append-only tables;
 - has an `app.*` default in `pg_db_role_setting` (role, database or all roles), or any of the four
   settings is non-empty on the fresh connection (checked by name: placeholders are not in
   `pg_settings`, and this also catches `-c app.*` in the DSN);
