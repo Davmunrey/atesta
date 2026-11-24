@@ -234,15 +234,17 @@ def expire_key_usage(session: Session, organization_id: uuid.UUID, *, now: datet
     `retention` policy hides younger rows from DELETE and tenant_isolation hides other
     organizations, so a wrong `now` or id here deletes nothing extra (ADR-012 amendment 9).
     """
-    gone = session.scalars(
+    gone = (
         delete(ApiTokenUsage)
         .where(
             ApiTokenUsage.organization_id == organization_id,
             ApiTokenUsage.at < now - USAGE_RETENTION,
         )
         .returning(ApiTokenUsage.id)
+        .cte("gone")
     )
-    return len(gone.all())
+    # Counted in the database: the deleted ids never travel to the worker.
+    return session.scalar(select(func.count()).select_from(gone)) or 0
 
 
 @dataclass(frozen=True, slots=True)
