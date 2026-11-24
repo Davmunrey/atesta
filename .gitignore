@@ -42,3 +42,6 @@ scanner/output/
 .DS_Store
 .idea/
 .vscode/
+
+# impeccable live-server runtime state (local token, never commit)
+.impeccable/live/
