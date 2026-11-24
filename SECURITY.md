@@ -67,6 +67,7 @@ for a control.
 | Catalog packs (frameworks, controls, mappings) | Trusted once the owner releases them after qualified review | `catalog/`, each pack's `SOURCES.md`; loaded as `atesta_owner`, read-only to the app role (ADR-012); release is an owner decision (GOVERNANCE.md) |
 | Sign-in tokens | Trusted after signature, issuer and audience checks against Cognito's JWKS | `identity/cognito.py`, `apps/api/tests/db/test_bff.py` |
 | Evidence statements and their links | Customer content: untrusted, never fetched, rendered as text | `evidence/links.py` refuses a link whose query or fragment carries a credential on every path into evidence: the web form, the ingestion API, policies, training campaigns, and `record_attestation` (#256; `apps/api/tests/db/test_ingestion.py`, `test_routines.py`, `test_routines_b.py`, `test_control_workspace.py`) |
+| Uploaded evidence files | Customer content: untrusted, never executed, rendered or parsed (rule 5) | `evidence/files.py`: the API is the only writer to the store; the type comes from the extension allowlist and the content must match it; size is counted, not declared; the SHA-256 is computed over the bytes received and recomputed before every download, which is refused and audited on a mismatch (#222, #263); downloads are attachments with `nosniff` and a sandbox policy (`apps/api/tests/db/test_evidence_files.py`) |
 | API tokens for evidence ingestion | Write-only, stored as a sha256 | `identity/api_tokens.py`; a token in a query string is refused before parsing (`QueryFreeRoute`, `apps/api/tests/db/test_ingestion.py`) |
 | Device agent reports | Evidence noise at worst: a device credential reads nothing | `docs/security/device-agent-threat-model.md`, including its own residual risks |
 
@@ -91,6 +92,9 @@ for a control.
 - **Local Docker runner (development only).** The attempt's `out/` folder is opened to the
   container's user 10001 (`scanning/local.py`); `LocalDockerRunner` refuses to start outside a
   development `ATESTA_ENV`.
+- **Uploaded files are not scanned for malware.** A booby-trapped PDF or Office document that a
+  member uploads reaches whoever downloads it, as it would by email. Atesta never opens the file,
+  and the allowlist leaves out formats that run or script (#401 holds the decision on scanning).
 - **Evidence lock in governance mode.** Stored evidence is retained 365 days under S3 Object
   Lock in governance mode, and the bucket policy denies the bypass to every principal (#263).
   Whoever can change that policy can still lift the lock; compliance mode would close this and

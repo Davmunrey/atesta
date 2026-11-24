@@ -2658,6 +2658,16 @@
             ],
             "title": "Created By"
           },
+          "file": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FileOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
@@ -2709,6 +2719,9 @@
       },
       "EvidencePage": {
         "properties": {
+          "file_uploads": {
+            "$ref": "#/components/schemas/FileUploads"
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/EvidenceOut"
@@ -2723,7 +2736,8 @@
         },
         "required": [
           "total",
-          "items"
+          "items",
+          "file_uploads"
         ],
         "title": "EvidencePage",
         "type": "object"
@@ -2831,6 +2845,62 @@
           "ref"
         ],
         "title": "ExpectedEvidenceItem",
+        "type": "object"
+      },
+      "FileOut": {
+        "description": "An uploaded document (evidence-file-uploads spec). The storage key stays in the API.",
+        "properties": {
+          "media_type": {
+            "title": "Media Type",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "sha256": {
+            "title": "Sha256",
+            "type": "string"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "media_type",
+          "size_bytes",
+          "sha256"
+        ],
+        "title": "FileOut",
+        "type": "object"
+      },
+      "FileUploads": {
+        "description": "What the upload form may offer: nothing when no store is configured.",
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "extensions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Extensions",
+            "type": "array"
+          },
+          "max_bytes": {
+            "title": "Max Bytes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "enabled",
+          "max_bytes",
+          "extensions"
+        ],
+        "title": "FileUploads",
         "type": "object"
       },
       "FindingOut": {
@@ -9030,6 +9100,94 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/controls/{control_key}/evidence/files": {
+      "post": {
+        "description": "Authentication first, then the declared length, and only then the body.",
+        "operationId": "upload_file_api_v1_orgs__org_id__controls__control_key__evidence_files_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "control_key",
+            "required": true,
+            "schema": {
+              "title": "Control Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "submission_id": {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "title": {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "submission_id",
+                  "title",
+                  "file"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Upload File",
+        "tags": [
+          "evidence"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/controls/{control_key}/reviews": {
       "get": {
         "operationId": "list_reviews_api_v1_orgs__org_id__controls__control_key__reviews_get",
@@ -9153,6 +9311,57 @@
         "summary": "Record Review",
         "tags": [
           "compliance"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/evidence/{evidence_id}/file": {
+      "get": {
+        "operationId": "download_file_api_v1_orgs__org_id__evidence__evidence_id__file_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "evidence_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Evidence Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Download File",
+        "tags": [
+          "evidence"
         ]
       }
     },

@@ -565,3 +565,37 @@ def _alerts(env: str) -> tuple[str, list[str]]:
 def test_budget_alerts_are_150_250_400_in_dev_and_250_350_450_in_prod() -> None:
     assert _alerts("dev") == ("400", '${toset(["150", "250", "400"])}')
     assert _alerts("prod") == ("450", '${toset(["250", "350", "450"])}')
+
+
+# --- evidence file uploads (evidence-file-uploads spec, #222) -------------------------------
+
+
+def test_the_api_may_only_put_and_get_uploaded_evidence() -> None:
+    statements = {s["sid"]: s for s in ECS_POLICIES["api"]["statement"]}
+    assert set(statements) == {"EvidenceFiles", "EvidenceKey"}
+    files = statements["EvidenceFiles"]
+    assert files["actions"] == ["s3:GetObject", "s3:PutObject"]  # no delete, no list
+    assert files["resources"] == ["${var.evidence_bucket_arn}/*/evidence/*"]  # not scan outputs
+    key = statements["EvidenceKey"]
+    assert key["actions"] == ["kms:Decrypt", "kms:GenerateDataKey"]
+    assert key["resources"] == ["${var.evidence_key_arn}"]
+    attached = ECS["aws_iam_role_policy.api"]
+    assert attached["role"] == "${aws_iam_role.api.id}"
+    assert attached["policy"] == "${data.aws_iam_policy_document.api.json}"
+
+
+def test_the_platform_points_the_services_at_the_evidence_bucket() -> None:
+    platform = {k: v for m in load("modules/platform/main.tf")["module"] for k, v in m.items()}
+    ecs = platform["ecs"]
+    assert ecs["evidence_key_arn"] == "${module.kms.evidence_key_arn}"
+    assert ecs["environment"] == "${local.app_environment}"
+    (environment,) = [
+        block["app_environment"]
+        for block in load("modules/platform/main.tf")["locals"]
+        if "app_environment" in block
+    ]
+    assert 'ATESTA_EVIDENCE_STORE = "s3"' in environment
+    assert "ATESTA_EVIDENCE_BUCKET = module.evidence.bucket_name" in environment
+    assert "AWS_DEFAULT_REGION" in environment  # boto3 takes its region from this variable
+    # Later arguments win in merge(): a hand-set value cannot point the API at another bucket.
+    assert environment.startswith("${merge(var.app_environment, {")
