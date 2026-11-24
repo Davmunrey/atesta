@@ -8,7 +8,7 @@ export type MenuItem = { key: "assess" | "routines" | "incidents" | "dossier" | 
 
 const how = "/#how-title";
 export const PRODUCT: { group: "prepare" | "respond" | "integrate"; items: MenuItem[] }[] = [
-  { group: "prepare", items: [{ key: "assess", href: PAGES.producto ? "/producto#autoevaluacion" : how }, { key: "routines", href: PAGES.producto ? "/producto#rutinas" : how }] },
+  { group: "prepare", items: [{ key: "assess", href: PAGES.producto ? "/producto#autoevaluacion" : how }, { key: "routines", href: PAGES.producto ? "/producto#registros" : how }] },
   { group: "respond", items: [{ key: "incidents", href: PAGES.producto ? "/producto#incidentes" : how }, { key: "dossier", href: PAGES.producto ? "/producto#dossier" : how }] },
   { group: "integrate", items: [{ key: "assistant", href: PAGES.producto ? "/producto#asistente" : how }, { key: "api", href: PAGES.producto ? "/producto#api" : "/docs/api" }] },
 ];

@@ -1164,14 +1164,14 @@
       "incidents:read": "Read incidents and their reporting deadlines",
       "evidence:write": "Record evidence",
       "assessment:propose": "Propose self-assessments (a person confirms or rejects them)",
-      "routines:write": "Record routines: incidents, training and access reviews"
+      "routines:write": "Write recurring records: incidents, training and access reviews"
     },
     "scopeShort": {
       "compliance:read": "Read compliance",
       "incidents:read": "Read incidents",
       "evidence:write": "Record evidence",
       "assessment:propose": "Propose self-assessments",
-      "routines:write": "Record routines"
+      "routines:write": "Write recurring records"
     },
     "readOnlyPreset": "Tick read-only",
     "readOnly": "Read-only",
@@ -1229,7 +1229,7 @@
     "title": "Auditor dossier",
     "frameworks": "Frameworks",
     "loading": "Preparing the dossier…",
-    "intro": "The dossier holds the management summary, the applicability, the evidence for each requirement and the routines. Print it or save it as PDF from the browser.",
+    "intro": "The dossier holds the management summary, the applicability, the evidence for each requirement and the recurring records. Print it or save it as PDF from the browser.",
     "print": "Print or save as PDF",
     "coverKicker": "Audit preparation dossier",
     "organization": "Organization",
@@ -1259,8 +1259,8 @@
     "review": "Security officer review",
     "reviewBy": "{name} ({role}), {date}.",
     "noReview": "No review recorded.",
-    "routinesState": "Pending routines",
-    "routinesClear": "No routines are pending.",
+    "routinesState": "Pending recurring records",
+    "routinesClear": "No recurring records are pending.",
     "pending": {
       "policiesDue": "{count, plural, one {# policy to review} other {# policies to review}}",
       "policiesUnapproved": "{count, plural, one {# policy not approved} other {# policies not approved}}",
@@ -1290,7 +1290,7 @@
       "scan": "Scan",
       "upload": "Document"
     },
-    "routines": "Recorded routines (last 12 months)",
+    "routines": "Recurring records (last 12 months)",
     "policies": "Policies",
     "accessReviews": "Closed access reviews",
     "trainings": "Closed trainings",
@@ -1314,7 +1314,7 @@
     "organization": "Organization",
     "assessed": "Measures assessed",
     "overdue": "Overdue measures",
-    "routines": "Pending routines",
+    "routines": "Pending records",
     "lastAssessed": "Last assessment",
     "frameworks": "{count, plural, =0 {no framework in progress} one {# framework in progress} other {# frameworks in progress}}",
     "ofTotal": "{assessed} of {total, plural, one {#} other {#}}",
@@ -1350,7 +1350,7 @@
       },
       "routine": {
         "title": "Run an access review or a training",
-        "help": "Each closed routine leaves dated evidence."
+        "help": "Each closed record leaves dated evidence."
       },
       "tool": {
         "title": "Connect a tool that records evidence for you",
@@ -1743,7 +1743,7 @@
           "desc": "73 measures with their official text"
         },
         "routines": {
-          "title": "Routines",
+          "title": "Recurring records",
           "desc": "Policies, access and training"
         },
         "incidents": {
@@ -1802,7 +1802,7 @@
       "p3": "A person always makes the decision"
     },
     "routines": {
-      "title": "Routines that do not slip",
+      "title": "Policies, access reviews and training",
       "body": "Policies with their review date, access reviews and training with each person's confirmation. Atesta gathers what falls due in one list.",
       "p1": "Policies and their next review",
       "p2": "Recorded access reviews",

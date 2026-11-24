@@ -24,3 +24,8 @@ it("every message is a non-empty string", () => {
     expect(typeof value === "string" && value.trim() !== "", key).toBe(true);
   }
 });
+
+it("names recurring records one way: never \"rutinas\" or \"routines\" in user-facing text", () => {
+  for (const [key, value] of leaves(es)) expect(String(value), key).not.toMatch(/rutina/i);
+  for (const [key, value] of leaves(en)) expect(String(value), key).not.toMatch(/routine/i);
+});

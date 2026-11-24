@@ -361,7 +361,7 @@ highlighter, with one motion language. Honest facts replace logos and testimonia
 
 ## Voice
 
-Console and public copy address the reader as "tú", never "vosotros" or "usted" (owner decision 2026-11-24). Plain statements over slogans and triads. "Responsable de medidas" names whoever owns a measure; "encargado" stays reserved for the GDPR processor.
+Console and public copy address the reader as "tú", never "vosotros" or "usted" (owner decision 2026-11-24). Plain statements over slogans and triads. "Responsable de medidas" names whoever owns a measure; "encargado" stays reserved for the GDPR processor. Policies, access reviews, training and incidents are "registros periódicos" (EN "recurring records"), never "rutinas" or "routines" (#423); API identifiers such as `routines:write` keep their names.
 
 ## Do's and Don'ts
 
