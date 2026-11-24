@@ -100,15 +100,20 @@ for that case, in the session or on the issue, and the pull request quotes that 
 - answer a person outside the project, a customer or an auditor;
 - delete branches, tags or releases that hold work not already in `main`.
 
-An instruction such as "open PRs and merge them" covers the agent's own pull requests once CI is
-green. It does not cover other people's pull requests, Dependabot's or another agent's.
+**One merger (owner, 2026-11-24: "Tú te encargas de las fusiones", #407).** The owner has
+delegated every merge to one coordinator session. Every other agent and session, whatever it was
+told earlier, opens its pull request, waits for CI to be green and reports "PR #N ready" (to the
+coordinator, or as a PR comment when it cannot reach it). It never merges, approves or closes a
+pull request itself. The coordinator reviews each one, including a coherence check against
+DESIGN.md and the shared components (owner rule: "que la app no sea un frankenstein"), and
+merges them one at a time.
 
 ## How a pull request lands
 
 Squash merge only. The commit takes the pull request's title and body, so `Fixes #n` reaches
-`main`, and GitHub deletes the branch on merge. GitHub enforces it: the `main` ruleset
-(`.github/rulesets/main-branch.json`) requires a pull request, squash merge and every CI job
-green. The branch need not be current with `main`; the push to `main` reruns CI on the result.
+`main`. GitHub enforces it: the `main` ruleset (`.github/rulesets/main-branch.json`) requires a
+pull request, squash merge, every CI job green and a branch that is up to date with `main`
+(strict, since #293). The coordinator updates the branch before merging.
 To save CI runs, prefer fewer, larger pull requests that each resolve their own issues (the owner,
 2026-11-22: "Haz PRs grandes para ahorrar en acciones").
 
