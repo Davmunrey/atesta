@@ -210,7 +210,9 @@
       "provider_unavailable": "No podemos verificar tu sesión ahora mismo. Vuelve a intentarlo en unos segundos."
     },
     "billing": {
-      "plan_limit": "Tu plan no incluye esto. Para ampliarlo, escribe a tu contacto en Atesta."
+      "plan_limit": "Tu plan no incluye esto. Para ampliarlo, escribe a tu contacto en Atesta.",
+      "trial_ended": "La prueba de 14 días ha terminado: la organización es de solo lectura hasta que Atesta active un plan.",
+      "no_profile": "Atesta aún no ha registrado tus datos de facturación."
     },
     "connections": {
       "incomplete_permissions": "El escaneo se detuvo: a la conexión le faltan permisos de lectura. Revisa los permisos concedidos y vuelve a verificarla.",
@@ -239,7 +241,9 @@
       "closure_name_mismatch": "El nombre no coincide. Escríbelo exactamente como aparece.",
       "api_token_invalid": "Token de API no válido, revocado o caducado.",
       "api_token_scope": "Este token no tiene el permiso que hace falta.",
-      "api_token_rate_limited": "Este token ha superado su límite de peticiones por minuto. Espera un momento."
+      "api_token_rate_limited": "Este token ha superado su límite de peticiones por minuto. Espera un momento.",
+      "organization_suspended": "Esta organización está suspendida.",
+      "closure_by_operator": "El cierre lo inició Atesta: solo Atesta puede cancelarlo."
     },
     "request": {
       "error": "No se ha podido completar la solicitud. Vuelve a intentarlo.",
@@ -273,7 +277,8 @@
       "not_found": "No encontramos ese escaneo, o no tienes acceso.",
       "output_invalid": "El resultado del escaneo no era válido y se descartó. No se guardó ningún dato de este intento.",
       "tenant_mismatch": "El resultado del escaneo pertenecía a otro inquilino y se descartó. Revisa a qué inquilino apunta la conexión.",
-      "timeout": "El escaneo superó el tiempo máximo y se detuvo."
+      "timeout": "El escaneo superó el tiempo máximo y se detuvo.",
+      "organization_suspended": "El escaneo no se ejecutó porque la organización está suspendida."
     },
     "notifications": {
       "not_optional": "Este aviso es de seguridad y no se puede desactivar.",

@@ -104,5 +104,9 @@
       "due": "Vencimientos en los próximos 7 días: {soon}. Vencidos: {overdue}.",
       "report": "El informe mensual ya está disponible: {url}"
     }
+  },
+  "standing": {
+    "organization_suspended": "Esta organización está suspendida.",
+    "trial_ended": "La prueba de 14 días ha terminado: la organización es de solo lectura hasta que Atesta active un plan."
   }
 }

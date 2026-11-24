@@ -5,7 +5,7 @@ Admins and owners only. Returns action, target, actor email and time, never even
 
 import uuid
 from datetime import UTC, date, datetime, timedelta
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
@@ -30,6 +30,8 @@ class DayCount(BaseModel):
 class ActivityEvent(BaseModel):
     occurred_at: datetime
     actor_email: str | None  # None for system events or a user no longer in the org
+    # `atesta`: an operator action, shown as the Atesta team, never naming the staff member.
+    actor_kind: Literal["member", "system", "atesta"]
     action: str
     target_type: str
     target_id: str
@@ -57,6 +59,12 @@ def person(session: Session, user_id: uuid.UUID) -> tuple[str, str]:
     """A signed-in person's email and language, for records written in their name (api.py)."""
     row = session.execute(select(User.email, User.locale).where(User.id == user_id)).one()
     return str(row.email), str(row.locale)
+
+
+def _actor_kind(event: AuditEvent) -> Literal["member", "system", "atesta"]:
+    if event.action.startswith("operator."):
+        return "atesta"
+    return "system" if event.actor_user_id is None else "member"
 
 
 @router.get("")
@@ -97,6 +105,7 @@ def read_activity(
         ActivityEvent(
             occurred_at=event.occurred_at,
             actor_email=email,
+            actor_kind=_actor_kind(event),
             action=event.action,
             target_type=event.target_type,
             target_id=event.target_id,

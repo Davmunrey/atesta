@@ -27,11 +27,13 @@ from atesta_api.modules.connections.api import (
     record_verification,
     scan_target,
 )
+from atesta_api.modules.identity.api import is_suspended
 from atesta_api.modules.notifications.api import queue_event
 from atesta_api.modules.scanning.error_codes import (
     BLOCKED_CODES,
     CONNECTION_NOT_ACTIVE,
     ENGINE_FAILED,
+    ORGANIZATION_SUSPENDED,
     TENANT_MISMATCH,
     TRANSIENT_ERRORS,
 )
@@ -175,6 +177,8 @@ def start_attempt(
     scan = _locked(session, scan_id)
     if scan.status not in ("queued", "running"):
         return Started(None, None)
+    if is_suspended(session, organization_id):  # ends here, so no scan stays queued for good
+        return Started(None, _end(session, scan, "blocked", ORGANIZATION_SUSPENDED))
     target = scan_target(session, organization_id, scan.connection_id)
     # Onboarding (#331): the activation scan verifies a `verifying` connection, pins the tenant
     # bound at sign-in and names the consenting admin for the binding check (step 6).

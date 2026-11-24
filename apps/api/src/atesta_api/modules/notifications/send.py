@@ -14,7 +14,7 @@ from email.headerregistry import Address
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
-from atesta_api.modules.identity.api import OrganizationProfile, Recipient
+from atesta_api.modules.identity.api import OrganizationProfile, Recipient, is_suspended
 from atesta_api.modules.notifications.config import mail_config
 from atesta_api.modules.notifications.deliveries import claim_delivery
 from atesta_api.modules.notifications.kinds import CRITICAL, Kind
@@ -77,7 +77,12 @@ def deliver(  # noqa: PLR0913 - one notice: who, what, where and its words
     lines: list[str],
     today: date,
 ) -> str:
-    """`sent`, `suppressed`, `failed`, or `duplicate` when this one was already claimed."""
+    """`sent`, `suppressed`, `failed`, or `duplicate` when this one was already claimed.
+
+    Nothing goes to a suspended organization (operator-portal spec), and nothing is claimed, so a
+    notice still due once it is reactivated can go then."""
+    if is_suspended(session, organization_id):
+        return "suppressed"
     delivery = claim_delivery(session, organization_id, recipient.user_id, kind, dedupe_key)
     if delivery is None:
         return "duplicate"

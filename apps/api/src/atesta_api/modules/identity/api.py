@@ -77,6 +77,7 @@ from atesta_api.modules.identity.org_profile import (
     recipients,
 )
 from atesta_api.modules.identity.routes import router
+from atesta_api.modules.identity.standing import is_suspended
 
 
 def wire_identity(app: FastAPI, client: httpx.Client) -> None:
@@ -144,6 +145,7 @@ __all__ = [
     "require_scope",
     "install_identity",
     "is_member",
+    "is_suspended",
     "member_read",
     "normalize_email",
     "organization_profile",
