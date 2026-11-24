@@ -1935,6 +1935,10 @@
         "name": "Conexión revocada o con permisos de más",
         "help": "Atesta deja de ver tu tenant, o la aplicación tiene más acceso del que debe."
       },
+      "evidence_malware": {
+        "name": "Archivo de evidencia con posible malware",
+        "help": "El análisis antimalware ha bloqueado un archivo subido: nadie puede descargarlo."
+      },
       "incident_clock": {
         "name": "Plazos de notificación de incidentes",
         "help": "Cuando empieza un plazo, como la alerta temprana de 24 horas de NIS2, 6 horas antes de que venza y si vence."

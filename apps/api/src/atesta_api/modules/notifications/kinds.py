@@ -7,6 +7,7 @@ from atesta_api.modules.identity.api import Role
 
 class Kind(StrEnum):
     CONNECTION_ALERT = "connection_alert"
+    EVIDENCE_MALWARE = "evidence_malware"
     INCIDENT_CLOCK = "incident_clock"
     SCAN_PROBLEM = "scan_problem"
     DUE_DIGEST = "due_digest"
@@ -14,7 +15,7 @@ class Kind(StrEnum):
 
 
 # Security email nobody can turn off (owner, 2026-11-23).
-CRITICAL = frozenset({Kind.CONNECTION_ALERT, Kind.INCIDENT_CLOCK})
+CRITICAL = frozenset({Kind.CONNECTION_ALERT, Kind.EVIDENCE_MALWARE, Kind.INCIDENT_CLOCK})
 OPTIONAL = frozenset(set(Kind) - CRITICAL)
 
 

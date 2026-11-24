@@ -18,7 +18,8 @@ from atesta_api.platform.db import Base, TenantMixin
 
 OPTIONAL_SQL = "kind IN ('scan_problem', 'due_digest', 'weekly_summary')"
 KIND_SQL = (
-    "kind IN ('connection_alert', 'incident_clock', 'scan_problem', 'due_digest', 'weekly_summary')"
+    "kind IN ('connection_alert', 'evidence_malware', 'incident_clock', 'scan_problem',"
+    " 'due_digest', 'weekly_summary')"
 )
 
 

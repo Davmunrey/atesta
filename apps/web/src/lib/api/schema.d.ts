@@ -2914,7 +2914,7 @@ export interface components {
          * Kind
          * @enum {string}
          */
-        Kind: "connection_alert" | "incident_clock" | "scan_problem" | "due_digest" | "weekly_summary";
+        Kind: "connection_alert" | "evidence_malware" | "incident_clock" | "scan_problem" | "due_digest" | "weekly_summary";
         /**
          * LastVerification
          * @description What the last verification found missing or extra, and what it cannot read.

@@ -66,6 +66,10 @@
         "body": "{org}: a {provider} connection holds more permissions than the read-only ones Atesta needs. Atesta does not scan it until they are removed."
       }
     },
+    "evidence_malware": {
+      "subject": "Atesta: file blocked as possible malware",
+      "body": "{org}: the malware scan found a possible threat in an evidence file uploaded to Atesta. Atesta has blocked it, and nobody can download it. Find out who uploaded it and where it came from, check that computer and, if the evidence is still needed, upload a clean copy. The file is not deleted: it stays blocked for its retention period."
+    },
     "scan_problem": {
       "subject": "Atesta: a scan did not finish",
       "body": "{org}: a {provider} scan did not finish after its retries. That connection's automated evidence is not refreshed until it is fixed."

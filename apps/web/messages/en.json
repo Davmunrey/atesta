@@ -1935,6 +1935,10 @@
         "name": "Connection revoked or with too many permissions",
         "help": "Atesta can no longer read your tenant, or the app holds more access than it should."
       },
+      "evidence_malware": {
+        "name": "Evidence file with possible malware",
+        "help": "The malware scan blocked an uploaded file: nobody can download it."
+      },
       "incident_clock": {
         "name": "Incident reporting deadlines",
         "help": "When a deadline starts, such as the NIS2 24-hour early warning, 6 hours before it is due, and if it is missed."

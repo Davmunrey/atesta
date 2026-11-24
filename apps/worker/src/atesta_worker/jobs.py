@@ -36,6 +36,7 @@ from atesta_api.modules.scanning.api import snapshot_scores as score_scan
 from procrastinate import Blueprint, JobContext, RetryStrategy
 from sqlalchemy.exc import OperationalError
 
+from atesta_worker import file_scans
 from atesta_worker.context import org_session
 from atesta_worker.scans import scan_config
 
@@ -44,6 +45,7 @@ SCAN_RETRIES = 3  # after 300, 600 and 900 s (scanner-connectors spec, Retries)
 RUNNER_ERROR_EXIT = 20  # a runner that raises counts as a failed engine run: transient
 scan_events = logging.getLogger("atesta.scan")
 retention_events = logging.getLogger("atesta.retention")
+file_scan_events = logging.getLogger("atesta.file_scans")
 
 
 def _report(event: Mapping[str, str | int | None] | None) -> None:
@@ -182,6 +184,16 @@ def notify_daily(organization_id: str) -> None:
         )
 
 
+def poll_file_scans(timestamp: int) -> None:
+    """Drain GuardDuty's malware scan results (evidence-malware-scanning spec). Counts only."""
+    config = file_scans.file_scan_config()
+    if config is None:
+        return
+    counts = file_scans.drain(config.queue, lambda body: file_scans.handle(body, config.bucket))
+    if any(counts.values()):
+        file_scan_events.info(json.dumps({"event": "file_scans.polled", **counts}, sort_keys=True))
+
+
 def make_blueprint() -> Blueprint:
     """A fresh blueprint per app: Procrastinate renames task objects when an app adds them.
 
@@ -212,4 +224,7 @@ def make_blueprint() -> Blueprint:
     blueprint.task(name="notify_clock", queue="notifications", retry=transient)(notify_clock)
     # A lost daily job would end the chain: transient database errors retry, as schedule_scan.
     blueprint.task(name="notify_daily", queue="notifications", retry=transient)(notify_daily)
+    # Every minute; an unfinished message stays in SQS, so the job itself is never retried.
+    poll = blueprint.task(name="poll_file_scans", queue="files")
+    blueprint.periodic(cron="* * * * *")(poll(poll_file_scans))
     return blueprint
