@@ -20,7 +20,7 @@ from atesta_api.platform.logs import install_log_redaction
 from fastapi import FastAPI
 from sqlalchemy import Engine
 
-from atesta_operator import me, session
+from atesta_operator import me, organizations, session
 from atesta_operator.mfa import MfaConfigReader, assert_staff_pool_requires_mfa
 from atesta_operator.settings import Settings
 
@@ -68,6 +68,7 @@ def create_app() -> FastAPI:
     created.add_exception_handler(session.SessionEndedError, session.session_ended_handler)
     created.include_router(session.router)
     created.include_router(me.router)
+    created.include_router(organizations.router)
     created.add_api_route("/health", health, methods=["GET"])
     return created
 

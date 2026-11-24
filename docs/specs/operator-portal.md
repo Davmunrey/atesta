@@ -289,6 +289,17 @@ Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
   sealed cookie holds the sign-in and last-use times: 30 minutes idle or 8 hours in total ends
   the session (401 `auth.invalid_token`, cookies cleared). A bearer token is still accepted, for
   tests and tools; its own expiry, set on the staff app client, bounds it.
+- **Organizations and the trails (#472):**
+  - **List:** `health=attention` and `billing=missing` are the two filter values; `plan=default`
+    is the organizations with no `subscriptions` row. Rows carry `plan` and `plan_default`.
+  - **Detail:** `billing` is `{"view": "full", ...}` for admin and billing and
+    `{"view": "summary", "legal_name", "complete"}` for support, so the full fields are absent
+    from support's response; null when there is no row. `trial_ended` is computed as above.
+  - **Reads in the trail:** `organizations.searched` and `organization.viewed`, with
+    no reason and no search text.
+  - **Customer events from the operator role** go through `platform.audit.record_by_atesta`,
+    which names no actor column (the role has no grant on it), and the operator trail through
+    `record_operator`, both in the request's transaction with the same request id.
 - **Local sign-in:** `uv run python apps/api/devtools/fake_cognito.py --staff` serves a fake staff
   pool on port 9001 with client id `local-operator`. Both fakes now put `auth_time` in access
   tokens and keep it across a refresh: Cognito documents it as the time the user "completed
