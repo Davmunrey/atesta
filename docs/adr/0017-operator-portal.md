@@ -230,7 +230,7 @@ The ADR does not pick. Whatever the owner chooses, the portal enforces MFA and r
   - **Data:** nothing is deleted or changed.
 - **Export:** staff never receive customer data. "Export" in the portal asks the owners to export:
   - it notifies them by email;
-  - it marks the request in their console, which keeps the existing owner-only export.
+  - it records the request in their Activity. The export itself stays the existing owner-only one.
 
   This keeps owner decision 1 and the offboarding runbook's rule, "Atesta staff never download
   it on the customer's behalf".
