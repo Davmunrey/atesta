@@ -392,7 +392,7 @@ def test_activity_is_for_admins_and_carries_no_metadata(
     actions = {e["action"] for e in activity["events"]}
     assert {"org.created", "framework.scope_recorded", "requirement.assessed"} <= actions
     assert all(
-        set(e) == {"occurred_at", "actor_email", "action", "target_type", "target_id"}
+        set(e) == {"occurred_at", "actor_email", "actor_kind", "action", "target_type", "target_id"}
         for e in activity["events"]
     )
     assert any(e["actor_email"] for e in activity["events"])

@@ -209,6 +209,43 @@ The portal never shows:
 - **Unsubscribe:** one-click unsubscribe keeps working, because RFC 8058 and the user's choice
   do not depend on the plan.
 
+### Customer side as built (build step 3, #463)
+
+Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
+- **One enforcement point:** `identity.standing.enforce`, called by `require_member` and by the
+  API-key check after each enters the organization's context. It reads `suspended_at` and
+  `trial_ends_at` by primary key, and the plan only once the trial date has passed. The
+  allowlists are matched against the request's own path with this organization's id, so any
+  other spelling is refused.
+- **The ended trial (owner answer 1):** when `trial_ends_at` has passed and there is no
+  `subscriptions` row, every write answers 403 `billing.trial_ended`. What stays:
+  - every read, export included;
+  - an owner's `POST` and `DELETE /api/v1/orgs/{org}/closure`;
+  - anyone's `PUT /api/v1/orgs/{org}/notifications/preferences`, a person's choice like the
+    one-click unsubscribe;
+  - training-link confirmations, which are the employees' records, not the organization's
+    members' writes. Invitation acceptance is not an organization route and is unchanged.
+- **Trial state:** `GET /api/v1/orgs/{org}/trial` returns `{ends_at, ended}` to every member,
+  `ends_at` null once a plan is set. `/me` cannot carry it, because `subscriptions` is read only
+  in the organization's own context.
+- **API keys and MCP:** the remote MCP endpoint calls the key routes in-process, so the key
+  check covers it. A key's refusal carries `message` in the caller's language, as the other key
+  errors do (api-keys-v2 spec).
+- **Worker:** the scheduled-scan chain keeps re-arming while suspended, so scans resume after
+  reactivation; a scan that starts for a suspended organization ends `blocked` with
+  `scanning.organization_suspended`, so none stays queued. A notice to a suspended organization
+  is suppressed before its delivery is claimed, so a notice still due after reactivation can go.
+- **Training link:** reading the suspension needs the organization's context, so the link
+  handler enters it (reason `training_link`) before answering 410 `compliance.training_closed`.
+- **Owner billing view:** `GET /api/v1/orgs/{org}/billing-profile` lives in identity next to
+  the organization settings, calling `billing.api.billing_profile`; billing stays a module with
+  no routes and no import of identity.
+- **`errors.identity.closure_by_operator`:** the shared error component renders texts without
+  values, so the text names no address ("El cierre lo inició Atesta: solo Atesta puede
+  cancelarlo"). The settings page shows the contact address next to an operator closure.
+- **Activity:** `actor_kind` is `atesta` for an `operator.*` action, `member` when the event
+  names a person, `system` otherwise.
+
 ## Permissions matrix
 
 | Action | admin | billing | support |

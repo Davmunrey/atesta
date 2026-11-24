@@ -134,6 +134,11 @@ def request_closure(
 def cancel_closure(
     member: Annotated[Member, Depends(require_role(Role.OWNER))], session: DbSession
 ) -> Response:
+    origin = session.scalar(
+        select(Organization.closure_origin).where(Organization.id == member.organization_id)
+    )
+    if origin == "operator":  # only an operator admin cancels it (owner answer 8)
+        raise error(409, "identity.closure_by_operator")
     cancelled = session.execute(
         update(Organization)
         .where(

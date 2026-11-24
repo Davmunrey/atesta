@@ -35,6 +35,7 @@ from atesta_api.modules.identity.context import (
     enter_user_context,
 )
 from atesta_api.modules.identity.models import Membership, Role, User
+from atesta_api.modules.identity.standing import enforce
 from atesta_api.platform.db import DbSession, read_only_transaction
 from atesta_api.platform.tenancy import Organization
 
@@ -173,9 +174,13 @@ def require_member(
     """Membership check, then the org context. Non-members get 404: no org enumeration.
 
     The auditor rules live here so that no endpoint can forget them (rbac spec): access ends
-    at the end date, and an auditor never writes, whatever the route.
+    at the end date, and an auditor never writes, whatever the route. So do suspension and the
+    ended trial (operator-portal spec), through `enforce`.
     """
-    return _enter_as_member(session, org_id, caller.user_id, writing=request.method in _WRITES)
+    member = _enter_as_member(session, org_id, caller.user_id, writing=request.method in _WRITES)
+    owner = member.role == Role.OWNER
+    enforce(session, org_id, method=request.method, path=request.url.path, owner=owner)
+    return member
 
 
 def _enter_as_member(
@@ -228,7 +233,10 @@ def member_read(
     """
     with read_only_transaction() as session:
         enter_user_context(session, subject, user_id)
-        yield session, _enter_as_member(session, org_id, user_id, writing=False)
+        member = _enter_as_member(session, org_id, user_id, writing=False)
+        # A suspended organization is not read for the portfolio either (operator-portal spec).
+        enforce(session, org_id, method="GET", path="", owner=False)
+        yield session, member
 
 
 def require_role(minimum: Role) -> Callable[[Member], Member]:

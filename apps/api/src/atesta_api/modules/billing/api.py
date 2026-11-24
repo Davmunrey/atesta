@@ -179,6 +179,15 @@ def entitlements(session: Session, organization_id: uuid.UUID) -> Entitlements:
     return Entitlements(Plan(row.plan), frozenset(row.addons))
 
 
+def has_plan(session: Session, organization_id: uuid.UUID) -> bool:
+    """Whether the operator has set a plan: it ends the trial's read-only state (owner answer 1).
+    Read in the organization's own context."""
+    found = session.scalar(
+        select(Subscription.organization_id).where(Subscription.organization_id == organization_id)
+    )
+    return found is not None
+
+
 def _beyond_plan(limit: str) -> HTTPException:
     return HTTPException(status_code=403, detail={"code": "billing.plan_limit", "limit": limit})
 
@@ -281,6 +290,7 @@ __all__ = [
     "entitlements",
     "has_feature",
     "has_framework",
+    "has_plan",
     "known_addons",
     "require_connector_slot",
     "require_feature",

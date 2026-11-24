@@ -210,7 +210,9 @@
       "provider_unavailable": "We cannot verify your session right now. Try again in a few seconds."
     },
     "billing": {
-      "plan_limit": "Your plan does not include this. To extend it, write to your Atesta contact."
+      "plan_limit": "Your plan does not include this. To extend it, write to your Atesta contact.",
+      "trial_ended": "The 14-day trial has ended: the organization is read-only until Atesta sets a plan.",
+      "no_profile": "Atesta has not recorded your billing details yet."
     },
     "connections": {
       "incomplete_permissions": "The scan stopped: the connection is missing read permissions. Check the permissions granted and verify it again.",
@@ -239,7 +241,9 @@
       "closure_name_mismatch": "The name does not match. Type it exactly as shown.",
       "api_token_invalid": "The API token is not valid, revoked or expired.",
       "api_token_scope": "This token does not have the permission needed.",
-      "api_token_rate_limited": "This token has gone over its limit of requests per minute. Wait a moment."
+      "api_token_rate_limited": "This token has gone over its limit of requests per minute. Wait a moment.",
+      "organization_suspended": "This organization is suspended.",
+      "closure_by_operator": "Atesta started this closure: only Atesta can cancel it."
     },
     "request": {
       "error": "The request could not be completed. Try again.",
@@ -273,7 +277,8 @@
       "not_found": "We couldn't find that scan, or you don't have access.",
       "output_invalid": "The scan's output was not valid and was discarded. No data from this attempt was kept.",
       "tenant_mismatch": "The scan's output belonged to another tenant and was discarded. Check which tenant the connection points to.",
-      "timeout": "The scan ran past its time limit and was stopped."
+      "timeout": "The scan ran past its time limit and was stopped.",
+      "organization_suspended": "The scan did not run because the organization is suspended."
     },
     "notifications": {
       "not_optional": "This is a security notice and cannot be turned off.",
