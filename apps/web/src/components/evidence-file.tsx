@@ -6,11 +6,25 @@ import { useDownloadEvidenceFile, useUploadEvidenceFile } from "@/lib/api/eviden
 import { ApiError } from "@/lib/api/hooks";
 import type { components } from "@/lib/api/schema";
 import { fileSize } from "@/lib/format";
+import type { State } from "@/lib/severity";
+import { Badge } from "./badge";
 import { ErrorMessage } from "./error-message";
 
 type StoredFile = components["schemas"]["FileOut"];
 type Limits = components["schemas"]["FileUploads"];
 type Context = { orgId: string; controlKey: string };
+
+/** The malware scan, as the panel shows it (evidence-malware-scanning spec). The API decides what
+ *  it serves; the button is offered only where it would. */
+const SCAN: Record<StoredFile["scan_status"], { label: string; state: State; help?: string; served: boolean }> = {
+  pending: { label: "pending", state: "fileScanPending", help: "pending", served: false },
+  threats_found: { label: "blocked", state: "fileBlocked", help: "blocked", served: false },
+  unsupported: { label: "failed", state: "fileNotScanned", help: "failed", served: false },
+  access_denied: { label: "failed", state: "fileNotScanned", help: "failed", served: false },
+  failed: { label: "failed", state: "fileNotScanned", help: "failed", served: false },
+  not_scanned: { label: "devUnscanned", state: "fileDevUnscanned", served: true },
+  no_threats_found: { label: "clean", state: "fileClean", served: true },
+};
 
 /** Shown in this order; "jpeg" is the same type as "jpg" and is not listed twice. */
 const SHOWN = ["pdf", "png", "jpg", "txt", "csv", "docx", "xlsx"];
@@ -61,7 +75,7 @@ export function EvidenceFileForm({ orgId, controlKey, limits, onDone }: Context 
       {refused ? <ErrorMessage error={refused} /> : null}
       <label htmlFor={`${id}-title`}>{t("title")}</label>
       <input id={`${id}-title`} required maxLength={200} value={title} onChange={(e) => setTitle(e.target.value)} />
-      <p className="text-sm text-muted">{t("notScanned")}</p>
+      <p className="text-sm text-muted">{t("scanned")}</p>
       <p className="text-sm text-muted">{t("immutable")}</p>
       {mutation.isError ? <ErrorMessage error={mutation.error} /> : null}
       <div className="evidence-actions">
@@ -72,7 +86,8 @@ export function EvidenceFileForm({ orgId, controlKey, limits, onDone }: Context 
   </form>;
 }
 
-/** Name, type and size of an uploaded file, with a download that the API verifies first. */
+/** Name, type, size and scan status of an uploaded file, with a download that the API verifies
+ *  first, offered only once the file is known clean. */
 export function EvidenceFileLine({ orgId, evidenceId, file }: { orgId: string; evidenceId: string; file: StoredFile }) {
   const t = useTranslations("evidence");
   const locale = useLocale();
@@ -83,9 +98,12 @@ export function EvidenceFileLine({ orgId, evidenceId, file }: { orgId: string; e
     link.click();
     URL.revokeObjectURL(url);
   };
+  const scan = SCAN[file.scan_status];
   return <div className="evidence-file">
     <p><span className="evidence-file-name">{file.name}</span> <span className="evidence-metadata">{t("fileDetails", { type: extension(file.name).toUpperCase(), size: fileSize(locale, file.size_bytes) })}</span></p>
-    <button type="button" className="dashboard-button" aria-label={t("downloadFile", { name: file.name })} disabled={download.isPending} onClick={() => download.mutate(evidenceId, { onSuccess: save })}>{t(download.isPending ? "downloading" : "download")}</button>
+    <Badge state={scan.state}>{t(`scan.${scan.label}`)}</Badge>
+    {scan.served ? <button type="button" className="dashboard-button" aria-label={t("downloadFile", { name: file.name })} disabled={download.isPending} onClick={() => download.mutate(evidenceId, { onSuccess: save })}>{t(download.isPending ? "downloading" : "download")}</button> : null}
+    {scan.help ? <p className="evidence-scan-help text-sm text-muted">{t(`scanHelp.${scan.help}`)}</p> : null}
     {download.isError ? <ErrorMessage error={download.error} /> : null}
   </div>;
 }
