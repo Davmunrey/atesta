@@ -235,7 +235,7 @@ def _refuse(session: Session, org_id: uuid.UUID, code: str) -> OperatorError:
 def suspend(session: Session, org_id: uuid.UUID, reason_code: str) -> datetime:
     if reason_code not in SUSPENSION_REASONS:
         raise ValueError(f"unknown suspension reason {reason_code!r}")
-    since = session.scalar(
+    since: datetime | None = session.scalar(
         update(_ORG_WRITE)
         .where(_ORG_WRITE.c.id == org_id, _ORG_WRITE.c.suspended_at.is_(None))
         .values(suspended_at=func.now(), suspension_reason=reason_code)
@@ -243,7 +243,7 @@ def suspend(session: Session, org_id: uuid.UUID, reason_code: str) -> datetime:
     )
     if since is None:
         raise _refuse(session, org_id, "already_suspended")
-    return since  # type: ignore[no-any-return]
+    return since
 
 
 def reactivate(session: Session, org_id: uuid.UUID) -> None:
@@ -259,7 +259,7 @@ def reactivate(session: Session, org_id: uuid.UUID) -> None:
 
 def start_operator_closure(session: Session, org_id: uuid.UUID) -> datetime:
     """The existing 30-day closure, with no person: `closure_origin` derives to `operator`."""
-    started = session.scalar(
+    started: datetime | None = session.scalar(
         update(_ORG_WRITE)
         .where(_ORG_WRITE.c.id == org_id, _ORG_WRITE.c.closure_requested_at.is_(None))
         .values(closure_requested_at=func.now())
@@ -267,7 +267,7 @@ def start_operator_closure(session: Session, org_id: uuid.UUID) -> datetime:
     )
     if started is None:
         raise _refuse(session, org_id, "closure_exists")
-    return started + GRACE  # type: ignore[no-any-return]
+    return started + GRACE
 
 
 def cancel_operator_closure(session: Session, org_id: uuid.UUID) -> None:
