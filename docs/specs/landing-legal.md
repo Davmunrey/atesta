@@ -145,6 +145,7 @@ constraints below were agreed with the coordinator the same day). It refines A1'
       marquee, and each pinned stage is verified at fixed scroll positions.
 - [ ] **Accessibility and performance e2e:** axe runs at 375, 1280 and 1440 px; CLS stays under
       0.1 and LCP is measured.
+
 Amendment A3: the public site (#371 and following). Status: **accepted** (owner, 23/11/2026,
 relayed by the coordinator). Research and direction: phase 1 and 2 notes kept outside the
 repository (four reference sites rendered and measured; techniques mapped to original uses).
@@ -187,6 +188,57 @@ repository (four reference sites rendered and measured; techniques mapped to ori
 - [ ] **Unchanged:** every A1/A2 rule (light only, 0 CSP hashes, WCAG 2.2 AA with axe at 375, 1280
       and 1440 px, pause controls, CLS 0, LCP regression at most 10%, e2e at fixed scroll positions,
       the bottom-right corner free for the assistant).
+
+A3, landing (#373):
+
+**Hero**
+- [ ] **Hero tabs:** the overview frame has tabs (Resumen, Autoevaluar, Rutinas, Incidente,
+      Dossier) that switch on click or arrow keys, with no auto-advance.
+- [ ] **Proof and integrations:** the proof strip and "Se conecta con" (Microsoft 365, Google
+      Workspace, each "Próximamente", as names) follow the hero.
+
+**Steps and frameworks**
+- [ ] **Five steps:** the pinned steps are connect (Próximamente), assess, routines, incident and
+      dossier.
+- [ ] **Incident stage:** it shows a deadline whose progress bar fills once (no ticking clock)
+      and a timestamped log.
+- [ ] **Ring diagram:** "Una evidencia, muchos marcos" is an original SVG ring diagram with a text
+      equivalent, revealed by a mask wipe.
+
+**Motion**
+- [ ] **No overshoot:** figures never overshoot their real value; the distribution bar settles on
+      the spring token.
+
+A3, /producto and /ens (#377):
+
+**/producto**
+- [ ] **One section per capability:** self-assessment, routines, incidents, dossier, assistant,
+      and API and MCP, at the anchors the menus use (`#autoevaluacion`, `#rutinas`,
+      `#incidentes`, `#dossier`, `#asistente`, `#api`).
+- [ ] **Product views:** each section has a product view labelled "Datos de ejemplo".
+      - The assistant view quotes reviewed expected evidence from the ENS pack, with its guide
+        citation, and a test keeps it equal to the catalog.
+      - The API view shows only real routes and MCP tool names.
+- [ ] **Signature:** each view rises once as it enters, on a view timeline inside `@supports`,
+      and is static under reduced motion.
+
+**/ens**
+- [ ] **What it is:** a lead on the ENS (Real Decreto 311/2022), its three categories and how the
+      category follows from the highest level of the five dimensions.
+- [ ] **Category chooser:** the assistant's own category flow, inline, with its citations. It loads
+      the same static index, and an error leaves the rest of the page usable.
+- [ ] **The 73 measures:** grouped by the official group titles.
+      - Each row shows the code, the Spanish title (`lang="es"`), the official basis (category or
+        dimensions) and the rule for BÁSICA/BAJO, MEDIA/MEDIO and ALTA/ALTO, verbatim.
+      - Each code links to its BOE source.
+      - All of it is read from `catalog/frameworks/ens_rd311_2022` at build time (rule 10), and a
+        test checks the page renders all 73.
+- [ ] **Narrow screens:** each group's table scrolls inside a focusable, labelled region; the page
+      itself never overflows at 375 px.
+
+**Site map**
+- [ ] **Flags on:** `PAGES.producto` and `PAGES.ens` are on. The header and footer link to both
+      pages, and the e2e public-pages sweep covers them.
 
 Legal pages (Spanish is the binding version)
 

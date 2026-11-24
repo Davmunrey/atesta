@@ -25,7 +25,7 @@ function Choice({ legend, options, value, onChange }: { legend: ReactNode; optio
 
 const shown = (text: Text, locale: Locale) => { const p = pick(text, locale); return p ? <span lang={p.lang}>{p.value}</span> : null; };
 
-function CategoryFlow({ index, announce }: Props) {
+export function CategoryFlow({ index, announce }: Props) {
   const t = useTranslations("assistant.flows.category");
   const locale = useLocale() as Locale;
   const [picked, setPicked] = useState<Record<string, string>>({});
