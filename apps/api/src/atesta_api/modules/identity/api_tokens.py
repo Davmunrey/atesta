@@ -18,7 +18,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.dependencies.models import Dependant
 from fastapi.routing import APIRoute
 from pydantic import BaseModel, Field, field_validator
-from sqlalchemy import func, select, update
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.identity.context import (
@@ -46,6 +46,7 @@ TOKEN_PREFIX = "atesta_"  # noqa: S105 - a public marker, not a secret
 PREFIX_LENGTH = 12
 WINDOW = timedelta(seconds=60)
 USAGE_SHOWN = 100
+USAGE_RETENTION = timedelta(days=90)  # the `retention` policy holds the same limit in Postgres
 
 type Scope = Literal[
     "compliance:read", "incidents:read", "evidence:write", "assessment:propose", "routines:write"
@@ -224,6 +225,26 @@ def token_usage(
     return UsageOut(
         last_24h=count, recent=[UsageRow.model_validate(r, from_attributes=True) for r in rows]
     )
+
+
+def expire_key_usage(session: Session, organization_id: uuid.UUID, *, now: datetime) -> int:
+    """Delete the organization's usage rows older than 90 days; returns how many went.
+
+    For the daily job, in the organization's context. The database decides what may go: the
+    `retention` policy hides younger rows from DELETE and tenant_isolation hides other
+    organizations, so a wrong `now` or id here deletes nothing extra (ADR-012 amendment 9).
+    """
+    gone = (
+        delete(ApiTokenUsage)
+        .where(
+            ApiTokenUsage.organization_id == organization_id,
+            ApiTokenUsage.at < now - USAGE_RETENTION,
+        )
+        .returning(ApiTokenUsage.id)
+        .cte("gone")
+    )
+    # Counted in the database: the deleted ids never travel to the worker.
+    return session.scalar(select(func.count()).select_from(gone)) or 0
 
 
 @dataclass(frozen=True, slots=True)

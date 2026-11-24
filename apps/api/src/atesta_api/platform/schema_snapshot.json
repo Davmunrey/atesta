@@ -38,6 +38,15 @@
   ],
   [
    "api_token_usage",
+   "retention",
+   "DELETE",
+   "RESTRICTIVE",
+   "public",
+   "(at < (now() - '90 days'::interval))",
+   ""
+  ],
+  [
+   "api_token_usage",
    "tenant_isolation",
    "ALL",
    "PERMISSIVE",
@@ -399,7 +408,7 @@
    "api_token_usage",
    "",
    "atesta_app",
-   "INSERT,SELECT"
+   "DELETE,INSERT,SELECT"
   ],
   [
    "api_tokens",

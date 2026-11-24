@@ -8,11 +8,14 @@ enforces and with which test, and what it does not yet do.
 
 Do not open a public issue for a vulnerability.
 
-- **Channel:** GitHub private vulnerability reporting, "Report a vulnerability" on the
-  [Security tab](https://github.com/Davmunrey/atesta/security/advisories/new). The report is
-  visible only to the owner. A `security@` address and a `/.well-known/security.txt` served by
-  the web app follow when Atesta's domain exists; both are release gates before the first
-  customer.
+- **Channels**, in order of preference:
+  1. Email `security@atesta.cloud`.
+  2. GitHub private vulnerability reporting, "Report a vulnerability" on the
+     [Security tab](https://github.com/Davmunrey/atesta/security/advisories/new). The report is
+     visible only to the owner.
+- **security.txt:** both channels are published at `/.well-known/security.txt` on
+  `atesta.cloud` and `app.atesta.cloud` (RFC 9116, `docs/specs/security-txt.md`). Each deploy
+  renews its expiry date. The file is not signed yet.
 - **Include:** the component (api, worker, web, scanner image, connector consent flow), the
   steps, and what you observed. Use only your own test tenant and synthetic data; never access
   another organization's data to prove a point.

@@ -34,9 +34,11 @@ it("lists every key route under its permission, in Spanish and English", () => {
   const scope = screen.getByRole("region", { name: /Registrar evidencias/ });
   expect(within(scope).getByRole("heading", { name: "POST /api/v1/ingest/evidence" })).toBeTruthy();
   expect(screen.getByRole("link", { name: "Guía para agentes de IA (MCP)" }).getAttribute("href")).toBe("/docs/mcp");
+  expect(screen.getByText(/durante 90 días; después lo borra/)).toBeTruthy(); // usage log retention, issue 353
   cleanup();
   renderWithProviders(<ApiReference operations={ops} />, "en");
   expect(screen.getByRole("heading", { level: 1, name: "API reference" })).toBeTruthy();
+  expect(screen.getByText(/for 90 days; then it deletes them/)).toBeTruthy();
 });
 
 it("offers exactly the tools the MCP server defines", () => {

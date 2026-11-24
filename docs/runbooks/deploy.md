@@ -58,7 +58,11 @@ In prod, also pass these. The Cognito email identity is created in eu-west-3, an
      uses to reach it.
 2. Publish the validation CNAMEs, plus the SES records from the outputs: DKIM, MAIL FROM and
    DMARC (`mail_dns_records`, `cognito_dns`).
-3. After the first deploy (step 6), point the hostnames:
+3. Create the `security@<domain>` mailbox, or an alias that reaches the owner, and send it a
+   test message. Every deploy publishes that address in `/.well-known/security.txt`
+   (`docs/specs/security-txt.md`); a vulnerability report sent to a mailbox that does not exist
+   is lost.
+4. After the first deploy (step 6), point the hostnames:
    - `app.<domain>`: CNAME or alias to the CloudFront domain (output `platform.web.domain`);
    - `api-origin.<domain>`: alias to the load balancer (output `platform.api_load_balancer`).
 
@@ -132,7 +136,8 @@ afterwards.
    - runs the migrations and stops if their exit code is not 0;
    - applies everything else;
    - uploads the site;
-   - checks that the response has a CSP and HSTS, and that `/api/v1/me` answers 401.
+   - checks that the response has a CSP and HSTS, that `/api/v1/me` answers 401 and that
+     `/.well-known/security.txt` is served as UTF-8 text.
 
    On this first run, the migrations fail because the roles do not exist yet. That is expected:
    go to step 2.
@@ -149,7 +154,7 @@ afterwards.
    Its log (`/atesta/atesta-dev/migrate`, stream prefix `bootstrap`) ends with
    `bootstrap done; LOGIN set for atesta_app, atesta_owner`.
 3. Run the deploy workflow again. This time the migrations and the smoke check pass.
-4. Point DNS (step 3.3), sign up at `https://app.<domain>` with MFA, and walk the pilot guide's
+4. Point DNS (step 3.4), sign up at `https://app.<domain>` with MFA, and walk the pilot guide's
    first steps.
 
 ## 7. Every later deploy

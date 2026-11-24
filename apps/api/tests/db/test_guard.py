@@ -49,6 +49,22 @@ MISCONFIGURATIONS: dict[str, tuple[str, str, tuple[str, ...]]] = {
         f"REVOKE UPDATE (action) ON audit_events FROM {APP}",
         ("can write an append-only",),
     ),
+    "update on a retention table": (
+        f"GRANT UPDATE ON api_token_usage TO {APP}",
+        f"REVOKE UPDATE ON api_token_usage FROM {APP}",
+        ("retention table",),
+    ),
+    "column update on a retention table": (
+        f"GRANT UPDATE (at) ON api_token_usage TO {APP}",
+        f"REVOKE UPDATE (at) ON api_token_usage FROM {APP}",
+        ("retention table",),
+    ),
+    "retention table without its age limit": (
+        "DROP POLICY retention ON api_token_usage",
+        "CREATE POLICY retention ON api_token_usage AS RESTRICTIVE FOR DELETE"
+        " USING (at < now() - interval '90 days')",
+        ("retention table",),
+    ),
     "column insert on a catalog table": (
         f"GRANT INSERT (key, title_es, title_en, description_es, description_en) ON controls"
         f" TO {APP}",

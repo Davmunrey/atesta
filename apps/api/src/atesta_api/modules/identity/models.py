@@ -150,7 +150,8 @@ class ApiToken(TenantMixin, Base):
 
 class ApiTokenUsage(TenantMixin, Base):
     """One accepted request of a key (api-keys-v2 spec): the route template and the scope, never
-    a body, query or customer content (rule 2). Append-only; the rate limit counts these rows."""
+    a body, query or customer content (rule 2). Never updated; deleted once 90 days old (ADR-012
+    amendment 9). The rate limit counts these rows."""
 
     __tablename__ = "api_token_usage"
     __table_args__ = (

@@ -8,9 +8,11 @@ from fastapi import FastAPI
 
 from atesta_api.modules.identity.activity import is_member, person
 from atesta_api.modules.identity.api_tokens import (
+    USAGE_RETENTION,
     ApiCaller,
     ApiTokenCaller,
     annotate_scopes,
+    expire_key_usage,
     key_router,
     require_scope,
     token_labels,
@@ -65,6 +67,7 @@ def install_identity(app: FastAPI) -> None:
 
 
 __all__ = [
+    "USAGE_RETENTION",
     "ApiCaller",
     "annotate_scopes",
     "ApiTokenCaller",
@@ -80,6 +83,7 @@ __all__ = [
     "enter_org_context",
     "enter_training_link_context",
     "enter_user_context",
+    "expire_key_usage",
     "require_member",
     "require_role",
     "require_scope",
