@@ -954,6 +954,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orgs/{org_id}/notifications/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Preferences */
+        get: operations["read_preferences_api_v1_orgs__org_id__notifications_preferences_get"];
+        /** Change Preference */
+        put: operations["change_preference_api_v1_orgs__org_id__notifications_preferences_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orgs/{org_id}/overview": {
         parameters: {
             query?: never;
@@ -1222,6 +1240,26 @@ export interface paths {
         put?: never;
         /** Read Link */
         post: operations["read_link_api_v1_training_link_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/unsubscribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Unsubscribe
+         * @description RFC 8058 one-click: a POST from the mail provider, nobody signed in.
+         */
+        post: operations["unsubscribe_api_v1_unsubscribe_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2745,6 +2783,11 @@ export interface components {
             scopes: string[];
         };
         /**
+         * Kind
+         * @enum {string}
+         */
+        Kind: "connection_alert" | "incident_clock" | "scan_problem" | "due_digest" | "weekly_summary";
+        /**
          * LastVerification
          * @description What the last verification found missing or extra, and what it cannot read.
          */
@@ -3020,6 +3063,20 @@ export interface components {
             review_months: number;
             /** Title */
             title: string;
+        };
+        /** PreferenceIn */
+        PreferenceIn: {
+            /** Enabled */
+            enabled: boolean;
+            kind: components["schemas"]["Kind"];
+        };
+        /** PreferenceOut */
+        PreferenceOut: {
+            /** Can Disable */
+            can_disable: boolean;
+            /** Enabled */
+            enabled: boolean;
+            kind: components["schemas"]["Kind"];
         };
         /** PreparationControl */
         PreparationControl: {
@@ -3730,6 +3787,10 @@ export interface components {
             framework_version: string;
             /** Score */
             score: number | null;
+        };
+        /** UnsubscribedOut */
+        UnsubscribedOut: {
+            kind: components["schemas"]["Kind"];
         };
         /** UpdateIn */
         UpdateIn: {
@@ -5932,6 +5993,72 @@ export interface operations {
             };
         };
     };
+    read_preferences_api_v1_orgs__org_id__notifications_preferences_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreferenceOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    change_preference_api_v1_orgs__org_id__notifications_preferences_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                org_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreferenceIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreferenceOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     overview_api_v1_orgs__org_id__overview_get: {
         parameters: {
             query?: never;
@@ -6512,6 +6639,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicCampaign"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unsubscribe_api_v1_unsubscribe_post: {
+        parameters: {
+            query?: {
+                token?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnsubscribedOut"];
                 };
             };
             /** @description Validation Error */

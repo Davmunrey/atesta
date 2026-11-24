@@ -116,3 +116,18 @@ other than `<name>_id: str`.
   - `api_token_usage`: append-only, SELECT and INSERT;
   - `assessment_proposals`: SELECT, INSERT, and UPDATE only to record a person's decision.
 - **No new named policy, setting or context reason.**
+
+## Amendment 7 (accepted by the owner 2026-11-23, notifications spec)
+
+- **Seventh reason to enter an organization's context:** `unsubscribe_link`. It is used only by
+  `POST /api/v1/unsubscribe`, after the API has opened a sealed unsubscribe token and checked its
+  age (60 days at most).
+  - **What it may do:** set one optional notification preference to disabled, for the person
+    and organization the token names, and write the audit event `notification.unsubscribed`.
+  - **Why no session:** RFC 8058 one-click unsubscribe is a POST from the mail provider, with
+    nobody signed in.
+- **New tenant tables, standard policy only:**
+  - `notification_preferences`: SELECT, INSERT and UPDATE;
+  - `notification_deliveries`: SELECT and INSERT, and UPDATE only of the delivery status.
+- **No named read policy and no new setting.** The token is sealed, not stored, so nothing is
+  read before the organization is known.

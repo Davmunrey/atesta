@@ -294,6 +294,12 @@
       "output_invalid": "The scan's output was not valid and was discarded. No data from this attempt was kept.",
       "tenant_mismatch": "The scan's output belonged to another tenant and was discarded. Check which tenant the connection points to.",
       "timeout": "The scan ran past its time limit and was stopped."
+    },
+    "notifications": {
+      "not_optional": "This is a security notice and cannot be turned off.",
+      "not_available": "Your role in the organization does not receive this notice.",
+      "link_invalid": "The link is not valid or has expired (links last 60 days). You can change your notices inside the app.",
+      "unavailable": "Email notices are not available right now. Try again later."
     }
   },
   "app": {
@@ -303,7 +309,8 @@
     "signOut": "Sign out",
     "signedInAs": "Signed in as {email}",
     "account": "Account",
-    "signedInLabel": "Signed in as"
+    "signedInLabel": "Signed in as",
+    "notificationsLink": "Email notices"
   },
   "home": {
     "title": "Your organizations",
@@ -807,7 +814,9 @@
       "training_closed": "Closed a training",
       "assessment_proposal_created": "An agent proposed a self-assessment",
       "assessment_proposal_confirmed": "Confirmed an agent's proposal",
-      "assessment_proposal_rejected": "Rejected an agent's proposal"
+      "assessment_proposal_rejected": "Rejected an agent's proposal",
+      "notification_preferences_changed": "Changed their email notices",
+      "notification_unsubscribed": "Unsubscribed from an email notice"
     },
     "day": "Day",
     "unknown": "Other action"
@@ -1795,5 +1804,44 @@
     "customers": {
       "title": "Organizations using Atesta"
     }
+  },
+  "notifications": {
+    "title": "Email notices",
+    "intro": "Choose which notices from {org} reach you by email. They hold only titles, dates and links; the details are in the app.",
+    "notYetSending": "Atesta does not send these notices yet. Your choices apply as soon as it starts.",
+    "types": "Notice types",
+    "loading": "Loading…",
+    "locked": "Always on: this is a security notice.",
+    "kinds": {
+      "connection_alert": {
+        "name": "Connection revoked or with too many permissions",
+        "help": "Atesta can no longer read your tenant, or the app holds more access than it should."
+      },
+      "incident_clock": {
+        "name": "Incident reporting deadlines",
+        "help": "When a deadline starts, such as the NIS2 24-hour early warning, 6 hours before it is due, and if it is missed."
+      },
+      "scan_problem": {
+        "name": "Failed or blocked scans",
+        "help": "Automated evidence stops refreshing until it is fixed."
+      },
+      "due_digest": {
+        "name": "Upcoming due dates",
+        "help": "A daily digest when something is due in 30, 7 or 1 day: control reviews, policies, access reviews and assigned measures."
+      },
+      "weekly_summary": {
+        "name": "Weekly summary",
+        "help": "Mondays at 8:00: results, scans, connections and due dates. The first Monday of each month adds the link to the monthly report."
+      }
+    }
+  },
+  "unsubscribe": {
+    "title": "Stop receiving a notice",
+    "loading": "Loading…",
+    "body": "Confirm to stop receiving this type of notice from Atesta. You can turn it back on in Email notices, inside the app.",
+    "confirm": "Confirm",
+    "done": "Done: you will no longer receive “{kind}”.",
+    "again": "You can turn it back on in Email notices, inside the app.",
+    "missing": "The link is incomplete. Open it again from the email."
   }
 }

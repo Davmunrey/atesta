@@ -290,6 +290,21 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
+  ordered_cache_behavior {
+    path_pattern               = "/unsubscribe*"
+    target_origin_id           = "site"
+    viewer_protocol_policy     = "redirect-to-https"
+    allowed_methods            = ["GET", "HEAD"]
+    cached_methods             = ["GET", "HEAD"]
+    cache_policy_id            = data.aws_cloudfront_cache_policy.optimized.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.no_referrer.id
+    compress                   = true
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.rewrite.arn
+    }
+  }
+
   # No custom_error_response: it would apply to the API origin too and replace API errors.
   # ListBucket lets S3 answer 404 (not 403) for a missing page.
 

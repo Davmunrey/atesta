@@ -37,7 +37,7 @@ TOKEN_ROUTES = {
     ("POST", "/api/v1/access-reviews"),
 }
 # Reached without a session: sign-in, the health check, and the routes that authenticate with
-# their own secret (training link, API key). Adding one is a reviewed change to this list.
+# their own secret (training link, API key, unsubscribe link). Adding one is a reviewed change to this list.
 PUBLIC = {
     ("GET", "/health"),
     ("GET", "/auth/login"),
@@ -45,6 +45,8 @@ PUBLIC = {
     ("GET", "/auth/logout"),
     ("POST", "/api/v1/training/link"),
     ("POST", "/api/v1/training/acknowledge"),
+    # RFC 8058 one-click unsubscribe: a sealed token, ADR-012 amendment 7 (notifications spec).
+    ("POST", "/api/v1/unsubscribe"),
     *TOKEN_ROUTES,
 }
 WRITES = {"POST", "PUT", "PATCH", "DELETE"}

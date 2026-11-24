@@ -19,6 +19,7 @@ class ContextReason(StrEnum):
     JOB = "job"
     TRAINING_LINK = "training_link"  # ADR-012 amendment 4: a valid training link, no account
     API_TOKEN = "api_token"  # noqa: S105 - a context reason, not a secret (ADR-012 amendment 5)
+    UNSUBSCRIBE_LINK = "unsubscribe_link"  # ADR-012 amendment 7: one-click unsubscribe, no session
 
 
 def enter_user_context(session: Session, subject: str, user_id: uuid.UUID | None = None) -> None:

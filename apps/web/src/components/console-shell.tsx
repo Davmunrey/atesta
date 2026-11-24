@@ -7,7 +7,7 @@ import { type ReactNode, useDeferredValue, useEffect, useId, useRef, useState, u
 import { useOverview } from "@/lib/api/hooks";
 import { useSearch } from "@/lib/api/register-hooks";
 import { LOGOUT_URL } from "@/lib/auth";
-import { type Membership, orgAccessReviews, orgActivity, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgIncidents, orgIntegrations, orgMyWork, orgPolicies, orgReport, orgSettings, orgTraining, selectOrg } from "@/lib/org";
+import { type Membership, orgAccessReviews, orgActivity, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgIncidents, orgIntegrations, orgMyWork, orgNotifications, orgPolicies, orgReport, orgSettings, orgTraining, selectOrg } from "@/lib/org";
 import { canInvite, canReviewControls, isContributor } from "@/lib/permissions";
 import { useMe } from "./auth-gate";
 import { Icon, type IconName } from "./icons";
@@ -23,7 +23,7 @@ const DETAIL_PAGES: Record<string, string> = {
   "/app/training-campaign": "/app/training-campaigns",
   "/app/incident": "/app/incidents",
 };
-const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings", "/app/access-reviews", "/app/access-review", "/app/policies", "/app/training-campaigns", "/app/training-campaign", "/app/incidents", "/app/incident", "/app/integrations", "/app/dossier", "/app/report"];
+const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings", "/app/access-reviews", "/app/access-review", "/app/policies", "/app/training-campaigns", "/app/training-campaign", "/app/incidents", "/app/incident", "/app/integrations", "/app/notifications", "/app/dossier", "/app/report"];
 const DESKTOP = "(min-width: 64rem)";
 
 // The collapsed rail is a remembered preference; media and storage are read as external stores.
@@ -101,7 +101,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
       <Link href="/app" className="topbar-brand" aria-label={brand("name")}><BrandMark /><span>{brand("name")}</span></Link>
       {org && inOrg ? <OrgSwitcher org={org} memberships={memberships} /> : null}
       {org && inOrg ? <GlobalSearch org={org} /> : <span className="topbar-spacer" />}
-      <div className="topbar-end"><LocaleSwitcher compact /><AccountMenu /></div>
+      <div className="topbar-end"><LocaleSwitcher compact /><AccountMenu org={org && inOrg && isContributor(org.role) ? org : null} /></div>
     </header>
     <div className="console-body">
       {org && inOrg ? <SideNav id={navId} org={org} pathname={pathname} collapsed={desktop && collapsed} onNavigate={() => !desktop && setDrawer(false)} onEscape={closeDrawer} /> : null}
@@ -238,7 +238,7 @@ function GlobalSearch({ org }: { org: Membership }) {
   </div>;
 }
 
-function AccountMenu() {
+function AccountMenu({ org }: { org: Membership | null }) {
   const t = useTranslations("app");
   const me = useMe();
   const id = useId();
@@ -249,6 +249,7 @@ function AccountMenu() {
     </button>
     <div id={id} popover="auto" className="account-menu" aria-label={t("account")}>
       <p className="account-email"><span className="text-muted">{t("signedInLabel")}</span> <strong>{me.email}</strong></p>
+      {org ? <Link href={orgNotifications(org.organization_id)} className="account-link">{t("notificationsLink")}</Link> : null}
       <a href={LOGOUT_URL} className="account-signout">{t("signOut")}</a>
     </div>
   </>;

@@ -164,6 +164,10 @@ INSERT INTO assessment_proposals (id, organization_id, framework_key, requiremen
 INSERT INTO api_token_usage (id, organization_id, token_id, method, route)
   SELECT gen_random_uuid(), :o, id, 'GET', '/api/v1/key' FROM api_tokens WHERE organization_id = :o;
 INSERT INTO subscriptions (organization_id, plan) VALUES (:o, 'starter');
+INSERT INTO notification_preferences (organization_id, user_id, kind, enabled)
+  VALUES (:o, :u, 'weekly_summary', false);
+INSERT INTO notification_deliveries (id, organization_id, user_id, kind, dedupe_key)
+  VALUES (gen_random_uuid(), :o, :u, 'due_digest', 'rls');
 INSERT INTO probe_child VALUES (:o, :p);
 """
 

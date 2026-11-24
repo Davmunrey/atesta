@@ -35,6 +35,8 @@ TENANT = frozenset(
         "api_ingestions",
         "api_token_usage",
         "assessment_proposals",
+        "notification_preferences",
+        "notification_deliveries",
         "subscriptions",  # billing: read-only for atesta_app, set by the operator
     }
 )
