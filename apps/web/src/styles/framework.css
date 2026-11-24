@@ -142,13 +142,6 @@
 
   /* Self-assessment workspace (requirement-register spec). Paper, ruled rows, highlighter for the
      primary action; no shadows (DESIGN.md). */
-  .button-primary { min-height: 2.75rem; border-radius: var(--radius-md, 0.375rem); background: var(--color-accent); color: var(--color-accent-fg); padding: 0.5rem 1rem; font-weight: 500; }
-  .button-primary:hover { text-decoration: underline; }
-  .button-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-  /* Destructive actions (DESIGN.md, buttons): the danger pair, same size and radius as the primary. */
-  .button-danger { min-height: 2.75rem; border-radius: var(--radius-md, 0.375rem); background: var(--color-danger); color: var(--color-danger-fg); padding: 0.5rem 1rem; font-weight: 500; }
-  .button-danger:hover { text-decoration: underline; }
-  .button-danger:disabled { opacity: 0.6; cursor: not-allowed; }
   /* An inline confirmation: the question, then confirm and cancel. */
   .confirm-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; }
   .self-assessment { margin-top: 2rem; padding: 1.5rem; background: var(--color-surface); border-radius: 0.375rem; }
@@ -245,7 +238,9 @@
   .chart-table { margin-top: 0.5rem; font-size: 0.8125rem; }
   .chart-table > summary { min-height: 2.75rem; display: flex; align-items: center; cursor: pointer; color: var(--color-link); text-decoration: underline; }
   .chart-table table, .activity-table { inline-size: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-  .chart-table th, .chart-table td, .activity-table th, .activity-table td { text-align: start; padding: 0.375rem 0.5rem; border-block-end: 1px solid var(--color-border); }
+  .chart-table th, .chart-table td { text-align: start; padding: 0.375rem 0.5rem; border-block-end: 1px solid var(--color-border); }
+  /* The activity table sits in a data table region, which sets its row height (packages/ui). */
+  .activity-table th, .activity-table td { text-align: start; padding-inline: 0.5rem; border-block-end: 1px solid var(--color-border); }
   /* Emails and ids have no break points; let them wrap so a phone never scrolls sideways. */
   .activity-table td { overflow-wrap: anywhere; }
   .ranked-bars { list-style: none; display: grid; gap: 0.5rem; }
