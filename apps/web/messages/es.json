@@ -221,7 +221,8 @@
       "signin_invalid": "El inicio de sesión con Microsoft no es válido o ha caducado. Vuelve a empezar la conexión desde Atesta.",
       "consent_denied": "No se concedió el consentimiento de administrador en Microsoft, así que la conexión no avanza. Vuelve a intentarlo con una cuenta de administrador global o de administrador de roles con privilegios.",
       "tenant_mismatch": "Microsoft devolvió un inquilino distinto del de tu inicio de sesión, o de este enlace. No se ha guardado nada; vuelve a empezar con una cuenta del inquilino correcto.",
-      "microsoft_unavailable": "No podemos contactar con Microsoft en este momento, o la conexión con Microsoft 365 aún no está disponible aquí. Inténtalo de nuevo más tarde."
+      "microsoft_unavailable": "No podemos contactar con Microsoft en este momento, o la conexión con Microsoft 365 aún no está disponible aquí. Inténtalo de nuevo más tarde.",
+      "google_subject_invalid": "Escribe el correo de un superadministrador de Google Workspace, como admin@tuempresa.es. Si está en un dominio secundario, indica también el dominio principal."
     },
     "identity": {
       "already_member": "Esta persona ya es miembro de la organización.",
@@ -251,6 +252,14 @@
     },
     "evidence": {
       "control_not_found": "Este control ya no está disponible. Recarga el catálogo.",
+      "file_content_mismatch": "El contenido no corresponde al tipo de archivo que indica su extensión. Comprueba el archivo y vuelve a subirlo.",
+      "file_empty": "El archivo está vacío. Elige un archivo con contenido.",
+      "file_integrity_failed": "El archivo guardado ya no coincide con el que se registró, así que no se entrega. El intento ha quedado en el registro de actividad. Contacta con soporte.",
+      "file_not_found": "No encontramos ese archivo, o no tienes acceso.",
+      "file_too_large": "El archivo supera el límite de 25 MB. Redúcelo o divídelo antes de subirlo.",
+      "file_type_not_allowed": "Ese tipo de archivo no se admite. Sube un PDF, PNG, JPG, TXT, CSV, DOCX o XLSX.",
+      "length_required": "El navegador no ha indicado el tamaño del archivo. Vuelve a intentarlo.",
+      "storage_unavailable": "Ahora mismo no se pueden guardar ni leer archivos. No se ha registrado nada; vuelve a intentarlo en unos minutos.",
       "submission_conflict": "Este envío ya se registró con otros datos. Recarga las evidencias antes de continuar."
     },
     "scanning": {
@@ -749,9 +758,14 @@
       "framework_assessment_reviewed": "Registró la revisión del responsable de seguridad",
       "framework_applicability_exported": "Exportó la declaración de aplicabilidad",
       "control_reviewed": "Revisó un control",
+      "evidence_file_downloaded": "Descargó un archivo de evidencia",
+      "evidence_file_integrity_failed": "Descarga bloqueada: el archivo no coincide con el registrado",
+      "evidence_file_uploaded": "Subió un archivo de evidencia",
       "evidence_statement_recorded": "Registró una evidencia",
       "connection_created": "Creó una conexión",
-      "connection_verification_requested": "Solicitó verificar una conexión de Microsoft 365",
+      "connection_verification_requested": "Solicitó verificar una conexión",
+      "connection_provisioned": "Atesta preparó las cuentas de servicio de Google Workspace",
+      "connection_google_subject_set": "Indicó el superadministrador de Google Workspace",
       "connection_consent_granted": "Concedió el consentimiento de Microsoft 365",
       "connection_disconnected": "Desconectó una conexión",
       "scan_requested": "Solicitó un análisis",
@@ -841,15 +855,13 @@
     "languageSaved": "Guardado. Los avisos llegarán en {language}."
   },
   "cockpit": {
-    "summary": "{framework}: {assessed} de {total, plural, one {# medida evaluada} other {# medidas evaluadas}}, {implemented, plural, one {# implantada} other {# implantadas}}.",
-    "summaryAttention": "{count, plural, one {Hay # asunto que requiere atención.} other {Hay # asuntos que requieren atención.}}",
-    "summaryCalm": "Nada urgente.",
     "now": "Ahora",
     "calm": "Nada urgente. Siguiente paso:",
     "severity": {
       "overdue": "Vencido",
       "missing": "Falta",
-      "pending": "Pendiente"
+      "pending": "Pendiente",
+      "clock": "Plazo legal"
     },
     "attention": {
       "overdue": "{count, plural, one {# medida con fecha límite vencida} other {# medidas con fecha límite vencida}} en {framework}",
@@ -865,7 +877,9 @@
         "incident_clock": "{clock} ({framework}) del incidente «{title}»: {when}",
         "clockOverdue": "venció el {time}",
         "clockRunning": "vence el {time}"
-      }
+      },
+      "overdueOthers": "{count, plural, one {# medida más con fecha límite vencida} other {# medidas más con fecha límite vencida}} en {framework}",
+      "mineOverdue": "venció el {date}"
     },
     "step": {
       "scope": "Define el alcance de {framework}",
@@ -874,18 +888,14 @@
       "export": "Exporta la declaración de aplicabilidad de {framework}"
     },
     "counts": "{assessed} de {total, plural, one {# evaluada} other {# evaluadas}} · {implemented, plural, one {# implantada} other {# implantadas}} · {partial} en parte · {notImplemented} sin implantar · {notApplicable, plural, one {# no aplica} other {# no aplican}}",
-    "yourWork": "Tu trabajo",
-    "yourWorkEmpty": "No tienes medidas abiertas asignadas.",
     "noDue": "Sin fecha",
     "allMyWork": "Ver todo en Mi trabajo",
-    "team": "Equipo",
-    "teamChart": "Medidas abiertas por persona",
-    "teamEmpty": "Aún no hay medidas asignadas.",
-    "formerMember": "Antiguo miembro",
-    "recent": "Actividad reciente",
-    "recentEmpty": "Sin actividad en los últimos 30 días.",
-    "system": "Sistema",
-    "allActivity": "Ver toda la actividad"
+    "frameworks": "Marcos",
+    "allFrameworks": "Ver todos los marcos",
+    "line": "<key>{assessed}</key> de {total, plural, one {# medida evaluada} other {# medidas evaluadas}} · {implemented, plural, one {# implantada} other {# implantadas}}",
+    "lineScore": "Último análisis: {score}",
+    "lineUnscored": "Último análisis sin puntuación",
+    "lineNotStarted": "Sin evaluar"
   },
   "console": {
     "skip": "Saltar al contenido",
@@ -1078,7 +1088,10 @@
       "classificationMissing": "falta cuándo se clasificó como significativo",
       "classify": "Registrar la clasificación",
       "classifyTitle": "Clasificación como significativo",
-      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registréis."
+      "classificationMissingNotice": "Este incidente es significativo, pero falta cuándo se clasificó. Los plazos que cuentan desde la clasificación solo muestran su límite exterior hasta que la registréis.",
+      "closeConfirm": "{count, plural, one {Queda # aviso sin enviar. ¿Cerrar igualmente?} other {Quedan # avisos sin enviar. ¿Cerrar igualmente?}}",
+      "closeAnyway": "Cerrar",
+      "cancel": "Cancelar"
     }
   },
   "trainingLink": {
@@ -1334,7 +1347,8 @@
         "title": "Registra la revisión y abre el dossier de {framework}",
         "help": "El responsable de seguridad revisa; la dirección lee el resumen y firma."
       }
-    }
+    },
+    "line": "{done} de {total, plural, other {#}}"
   },
   "report": {
     "title": "Informe mensual",
@@ -1405,7 +1419,7 @@
       "acknowledged": "Confirmaciones"
     },
     "incidents": {
-      "lead": "{open, plural, =0 {No hay incidentes abiertos.} one {# incidente abierto} other {# incidentes abiertos}}{open, plural, =0 {} other {{overdue, plural, =0 {, sin avisos vencidos.} one {, # con avisos vencidos.} other {, # con avisos vencidos.}}}}",
+      "lead": "{open, plural, =0 {No hay incidentes abiertos.} one {# incidente abierto} other {# incidentes abiertos}}{open, plural, =0 {} other {{overdue, plural, =0 {{running, plural, =0 {, sin avisos pendientes.} one {, # con un aviso por enviar en plazo.} other {, # con avisos por enviar en plazo.}}} one {, # con avisos vencidos.} other {, # con avisos vencidos.}}}}",
       "open": "Abiertos",
       "closed": "Cerrados",
       "overdue": "Con avisos vencidos"
@@ -2019,5 +2033,9 @@
     },
     "view": "Cartera: tus organizaciones de un vistazo",
     "close": "Prepara a tus clientes con Atesta."
+  },
+  "deadline": {
+    "left": "{unit, select, days {{value, plural, one {Queda # día} other {Quedan # días}}} other {{value, plural, one {Queda # h} other {Quedan # h}}}}",
+    "past": "{unit, select, days {{value, plural, one {Vencido hace # día} other {Vencido hace # días}}} other {Vencido hace {value} h}}"
   }
 }

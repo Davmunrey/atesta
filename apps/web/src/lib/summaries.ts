@@ -24,9 +24,12 @@ export function trainingSummary(campaigns: TrainingCampaign[]) {
   return { total: campaigns.length, open: campaigns.filter((c) => !c.closed_at).length, acknowledged: campaigns.reduce((n, c) => n + c.acknowledged, 0) };
 }
 
-export function incidentSummary(incidents: Pick<Incident, "closed_at" | "overdue">[]) {
+/** `running`: open incidents whose next notice is still within its deadline; `nextDue` the soonest. */
+export function incidentSummary(incidents: Pick<Incident, "closed_at" | "overdue" | "next_due_at">[]) {
   const open = incidents.filter((i) => !i.closed_at);
-  return { open: open.length, closed: incidents.length - open.length, overdue: open.filter((i) => i.overdue > 0).length };
+  const running = open.filter((i) => i.overdue === 0 && i.next_due_at);
+  const nextDue = running.map((i) => i.next_due_at!).sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
+  return { open: open.length, closed: incidents.length - open.length, overdue: open.filter((i) => i.overdue > 0).length, running: running.length, nextDue };
 }
 
 export function tokenSummary(tokens: ApiToken[], now: Date) {

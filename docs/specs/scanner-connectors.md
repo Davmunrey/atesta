@@ -258,7 +258,7 @@ allowlist.
 
 | Table | Module | Columns |
 |---|---|---|
-| `connections` | connections | id, organization_id, provider (`m365`/`google_workspace`), status, display_name, external_tenant_id `text NULL` (M365 tenant GUID or Google customer id, set by the first successful verification, then immutable), ms_tenant_id NULL and consented_by_oid NULL (from the M365 sign-in and consent callbacks), allowlist_version NULL, primary_domain NULL, google_subject_email NULL, google_client_id NULL, credential_ref NULL, google_verifier_client_id NULL, verifier_credential_ref NULL, granted `jsonb NOT NULL DEFAULT '{}'` (the last verification report: `granted` permission, scope and role ids, `missing`, `extra` and `limits`; shown on the connection detail), verified_at NULL, revoked_at NULL, created_by, created_at, updated_at; UNIQUE (organization_id, id); partial UNIQUE (organization_id, provider, external_tenant_id) WHERE revoked_at IS NULL |
+| `connections` | connections | id, organization_id, provider (`m365`/`google_workspace`), status, display_name, external_tenant_id `text NULL` (M365 tenant GUID or Google customer id, set by the first successful verification, then immutable), ms_tenant_id NULL and consented_by_oid NULL (from the M365 sign-in and consent callbacks), allowlist_version NULL, primary_domain NULL, google_subject_email NULL, google_client_id NULL, credential_ref NULL, google_verifier_client_id NULL, verifier_credential_ref NULL, google_unique_id NULL and google_verifier_unique_id NULL (the service accounts' IAM `uniqueId`s, numeric; issue 398), verifying_since NULL (set when verification starts), granted `jsonb NOT NULL DEFAULT '{}'` (the last verification report: `granted` permission, scope and role ids, `missing`, `extra` and `limits`; shown on the connection detail), verified_at NULL, revoked_at NULL, created_by, created_at, updated_at; UNIQUE (organization_id, id); partial UNIQUE (organization_id, provider, external_tenant_id) WHERE revoked_at IS NULL |
 | `scans` | scanning | id, organization_id, connection_id (no FK: connections module), provider, trigger (`schedule`/`user`/`activation`), status, attempts, engine (`prowler`), engine_version, image_digest NULL, output_prefix NULL, manifest_sha256 NULL, error_code NULL, expected_checks, evaluated_checks, requested_by NULL, queued_at, started_at NULL, finished_at NULL, ingested_at NULL; UNIQUE (organization_id, id); partial UNIQUE (organization_id, connection_id) WHERE status IN ('queued', 'running') |
 | `scan_check_results` | scanning | organization_id, scan_id, engine, check_id, status (`pass`/`fail`/`manual`/`not_evaluated`), reason NULL (`no_findings`/`excluded`/`not_granted`), pass_count, fail_count, manual_count; PK (organization_id, scan_id, engine, check_id); FK (organization_id, scan_id) |
 | `findings` | scanning | id, organization_id, scan_id, engine, check_id, status (`pass`/`fail`/`manual`), muted, severity, service, resource_type, resource_uid, resource_name, region, message, created_at; UNIQUE (organization_id, id); FK (organization_id, scan_id); index (organization_id, scan_id, check_id) |
@@ -273,7 +273,7 @@ allowlist.
   `atesta/<env>/google-verifier/<organization_id>-??????` or
   `local:google-verifier-<organization_id>` (Secrets Manager appends six random characters);
   `status <> 'active' OR external_tenant_id IS NOT NULL`; an active Google connection has both
-  refs, both client ids and `google_subject_email`; M365 rows have both refs NULL (the platform
+  refs, both client ids, both `uniqueId`s and `google_subject_email`; M365 rows have both refs NULL (the platform
   credential is not per connection).
 - Grants for `atesta_app`: `connections`, `scans` SELECT, INSERT, UPDATE (a removed connection
   becomes `disconnected`, never deleted); `scan_check_results` and `findings` INSERT, SELECT
@@ -441,21 +441,33 @@ Expected set v1 (Graph-only), application permissions on Microsoft Graph
 1. An org admin creates the connection. If the org has no service accounts yet: status
    `pending_provisioning`, and the owner runs the runbook (`scanner/runbooks/google_sa.sh`, gcloud)
    that creates the org's scan and verifier service accounts and keys in Atesta's dedicated GCP
-   project, stores the keys in the credential store and defers `register_google_client` (a job,
-   so it enters context with reason `job`; the ref CHECKs reject another org's secret). Then
-   `pending_setup`.
+   project and stores the keys in the credential store. It then runs the worker image's
+   `atesta-register-google` command (locally `uv run`, in AWS a one-off task of the worker image),
+   which records both client ids, both service accounts' IAM `uniqueId`s and both credential refs
+   in the org's context with reason `job` (the ref CHECKs reject another org's secret) and writes
+   `connection.provisioned`. Then `pending_setup`. A command, not a queued job: a ref is not an
+   `_id` argument, and queue tables carry ids only (ADR-012 amendment 2).
 2. The screen shows both client IDs, each with its exact comma-separated scope string, and the
    path: Admin console, Security, Access and data control, API controls, Manage Domain Wide
    Delegation, Add new. A super admin must do it, and a second super admin approves if
    multi-party approval is on.
-3. The customer enters the super admin email to impersonate and the primary domain
-   (`PUT .../google`). Onboarding explains: Google logs Atesta's reads as that user; delegation
-   reaches the data of all users within the granted scopes; a suspended, renamed or demoted
-   account stops scans; a dedicated account can push `directory_super_admin_count` from 4 to 5
-   (FAIL).
-4. `POST .../verify` runs the scanner image in `verify` mode. Google says changes can take up to
-   24 hours, so `unauthorized_client` keeps the connection `verifying` and the job re-defers
-   itself hourly for 24 h before `incomplete`.
+3. The customer enters the email of the super admin Atesta reads as (`PUT .../google`, allowed
+   while `pending_provisioning` or onboarding; `connection.google_subject_set`, never the email in
+   the audit metadata). The screen recommends an existing super admin (owner, 2026-11-24). The
+   primary domain is the email's domain; only an admin on a secondary domain also enters the
+   primary domain (owner, 2026-11-24). Onboarding explains: Google logs Atesta's reads as that
+   user; delegation reaches the data of all users within the granted scopes; a suspended, renamed
+   or demoted account stops scans; a dedicated account costs a licence and can push
+   `directory_super_admin_count` from 4 to 5 (FAIL).
+4. `POST .../verify` sets `verifying` and `verifying_since` and queues the activation scan, which
+   runs the scanner image twice into the attempt's `out/`: `verify` with both keys
+   (`verification.json`), then `scan` with the scan key only (`scan-verification.json`, then
+   Prowler's output). Google says changes can take up to 24 hours, so while an activation verdict
+   is `incomplete` only because a client is not yet authorized or its authorization event is not
+   yet in the log (`*_client_not_authorized`, `*_client_authorization_event`), nothing is recorded,
+   the connection stays `verifying`, the scan ends `blocked` (`connections.incomplete_permissions`)
+   and another activation scan is queued an hour later. From 24 h after `verifying_since` the
+   report is recorded and the connection becomes `incomplete`.
 5. When the org's last Google connection that is not disconnected becomes `disconnected` or
    `revoked`, both service accounts are disabled and their keys deleted (Connections criteria).
 
@@ -567,6 +579,10 @@ admin domain settings events appendix (updated 2026-09-03), Google's service acc
   `verifier_scopes`, `role_assignments`: the `roleAssignmentId`s found), `missing`, `extra`,
   `limits` (`roles_through_groups_not_read`, `tokens_issued_before_revocation`). No email, token,
   key or Google message. A `scan` run pins its OCSF findings to that `tenant_id`.
+- **Two runs, one `out/`** (issue 398). The `verify` run writes `verification.json`; the Google
+  `scan` run writes its own steps 1 and 2 report to `scan-verification.json`, so outputs stay
+  write-once. The API records `verification.json` on exit 0; on exit 10 it records
+  `scan-verification.json` when present (the later refusal), else `verification.json`.
 - **Reader.** GET only, `https://admin.googleapis.com` only; pages follow `nextPageToken` as a
   parameter, never a URL from an answer, at most 100 pages. 400, 401, 403 and 404 are refusals
   (`incomplete`, `read access for verification`, except the 404 above); 429, 5xx, network
@@ -615,7 +631,6 @@ tenant). The runner adds 21 timeout. All but 10 are transient.
 | Job | Args | Lock | Retry | Effect |
 |---|---|---|---|---|
 | `schedule_scan` | organization_id, connection_id | queueing_lock `sched:<connection_id>` | 3, transient database errors only (a lost job would end the chain) | If the connection is active: `queue_scan(trigger=schedule)` (skipped on `already_queued`); always re-defers itself +24 h while the connection is not `disconnected` or `revoked` |
-| `register_google_client` | organization_id, connection_id, both client ids, both credential refs | none | none | Owner runbook result; sets `pending_setup` |
 | `verify_connection` | organization_id, connection_id | `conn:<connection_id>` | none (re-defers hourly up to 24 h while `verifying`) | Runs `verify` mode, `connections.api.record_verification` |
 | `run_scan` | organization_id, scan_id | `conn:<connection_id>` (M365), `gws-policy-api` (Google); no queueing_lock | 3, transient only | Below |
 | `ingest_scan` | organization_id, scan_id | none | 3 | Ingest, coverage, control results, evidence |
@@ -951,7 +966,7 @@ not, unless the row says so.
 | Two "Scan now" calls, and "Scan now" while a scan is running: 409; `schedule_scan` skips on `already_queued` and re-defers itself after a failed scan | Locks and schedule chain |
 | A 7th "Scan now" on one Madrid day: 429 `scanning.daily_limit` with `retry_at` and `Retry-After`, no row, no event; 6 `user` scans queued before the last Madrid midnight and any number of `schedule` scans do not count; the Madrid day is 23 h on 2026-03-29 and 25 h on 2026-10-25 | Daily budget (#265) |
 | Job with org A id and org B scan id: no row, no retry | Job context |
-| Every registered task's arguments are uuids, a Google client id or a credential ref only; an email, token or key in a job argument fails the test | ADR-012 amendment, rule 2 |
+| Every registered task's arguments are uuids only; an email, token, key or credential ref in a job argument fails the test (Google provisioning is a command, issue 398) | ADR-012 amendment, rule 2 |
 | Startup with `ATESTA_ENV=prod` and any local runner, store or credential store configured fails; `record_verification` refuses a `local:` ref in prod | Dev-only local path |
 | Synthetic fixtures validate against `py_ocsf_models` 0.10.0 `DetectionFinding` | Fixture fidelity |
 | Ingest of fixtures: tenant mismatch rejects the scan; unexpected check id rejects it; missing service gives `partial` with `not_evaluated` rows; repeated ingest inserts nothing | Ingest contract |

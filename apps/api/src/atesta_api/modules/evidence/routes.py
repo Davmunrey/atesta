@@ -6,11 +6,12 @@ import uuid
 from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy import and_, func, select, text
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.compliance.api import control_is_visible
+from atesta_api.modules.evidence.files import file_out, file_uploads
 from atesta_api.modules.evidence.models import Evidence, EvidenceControl, EvidenceStatement
 from atesta_api.modules.evidence.schemas import EvidenceOut, EvidencePage, StatementIn
 from atesta_api.modules.identity.api import Member, require_member
@@ -37,12 +38,14 @@ def output(row: Evidence, statement: EvidenceStatement | None) -> EvidenceOut:
         collected_at=row.collected_at.astimezone(UTC),
         statement=statement.statement if statement else None,
         reference_url=statement.reference_url if statement else None,
+        file=file_out(row),
     )
 
 
 @router.get("")
 def list_evidence(
     control_key: str,
+    request: Request,
     member: Annotated[Member, Depends(require_member)],
     session: DbSession,
     limit: Annotated[int, Query(ge=1, le=50)] = 20,
@@ -75,7 +78,11 @@ def list_evidence(
         .offset(offset)
         .limit(limit)
     )
-    return EvidencePage(total=total, items=[output(row, statement) for row, statement in rows])
+    return EvidencePage(
+        total=total,
+        items=[output(row, statement) for row, statement in rows],
+        file_uploads=file_uploads(request),
+    )
 
 
 @router.post("", status_code=201)

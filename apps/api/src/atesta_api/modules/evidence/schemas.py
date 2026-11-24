@@ -46,6 +46,23 @@ class StatementIn(BaseModel):
         return value
 
 
+class FileOut(BaseModel):
+    """An uploaded document (evidence-file-uploads spec). The storage key stays in the API."""
+
+    name: str
+    media_type: str
+    size_bytes: int
+    sha256: str
+
+
+class FileUploads(BaseModel):
+    """What the upload form may offer: nothing when no store is configured."""
+
+    enabled: bool
+    max_bytes: int
+    extensions: list[str]
+
+
 class EvidenceOut(BaseModel):
     id: uuid.UUID
     kind: str
@@ -55,8 +72,10 @@ class EvidenceOut(BaseModel):
     created_by: uuid.UUID | None
     created_at: datetime
     collected_at: datetime
+    file: FileOut | None = None
 
 
 class EvidencePage(BaseModel):
     total: int
     items: list[EvidenceOut]
+    file_uploads: FileUploads

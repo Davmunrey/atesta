@@ -269,13 +269,22 @@ def test_a_google_attempt_carries_its_connections_credential_reference(
     made.status, made.external_tenant_id = "active", "C0fixture1"
     made.credential_ref = f"local:google-{ORG_A}"
     made.verifier_credential_ref = f"local:google-verifier-{ORG_A}"
-    made.google_client_id, made.google_verifier_client_id = "1", "2"
+    made.google_client_id, made.google_verifier_client_id = "111111", "222222"
+    made.google_unique_id, made.google_verifier_unique_id = "333333", "444444"
     made.google_subject_email = "admin@example.com"
     db_rollback.flush()
     scan_id = queue_scan(db_rollback, ORG_A, made.id, trigger="user").id
     job = start(db_rollback, scan_id, store).job
-    # M365 jobs carry none: the M365 credential is the platform's one (D5).
-    assert job == ScanJob(ORG_A, scan_id, 1, "google_workspace", f"local:google-{ORG_A}")
+    # M365 jobs carry none: the M365 credential is the platform's one (D5). The verifier
+    # reference is for the verify run only (D7, issue 398).
+    assert job == ScanJob(
+        ORG_A,
+        scan_id,
+        1,
+        "google_workspace",
+        f"local:google-{ORG_A}",
+        f"local:google-verifier-{ORG_A}",
+    )
 
 
 def verification(store: LocalScanStore, scan_id: uuid.UUID, verdict: str, **fields: Any) -> None:

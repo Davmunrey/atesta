@@ -13,6 +13,8 @@ import { Icon } from "./icons";
 import { Panel } from "./page-frame";
 
 export const FIRST_ASSESSMENTS = 10;
+/** From this many steps done, the checklist folds to one line (console-unification spec). */
+export const FOLD_FROM = 5;
 const KEY = (orgId: string) => `atesta_getting_started_hidden:${orgId}`;
 
 function storage(): Storage | null {
@@ -34,6 +36,7 @@ export function leadFramework(readiness: Readiness[]): Readiness | undefined {
 /**
  * Getting started (owner decision, 2026-11-23: the first value is "everything"). Each step is
  * marked done from the organization's own records; admins see it until it is complete or hidden.
+ * From five of seven it folds to one line that names the next step.
  */
 export function GettingStarted({ org, readiness }: { org: Membership; readiness: Readiness[] }) {
   const t = useTranslations("gettingStarted");
@@ -59,6 +62,11 @@ export function GettingStarted({ org, readiness }: { org: Membership; readiness:
   ] as const;
   const done = steps.filter((s) => s.done).length;
   if (done === steps.length) return null;
+  const next = steps.find((s) => !s.done)!;
+  if (done >= FOLD_FROM) return <p className="getting-started-line">
+    <span className="sr-only">{t("title")}: </span>{t("line", { done, total: steps.length })} ·{" "}
+    <Link href={next.href} className="text-link underline action-link">{t(`steps.${next.key}.title`, next.values)}<span aria-hidden="true">&nbsp;→</span></Link>
+  </p>;
   function hide() {
     storage()?.setItem(KEY(id), "1");
     listeners.forEach((l) => l());

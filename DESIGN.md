@@ -203,9 +203,31 @@ Controls and navigation use the small radius; shared primary actions and the col
 
 **State badges.** Every recorded state shows a drawn icon beside its label: done (circle check), partial (half-ruled circle), missing (triangle), not applicable (slashed circle), pending (clock). Colour reinforces, never carries, the state.
 
+**Severity mapping (console-unification spec, 2026-11-24).** This table is the one source for how urgent a state looks. `Badge` and `ClockBadge` (`components/badge.tsx`) draw it; no page sets a badge's colour or icon by hand.
+
+| Severity | Icon | Colour | Label | Used for |
+|---|---|---|---|---|
+| `clock` | clock | danger, semibold | the countdown: "Quedan 32 h", "Quedan 3 días" | a running regulatory clock (incident notifications) |
+| `overdue` | circle with a bar | danger | "Vencido", or "Vencido hace 5 h" for a clock | anything past its date |
+| `missing` | triangle | warning | "Falta" or the state, such as "Sin aprobar" | something never recorded that should be |
+| `pending` | clock | muted | "Pendiente", a date, or the state | housekeeping, not late |
+| `done` | circle check | success | "Hecho", "Al día" or the state | recorded and current |
+
+A running clock is never `pending`, and nothing that has a running clock reads "Al día". Countdowns
+read the deadline the API computed; hours below 72 h, days from there.
+
 **Record summary.** Records pages (policies, access reviews, training, incidents, integrations) open with an executive summary for management: one medium-weight sentence, then the KPI strip with as many figures as fit (`.kpis-fit`). Figures that can need action carry their state as icon plus "Requiere acción" / "Al día". The register follows; the creation form comes last. No figures while the list loads or fails.
 
-**Records at a glance.** When work is underway, the overview has a "Registros" table, in the fixed order policies, access reviews, training, incidents. Each row links to its page, writes its state as a badge ("Requiere acción", "Al día" or "Sin registros") and repeats the lead sentence of that page's record summary. A row that is loading or failed says so and claims no state.
+**Home (console-unification spec, owner decision 2026-11-24: "Lista de tareas").** The organization's home answers "what do I do now":
+1. the page header, with the organization name and the refresh action, and no summary sentence;
+2. "Ahora", the one task list and the first full-width region. Legal clocks come first, then overdue items, then my measures due this week, then the rest; within each group, soonest first;
+3. getting started: the full checklist below 5 of 7 steps, one line ("6 de 7 · Invita a tu equipo →") from 5, nothing at 7;
+4. "Marcos": one ruled line per framework, its name as a link and its state. The lead framework's measures assessed is the key figure;
+5. "Registros".
+
+No KPI strip, team chart, activity feed or scan list: their pages are in the navigation. A figure appears once per screen.
+
+**Records at a glance.** When work is underway, the overview has a "Registros" table, in the fixed order policies, access reviews, training, incidents. Each row links to its page, writes its state as a badge ("Requiere acción", "Al día" or "Sin registros") and repeats the lead sentence of that page's record summary. While an incident's notification clock runs, the incidents row shows the `clock` severity with its countdown, never "Al día". A row that is loading or failed says so and claims no state.
 
 **Landing (landing-legal A4, #393).** The public landing is light only, on the public content column (73.5rem plus 1.25rem gutters, which the header and footer share). It tells the story once:
 - **Hero:** the ENS headline in the display face up to 5rem (it never moves, because it is the LCP; only its highlighter stroke draws), one line and the request. Below it, one ENS measure in a product frame, as the measure sheet.
@@ -280,7 +302,7 @@ Every pair is checked by `tests/unit/contrast.test.ts`.
 **In the console (#330).** The motif is used sparingly:
 - **Top bar:** the lockup on ink (mark at 1.5rem, wordmark Newsreader 600).
 - **Page titles:** the highlighter tab under every page title.
-- **Key figure:** one per page, the overview's measures assessed. In light mode it gets the band behind ink. In dark mode it is set in the accent yellow with no band, because light text on yellow fails contrast. In print it is plain.
+- **Key figure:** one per page, the home's measures assessed (on the lead framework's line). In light mode it gets the band behind ink. In dark mode it is set in the accent yellow with no band, because light text on yellow fails contrast. In print it is plain.
 
 **Scrollytelling (#356, landing-legal amendment A2).** On wide screens with motion allowed:
 - **Pinned steps:** "Cómo funciona" pins one product frame beside the steps. The frame shows the stage of the step in view (IntersectionObserver, no scroll-jacking); the active step's rule turns yellow. No counter and no progress bar (A4). Stages crossfade. Inactive step titles dim by colour, never by opacity, so contrast holds.
