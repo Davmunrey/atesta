@@ -29,7 +29,7 @@
 
   /* Zero, not a tiny duration: `transition-property` defaults to `all`, so a non-zero duration on
      every element made each style change (a resize, a theme switch, a web font swapping in) start
-     a one-frame transition of every changed property, from the old value (#456). A transition
+     a one-frame transition of every changed property, from the old value (issue 456). A transition
      whose duration and delay are both zero never starts. */
   @media (prefers-reduced-motion: reduce) {
     *,
