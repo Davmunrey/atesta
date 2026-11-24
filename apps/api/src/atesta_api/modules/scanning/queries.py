@@ -1,6 +1,8 @@
 """Bounded, non-sensitive scan summaries for organization read surfaces."""
 
 import uuid
+from collections.abc import Collection
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Literal
 
@@ -41,3 +43,33 @@ def recent_scans(session: Session, organization_id: uuid.UUID) -> list[ScanSumma
         .limit(5)
     )
     return [ScanSummary.model_validate(row) for row in rows]
+
+
+@dataclass(frozen=True, slots=True)
+class ScanActivity:
+    """Scans queued in a window by status, and the last finish ever (operator-portal spec)."""
+
+    by_status: dict[str, int] = field(default_factory=dict)
+    last_finished: datetime | None = None
+
+
+def scan_activity(
+    session: Session, org_ids: Collection[uuid.UUID], *, since: datetime
+) -> dict[uuid.UUID, ScanActivity]:
+    """For the operator service, on an atesta_operator session: status and times only."""
+    windowed = session.execute(
+        select(Scan.organization_id, Scan.status, func.count())
+        .where(Scan.organization_id.in_(org_ids), Scan.queued_at >= since)
+        .group_by(Scan.organization_id, Scan.status)
+    )
+    last = dict(
+        session.execute(
+            select(Scan.organization_id, func.max(Scan.finished_at))
+            .where(Scan.organization_id.in_(org_ids))
+            .group_by(Scan.organization_id)
+        ).all()
+    )
+    found = {org_id: ScanActivity(last_finished=at) for org_id, at in last.items()}
+    for org_id, status, count in windowed:
+        found.setdefault(org_id, ScanActivity()).by_status[str(status)] = int(count)
+    return found
