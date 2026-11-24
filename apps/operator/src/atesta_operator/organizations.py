@@ -24,6 +24,7 @@ from atesta_api.modules.identity.api import (
     OrganizationFilters,
     api_key_counts,
     invitation_counts,
+    latest_erasure,
     member_counts,
     organization_metadata,
     organization_rows,
@@ -182,6 +183,40 @@ class ScansOut(BaseModel):
     last_finished: datetime | None
 
 
+class ErasureOut(BaseModel):
+    """The latest erasure request, for the admin's Erase screen (spec, "Screens" 8)."""
+
+    id: uuid.UUID
+    state: Literal["pending", "approved", "cancelled", "executed"]
+    requested_at: datetime
+    requested_by_me: bool
+    approved_at: datetime | None
+    receipt_id: uuid.UUID | None
+
+
+def _erasure(session: DbSession, org_id: uuid.UUID, staff_id: uuid.UUID) -> ErasureOut | None:
+    found = latest_erasure(session, org_id)
+    if found is None:
+        return None
+    state: Literal["pending", "approved", "cancelled", "executed"] = (
+        "executed"
+        if found.executed_at
+        else "cancelled"
+        if found.cancelled_at
+        else "approved"
+        if found.approved_at
+        else "pending"
+    )
+    return ErasureOut(
+        id=found.id,
+        state=state,
+        requested_at=found.requested_at,
+        requested_by_me=found.requested_by == staff_id,
+        approved_at=found.approved_at,
+        receipt_id=found.receipt_id,
+    )
+
+
 class OrganizationDetail(BaseModel):
     id: uuid.UUID
     name: str
@@ -202,6 +237,7 @@ class OrganizationDetail(BaseModel):
     scans: ScansOut
     api_keys: int
     api_calls_30_days: int
+    erasure: ErasureOut | None
 
 
 def _billing(
@@ -277,4 +313,5 @@ def organization_detail(
         ),
         api_keys=keys.active if keys else 0,
         api_calls_30_days=keys.calls if keys else 0,
+        erasure=_erasure(session, org_id, staff.id),
     )
