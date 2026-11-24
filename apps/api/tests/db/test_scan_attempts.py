@@ -91,6 +91,30 @@ def start(session: Session, scan_id: uuid.UUID, store: LocalScanStore, attempt: 
     )
 
 
+M365_REF = (
+    "aws-sm:arn:aws:secretsmanager:eu-south-2:123456789012:secret:atesta/dev/m365-scanner-AbC123"
+)
+
+
+def test_an_m365_job_names_the_platform_certificate_it_reads_in_aws(
+    db_rollback: Session, scan_id: uuid.UUID, store: LocalScanStore
+) -> None:
+    """issue 444: the Fargate wrapper reads the credential by the job's ref with its task role."""
+    started = start_attempt(
+        db_rollback,
+        ORG_A,
+        scan_id,
+        attempt=1,
+        store=store,
+        expected_root=EXPECTED,
+        m365_credential_ref=M365_REF,
+    )
+    assert started.job is not None
+    raw = store.read(f"{ORG_A}/scans/{scan_id}/attempt-1/job.json")
+    assert json.loads(raw)["credential_ref"] == M365_REF
+    assert load_job(raw).credential_ref == M365_REF
+
+
 def test_an_attempt_starts_with_a_job_file_the_scanner_accepts(
     db_rollback: Session, scan_id: uuid.UUID, store: LocalScanStore
 ) -> None:
