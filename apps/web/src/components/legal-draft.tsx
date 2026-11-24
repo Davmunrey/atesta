@@ -38,7 +38,7 @@ export function LegalDraft({ page, clauses }: { page: "notice" | "privacy"; clau
     <div className="policy-layout">
       <nav aria-label={t("index")} className="policy-index">
         <p className="font-medium">{t("index")}</p>
-        {clauses.map((c) => <a key={c.id} href={`#${c.id}`} className="underline">{t(`${page}.${c.id}.title`)}</a>)}
+        {clauses.map((c) => <a key={c.id} href={`#${c.id}`}>{t(`${page}.${c.id}.title`)}</a>)}
       </nav>
       <div className="policy-copy">
         {clauses.map((c) => <Clause key={c.id} id={c.id} title={t(`${page}.${c.id}.title`)} body={t(`${page}.${c.id}.body`)} fields={c.fields} extra={c.extra} />)}

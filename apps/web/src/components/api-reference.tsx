@@ -30,9 +30,9 @@ export function ApiReference({ operations }: { operations: Operation[] }) {
     <div className="policy-layout">
       <nav aria-label={t("index")} className="policy-index">
         <p className="font-medium">{t("index")}</p>
-        <a href="#basics" className="underline">{t("basics.title")}</a>
-        <a href="#errors" className="underline">{t("errors.title")}</a>
-        {GROUPS.map((scope) => <a key={anchor(scope)} href={`#${anchor(scope)}`} className="underline">{label(scope)}</a>)}
+        <a href="#basics">{t("basics.title")}</a>
+        <a href="#errors">{t("errors.title")}</a>
+        {GROUPS.map((scope) => <a key={anchor(scope)} href={`#${anchor(scope)}`}>{label(scope)}</a>)}
       </nav>
       <div className="policy-copy">
         <section id="basics" aria-labelledby="basics-title">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useId, useSyncExternalStore } from "react";
 import type { Scope } from "@/lib/api/tokens";
+import { CopyButton } from "./copy-button";
 
 /** The MCP server's tools and the permission each needs; a test keeps it equal to server.py. */
 export const MCP_TOOLS: { read: { name: string; scope: Scope | null }[]; write: { name: string; scope: Scope }[] } = {
@@ -47,7 +48,7 @@ export function McpGuide() {
     <div className="policy-layout">
       <nav aria-label={t("index")} className="policy-index">
         <p className="font-medium">{t("index")}</p>
-        {SECTIONS.map((id) => <a key={id} href={`#${id}`} className="underline">{t(`${id}.title`)}</a>)}
+        {SECTIONS.map((id) => <a key={id} href={`#${id}`}>{t(`${id}.title`)}</a>)}
       </nav>
       <div className="policy-copy">
         <section id="what" aria-labelledby="what-title">
@@ -67,6 +68,7 @@ export function McpGuide() {
           </ol>
           <label htmlFor={configId} className="font-medium">{t("setup.configLabel")}</label>
           <textarea id={configId} readOnly rows={12} className="code-example" value={config} onFocus={(e) => e.currentTarget.select()} />
+          <CopyButton text={config} label={t("setup.copy")} />
           <p className="text-sm text-muted">{t("setup.secret")}</p>
         </section>
         <section id="hosted" aria-labelledby="hosted-title">

@@ -271,6 +271,19 @@ A3, /seguridad and /consultoras (#381):
 - [ ] **Flags on:** `PAGES.seguridad` and `PAGES.consultoras` are on, and the e2e sweep covers
       both.
 
+A3, existing subpages (#384):
+
+- [ ] **Index:** docs and legal pages share a compact hairline "En esta página" index (44 px rows),
+      sticky below the header from 64rem.
+- [ ] **Code blocks:** docs code blocks are ink blocks in mono. The MCP configuration has a
+      visible copy button whose result, success or failure, is announced in a status region
+      (modern-web-guidance copy-button, React fallback since Invoker Commands are not Baseline
+      Widely available).
+- [ ] **Single-message pages:** `/invite`, `/training`, `/unsubscribe` and the 404 show their
+      message in a centred card with the seal.
+- [ ] **404:** it says what may have happened, links home, to Producto and to ENS, and opens the
+      assistant from a button in the card.
+
 Legal pages (Spanish is the binding version)
 
 - [ ] Until the owner supplies the identity and a lawyer reviews the texts, both pages open with a
