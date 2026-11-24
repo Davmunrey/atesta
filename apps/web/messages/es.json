@@ -1762,29 +1762,6 @@
       "contact": "Contacto",
       "how": "Cómo funciona"
     },
-    "proof": {
-      "label": "Lo que es verdad hoy",
-      "boe": {
-        "lead": "73 medidas",
-        "line": "con el texto oficial del BOE"
-      },
-      "team": {
-        "lead": "Guías de evidencia",
-        "line": "revisadas por el equipo de Atesta"
-      },
-      "spain": {
-        "lead": "España",
-        "line": "Diseñado para alojarse en España (AWS, región de Aragón)"
-      },
-      "readonly": {
-        "lead": "Solo lectura",
-        "line": "Atesta pide solo permisos de lectura en tus sistemas"
-      },
-      "noai": {
-        "lead": "Sin decisiones de IA",
-        "line": "el estado de cada medida lo decide una persona"
-      }
-    },
     "customers": {
       "title": "Organizaciones que usan Atesta"
     },

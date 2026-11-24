@@ -361,6 +361,14 @@ and ring diagram. Every other criterion stays.
 reduced motion respected, the bottom-right corner free for the assistant, at most 260 words of
 landing copy, and the motion library budget.
 
+Amendment A5: no proof strip (#418). Status: **accepted** (owner, 24/11/2026, relayed by the
+coordinator: "Me sobra la parte de abajo esta", on a screenshot of the footer strip). It
+supersedes A3's proof-strip item and A4's proof-strip lines.
+- [ ] **Removed:** no public page shows the proof strip; the component, its styles and its
+      `public.proof` messages are deleted.
+- [ ] **Facts kept in place:** the BOE text stays on the landing and /ens; read-only access, hosting
+      and "no AI decides" stay on /seguridad.
+
 Legal pages (Spanish is the binding version)
 
 - [ ] Until the owner supplies the identity and a lawyer reviews the texts, both pages open with a

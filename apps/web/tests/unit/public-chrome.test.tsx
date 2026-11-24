@@ -2,7 +2,6 @@
 import { cleanup, fireEvent, screen, within } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { CustomerLogos } from "@/components/public/customer-logos";
-import { ProofStrip } from "@/components/public/proof-strip";
 import { PublicFooter } from "@/components/public/public-footer";
 import { PAGES } from "@/components/public/site-map";
 import { PublicHeader } from "@/components/public-header";
@@ -41,13 +40,10 @@ it("maps the public site in the footer, with the honest proof and no person's na
   expect(footer.textContent).not.toMatch(/Muñoz/);
 });
 
-it("states five facts that are true today", () => {
-  renderWithProviders(<ProofStrip />);
-  const facts = screen.getAllByRole("listitem").map((li) => li.textContent);
-  expect(facts).toHaveLength(5);
-  expect(facts.join(" ")).toContain("Guías de evidencia revisadas por el equipo de Atesta");
-  expect(facts.join(" ")).not.toMatch(/evidencias revisadas/);
-  expect(facts.join(" ")).toContain("Diseñado para alojarse en España");
+it("shows no proof strip in the footer (owner, 24/11/2026, amendment A5)", () => {
+  const { container } = renderWithProviders(<PublicFooter />);
+  expect(container.querySelector(".proof-strip")).toBeNull();
+  expect(container.textContent).not.toMatch(/Guías de evidencia revisadas/);
 });
 
 it("renders no customer section while there is no written permission", () => {

@@ -57,10 +57,9 @@ test("the hero is one ENS measure beside its self-assessment, with the headline 
   }
 });
 
-test("the proof strip appears once on the landing, in the footer", async ({ page }) => {
+test("the landing shows no proof strip (amendment A5)", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator(".proof-strip")).toHaveCount(1);
-  await expect(page.locator("footer .proof-strip")).toHaveCount(1);
+  await expect(page.locator(".proof-strip")).toHaveCount(0);
 });
 
 test("the pinned steps show each stage at its scroll position, with no counter", async ({ page }) => {
