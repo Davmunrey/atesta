@@ -2,6 +2,9 @@
 
 Run: uv run python apps/api/devtools/fake_cognito.py  (listens on http://localhost:9000)
 Then start the API with ATESTA_COGNITO_ISSUER and ATESTA_COGNITO_BASE_URL set to that URL.
+
+With --staff it stands in for the separate staff pool of the operator service (ADR-017): its own
+issuer, port 9001 and client id `local-operator`, so a customer token never passes there.
 """
 
 import base64
@@ -30,13 +33,14 @@ class _Grant:
     redirect_uri: str
     challenge: str
     expires: float
+    auth_time: int  # the sign-in, kept across refreshes as Cognito's `auth_time` claim is
 
 
 def create_app(issuer: str, client_id: str) -> FastAPI:
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     jwk = jwt.algorithms.RSAAlgorithm.to_jwk(key.public_key(), as_dict=True)
     codes: dict[str, _Grant] = {}
-    refresh_tokens: dict[str, str] = {}
+    refresh_tokens: dict[str, tuple[str, int]] = {}
     app = FastAPI(title="Fake Cognito (local only)")
 
     def sign(claims: dict[str, Any]) -> str:
@@ -44,12 +48,16 @@ def create_app(issuer: str, client_id: str) -> FastAPI:
         body = {"iss": issuer, "iat": now, "exp": now + 1800, **claims}
         return jwt.encode(body, key, algorithm="RS256", headers={"kid": KID})
 
-    def tokens_for(email: str, nonce: str | None) -> dict[str, Any]:
+    def tokens_for(email: str, nonce: str | None, auth_time: int) -> dict[str, Any]:
         sub = str(uuid.uuid5(_SUB_NAMESPACE, email))
+        access = {
+            "sub": sub,
+            "token_use": "access",
+            "client_id": client_id,
+            "scope": "openid email",
+        }
         out: dict[str, Any] = {
-            "access_token": sign(
-                {"sub": sub, "token_use": "access", "client_id": client_id, "scope": "openid email"}
-            ),
+            "access_token": sign({**access, "auth_time": auth_time}),
             "token_type": "Bearer",
             "expires_in": 1800,
         }
@@ -65,7 +73,7 @@ def create_app(issuer: str, client_id: str) -> FastAPI:
                 }
             )
             refresh = secrets.token_urlsafe(32)
-            refresh_tokens[refresh] = email
+            refresh_tokens[refresh] = (email, auth_time)
             out["refresh_token"] = refresh
         return out
 
@@ -118,7 +126,12 @@ def create_app(issuer: str, client_id: str) -> FastAPI:
             raise HTTPException(400, "invalid_request")
         grant = secrets.token_urlsafe(24)
         codes[grant] = _Grant(
-            email.strip().lower(), nonce, redirect_uri, code_challenge, time.time() + 300
+            email.strip().lower(),
+            nonce,
+            redirect_uri,
+            code_challenge,
+            time.time() + 300,
+            int(time.time()),
         )
         return RedirectResponse(f"{redirect_uri}?{urlencode({'code': grant, 'state': state})}", 302)
 
@@ -135,15 +148,18 @@ def create_app(issuer: str, client_id: str) -> FastAPI:
         if client_id != app.state.client_id:
             return invalid
         if grant_type == "refresh_token":
-            email = refresh_tokens.get(refresh_token or "")
-            return invalid if email is None else JSONResponse(tokens_for(email, None))
+            signed_in = refresh_tokens.get(refresh_token or "")
+            if signed_in is None:
+                return invalid
+            email, auth_time = signed_in
+            return JSONResponse(tokens_for(email, None, auth_time))
         grant = codes.pop(code or "", None)
         if grant is None or grant.expires < time.time() or grant.redirect_uri != redirect_uri:
             return invalid
         digest = hashlib.sha256((code_verifier or "").encode()).digest()
         if base64.urlsafe_b64encode(digest).rstrip(b"=").decode() != grant.challenge:
             return invalid
-        return JSONResponse(tokens_for(grant.email, grant.nonce))
+        return JSONResponse(tokens_for(grant.email, grant.nonce, grant.auth_time))
 
     @app.post("/oauth2/revoke")
     def revoke(token: Annotated[str, Form()], client_id: Annotated[str, Form()]) -> JSONResponse:
@@ -164,7 +180,7 @@ def create_app(issuer: str, client_id: str) -> FastAPI:
             )
         except jwt.PyJWTError:
             raise HTTPException(401, "invalid_token") from None
-        email = next((e for e in refresh_tokens.values() if _sub(e) == claims["sub"]), "")
+        email = next((e for e, _ in refresh_tokens.values() if _sub(e) == claims["sub"]), "")
         return {"sub": claims["sub"], "email": email, "email_verified": "true"}
 
     @app.get("/logout")
@@ -180,6 +196,10 @@ def _sub(email: str) -> str:
 
 
 if __name__ == "__main__":
+    import sys
+
     import uvicorn
 
-    uvicorn.run(create_app("http://localhost:9000", "local-web"), host="127.0.0.1", port=9000)
+    port, client = (9001, "local-operator") if "--staff" in sys.argv[1:] else (9000, "local-web")
+    issuer = f"http://localhost:{port}"
+    uvicorn.run(create_app(issuer, client), host="127.0.0.1", port=port)

@@ -79,6 +79,7 @@ class CognitoSettings:
 class AccessToken:
     sub: str
     scopes: frozenset[str]
+    auth_time: int | None = None  # when the person signed in; a refresh keeps it (operator portal)
 
 
 class TokenVerifier:
@@ -161,7 +162,11 @@ class TokenVerifier:
             or ADMIN_SCOPE in scopes
         ):
             raise InvalidTokenError
-        return AccessToken(sub=str(claims["sub"]), scopes=scopes)
+        auth_time = claims.get("auth_time")
+        signed_in = (
+            auth_time if isinstance(auth_time, int) and not isinstance(auth_time, bool) else None
+        )
+        return AccessToken(sub=str(claims["sub"]), scopes=scopes, auth_time=signed_in)
 
     def verify_agent(self, token: str, oauth: AgentOAuth) -> AgentToken:
         """An access token of the hosted MCP server (mcp-oauth spec): issued by this pool for

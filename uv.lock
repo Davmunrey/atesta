@@ -17,6 +17,7 @@ members = [
     "atesta-api",
     "atesta-core",
     "atesta-mcp",
+    "atesta-operator",
     "atesta-scanner",
     "atesta-worker",
 ]
@@ -229,6 +230,31 @@ dependencies = [
 requires-dist = [
     { name = "httpx", specifier = ">=0.27" },
     { name = "mcp", specifier = "==2.3.0" },
+]
+
+[[package]]
+name = "atesta-operator"
+version = "0.0.0"
+source = { editable = "apps/operator" }
+dependencies = [
+    { name = "atesta-api" },
+    { name = "boto3" },
+    { name = "fastapi" },
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "sqlalchemy" },
+    { name = "uvicorn", extra = ["standard"] },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "atesta-api", editable = "apps/api" },
+    { name = "boto3", specifier = ">=1.40" },
+    { name = "fastapi", specifier = ">=0.115" },
+    { name = "httpx", specifier = ">=0.27" },
+    { name = "pydantic", specifier = ">=2.9" },
+    { name = "sqlalchemy", specifier = ">=2.0.36" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.32" },
 ]
 
 [[package]]
