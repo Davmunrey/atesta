@@ -82,6 +82,8 @@ read nothing, and nothing stops an agent from marking a measure as implemented.
 - [ ] **Hosted remote:** with `ATESTA_MCP_REMOTE=1`, the API mounts Streamable HTTP at `/mcp`.
   - It is stateless and answers in JSON.
   - A request without `Authorization: Bearer atesta_…` gets 401 before any MCP handling.
+  - With OAuth on (`mcp-oauth.md`, issue 354), an access token issued for this server opens it
+    too. It is verified at the gate and never forwarded.
   - Tools forward that header to the API routes in-process.
   - The allowed hosts and origins come from `ATESTA_MCP_ALLOWED_HOSTS` and the web origin.
   - Without the flag, `/mcp` is 404.

@@ -20,7 +20,10 @@ from fastapi.routing import APIRoute
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.orm import Session
+from starlette.types import ASGIApp, Receive, Send
+from starlette.types import Scope as Scope_
 
+from atesta_api.modules.identity.agent_oauth import AgentOAuth, grant_digest
 from atesta_api.modules.identity.context import (
     ContextReason,
     enter_api_token_context,
@@ -33,6 +36,7 @@ from atesta_api.modules.identity.models import (
     SCOPES,
     ApiToken,
     ApiTokenUsage,
+    Membership,
     Role,
     User,
 )
@@ -46,6 +50,11 @@ TOKEN_PREFIX = "atesta_"  # noqa: S105 - a public marker, not a secret
 PREFIX_LENGTH = 12
 WINDOW = timedelta(seconds=60)
 USAGE_SHOWN = 100
+# Set on the ASGI scope by the hosted MCP server's in-process hand-off only (`as_agent`): the
+# digest of an agent token it has already verified. A request from outside cannot set a scope
+# key, and no header is ever read for this (mcp-oauth spec).
+AGENT_SCOPE_KEY = "atesta.agent_grant"
+GRANT_PREFIX = "oauth_"
 USAGE_RETENTION = timedelta(days=90)  # the `retention` policy holds the same limit in Postgres
 
 type Scope = Literal[
@@ -77,6 +86,8 @@ class TokenIn(BaseModel):
 
 class TokenOut(BaseModel):
     id: uuid.UUID
+    kind: Literal["key", "oauth"] = "key"
+    client_id: str | None = None  # the approved client of an OAuth grant
     name: str
     prefix: str
     scopes: list[str]
@@ -96,6 +107,8 @@ class CreatedToken(TokenOut):
 def _out(row: ApiToken, email: str) -> TokenOut:
     return TokenOut(
         id=row.id,
+        kind="oauth" if row.kind == "oauth" else "key",
+        client_id=row.oauth_client_id,
         name=row.name,
         prefix=row.prefix,
         scopes=row.scopes,
@@ -165,7 +178,7 @@ def revoke_token(
     member: Annotated[Member, Depends(require_role(Role.ADMIN))],
     session: DbSession,
 ) -> Response:
-    revoked = session.scalar(
+    revoked = session.execute(
         update(ApiToken)
         .where(
             ApiToken.organization_id == member.organization_id,
@@ -173,20 +186,123 @@ def revoke_token(
             ApiToken.revoked_at.is_(None),
         )
         .values(revoked_at=datetime.now(UTC), revoked_by=member.user_id)
-        .returning(ApiToken.prefix)
-    )
+        .returning(ApiToken.prefix, ApiToken.kind, ApiToken.oauth_client_id)
+    ).first()
     if revoked is None:
         raise error(404, "identity.not_found")
+    is_grant = revoked.kind == "oauth"
     record(
         session,
         organization_id=member.organization_id,
-        action="api_token.revoked",
+        action="agent_grant.revoked" if is_grant else "api_token.revoked",
         target_type="api_token",
         target_id=str(token_id),
         actor_user_id=member.user_id,
-        metadata={"prefix": revoked},
+        metadata={"prefix": revoked.prefix}
+        | ({"client_id": revoked.oauth_client_id} if is_grant else {}),
     )
     return Response(status_code=204)
+
+
+class AgentClient(BaseModel):
+    client_id: str
+    name: str
+
+
+class GrantIn(BaseModel):
+    client_id: str = Field(min_length=1, max_length=128)
+    expires_in_days: int = Field(ge=1, le=365)
+    scopes: list[Scope] = Field(min_length=1, max_length=len(SCOPES))
+    rate_limit_per_minute: int = Field(default=60, ge=1, le=600)
+
+    @field_validator("scopes")
+    @classmethod
+    def distinct(cls, value: list[Scope]) -> list[Scope]:
+        if len(set(value)) != len(value):
+            raise ValueError("a scope is repeated")
+        return sorted(value, key=SCOPES.index)
+
+
+def agent_oauth(request: Request) -> AgentOAuth | None:
+    """OAuth for the hosted MCP server, or None while it is off (mcp-oauth spec)."""
+    found: AgentOAuth | None = getattr(request.app.state, "agent_oauth", None)
+    return found
+
+
+@router.get("/orgs/{org_id}/agent-clients")
+def list_agent_clients(
+    request: Request, member: Annotated[Member, Depends(require_role(Role.ADMIN))]
+) -> list[AgentClient]:
+    """The approved clients an admin may grant; empty while OAuth is off."""
+    oauth = agent_oauth(request)
+    clients = {} if oauth is None else oauth.clients
+    return [AgentClient(client_id=key, name=name) for key, name in clients.items()]
+
+
+@router.post("/orgs/{org_id}/agent-grants", status_code=201)
+def create_agent_grant(
+    body: GrantIn,
+    request: Request,
+    member: Annotated[Member, Depends(require_role(Role.ADMIN))],
+    session: DbSession,
+) -> TokenOut:
+    """The caller lets one approved client act for them in this organization: the consent.
+
+    A grant is an API key without a secret (ADR-016 amendment 1): it is found by the digest of
+    the issuer, the client and the person, which the hosted server derives from a verified token.
+    """
+    oauth = agent_oauth(request)
+    if oauth is None:
+        raise error(409, "identity.agent_oauth_off")
+    if body.client_id not in oauth.clients:
+        raise error(422, "identity.agent_client_unknown")
+    person = session.execute(
+        select(User.cognito_sub, User.email).where(User.id == member.user_id)
+    ).one()
+    digest = grant_digest(oauth.issuer, body.client_id, person.cognito_sub)
+    now = datetime.now(UTC)
+    active = session.scalar(
+        select(ApiToken.id).where(
+            ApiToken.organization_id == member.organization_id,
+            ApiToken.token_sha256 == digest,
+            ApiToken.kind == "oauth",
+            ApiToken.revoked_at.is_(None),
+            ApiToken.expires_at > now,
+        )
+    )
+    if active is not None:
+        raise error(409, "identity.agent_grant_exists")
+    row = ApiToken(
+        organization_id=member.organization_id,
+        kind="oauth",
+        oauth_client_id=body.client_id,
+        name=oauth.clients[body.client_id][:100],
+        prefix=GRANT_PREFIX + digest[: PREFIX_LENGTH - len(GRANT_PREFIX)],
+        token_sha256=digest,
+        scopes=list(body.scopes),
+        rate_limit_per_minute=body.rate_limit_per_minute,
+        created_by=member.user_id,
+        created_at=now,
+        expires_at=now + timedelta(days=body.expires_in_days),
+    )
+    session.add(row)
+    session.flush()
+    record(
+        session,
+        organization_id=member.organization_id,
+        action="agent_grant.created",
+        target_type="api_token",
+        target_id=str(row.id),
+        actor_user_id=member.user_id,
+        metadata={
+            "prefix": row.prefix,
+            "client_id": body.client_id,
+            "expires_in_days": body.expires_in_days,
+            "scopes": " ".join(body.scopes),
+            "rate_limit_per_minute": body.rate_limit_per_minute,
+        },
+    )
+    return _out(row, person.email)
 
 
 class UsageRow(BaseModel):
@@ -269,18 +385,69 @@ def _error(
     return HTTPException(status, detail=detail, headers=headers)
 
 
+def as_agent(app: ASGIApp, digest: str) -> ASGIApp:
+    """The API, entered as the agent whose token the hosted MCP server has verified.
+
+    In-process only: the digest travels on the ASGI scope, which no network request can set.
+    """
+
+    async def entered(scope: Scope_, receive: Receive, send: Send) -> None:
+        await app({**scope, AGENT_SCOPE_KEY: digest}, receive, send)
+
+    return entered
+
+
+def _grant(request: Request, session: DbSession, digest: str) -> ApiToken:
+    """The one active grant of a verified person and client, while that person is still an
+    owner or admin of its organization. Anything else is the 401 of a bad key."""
+    enter_api_token_context(session, digest)
+    now = datetime.now(UTC)
+    found = session.scalars(
+        select(ApiToken).where(
+            ApiToken.token_sha256 == digest,
+            ApiToken.kind == "oauth",
+            ApiToken.revoked_at.is_(None),
+            ApiToken.expires_at > now,
+        )
+    ).all()
+    if len(found) != 1:  # none, or the same person and client in two organizations
+        raise _error(401, "identity.api_token_invalid", request)
+    row = found[0]
+    enter_org_context(session, row.organization_id, ContextReason.API_TOKEN)
+    standing = session.execute(
+        select(Membership.role, Membership.access_expires_at).where(
+            Membership.organization_id == row.organization_id,
+            Membership.user_id == row.created_by,
+        )
+    ).first()
+    if (
+        standing is None
+        or Role(standing.role) not in (Role.OWNER, Role.ADMIN)
+        or (standing.access_expires_at is not None and standing.access_expires_at <= now)
+    ):
+        raise _error(401, "identity.api_token_invalid", request)
+    return row
+
+
 def require_api_token(request: Request, session: DbSession) -> ApiCaller:
     """401 identity.api_token_invalid for a missing, unknown, revoked or expired key alike."""
-    scheme, _, token = request.headers.get("authorization", "").partition(" ")
-    if scheme.lower() != "bearer" or not token.startswith(TOKEN_PREFIX) or len(token) > 200:
-        raise _error(401, "identity.api_token_invalid", request)
-    digest = token_hash(token)
-    enter_api_token_context(session, digest)
-    row = session.scalar(select(ApiToken).where(ApiToken.token_sha256 == digest))
     now = datetime.now(UTC)
-    if row is None or row.revoked_at is not None or row.expires_at <= now:
-        raise _error(401, "identity.api_token_invalid", request)
-    enter_org_context(session, row.organization_id, ContextReason.API_TOKEN)
+    agent = request.scope.get(AGENT_SCOPE_KEY)
+    if isinstance(agent, str):
+        row = _grant(request, session, agent)
+    else:
+        scheme, _, token = request.headers.get("authorization", "").partition(" ")
+        if scheme.lower() != "bearer" or not token.startswith(TOKEN_PREFIX) or len(token) > 200:
+            raise _error(401, "identity.api_token_invalid", request)
+        digest = token_hash(token)
+        enter_api_token_context(session, digest)
+        found = session.scalar(
+            select(ApiToken).where(ApiToken.token_sha256 == digest, ApiToken.kind == "key")
+        )
+        if found is None or found.revoked_at is not None or found.expires_at <= now:
+            raise _error(401, "identity.api_token_invalid", request)
+        row = found
+        enter_org_context(session, row.organization_id, ContextReason.API_TOKEN)
     # Taking the row lock serializes this key's requests: idempotency and rate counts hold.
     session.execute(
         update(ApiToken)

@@ -28,7 +28,7 @@ Verified on the local stack (fake Cognito, local Postgres, fixture scans). "Spec
 | Activity log, assignments, "Mi trabajo" | `insights.md`, `rbac.md`, `test_audit.py`, `test_rbac.py` | Audit events are append-only |
 | API keys with scopes, a rate limit and a usage log | `api-keys-v2.md`, `test_api_keys_v2.py`, `test_key_reads.py`, `test_key_writes.py` | A key reaches only its own organization |
 | Evidence ingestion API and ready-made scripts | `evidence-ingestion-api.md`, `test_ingestion.py` | Statements only; a link that is a credential is refused |
-| MCP server for AI agents, local | `mcp-server.md`, `test_mcp_contract.py`, `apps/mcp/` | The hosted server is not available. An agent proposes; a person confirms (`test_proposals.py`) |
+| MCP server for AI agents, local | `mcp-server.md`, `mcp-oauth.md`, `test_mcp_contract.py`, `test_agent_grants.py`, `apps/mcp/` | The hosted server is not available. OAuth for it is built and off, with no console screen yet (ADR-016 amendment 1, proposed). An agent proposes; a person confirms (`test_proposals.py`) |
 | Email notices, daily digest, weekly summary, one-click unsubscribe | `notifications.md`, `test_notifications.py`, `test_notify_daily.py`, `test_notify_events.py` | Mail is written to a local directory (`FileMailer`). No sender for SES exists yet |
 | Plans enforced per framework | `billing-entitlements.md`, `test_billing.py`, `catalog/plans.yaml` | No payment provider. An operator sets the plan; prices are not in this repository |
 | Data export, organization closure, erasure after 30 days | `organization-closure.md`, `test_org_closure.py` | Erasure is an operator command, run as `atesta_owner` |

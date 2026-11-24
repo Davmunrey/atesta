@@ -239,7 +239,10 @@
       "closure_name_mismatch": "El nombre no coincide. Escríbelo exactamente como aparece.",
       "api_token_invalid": "Token de API no válido, revocado o caducado.",
       "api_token_scope": "Este token no tiene el permiso que hace falta.",
-      "api_token_rate_limited": "Este token ha superado su límite de peticiones por minuto. Espera un momento."
+      "api_token_rate_limited": "Este token ha superado su límite de peticiones por minuto. Espera un momento.",
+      "agent_client_unknown": "Ese agente no está en la lista de agentes aprobados.",
+      "agent_grant_exists": "Ya tienes una autorización activa para ese agente en esta organización. Revócala antes de crear otra.",
+      "agent_oauth_off": "La conexión de agentes con inicio de sesión todavía no está disponible."
     },
     "request": {
       "error": "No se ha podido completar la solicitud. Vuelve a intentarlo.",
@@ -802,6 +805,8 @@
       "access_review_closed": "Cerró una revisión de accesos",
       "api_token_created": "Creó un token de integración",
       "api_token_revoked": "Revocó un token de integración",
+      "agent_grant_created": "Autorizó un agente de IA",
+      "agent_grant_revoked": "Revocó la autorización de un agente de IA",
       "connection_verified": "Conexión verificada como de solo lectura",
       "connection_incomplete": "Conexión con permisos incompletos",
       "connection_over_privileged": "Conexión con más permisos de los necesarios",

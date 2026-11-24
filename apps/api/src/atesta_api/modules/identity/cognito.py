@@ -14,6 +14,7 @@ from urllib.parse import urlencode
 import httpx
 import jwt
 
+from atesta_api.modules.identity.agent_oauth import AgentOAuth, AgentToken
 from atesta_api.platform.devenv import DEV_ENVS
 
 ADMIN_SCOPE = "aws.cognito.signin.user.admin"
@@ -161,6 +162,21 @@ class TokenVerifier:
         ):
             raise InvalidTokenError
         return AccessToken(sub=str(claims["sub"]), scopes=scopes)
+
+    def verify_agent(self, token: str, oauth: AgentOAuth) -> AgentToken:
+        """An access token of the hosted MCP server (mcp-oauth spec): issued by this pool for
+        that resource (`aud`), to an approved client, carrying the agent scope. A web session
+        token has no such audience, so it is refused here."""
+        claims = self._decode(token, audience=oauth.resource)
+        client_id = str(claims.get("client_id", ""))
+        if (
+            claims.get("token_use") != "access"
+            or client_id not in oauth.clients
+            or client_id == self._settings.app_client_id
+            or oauth.scope not in str(claims.get("scope", "")).split()
+        ):
+            raise InvalidTokenError
+        return AgentToken(sub=str(claims["sub"]), client_id=client_id)
 
     def verify_id_token(self, token: str) -> dict[str, Any]:
         """ID tokens are used only to check the sign-in nonce, never to authorize requests."""

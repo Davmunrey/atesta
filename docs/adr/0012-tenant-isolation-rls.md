@@ -235,3 +235,18 @@ Status: proposed. The owner chose the substance on 2026-11-24, in the session th
 - **Why not a job that runs as `atesta_owner`:** the worker would then hold a role that bypasses
   RLS on every table. A narrow grant plus a restrictive policy keeps the worker on the runtime
   role and gives it one new ability: deleting its organization's old usage rows.
+
+## Amendment 11 (proposed 2026-11-24, ADR-016 amendment 1, mcp-oauth spec, issue 354)
+
+Status: proposed with ADR-016 amendment 1; the owner's "sí a todo" of 2026-11-24 covers its
+three choices. Accepting the amendment is the owner's.
+
+- **No new table, policy, setting or context reason.** An OAuth grant for an AI agent is a row
+  of the tenant table `api_tokens`, which gains two columns: `kind` (`key` or `oauth`) and
+  `oauth_client_id` (set exactly when the kind is `oauth`).
+- **`api_token_read` is used as it is.** For a key, `token_sha256` is the hash of the secret. For
+  a grant it is the hash of the issuer, the client id and the person's `sub`, taken from a token
+  the API has already verified. Either way the caller proves the value before one row is read,
+  and the organization is then entered with the reason `api_token`.
+- **Grants and policies snapshot:** unchanged. `atesta_app` already holds SELECT, INSERT and
+  UPDATE on `api_tokens`.

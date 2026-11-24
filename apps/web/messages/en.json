@@ -239,7 +239,10 @@
       "closure_name_mismatch": "The name does not match. Type it exactly as shown.",
       "api_token_invalid": "The API token is not valid, revoked or expired.",
       "api_token_scope": "This token does not have the permission needed.",
-      "api_token_rate_limited": "This token has gone over its limit of requests per minute. Wait a moment."
+      "api_token_rate_limited": "This token has gone over its limit of requests per minute. Wait a moment.",
+      "agent_client_unknown": "That agent is not on the list of approved agents.",
+      "agent_grant_exists": "You already have an active authorization for that agent in this organization. Revoke it before creating another.",
+      "agent_oauth_off": "Connecting agents with sign-in is not available yet."
     },
     "request": {
       "error": "The request could not be completed. Try again.",
@@ -802,6 +805,8 @@
       "access_review_closed": "Closed an access review",
       "api_token_created": "Created an integration token",
       "api_token_revoked": "Revoked an integration token",
+      "agent_grant_created": "Authorized an AI agent",
+      "agent_grant_revoked": "Revoked an AI agent's authorization",
       "connection_verified": "Connection verified as read-only",
       "connection_incomplete": "Connection with incomplete permissions",
       "connection_over_privileged": "Connection with more permissions than needed",
