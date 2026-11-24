@@ -1164,14 +1164,14 @@
       "incidents:read": "Leer los incidentes y sus plazos de notificación",
       "evidence:write": "Registrar evidencias",
       "assessment:propose": "Proponer autoevaluaciones (una persona las confirma o las rechaza)",
-      "routines:write": "Registrar rutinas: incidentes, formaciones y revisiones de acceso"
+      "routines:write": "Escribir registros periódicos: incidentes, formaciones y revisiones de acceso"
     },
     "scopeShort": {
       "compliance:read": "Leer el cumplimiento",
       "incidents:read": "Leer los incidentes",
       "evidence:write": "Registrar evidencias",
       "assessment:propose": "Proponer autoevaluaciones",
-      "routines:write": "Registrar rutinas"
+      "routines:write": "Escribir registros periódicos"
     },
     "readOnlyPreset": "Marcar solo lectura",
     "readOnly": "Solo lectura",
@@ -1229,7 +1229,7 @@
     "title": "Dossier para el auditor",
     "frameworks": "Marcos",
     "loading": "Preparando el dossier…",
-    "intro": "El dossier reúne el resumen para dirección, la aplicabilidad, las evidencias de cada requisito y las rutinas. Imprímelo o guárdalo en PDF desde el navegador.",
+    "intro": "El dossier reúne el resumen para dirección, la aplicabilidad, las evidencias de cada requisito y los registros periódicos. Imprímelo o guárdalo en PDF desde el navegador.",
     "print": "Imprimir o guardar en PDF",
     "coverKicker": "Dossier de preparación de auditoría",
     "organization": "Organización",
@@ -1259,8 +1259,8 @@
     "review": "Revisión del responsable de seguridad",
     "reviewBy": "{name} ({role}), {date}.",
     "noReview": "Sin revisión registrada.",
-    "routinesState": "Rutinas pendientes",
-    "routinesClear": "No hay rutinas pendientes.",
+    "routinesState": "Registros periódicos pendientes",
+    "routinesClear": "No hay registros periódicos pendientes.",
     "pending": {
       "policiesDue": "{count, plural, one {# política por revisar} other {# políticas por revisar}}",
       "policiesUnapproved": "{count, plural, one {# política sin aprobar} other {# políticas sin aprobar}}",
@@ -1290,7 +1290,7 @@
       "scan": "Escaneo",
       "upload": "Documento"
     },
-    "routines": "Rutinas registradas (últimos 12 meses)",
+    "routines": "Registros periódicos (últimos 12 meses)",
     "policies": "Políticas",
     "accessReviews": "Revisiones de acceso cerradas",
     "trainings": "Formaciones cerradas",
@@ -1314,7 +1314,7 @@
     "organization": "Organización",
     "assessed": "Medidas evaluadas",
     "overdue": "Medidas vencidas",
-    "routines": "Rutinas pendientes",
+    "routines": "Registros pendientes",
     "lastAssessed": "Última evaluación",
     "frameworks": "{count, plural, =0 {ningún marco en curso} one {# marco en curso} other {# marcos en curso}}",
     "ofTotal": "{assessed} de {total, plural, one {#} other {#}}",
@@ -1350,7 +1350,7 @@
       },
       "routine": {
         "title": "Haz una revisión de accesos o una formación",
-        "help": "Cada rutina cerrada deja una evidencia fechada."
+        "help": "Cada registro cerrado deja una evidencia fechada."
       },
       "tool": {
         "title": "Conecta una herramienta que registre evidencias por ti",
@@ -1743,7 +1743,7 @@
           "desc": "73 medidas con su texto oficial"
         },
         "routines": {
-          "title": "Rutinas",
+          "title": "Registros periódicos",
           "desc": "Políticas, accesos y formación"
         },
         "incidents": {
@@ -1802,7 +1802,7 @@
       "p3": "La decisión es siempre de una persona"
     },
     "routines": {
-      "title": "Rutinas que no se pierden",
+      "title": "Políticas, revisiones de acceso y formación",
       "body": "Políticas con su fecha de revisión, revisiones de acceso y formaciones con la confirmación de cada persona. Atesta reúne lo que vence en una sola lista.",
       "p1": "Políticas y su próxima revisión",
       "p2": "Revisiones de acceso registradas",

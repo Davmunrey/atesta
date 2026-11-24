@@ -330,6 +330,7 @@ and ring diagram. Every other criterion stays.
 - [ ] **Tone:** direct and sober. Each line states a task or a fact a security lead or an IT
       consultant would say. No aphorisms, puns, triads or taglines.
 - [ ] **Jargon:** "eu-south-2", "MCP", "control común" and "rutinas" are explained in place or not used.
+      "Rutinas" is not used: the term is "registros periódicos" across the site and the console (#423).
 - [ ] **Banned:** a unit test keeps the replaced lines out of both message files (for example "El
       ENS no cabe en una hoja de cálculo", "Tu próxima auditoría, preparada.", "Míralo con tus
       propias medidas.", "Lo que Atesta puede tocar", "Sin fuente, no hay respuesta", "Según el
