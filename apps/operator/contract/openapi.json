@@ -1,6 +1,239 @@
 {
   "components": {
     "schemas": {
+      "BillingFullOut": {
+        "properties": {
+          "address_line1": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address Line1"
+          },
+          "address_line2": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address Line2"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "contact_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Email"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "legal_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Name"
+          },
+          "postal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postal Code"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "tax_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tax Id"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "view": {
+            "const": "full",
+            "default": "full",
+            "title": "View",
+            "type": "string"
+          }
+        },
+        "required": [
+          "legal_name",
+          "tax_id",
+          "address_line1",
+          "address_line2",
+          "postal_code",
+          "city",
+          "region",
+          "country",
+          "contact_email",
+          "complete",
+          "updated_at"
+        ],
+        "title": "BillingFullOut",
+        "type": "object"
+      },
+      "BillingSummaryOut": {
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "legal_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Name"
+          },
+          "view": {
+            "const": "summary",
+            "default": "summary",
+            "title": "View",
+            "type": "string"
+          }
+        },
+        "required": [
+          "legal_name",
+          "complete"
+        ],
+        "title": "BillingSummaryOut",
+        "type": "object"
+      },
+      "ClosureOut": {
+        "properties": {
+          "erase_after": {
+            "format": "date-time",
+            "title": "Erase After",
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "owner",
+              "operator"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "requested_at": {
+            "format": "date-time",
+            "title": "Requested At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "requested_at",
+          "origin",
+          "erase_after"
+        ],
+        "title": "ClosureOut",
+        "type": "object"
+      },
+      "ConnectionsOut": {
+        "properties": {
+          "by_provider": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "title": "By Provider",
+            "type": "object"
+          },
+          "health": {
+            "$ref": "#/components/schemas/Health"
+          },
+          "in_use": {
+            "title": "In Use",
+            "type": "integer"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit"
+          }
+        },
+        "required": [
+          "by_provider",
+          "health",
+          "in_use",
+          "limit"
+        ],
+        "title": "ConnectionsOut",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -13,6 +246,15 @@
         },
         "title": "HTTPValidationError",
         "type": "object"
+      },
+      "Health": {
+        "enum": [
+          "none",
+          "ok",
+          "attention",
+          "pending"
+        ],
+        "type": "string"
       },
       "MeOut": {
         "properties": {
@@ -31,11 +273,345 @@
         "title": "MeOut",
         "type": "object"
       },
+      "OrganizationDetail": {
+        "properties": {
+          "api_calls_30_days": {
+            "title": "Api Calls 30 Days",
+            "type": "integer"
+          },
+          "api_keys": {
+            "title": "Api Keys",
+            "type": "integer"
+          },
+          "billing": {
+            "anyOf": [
+              {
+                "discriminator": {
+                  "mapping": {
+                    "full": "#/components/schemas/BillingFullOut",
+                    "summary": "#/components/schemas/BillingSummaryOut"
+                  },
+                  "propertyName": "view"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/BillingFullOut"
+                  },
+                  {
+                    "$ref": "#/components/schemas/BillingSummaryOut"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Billing"
+          },
+          "closure": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClosureOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "connections": {
+            "$ref": "#/components/schemas/ConnectionsOut"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_activity": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Activity"
+          },
+          "locale": {
+            "title": "Locale",
+            "type": "string"
+          },
+          "members": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Members",
+            "type": "object"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "pending_invitations": {
+            "title": "Pending Invitations",
+            "type": "integer"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/PlanOut"
+          },
+          "scans": {
+            "$ref": "#/components/schemas/ScansOut"
+          },
+          "state": {
+            "$ref": "#/components/schemas/State"
+          },
+          "suspended_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suspended At"
+          },
+          "suspension_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suspension Reason"
+          },
+          "trial_ended": {
+            "title": "Trial Ended",
+            "type": "boolean"
+          },
+          "trial_ends_at": {
+            "format": "date-time",
+            "title": "Trial Ends At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "locale",
+          "created_at",
+          "trial_ends_at",
+          "trial_ended",
+          "last_activity",
+          "state",
+          "suspended_at",
+          "suspension_reason",
+          "closure",
+          "plan",
+          "billing",
+          "members",
+          "pending_invitations",
+          "connections",
+          "scans",
+          "api_keys",
+          "api_calls_30_days"
+        ],
+        "title": "OrganizationDetail",
+        "type": "object"
+      },
+      "OrganizationList": {
+        "properties": {
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "page_size": {
+            "title": "Page Size",
+            "type": "integer"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/OrganizationRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rows",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "OrganizationList",
+        "type": "object"
+      },
+      "OrganizationRow": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "health": {
+            "$ref": "#/components/schemas/Health"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_activity": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Activity"
+          },
+          "members": {
+            "title": "Members",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          },
+          "plan_default": {
+            "title": "Plan Default",
+            "type": "boolean"
+          },
+          "state": {
+            "$ref": "#/components/schemas/State"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "state",
+          "plan",
+          "plan_default",
+          "members",
+          "health",
+          "last_activity",
+          "created_at"
+        ],
+        "title": "OrganizationRow",
+        "type": "object"
+      },
+      "Plan": {
+        "enum": [
+          "starter",
+          "pro",
+          "business"
+        ],
+        "title": "Plan",
+        "type": "string"
+      },
+      "PlanOut": {
+        "properties": {
+          "addons": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Addons",
+            "type": "array"
+          },
+          "default": {
+            "title": "Default",
+            "type": "boolean"
+          },
+          "note": {
+            "default": "",
+            "title": "Note",
+            "type": "string"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "plan",
+          "default"
+        ],
+        "title": "PlanOut",
+        "type": "object"
+      },
+      "ScansOut": {
+        "properties": {
+          "last_30_days": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Last 30 Days",
+            "type": "object"
+          },
+          "last_finished": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Finished"
+          }
+        },
+        "required": [
+          "last_30_days",
+          "last_finished"
+        ],
+        "title": "ScansOut",
+        "type": "object"
+      },
       "StaffRole": {
         "enum": [
           "admin",
           "billing",
           "support"
+        ],
+        "type": "string"
+      },
+      "State": {
+        "enum": [
+          "active",
+          "suspended",
+          "closing"
         ],
         "type": "string"
       },
@@ -116,6 +692,202 @@
         "summary": "Me",
         "tags": [
           "staff"
+        ]
+      }
+    },
+    "/api/v1/organizations": {
+      "get": {
+        "operationId": "list_organizations_api_v1_organizations_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 200,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/State"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          },
+          {
+            "in": "query",
+            "name": "plan",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "starter",
+                    "pro",
+                    "business",
+                    "default"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Plan"
+            }
+          },
+          {
+            "in": "query",
+            "name": "health",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "const": "attention",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Health"
+            }
+          },
+          {
+            "in": "query",
+            "name": "billing",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "const": "missing",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Billing"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "default": "name",
+              "enum": [
+                "name",
+                "created",
+                "activity"
+              ],
+              "title": "Sort",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "maximum": 10000,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Organizations",
+        "tags": [
+          "organizations"
+        ]
+      }
+    },
+    "/api/v1/organizations/{org_id}": {
+      "get": {
+        "operationId": "organization_detail_api_v1_organizations__org_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Organization Detail",
+        "tags": [
+          "organizations"
         ]
       }
     },

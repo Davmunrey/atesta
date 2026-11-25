@@ -14,6 +14,8 @@ ALL: frozenset[StaffRole] = frozenset(STAFF_ROLES)
 BILLING: frozenset[StaffRole] = frozenset({"admin", "billing"})
 ADMIN: frozenset[StaffRole] = frozenset({"admin"})
 RECENT_SIGN_IN_SECONDS = 15 * 60
+# Matrix row "View tax ID, address and billing email": a field rule inside a route all may read.
+FULL_BILLING_DETAILS = BILLING
 
 
 @dataclass(frozen=True, slots=True)
