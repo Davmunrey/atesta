@@ -480,6 +480,21 @@ applied; the owner applies it (deploy runbook).
     the rule compares case-insensitively, at most 128 characters). The default action stays the
     API. OpenTofu reads the value, so it is in the state; it routes and grants no data. A plan
     role, when added, needs read on that one secret.
+- **Portal hosting (#501):** a second instance of `infra/modules/web` (`<env>-admin`): its own
+  private bucket, distribution, certificate (`edge.admin_certificate_arn`, us-east-1) and
+  hostname (`edge.admin_aliases`). The module gained two inputs, so one definition serves both:
+  - `no_referrer_paths`: the console passes `/invite*`, `/training*` and `/unsubscribe*`; the
+    portal has none;
+  - `origin_header_name` and `_value`: the portal's distribution adds `X-Atesta-Operator-Origin`
+    to every request to the load balancer; the console's adds nothing.
+
+  `/api/*` and `/auth/*` keep caching disabled; every response carries the security headers and
+  the CSP that `apps/operator-web`'s build writes (`edge.admin_content_security_policy`).
+- **Deploy (#501):** the same workflow and protected environment (reviewers approve each run)
+  builds the portal, uploads it (immutable `_next/static`, then the rest with `--delete`),
+  invalidates its distribution and smoke-checks it: CSP and HSTS on the portal,
+  `/api/v1/staff` 401 on the portal host and 404 on the console host, so each distribution
+  reaches its own service.
 
 ## Permissions matrix
 

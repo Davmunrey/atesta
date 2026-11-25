@@ -140,12 +140,14 @@ variable "images" {
 
 variable "edge" {
   type = object({
-    aliases                 = list(string)
-    admin_aliases           = list(string) # the operator portal's host (ADR-017)
-    web_certificate_arn     = string
-    api_origin_domain       = string
-    api_certificate_arn     = string
-    content_security_policy = string
+    aliases                       = list(string)
+    admin_aliases                 = list(string) # the operator portal's host (ADR-017)
+    web_certificate_arn           = string
+    admin_certificate_arn         = string # us-east-1, for admin_aliases
+    api_origin_domain             = string
+    api_certificate_arn           = string
+    content_security_policy       = string
+    admin_content_security_policy = string # from apps/operator-web/csp-policy.json
   })
   default = null
 }
@@ -195,6 +197,7 @@ output "platform" {
     ecr_repositories  = module.platform.ecr_repositories
     api_load_balancer = module.platform.api_load_balancer
     web               = module.platform.web
+    admin_web         = module.platform.admin_web
     mail_dns_records  = module.platform.mail_dns_records
     cognito_dns       = module.ses_cognito.dns_records
   }
