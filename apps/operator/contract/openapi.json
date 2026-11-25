@@ -1,6 +1,20 @@
 {
   "components": {
     "schemas": {
+      "ApprovedOut": {
+        "properties": {
+          "not_before": {
+            "format": "date-time",
+            "title": "Not Before",
+            "type": "string"
+          }
+        },
+        "required": [
+          "not_before"
+        ],
+        "title": "ApprovedOut",
+        "type": "object"
+      },
       "BillingFullOut": {
         "properties": {
           "address_line1": {
@@ -309,33 +323,26 @@
         "title": "BillingSummaryOut",
         "type": "object"
       },
-      "ClosureOut": {
+      "ConfirmedIn": {
         "properties": {
-          "erase_after": {
-            "format": "date-time",
-            "title": "Erase After",
+          "confirm_name": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Confirm Name",
             "type": "string"
           },
-          "origin": {
-            "enum": [
-              "owner",
-              "operator"
-            ],
-            "title": "Origin",
-            "type": "string"
-          },
-          "requested_at": {
-            "format": "date-time",
-            "title": "Requested At",
+          "reason": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Reason",
             "type": "string"
           }
         },
         "required": [
-          "requested_at",
-          "origin",
-          "erase_after"
+          "confirm_name",
+          "reason"
         ],
-        "title": "ClosureOut",
+        "title": "ConfirmedIn",
         "type": "object"
       },
       "ConnectionsOut": {
@@ -376,6 +383,83 @@
           "limit"
         ],
         "title": "ConnectionsOut",
+        "type": "object"
+      },
+      "ErasureOut": {
+        "description": "The latest erasure request, for the admin's Erase screen (spec, \"Screens\" 8).",
+        "properties": {
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "receipt_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Receipt Id"
+          },
+          "requested_at": {
+            "format": "date-time",
+            "title": "Requested At",
+            "type": "string"
+          },
+          "requested_by_me": {
+            "title": "Requested By Me",
+            "type": "boolean"
+          },
+          "state": {
+            "enum": [
+              "pending",
+              "approved",
+              "cancelled",
+              "executed"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "requested_at",
+          "requested_by_me",
+          "approved_at",
+          "receipt_id"
+        ],
+        "title": "ErasureOut",
+        "type": "object"
+      },
+      "ErasureRequestOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "ErasureRequestOut",
         "type": "object"
       },
       "Feature": {
@@ -467,7 +551,7 @@
           "closure": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/ClosureOut"
+                "$ref": "#/components/schemas/atesta_operator__organizations__ClosureOut"
               },
               {
                 "type": "null"
@@ -481,6 +565,16 @@
             "format": "date-time",
             "title": "Created At",
             "type": "string"
+          },
+          "erasure": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ErasureOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "id": {
             "format": "uuid",
@@ -579,7 +673,8 @@
           "connections",
           "scans",
           "api_keys",
-          "api_calls_30_days"
+          "api_calls_30_days",
+          "erasure"
         ],
         "title": "OrganizationDetail",
         "type": "object"
@@ -782,6 +877,31 @@
         "title": "PlansOut",
         "type": "object"
       },
+      "ReasonCode": {
+        "enum": [
+          "non_payment",
+          "contract_ended",
+          "customer_request",
+          "security_review",
+          "other"
+        ],
+        "type": "string"
+      },
+      "ReasonIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "ReasonIn",
+        "type": "object"
+      },
       "ScansOut": {
         "properties": {
           "last_30_days": {
@@ -895,6 +1015,46 @@
         "title": "SubscriptionOut",
         "type": "object"
       },
+      "SuspendIn": {
+        "properties": {
+          "confirm_name": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Confirm Name",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "reason_code": {
+            "$ref": "#/components/schemas/ReasonCode"
+          }
+        },
+        "required": [
+          "confirm_name",
+          "reason",
+          "reason_code"
+        ],
+        "title": "SuspendIn",
+        "type": "object"
+      },
+      "SuspendedOut": {
+        "properties": {
+          "suspended_at": {
+            "format": "date-time",
+            "title": "Suspended At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "suspended_at"
+        ],
+        "title": "SuspendedOut",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -934,6 +1094,49 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "atesta_operator__actions__ClosureOut": {
+        "properties": {
+          "erase_after": {
+            "format": "date-time",
+            "title": "Erase After",
+            "type": "string"
+          }
+        },
+        "required": [
+          "erase_after"
+        ],
+        "title": "ClosureOut",
+        "type": "object"
+      },
+      "atesta_operator__organizations__ClosureOut": {
+        "properties": {
+          "erase_after": {
+            "format": "date-time",
+            "title": "Erase After",
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "owner",
+              "operator"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "requested_at": {
+            "format": "date-time",
+            "title": "Requested At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "requested_at",
+          "origin",
+          "erase_after"
+        ],
+        "title": "ClosureOut",
+        "type": "object"
       }
     },
     "securitySchemes": {
@@ -949,6 +1152,116 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/erasure-requests/{erasure_id}": {
+      "delete": {
+        "operationId": "delete_erasure_request_api_v1_erasure_requests__erasure_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "erasure_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Erasure Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Erasure Request",
+        "tags": [
+          "actions"
+        ]
+      }
+    },
+    "/api/v1/erasure-requests/{erasure_id}/approval": {
+      "post": {
+        "description": "The name is checked once the request names its organization; a mismatch raises, and the\nrequest's transaction rolls the approval back.",
+        "operationId": "post_approval_api_v1_erasure_requests__erasure_id__approval_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "erasure_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Erasure Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmedIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovedOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Post Approval",
+        "tags": [
+          "actions"
+        ]
+      }
+    },
     "/api/v1/me": {
       "get": {
         "operationId": "me_api_v1_me_get",
@@ -1275,6 +1588,171 @@
         ]
       }
     },
+    "/api/v1/organizations/{org_id}/closure": {
+      "delete": {
+        "operationId": "delete_closure_api_v1_organizations__org_id__closure_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Closure",
+        "tags": [
+          "actions"
+        ]
+      },
+      "post": {
+        "operationId": "post_closure_api_v1_organizations__org_id__closure_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmedIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/atesta_operator__actions__ClosureOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Post Closure",
+        "tags": [
+          "actions"
+        ]
+      }
+    },
+    "/api/v1/organizations/{org_id}/erasure-requests": {
+      "post": {
+        "operationId": "post_erasure_request_api_v1_organizations__org_id__erasure_requests_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmedIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErasureRequestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Post Erasure Request",
+        "tags": [
+          "actions"
+        ]
+      }
+    },
     "/api/v1/organizations/{org_id}/subscription": {
       "put": {
         "operationId": "put_subscription_api_v1_organizations__org_id__subscription_put",
@@ -1330,6 +1808,113 @@
         "summary": "Put Subscription",
         "tags": [
           "billing"
+        ]
+      }
+    },
+    "/api/v1/organizations/{org_id}/suspension": {
+      "delete": {
+        "operationId": "delete_suspension_api_v1_organizations__org_id__suspension_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Suspension",
+        "tags": [
+          "actions"
+        ]
+      },
+      "post": {
+        "operationId": "post_suspension_api_v1_organizations__org_id__suspension_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuspendIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuspendedOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Post Suspension",
+        "tags": [
+          "actions"
         ]
       }
     },

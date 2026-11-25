@@ -317,6 +317,15 @@ Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
     digits. A bad field is 422 `operator.invalid_field` with `field`.
   - **Reads:** `GET .../billing-profile` writes `billing_profile.viewed` to the operator trail.
   - **No change, no event:** a billing write that changes no field records nothing.
+- **Suspension, closure and erasure (#473):**
+  - **Typed name:** `confirm_name` must equal `organizations.name` exactly (case, spaces); else
+    422 `operator.name_mismatch` and nothing changes.
+  - **Approval body:** `{confirm_name, reason}`, since every write takes a reason. The request's
+    organization is known only once the request is found, so the name is checked after the
+    approval is written; a mismatch fails the request and its transaction rolls the approval
+    back. The path parameter is `{erasure_id}` (`request_id` is the trail's request id).
+  - **Detail:** `erasure` is the organization's latest request (`pending`, `approved`,
+    `cancelled` or `executed`, with `requested_by_me` and the receipt id), for screen 8.
 - **Local sign-in:** `uv run python apps/api/devtools/fake_cognito.py --staff` serves a fake staff
   pool on port 9001 with client id `local-operator`. Both fakes now put `auth_time` in access
   tokens and keep it across a refresh: Cognito documents it as the time the user "completed

@@ -32,8 +32,8 @@ SPEC: dict[tuple[str, str], tuple[frozenset[str], bool]] = {
     ("POST", "/api/v1/organizations/{org_id}/closure"): (frozenset({A}), True),
     ("DELETE", "/api/v1/organizations/{org_id}/closure"): (frozenset({A}), False),
     ("POST", "/api/v1/organizations/{org_id}/erasure-requests"): (frozenset({A}), True),
-    ("POST", "/api/v1/erasure-requests/{request_id}/approval"): (frozenset({A}), True),
-    ("DELETE", "/api/v1/erasure-requests/{request_id}"): (frozenset({A}), False),
+    ("POST", "/api/v1/erasure-requests/{erasure_id}/approval"): (frozenset({A}), True),
+    ("DELETE", "/api/v1/erasure-requests/{erasure_id}"): (frozenset({A}), False),
     ("GET", "/api/v1/erasure-receipts"): (frozenset({A}), False),
     ("GET", "/api/v1/staff"): (frozenset({A}), False),
     ("PATCH", "/api/v1/staff/{staff_id}"): (frozenset({A}), False),
@@ -53,7 +53,7 @@ def routes() -> list[tuple[str, str]]:
 
 
 def url(path: str) -> str:
-    return path.format(org_id=uuid.uuid4(), request_id=uuid.uuid4(), staff_id=uuid.uuid4())
+    return path.format(org_id=uuid.uuid4(), erasure_id=uuid.uuid4(), staff_id=uuid.uuid4())
 
 
 def test_the_policy_is_the_spec_table() -> None:

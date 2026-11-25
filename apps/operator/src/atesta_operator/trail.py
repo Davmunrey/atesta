@@ -35,7 +35,8 @@ def write(
     customer_sees: bool = True,
     metadata: dict[str, Scalar] | None = None,
 ) -> None:
-    """A staff write. `metadata` is what the customer sees, and the operator trail keeps it too."""
+    """A staff write. `metadata` is what the customer sees, and the operator trail keeps it too;
+    `target_id` (an erasure request, a staff member) goes to the operator trail only."""
     if customer_sees:
         if organization_id is None:
             raise ValueError("a customer-visible event needs its organization")
@@ -44,7 +45,7 @@ def write(
             organization_id=organization_id,
             action=action,
             target_type="organization",
-            target_id=target_id or str(organization_id),
+            target_id=str(organization_id),
             request_id=request_id,
             metadata=metadata,
         )

@@ -163,7 +163,7 @@ def test_detail_has_every_metadata_field(client: TestClient, as_role: Any, rich:
     assert set(body) == {
         "id", "name", "locale", "created_at", "trial_ends_at", "trial_ended", "last_activity",
         "state", "suspended_at", "suspension_reason", "closure", "plan", "billing", "members",
-        "pending_invitations", "connections", "scans", "api_keys", "api_calls_30_days",
+        "pending_invitations", "connections", "scans", "api_keys", "api_calls_30_days", "erasure",
     }  # fmt: skip
     assert body["state"] == "closing" and body["closure"]["origin"] == "operator"
     assert body["plan"] == {

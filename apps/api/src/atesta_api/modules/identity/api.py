@@ -66,8 +66,10 @@ from atesta_api.modules.identity.deps import (
 )
 from atesta_api.modules.identity.erasure_requests import (
     ApprovedErasure,
+    ErasureStatus,
     approve_erasure,
     cancel_erasure,
+    latest_erasure,
     request_erasure,
 )
 from atesta_api.modules.identity.for_operator import (
@@ -191,6 +193,8 @@ __all__ = [
     "TokenSet",
     "TokenVerifier",
     "enabled_staff",
+    "ErasureStatus",
+    "latest_erasure",
     "jwks_fetcher",
     "safe_return",
     "PAGE_SIZE",
