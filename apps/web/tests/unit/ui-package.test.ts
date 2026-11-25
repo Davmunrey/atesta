@@ -94,7 +94,7 @@ describe("the shared UI package", () => {
       "breadcrumbs", "panel", "badge", "table-region", "state-loading", "state-error", "state-empty",
       // The app shell (#486): every signed-in app draws the same frame.
       "console", "topbar", "topbar-brand", "sidenav", "console-page", "notice", "account-menu", "skip-link", "brand-seal",
-      "confirm-row", "form-actions"]));
+      "confirm-row", "form-actions", "facts", "filters", "pagination"]));
     const sharedSelectors = new Set(selectors(shared));
     const app = files(join(WEB, "src"), /\.css$/);
     const defined = app.flatMap((file) => selectors(readFileSync(file, "utf8"))
