@@ -37,7 +37,149 @@
   },
   "organizations": {
     "title": "Organizaciones",
-    "description": "Las organizaciones de clientes: solo sus metadatos, nunca su contenido."
+    "description": "Las organizaciones de clientes: solo sus metadatos, nunca su contenido.",
+    "filters": "Filtros",
+    "search": "Nombre o identificador",
+    "searchAction": "Buscar",
+    "all": "Todos",
+    "state": "Estado",
+    "plan": "Plan",
+    "sort": "Ordenar por",
+    "needsAttention": "Conexiones que requieren atención",
+    "billingMissing": "Sin datos de facturación",
+    "states": {
+      "active": "Activa",
+      "suspended": "Suspendida",
+      "closing": "En cierre"
+    },
+    "plans": {
+      "starter": "Starter",
+      "pro": "Pro",
+      "business": "Business",
+      "default": "Por defecto (sin plan fijado)"
+    },
+    "defaultPlan": "{plan} (por defecto)",
+    "health": {
+      "ok": "Correctas",
+      "attention": "Requieren atención",
+      "pending": "En preparación",
+      "none": "Sin conexiones"
+    },
+    "sorts": {
+      "name": "Nombre",
+      "created": "Fecha de alta",
+      "activity": "Última actividad"
+    },
+    "results": "Organizaciones encontradas",
+    "name": "Nombre",
+    "members": "Miembros",
+    "connections": "Conexiones",
+    "lastActivity": "Última actividad",
+    "never": "Sin actividad",
+    "empty": "Aún no hay ninguna organización.",
+    "noMatch": "Ninguna organización coincide con la búsqueda o los filtros.",
+    "clear": "Borrar la búsqueda y los filtros"
+  },
+  "organization": {
+    "crumb": "Organización",
+    "overview": "Resumen",
+    "id": "Identificador",
+    "language": "Idioma",
+    "languages": {
+      "es": "Español",
+      "en": "Inglés"
+    },
+    "created": "Alta",
+    "trial": "Prueba",
+    "trialEnds": "Termina el {date}",
+    "trialEnded": "Terminó el {date}: solo lectura hasta que se fije un plan",
+    "trialOver": "Terminada: tiene un plan fijado",
+    "lastActivity": "Última actividad",
+    "never": "Nunca",
+    "state": "Estado",
+    "suspendedSince": "Suspendida desde",
+    "suspensionReason": "Motivo de la suspensión",
+    "reasons": {
+      "non_payment": "Pago pendiente",
+      "contract_ended": "Contrato finalizado",
+      "customer_request": "A petición de la organización",
+      "security_review": "Revisión de seguridad",
+      "other": "Otro motivo"
+    },
+    "closureStarted": "Cierre",
+    "closureBy": "Iniciado el {date} por {origin, select, owner {una persona propietaria} other {Atesta}}",
+    "eraseAfter": "Se puede borrar a partir del",
+    "erasure": "Solicitud de borrado",
+    "erasureStates": {
+      "pending": "Pendiente de aprobación",
+      "approved": "Aprobada, a la espera de la fecha",
+      "cancelled": "Cancelada",
+      "executed": "Ejecutada"
+    },
+    "plan": "Plan",
+    "addons": "Complementos",
+    "noAddons": "Ninguno",
+    "note": "Nota del plan",
+    "planSet": "Fijado el",
+    "billing": "Datos de facturación",
+    "noBilling": "Atesta aún no ha registrado sus datos de facturación.",
+    "billingState": "Situación",
+    "complete": "Completos",
+    "incomplete": "Incompletos",
+    "legalName": "Razón social",
+    "taxId": "NIF",
+    "address": "Dirección",
+    "contactEmail": "Email de facturación",
+    "notRecorded": "Sin registrar",
+    "usage": "Uso",
+    "members": "Miembros",
+    "roles": {
+      "owner": "{count, plural, one {# propietario} other {# propietarios}}",
+      "admin": "{count, plural, one {# administrador} other {# administradores}}",
+      "member": "{count, plural, one {# colaborador} other {# colaboradores}}",
+      "auditor": "{count, plural, one {# auditor externo} other {# auditores externos}}"
+    },
+    "invitations": "Invitaciones pendientes",
+    "count": "{count, number}",
+    "none": "Ninguno",
+    "scans": "Análisis en los últimos 30 días",
+    "scanStates": {
+      "queued": "{count, plural, one {# en cola} other {# en cola}}",
+      "running": "{count, plural, one {# en curso} other {# en curso}}",
+      "collected": "{count, plural, one {# recogido} other {# recogidos}}",
+      "succeeded": "{count, plural, one {# correcto} other {# correctos}}",
+      "partial": "{count, plural, one {# parcial} other {# parciales}}",
+      "failed": "{count, plural, one {# fallido} other {# fallidos}}",
+      "blocked": "{count, plural, one {# bloqueado} other {# bloqueados}}"
+    },
+    "lastScan": "Último análisis terminado",
+    "apiKeys": "Claves de API activas",
+    "apiCalls": "Llamadas a la API en los últimos 30 días",
+    "connections": "Conexiones",
+    "health": "Situación",
+    "inUse": "En uso",
+    "inUseOf": "{count, plural, one {# conexión} other {# conexiones}} de {limit, number} que permite el plan",
+    "inUseNoLimit": "{count, plural, one {# conexión} other {# conexiones}}, sin límite en el plan",
+    "providers": {
+      "m365": "Microsoft 365",
+      "google_workspace": "Google Workspace"
+    },
+    "connectionStates": {
+      "pending_provisioning": "{count, plural, one {# pendiente de preparar} other {# pendientes de preparar}}",
+      "pending_setup": "{count, plural, one {# pendiente de conectar} other {# pendientes de conectar}}",
+      "verifying": "{count, plural, one {# verificando} other {# verificando}}",
+      "incomplete": "{count, plural, one {# con permisos incompletos} other {# con permisos incompletos}}",
+      "active": "{count, plural, one {# activa} other {# activas}}",
+      "over_privileged": "{count, plural, one {# con permisos de más} other {# con permisos de más}}",
+      "revoked": "{count, plural, one {# con acceso revocado} other {# con acceso revocado}}",
+      "disconnected": "{count, plural, one {# desconectada} other {# desconectadas}}"
+    }
+  },
+  "pagination": {
+    "label": "Páginas",
+    "range": "{from, number}–{to, number} de {total, number}",
+    "previous": "Anterior",
+    "next": "Siguiente"
   },
   "console": {
     "skip": "Saltar al contenido",

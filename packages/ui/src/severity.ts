@@ -18,6 +18,11 @@ export const STATE_SEVERITY = {
   fileDevUnscanned: "pending",
   connectionActive: "done", connectionWaiting: "pending", connectionIncomplete: "missing",
   connectionOverPrivileged: "overdue", connectionRevoked: "overdue",
+  // Operator portal (operator-portal spec): an organization's state, its connections' health and
+  // whether its billing details are complete.
+  orgActive: "done", orgSuspended: "overdue", orgClosing: "missing",
+  healthOk: "done", healthAttention: "missing", healthPending: "pending", healthNone: "pending",
+  billingComplete: "done", billingMissing: "missing",
 } as const satisfies Record<string, Severity>;
 
 export type State = keyof typeof STATE_SEVERITY;

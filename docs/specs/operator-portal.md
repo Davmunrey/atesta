@@ -385,6 +385,13 @@ Amended 2026-11-25 where the text above was ambiguous or did not fit the code:
   write without the portal's origin is explained.
 - **Routes** (query parameters, as the console's, because the export is static): `/`
   (organizations), `/organization?id=`, `/erased`, `/team`, `/log`.
+- **Organization list and detail (#488):** the search is submitted with its button, not on every
+  keystroke, because each list request writes `organizations.searched` to the operator trail. The
+  address keeps the search, filters, sort and page (`/?q=&state=&plan=&health=attention&billing=missing&sort=&page=`).
+  Health and billing filters are toggles. The detail groups its fields in six panels (Resumen,
+  Estado, Plan, Datos de facturación, Uso, Conexiones); support's billing panel shows the legal
+  name and completeness only, because the API sends nothing else. The console's billing-details
+  rows became the shared `Facts`, and `FilterBar` and `Pagination` joined `@atesta/ui`.
 - **Bundles:** after both builds, `apps/operator-web/scripts/check-bundles.ts` fails when the
   console's export holds a portal route or text, or the reverse.
 - **CI:** the `web` job types, lints, tests, builds and licence-checks the portal and runs the

@@ -82,6 +82,21 @@ def seed_operator(admin_url: str) -> None:
                 " 'non_payment')"
             )
         )
+        conn.execute(
+            text(
+                "INSERT INTO billing_profiles (organization_id, legal_name, tax_id, address_line1,"
+                " postal_code, city, region, country, contact_email) SELECT id,"
+                " 'Clínica Norte Sociedad Limitada', 'B12345678', 'Calle Mayor 1', '28001',"
+                " 'Madrid', 'Madrid', 'ES', 'facturas@example.test' FROM organizations"
+                " WHERE name = 'Clínica Norte S.L.'"
+            )
+        )
+        conn.execute(
+            text(
+                "INSERT INTO subscriptions (organization_id, plan, addons) SELECT id, 'pro',"
+                " '{}' FROM organizations WHERE name = 'Organización de prueba 01'"
+            )
+        )
 
 
 if __name__ == "__main__":
