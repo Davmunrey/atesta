@@ -217,5 +217,9 @@ def test_no_response_holds_a_person_or_a_connection_identity(
         client.get("/api/v1/organizations", params={"q": rich.name}, headers=headers).text,
         client.get(f"/api/v1/organizations/{rich.id}", headers=headers).text,
     ]
+    if role != "support":
+        bodies.append(
+            client.get(f"/api/v1/organizations/{rich.id}/billing-profile", headers=headers).text
+        )
     for body in bodies:
         assert not any(secret.lower() in body.lower() for secret in seed.SECRETS), body

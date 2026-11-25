@@ -30,6 +30,7 @@ POLICY: dict[tuple[str, str], Rule] = {
     ("GET", f"{_V1}/me"): Rule(ALL),
     ("GET", f"{_V1}/organizations"): Rule(ALL),
     ("GET", _ORG): Rule(ALL),
+    ("GET", f"{_V1}/plans"): Rule(BILLING),
     ("PUT", f"{_ORG}/subscription"): Rule(BILLING),
     ("GET", f"{_ORG}/billing-profile"): Rule(BILLING),
     ("PUT", f"{_ORG}/billing-profile"): Rule(BILLING),
