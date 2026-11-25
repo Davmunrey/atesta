@@ -6,6 +6,8 @@ export class ApiError extends Error {
   constructor(
     readonly status: number,
     readonly code: string | null,
+    /** The field a validation error names (`{"detail": {"code": ..., "field": ...}}`), if any. */
+    readonly field: string | null = null,
   ) {
     super(code ?? `HTTP ${status}`);
   }
@@ -20,18 +22,25 @@ export function errorCode(body: unknown): string | null {
   return typeof code === "string" ? code : null;
 }
 
+/** The field a validation error names, if the body names one. */
+export function errorField(body: unknown): string | null {
+  const detail = typeof body === "object" && body !== null ? (body as { detail?: unknown }).detail : null;
+  const field = typeof detail === "object" && detail !== null ? (detail as { field?: unknown }).field : null;
+  return typeof field === "string" ? field : null;
+}
+
 type Result<T> = { data?: T; error?: unknown; response: Response };
 
 export async function unwrap<T>(call: Promise<Result<T>>): Promise<T> {
   const { data, error, response } = await call;
-  if (data === undefined) throw new ApiError(response.status, errorCode(error));
+  if (data === undefined) throw new ApiError(response.status, errorCode(error), errorField(error));
   return data;
 }
 
 /** For 204 responses, which carry no body. */
 export async function expectOk(call: Promise<{ error?: unknown; response: Response }>): Promise<void> {
   const { error, response } = await call;
-  if (!response.ok) throw new ApiError(response.status, errorCode(error));
+  if (!response.ok) throw new ApiError(response.status, errorCode(error), errorField(error));
 }
 
 /** Message key for a code: `errors.<code>` when the app's messages (next-intl `useMessages()`)

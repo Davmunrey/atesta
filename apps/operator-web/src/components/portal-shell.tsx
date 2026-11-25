@@ -12,7 +12,7 @@ import { Empty, LoadError, Loading, PageHeader } from "@atesta/ui/page-frame";
 import { useMeQuery } from "@/lib/api/hooks";
 import { type Staff, isAdmin } from "@/lib/roles";
 
-const StaffContext = createContext<Staff | null>(null);
+export const StaffContext = createContext<Staff | null>(null);
 
 export function useStaff(): Staff {
   const staff = use(StaffContext);
@@ -21,7 +21,7 @@ export function useStaff(): Staff {
 }
 
 // A detail page lights up its list in the menu.
-const SECTION: Record<string, string> = { "/organization": "/" };
+const SECTION: Record<string, string> = { "/organization": "/", "/organization/plan": "/", "/organization/billing": "/" };
 
 function useNavigation(staff: Staff | undefined): NavGroup[] | null {
   const t = useTranslations("portal.nav");

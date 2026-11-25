@@ -3,7 +3,7 @@ import { cleanup, fireEvent, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { OrganizationDetailPage } from "@/components/organization-detail";
 import { OrganizationList } from "@/components/organization-list";
-import { renderWithProviders, stubApi } from "./render";
+import { renderAs, renderWithProviders, stubApi } from "./render";
 
 let search = "";
 const replace = vi.fn();
@@ -79,7 +79,7 @@ const detail = {
 it("shows every metadata group; support sees the billing summary only", async () => {
   search = "id=o-1";
   stubApi({ "GET /api/v1/organizations/o-1": [200, detail] });
-  renderWithProviders(<OrganizationDetailPage />);
+  renderAs("support", <OrganizationDetailPage />);
   expect(await screen.findByRole("heading", { level: 1, name: "Clínica Norte S.L." })).toBeTruthy();
   for (const panel of ["Resumen", "Estado", "Plan", "Datos de facturación", "Uso", "Conexiones"]) expect(screen.getByRole("region", { name: panel })).toBeTruthy();
   const state = within(screen.getByRole("region", { name: "Estado" }));
@@ -94,6 +94,8 @@ it("shows every metadata group; support sees the billing summary only", async ()
   expect(within(screen.getByRole("region", { name: "Conexiones" })).getByText("2 conexiones de 1 que permite el plan")).toBeTruthy();
   expect(within(screen.getByRole("region", { name: "Resumen" })).getByText(/solo lectura hasta que se fije un plan/)).toBeTruthy();
   expect(screen.getByRole("link", { name: "Organizaciones" }).getAttribute("href")).toBe("/");
+  expect(screen.queryByRole("link", { name: "Cambiar el plan" })).toBeNull();
+  expect(screen.queryByRole("link", { name: "Editar" })).toBeNull();
 });
 
 it("billing staff see the full billing details; an unknown organization says so", async () => {
@@ -101,13 +103,15 @@ it("billing staff see the full billing details; an unknown organization says so"
   stubApi({ "GET /api/v1/organizations/o-1": [200, { ...detail, billing: { view: "full", legal_name: "Clínica Norte", tax_id: "B12345678",
     address_line1: "Calle Mayor 1", address_line2: null, postal_code: "28001", city: "Madrid", region: "Madrid", country: "ES",
     contact_email: "facturas@example.test", complete: true, updated_at: "2026-11-20T09:00:00Z" } }] });
-  renderWithProviders(<OrganizationDetailPage />);
+  renderAs("billing", <OrganizationDetailPage />);
   const billing = within(await screen.findByRole("region", { name: "Datos de facturación" }));
   expect(billing.getByText("B12345678")).toBeTruthy();
   expect(billing.getByText("Calle Mayor 1, 28001, Madrid, Madrid, ES")).toBeTruthy();
+  expect(billing.getByRole("link", { name: "Editar" }).getAttribute("href")).toBe("/organization/billing?id=o-1");
+  expect(screen.getByRole("link", { name: "Cambiar el plan" }).getAttribute("href")).toBe("/organization/plan?id=o-1");
   cleanup();
   search = "id=nope";
   stubApi({ "GET /api/v1/organizations/nope": [404, { detail: { code: "operator.not_found" } }] });
-  renderWithProviders(<OrganizationDetailPage />);
+  renderAs("billing", <OrganizationDetailPage />);
   expect((await screen.findByRole("alert")).textContent).toBe("No encontramos esa organización o solicitud.");
 });

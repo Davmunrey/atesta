@@ -21,3 +21,9 @@ export function PlanName({ plan, isDefault }: { plan: string; isDefault: boolean
   const t = useTranslations("organizations");
   return <>{isDefault ? t("defaultPlan", { plan: t(`plans.${plan}`) }) : t(`plans.${plan}`)}</>;
 }
+
+/** A feature add-on by its name; a framework add-on (a pack id) as the identifier it is. */
+export function AddonName({ addon }: { addon: string }) {
+  const t = useTranslations("plan.features");
+  return t.has(addon) ? <>{t(addon)}</> : <span className="font-mono">{addon}</span>;
+}

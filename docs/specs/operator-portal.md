@@ -392,6 +392,12 @@ Amended 2026-11-25 where the text above was ambiguous or did not fit the code:
   Estado, Plan, Datos de facturación, Uso, Conexiones); support's billing panel shows the legal
   name and completeness only, because the API sends nothing else. The console's billing-details
   rows became the shared `Facts`, and `FilterBar` and `Pagination` joined `@atesta/ui`.
+- **Plan and billing details (#489):** `/organization/plan?id=` and `/organization/billing?id=`,
+  reached from the detail's Plan and Billing panels, shown only to admin and billing. The plan
+  editor previews the connector limit and the features gained or lost; the frameworks gained or
+  lost need data `GET /plans` does not return yet (#495). The billing form is prefilled from the
+  detail (no second read, so no second `billing_profile.viewed`), sends empty fields as null, and
+  marks the field a 422 `operator.invalid_field` names. Both return to the detail when saved.
 - **Bundles:** after both builds, `apps/operator-web/scripts/check-bundles.ts` fails when the
   console's export holds a portal route or text, or the reverse.
 - **CI:** the `web` job types, lints, tests, builds and licence-checks the portal and runs the

@@ -12,6 +12,7 @@
     "./error-message": "./src/error-message.tsx",
     "./facts": "./src/facts.tsx",
     "./fonts": "./src/fonts.ts",
+    "./form": "./src/form.tsx",
     "./format": "./src/format.ts",
     "./i18n/locale": "./src/i18n/locale.ts",
     "./i18n/provider": "./src/i18n/provider.tsx",
