@@ -178,6 +178,50 @@
     "editBilling": "Editar",
     "notForRole": "Tu rol no permite esta acción."
   },
+  "actions": {
+    "reason": "Motivo interno",
+    "reasonHint": "Solo para el registro de operaciones; la organización no lo ve.",
+    "reasonCode": "Motivo que verá la organización",
+    "cancel": "Cancelar",
+    "codes": {
+      "non_payment": "Pago pendiente",
+      "contract_ended": "Contrato finalizado",
+      "customer_request": "A petición de la organización",
+      "security_review": "Revisión de seguridad",
+      "other": "Otro motivo"
+    },
+    "recentAuth": "Por seguridad, esta acción necesita un inicio de sesión de los últimos 15 minutos.",
+    "signInAgain": "Volver a iniciar sesión",
+    "suspension": "Suspensión",
+    "suspendHelp": "Sus miembros verán una página de organización suspendida; las personas propietarias podrán exportar y cerrar. No se borra nada.",
+    "suspendedHelp": "Al reactivarla, sus miembros recuperan el acceso con todos sus datos.",
+    "suspend": "Suspender la organización",
+    "reactivate": "Reactivar la organización",
+    "closure": "Exportación y cierre",
+    "closureHelp": "El cierre da 30 días antes de poder borrar los datos; la organización lo ve desde el primer día.",
+    "askExport": "Pedir a los propietarios que exporten",
+    "exportAsked": "Hemos avisado a las personas propietarias por email.",
+    "startClosure": "Iniciar el cierre",
+    "cancelClosure": "Cancelar el cierre",
+    "closingSince": "Atesta inició el cierre el {date}; se puede borrar a partir del {erase}.",
+    "closedByOwner": "El cierre lo pidió una persona propietaria: solo ella puede cancelarlo. Se puede borrar a partir del {erase}.",
+    "erasure": "Borrado",
+    "erasureHelp": "Borra los datos de la organización cuando pasa la fecha del cierre. Necesita la aprobación de otra persona administradora.",
+    "needsClosure": "Primero hay que iniciar el cierre de la organización.",
+    "requestErasure": "Pedir el borrado",
+    "approveErasure": "Aprobar el borrado",
+    "cancelErasure": "Cancelar la solicitud de borrado",
+    "erasureStates": {
+      "pending": "Pendiente de aprobación",
+      "approved": "Aprobada, a la espera de la fecha",
+      "cancelled": "Cancelada",
+      "executed": "Ejecutada"
+    },
+    "requestedByMe": "La pediste el {date}. Debe aprobarla otra persona administradora; si eres la única, podrás aprobarla 72 horas después.",
+    "requestedByOther": "Pedida el {date} por otra persona administradora.",
+    "approved": "Se ejecutará a partir del {erase}. Hasta entonces se puede cancelar.",
+    "executed": "Los datos se borraron. Recibo: {receipt}"
+  },
   "plan": {
     "title": "Cambiar el plan",
     "plan": "Plan",
@@ -196,7 +240,7 @@
     },
     "note": "Nota del plan (opcional)",
     "noteHint": "Se guarda con el plan de la organización: no escribas nada interno.",
-    "reason": "Motivo",
+    "reason": "Motivo interno",
     "reasonHint": "Solo para el registro de operaciones; la organización no lo ve.",
     "save": "Guardar el plan",
     "preview": "Qué cambia",
@@ -228,10 +272,13 @@
       "country": "Código de dos letras (ISO 3166-1), por ejemplo ES."
     },
     "invalid": "El formato de este campo no es válido.",
-    "reason": "Motivo",
+    "reason": "Motivo interno",
     "reasonHint": "Solo para el registro de operaciones; la organización no lo ve.",
     "save": "Guardar los datos de facturación",
     "form": "Datos para las facturas"
+  },
+  "form": {
+    "typeName": "Escribe «{name}» para confirmar"
   },
   "pagination": {
     "label": "Páginas",

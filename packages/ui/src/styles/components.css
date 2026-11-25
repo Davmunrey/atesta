@@ -166,6 +166,8 @@
   .form-error { font-size: 0.875rem; font-weight: 400; color: var(--color-danger); }
   .field[aria-invalid="true"] { border-color: var(--color-danger); }
   .form-grid .form-actions { margin-top: 0; }
+  /* A panel of destructive actions: its border in the danger colour. */
+  .panel.danger-zone { border-color: var(--color-danger); }
   .form-grid input[type="checkbox"] { width: 1.125rem; height: 1.125rem; accent-color: var(--color-link); }
 
   /* A list's filters (FilterBar): labelled fields and pressed toggles in one wrapping row. */

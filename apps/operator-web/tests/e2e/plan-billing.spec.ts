@@ -11,7 +11,7 @@ test("billing staff change a plan and correct billing details the API refused", 
   const preview = page.getByRole("region", { name: "Qué cambia" });
   await expect(preview.getByText("sin límite → 1 conexión")).toBeVisible();
   await page.getByLabel("Centro de confianza").check();
-  await page.getByLabel("Motivo").fill("Contrato firmado el 25 de noviembre");
+  await page.getByLabel("Motivo interno").fill("Contrato firmado el 25 de noviembre");
   await everyView(page, "plan editor");
   await page.getByRole("button", { name: "Guardar el plan" }).click();
   const plan = page.getByRole("region", { name: "Plan" });
@@ -27,7 +27,7 @@ test("billing staff change a plan and correct billing details the API refused", 
   await page.getByLabel("Provincia o región").fill("Toledo");
   await page.getByLabel("País").fill("es");
   await page.getByLabel("Email de facturación").fill("facturas@prueba7.example");
-  await page.getByLabel("Motivo").fill("Alta de datos de facturación");
+  await page.getByLabel("Motivo interno").fill("Alta de datos de facturación");
   await page.getByRole("button", { name: "Guardar los datos de facturación" }).click();
   await expect(page.getByLabel("NIF")).toHaveAttribute("aria-invalid", "true");
   await expect(page.getByLabel("NIF")).toBeFocused();
