@@ -495,6 +495,35 @@ applied; the owner applies it (deploy runbook).
   invalidates its distribution and smoke-checks it: CSP and HSTS on the portal,
   `/api/v1/staff` 401 on the portal host and 404 on the console host, so each distribution
   reaches its own service.
+- **Erasure runner (#502):**
+  - **Command:** `python -m atesta_api.ops.erase --request <id> | --pending [--execute]`, in the
+    API image (`atesta_api.ops`, one-off operations as `atesta_owner`; the spec's
+    `apps.api.devtools.erase_org` is not in the image and now only calls it). Dry run without
+    `--execute`. The old `--org` mode is gone: without an approved request it refuses.
+  - **One implementation:** `identity.api.run_erasure_request` locks the request, refuses one
+    that is unknown, not approved, cancelled or already executed, and calls
+    `erase_organization`, which refuses an organization whose closure date has not passed (or
+    whose closure was cancelled). Executing writes the receipt, sets `executed_at` and
+    `receipt_id`, and writes `erasure.executed` (no staff, target the request, metadata the
+    receipt id) to the operator trail, in one transaction per request.
+    `due_erasure_requests` lists approved, open requests whose closure date has passed.
+  - **Schedule (the ADR-017 candidate, resolved):** EventBridge Scheduler is offered in
+    eu-south-2 (AWS General Reference, "Amazon EventBridge Scheduler endpoints and quotas",
+    `scheduler.eu-south-2.amazonaws.com`, read 2026-11-25). Every 6 hours it starts the
+    `<env>-erasure` task (API image, migration secret, no task role, private subnets, no
+    retry). Its role may only run that family on this cluster and pass the shared execution
+    role, and trusts Scheduler only for this account and the default group.
+  - **Output:** one JSON line per request (ids and row counts) and a last line
+    `{"event": "erasure.run", "status": "finished" | "failed"}`; a refusal exits 2, an error 1,
+    and the error's message is never printed (rule 2).
+- **Alarms (#502):** to the existing alerts topic. Budgets are account-wide, so no budget
+  changes.
+  - `<env>-erasure-runner`: a failed run, or no finished run in a day (missing data breaches,
+    so a task that never started alarms);
+  - `<env>-operator`: any target 5xx or no healthy operator task in 5 minutes.
+  - **Candidate:** with `FILL` on daily periods, CloudWatch warns an alarm can stick if the
+    newest period never has data ("Math expressions with metrics", read 2026-11-25); seen only
+    after the first apply.
 
 ## Permissions matrix
 

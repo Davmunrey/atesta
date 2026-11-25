@@ -137,6 +137,12 @@ data "aws_iam_policy_document" "apply" {
     actions   = ["events:*"]
     resources = ["arn:aws:events:*:${local.account}:rule/${var.name}-*"]
   }
+  # The erasure runner's schedule (operator-portal spec), in the default schedule group.
+  statement {
+    sid       = "OwnSchedules"
+    actions   = ["scheduler:*"]
+    resources = ["arn:aws:scheduler:*:${local.account}:schedule/default/${var.name}-*"]
+  }
   statement {
     sid       = "OwnSecrets"
     actions   = ["secretsmanager:*"]

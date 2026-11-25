@@ -336,6 +336,7 @@ def test_every_container_is_locked_down_and_logs_to_its_own_group() -> None:
         "api",
         "worker",
         "migrate",
+        "erasure",
         "bootstrap",
         "scan",
         "egress",
@@ -1352,3 +1353,87 @@ def test_the_deploy_builds_uploads_and_smoke_checks_the_portal() -> None:
     smoke = steps["Smoke"]["run"]
     assert '"https://$admin/api/v1/staff"' in smoke and 'test "$status" = "401"' in smoke
     assert '"https://$host/api/v1/staff"' in smoke and 'test "$status" = "404"' in smoke
+
+
+RUNNER = resources("modules/ecs/runner.tf")
+RUNNER_FILE = load("modules/ecs/runner.tf")
+RUNNER_POLICIES = {
+    name: body
+    for block in RUNNER_FILE["data"]
+    for kind, named in block.items()
+    if kind == "aws_iam_policy_document"
+    for name, body in named.items()
+}
+
+
+def test_the_erasure_runner_runs_the_pending_requests_with_the_migration_credential() -> None:
+    runner = CONTAINERS["erasure"]
+    command = '["python", "-m", "atesta_api.ops.erase", "--pending", "--execute"]'
+    assert command in runner
+    assert "image = var.images.api" in runner
+    assert "secrets = [for k, arn in var.secrets.migrate :" in runner
+    task = ECS["aws_ecs_task_definition.this"]["for_each"]
+    assert task["erasure"] is None  # no task role: it talks to Postgres only
+    platform = {k: v for m in PLATFORM_FILE["module"] for k, v in m.items()}
+    migration = "${module.database.migration_url_secret_arn}"
+    holders = [k for k, v in platform["ecs"]["secrets"].items() if migration in v.values()]
+    assert sorted(holders) == ["bootstrap", "migrate"]  # and the runner, through migrate
+    for name, container in CONTAINERS.items():
+        if "var.secrets.migrate" in container:
+            assert name in ("migrate", "erasure"), name
+
+
+def test_eventbridge_scheduler_starts_only_the_runner_on_this_cluster() -> None:
+    schedule = RUNNER["aws_scheduler_schedule.erasure"]
+    assert schedule["schedule_expression"] == "rate(6 hours)"
+    target = schedule["target"][0]
+    assert target["arn"] == "${aws_ecs_cluster.this.arn}"
+    ecs = target["ecs_parameters"][0]
+    assert ecs["task_definition_arn"] == '${aws_ecs_task_definition.this["erasure"].arn}'
+    assert ecs["launch_type"] == "FARGATE"
+    assert ecs["network_configuration"][0]["assign_public_ip"] is False
+    assert ecs["network_configuration"][0]["subnets"] == "${var.private_subnet_ids}"
+    statements = {s["sid"]: s for s in RUNNER_POLICIES["erasure_scheduler"]["statement"]}
+    assert statements["RunErasure"]["actions"] == ["ecs:RunTask"]
+    assert statements["RunErasure"]["resources"] == ["${local.erasure_family_arn}:*"]
+    assert statements["PassExecutionRole"]["resources"] == ["${aws_iam_role.execution.arn}"]
+    trust = RUNNER_POLICIES["scheduler_trust"]["statement"][0]
+    assert trust["principals"][0]["identifiers"] == ["scheduler.amazonaws.com"]
+    assert {c["variable"] for c in trust["condition"]} == {"aws:SourceAccount", "aws:SourceArn"}
+    oidc = load("modules/github-oidc/main.tf")
+    apply = next(
+        d["aws_iam_policy_document"]["apply"]
+        for d in oidc["data"]
+        if "apply" in d.get("aws_iam_policy_document", {})
+    )
+    own = next(s for s in apply["statement"] if s.get("sid") == "OwnSchedules")
+    assert own["resources"] == [
+        "arn:aws:scheduler:*:${local.account}:schedule/default/${var.name}-*"
+    ]
+
+
+def test_a_failed_or_silent_erasure_run_alarms() -> None:
+    filters = RUNNER["aws_cloudwatch_log_metric_filter.erasure"]
+    assert filters["log_group_name"] == '${aws_cloudwatch_log_group.this["erasure"].name}'
+    patterns = filters["for_each"]
+    assert set(patterns) == {"ErasureRunsFinished", "ErasureRunsFailed"}
+    for name, status in (("ErasureRunsFinished", "finished"), ("ErasureRunsFailed", "failed")):
+        assert "erasure.run" in patterns[name] and status in patterns[name], name
+    alarm = RUNNER["aws_cloudwatch_metric_alarm.erasure_runner"]
+    assert alarm["alarm_actions"] == ["${var.alert_topic_arn}"]
+    assert alarm["treat_missing_data"] == "breaching"  # a task that never ran logs nothing
+    expression = alarm["metric_query"][0]["expression"]
+    assert expression == "IF(FILL(failed, 0) > 0 OR FILL(finished, 0) < 1, 1, 0)"
+    periods = [q["metric"][0]["period"] for q in alarm["metric_query"][1:]]
+    assert periods == [86400, 86400]
+
+
+def test_operator_5xx_or_no_healthy_task_alarms() -> None:
+    alarm = RUNNER["aws_cloudwatch_metric_alarm.operator"]
+    assert alarm["alarm_actions"] == ["${var.alert_topic_arn}"]
+    metrics = {q["id"]: q["metric"][0] for q in alarm["metric_query"][1:]}
+    assert metrics["errors"]["metric_name"] == "HTTPCode_Target_5XX_Count"
+    assert metrics["healthy"]["metric_name"] == "HealthyHostCount"
+    for metric in metrics.values():
+        target_group = metric["dimensions"]["TargetGroup"]
+        assert target_group == "${aws_lb_target_group.operator.arn_suffix}"
