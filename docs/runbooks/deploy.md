@@ -35,7 +35,8 @@ tofu apply -var state_bucket=<state bucket> -var budget_email=<alerts address>
 **This creates:**
 - the keys, the network and the evidence bucket;
 - the database and its secrets;
-- the registries, Cognito, the GitHub roles and the budget alerts.
+- the registries, Cognito (the customer pool and the operator portal's staff pool), the GitHub
+  roles and the budget alerts.
 
 It creates no ECS service and no CloudFront yet: `images` and `edge` are still unset. Note the
 outputs `deploy.repositories` and `github_oidc` (the plan and apply role ARNs).
@@ -45,6 +46,7 @@ In prod, also pass these. The Cognito email identity is created in eu-west-3, an
 
 ```bash
 -var app_url=https://app.<domain>
+-var admin_url=https://admin.<domain>
 -var cognito_mail_domain=<domain>
 -var cognito_from="Atesta <no-reply@<domain>>"
 ```
@@ -52,8 +54,8 @@ In prod, also pass these. The Cognito email identity is created in eu-west-3, an
 ## 3. Domain, certificates and DNS
 
 1. Request two ACM certificates, with DNS validation:
-   - **CloudFront:** in **us-east-1**, for `app.<domain>`. It is a certificate only; no customer
-     data goes there.
+   - **CloudFront:** in **us-east-1**, for `app.<domain>`, and one for `admin.<domain>` (the
+     operator portal, ADR-017). They are certificates only; no customer data goes there.
    - **API load balancer:** in **eu-south-2**, for `api-origin.<domain>`, the hostname CloudFront
      uses to reach it.
 2. Publish the validation CNAMEs, plus the SES records from the outputs: DKIM, MAIL FROM and
@@ -64,7 +66,9 @@ In prod, also pass these. The Cognito email identity is created in eu-west-3, an
    is lost.
 4. After the first deploy (step 6), point the hostnames:
    - `app.<domain>`: CNAME or alias to the CloudFront domain (output `platform.web.domain`);
-   - `api-origin.<domain>`: alias to the load balancer (output `platform.api_load_balancer`).
+   - `api-origin.<domain>`: alias to the load balancer (output `platform.api_load_balancer`);
+   - `admin.<domain>`: CNAME or alias to the portal's CloudFront domain (output
+     `platform.admin_web.domain`).
 
 ## 4. Secrets (never in git, never in shell history)
 
@@ -89,6 +93,21 @@ rm /dev/shm/session-key
 
 On macOS, use a directory created with `mktemp -d` instead of `/dev/shm`, and remove it
 afterwards.
+
+**Operator portal origin header** (ADR-017, "Reaching the target group"). The portal's
+distribution sends it, and the load balancer forwards to the operator service only requests that
+carry it. Letters and digits only. Set it before `edge`, because OpenTofu reads it when `edge`
+is set:
+
+```bash
+aws secretsmanager get-random-password --exclude-punctuation --password-length 64 \
+  --query RandomPassword --output text > /dev/shm/origin-header
+aws secretsmanager put-secret-value --secret-id atesta/atesta-dev/operator/origin-header --secret-string file:///dev/shm/origin-header
+rm /dev/shm/origin-header
+```
+
+To rotate it, put a new value and run the deploy: the distribution and the listener rule change
+in the same apply, so the portal may answer 404 for a minute.
 
 **M365 scanner credential** (scanner-connectors spec, AWS runner; issue 453). The "Atesta
 Scanner" app's client id and its certificate go in `atesta/<env>/m365/scanner` as JSON, with the
@@ -141,7 +160,8 @@ confirmation link to that address; click it once, or the scan failure-rate alarm
        }
        ```
 
-       Prod also adds `app_url`, `cognito_mail_domain` and `cognito_from`.
+       Prod also adds `app_url`, `admin_url`, `cognito_mail_domain` and `cognito_from`. Both add
+       `"staff_passkeys": true` only after the passkey step below.
    - **Secret:** `BUDGET_EMAIL`.
 3. Update the Cognito callback and logout URLs to `https://app.<domain>` in dev too, by setting
    them in `envs/dev/main.tf`, in a PR.
@@ -173,9 +193,58 @@ confirmation link to that address; click it once, or the scan failure-rate alarm
 
    Its log (`/atesta/atesta-dev/migrate`, stream prefix `bootstrap`) ends with
    `bootstrap done; LOGIN set for atesta_app, atesta_operator, atesta_owner`.
-3. Run the deploy workflow again. This time the migrations and the smoke check pass.
+3. Run the deploy workflow again. This time the migrations and the smoke check pass. The smoke
+   check also proves the portal's routing: `/api/v1/staff` answers 401 on `admin.<domain>` (the
+   operator service) and 404 on `app.<domain>` (the customer API).
 4. Point DNS (step 3.4), sign up at `https://app.<domain>` with MFA, and walk the pilot guide's
    first steps.
+
+## 6b. Operator portal checks (first apply)
+
+The operator portal's infrastructure (operator-portal spec, build step 6) is part of the same
+apply. Before relying on it:
+
+1. **The staff pool requires MFA and never SMS.** The operator service checks this at startup and
+   refuses to start otherwise. If its tasks keep failing (ECS service events, log group
+   `/atesta/<env>/operator`), compare with:
+
+   ```bash
+   aws cognito-idp get-user-pool-mfa-config --user-pool-id <staff_cognito.user_pool_id>
+   ```
+
+   Expect `"MfaConfiguration": "ON"`, `"SoftwareTokenMfaConfiguration": {"Enabled": true}`, no
+   `SmsMfaConfiguration`, and `"WebAuthnConfiguration"` with `"UserVerification": "required"`.
+   Note the `RelyingPartyId` it shows: this has not been seen yet on a real pool.
+2. **The service is healthy:** the target group `<env>-operator` has one healthy target, and
+   `https://admin.<domain>/` shows *Iniciar sesión*.
+3. **The first admin:** `operator-staff.md`, section 1.
+4. **Passkeys (once, after the first admin signs in).** The pinned provider cannot set
+   `FactorConfiguration`, and with MFA required Cognito offers passkeys only when it is
+   `MULTI_FACTOR_WITH_USER_VERIFICATION` (spec, "Infrastructure as built"). Set it with the
+   complete MFA settings, because the call replaces them:
+
+   ```bash
+   aws cognito-idp set-user-pool-mfa-config --user-pool-id <staff pool id> \
+     --mfa-configuration ON --software-token-mfa-configuration Enabled=true \
+     --web-authn-configuration UserVerification=required,FactorConfiguration=MULTI_FACTOR_WITH_USER_VERIFICATION
+   ```
+
+   Read it back with `get-user-pool-mfa-config`, then add `"staff_passkeys": true` to
+   `TFVARS_JSON` and deploy. If a later change to the staff pool's MFA arguments is applied, the
+   provider resets the field, and passkeys stop being offered while password plus authenticator
+   app still work. Repeat this step after any such change.
+5. **The erasure runner:** EventBridge Scheduler shows the schedule `<env>-erasure`. Within
+   6 hours the log group `/atesta/<env>/erasure` has a line
+   `{"event": "erasure.run", "status": "finished"}`, and the alarm `<env>-erasure-runner` is OK.
+6. **Alarms reach someone:** the alerts subscription is confirmed (step 4, "Alerts"). The alarms
+   `<env>-operator` and `<env>-erasure-runner` are in OK state.
+7. **Malware scanning:** the GuardDuty Malware Protection plan for the evidence bucket is
+   `ACTIVE`:
+
+   ```bash
+   aws guardduty list-malware-protection-plans
+   aws guardduty get-malware-protection-plan --malware-protection-plan-id <id> --query Status
+   ```
 
 ## 7. Every later deploy
 
@@ -188,6 +257,14 @@ bootstrap task of step 6.2 again. It adds the `atesta_operator` role (no LOGIN y
 stops with "role atesta_operator does not exist" and the running version stays. From #499 the
 task also gives `atesta_operator` its login, so write `atesta/<env>/db/operator-url` first
 (step 4); a secret without a value stops the task before it starts.
+
+**Order for the first deploy with the operator portal:**
+1. Write `atesta/<env>/db/operator-url`, `atesta/<env>/operator/session-key` and
+   `atesta/<env>/operator/origin-header` (step 4).
+2. Add the admin fields to `edge` in `TFVARS_JSON`, and `admin_url` in prod (step 5).
+3. Run the bootstrap task (step 6.2). Its log ends with
+   `LOGIN set for atesta_app, atesta_operator, atesta_owner`.
+4. Run the deploy workflow, then the checks in 6b.
 
 **Migrations run before the services change:**
 - If a migration fails, the old version keeps running.
@@ -220,6 +297,8 @@ handful of organizations, one scan a day each. Taxes are not included.
 | Fargate worker, 0.5 vCPU and 1 GB | same | 20.72 | 20.72 |
 | Fargate scans, 2 vCPU and 4 GB ($0.1136 per hour) | same | 75 h: 8.52 | 150 h: 17.03 |
 | Fargate egress proxy, 0.25 vCPU and 0.5 GB per task (issue 454) | same | 1 task: 10.36 | 2 tasks: 20.72 |
+| Fargate operator service, 0.25 vCPU and 0.5 GB (ADR-017) | same | 1 task: 10.36 | 1 task: 10.36 |
+| Fargate erasure runner, 0.25 vCPU and 0.5 GB, about 1 minute every 6 hours | same | 0.03 | 0.03 |
 | Interface endpoints: ecr.api, ecr.dkr, logs, secretsmanager (issue 454) | $0.011 per endpoint-zone hour, plus $0.01 per GB (VPC file, read 2026-11-24) | 1 zone: 32.12 | 2 zones: 64.24 |
 | Cloud Map name for the proxy | $0.10 per registered task (Cloud Map file, publication `20261106193843`); $0.50 per hosted zone (Route 53 file, publication `20261118191548`) | 0.60 | 0.70 |
 | RDS PostgreSQL db.t4g.micro | $0.018 per hour Single-AZ, $0.035 Multi-AZ | 13.14 | 25.55 |
@@ -229,19 +308,21 @@ handful of organizations, one scan a day each. Taxes are not included.
 | Public IPv4 addresses (NAT, load balancer) | $0.005 per hour each | 3: 10.95 | 4: 14.60 |
 | Application Load Balancer | $0.0252 per hour plus $0.008 per LCU-hour | about 0.5 LCU: 21.32 | about 1 LCU: 24.24 |
 | KMS keys | $1 per key-month (more after rotations) | 5: 5.00 | 5: 5.00 |
-| Secrets Manager | $0.40 per secret-month | 5: 2.00 | 10 (with connectors): 4.00 |
-| Scan failure-rate alert: 2 custom metrics, 1 alarm on 2 metrics | $0.30 per metric-month, $0.10 per alarm metric-month (CloudWatch file, publication `20261124145303`) | 0.80 | 0.80 |
+| Secrets Manager | $0.40 per secret-month | 8: 3.20 | 13 (with connectors): 5.20 |
+| Alerts: scan failure rate, erasure runner, operator (4 custom metrics, 3 alarms on 6 metrics) | $0.30 per metric-month, $0.10 per alarm metric-month (CloudWatch file, publication `20261124145303`) | 1.80 | 1.80 |
 | CloudWatch Logs, custom and vended (flow logs, Postgres) | $0.57 per GB ingested, $0.03 per GB-month stored | about 5 GB: 3.30 | about 20 GB: 12.00 |
 | Container Insights metrics | $0.07 per metric-month | about 3.50 | about 4.00 |
 | S3, ECR, SES | $0.023 and $0.10 per GB-month; SES per message | about 2.00 | about 3.00 |
 | CloudFront | always-free tier: 1 TB and 10 M requests a month | 0 | 0 |
 | Malware scanning of the evidence bucket (below) | free tier: 1,000 objects and 1 GB a month | 0 | 0 |
-| **Total** | | **about 183** | **about 316** |
+| **Total** | | **about 196** | **about 329** |
 
 **Against the budget alerts.**
-- **Dev** alerts at 150, 250 and 400. Its estimate (about 183) now passes the first one.
-- **Prod** alerts at 250, 350 and 450 (owner decision, #286). Its estimate (about 316, or about
-  342 with db.t4g.small Multi-AZ) passes the first one.
+- **Dev** alerts at 150, 250 and 400. Its estimate (about 196) now passes the first one.
+- **Prod** alerts at 250, 350 and 450 (owner decision, #286). Its estimate (about 329, or about
+  355 with db.t4g.small Multi-AZ) passes the first one, and the larger database the second.
+- **The operator portal** (#499 to #502) adds about 13 a month to each: its service, three
+  secrets, the runner and the alarms. Its distribution shares CloudFront's free tier.
 - **What raised them:** the scan egress filter (issue 454) adds about 43 in dev and 86 in prod,
   mostly interface endpoints. Moving the thresholds is the owner's decision.
 
@@ -279,8 +360,10 @@ files for GuardDuty (publication 2026-10-30), S3 (2026-11-21), SQS (2026-11-11) 
   GuardDuty console after each deploy.
 
 **Not included:**
-- Cognito Essentials (free up to its monthly active user allowance; check the Cognito pricing
-  page);
+- Cognito Essentials, for both pools (free up to its monthly active user allowance; check the
+  Cognito pricing page);
+- EventBridge Scheduler: about 120 invocations a month (candidate: not in the price files read
+  above; check the Scheduler pricing page);
 - data transfer to the internet beyond CloudFront's free tier;
 - AWS Support plans;
 - Route 53, if the domain's DNS is hosted there.

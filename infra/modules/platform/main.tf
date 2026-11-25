@@ -397,6 +397,7 @@ output "deploy" {
     app_security_group = aws_security_group.app.id
     migrate_family     = "${var.name}-migrate"
     bootstrap_family   = "${var.name}-bootstrap"
+    erasure_family     = "${var.name}-erasure"
     repositories       = module.ecr.repository_urls
     web_bucket         = try(module.web[0].bucket_name, null)
     distribution       = try(module.web[0].distribution_id, null)

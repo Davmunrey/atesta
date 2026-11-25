@@ -525,6 +525,25 @@ applied; the owner applies it (deploy runbook).
     newest period never has data ("Math expressions with metrics", read 2026-11-25); seen only
     after the first apply.
 
+### Runbooks and staff command as built (build step 7, #503)
+
+Amended 2026-11-25 where the text above was ambiguous or did not fit:
+- **Staff command:** `python -m atesta_api.ops.staff add | disable | enable`, in the API image
+  (local: `apps/api/devtools/operator_staff.py`). It runs with the migration credential as
+  `atesta_owner` and sets `operator_staff` rows; the account itself is created in the staff pool
+  with the AWS CLI. Each change writes the operator trail with the enabled admin named by `--by`
+  and a reason: `staff.added` (new action, read by the portal's log in ES and EN),
+  `staff.disabled`, `staff.enabled`. The trail's check allows a NULL staff only for the runner, so
+  `--first`, accepted only while no admin is enabled, records the first admin as acting for
+  themselves. `change_staff` keeps the portal's rules (`self_change`, `last_admin`).
+- **Running one-off commands in AWS:** a one-off task of `<env>-erasure` with a command override,
+  because that task definition holds the migration credential and the API image
+  (`deploy.erasure_family`). Its log group is `/atesta/<env>/erasure`; only the erasure runner's
+  `erasure.run` lines count toward its alarm.
+- **Runbooks:** `operator-staff.md` (staff accounts, MFA enrolment, lost devices, offboarding
+  staff), `plans-and-trials.md`, `offboarding.md` (rewritten for the portal and the runner) and
+  `deploy.md` (operator secrets, deploy order, "Operator portal checks", costs).
+
 ## Permissions matrix
 
 | Action | admin | billing | support |
@@ -567,6 +586,7 @@ applied; the owner applies it (deploy runbook).
 | `organization.viewed` | no | none | yes |
 | `organizations.searched` | no | none (the search text is not stored) | yes |
 | `staff.role_changed`, `staff.disabled` | no | none | yes |
+| `staff.added` (#503) | no | none | yes, written by the staff command (`atesta_api.ops.staff`) with the acting admin |
 | `erasure.executed` | no (the organization no longer exists) | none | yes, written by the erasure runner with the receipt id |
 
 ## What a suspended customer sees

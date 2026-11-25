@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Literal
 
-from sqlalchemy import func, select, update
+from sqlalchemy import func, insert, select, update
 from sqlalchemy.orm import Session
 
 from atesta_api.modules.identity.for_operator import OperatorError
@@ -93,3 +93,33 @@ def change_staff(
         .returning(*_COLUMNS)
     ).one()
     return before, _member(changed.id, changed.email, changed.role, changed.disabled_at)
+
+
+# --- the staff devtool (atesta_api.ops.staff, runbook "Staff accounts"), as atesta_owner --------
+
+
+def staff_by_email(session: Session, email: str) -> StaffMember | None:
+    row = session.execute(
+        select(*_COLUMNS).where(func.lower(OperatorStaff.email) == email.lower())
+    ).one_or_none()
+    return None if row is None else _member(row.id, row.email, row.role, row.disabled_at)
+
+
+def enabled_admins(session: Session) -> int:
+    count = session.scalar(
+        select(func.count()).where(
+            OperatorStaff.role == "admin", OperatorStaff.disabled_at.is_(None)
+        )
+    )
+    return int(count or 0)
+
+
+def add_staff(session: Session, *, cognito_sub: str, email: str, role: StaffRole) -> StaffMember:
+    """A new staff row for a staff-pool account (its `sub`). The account itself is created in
+    the pool by an owner step; this row is what gives it a role."""
+    row = session.execute(
+        insert(OperatorStaff)
+        .values(id=uuid.uuid4(), cognito_sub=cognito_sub, email=email.lower(), role=role)
+        .returning(*_COLUMNS)
+    ).one()
+    return _member(row.id, row.email, row.role, row.disabled_at)

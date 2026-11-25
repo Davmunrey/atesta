@@ -330,6 +330,7 @@
       "operator_erasure_requested": "Pidió el borrado",
       "operator_erasure_approved": "Aprobó el borrado",
       "operator_erasure_cancelled": "Canceló la solicitud de borrado",
+      "staff_added": "Añadió a una persona del equipo",
       "staff_role_changed": "Cambió el rol de una persona del equipo",
       "staff_disabled": "Desactivó a una persona del equipo",
       "staff_enabled": "Reactivó a una persona del equipo",

@@ -330,6 +330,7 @@
       "operator_erasure_requested": "Requested erasure",
       "operator_erasure_approved": "Approved the erasure",
       "operator_erasure_cancelled": "Cancelled the erasure request",
+      "staff_added": "Added a team member",
       "staff_role_changed": "Changed a team member's role",
       "staff_disabled": "Disabled a team member",
       "staff_enabled": "Re-enabled a team member",
