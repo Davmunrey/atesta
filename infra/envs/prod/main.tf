@@ -134,13 +134,14 @@ output "staff_cognito" {
 # decides. images, edge and mail_domain stay null until images are pushed and the owner has a
 # domain and certificates (docs/runbooks/deploy.md); until then only the base layer is planned.
 variable "images" {
-  type    = object({ api = string, worker = string, scan = string, egress = string })
+  type    = object({ api = string, worker = string, scan = string, egress = string, operator = string })
   default = null
 }
 
 variable "edge" {
   type = object({
     aliases                 = list(string)
+    admin_aliases           = list(string) # the operator portal's host (ADR-017)
     web_certificate_arn     = string
     api_origin_domain       = string
     api_certificate_arn     = string
@@ -180,6 +181,12 @@ module "platform" {
   mail_domain           = var.mail_domain
   alert_email           = var.budget_email
   scan_organizations    = var.scan_organizations
+  staff_pool = {
+    user_pool_id  = module.staff_cognito.user_pool_id
+    user_pool_arn = module.staff_cognito.user_pool_arn
+    app_client_id = module.staff_cognito.app_client_id
+    domain        = module.staff_cognito.domain
+  }
 }
 
 output "platform" {

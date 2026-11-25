@@ -12,6 +12,8 @@
 !apps/api/src/**
 !apps/mcp/pyproject.toml
 !apps/mcp/src/**
+!apps/operator/pyproject.toml
+!apps/operator/src/**
 !apps/worker/pyproject.toml
 !apps/worker/src/**
 !catalog/**

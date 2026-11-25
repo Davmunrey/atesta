@@ -63,7 +63,7 @@ jobs:
         env:
           TFVARS_JSON: ${{ vars.TFVARS_JSON }}
         run: |
-          echo "$TFVARS_JSON" | jq -e '.edge.aliases[0] and .edge.api_origin_domain' > /dev/null \
+          echo "$TFVARS_JSON" | jq -e '.edge.aliases[0] and .edge.admin_aliases[0] and .edge.api_origin_domain' > /dev/null \
             || { echo "TFVARS_JSON needs edge (see docs/runbooks/deploy.md)"; exit 1; }
           echo "$TFVARS_JSON" > settings.json
           $TOFU output -json deploy > deploy.json
@@ -73,7 +73,7 @@ jobs:
           aws ecr get-login-password | docker login --username AWS --password-stdin "$registry"
           tag="$GITHUB_SHA"
           digest() { docker inspect --format '{{index .RepoDigests 0}}' "$1"; }
-          for target in api worker; do
+          for target in api worker operator; do
             repo=$(jq -r ".repositories.$target" deploy.json)
             docker build -f apps/Dockerfile --target "$target" -t "$repo:$tag" .
             docker push "$repo:$tag"
@@ -86,9 +86,10 @@ jobs:
           docker push "$egress:$tag"
           jq -n --arg api "$(digest "$(jq -r .repositories.api deploy.json):$tag")" \
                 --arg worker "$(digest "$(jq -r .repositories.worker deploy.json):$tag")" \
+                --arg operator "$(digest "$(jq -r .repositories.operator deploy.json):$tag")" \
                 --arg scan "$(digest "$scan:$tag")" \
                 --arg egress "$(digest "$egress:$tag")" \
-                '{api: $api, worker: $worker, scan: $scan, egress: $egress}' > images.json
+                '{api: $api, worker: $worker, scan: $scan, egress: $egress, operator: $operator}' > images.json
           cat images.json
       - name: Build the web app
         working-directory: apps/web

@@ -20,7 +20,7 @@ variable "kms_key_arn" {
 }
 
 resource "aws_ecr_repository" "this" {
-  for_each             = toset(["api", "worker", "scan", "egress"])
+  for_each             = toset(["api", "worker", "scan", "egress", "operator"])
   name                 = "${var.name}/${each.key}"
   image_tag_mutability = "IMMUTABLE"
   image_scanning_configuration {

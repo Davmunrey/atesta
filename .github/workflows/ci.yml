@@ -258,10 +258,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Build the API and worker images
+      - name: Build the API, worker and operator images
         run: |
           docker build -f apps/Dockerfile --target api -t atesta-api:ci .
           docker build -f apps/Dockerfile --target worker -t atesta-worker:ci .
+          docker build -f apps/Dockerfile --target operator -t atesta-operator:ci .
       - name: Smoke as ECS runs them (read-only root, user 10001, no capabilities)
         run: |
           locked=(--rm --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges)
@@ -270,6 +271,11 @@ jobs:
           # The customer API image holds no operator service (ADR-017, "Images").
           docker run "${locked[@]}" atesta-api:ci python -c 'import importlib.util, sys; sys.exit(importlib.util.find_spec("atesta_operator") is not None)'
           test "$(docker run "${locked[@]}" atesta-api:ci id -u)" = 10001
+          # The operator image holds the API's modules but no worker, and reads the plans catalog.
+          docker run "${locked[@]}" atesta-operator:ci python -c "import atesta_operator.main"
+          docker run "${locked[@]}" atesta-operator:ci python -c 'import importlib.util, sys; sys.exit(importlib.util.find_spec("atesta_worker") is not None)'
+          docker run "${locked[@]}" atesta-operator:ci python -c "from atesta_api.modules.billing.api import known_addons; assert known_addons()"
+          test "$(docker run "${locked[@]}" atesta-operator:ci id -u)" = 10001
       # Scan egress proxy (issue 454): the allowlist must load, and as ECS runs it, an allowed
       # host gets a 200 CONNECT while any other host, or plain HTTP, gets 403.
       - name: Egress proxy, validated and tested as ECS runs it

@@ -332,7 +332,15 @@ def test_every_container_is_locked_down_and_logs_to_its_own_group() -> None:
     assert locked["readonlyRootFilesystem"] is True and locked["privileged"] is False
     assert locked["user"] == "10001"
     assert locked["linuxParameters"]["capabilities"]["drop"] == ["ALL"]
-    assert set(CONTAINERS) == {"api", "worker", "migrate", "bootstrap", "scan", "egress"}
+    assert set(CONTAINERS) == {
+        "api",
+        "worker",
+        "migrate",
+        "bootstrap",
+        "scan",
+        "egress",
+        "operator",
+    }
     for name, container in CONTAINERS.items():
         assert container.startswith("${merge(local.locked, {"), name
         assert 'logDriver = "awslogs"' in container, name
@@ -357,7 +365,7 @@ def test_images_are_pinned_by_digest_and_registries_are_immutable() -> None:
     rule = ECS_VARS["images"]["validation"][0]["condition"]
     assert "@sha256:[0-9a-f]{64}$" in rule
     repos = resources("modules/ecr/main.tf")["aws_ecr_repository.this"]
-    assert repos["for_each"] == '${toset(["api", "worker", "scan", "egress"])}'
+    assert repos["for_each"] == '${toset(["api", "worker", "scan", "egress", "operator"])}'
     assert repos["image_tag_mutability"] == "IMMUTABLE"
     assert repos["image_scanning_configuration"] == [{"scan_on_push": True}]
     assert repos["encryption_configuration"][0]["encryption_type"] == "KMS"
@@ -1092,8 +1100,11 @@ def test_interface_endpoints_carry_image_pulls_logs_and_secrets() -> None:
     assert outputs["endpoints_security_group_id"]["value"] == "${aws_security_group.endpoints.id}"
 
 
-def test_every_image_variable_includes_the_egress_proxy() -> None:
-    expected = "${object({api = string, worker = string, scan = string, egress = string})}"
+def test_every_image_variable_includes_the_egress_proxy_and_the_operator() -> None:
+    expected = (
+        "${object({api = string, worker = string, scan = string, egress = string,"
+        " operator = string})}"
+    )
     assert ECS_VARS["images"]["type"] == expected
     for path in ("modules/platform/main.tf", "envs/dev/main.tf", "envs/prod/main.tf"):
         variables = {k: v for b in load(path)["variable"] for k, v in b.items()}
@@ -1207,3 +1218,88 @@ def test_the_operator_has_its_own_database_secret_and_session_key() -> None:
     assert secrets["bootstrap"]["ATESTA_OPERATOR_DATABASE_URL"] == url  # LOGIN from its URL
     for task in ("api", "worker", "migrate"):  # the customer side never holds it
         assert url not in secrets[task].values(), task
+
+
+OPERATOR = resources("modules/ecs/operator.tf")
+OPERATOR_FILE = load("modules/ecs/operator.tf")
+OPERATOR_POLICIES = {
+    name: body
+    for block in OPERATOR_FILE["data"]
+    for kind, named in block.items()
+    if kind == "aws_iam_policy_document"
+    for name, body in named.items()
+}
+
+
+def test_the_operator_task_role_may_only_read_the_staff_pool_mfa_settings() -> None:
+    (statement,) = OPERATOR_POLICIES["operator"]["statement"]
+    assert statement["actions"] == ["cognito-idp:GetUserPoolMfaConfig"]
+    assert statement["resources"] == ["${var.operator.staff_pool_arn}"]
+    task = OPERATOR["aws_ecs_task_definition.operator"]
+    assert task["task_role_arn"] == "${aws_iam_role.operator.arn}"
+    assert task["execution_role_arn"] == "${aws_iam_role.operator_execution.arn}"
+    attached = [k for k in OPERATOR if k.startswith("aws_iam_role_policy_attachment.")]
+    assert attached == ["aws_iam_role_policy_attachment.operator_execution_managed"]
+
+
+def test_only_the_operator_execution_role_reads_the_operator_secrets() -> None:
+    read = OPERATOR_POLICIES["operator_execution"]["statement"][0]
+    assert read["resources"] == "${local.operator_secret_arns}"
+    assert "var.secrets.operator" in OPERATOR_FILE["locals"][0]["operator_secret_arns"]
+    shared = ECS_FILE["locals"][0]["secret_arns"]
+    assert "var.secrets.operator" not in shared  # the API, worker and migrate role never can
+    container = CONTAINERS["operator"]
+    assert "secrets = [for k, arn in var.secrets.operator :" in container
+    assert "var.environment" not in container  # never the API's settings
+    platform = {k: v for m in PLATFORM_FILE["module"] for k, v in m.items()}
+    operator_secrets = platform["ecs"]["secrets"]["operator"]
+    assert set(operator_secrets) == {"ATESTA_OPERATOR_DATABASE_URL", "ATESTA_OPERATOR_SESSION_KEY"}
+    session_key = "${aws_secretsmanager_secret.session_key.arn}"
+    assert session_key not in operator_secrets.values()  # the console's key stays the API's
+    rule = OPERATOR_FILE["variable"][0]["operator"]["validation"][0]["condition"]
+    assert "DATABASE_URL|_KEY|SECRET|PASSWORD|TOKEN" in rule
+
+
+def test_the_operator_runs_privately_and_takes_traffic_only_from_the_load_balancer() -> None:
+    service = OPERATOR["aws_ecs_service.operator"]
+    network = service["network_configuration"][0]
+    assert network["assign_public_ip"] is False
+    assert network["subnets"] == "${var.private_subnet_ids}"
+    assert network["security_groups"] == ["${aws_security_group.operator.id}"]
+    assert service["deployment_circuit_breaker"][0] == {"enable": True, "rollback": True}
+    assert service["load_balancer"][0]["container_port"] == 8001
+    ingress = {k: v for k, v in OPERATOR.items() if k.startswith("aws_vpc_security_group_ingress")}
+    assert set(ingress) == {
+        "aws_vpc_security_group_ingress_rule.operator_from_alb",
+        "aws_vpc_security_group_ingress_rule.db_from_operator",
+    }
+    from_alb = ingress["aws_vpc_security_group_ingress_rule.operator_from_alb"]
+    assert from_alb["referenced_security_group_id"] == "${aws_security_group.alb.id}"
+    assert all("cidr_ipv4" not in rule for rule in ingress.values())
+    assert OPERATOR["aws_lb_target_group.operator"]["health_check"][0]["path"] == "/health"
+
+
+def test_only_the_admin_distributions_header_reaches_the_operator() -> None:
+    rule = OPERATOR["aws_lb_listener_rule.operator"]
+    header = rule["condition"][0]["http_header"][0]
+    assert header == {
+        "http_header_name": "${local.operator_header}",
+        "values": ["${var.operator_origin_header}"],
+    }
+    assert rule["action"][0]["target_group_arn"] == "${aws_lb_target_group.operator.arn}"
+    variable = OPERATOR_FILE["variable"][1]["operator_origin_header"]
+    assert variable["sensitive"] is True
+    secret = PLATFORM["aws_secretsmanager_secret.operator_origin_header"]
+    assert secret["name"] == "atesta/${var.name}/operator/origin-header"
+    assert "aws_secretsmanager_secret_version.operator_origin_header" not in PLATFORM  # by hand
+    # The API's default action is unchanged: no header, no operator.
+    assert EDGE["aws_lb_listener.https"]["default_action"][0]["target_group_arn"] == (
+        "${aws_lb_target_group.api.arn}"
+    )
+
+
+def test_the_deploy_builds_and_pins_the_operator_image() -> None:
+    deploy = (WORKFLOWS / "deploy.yml").read_text()
+    assert "for target in api worker operator; do" in deploy
+    assert "operator: $operator" in deploy
+    assert ".edge.admin_aliases[0]" in deploy

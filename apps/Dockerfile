@@ -1,8 +1,10 @@
-# Atesta API and worker image (issue #236, hosted-environment spec). One build, two targets:
+# Atesta API, worker and operator images (issue #236, hosted-environment spec; ADR-017). Targets:
 #   docker build -f apps/Dockerfile --target api -t atesta-api .
 #   docker build -f apps/Dockerfile --target worker -t atesta-worker .
+#   docker build -f apps/Dockerfile --target operator -t atesta-operator .
 # The api target also runs migrations (ECS migrate task: alembic -c apps/api/alembic.ini upgrade
-# head). Same pinned base as scanner/Dockerfile. Third-party packages install only by hash, from
+# head). The operator target is built from its own stages: the api and worker targets never copy
+# or install apps/operator, and the operator holds no worker (ADR-017, "Images"). Same pinned base as scanner/Dockerfile. Third-party packages install only by hash, from
 # an export of uv.lock made at build time (so Dependabot's lock updates need no second file);
 # Atesta's own packages build offline from this tree with the hash-locked hatchling. Runs as 10001
 # on a read-only root; only /tmp is written.
@@ -38,6 +40,32 @@ RUN /opt/build/bin/pip wheel --no-deps --no-build-isolation --no-index -w /wheel
       /src/packages/core /src/apps/api /src/apps/mcp /src/apps/worker \
  && /opt/venv/bin/pip install --no-deps --no-index /wheels/*.whl
 
+# The operator service (ADR-017): the same steps for its own closure, which has atesta-api and
+# atesta-mcp (an atesta-api dependency) but not the worker.
+FROM base AS operator-build
+COPY --from=uv /uv /usr/local/bin/uv
+WORKDIR /src
+COPY pyproject.toml uv.lock ./
+COPY packages/core/pyproject.toml packages/core/
+COPY apps/api/pyproject.toml apps/api/
+COPY apps/mcp/pyproject.toml apps/mcp/
+COPY apps/operator/pyproject.toml apps/operator/
+COPY scanner/pyproject.toml scanner/
+COPY apps/build-requirements.txt /tmp/
+RUN uv export --frozen --no-dev --package atesta-operator --no-emit-workspace \
+      --format requirements-txt --no-header -o /tmp/requirements.txt \
+ && python -m venv /opt/build \
+ && /opt/build/bin/pip install --require-hashes -r /tmp/build-requirements.txt \
+ && python -m venv /opt/venv \
+ && /opt/venv/bin/pip install --require-hashes --no-deps -r /tmp/requirements.txt
+COPY packages/core /src/packages/core
+COPY apps/api /src/apps/api
+COPY apps/mcp /src/apps/mcp
+COPY apps/operator /src/apps/operator
+RUN /opt/build/bin/pip wheel --no-deps --no-build-isolation --no-index -w /wheels \
+      /src/packages/core /src/apps/api /src/apps/mcp /src/apps/operator \
+ && /opt/venv/bin/pip install --no-deps --no-index /wheels/*.whl
+
 FROM base AS runtime
 RUN useradd --uid 10001 --no-create-home --shell /usr/sbin/nologin atesta
 COPY --from=build /opt/venv /opt/venv
@@ -57,3 +85,16 @@ CMD ["uvicorn", "atesta_api.main:app", "--host", "0.0.0.0", "--port", "8000", "-
 
 FROM runtime AS worker
 CMD ["atesta-worker"]
+
+# Organization metadata only: no migrations, no scanner files. The catalog is read for the plans
+# and add-ons (billing.api). Port 8001, as in development; the load balancer forwards to it.
+FROM base AS operator
+RUN useradd --uid 10001 --no-create-home --shell /usr/sbin/nologin atesta
+COPY --from=operator-build /opt/venv /opt/venv
+COPY catalog /app/catalog
+ENV PATH=/opt/venv/bin:$PATH \
+    ATESTA_CATALOG_DIR=/app/catalog
+WORKDIR /app
+USER 10001
+EXPOSE 8001
+CMD ["uvicorn", "atesta_operator.main:app", "--host", "0.0.0.0", "--port", "8001", "--no-server-header", "--no-access-log"]

@@ -152,7 +152,7 @@ module "ecr" {
 # Services come up once images are pushed (pinned by digest) and the edge certificates exist;
 # until then images and edge stay null and only the base layer is planned.
 variable "images" {
-  type    = object({ api = string, worker = string, scan = string, egress = string })
+  type    = object({ api = string, worker = string, scan = string, egress = string, operator = string })
   default = null
 }
 
@@ -161,6 +161,7 @@ variable "images" {
 variable "edge" {
   type = object({
     aliases                 = list(string)
+    admin_aliases           = list(string) # the operator portal's host (ADR-017)
     web_certificate_arn     = string
     api_origin_domain       = string
     api_certificate_arn     = string
@@ -175,6 +176,11 @@ variable "app_environment" {
   default     = {}
 }
 
+variable "staff_pool" {
+  description = "The staff Cognito pool (modules/staff-cognito) the operator service trusts."
+  type        = object({ user_pool_id = string, user_pool_arn = string, app_client_id = string, domain = string })
+}
+
 resource "aws_secretsmanager_secret" "session_key" {
   name        = "atesta/${var.name}/api/session-key"
   description = "ATESTA_SESSION_KEY (base64, 32 bytes), set by hand"
@@ -186,6 +192,20 @@ resource "aws_secretsmanager_secret" "operator_session_key" {
   name        = "atesta/${var.name}/operator/session-key"
   description = "ATESTA_OPERATOR_SESSION_KEY (base64, 32 bytes), set by hand; differs from the API's"
   kms_key_id  = module.kms.secrets_key_arn
+}
+
+# The header value only the admin distribution sends to the load balancer (ADR-017,
+# "Reaching the target group"): letters and digits, set by hand before edge (deploy runbook).
+# Reading it puts it in the state, which is private and encrypted; it routes, it grants no data.
+resource "aws_secretsmanager_secret" "operator_origin_header" {
+  name        = "atesta/${var.name}/operator/origin-header"
+  description = "X-Atesta-Operator-Origin value, set by hand; rotate by setting a new value and applying"
+  kms_key_id  = module.kms.secrets_key_arn
+}
+
+data "aws_secretsmanager_secret_version" "operator_origin_header" {
+  count     = var.edge == null ? 0 : 1
+  secret_id = aws_secretsmanager_secret.operator_origin_header.id
 }
 
 # The platform's M365 scanner credential (issue 453): {AZURE_CLIENT_ID, M365_CERTIFICATE_CONTENT}
@@ -220,6 +240,19 @@ locals {
     ATESTA_FILE_SCAN_QUEUE_URL = aws_sqs_queue.file_scans.url
     AWS_DEFAULT_REGION         = data.aws_region.current.region
   })
+  # The operator's own settings (apps/operator, settings.py). The customer pool's ids go along
+  # only so its startup can refuse them as the staff pool; nothing else of the API's.
+  operator_environment = merge(
+    { for k, v in var.app_environment : k => v if contains(["ATESTA_ENV", "ATESTA_DB_SSLMODE", "ATESTA_COGNITO_USER_POOL_ID", "ATESTA_COGNITO_APP_CLIENT_ID"], k) },
+    {
+      ATESTA_STAFF_COGNITO_REGION        = data.aws_region.current.region
+      ATESTA_STAFF_COGNITO_USER_POOL_ID  = var.staff_pool.user_pool_id
+      ATESTA_STAFF_COGNITO_APP_CLIENT_ID = var.staff_pool.app_client_id
+      ATESTA_STAFF_COGNITO_DOMAIN        = var.staff_pool.domain
+      ATESTA_OPERATOR_WEB_ORIGIN         = try("https://${var.edge.admin_aliases[0]}", "")
+      AWS_DEFAULT_REGION                 = data.aws_region.current.region
+    },
+  )
 }
 
 module "ecs" {
@@ -243,8 +276,13 @@ module "ecs" {
   certificate_arn       = var.edge.api_certificate_arn
   images                = var.images
   environment           = local.app_environment
-  api_count             = var.api_count
-  worker_count          = var.worker_count
+  operator = {
+    staff_pool_arn = var.staff_pool.user_pool_arn
+    environment    = local.operator_environment
+  }
+  operator_origin_header = data.aws_secretsmanager_secret_version.operator_origin_header[0].secret_string
+  api_count              = var.api_count
+  worker_count           = var.worker_count
   secrets = {
     api = {
       ATESTA_DATABASE_URL = module.database.app_url_secret_arn
@@ -257,6 +295,10 @@ module "ecs" {
       ATESTA_DATABASE_URL           = module.database.app_url_secret_arn
       ATESTA_MIGRATION_DATABASE_URL = module.database.migration_url_secret_arn
       ATESTA_OPERATOR_DATABASE_URL  = module.database.operator_url_secret_arn
+    }
+    operator = {
+      ATESTA_OPERATOR_DATABASE_URL = module.database.operator_url_secret_arn
+      ATESTA_OPERATOR_SESSION_KEY  = aws_secretsmanager_secret.operator_session_key.arn
     }
   }
   decrypt_key_arns = [module.kms.database_key_arn]
