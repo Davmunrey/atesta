@@ -46,6 +46,7 @@ STAFF = {
     "second-admin@atesta.test": "admin",
     "billing@atesta.test": "billing",
     "support@atesta.test": "support",
+    "rotating@atesta.test": "support",  # the team screen's e2e changes this one's role
 }
 
 
@@ -89,6 +90,14 @@ def seed_operator(admin_url: str) -> None:
                 " 'Clínica Norte Sociedad Limitada', 'B12345678', 'Calle Mayor 1', '28001',"
                 " 'Madrid', 'Madrid', 'ES', 'facturas@example.test' FROM organizations"
                 " WHERE name = 'Clínica Norte S.L.'"
+            )
+        )
+        # An earlier erasure's receipt: the organization is gone, only its id and counts stay.
+        conn.execute(
+            text(
+                "INSERT INTO erasure_receipts (id, organization_id, closure_requested_at, note,"
+                " row_counts) VALUES (gen_random_uuid(), gen_random_uuid(),"
+                " now() - interval '40 days', 'e2e', '{\"organizations\": 1, \"memberships\": 3}')"
             )
         )
         conn.execute(
