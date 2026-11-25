@@ -173,7 +173,65 @@
       "over_privileged": "{count, plural, one {# con permisos de más} other {# con permisos de más}}",
       "revoked": "{count, plural, one {# con acceso revocado} other {# con acceso revocado}}",
       "disconnected": "{count, plural, one {# desconectada} other {# desconectadas}}"
-    }
+    },
+    "changePlan": "Cambiar el plan",
+    "editBilling": "Editar",
+    "notForRole": "Tu rol no permite esta acción."
+  },
+  "plan": {
+    "title": "Cambiar el plan",
+    "plan": "Plan",
+    "plans": {
+      "starter": "Starter",
+      "pro": "Pro",
+      "business": "Business"
+    },
+    "addons": "Complementos",
+    "features": {
+      "daily_monitoring": "Supervisión diaria",
+      "evidence_export": "Exportación de evidencias",
+      "policy_ai_review": "Revisión de políticas con IA",
+      "questionnaire_autofill": "Respuesta automática de cuestionarios",
+      "trust_center": "Centro de confianza"
+    },
+    "note": "Nota del plan (opcional)",
+    "noteHint": "Se guarda con el plan de la organización: no escribas nada interno.",
+    "reason": "Motivo",
+    "reasonHint": "Solo para el registro de operaciones; la organización no lo ve.",
+    "save": "Guardar el plan",
+    "preview": "Qué cambia",
+    "connectorLimit": "Límite de conexiones",
+    "noLimit": "sin límite",
+    "connections": "{count, plural, one {# conexión} other {# conexiones}}",
+    "gains": "Funciones que gana",
+    "loses": "Funciones que pierde",
+    "nothing": "Ninguna",
+    "overLimit": "La organización usa {count, plural, one {# conexión} other {# conexiones}} y el nuevo plan permite {limit, number}: las que tiene siguen funcionando, pero no podrá añadir más.",
+    "form": "Plan y complementos"
+  },
+  "billingForm": {
+    "title": "Datos de facturación",
+    "help": "Los datos que usarán las facturas. Solo se comprueba su formato.",
+    "fields": {
+      "legal_name": "Razón social",
+      "tax_id": "NIF",
+      "address_line1": "Dirección",
+      "address_line2": "Dirección, segunda línea (opcional)",
+      "postal_code": "Código postal",
+      "city": "Ciudad",
+      "region": "Provincia o región",
+      "country": "País",
+      "contact_email": "Email de facturación"
+    },
+    "hints": {
+      "tax_id": "Para España, NIF de empresa, DNI o NIE; se ignoran espacios, puntos y guiones.",
+      "country": "Código de dos letras (ISO 3166-1), por ejemplo ES."
+    },
+    "invalid": "El formato de este campo no es válido.",
+    "reason": "Motivo",
+    "reasonHint": "Solo para el registro de operaciones; la organización no lo ve.",
+    "save": "Guardar los datos de facturación",
+    "form": "Datos para las facturas"
   },
   "pagination": {
     "label": "Páginas",

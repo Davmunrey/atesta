@@ -3,7 +3,14 @@ import { render } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
 import { vi } from "vitest";
+import { StaffContext } from "@/components/portal-shell";
 import { MESSAGES } from "@/lib/messages";
+import type { StaffRole } from "@/lib/roles";
+
+/** A screen inside the shell, signed in with `role`. */
+export function renderAs(role: StaffRole, ui: ReactNode, locale: "es" | "en" = "es") {
+  return renderWithProviders(<StaffContext value={{ email: `${role}@atesta.test`, role }}>{ui}</StaffContext>, locale);
+}
 
 export function renderWithProviders(ui: ReactNode, locale: "es" | "en" = "es") {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });

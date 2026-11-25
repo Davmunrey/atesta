@@ -154,6 +154,20 @@
   .confirm-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; }
   .form-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem; }
 
+  /* Forms (FormField; DESIGN.md, "Forms"): labelled fields in a grid, two columns from 48rem;
+     hints muted, a field's error in the danger colour beside a danger border. */
+  .form-grid { display: grid; gap: 1rem; max-width: 52rem; }
+  @media (min-width: 48rem) { .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .form-grid > :is(.form-wide, .form-actions, fieldset, [role="alert"]) { grid-column: 1 / -1; } }
+  .form-grid fieldset { display: grid; gap: 0.5rem; min-width: 0; margin: 0; padding: 0; border: 0; }
+  .form-grid legend { margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; }
+  .form-field { display: grid; gap: 0.375rem; min-width: 0; font-size: 0.875rem; font-weight: 500; }
+  .form-field textarea { min-height: 5rem; resize: vertical; }
+  .form-hint { font-size: 0.8125rem; font-weight: 400; color: var(--color-muted); }
+  .form-error { font-size: 0.875rem; font-weight: 400; color: var(--color-danger); }
+  .field[aria-invalid="true"] { border-color: var(--color-danger); }
+  .form-grid .form-actions { margin-top: 0; }
+  .form-grid input[type="checkbox"] { width: 1.125rem; height: 1.125rem; accent-color: var(--color-link); }
+
   /* A list's filters (FilterBar): labelled fields and pressed toggles in one wrapping row. */
   .filters { display: flex; flex-wrap: wrap; align-items: end; gap: 0.75rem 1rem; margin-bottom: 1rem; }
   .filters label { display: grid; gap: 0.375rem; min-width: 0; font-size: 0.875rem; font-weight: 500; }
@@ -217,6 +231,9 @@ tr.row-detail > td { padding-top: 0; }
 
 /* Links that stand alone as actions (not inside running text) are full-height targets. */
 .action-link { display: inline-flex; align-items: center; min-height: 2.75rem; }
+/* A checkbox beside its label; a hint below them. */
+.checkbox-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.checkbox-row > .text-sm { flex-basis: 100%; }
 /* Recorded fields (Facts): label and value rows; one column when the panel is narrow. */
 .facts { display: grid; gap: 0.5rem; margin: 0; container-type: inline-size; }
 .facts div { display: grid; grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr); gap: 1rem; }

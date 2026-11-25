@@ -35,6 +35,7 @@ copy it.
   | `locale-switcher`, `i18n/locale`, `i18n/provider` | the switcher, the locale cookie rules, `I18nProvider` (each app passes its own messages) |
   | `format` | `percent`, `fileSize` |
   | `csp` | the CSP build step, run from the app's directory after `next build` |
+  | `form` | `FormField` (#489); `ApiError` also carries the refused `field` |
   | `facts`, `lists` | `Facts` and `Fact` (the console's billing-details rows, moved), `FilterBar` and `Pagination`, added for the portal (#488) |
   | `auth`, `gen-api-types`, `check-licenses`, `e2e-polish`, `scripts/serve.mjs` | added for the operator portal (#487): the BFF sign-in and sign-out URLs; the typed-client generator and the licence check, each run from the app's directory; the e2e polish bar; the CloudFront stand-in |
 

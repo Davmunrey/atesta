@@ -173,7 +173,65 @@
       "over_privileged": "{count, plural, one {# with too many permissions} other {# with too many permissions}}",
       "revoked": "{count, plural, one {# with access revoked} other {# with access revoked}}",
       "disconnected": "{count, plural, one {# disconnected} other {# disconnected}}"
-    }
+    },
+    "changePlan": "Change the plan",
+    "editBilling": "Edit",
+    "notForRole": "Your role does not allow this action."
+  },
+  "plan": {
+    "title": "Change the plan",
+    "plan": "Plan",
+    "plans": {
+      "starter": "Starter",
+      "pro": "Pro",
+      "business": "Business"
+    },
+    "addons": "Add-ons",
+    "features": {
+      "daily_monitoring": "Daily monitoring",
+      "evidence_export": "Evidence export",
+      "policy_ai_review": "AI policy review",
+      "questionnaire_autofill": "Questionnaire autofill",
+      "trust_center": "Trust center"
+    },
+    "note": "Plan note (optional)",
+    "noteHint": "Stored with the organization's plan: write nothing internal.",
+    "reason": "Reason",
+    "reasonHint": "For the operations log only; the organization does not see it.",
+    "save": "Save the plan",
+    "preview": "What changes",
+    "connectorLimit": "Connection limit",
+    "noLimit": "no limit",
+    "connections": "{count, plural, one {# connection} other {# connections}}",
+    "gains": "Features gained",
+    "loses": "Features lost",
+    "nothing": "None",
+    "overLimit": "The organization uses {count, plural, one {# connection} other {# connections}} and the new plan allows {limit, number}: the ones it has keep working, but it cannot add more.",
+    "form": "Plan and add-ons"
+  },
+  "billingForm": {
+    "title": "Billing details",
+    "help": "The details invoices will use. Only their format is checked.",
+    "fields": {
+      "legal_name": "Legal name",
+      "tax_id": "Tax ID",
+      "address_line1": "Address",
+      "address_line2": "Address, second line (optional)",
+      "postal_code": "Postal code",
+      "city": "City",
+      "region": "Province or region",
+      "country": "Country",
+      "contact_email": "Billing email"
+    },
+    "hints": {
+      "tax_id": "For Spain, a company NIF, DNI or NIE; spaces, dots and hyphens are ignored.",
+      "country": "Two-letter code (ISO 3166-1), for example ES."
+    },
+    "invalid": "This field's format is not valid.",
+    "reason": "Reason",
+    "reasonHint": "For the operations log only; the organization does not see it.",
+    "save": "Save the billing details",
+    "form": "Details for invoices"
   },
   "pagination": {
     "label": "Pages",

@@ -7,7 +7,10 @@ import { Badge } from "@atesta/ui/badge";
 import { Fact, Facts } from "@atesta/ui/facts";
 import { LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 import { type OrganizationDetail, useOrganization } from "@/lib/api/organizations";
-import { HealthBadge, PlanName, StateBadge } from "./organization-labels";
+import Link from "next/link";
+import { canBill } from "@/lib/roles";
+import { AddonName, HealthBadge, PlanName, StateBadge } from "./organization-labels";
+import { useStaff } from "./portal-shell";
 
 /** Screen 3 of the operator-portal spec: every metadata field, grouped; never content. */
 export function OrganizationDetailPage() {
@@ -71,12 +74,17 @@ function State({ org }: Props) {
   </Facts></Panel>;
 }
 
+/** The way to an action, shown only to the roles that may take it (spec, screen 3). */
+function Action({ href, label }: { href: string; label: string }) {
+  return canBill(useStaff().role) ? <Link href={href} className="dashboard-button action-link">{label}</Link> : null;
+}
+
 function Plan({ org }: Props) {
   const t = useTranslations("organization");
   const date = useDate();
-  return <Panel title={t("plan")}><Facts>
+  return <Panel title={t("plan")} actions={<Action href={`/organization/plan?id=${org.id}`} label={t("changePlan")} />}><Facts>
     <Fact label={t("plan")}><PlanName plan={org.plan.plan} isDefault={org.plan.default} /></Fact>
-    <Fact label={t("addons")}>{org.plan.addons?.length ? org.plan.addons.join(", ") : t("noAddons")}</Fact>
+    <Fact label={t("addons")}>{org.plan.addons?.length ? org.plan.addons.map((a, i) => <span key={a}>{i > 0 ? ", " : null}<AddonName addon={a} /></span>) : t("noAddons")}</Fact>
     {org.plan.note ? <Fact label={t("note")}>{org.plan.note}</Fact> : null}
     {org.plan.updated_at ? <Fact label={t("planSet")}>{date(org.plan.updated_at)}</Fact> : null}
   </Facts></Panel>;
@@ -85,7 +93,7 @@ function Plan({ org }: Props) {
 function Billing({ org }: Props) {
   const t = useTranslations("organization");
   const b = org.billing;
-  return <Panel title={t("billing")}>{b === null ? <p className="state-empty">{t("noBilling")}</p> : <Facts>
+  return <Panel title={t("billing")} actions={<Action href={`/organization/billing?id=${org.id}`} label={t("editBilling")} />}>{b === null ? <p className="state-empty">{t("noBilling")}</p> : <Facts>
     <Fact label={t("billingState")}>{b.complete ? <Badge state="billingComplete">{t("complete")}</Badge> : <Badge state="billingMissing">{t("incomplete")}</Badge>}</Fact>
     <Fact label={t("legalName")}>{b.legal_name ?? t("notRecorded")}</Fact>
     {b.view === "full" ? <>
