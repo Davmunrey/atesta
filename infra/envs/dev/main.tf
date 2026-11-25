@@ -44,6 +44,33 @@ module "cognito" {
   logout_urls   = ["http://localhost:3000/"]
 }
 
+# Operator portal staff (ADR-017): its own pool. Local portal sign-in uses the fake staff pool,
+# so the localhost URLs serve only a dev portal pointed at this pool.
+variable "admin_url" {
+  description = "Public origin of the operator portal, for example https://admin.example.com."
+  type        = string
+  default     = null
+}
+
+variable "staff_passkeys" {
+  description = "Offer passkeys to staff; set only after the deploy runbook's passkey step."
+  type        = bool
+  default     = false
+}
+
+locals {
+  admin_origins = concat(["http://localhost:3001"], var.admin_url == null ? [] : [var.admin_url])
+}
+
+module "staff_cognito" {
+  source        = "../../modules/staff-cognito"
+  name          = "atesta-dev-staff"
+  domain_prefix = "atesta-dev-staff"
+  callback_urls = [for origin in local.admin_origins : "${origin}/auth/callback"]
+  logout_urls   = [for origin in local.admin_origins : "${origin}/"]
+  passkeys      = var.staff_passkeys
+}
+
 module "github_oidc" {
   source       = "../../modules/github-oidc"
   repository   = "Davmunrey/atesta"
@@ -60,6 +87,14 @@ output "cognito_app_client_id" {
 
 output "cognito_domain" {
   value = module.cognito.domain
+}
+
+output "staff_cognito" {
+  value = {
+    user_pool_id  = module.staff_cognito.user_pool_id
+    app_client_id = module.staff_cognito.app_client_id
+    domain        = module.staff_cognito.domain
+  }
 }
 
 # Hosted environment (hosted-environment spec): dev sizes. Nothing is applied until the owner

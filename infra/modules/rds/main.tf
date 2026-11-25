@@ -164,11 +164,19 @@ resource "aws_db_instance" "this" {
   depends_on                      = [aws_cloudwatch_log_group.postgres]
 }
 
-# Connection URLs for the two application roles. Values are written once by the runbook after
+# Connection URLs for the application roles. Values are written once by the runbook after
 # bootstrap.sql sets each role's password; tasks read them through ECS secrets.
 resource "aws_secretsmanager_secret" "app_url" {
   name        = "atesta/${var.name}/db/app-url"
   description = "ATESTA_DATABASE_URL for atesta_app"
+  kms_key_id  = var.secrets_key_arn
+}
+
+# The operator service's own credential (ADR-017, "Credentials, never shared"): only its task and
+# the bootstrap task read it.
+resource "aws_secretsmanager_secret" "operator_url" {
+  name        = "atesta/${var.name}/db/operator-url"
+  description = "ATESTA_OPERATOR_DATABASE_URL for atesta_operator (operator service only)"
   kms_key_id  = var.secrets_key_arn
 }
 
@@ -188,6 +196,10 @@ output "master_secret_arn" {
 
 output "app_url_secret_arn" {
   value = aws_secretsmanager_secret.app_url.arn
+}
+
+output "operator_url_secret_arn" {
+  value = aws_secretsmanager_secret.operator_url.arn
 }
 
 output "migration_url_secret_arn" {

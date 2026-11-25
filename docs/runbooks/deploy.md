@@ -68,13 +68,13 @@ In prod, also pass these. The Cognito email identity is created in eu-west-3, an
 
 ## 4. Secrets (never in git, never in shell history)
 
-Generate two passwords and write the connection URLs. Work in a tmpfs or with `umask 077`, and
-delete the files afterwards:
+Generate three passwords and write the connection URLs: the app, the migrations and the operator
+service (ADR-017). Work in a tmpfs or with `umask 077`, and delete the files afterwards:
 
 ```bash
 host=$(tofu output -json platform | jq -r .database_endpoint)
-for role in app migration; do
-  user=$([ $role = app ] && echo atesta_app || echo atesta_owner)
+for role in app migration operator; do
+  case $role in app) user=atesta_app;; migration) user=atesta_owner;; operator) user=atesta_operator;; esac
   pass=$(aws secretsmanager get-random-password --exclude-punctuation --password-length 40 --query RandomPassword --output text)
   printf 'postgresql+psycopg://%s:%s@%s:5432/atesta' "$user" "$pass" "$host" > "/dev/shm/$role-url"
   aws secretsmanager put-secret-value --secret-id "atesta/atesta-dev/db/$role-url" --secret-string "file:///dev/shm/$role-url"
@@ -82,6 +82,8 @@ for role in app migration; do
 done
 head -c 32 /dev/urandom | base64 > /dev/shm/session-key
 aws secretsmanager put-secret-value --secret-id atesta/atesta-dev/api/session-key --secret-string file:///dev/shm/session-key
+head -c 32 /dev/urandom | base64 > /dev/shm/session-key  # a different key for the operator portal
+aws secretsmanager put-secret-value --secret-id atesta/atesta-dev/operator/session-key --secret-string file:///dev/shm/session-key
 rm /dev/shm/session-key
 ```
 
@@ -167,7 +169,7 @@ confirmation link to that address; click it once, or the scan failure-rate alarm
    ```
 
    Its log (`/atesta/atesta-dev/migrate`, stream prefix `bootstrap`) ends with
-   `bootstrap done; LOGIN set for atesta_app, atesta_owner`.
+   `bootstrap done; LOGIN set for atesta_app, atesta_operator, atesta_owner`.
 3. Run the deploy workflow again. This time the migrations and the smoke check pass.
 4. Point DNS (step 3.4), sign up at `https://app.<domain>` with MFA, and walk the pilot guide's
    first steps.
@@ -180,7 +182,9 @@ step 5 approve each run.
 **Once, before the first deploy that carries migration 0033 (operator portal, #445):** run the
 bootstrap task of step 6.2 again. It adds the `atesta_operator` role (no LOGIN yet), which
 `atesta_owner` cannot create; the other roles keep their passwords. Without it, migration 0033
-stops with "role atesta_operator does not exist" and the running version stays.
+stops with "role atesta_operator does not exist" and the running version stays. From #499 the
+task also gives `atesta_operator` its login, so write `atesta/<env>/db/operator-url` first
+(step 4); a secret without a value stops the task before it starts.
 
 **Migrations run before the services change:**
 - If a migration fails, the old version keeps running.

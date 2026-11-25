@@ -77,6 +77,31 @@ module "cognito" {
   from_email_address    = var.cognito_from
 }
 
+# Operator portal staff (ADR-017): its own pool, email through the same SES identity in Paris as
+# the customer pool (ADR-007 amendment 1; no new exception).
+variable "admin_url" {
+  description = "Public origin of the operator portal, for example https://admin.example.com."
+  type        = string
+}
+
+variable "staff_passkeys" {
+  description = "Offer passkeys to staff; set only after the deploy runbook's passkey step."
+  type        = bool
+  default     = false
+}
+
+module "staff_cognito" {
+  source                = "../../modules/staff-cognito"
+  name                  = "atesta-prod-staff"
+  domain_prefix         = "atesta-prod-staff"
+  callback_urls         = ["${var.admin_url}/auth/callback"]
+  logout_urls           = ["${var.admin_url}/"]
+  passkeys              = var.staff_passkeys
+  email_sending_account = "DEVELOPER"
+  ses_source_arn        = module.ses_cognito.identity_arn
+  from_email_address    = var.cognito_from
+}
+
 module "github_oidc" {
   source            = "../../modules/github-oidc"
   name              = "atesta-prod"
@@ -95,6 +120,14 @@ output "cognito_app_client_id" {
 
 output "cognito_domain" {
   value = module.cognito.domain
+}
+
+output "staff_cognito" {
+  value = {
+    user_pool_id  = module.staff_cognito.user_pool_id
+    app_client_id = module.staff_cognito.app_client_id
+    domain        = module.staff_cognito.domain
+  }
 }
 
 # Hosted environment (hosted-environment spec): prod sizes. Nothing is applied until the owner

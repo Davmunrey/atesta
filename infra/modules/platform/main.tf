@@ -181,6 +181,13 @@ resource "aws_secretsmanager_secret" "session_key" {
   kms_key_id  = module.kms.secrets_key_arn
 }
 
+# The operator service's session key (ADR-017): ATESTA_OPERATOR_SESSION_KEY, never the console's.
+resource "aws_secretsmanager_secret" "operator_session_key" {
+  name        = "atesta/${var.name}/operator/session-key"
+  description = "ATESTA_OPERATOR_SESSION_KEY (base64, 32 bytes), set by hand; differs from the API's"
+  kms_key_id  = module.kms.secrets_key_arn
+}
+
 # The platform's M365 scanner credential (issue 453): {AZURE_CLIENT_ID, M365_CERTIFICATE_CONTENT}
 # as JSON, the same keys as a local credential file, set by hand (deploy runbook). Only the
 # scan-m365 role of each customer reads it.
@@ -249,6 +256,7 @@ module "ecs" {
       ATESTA_MASTER_PASSWORD        = "${module.database.master_secret_arn}:password::"
       ATESTA_DATABASE_URL           = module.database.app_url_secret_arn
       ATESTA_MIGRATION_DATABASE_URL = module.database.migration_url_secret_arn
+      ATESTA_OPERATOR_DATABASE_URL  = module.database.operator_url_secret_arn
     }
   }
   decrypt_key_arns = [module.kms.database_key_arn]

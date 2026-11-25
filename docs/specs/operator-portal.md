@@ -425,6 +425,39 @@ Amended 2026-11-25 where the text above was ambiguous or did not fit the code:
   and the fake staff pool (`prepare_e2e_db.py --operator` gives `atesta_operator` a login and
   seeds staff and organizations). No new job, so the ruleset is unchanged.
 
+### Infrastructure as built (build step 6, #499 to #502)
+
+Amended 2026-11-25 where the text above was ambiguous or did not fit the tools. Nothing is
+applied; the owner applies it (deploy runbook).
+- **Staff pool (#499):** `infra/modules/staff-cognito`, one per environment (`atesta-<env>-staff`),
+  next to the customer pool:
+  - **Accounts:** admin-created only, with an invitation in ES then EN; email as username;
+    recovery `admin_only`, so a lost password or device goes to an admin, never to a mailbox.
+  - **MFA:** `ON` with TOTP; no SMS and no email codes. Essentials tier, because passkeys and
+    passkey MFA need it.
+  - **Passkeys, and the `FactorConfiguration` candidate of ADR-017:** with MFA required,
+    choice-based sign-in offers `WEB_AUTHN` only when `FactorConfiguration` is
+    `MULTI_FACTOR_WITH_USER_VERIFICATION` (AWS Cognito developer guide, "Adding MFA to a user
+    pool", read 2026-11-25). The pinned provider, hashicorp/aws 6.73.0, cannot set it: its
+    `web_authn_configuration` has only `relying_party_id` and `user_verification`
+    (`internal/service/cognitoidp/user_pool.go` at `v6.73.0`), and it sends
+    `SetUserPoolMfaConfig` without the field whenever an MFA argument changes. So:
+    - the first apply has user verification `required` and offers password plus TOTP;
+    - the owner sets the factor configuration once with the AWS CLI, then sets
+      `staff_passkeys = true`, which adds `WEB_AUTHN` to the first factors and `ALLOW_USER_AUTH`
+      to the client (deploy runbook);
+    - a later change to an MFA argument of the pool resets the field. Cognito then stops offering
+      passkeys and password plus TOTP still applies, so it fails closed; the runbook repeats the
+      step.
+  - **Client:** the portal's only client, code flow with PKCE and no secret; access and ID tokens
+    15 minutes, refresh 8 hours (the session's total limit). Callback and logout on
+    `admin_url` (prod) or `http://localhost:3001` plus an optional `admin_url` (dev).
+  - **Email:** in prod through the same SES identity in eu-west-3 as the customer pool (ADR-007
+    amendment 1), so no new exception.
+- **Credentials (#499):** `atesta/<env>/db/operator-url` and `atesta/<env>/operator/session-key`,
+  values set by hand. The bootstrap task also reads the operator URL, and `db_bootstrap` gives
+  `atesta_operator` LOGIN with its password, as for the other two roles.
+
 ## Permissions matrix
 
 | Action | admin | billing | support |
