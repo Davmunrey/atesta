@@ -112,8 +112,11 @@ from atesta_api.modules.identity.staff import (
     STAFF_ROLES,
     StaffMember,
     StaffRole,
+    add_staff,
     change_staff,
+    enabled_admins,
     enabled_staff,
+    staff_by_email,
     staff_list,
 )
 from atesta_api.modules.identity.standing import is_suspended
@@ -210,6 +213,9 @@ __all__ = [
     "enabled_staff",
     "change_staff",
     "staff_list",
+    "add_staff",
+    "enabled_admins",
+    "staff_by_email",
     "ErasureStatus",
     "ErasureRefusedError",
     "ErasureRun",

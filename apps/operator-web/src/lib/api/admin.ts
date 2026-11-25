@@ -9,7 +9,7 @@ export type EventFilters = { org_id: string; staff_id: string; action: string; p
 export const ACTIONS = ["organizations.searched", "organization.viewed", "billing_profile.viewed", "operator.plan_changed",
   "operator.billing_profile_updated", "operator.suspended", "operator.reactivated", "operator.export_requested", "operator.closure_started",
   "operator.closure_cancelled", "operator.erasure_requested", "operator.erasure_approved", "operator.erasure_cancelled",
-  "staff.role_changed", "staff.disabled", "staff.enabled", "erasure.executed"] as const;
+  "staff.added", "staff.role_changed", "staff.disabled", "staff.enabled", "erasure.executed"] as const;
 
 const STAFF = ["staff"] as const;
 
