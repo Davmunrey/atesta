@@ -5,7 +5,7 @@ OpenTofu for AWS eu-south-2 (Spain), ADR-007.
 ```text
 infra/
   modules/        platform (composes the rest), network, kms, rds, s3-evidence, ecr, ecs,
-                  web, ses, cognito, github-oidc
+                  web, ses, cognito, staff-cognito (operator portal), github-oidc
   envs/dev/
   envs/prod/
 ```

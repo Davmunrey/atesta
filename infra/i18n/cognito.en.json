@@ -1,4 +1,6 @@
 {
   "verification_subject": "Your Atesta verification code",
-  "verification_message": "Your Atesta verification code is the one shown above. It expires soon. If you did not ask for it, ignore this email."
+  "verification_message": "Your Atesta verification code is the one shown above. It expires soon. If you did not ask for it, ignore this email.",
+  "staff_invite_subject": "Your Atesta operations portal account",
+  "staff_invite_message": "You have an account in the Atesta operations portal. Your username and temporary password are shown above. They expire in 3 days. When you sign in, change the password and set up the second factor. If you did not expect this email, tell the Atesta team."
 }

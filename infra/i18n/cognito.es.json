@@ -1,4 +1,6 @@
 {
   "verification_subject": "Tu código de verificación de Atesta",
-  "verification_message": "Hola:\n\nTu código de verificación de Atesta es {####}\n\nCaduca pronto. Si no lo has pedido tú, ignora este correo."
+  "verification_message": "Hola:\n\nTu código de verificación de Atesta es {####}\n\nCaduca pronto. Si no lo has pedido tú, ignora este correo.",
+  "staff_invite_subject": "Tu cuenta del portal de operaciones de Atesta",
+  "staff_invite_message": "Hola:\n\nTienes una cuenta en el portal de operaciones de Atesta.\nUsuario: {username}\nContraseña temporal: {####}\n\nCaduca en 3 días. Al entrar, cambia la contraseña y configura el segundo factor. Si no esperabas este correo, avisa al equipo de Atesta."
 }

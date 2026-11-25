@@ -283,6 +283,7 @@ def test_role_connection_secrets_are_encrypted_and_hold_no_value_in_code() -> No
     assert set(secrets) == {
         "aws_secretsmanager_secret.app_url",
         "aws_secretsmanager_secret.migration_url",
+        "aws_secretsmanager_secret.operator_url",  # ADR-017: the operator service's own login
     }
     for name, secret in secrets.items():
         assert secret["kms_key_id"] == "${var.secrets_key_arn}", name
@@ -1114,3 +1115,95 @@ def test_the_deploy_builds_and_pins_the_egress_image() -> None:
     assert "docker build -f infra/egress/Dockerfile" in deploy
     assert '--arg egress "$(digest "$egress:$tag")"' in deploy
     assert "egress: $egress" in deploy
+
+
+# --- operator portal (operator-portal spec, build step 6; ADR-017) ---------------------------
+
+STAFF = resources("modules/staff-cognito/main.tf")
+STAFF_POOL = STAFF["aws_cognito_user_pool.this"]
+STAFF_CLIENT = STAFF["aws_cognito_user_pool_client.operator"]
+
+
+def test_the_staff_pool_requires_mfa_never_by_sms_and_admits_no_self_sign_up() -> None:
+    assert (STAFF_POOL["mfa_configuration"], STAFF_POOL["deletion_protection"]) == ("ON", "ACTIVE")
+    assert STAFF_POOL["software_token_mfa_configuration"] == [{"enabled": True}]
+    for sms in ("sms_configuration", "sms_authentication_message", "sms_verification_message"):
+        assert sms not in STAFF_POOL, sms
+    assert "email_mfa_configuration" not in STAFF_POOL  # TOTP or a passkey, never a mailed code
+    admin_only = STAFF_POOL["admin_create_user_config"][0]
+    assert admin_only["allow_admin_create_user_only"] is True
+    recovery = STAFF_POOL["account_recovery_setting"][0]["recovery_mechanism"]
+    assert [m["name"] for m in recovery] == ["admin_only"]
+    assert STAFF_POOL["username_attributes"] == ["email"]
+    assert STAFF_POOL["username_configuration"] == [{"case_sensitive": False}]
+
+
+def test_staff_passkeys_require_user_verification_and_never_stand_alone() -> None:
+    assert STAFF_POOL["user_pool_tier"] == "ESSENTIALS"  # passkeys need more than Lite
+    assert STAFF_POOL["web_authn_configuration"] == [{"user_verification": "required"}]
+    factors = STAFF_POOL["sign_in_policy"][0]["allowed_first_auth_factors"]
+    # WEB_AUTHN needs another first factor (AWS); never an emailed or texted code.
+    assert factors == '${var.passkeys ? ["PASSWORD", "WEB_AUTHN"] : ["PASSWORD"]}'
+    flows = STAFF_CLIENT["explicit_auth_flows"]
+    assert flows == (
+        '${var.passkeys ? ["ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_AUTH"]'
+        ' : ["ALLOW_REFRESH_TOKEN_AUTH"]}'
+    )
+    staff_vars = {
+        k: v for b in load("modules/staff-cognito/main.tf")["variable"] for k, v in b.items()
+    }
+    assert staff_vars["passkeys"]["default"] is False  # on only after the runbook's step
+
+
+def test_the_staff_invitation_is_spanish_first_with_username_and_code_once() -> None:
+    es = json.loads((INFRA / "i18n/cognito.es.json").read_text())
+    en = json.loads((INFRA / "i18n/cognito.en.json").read_text())
+    for placeholder in ("{username}", "{####}"):
+        assert es["staff_invite_message"].count(placeholder) == 1, placeholder
+        assert placeholder not in en["staff_invite_message"], placeholder
+    template = STAFF_POOL["admin_create_user_config"][0]["invite_message_template"][0]
+    assert template["email_message"].startswith("${local.es.staff_invite_message}")
+
+
+def test_the_portal_client_is_public_pkce_with_short_tokens() -> None:
+    assert STAFF_CLIENT["generate_secret"] is False
+    assert STAFF_CLIENT["allowed_oauth_flows"] == ["code"]
+    assert STAFF_CLIENT["allowed_oauth_scopes"] == ["openid", "email"]
+    assert STAFF_CLIENT["write_attributes"] and "email" not in STAFF_CLIENT["write_attributes"]
+    assert STAFF_CLIENT["enable_token_revocation"] is True
+    assert (STAFF_CLIENT["access_token_validity"], STAFF_CLIENT["id_token_validity"]) == (15, 15)
+    assert STAFF_CLIENT["refresh_token_validity"] == 8  # hours: the session's total limit
+    assert [k for k in STAFF if k.startswith("aws_cognito_user_pool_client.")] == [
+        "aws_cognito_user_pool_client.operator"
+    ]
+
+
+def test_each_environment_has_a_staff_pool_apart_from_the_customer_pool() -> None:
+    for env in ("dev", "prod"):
+        modules = _modules(env)
+        staff, customer = modules["staff_cognito"], modules["cognito"]
+        assert staff["source"] == "../../modules/staff-cognito", env
+        assert staff["name"] == f"atesta-{env}-staff" != customer["name"], env
+        assert staff["domain_prefix"] != customer["domain_prefix"], env
+        assert staff["passkeys"] == "${var.staff_passkeys}", env
+    prod = _modules("prod")["staff_cognito"]
+    assert prod["callback_urls"] == ["${var.admin_url}/auth/callback"]
+    assert prod["email_sending_account"] == "DEVELOPER"  # ADR-007 amendment 1, as the customers'
+    assert prod["ses_source_arn"] == "${module.ses_cognito.identity_arn}"
+
+
+def test_the_operator_has_its_own_database_secret_and_session_key() -> None:
+    operator = RDS["aws_secretsmanager_secret.operator_url"]
+    assert operator["name"] == "atesta/${var.name}/db/operator-url"
+    assert operator["kms_key_id"] == "${var.secrets_key_arn}"
+    assert "aws_secretsmanager_secret_version.operator_url" not in RDS  # value set by hand
+    key = PLATFORM["aws_secretsmanager_secret.operator_session_key"]
+    assert key["name"] == "atesta/${var.name}/operator/session-key"
+    session_key = PLATFORM["aws_secretsmanager_secret.session_key"]
+    assert key["name"] != session_key["name"]
+    platform = {k: v for m in PLATFORM_FILE["module"] for k, v in m.items()}
+    secrets = platform["ecs"]["secrets"]
+    url = "${module.database.operator_url_secret_arn}"
+    assert secrets["bootstrap"]["ATESTA_OPERATOR_DATABASE_URL"] == url  # LOGIN from its URL
+    for task in ("api", "worker", "migrate"):  # the customer side never holds it
+        assert url not in secrets[task].values(), task

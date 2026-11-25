@@ -1,10 +1,11 @@
 """One-off database bootstrap for a hosted environment (hosted-environment spec, deploy runbook).
 
-Runs once per environment as an ECS task built from the API image, with three ECS secrets: the
-RDS master password (the `password` key of the RDS-managed secret) and the two role URLs. It
-applies bootstrap.sql as the master user, then gives atesta_owner and atesta_app LOGIN with the
-password in each role's own URL, so the secrets stay the single source of truth. Running it again
-changes nothing but the passwords. It prints role names only, never a password or URL (rule 2).
+Runs once per environment as an ECS task built from the API image, with four ECS secrets: the
+RDS master password (the `password` key of the RDS-managed secret) and the three role URLs. It
+applies bootstrap.sql as the master user, then gives atesta_owner, atesta_app and atesta_operator
+(ADR-017, the operator service) LOGIN with the password in each role's own URL, so the secrets
+stay the single source of truth. Running it again changes nothing but the passwords. It prints
+role names only, never a password or URL (rule 2).
 
     python -m atesta_api.platform.db_bootstrap [path/to/bootstrap.sql]
 """
@@ -21,7 +22,11 @@ from atesta_api.platform.db import make_engine
 
 DEFAULT_SCRIPT = Path("apps/api/migrations/bootstrap.sql")  # relative to the image's /app
 MASTER_USER = "atesta_master"  # infra/modules/rds
-ROLES = (("ATESTA_MIGRATION_DATABASE_URL", "atesta_owner"), ("ATESTA_DATABASE_URL", "atesta_app"))
+ROLES = (
+    ("ATESTA_MIGRATION_DATABASE_URL", "atesta_owner"),
+    ("ATESTA_DATABASE_URL", "atesta_app"),
+    ("ATESTA_OPERATOR_DATABASE_URL", "atesta_operator"),
+)
 
 
 def role_passwords(env: Mapping[str, str]) -> dict[str, str]:
