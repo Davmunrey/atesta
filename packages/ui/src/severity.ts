@@ -23,6 +23,7 @@ export const STATE_SEVERITY = {
   orgActive: "done", orgSuspended: "overdue", orgClosing: "missing",
   healthOk: "done", healthAttention: "missing", healthPending: "pending", healthNone: "pending",
   billingComplete: "done", billingMissing: "missing",
+  staffEnabled: "done", staffDisabled: "pending",
   erasurePending: "pending", erasureApproved: "missing", erasureCancelled: "pending", erasureExecuted: "done",
 } as const satisfies Record<string, Severity>;
 

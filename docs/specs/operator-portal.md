@@ -409,6 +409,15 @@ Amended 2026-11-25 where the text above was ambiguous or did not fit the code:
   `operator.recent_auth_required` shows a notice with "Volver a iniciar sesión", which signs in
   again and returns to the organization. The approval date is not in the detail, so "approved"
   shows the closure's erase date, from which the runner may execute it.
+- **Team, operations log and erased organizations (#491):** `/team`, `/log` and `/erased`, admin
+  only (other roles read that the role does not allow it, and nothing is fetched). Team: email,
+  role, access; one's own row reads "Tú" with no actions; "Gestionar" opens, below the row, the
+  role change and the disable or re-enable, each with the internal reason. The log reads each
+  action as a sentence, names the staff member by email ("Proceso de borrado" for the runner,
+  "Persona que ya no está en el equipo" for an id the staff list no longer has), links the
+  organization id, and shows the reason and the scalar metadata; it filters by full organization
+  id, staff member and action. Erased organizations list id, closure date, erase date and total
+  rows, 50 per page.
 - **Bundles:** after both builds, `apps/operator-web/scripts/check-bundles.ts` fails when the
   console's export holds a portal route or text, or the reverse.
 - **CI:** the `web` job types, lints, tests, builds and licence-checks the portal and runs the
