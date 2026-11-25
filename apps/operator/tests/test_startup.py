@@ -2,6 +2,7 @@
 operator-portal spec, "Staff pool settings"): a pool shared with customers, a staff pool without
 required MFA, and any database role but atesta_operator."""
 
+import base64
 from collections.abc import Mapping
 from typing import Any
 
@@ -21,6 +22,8 @@ ENV = {
     "ATESTA_STAFF_COGNITO_USER_POOL_ID": "eu-south-2_staff",
     "ATESTA_STAFF_COGNITO_APP_CLIENT_ID": "staff-client",
     "ATESTA_STAFF_COGNITO_DOMAIN": "staff-auth.atesta.cloud",
+    "ATESTA_OPERATOR_WEB_ORIGIN": "https://admin.atesta.cloud/",
+    "ATESTA_OPERATOR_SESSION_KEY": base64.b64encode(bytes(range(32, 64))).decode(),
 }
 SAFE = {
     "MfaConfiguration": "ON",
@@ -39,6 +42,13 @@ def test_settings_read_the_staff_pool() -> None:
     )
     assert settings.cognito.app_client_id == "staff-client"
     assert settings.sslmode == "verify-full" and not settings.dev
+    assert settings.web_origin == "https://admin.atesta.cloud"
+    assert settings.session_key == bytes(range(32, 64))
+
+
+def test_the_console_session_key_is_refused() -> None:
+    with pytest.raises(RuntimeError, match="session key"):
+        Settings.from_env({**ENV, "ATESTA_SESSION_KEY": ENV["ATESTA_OPERATOR_SESSION_KEY"]})
 
 
 @pytest.mark.parametrize(

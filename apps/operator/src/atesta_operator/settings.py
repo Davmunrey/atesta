@@ -5,6 +5,7 @@ Its own database credential and staff Cognito pool, read from `ATESTA_OPERATOR_*
 customer pool or app client, so a configuration slip cannot make customer tokens valid here.
 """
 
+import base64
 import os
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -19,6 +20,8 @@ class Settings:
     database_url: str
     sslmode: str
     cognito: CognitoSettings
+    web_origin: str  # the portal's own origin: OAuth redirects and the write-origin check
+    session_key: bytes
 
     @property
     def dev(self) -> bool:
@@ -45,9 +48,14 @@ class Settings:
             cognito.app_client_id == env.get("ATESTA_COGNITO_APP_CLIENT_ID")
         ):
             raise RuntimeError("the operator service needs the staff pool, not the customer pool")
+        key = base64.b64decode(env["ATESTA_OPERATOR_SESSION_KEY"])
+        if key == base64.b64decode(env.get("ATESTA_SESSION_KEY", "")):
+            raise RuntimeError("the operator session key must differ from the console's")
         return cls(
             environment,
             env["ATESTA_OPERATOR_DATABASE_URL"],
             env.get("ATESTA_DB_SSLMODE", "verify-full"),
             cognito,
+            env["ATESTA_OPERATOR_WEB_ORIGIN"].rstrip("/"),
+            key,
         )
