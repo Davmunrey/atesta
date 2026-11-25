@@ -120,10 +120,13 @@ confirmation link to that address; click it once, or the scan failure-rate alarm
        {
          "edge": {
            "aliases": ["app.<domain>"],
+           "admin_aliases": ["admin.<domain>"],
            "web_certificate_arn": "<us-east-1 certificate ARN>",
+           "admin_certificate_arn": "<us-east-1 certificate ARN for admin.<domain>>",
            "api_origin_domain": "api-origin.<domain>",
            "api_certificate_arn": "<eu-south-2 certificate ARN>",
-           "content_security_policy": "filled in by the workflow"
+           "content_security_policy": "filled in by the workflow",
+           "admin_content_security_policy": "filled in by the workflow"
          },
          "app_environment": {
            "ATESTA_ENV": "dev",

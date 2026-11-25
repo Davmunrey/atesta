@@ -498,14 +498,22 @@ def test_the_distribution_routes_api_and_private_pages_and_forces_https() -> Non
     default = dist["default_cache_behavior"][0]
     assert default["viewer_protocol_policy"] == "redirect-to-https"
     behaviors = {b["path_pattern"]: b for b in dist["ordered_cache_behavior"]}
-    assert set(behaviors) == {"/api/*", "/auth/*", "/invite*", "/training*", "/unsubscribe*"}
+    assert set(behaviors) == {"/api/*", "/auth/*"}  # before the token paths: they come first
     assert "custom_error_response" not in dist  # would rewrite the API's own error responses
     for path in ("/api/*", "/auth/*"):
         assert behaviors[path]["target_origin_id"] == "api", path
         assert behaviors[path]["viewer_protocol_policy"] == "https-only", path
-    for path in ("/invite*", "/training*", "/unsubscribe*"):  # tokens in the URL
-        policy = behaviors[path]["response_headers_policy_id"]
-        assert policy == "${aws_cloudfront_response_headers_policy.no_referrer.id}", path
+        assert behaviors[path]["cache_policy_id"] == (
+            "${data.aws_cloudfront_cache_policy.disabled.id}"
+        ), path
+    private = dist["dynamic"][0]["ordered_cache_behavior"]
+    assert private["for_each"] == "${var.no_referrer_paths}"  # tokens in the URL
+    policy = private["content"][0]["response_headers_policy_id"]
+    assert policy == "${aws_cloudfront_response_headers_policy.no_referrer.id}"
+    platform = {k: v for m in load("modules/platform/main.tf")["module"] for k, v in m.items()}
+    console = platform["web"]
+    assert console["no_referrer_paths"] == ["/invite*", "/training*", "/unsubscribe*"]
+    assert "origin_header_name" not in console  # the console never reaches the operator
     assert dist["viewer_certificate"][0]["minimum_protocol_version"] == "TLSv1.2_2021"
     assert dist["viewer_certificate"][0]["ssl_support_method"] == "sni-only"
     api = next(o for o in dist["origin"] if o["origin_id"] == "api")
@@ -1303,3 +1311,44 @@ def test_the_deploy_builds_and_pins_the_operator_image() -> None:
     assert "for target in api worker operator; do" in deploy
     assert "operator: $operator" in deploy
     assert ".edge.admin_aliases[0]" in deploy
+
+
+def test_the_portal_has_its_own_distribution_with_the_operator_header() -> None:
+    platform = {k: v for m in PLATFORM_FILE["module"] for k, v in m.items()}
+    admin, console = platform["admin_web"], platform["web"]
+    assert admin["source"] == console["source"] == "../web"
+    assert admin["name"] == "${var.name}-admin"  # its own bucket, functions and policies
+    assert admin["aliases"] == "${var.edge.admin_aliases}"
+    assert admin["certificate_arn"] == "${var.edge.admin_certificate_arn}"
+    assert admin["content_security_policy"] == "${var.edge.admin_content_security_policy}"
+    assert "no_referrer_paths" not in admin  # the console's token paths are not the portal's
+    header = OPERATOR_FILE["locals"][0]["operator_header"]
+    assert admin["origin_header_name"] == header  # the header the listener rule matches
+    value = "${data.aws_secretsmanager_secret_version.operator_origin_header[0].secret_string}"
+    assert admin["origin_header_value"] == value
+    origin = next(
+        o for o in WEB["aws_cloudfront_distribution.this"]["origin"] if o["origin_id"] == "api"
+    )
+    custom = origin["dynamic"][0]["custom_header"]
+    assert custom["for_each"] == (
+        "${var.origin_header_name == null ? [] : [var.origin_header_name]}"
+    )
+    assert custom["content"][0]["value"] == "${var.origin_header_value}"
+    assert WEB_VARS["origin_header_value"]["sensitive"] is True
+
+
+def test_the_deploy_builds_uploads_and_smoke_checks_the_portal() -> None:
+    deploy = yaml.safe_load((WORKFLOWS / "deploy.yml").read_text())
+    steps = {s.get("name", ""): s for s in deploy["jobs"]["deploy"]["steps"]}
+    names = list(steps)
+    assert steps["Build the operator portal"]["working-directory"] == "apps/operator-web"
+    assert names.index("Build the operator portal") < names.index("Variables")
+    assert "apps/operator-web/csp-policy.json" in steps["Variables"]["run"]
+    assert ".edge.admin_content_security_policy = $admin_csp[0].policy" in steps["Variables"]["run"]
+    upload = steps["Upload the operator portal"]["run"]
+    assert names.index("Apply") < names.index("Upload the operator portal") < names.index("Smoke")
+    assert "jq -er .admin_bucket" in upload and "--delete" in upload
+    assert upload.index("aws s3 sync") < upload.index("create-invalidation")
+    smoke = steps["Smoke"]["run"]
+    assert '"https://$admin/api/v1/staff"' in smoke and 'test "$status" = "401"' in smoke
+    assert '"https://$host/api/v1/staff"' in smoke and 'test "$status" = "404"' in smoke

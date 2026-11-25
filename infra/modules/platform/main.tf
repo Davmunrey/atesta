@@ -160,12 +160,14 @@ variable "images" {
 # certificate is in eu-south-2 for the load balancer; the web one is in us-east-1 for CloudFront.
 variable "edge" {
   type = object({
-    aliases                 = list(string)
-    admin_aliases           = list(string) # the operator portal's host (ADR-017)
-    web_certificate_arn     = string
-    api_origin_domain       = string
-    api_certificate_arn     = string
-    content_security_policy = string
+    aliases                       = list(string)
+    admin_aliases                 = list(string) # the operator portal's host (ADR-017)
+    web_certificate_arn           = string
+    admin_certificate_arn         = string # us-east-1, for admin_aliases
+    api_origin_domain             = string
+    api_certificate_arn           = string
+    content_security_policy       = string
+    admin_content_security_policy = string # from apps/operator-web/csp-policy.json
   })
   default = null
 }
@@ -330,6 +332,21 @@ module "web" {
   certificate_arn         = var.edge.web_certificate_arn
   api_origin_domain       = var.edge.api_origin_domain
   content_security_policy = var.edge.content_security_policy
+  no_referrer_paths       = ["/invite*", "/training*", "/unsubscribe*"]
+}
+
+# The operator portal (ADR-017): its own bucket, distribution and hostname. Its /api and /auth go
+# to the same load balancer with the header that routes them to the operator service.
+module "admin_web" {
+  source                  = "../web"
+  count                   = var.edge == null ? 0 : 1
+  name                    = "${var.name}-admin"
+  aliases                 = var.edge.admin_aliases
+  certificate_arn         = var.edge.admin_certificate_arn
+  api_origin_domain       = var.edge.api_origin_domain
+  content_security_policy = var.edge.admin_content_security_policy
+  origin_header_name      = "X-Atesta-Operator-Origin"
+  origin_header_value     = data.aws_secretsmanager_secret_version.operator_origin_header[0].secret_string
 }
 
 output "api_load_balancer" {
@@ -338,6 +355,10 @@ output "api_load_balancer" {
 
 output "web" {
   value = try({ bucket = module.web[0].bucket_name, distribution = module.web[0].distribution_id, domain = module.web[0].domain_name }, null)
+}
+
+output "admin_web" {
+  value = try({ bucket = module.admin_web[0].bucket_name, distribution = module.admin_web[0].distribution_id, domain = module.admin_web[0].domain_name }, null)
 }
 
 output "ecr_repositories" {
@@ -380,5 +401,8 @@ output "deploy" {
     web_bucket         = try(module.web[0].bucket_name, null)
     distribution       = try(module.web[0].distribution_id, null)
     hostname           = try(var.edge.aliases[0], null)
+    admin_bucket       = try(module.admin_web[0].bucket_name, null)
+    admin_distribution = try(module.admin_web[0].distribution_id, null)
+    admin_hostname     = try(var.edge.admin_aliases[0], null)
   }
 }

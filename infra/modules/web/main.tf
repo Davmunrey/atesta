@@ -2,7 +2,9 @@
 # behind CloudFront with origin access control. The app is single-origin (CSP connect-src 'self',
 # same-site session cookie), so /api/* and /auth/* go through the same distribution to the API's
 # load balancer. Every response carries the CSP built by packages/ui/scripts/csp.ts and the
-# security headers; /invite and /training send no referrer.
+# security headers; paths with tokens in the URL send no referrer. The operator portal (ADR-017)
+# is a second instance: its own bucket, distribution and hostname, no such paths, and a header on
+# the API origin that the load balancer forwards to the operator service (modules/ecs/operator.tf).
 
 terraform {
   required_providers {
@@ -32,8 +34,27 @@ variable "api_origin_domain" {
   type        = string
 }
 
+variable "no_referrer_paths" {
+  description = "Paths whose URL carries a token: served with no referrer (console: /invite, /training, /unsubscribe)."
+  type        = list(string)
+  default     = []
+}
+
+variable "origin_header_name" {
+  description = "Header added to every request to the API origin; null adds none (the console)."
+  type        = string
+  default     = null
+}
+
+variable "origin_header_value" {
+  description = "Its value, a hand-set secret."
+  type        = string
+  default     = null
+  sensitive   = true
+}
+
 variable "content_security_policy" {
-  description = "The policy from apps/web/csp-policy.json, written by the web build."
+  description = "The policy from the app's csp-policy.json, written by its build."
   type        = string
   validation {
     condition     = length(var.content_security_policy) <= 1783 && startswith(var.content_security_policy, "default-src 'self'")
@@ -222,6 +243,13 @@ resource "aws_cloudfront_distribution" "this" {
       origin_protocol_policy = "https-only"
       origin_ssl_protocols   = ["TLSv1.2"]
     }
+    dynamic "custom_header" {
+      for_each = var.origin_header_name == null ? [] : [var.origin_header_name]
+      content {
+        name  = custom_header.value
+        value = var.origin_header_value
+      }
+    }
   }
 
   default_cache_behavior {
@@ -260,48 +288,21 @@ resource "aws_cloudfront_distribution" "this" {
     response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
   }
 
-  ordered_cache_behavior {
-    path_pattern               = "/invite*"
-    target_origin_id           = "site"
-    viewer_protocol_policy     = "redirect-to-https"
-    allowed_methods            = ["GET", "HEAD"]
-    cached_methods             = ["GET", "HEAD"]
-    cache_policy_id            = data.aws_cloudfront_cache_policy.optimized.id
-    response_headers_policy_id = aws_cloudfront_response_headers_policy.no_referrer.id
-    compress                   = true
-    function_association {
-      event_type   = "viewer-request"
-      function_arn = aws_cloudfront_function.rewrite.arn
-    }
-  }
-
-  ordered_cache_behavior {
-    path_pattern               = "/training*"
-    target_origin_id           = "site"
-    viewer_protocol_policy     = "redirect-to-https"
-    allowed_methods            = ["GET", "HEAD"]
-    cached_methods             = ["GET", "HEAD"]
-    cache_policy_id            = data.aws_cloudfront_cache_policy.optimized.id
-    response_headers_policy_id = aws_cloudfront_response_headers_policy.no_referrer.id
-    compress                   = true
-    function_association {
-      event_type   = "viewer-request"
-      function_arn = aws_cloudfront_function.rewrite.arn
-    }
-  }
-
-  ordered_cache_behavior {
-    path_pattern               = "/unsubscribe*"
-    target_origin_id           = "site"
-    viewer_protocol_policy     = "redirect-to-https"
-    allowed_methods            = ["GET", "HEAD"]
-    cached_methods             = ["GET", "HEAD"]
-    cache_policy_id            = data.aws_cloudfront_cache_policy.optimized.id
-    response_headers_policy_id = aws_cloudfront_response_headers_policy.no_referrer.id
-    compress                   = true
-    function_association {
-      event_type   = "viewer-request"
-      function_arn = aws_cloudfront_function.rewrite.arn
+  dynamic "ordered_cache_behavior" {
+    for_each = var.no_referrer_paths
+    content {
+      path_pattern               = ordered_cache_behavior.value
+      target_origin_id           = "site"
+      viewer_protocol_policy     = "redirect-to-https"
+      allowed_methods            = ["GET", "HEAD"]
+      cached_methods             = ["GET", "HEAD"]
+      cache_policy_id            = data.aws_cloudfront_cache_policy.optimized.id
+      response_headers_policy_id = aws_cloudfront_response_headers_policy.no_referrer.id
+      compress                   = true
+      function_association {
+        event_type   = "viewer-request"
+        function_arn = aws_cloudfront_function.rewrite.arn
+      }
     }
   }
 
