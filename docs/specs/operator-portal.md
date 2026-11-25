@@ -246,6 +246,46 @@ Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
 - **Activity:** `actor_kind` is `atesta` for an `operator.*` action, `member` when the event
   names a person, `system` otherwise.
 
+### Operator service as built (build step 4, #470 to #474)
+
+Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
+- **Entry point and settings:** `uvicorn atesta_operator.main:app`. It reads
+  `ATESTA_OPERATOR_DATABASE_URL` and `ATESTA_STAFF_COGNITO_REGION`, `_USER_POOL_ID`,
+  `_APP_CLIENT_ID` and `_DOMAIN`; issuer and base URL overrides (`ATESTA_STAFF_COGNITO_ISSUER`,
+  `_BASE_URL`) only in a dev `ATESTA_ENV`. Startup refuses the customer pool's id or app client.
+- **MFA:** Cognito access tokens carry no claim naming the factors used, and a pre token
+  generation trigger cannot add or change `amr` (AWS Cognito developer guide, "Understanding the
+  access token" and "Pre token generation Lambda trigger", read 2026-11-24). So "MFA required"
+  is held by the pool, checked twice:
+  - **at startup**, outside dev environments, `GetUserPoolMfaConfig` must report
+    `MfaConfiguration` `ON`, no SMS configuration, and passkeys (if any) with
+    `UserVerification` `required`; otherwise the service does not start. The task role needs
+    `cognito-idp:GetUserPoolMfaConfig` on the staff pool (build step 6);
+  - **per request**, only the staff pool's issuer and app client are accepted.
+  - **Candidate:** the response for a pool built by step 6's HCL is not yet seen; that pull
+    request runs the check against it.
+- **`auth_time`:** required in every staff token (401 `auth.invalid_token` without it). Recent
+  sign-in is `auth_time` within 15 minutes. It also guards creating an erasure request, not only
+  approving it (coordinator, 2026-11-24: recent sign-in "for suspend, close and erase").
+- **Matrix in one place:** `atesta_operator.policy.POLICY` maps each method and path template to
+  its roles and the recent sign-in flag; one dependency applies it to the matched route and
+  refuses any route not listed. A test walks it for every route and role, and holds it equal to
+  the table above.
+- **Imports:** the list above named `platform.db` and `platform.audit` only, but the service also
+  needs the startup guard (amendment 8), the error envelope, response headers and log redaction.
+  It may import the shared kernel except `platform.tenancy`, `platform.context` and
+  `platform.queue`, plus modules' `api.py`; import-linter holds both directions.
+- **Contract:** `apps/operator/contract/` holds `openapi.json`, `error-codes.json` and
+  `messages/es.json` and `en.json`, the texts of every `operator.*` code, kept complete by tests.
+  `apps/operator-web` (step 5) generates its client from there.
+- **Images:** the customer API image holds no `atesta_operator` (a Dockerfile test and CI's
+  built-image check). The operator image itself comes with build step 6.
+- **Local sign-in:** `uv run python apps/api/devtools/fake_cognito.py --staff` serves a fake staff
+  pool on port 9001 with client id `local-operator`. Both fakes now put `auth_time` in access
+  tokens and keep it across a refresh: Cognito documents it as the time the user "completed
+  authentication". That a refresh keeps it is a candidate, checked against the real pool in
+  step 6.
+
 ## Permissions matrix
 
 | Action | admin | billing | support |

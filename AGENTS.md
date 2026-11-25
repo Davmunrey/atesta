@@ -15,6 +15,8 @@ framework. Atesta builds evidence packs for auditors.
 ## Architecture (see docs/adr)
 
 - Python 3.13 backend: FastAPI modular monolith in `apps/api`, jobs in `apps/worker`.
+- Operator API in `apps/operator` (ADR-017): the staff service, a third entrypoint with its own
+  database role, staff pool and permissions matrix; organization metadata only, never content.
 - Next.js + TypeScript UI in `apps/web`, typed client generated from the OpenAPI spec.
 - Shared UI in `packages/ui` (`@atesta/ui`, ADR-017): tokens, fonts, base styles, the shared
   components and the CSP script. A web app imports them from the package, never copies them.
