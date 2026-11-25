@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { expectPolished } from "./polish";
+import { expectPolished } from "@atesta/ui/e2e-polish";
 
 /**
  * Landing, part 1 (landing-legal spec, #308): no third party and no cookie before the visitor acts,

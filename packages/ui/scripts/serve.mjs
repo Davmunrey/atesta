@@ -1,17 +1,19 @@
 /**
- * Stand-in for CloudFront in e2e (web-shell and infra specs): serves the static export, routes
- * /api and /auth to the API, and adds the security headers the response headers policy adds.
- * Usage: node tests/e2e/serve.mjs   (PORT 3000, API_ORIGIN http://127.0.0.1:8000)
+ * Stand-in for CloudFront in e2e (web-shell and infra specs): serves an app's static export,
+ * routes /api and /auth to its API, and adds the security headers the response headers policy
+ * adds. Shared by every Atesta web app (ADR-017). Usage, from the app's directory:
+ * node node_modules/@atesta/ui/scripts/serve.mjs   (PORT 3000, API_ORIGIN http://127.0.0.1:8000,
+ * NO_REFERRER: comma-separated path prefixes sent with Referrer-Policy no-referrer)
  */
 import { readFileSync } from "node:fs";
 import { request as forward, createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
-import { fileURLToPath } from "node:url";
 
-const ROOT = fileURLToPath(new URL("../../", import.meta.url));
+const ROOT = process.cwd();
 const OUT = join(ROOT, "out");
 const API = new URL(process.env.API_ORIGIN ?? "http://127.0.0.1:8000");
 const { policy } = JSON.parse(readFileSync(join(ROOT, "csp-policy.json"), "utf8"));
+const NO_REFERRER = (process.env.NO_REFERRER ?? "").split(",").filter(Boolean);
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".txt": "text/plain; charset=utf-8", ".svg": "image/svg+xml", ".ico": "image/x-icon", ".woff2": "font/woff2" };
 
 function securityHeaders(path) {
@@ -19,7 +21,7 @@ function securityHeaders(path) {
     "content-security-policy": policy,
     "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
     "x-content-type-options": "nosniff",
-    "referrer-policy": ["/invite", "/training", "/unsubscribe"].some((p) => path.startsWith(p)) ? "no-referrer" : "same-origin",
+    "referrer-policy": NO_REFERRER.some((p) => path.startsWith(p)) ? "no-referrer" : "same-origin",
   };
 }
 

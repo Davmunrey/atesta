@@ -1,0 +1,79 @@
+{
+  "brand": {
+    "name": "Atesta"
+  },
+  "portal": {
+    "name": "Portal de operaciones",
+    "shortName": "Operaciones",
+    "title": "Atesta · Portal de operaciones",
+    "nav": {
+      "label": "Secciones del portal",
+      "customers": "Clientes",
+      "admin": "Administración",
+      "organizations": "Organizaciones",
+      "erased": "Organizaciones borradas",
+      "team": "Equipo",
+      "log": "Registro de operaciones"
+    },
+    "role": {
+      "label": "Rol",
+      "admin": "Administración",
+      "billing": "Facturación",
+      "support": "Soporte"
+    },
+    "signIn": {
+      "title": "Portal de operaciones",
+      "body": "Solo para el equipo de Atesta. Entra con tu cuenta de equipo: te pedirá tu llave de acceso o tu código de verificación.",
+      "action": "Iniciar sesión"
+    },
+    "noAccess": {
+      "title": "Sin acceso al portal",
+      "body": "Tu cuenta de equipo no tiene acceso o está desactivada. Pide a una persona administradora que lo revise."
+    },
+    "notFound": {
+      "title": "No encontramos esta página",
+      "back": "Volver a Organizaciones"
+    }
+  },
+  "organizations": {
+    "title": "Organizaciones",
+    "description": "Las organizaciones de clientes: solo sus metadatos, nunca su contenido."
+  },
+  "console": {
+    "skip": "Saltar al contenido",
+    "menuShow": "Mostrar el menú",
+    "menuHide": "Ocultar el menú",
+    "breadcrumbs": "Ruta"
+  },
+  "app": {
+    "loading": "Cargando…",
+    "retry": "Reintentar",
+    "account": "Cuenta",
+    "signedInLabel": "Sesión iniciada como",
+    "signOut": "Cerrar sesión"
+  },
+  "locale": {
+    "label": "Idioma",
+    "es": "Español",
+    "en": "English"
+  },
+  "errors": {
+    "unknown": "Algo ha fallado. Vuelve a intentarlo y, si se repite, avisa en el canal del equipo.",
+    "auth": {
+      "bad_nonce": "No se ha podido completar el inicio de sesión. Vuelve a iniciar sesión.",
+      "bad_origin": "Hemos bloqueado una solicitud que no venía del portal. Recarga la página.",
+      "bad_state": "El inicio de sesión ha caducado. Vuelve a iniciar sesión.",
+      "invalid_token": "Tu sesión ha terminado. Vuelve a iniciar sesión.",
+      "provider_unavailable": "No podemos verificar tu sesión ahora mismo. Vuelve a intentarlo en unos segundos."
+    },
+    "request": {
+      "error": "No se ha podido completar la solicitud. Vuelve a intentarlo.",
+      "invalid": "Revisa los datos: hay un campo que no es válido.",
+      "method_not_allowed": "Esta acción no está disponible. Recarga la página.",
+      "not_found": "No encontramos esa página o recurso."
+    },
+    "server": {
+      "error": "Algo ha fallado por nuestra parte. Vuelve a intentarlo y, si se repite, avisa en el canal del equipo."
+    }
+  }
+}

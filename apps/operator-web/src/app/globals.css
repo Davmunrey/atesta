@@ -1,0 +1,6 @@
+/* The operator portal holds no style of its own (ADR-017, "Design system"): tokens, components
+   and base styles all come from @atesta/ui; a test refuses any rule here. */
+@import "tailwindcss";
+@import "@atesta/ui/styles/tokens.css";
+@import "@atesta/ui/styles/components.css";
+@import "@atesta/ui/styles/base.css";

@@ -95,3 +95,15 @@ def test_a_customer_fake_token_is_refused_by_the_staff_check() -> None:
     token = sign_in(customer, "local-web")["access_token"]
     with pytest.raises(InvalidTokenError):
         verify(staff, STAFF, "local-operator", token)
+
+
+def test_the_portal_e2e_seed_derives_staff_subjects_as_the_fake_does() -> None:
+    """prepare_e2e_db.py --operator seeds staff rows the fake staff pool signs in (#487)."""
+    sys.path.insert(0, str(API))
+    try:
+        seed: Any = importlib.import_module("devtools.prepare_e2e_db")
+        issuer: Any = importlib.import_module("devtools.fake_cognito")
+    finally:
+        sys.path.remove(str(API))
+    assert seed._SUB_NAMESPACE == issuer._SUB_NAMESPACE
+    assert "admin@atesta.test" in seed.STAFF

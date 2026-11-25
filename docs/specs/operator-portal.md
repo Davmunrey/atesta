@@ -357,6 +357,41 @@ Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
   authentication". That a refresh keeps it is a candidate, checked against the real pool in
   step 6.
 
+### Portal as built (build step 5, #487 to #491)
+
+Amended 2026-11-25 where the text above was ambiguous or did not fit the code:
+- **App:** `apps/operator-web`, a member of the root pnpm workspace with the console's dependency
+  versions and none of its own. Static export; the shared CSP step writes its policy (0 script
+  hashes, `connect-src 'self'`, `frame-ancestors 'none'`). Its dev server rewrites `/api` and
+  `/auth` to the operator API on port 8001.
+- **Shared, not copied (owner rule: "que la app no sea un frankenstein"):** the portal's frame is
+  the console's (`AppShell`, #486), and the console's helpers it needs moved into `@atesta/ui`
+  with it: the sign-in and sign-out URLs (`auth`), the query retry policy (`api-error`), the
+  typed-client generator, the licence check, the CloudFront stand-in and the e2e polish bar.
+  `globals.css` only imports the package's stylesheets, and a test refuses any rule, colour,
+  custom property, inline style or arbitrary Tailwind value in the app, any name the package
+  exports, and any import of the console.
+- **Environment marker:** `AppShell` takes a `label`; the portal's is "Portal de operaciones" /
+  "Operations portal", shortened on phones to "Operaciones" / "Operations" so it is never cut.
+- **Sign-in:** signed out (`GET /me` 401), the page says the portal is for the Atesta team and
+  offers "Iniciar sesión", which goes to `/auth/login` with the page to come back to. No automatic
+  redirect: after "Cerrar sesión" the staff member lands on this page, not back in the pool. A
+  valid staff sign-in without an enabled staff row (403 `operator.forbidden`) reads "Sin acceso al
+  portal", with sign-out.
+- **Messages:** `apps/operator-web/messages` holds the portal's own texts; the `operator.*` error
+  texts are read from `apps/operator/contract/messages` at build time, never copied. A test holds
+  the texts under `errors` equal to `error-codes.json` plus `unknown`. The session's
+  `auth.bad_origin`, `auth.bad_state` and `auth.bad_nonce` joined the contract's code list, so a
+  write without the portal's origin is explained.
+- **Routes** (query parameters, as the console's, because the export is static): `/`
+  (organizations), `/organization?id=`, `/erased`, `/team`, `/log`.
+- **Bundles:** after both builds, `apps/operator-web/scripts/check-bundles.ts` fails when the
+  console's export holds a portal route or text, or the reverse.
+- **CI:** the `web` job types, lints, tests, builds and licence-checks the portal and runs the
+  bundle check; the `e2e` job builds it and runs its suite against the real operator API, Postgres
+  and the fake staff pool (`prepare_e2e_db.py --operator` gives `atesta_operator` a login and
+  seeds staff and organizations). No new job, so the ruleset is unchanged.
+
 ## Permissions matrix
 
 | Action | admin | billing | support |

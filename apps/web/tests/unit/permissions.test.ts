@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loginUrl } from "@/lib/auth";
+import { loginUrl } from "@atesta/ui/auth";
 import { selectOrg } from "@/lib/org";
 import { auditorWindow, canAssess, canChangeRoles, canInvite, canRemove, invitableRoles, isContributor } from "@/lib/permissions";
 

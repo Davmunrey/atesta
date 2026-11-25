@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { dossier } from "./fixtures";
-import { expectPolished } from "./polish";
+import { expectPolished } from "@atesta/ui/e2e-polish";
 
 /**
  * Public pages (ui-polish spec, #301): the public side meets the console's bar at a phone and a

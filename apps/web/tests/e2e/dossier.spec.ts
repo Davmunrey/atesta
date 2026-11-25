@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { settled } from "./polish";
+import { settled } from "@atesta/ui/e2e-polish";
 import { dossier } from "./fixtures";
 
 test("the auditor dossier reads well on a phone and a laptop", async ({ page }) => {

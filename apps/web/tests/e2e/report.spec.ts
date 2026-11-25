@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { settled } from "./polish";
+import { settled } from "@atesta/ui/e2e-polish";
 
 test("the monthly report reads well on a phone and a laptop, and prints clean", async ({ page }) => {
   await page.goto("/app");

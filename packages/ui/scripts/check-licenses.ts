@@ -1,13 +1,14 @@
 /**
  * Fails on GPL or AGPL licensed packages and on packages with no declared license (ADR-006,
  * web-shell spec). LGPL is allowed: those libraries are used unmodified.
- * Usage: pnpm licenses list --json | node scripts/check-licenses.ts
+ * Shared by every Atesta web app (ADR-017). Usage, from the app's directory:
+ * pnpm licenses list --json | node node_modules/@atesta/ui/scripts/check-licenses.ts
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 type Entry = { name: string; versions: string[] };
-export type Report = Record<string, Entry[]>;
+export type LicenseReport = Record<string, Entry[]>;
 
 // License fields are free text, not always SPDX: "GPLv3", "GNU GPL v3" and the spelled-out name
 // must be caught too. LGPL, in either spelling, is not a match.
@@ -27,7 +28,7 @@ export function isAllowed(expression: string): boolean {
     .every((id) => !UNDECLARED.test(id) && !COPYLEFT.test(id));
 }
 
-export function violations(report: Report): string[] {
+export function violations(report: LicenseReport): string[] {
   return Object.entries(report)
     .filter(([license]) => !isAllowed(license))
     .flatMap(([license, entries]) =>
@@ -35,8 +36,9 @@ export function violations(report: Report): string[] {
     );
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const found = violations(JSON.parse(readFileSync(0, "utf8")) as Report);
+// The app runs this file through its node_modules link, so compare real paths.
+if (process.argv[1] && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const found = violations(JSON.parse(readFileSync(0, "utf8")) as LicenseReport);
   for (const line of found) console.error(`license not allowed: ${line}`);
   process.exit(found.length > 0 ? 1 : 0);
 }

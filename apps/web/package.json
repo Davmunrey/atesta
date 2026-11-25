@@ -11,10 +11,10 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint . ../../packages/ui",
     "test": "vitest run",
-    "check-licenses": "pnpm licenses list --json | node scripts/check-licenses.ts",
+    "check-licenses": "pnpm licenses list --json | node node_modules/@atesta/ui/scripts/check-licenses.ts",
     "check-legal": "node scripts/check-legal.ts",
     "check-landing": "node scripts/check-landing.ts",
-    "gen:api": "node scripts/gen-api-types.ts"
+    "gen:api": "node node_modules/@atesta/ui/scripts/gen-api-types.ts src/lib/api/openapi.json src/lib/api/schema.d.ts"
   },
   "dependencies": {
     "@atesta/ui": "workspace:*",

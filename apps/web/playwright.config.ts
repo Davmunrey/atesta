@@ -2,7 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 /**
  * e2e against the real API and Postgres with the fake Cognito (web-shell spec). The static
- * export is served by tests/e2e/serve.mjs, which adds the headers CloudFront adds.
+ * export is served by @atesta/ui/scripts/serve.mjs, which adds the headers CloudFront adds.
  * Needs: `pnpm build` first and ATESTA_E2E_ADMIN_URL (a Postgres superuser URL).
  */
 const admin = process.env.ATESTA_E2E_ADMIN_URL ?? "postgresql+psycopg://postgres@localhost:5432/postgres";
@@ -52,6 +52,11 @@ export default defineConfig({
         ATESTA_SESSION_KEY: Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString("base64"),
       },
     },
-    { command: "node tests/e2e/serve.mjs", url: "http://localhost:3000/", reuseExistingServer: false },
+    {
+      command: "node node_modules/@atesta/ui/scripts/serve.mjs",
+      url: "http://localhost:3000/",
+      reuseExistingServer: false,
+      env: { NO_REFERRER: "/invite,/training,/unsubscribe" },
+    },
   ],
 });

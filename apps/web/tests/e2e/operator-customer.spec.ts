@@ -1,5 +1,5 @@
 import { type Page, expect, test } from "@playwright/test";
-import { expectPolished } from "./polish";
+import { expectPolished } from "@atesta/ui/e2e-polish";
 
 /**
  * What customers see of the operator (operator-portal spec): the suspended page for an owner and a

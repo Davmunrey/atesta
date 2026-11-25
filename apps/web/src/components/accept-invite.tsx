@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { isLocale } from "@atesta/ui/i18n/locale";
 import { ApiError } from "@atesta/ui/api-error";
 import { useAcceptInvitation, useMeQuery } from "@/lib/api/hooks";
-import { loginUrl } from "@/lib/auth";
+import { loginUrl } from "@atesta/ui/auth";
 import { captureInviteToken, forgetInviteToken } from "@/lib/invite";
 import { goTo } from "@/lib/navigation";
 import { orgHome } from "@/lib/org";

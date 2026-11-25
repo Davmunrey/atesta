@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isAllowed, violations } from "../../scripts/check-licenses";
+import { isAllowed, violations } from "@atesta/ui/check-licenses";
 
 describe("isAllowed", () => {
   it.each(["MIT", "Apache-2.0", "ISC", "BSD-3-Clause", "MPL-2.0", "LGPL-3.0-or-later", "Apache-2.0 AND MIT", "(MIT OR GPL-3.0)"])(

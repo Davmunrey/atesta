@@ -1,0 +1,79 @@
+{
+  "brand": {
+    "name": "Atesta"
+  },
+  "portal": {
+    "name": "Operations portal",
+    "shortName": "Operations",
+    "title": "Atesta · Operations portal",
+    "nav": {
+      "label": "Portal sections",
+      "customers": "Customers",
+      "admin": "Administration",
+      "organizations": "Organizations",
+      "erased": "Erased organizations",
+      "team": "Team",
+      "log": "Operations log"
+    },
+    "role": {
+      "label": "Role",
+      "admin": "Admin",
+      "billing": "Billing",
+      "support": "Support"
+    },
+    "signIn": {
+      "title": "Operations portal",
+      "body": "For the Atesta team only. Sign in with your team account: it will ask for your passkey or your verification code.",
+      "action": "Sign in"
+    },
+    "noAccess": {
+      "title": "No access to the portal",
+      "body": "Your team account has no access or is disabled. Ask an admin to check it."
+    },
+    "notFound": {
+      "title": "We could not find this page",
+      "back": "Back to Organizations"
+    }
+  },
+  "organizations": {
+    "title": "Organizations",
+    "description": "Customer organizations: their metadata only, never their content."
+  },
+  "console": {
+    "skip": "Skip to content",
+    "menuShow": "Show the menu",
+    "menuHide": "Hide the menu",
+    "breadcrumbs": "Breadcrumbs"
+  },
+  "app": {
+    "loading": "Loading…",
+    "retry": "Try again",
+    "account": "Account",
+    "signedInLabel": "Signed in as",
+    "signOut": "Sign out"
+  },
+  "locale": {
+    "label": "Language",
+    "es": "Español",
+    "en": "English"
+  },
+  "errors": {
+    "unknown": "Something went wrong. Try again, and tell the team channel if it keeps happening.",
+    "auth": {
+      "bad_nonce": "Sign-in could not be completed. Sign in again.",
+      "bad_origin": "A request that did not come from the portal was blocked. Reload the page.",
+      "bad_state": "Sign-in expired. Sign in again.",
+      "invalid_token": "Your session has ended. Sign in again.",
+      "provider_unavailable": "We cannot verify your session right now. Try again in a few seconds."
+    },
+    "request": {
+      "error": "The request could not be completed. Try again.",
+      "invalid": "Check your input: one of the fields is not valid.",
+      "method_not_allowed": "This action is not available. Reload the page.",
+      "not_found": "We could not find that page or resource."
+    },
+    "server": {
+      "error": "Something went wrong on our side. Try again, and tell the team channel if it keeps happening."
+    }
+  }
+}

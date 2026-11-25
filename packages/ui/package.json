@@ -5,6 +5,7 @@
   "exports": {
     "./api-error": "./src/api-error.ts",
     "./app-shell": "./src/app-shell.tsx",
+    "./auth": "./src/auth.ts",
     "./badge": "./src/badge.tsx",
     "./brand-mark": "./src/brand-mark.tsx",
     "./deadline": "./src/deadline.ts",
@@ -18,11 +19,17 @@
     "./page-frame": "./src/page-frame.tsx",
     "./severity": "./src/severity.ts",
     "./styles/*": "./src/styles/*",
-    "./csp": "./scripts/csp.ts"
+    "./csp": "./scripts/csp.ts",
+    "./check-licenses": "./scripts/check-licenses.ts",
+    "./gen-api-types": "./scripts/gen-api-types.ts",
+    "./e2e-polish": "./scripts/polish.ts"
   },
   "peerDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.1",
     "next": "16.4.6",
     "next-intl": "4.15.1",
+    "openapi-typescript": "7.13.0",
     "react": "19.3.1"
   },
   "devDependencies": {

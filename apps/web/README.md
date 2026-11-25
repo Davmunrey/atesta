@@ -64,5 +64,5 @@ pnpm build
 ATESTA_E2E_ADMIN_URL=postgresql+psycopg://postgres@localhost:5432/postgres pnpm exec playwright test
 ```
 
-`tests/e2e/serve.mjs` stands in for CloudFront: it serves `out/`, routes `/api` and `/auth` to the
+`@atesta/ui/scripts/serve.mjs` stands in for CloudFront: it serves `out/`, routes `/api` and `/auth` to the
 API on :8000, and adds the security headers, including the CSP from `csp-policy.json`.

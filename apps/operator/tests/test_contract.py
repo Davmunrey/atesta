@@ -7,6 +7,7 @@ Regenerate with ATESTA_UPDATE_API_CONTRACT=1 uv run pytest apps/operator/tests/t
 import ast
 import json
 import os
+import re
 from pathlib import Path
 
 from atesta_operator.contract import error_codes, openapi_document
@@ -56,3 +57,11 @@ def test_every_operator_code_has_spanish_and_english_text() -> None:
         operator = texts["errors"]["operator"]
         assert set(operator) == codes, language
         assert all(isinstance(t, str) and t.strip() for t in operator.values())
+
+
+def test_every_code_the_session_returns_is_listed() -> None:
+    """The portal shows a text only for listed codes; a write without its origin is 403
+    `auth.bad_origin`, which the portal must explain (#487)."""
+    source = (APP / "src" / "atesta_operator" / "session.py").read_text()
+    raised = set(re.findall(r'"(auth\.[a-z_]+)"', source))
+    assert raised and raised <= set(error_codes())

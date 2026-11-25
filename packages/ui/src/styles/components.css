@@ -80,6 +80,10 @@
   /* Brand system (DESIGN.md, issue 330): the seal lockup on ink; the mark carries the highlighter. */
   .topbar-brand { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-display); font-size: 1.375rem; font-weight: 600; letter-spacing: -0.03em; padding-inline: 0.25rem; line-height: 1.3; }
   .topbar-brand .brand-seal { width: 1.5rem; height: 1.5rem; }
+  /* An app's name beside the lockup (AppShell label): the operator portal says what it is. */
+  .topbar-label { min-width: 0; padding-left: 0.75rem; border-left: 1px solid var(--color-topbar-field); font-size: 0.9375rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .topbar-label > span + span { display: none; }
+  @media (max-width: 40rem) { .topbar-label > span:first-child { display: none; } .topbar-label > span + span { display: inline; } }
   .topbar-spacer { flex: 1; }
   .topbar-end { display: flex; align-items: center; gap: 0.75rem; margin-left: auto; }
   .topbar .account-trigger { width: 2.25rem; height: 2.25rem; background: var(--color-topbar-field); border-color: var(--color-topbar-muted); color: var(--color-topbar-fg); }
@@ -202,5 +206,7 @@ tr.row-detail > td { padding-top: 0; }
   .topbar-icon, .topbar .account-trigger { min-height: 2.75rem; min-width: 2.75rem; }
 }
 
+/* Links that stand alone as actions (not inside running text) are full-height targets. */
+.action-link { display: inline-flex; align-items: center; min-height: 2.75rem; }
 /* Focus and anchors never land under the sticky top bar (WCAG 2.4.11). */
 html { scroll-padding-top: 4.5rem; }

@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
-import { expectPolished, settled } from "./polish";
+import { expectPolished, settled } from "@atesta/ui/e2e-polish";
 import { framework, paperEvidence, passingReview, preparationFramework, requirementGuidance, withManualControl } from "../fixtures/framework";
 import { overview } from "../fixtures/overview";
 
