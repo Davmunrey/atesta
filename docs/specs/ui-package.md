@@ -1,6 +1,7 @@
 # Spec: shared UI package (`@atesta/ui`)
 
-- Issues: #440 (the package); #441 (the component stylesheets, section below).
+- Issues: #440 (the package); #441 (the component stylesheets, section below); #486 (the app shell,
+  section below).
 - Status: approved (2026-11-24, ADR-017 accepted in #405).
 - ADRs: ADR-017 ("How the UI code is shared", "Design system"), ADR-006, ADR-013.
 - Build order: step 1 of the operator portal (`operator-portal.md`, "Design notes").
@@ -28,6 +29,7 @@ copy it.
   | `styles/tokens.css`, `styles/base.css`, `fonts` | tokens, base element styles, the three self-hosted faces (`styles/fonts/`) |
   | `styles/components.css` | the shared component styles (#441, below) |
   | `page-frame` | `PageHeader`, `Breadcrumbs`, `Panel`, `Loading`, `LoadError`, `Empty` |
+  | `app-shell`, `brand-mark` | `AppShell`, `AccountMenu`, `Notice`; `BrandMark` (#486, below) |
   | `badge`, `severity`, `deadline`, `icons` | `Badge`, `ClockBadge`, the severity mapping, the countdown, the icon set |
   | `error-message`, `api-error` | `ErrorMessage`; `ApiError`, `errorCode`, `unwrap`, `expectOk`, `messageKey` |
   | `locale-switcher`, `i18n/locale`, `i18n/provider` | the switcher, the locale cookie rules, `I18nProvider` (each app passes its own messages) |
@@ -148,3 +150,30 @@ properties and an element that matches both:
 - #441: `ui-package.test.ts` (no shared component defined in the app, import order),
   `consistency.test.tsx` (`.field` and the console form controls carry the same declarations);
   the reordered-rule listing and the computed-style comparison above, run against `main`'s build.
+
+## App shell (#486)
+
+Step 5.0 of the operator portal: `apps/operator-web` needs the console's frame, and the
+product-components rule above ("one moves only when a second app needs it") now applies to it.
+
+### Acceptance criteria
+
+- [ ] **Components.** `@atesta/ui/app-shell` exports `AppShell` (skip link, ink top bar with the
+  menu button and the lockup, the app's own top-bar content or a spacer, the end slot; the grouped
+  side navigation, its remembered rail and its phone drawer; a notices slot, the page and a footer
+  slot), `AccountMenu` (initial, signed-in email, the app's links, sign-out) and `Notice`;
+  `@atesta/ui/brand-mark` exports `BrandMark`. `ConsoleShell` passes its navigation, organization
+  switcher, search, notices and footer to `AppShell`; the markup is unchanged.
+- [ ] **Styles.** The shell's rules (`console`, `topbar*` but the switcher and search, `sidenav*`,
+  `drawer-scrim`, `console-body`, `console-main`, `console-page` and its placeholders, `notices`,
+  `notice`, `account-*`, `skip-link`, `brand-seal*`, the shell's phone targets and print rules,
+  the top bar's scroll padding) and the generic `confirm-row` and `form-actions` move into
+  `components.css`. The console's `.account-menu { top; right }` rule is removed: the later
+  account-menu rule always overrode both values, so it never applied.
+- [ ] **No visual change.** The built CSS holds the same rules apart from that dead one (an
+  order-free comparison of every rule with its at-rule context), and no moved rule changes winner:
+  the only app rules with the same layer and specificity on the same classes are
+  `.notice.proposal-notice` against `.notice[data-severity="overdue"]` (no shared property) and
+  `.assistant-launcher .brand-seal` against `.topbar-brand .brand-seal` (no shared element). The
+  console's unit tests and e2e pass with only the placeholder test reading the package.
+

@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
 import { AssistantLauncher } from "@/components/assistant/launcher";
 import { CategoryFlow } from "@/components/assistant/flows";
-import { BrandMark } from "@/components/brand-mark";
+import { BrandMark } from "@atesta/ui/brand-mark";
 import { PageIndex } from "@/components/public/page-index";
 import { legalEntity } from "@/content/legal-entity";
 import { loadIndex } from "@/lib/assistant/flows";

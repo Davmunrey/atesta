@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { legalEntity } from "@/content/legal-entity";
-import { BrandMark } from "../brand-mark";
+import { BrandMark } from "@atesta/ui/brand-mark";
 import { DOCS, LINKS, PAGES } from "./site-map";
 
 /** The public footer (A3): a full map of the public site on ink, with the honest proof. Plain

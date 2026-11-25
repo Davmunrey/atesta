@@ -2,7 +2,7 @@
 
 import { useFormatter, useTranslations } from "next-intl";
 import { AssistantLauncher } from "@/components/assistant/launcher";
-import { BrandMark } from "@/components/brand-mark";
+import { BrandMark } from "@atesta/ui/brand-mark";
 import { Icon } from "@atesta/ui/icons";
 import { ViewFrame } from "@/components/landing/view-frame";
 import fixture from "@/content/landing-fixture.json";

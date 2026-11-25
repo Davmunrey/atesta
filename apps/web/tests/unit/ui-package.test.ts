@@ -91,7 +91,10 @@ describe("the shared UI package", () => {
     const shared = readFileSync(join(UI, "src/styles/components.css"), "utf8");
     const owned = new Set(selectors(shared).flatMap(classes));
     expect([...owned]).toEqual(expect.arrayContaining(["dashboard-button", "button-primary", "button-danger", "field", "page-header",
-      "breadcrumbs", "panel", "badge", "table-region", "state-loading", "state-error", "state-empty"]));
+      "breadcrumbs", "panel", "badge", "table-region", "state-loading", "state-error", "state-empty",
+      // The app shell (#486): every signed-in app draws the same frame.
+      "console", "topbar", "topbar-brand", "sidenav", "console-page", "notice", "account-menu", "skip-link", "brand-seal",
+      "confirm-row", "form-actions"]));
     const sharedSelectors = new Set(selectors(shared));
     const app = files(join(WEB, "src"), /\.css$/);
     const defined = app.flatMap((file) => selectors(readFileSync(file, "utf8"))

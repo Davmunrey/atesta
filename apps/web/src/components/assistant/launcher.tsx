@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Suspense, lazy, useId, useState } from "react";
-import { BrandMark } from "../brand-mark";
+import { BrandMark } from "@atesta/ui/brand-mark";
 import type { Surface } from "./panel";
 
 const Panel = lazy(() => import("./panel"));

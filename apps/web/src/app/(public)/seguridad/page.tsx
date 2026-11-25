@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { AssistantLauncher } from "@/components/assistant/launcher";
-import { BrandMark } from "@/components/brand-mark";
+import { BrandMark } from "@atesta/ui/brand-mark";
 import { PageIndex } from "@/components/public/page-index";
 import { legalEntity } from "@/content/legal-entity";
 

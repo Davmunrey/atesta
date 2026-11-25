@@ -9,8 +9,6 @@
 
   /* Lockup: the mark beside the live wordmark. */
   .brand-lockup { display: inline-flex; align-items: center; gap: 0.625rem; min-height: 2.75rem; color: var(--color-fg); }
-  .brand-seal { flex: none; width: 2rem; height: 2rem; }
-  .brand-seal-highlight { fill: var(--color-accent); }
   .brand-word { font-family: var(--font-display); font-size: 1.75rem; font-weight: 600; line-height: 1; letter-spacing: -0.04em; }
 
   .public-header-end { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.5rem; }

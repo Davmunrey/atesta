@@ -64,7 +64,7 @@ it("does not repeat the page title on the register panel", async () => {
 it("bounds page descriptions, takes placeholders from the muted token and keeps room for the assistant", () => {
   const console_ = css("console.css");
   expect(shared).toMatch(/\.page-description \{ max-width: 72ch;/);
-  expect(console_).toMatch(/\.console-page :is\(input, textarea\)::placeholder \{ color: var\(--color-muted\);/);
+  expect(shared).toMatch(/\.console-page :is\(input, textarea\)::placeholder \{ color: var\(--color-muted\);/);
   expect(console_).toMatch(/body:has\(\.assistant-launcher\) \.console-page \{ padding-bottom:/);
   expect(console_).toMatch(/html:has\(\.console\):has\(\.assistant-launcher\) \{ scroll-padding-bottom:/);
 });

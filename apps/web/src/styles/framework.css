@@ -142,8 +142,6 @@
 
   /* Self-assessment workspace (requirement-register spec). Paper, ruled rows, highlighter for the
      primary action; no shadows (DESIGN.md). */
-  /* An inline confirmation: the question, then confirm and cancel. */
-  .confirm-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; }
   .self-assessment { margin-top: 2rem; padding: 1.5rem; background: var(--color-surface); border-radius: 0.375rem; }
   .self-assessment h2 { font-size: 1.25rem; font-weight: 500; }
   .assessment-steps { list-style: none; counter-reset: step; display: grid; gap: 0; margin-top: 1.25rem; }
@@ -169,7 +167,6 @@
   .form-row { display: grid; gap: 0.75rem; }
   @media (min-width: 40rem) { .form-row { grid-template-columns: 2fr 1fr; } }
   .form-row > span { display: grid; gap: 0.25rem; }
-  .form-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem; }
   .assessment-card { padding-block: 0.5rem 1.25rem; border-block-end: 1px solid var(--color-border); margin-bottom: 1rem; }
   .assessment-summary { display: grid; gap: 0.5rem; margin-block: 0.75rem; }
   .assessment-summary div { display: grid; grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr); gap: 1rem; }
