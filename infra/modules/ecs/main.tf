@@ -76,8 +76,8 @@ variable "queues_key_arn" {
 }
 
 variable "images" {
-  description = "Image references for api, worker, scan and the egress proxy, pinned by digest."
-  type        = object({ api = string, worker = string, scan = string, egress = string })
+  description = "Image references for api, worker, scan, the egress proxy and the operator service, pinned by digest."
+  type        = object({ api = string, worker = string, scan = string, egress = string, operator = string })
   validation {
     condition     = alltrue([for image in values(var.images) : can(regex("@sha256:[0-9a-f]{64}$", image))])
     error_message = "Pin every image by digest (repository@sha256:...)."
@@ -100,6 +100,7 @@ variable "secrets" {
     worker    = map(string)
     migrate   = map(string)
     bootstrap = optional(map(string), {})
+    operator  = map(string) # read only by the operator's own execution role (operator.tf)
   })
 }
 
@@ -226,6 +227,15 @@ locals {
       environment      = [for k, v in local.scan_environment : { name = k, value = v }]
       logConfiguration = { logDriver = "awslogs", options = { "awslogs-group" = aws_cloudwatch_log_group.this["scan"].name, "awslogs-region" = local.region, "awslogs-stream-prefix" = "scan" } }
     })
+    # The operator service (ADR-017, operator.tf): its own settings and secrets, port 8001.
+    operator = merge(local.locked, {
+      mountPoints      = [{ sourceVolume = "tmp", containerPath = "/tmp" }]
+      image            = var.images.operator
+      portMappings     = [{ containerPort = 8001, protocol = "tcp" }]
+      environment      = [for k, v in var.operator.environment : { name = k, value = v }]
+      secrets          = [for k, arn in var.secrets.operator : { name = k, valueFrom = arn }]
+      logConfiguration = { logDriver = "awslogs", options = { "awslogs-group" = aws_cloudwatch_log_group.this["operator"].name, "awslogs-region" = local.region, "awslogs-stream-prefix" = "operator" } }
+    })
     # The scan egress proxy (issue 454): no secrets, no settings, no AWS rights.
     egress = merge(local.locked, {
       mountPoints      = [{ sourceVolume = "tmp", containerPath = "/tmp" }]
@@ -237,7 +247,7 @@ locals {
 }
 
 resource "aws_cloudwatch_log_group" "this" {
-  for_each          = toset(["api", "worker", "migrate", "scan", "egress"])
+  for_each          = toset(["api", "worker", "migrate", "scan", "egress", "operator"])
   name              = "/atesta/${var.name}/${each.key}"
   retention_in_days = var.log_retention_days
   kms_key_id        = var.logs_key_arn

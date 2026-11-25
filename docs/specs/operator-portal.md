@@ -457,6 +457,29 @@ applied; the owner applies it (deploy runbook).
 - **Credentials (#499):** `atesta/<env>/db/operator-url` and `atesta/<env>/operator/session-key`,
   values set by hand. The bootstrap task also reads the operator URL, and `db_bootstrap` gives
   `atesta_operator` LOGIN with its password, as for the other two roles.
+- **Image (#500):** `apps/Dockerfile` target `operator`, from its own stages on the same pinned
+  base: the operator's closure (`uv export --package atesta-operator`), so `atesta_api` and its
+  dependency `atesta_mcp` but no worker, plus the catalog (plans and add-ons); no migrations.
+  Port 8001. `apps/operator/tests/test_image.py` follows each target's stages; CI's images job
+  checks the built images both ways, as ECS runs them.
+- **Service (#500):** `infra/modules/ecs/operator.tf`, in the API's cluster:
+  - **Roles:** its own execution role, which reads only `atesta/<env>/db/operator-url` and
+    `atesta/<env>/operator/session-key`; its own task role, allowed only
+    `cognito-idp:GetUserPoolMfaConfig` on the staff pool. The shared execution role of the
+    API, worker and migrations cannot read the operator secrets. The bootstrap task still reads
+    the operator URL, once, to set the password.
+  - **Network:** private subnets, no public IP, its own security group: in from the load
+    balancer on 8001, out to Postgres and HTTPS. The database accepts it as a second client.
+  - **Settings:** the staff pool's ids, the portal origin (`https://<edge.admin_aliases[0]>`),
+    and from the API's settings only `ATESTA_ENV`, `ATESTA_DB_SSLMODE` and the customer pool's
+    ids, which its startup refuses as the staff pool. It never gets `ATESTA_SESSION_KEY`, so the
+    "differs from the console's key" check holds only where both are set (local).
+  - **Reaching it (ADR-017 choice: header):** one listener rule on the API's load balancer
+    forwards to the operator's target group only requests carrying `X-Atesta-Operator-Origin`
+    with the value of `atesta/<env>/operator/origin-header`, set by hand (letters and digits;
+    the rule compares case-insensitively, at most 128 characters). The default action stays the
+    API. OpenTofu reads the value, so it is in the state; it routes and grants no data. A plan
+    role, when added, needs read on that one secret.
 
 ## Permissions matrix
 
