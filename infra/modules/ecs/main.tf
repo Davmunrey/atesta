@@ -216,6 +216,16 @@ locals {
       secrets          = [for k, arn in var.secrets.bootstrap : { name = k, valueFrom = arn }]
       logConfiguration = { logDriver = "awslogs", options = { "awslogs-group" = aws_cloudwatch_log_group.this["migrate"].name, "awslogs-region" = local.region, "awslogs-stream-prefix" = "bootstrap" } }
     })
+    # The erasure runner (runner.tf): the API image's erasure command, as atesta_owner with the
+    # migration credential, for approved requests whose closure date has passed.
+    erasure = merge(local.locked, {
+      mountPoints      = [{ sourceVolume = "tmp", containerPath = "/tmp" }]
+      image            = var.images.api
+      command          = ["python", "-m", "atesta_api.ops.erase", "--pending", "--execute"]
+      environment      = [for k, v in var.environment : { name = k, value = v }]
+      secrets          = [for k, arn in var.secrets.migrate : { name = k, valueFrom = arn }]
+      logConfiguration = { logDriver = "awslogs", options = { "awslogs-group" = aws_cloudwatch_log_group.this["erasure"].name, "awslogs-region" = local.region, "awslogs-stream-prefix" = "erasure" } }
+    })
     scan = merge(local.locked, {
       # Same writable paths as the local runner's tmpfs mounts (scanner-connectors spec).
       mountPoints = [
@@ -247,7 +257,7 @@ locals {
 }
 
 resource "aws_cloudwatch_log_group" "this" {
-  for_each          = toset(["api", "worker", "migrate", "scan", "egress", "operator"])
+  for_each          = toset(["api", "worker", "migrate", "scan", "egress", "operator", "erasure"])
   name              = "/atesta/${var.name}/${each.key}"
   retention_in_days = var.log_retention_days
   kms_key_id        = var.logs_key_arn
@@ -570,7 +580,7 @@ resource "aws_service_discovery_service" "egress" {
 # --- Tasks and services ---------------------------------------------------------------------
 
 resource "aws_ecs_task_definition" "this" {
-  for_each                 = { api = aws_iam_role.api.arn, worker = aws_iam_role.worker.arn, migrate = null, bootstrap = null }
+  for_each                 = { api = aws_iam_role.api.arn, worker = aws_iam_role.worker.arn, migrate = null, bootstrap = null, erasure = null }
   family                   = "${var.name}-${each.key}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]

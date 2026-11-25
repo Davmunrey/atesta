@@ -64,6 +64,12 @@ from atesta_api.modules.identity.deps import (
     require_member,
     require_role,
 )
+from atesta_api.modules.identity.erasure import (
+    ErasureRefusedError,
+    ErasureRun,
+    due_erasure_requests,
+    run_erasure_request,
+)
 from atesta_api.modules.identity.erasure_requests import (
     ApprovedErasure,
     ErasureStatus,
@@ -205,6 +211,10 @@ __all__ = [
     "change_staff",
     "staff_list",
     "ErasureStatus",
+    "ErasureRefusedError",
+    "ErasureRun",
+    "due_erasure_requests",
+    "run_erasure_request",
     "ReceiptRow",
     "erasure_receipts",
     "latest_erasure",
