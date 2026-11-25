@@ -13,6 +13,7 @@ from sqlalchemy import (
     column,
     func,
     insert,
+    select,
     table,
     text,
 )
@@ -187,3 +188,33 @@ def record_operator(
     session.add(row)
     session.flush()
     return row.id
+
+
+def operator_events(
+    session: Session,
+    *,
+    organization_id: uuid.UUID | None,
+    staff_id: uuid.UUID | None,
+    action: str | None,
+    page: int,
+    size: int,
+) -> tuple[list[OperatorAuditEvent], int]:
+    """The operator trail, newest first, filtered by organization, staff member and action."""
+    where = [
+        condition
+        for value, condition in (
+            (organization_id, OperatorAuditEvent.organization_id == organization_id),
+            (staff_id, OperatorAuditEvent.staff_id == staff_id),
+            (action, OperatorAuditEvent.action == action),
+        )
+        if value is not None
+    ]
+    rows = session.scalars(
+        select(OperatorAuditEvent)
+        .where(*where)
+        .order_by(OperatorAuditEvent.occurred_at.desc(), OperatorAuditEvent.id)
+        .limit(size)
+        .offset((max(page, 1) - 1) * size)
+    ).all()
+    total = session.scalar(select(func.count()).select_from(OperatorAuditEvent).where(*where))
+    return list(rows), int(total or 0)

@@ -9,11 +9,13 @@ from datetime import timedelta
 from typing import Any
 
 import pytest
+from atesta_api.modules.identity.api import OperatorError, change_staff
 from fastapi.testclient import TestClient
 from sqlalchemy import Engine
+from sqlalchemy.orm import Session
 
 from . import seed
-from .conftest import Issuer, MakeStaff, bearer
+from .conftest import OPERATOR_PASSWORD, Issuer, MakeStaff, bearer
 from .test_billing import customer_events
 from .test_organizations import operator_rows
 
@@ -267,7 +269,92 @@ def test_cancel_before_it_runs_never_after(
         "DELETE", f"/api/v1/erasure-requests/{run}", json={"reason": "x"}, headers=admin
     )
     assert done.json() == {"detail": {"code": "operator.erasure_executed"}}
+    receipts = client.get("/api/v1/erasure-receipts", headers=admin).json()
+    mine = [r for r in receipts["rows"] if r["id"] == str(receipt)]
+    assert mine and mine[0]["rows"] == 3 and mine[0]["organization_id"] == str(executed.id)
+    assert set(mine[0]) == {"id", "organization_id", "closure_requested_at", "erased_at", "rows"}
     detail = client.get(f"/api/v1/organizations/{executed.id}", headers=admin).json()
     assert detail["erasure"]["state"] == "executed" and detail["erasure"]["receipt_id"] == str(
         receipt
     )
+
+
+def test_staff_management(
+    client: TestClient,
+    superuser: Engine,
+    admin: dict[str, str],
+    admin_sub: str,
+    staff_pool: Issuer,
+    make_staff: MakeStaff,
+) -> None:
+    colleague = make_staff("support", email="new.colleague@atesta.test")
+    colleague_id = staff_id(superuser, colleague)
+    team = client.get("/api/v1/staff", headers=admin).json()
+    assert {"id": str(colleague_id), "email": "new.colleague@atesta.test", "role": "support",
+            "disabled_at": None} in team  # fmt: skip
+    me = staff_id(superuser, admin_sub)
+    own = client.patch(
+        f"/api/v1/staff/{me}", json={"role": "billing", "reason": "x"}, headers=admin
+    )
+    assert own.json() == {"detail": {"code": "operator.self_change"}}
+    promoted = client.patch(
+        f"/api/v1/staff/{colleague_id}", json={"role": "billing", "reason": "Joins billing"},
+        headers=admin,
+    )  # fmt: skip
+    assert promoted.json()["role"] == "billing"
+    off = client.patch(
+        f"/api/v1/staff/{colleague_id}", json={"disabled": True, "reason": "Left"}, headers=admin
+    )
+    assert off.json()["disabled_at"] is not None
+    gone = client.get("/api/v1/me", headers=bearer(staff_pool.token(colleague)))
+    assert gone.json() == {"detail": {"code": "operator.forbidden"}}
+    rows = client.get(
+        "/api/v1/operator-events", params={"action": "staff.role_changed"}, headers=admin
+    ).json()["rows"]
+    mine = [r for r in rows if r["target_id"] == str(colleague_id)]
+    assert mine[0]["metadata"] == {"role": "billing", "previous_role": "support"}
+    assert mine[0]["reason"] == "Joins billing" and mine[0]["organization_id"] is None
+    assert operator_rows(superuser, "staff.disabled")[-1].reason == "Left"
+
+
+def test_the_last_enabled_admin_is_never_demoted_or_disabled(
+    database: Any, superuser: Engine, make_staff: MakeStaff
+) -> None:
+    """Through the API an admin acts and cannot change their own row, so two admins exist; the
+    module function still refuses on its own, as when two admins demote each other at once."""
+    from atesta_api.platform.db import make_engine
+
+    only_admin = staff_id(superuser, make_staff("admin"))
+    actor = staff_id(superuser, make_staff("billing"))
+    engine = make_engine(
+        database.set(username="atesta_operator", password=OPERATOR_PASSWORD), sslmode="disable"
+    )
+    try:
+        for change in ({"role": "support"}, {"disabled": True}):
+            with Session(engine) as session, pytest.raises(OperatorError) as refused:
+                change_staff(session, only_admin, actor_id=actor, **change)  # type: ignore[arg-type]
+            assert refused.value.code == "last_admin"
+    finally:
+        engine.dispose()
+        seed.run(
+            superuser, "UPDATE operator_staff SET disabled_at = now() WHERE disabled_at IS NULL"
+        )
+
+
+def test_the_operator_trail_filters_by_organization(
+    client: TestClient, superuser: Engine, admin: dict[str, str]
+) -> None:
+    o = seed.org(superuser, "Trail")
+    client.get(f"/api/v1/organizations/{o.id}", headers=admin)
+    client.post(
+        f"/api/v1/organizations/{o.id}/closure",
+        json={"confirm_name": o.name, "reason": "Offboarding"},
+        headers=admin,
+    )
+    body = client.get("/api/v1/operator-events", params={"org_id": str(o.id)}, headers=admin).json()
+    assert body["total"] == 2
+    assert [r["action"] for r in body["rows"]] == [
+        "operator.closure_started",
+        "organization.viewed",
+    ]
+    assert body["rows"][0]["reason"] == "Offboarding" and body["rows"][1]["reason"] is None

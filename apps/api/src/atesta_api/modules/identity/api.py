@@ -67,8 +67,10 @@ from atesta_api.modules.identity.deps import (
 from atesta_api.modules.identity.erasure_requests import (
     ApprovedErasure,
     ErasureStatus,
+    ReceiptRow,
     approve_erasure,
     cancel_erasure,
+    erasure_receipts,
     latest_erasure,
     request_erasure,
 )
@@ -100,7 +102,14 @@ from atesta_api.modules.identity.org_profile import (
     recipients,
 )
 from atesta_api.modules.identity.routes import router
-from atesta_api.modules.identity.staff import STAFF_ROLES, StaffMember, StaffRole, enabled_staff
+from atesta_api.modules.identity.staff import (
+    STAFF_ROLES,
+    StaffMember,
+    StaffRole,
+    change_staff,
+    enabled_staff,
+    staff_list,
+)
 from atesta_api.modules.identity.standing import is_suspended
 
 
@@ -193,7 +202,11 @@ __all__ = [
     "TokenSet",
     "TokenVerifier",
     "enabled_staff",
+    "change_staff",
+    "staff_list",
     "ErasureStatus",
+    "ReceiptRow",
+    "erasure_receipts",
     "latest_erasure",
     "jwks_fetcher",
     "safe_return",
