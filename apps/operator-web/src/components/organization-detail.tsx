@@ -8,7 +8,8 @@ import { Fact, Facts } from "@atesta/ui/facts";
 import { LoadError, Loading, PageHeader, Panel } from "@atesta/ui/page-frame";
 import { type OrganizationDetail, useOrganization } from "@/lib/api/organizations";
 import Link from "next/link";
-import { canBill } from "@/lib/roles";
+import { canBill, isAdmin } from "@/lib/roles";
+import { OrganizationActions } from "./organization-actions";
 import { AddonName, HealthBadge, PlanName, StateBadge } from "./organization-labels";
 import { useStaff } from "./portal-shell";
 
@@ -22,9 +23,14 @@ export function OrganizationDetailPage() {
   if (query.isPending) return <><PageHeader crumbs={crumbs} title={t("crumb")} /><Loading /></>;
   if (query.isError) return <><PageHeader crumbs={crumbs} title={t("crumb")} /><LoadError error={query.error} onRetry={() => void query.refetch()} /></>;
   const org = query.data;
+  return <Content org={org} crumbs={crumbs} />;
+}
+
+function Content({ org, crumbs }: Props & { crumbs: { label: string; href?: string }[] }) {
+  const admin = isAdmin(useStaff().role);
   return <>
     <PageHeader crumbs={crumbs} title={org.name} description={<StateBadge state={org.state} />} />
-    <div className="panel-grid panel-grid-halves">
+    <div className="panel-grid"><div className="panel-grid panel-grid-halves">
       <Overview org={org} />
       <State org={org} />
       <Plan org={org} />
@@ -32,6 +38,7 @@ export function OrganizationDetailPage() {
       <Usage org={org} />
       <Connections org={org} />
     </div>
+    {admin ? <OrganizationActions org={org} /> : null}</div>
   </>;
 }
 

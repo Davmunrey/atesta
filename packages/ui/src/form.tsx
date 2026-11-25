@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
 /**
@@ -13,4 +16,13 @@ export function FormField({ id, label, hint, error, wide, children }: {
     {children}
     {error ? <span id={`${id}-hint`} className="form-error">{error}</span> : hint ? <span id={`${id}-hint`} className="form-hint">{hint}</span> : null}
   </div>;
+}
+
+/** The exact name typed to confirm a destructive action (DESIGN.md, "Forms"): the action stays
+ *  disabled until `value === name`, and the API checks it again. */
+export function TypedName({ id, name, value, onChange }: { id: string; name: string; value: string; onChange: (value: string) => void }) {
+  const t = useTranslations("form");
+  return <FormField id={id} label={t("typeName", { name })} wide>
+    <input id={id} className="field" value={value} onChange={(e) => onChange(e.target.value)} autoComplete="off" spellCheck={false} />
+  </FormField>;
 }

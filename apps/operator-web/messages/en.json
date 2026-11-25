@@ -178,6 +178,50 @@
     "editBilling": "Edit",
     "notForRole": "Your role does not allow this action."
   },
+  "actions": {
+    "reason": "Internal reason",
+    "reasonHint": "For the operations log only; the organization does not see it.",
+    "reasonCode": "Reason the organization will see",
+    "cancel": "Cancel",
+    "codes": {
+      "non_payment": "Payment pending",
+      "contract_ended": "Contract ended",
+      "customer_request": "At the organization's request",
+      "security_review": "Security review",
+      "other": "Other reason"
+    },
+    "recentAuth": "For security, this action needs a sign-in from the last 15 minutes.",
+    "signInAgain": "Sign in again",
+    "suspension": "Suspension",
+    "suspendHelp": "Its members will see a suspended-organization page; owners can still export and close. Nothing is deleted.",
+    "suspendedHelp": "Reactivating it gives its members their access back, with all their data.",
+    "suspend": "Suspend the organization",
+    "reactivate": "Reactivate the organization",
+    "closure": "Export and closure",
+    "closureHelp": "Closure gives 30 days before the data can be erased; the organization sees it from day one.",
+    "askExport": "Ask the owners to export",
+    "exportAsked": "The owners have been emailed.",
+    "startClosure": "Start the closure",
+    "cancelClosure": "Cancel the closure",
+    "closingSince": "Atesta started the closure on {date}; it can be erased from {erase}.",
+    "closedByOwner": "An owner requested this closure: only they can cancel it. It can be erased from {erase}.",
+    "erasure": "Erasure",
+    "erasureHelp": "Erases the organization's data once the closure date has passed. It needs another admin's approval.",
+    "needsClosure": "The organization's closure must be started first.",
+    "requestErasure": "Request erasure",
+    "approveErasure": "Approve the erasure",
+    "cancelErasure": "Cancel the erasure request",
+    "erasureStates": {
+      "pending": "Waiting for approval",
+      "approved": "Approved, waiting for the date",
+      "cancelled": "Cancelled",
+      "executed": "Executed"
+    },
+    "requestedByMe": "You requested it on {date}. Another admin must approve it; if you are the only one, you can approve it 72 hours later.",
+    "requestedByOther": "Requested on {date} by another admin.",
+    "approved": "It will run from {erase}. Until then it can be cancelled.",
+    "executed": "The data was erased. Receipt: {receipt}"
+  },
   "plan": {
     "title": "Change the plan",
     "plan": "Plan",
@@ -196,7 +240,7 @@
     },
     "note": "Plan note (optional)",
     "noteHint": "Stored with the organization's plan: write nothing internal.",
-    "reason": "Reason",
+    "reason": "Internal reason",
     "reasonHint": "For the operations log only; the organization does not see it.",
     "save": "Save the plan",
     "preview": "What changes",
@@ -228,10 +272,13 @@
       "country": "Two-letter code (ISO 3166-1), for example ES."
     },
     "invalid": "This field's format is not valid.",
-    "reason": "Reason",
+    "reason": "Internal reason",
     "reasonHint": "For the operations log only; the organization does not see it.",
     "save": "Save the billing details",
     "form": "Details for invoices"
+  },
+  "form": {
+    "typeName": "Type “{name}” to confirm"
   },
   "pagination": {
     "label": "Pages",

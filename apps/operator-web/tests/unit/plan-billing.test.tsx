@@ -38,7 +38,7 @@ it("previews what a plan change does, warns about connections over the limit, an
   fireEvent.click(screen.getByLabelText("Centro de confianza"));
   const save = screen.getByRole("button", { name: "Guardar el plan" }) as HTMLButtonElement;
   expect(save.disabled).toBe(true);
-  fireEvent.change(screen.getByLabelText("Motivo"), { target: { value: " Contrato firmado " } });
+  fireEvent.change(screen.getByLabelText("Motivo interno"), { target: { value: " Contrato firmado " } });
   fireEvent.click(save);
   await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/organization?id=o-1"));
   const put = requests.find((r) => r.method === "PUT")!;
@@ -54,7 +54,7 @@ it("marks the billing field the API refuses and keeps the form", async () => {
   fireEvent.change(tax, { target: { value: "123" } });
   fireEvent.change(screen.getByLabelText("País"), { target: { value: "es" } });
   expect((screen.getByLabelText("País") as HTMLInputElement).value).toBe("ES");
-  fireEvent.change(screen.getByLabelText("Motivo"), { target: { value: "Corrección" } });
+  fireEvent.change(screen.getByLabelText("Motivo interno"), { target: { value: "Corrección" } });
   fireEvent.click(screen.getByRole("button", { name: "Guardar los datos de facturación" }));
   expect((await screen.findByRole("alert")).textContent).toBe("Revisa el campo marcado: su formato no es válido.");
   expect(tax.getAttribute("aria-invalid")).toBe("true");
@@ -67,7 +67,7 @@ it("sends empty optional fields as null and goes back to the organization", asyn
   const requests = stubApi({ "GET /api/v1/organizations/o-1": [200, org], "PUT /api/v1/organizations/o-1/billing-profile": [200, { changed: ["city"], updated_at: null }] });
   renderAs("billing", <BillingPage />);
   fireEvent.change(await screen.findByLabelText("Ciudad"), { target: { value: " Toledo " } });
-  fireEvent.change(screen.getByLabelText("Motivo"), { target: { value: "Cambio de sede" } });
+  fireEvent.change(screen.getByLabelText("Motivo interno"), { target: { value: "Cambio de sede" } });
   fireEvent.click(screen.getByRole("button", { name: "Guardar los datos de facturación" }));
   await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/organization?id=o-1"));
   const body = await requests.find((r) => r.method === "PUT")!.json();

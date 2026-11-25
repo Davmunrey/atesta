@@ -398,6 +398,17 @@ Amended 2026-11-25 where the text above was ambiguous or did not fit the code:
   lost need data `GET /plans` does not return yet (#495). The billing form is prefilled from the
   detail (no second read, so no second `billing_profile.viewed`), sends empty fields as null, and
   marks the field a 422 `operator.invalid_field` names. Both return to the detail when saved.
+- **Suspension, closure and erasure (#490):** admins see three danger-bordered panels under the
+  detail (Suspensión; Exportación y cierre; Borrado). Each action opens in place from a bordered
+  button and takes the internal reason ("Motivo interno"); suspend, start closure, request and
+  approve erasure also take the exact name, typed, with the action disabled until it matches. The
+  suspension's reason code is labelled as what the organization will see. An owner's closure reads
+  as such, with no cancel. The erasure panel shows the latest request's state with the shared
+  badge; a pending request says who asked, and the requester's approval is refused by the API
+  (`same_approver`, or `cooling_off` for a sole admin) with its own message. A 401
+  `operator.recent_auth_required` shows a notice with "Volver a iniciar sesión", which signs in
+  again and returns to the organization. The approval date is not in the detail, so "approved"
+  shows the closure's erase date, from which the runner may execute it.
 - **Bundles:** after both builds, `apps/operator-web/scripts/check-bundles.ts` fails when the
   console's export holds a portal route or text, or the reverse.
 - **CI:** the `web` job types, lints, tests, builds and licence-checks the portal and runs the
