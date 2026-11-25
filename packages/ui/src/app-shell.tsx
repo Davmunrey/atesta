@@ -30,10 +30,13 @@ export const isDesktop = () => !hasMedia() || window.matchMedia(DESKTOP).matches
 /**
  * The frame of every signed-in Atesta app (console-shell spec; ADR-017, "Design system"): the ink
  * top bar with the lockup, grouped side navigation (a rail on desktop, a drawer below), notices and
- * the page. Each app passes its own navigation, top-bar content and account menu.
+ * the page. Each app passes its own navigation, top-bar content and account menu. An app other than
+ * the console names itself beside the lockup (`label`, with a short form for phones), so staff never
+ * mistake it for the console
+ * (ADR-017, "Environment marker").
  */
-export function AppShell({ home, nav, navLabel, current, topbar, end, notices, footer, children }: {
-  home: string; nav: NavGroup[] | null; navLabel: string; current?: string;
+export function AppShell({ home, label, nav, navLabel, current, topbar, end, notices, footer, children }: {
+  home: string; label?: { full: string; short: string }; nav: NavGroup[] | null; navLabel: string; current?: string;
   topbar?: ReactNode; end: ReactNode; notices?: ReactNode; footer?: ReactNode; children: ReactNode;
 }) {
   const c = useTranslations("console");
@@ -53,7 +56,9 @@ export function AppShell({ home, nav, navLabel, current, topbar, end, notices, f
         onClick={() => (desktop ? setCollapsed(!collapsed) : setDrawer(!drawer))}>
         <Icon name="menu" />
       </button> : null}
-      <Link href={home} className="topbar-brand" aria-label={brand("name")}><BrandMark /><span>{brand("name")}</span></Link>
+      <Link href={home} className="topbar-brand" aria-label={label ? `${brand("name")} · ${label.full}` : brand("name")}><BrandMark /><span>{brand("name")}</span></Link>
+      {/* The full name, or its short form on a phone; the brand link already reads it out. */}
+      {label ? <span className="topbar-label" aria-hidden="true"><span>{label.full}</span><span>{label.short}</span></span> : null}
       {topbar ?? <span className="topbar-spacer" />}
       <div className="topbar-end">{end}</div>
     </header>

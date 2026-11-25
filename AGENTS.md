@@ -65,7 +65,7 @@ uv run pytest
 
 ## Interface work
 
-Any change to `apps/web` or `packages/ui` that touches HTML, CSS or client-side JavaScript follows two vendored
+Any change to `apps/web`, `apps/operator-web` or `packages/ui` that touches HTML, CSS or client-side JavaScript follows two vendored
 skills (ADR-013). It reads `.claude/skills/impeccable/reference/craft-floor.md` and
 `reference/operate.md` before the edit: the app is Operate mode, and DESIGN.md is the identity, so
 changes are refinement, not a new visual world. It checks the matching guide in

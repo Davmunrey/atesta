@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { I18nProvider } from "@atesta/ui/i18n/provider";
 import { type ReactNode, useState } from "react";
-import { retryQuery } from "@/lib/api/retry";
+import { retryQuery } from "@atesta/ui/api-error";
 import en from "../../messages/en.json";
 import es from "../../messages/es.json";
 

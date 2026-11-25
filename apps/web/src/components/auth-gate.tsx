@@ -6,7 +6,7 @@ import { isLocale } from "@atesta/ui/i18n/locale";
 import { ApiError } from "@atesta/ui/api-error";
 import { useMeQuery } from "@/lib/api/hooks";
 import type { components } from "@/lib/api/schema";
-import { loginUrl } from "@/lib/auth";
+import { loginUrl } from "@atesta/ui/auth";
 import { goTo } from "@/lib/navigation";
 import { ErrorMessage } from "@atesta/ui/error-message";
 

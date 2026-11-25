@@ -117,8 +117,8 @@ describe("the shared UI package", () => {
 describe("one pnpm workspace at the repository root", () => {
   const workspace = readFileSync(join(REPO, "pnpm-workspace.yaml"), "utf8");
 
-  it("lists the app and the package, with the supply-chain settings", () => {
-    expect(workspace).toMatch(/^packages:\n {2}- apps\/web\n {2}- packages\/ui\n/m);
+  it("lists the apps and the package, with the supply-chain settings", () => {
+    expect(workspace).toMatch(/^packages:\n {2}- apps\/web\n {2}- apps\/operator-web\n {2}- packages\/ui\n/m);
     expect(workspace).toMatch(/^minimumReleaseAge: 10080$/m);
     expect(workspace).toMatch(/^blockExoticSubdeps: true$/m);
     expect(workspace).toMatch(/^trustPolicy: no-downgrade$/m);

@@ -403,3 +403,29 @@ def test_every_workspace_app_is_typed_and_tested_in_ci() -> None:
         for line in s.get("run", "").splitlines()
     ]
     assert "uv run mypy" in python and "uv run pytest -q" in python
+
+
+def test_every_web_app_is_checked_built_and_tested_in_ci() -> None:
+    """Each app of the pnpm workspace (ADR-017: the console and the operator portal) is typed,
+    linted, tested, built and licence-checked in the web job, and its e2e suite runs (#487)."""
+    root = WORKFLOWS.parents[1]
+    workspace = yaml.safe_load((root / "pnpm-workspace.yaml").read_text())["packages"]
+    apps = [p for p in workspace if p.startswith("apps/")]
+    assert apps == ["apps/web", "apps/operator-web"]
+    jobs = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())["jobs"]
+
+    def runs(job: str, app: str) -> set[str]:
+        default = jobs[job].get("defaults", {}).get("run", {}).get("working-directory")
+        return {
+            s["run"].strip()
+            for s in jobs[job]["steps"]
+            if "run" in s and s.get("working-directory", default) == app
+        }
+
+    for app in apps:
+        web = runs("web", app)
+        for command in ("typecheck", "lint", "test", "build", "check-licenses"):
+            assert f"pnpm {command}" in web, (app, command)
+        assert "pnpm build" in runs("e2e", app), app
+        assert "pnpm exec playwright test --trace off" in runs("e2e", app), app
+    assert "node scripts/check-bundles.ts ../web/out out" in runs("web", "apps/operator-web")

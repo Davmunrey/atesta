@@ -6,9 +6,13 @@ import json
 from atesta_operator.errors import STATUS
 from atesta_operator.main import create_app
 
-# Raised by the shared kernel (platform.errors) and the token check, as in the customer API.
+# Raised by the shared kernel (platform.errors), the token check and the staff session
+# (session.py: state, nonce and origin checks), as in the customer API.
 SHARED_CODES = frozenset(
     {
+        "auth.bad_nonce",
+        "auth.bad_origin",
+        "auth.bad_state",
         "auth.invalid_token",
         "auth.provider_unavailable",
         "request.error",

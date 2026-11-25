@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
-import { settled } from "./polish";
+import { settled } from "@atesta/ui/e2e-polish";
 
 /** Assistant (assistant spec, #357): keyboard only, cited cards, no answer, Esc, axe. */
 

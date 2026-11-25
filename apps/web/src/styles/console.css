@@ -131,8 +131,8 @@ html:has(.console):has(.assistant-launcher) { scroll-padding-bottom: 5rem; }
 @media (max-width: 40rem) {
   body:has(.assistant-launcher) .console-page { padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)); }
 }
-/* Links that stand alone as actions (not inside running text) are full-height targets. */
-.action-link, .preparation-jumps a, .policy-index a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+/* Links that stand alone as actions are full-height targets (`.action-link`, packages/ui). */
+.preparation-jumps a, .policy-index a { display: inline-flex; align-items: center; min-height: 2.75rem; }
 @media (max-width: 40rem), (pointer: coarse) {
   /* The search follows the shared phone rules (packages/ui): 16px, so phones do not zoom. */
   .topbar-search input { font-size: 1rem; }

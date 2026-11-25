@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type BrowserContext, type Page, expect, test } from "@playwright/test";
-import { settled } from "./polish";
+import { settled } from "@atesta/ui/e2e-polish";
 
 async function expectLifetime(context: BrowserContext, name: string, seconds: number, httpOnly: boolean) {
   const cookie = (await context.cookies()).find((item) => item.name === name);

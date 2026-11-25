@@ -7,7 +7,7 @@ import { type ReactNode, useDeferredValue, useEffect, useId, useRef, useState, u
 import { AccountMenu, AppShell, type NavGroup, Notice, isDesktop, subscribeMedia } from "@atesta/ui/app-shell";
 import { useOverview, useTrial } from "@/lib/api/hooks";
 import { useSearch } from "@/lib/api/register-hooks";
-import { LOGOUT_URL } from "@/lib/auth";
+import { LOGOUT_URL } from "@atesta/ui/auth";
 import { type Membership, orgAccessReviews, orgActivity, orgConnections, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgIncidents, orgIntegrations, orgMyWork, orgNotifications, orgPolicies, orgReport, orgSettings, orgTraining, selectOrg } from "@/lib/org";
 import { canInvite, canReviewControls, isContributor } from "@/lib/permissions";
 import { useMe } from "./auth-gate";

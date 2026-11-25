@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect } from "@playwright/test";
 
 /**
- * The polish bar shared by the console and public e2e specs (ui-polish spec): no axe violation of
+ * The polish bar shared by every Atesta web app's e2e specs (ui-polish spec; ADR-017): no axe violation of
  * any impact, nothing scrolls sideways (inside table regions too), no interface text under 13 px,
  * standalone targets 44 px on a phone.
  */

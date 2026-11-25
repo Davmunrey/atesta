@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
-import { settled } from "./polish";
+import { settled } from "@atesta/ui/e2e-polish";
 import { framework, requirementGuidance } from "../fixtures/framework";
 import { overview } from "../fixtures/overview";
 

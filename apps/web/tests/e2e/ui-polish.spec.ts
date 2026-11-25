@@ -1,5 +1,5 @@
 import { type Page, expect, test } from "@playwright/test";
-import { expectPolished } from "./polish";
+import { expectPolished } from "@atesta/ui/e2e-polish";
 
 /**
  * UI polish (ui-polish spec, #238 #239 #240): every console page with real records, at a phone and

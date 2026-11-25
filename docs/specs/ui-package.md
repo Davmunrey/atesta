@@ -35,12 +35,14 @@ copy it.
   | `locale-switcher`, `i18n/locale`, `i18n/provider` | the switcher, the locale cookie rules, `I18nProvider` (each app passes its own messages) |
   | `format` | `percent`, `fileSize` |
   | `csp` | the CSP build step, run from the app's directory after `next build` |
+  | `auth`, `gen-api-types`, `check-licenses`, `e2e-polish`, `scripts/serve.mjs` | added for the operator portal (#487): the BFF sign-in and sign-out URLs; the typed-client generator and the licence check, each run from the app's directory; the e2e polish bar; the CloudFront stand-in |
 
 - [ ] **Imported, never copied.** `apps/web` imports these only as `@atesta/ui/<entry>`. A test
   fails when a file in `apps/web` exports a name the package exports, imports the package by
   path, or imports an entry the package does not export.
 - [ ] **One direction.** The package imports nothing from an app: only its peers (`next`,
-  `next-intl`, `react`), `node:` built-ins and its own files (tested).
+  `next-intl`, `react`; for its scripts `openapi-typescript`, `@playwright/test` and
+  `@axe-core/playwright`, #487), `node:` built-ins and its own files (tested).
 - [ ] **Each app keeps its own contract.** Messages, `error-codes.json` and the OpenAPI client
   stay per app. `ErrorMessage` shows `errors.<code>` when the app's messages hold a text for the
   code and `errors.unknown` otherwise; a test keeps the texts under `errors` equal to the API's

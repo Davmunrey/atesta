@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { settled } from "./polish";
+import { settled } from "@atesta/ui/e2e-polish";
 
 test("a person with two organizations sees them as a portfolio", async ({ page }) => {
   await page.goto("/app");

@@ -141,6 +141,25 @@ jobs:
         run: pnpm build
       - name: Licenses (no GPL or AGPL)
         run: pnpm check-licenses
+      # The operator portal (ADR-017): the same checks, then each export holds only its own screens.
+      - name: Portal types
+        working-directory: apps/operator-web
+        run: pnpm typecheck
+      - name: Portal lint
+        working-directory: apps/operator-web
+        run: pnpm lint
+      - name: Portal tests
+        working-directory: apps/operator-web
+        run: pnpm test
+      - name: Portal build (static export)
+        working-directory: apps/operator-web
+        run: pnpm build
+      - name: Portal licenses (no GPL or AGPL)
+        working-directory: apps/operator-web
+        run: pnpm check-licenses
+      - name: Each app ships only its own screens
+        working-directory: apps/operator-web
+        run: node scripts/check-bundles.ts ../web/out out
 
   e2e:
     runs-on: ubuntu-latest
@@ -185,6 +204,12 @@ jobs:
       - name: Build (static export and CSP hashes)
         run: pnpm build
       - name: e2e (fake Cognito, real API and Postgres, axe)
+        run: pnpm exec playwright test --trace off
+      - name: Portal build (static export and CSP hashes)
+        working-directory: apps/operator-web
+        run: pnpm build
+      - name: Portal e2e (fake staff pool, real operator API and Postgres, axe)
+        working-directory: apps/operator-web
         run: pnpm exec playwright test --trace off
 
   security:

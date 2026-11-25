@@ -1,4 +1,7 @@
 [
+  "auth.bad_nonce",
+  "auth.bad_origin",
+  "auth.bad_state",
   "auth.invalid_token",
   "auth.provider_unavailable",
   "operator.already_suspended",

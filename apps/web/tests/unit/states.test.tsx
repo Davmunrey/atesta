@@ -5,7 +5,7 @@ import { AuthGate } from "@/components/auth-gate";
 import { MembersView } from "@/components/members-view";
 import { PoliciesView } from "@/components/policies-view";
 import { ApiError } from "@atesta/ui/api-error";
-import { retryQuery } from "@/lib/api/retry";
+import { retryQuery } from "@atesta/ui/api-error";
 import { renderWithProviders, stubApi } from "./render";
 
 // Loading, error and empty states (ui-polish spec, #283).

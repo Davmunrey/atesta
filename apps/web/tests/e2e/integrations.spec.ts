@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { settled } from "./polish";
+import { settled } from "@atesta/ui/e2e-polish";
 
 test("an API token authenticates ingestion until it is revoked", async ({ page, request }) => {
   await page.goto("/app");

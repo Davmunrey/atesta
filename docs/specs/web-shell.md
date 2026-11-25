@@ -7,7 +7,7 @@
 - Revised 2026-11-13: BFF moved into the API so the web stays a static export (Infrastructure tab)
 - Revised 2026-11-13: CSP is one header with every page's script hashes; `pnpm build` fails if it
   exceeds CloudFront's 1,783-character limit (AWS CloudFront quotas, checked 2026-11-13). e2e
-  serves the export through a CloudFront stand-in (`tests/e2e/serve.mjs`) that adds the headers.
+  serves the export through a CloudFront stand-in (`@atesta/ui/scripts/serve.mjs`) that adds the headers.
 - Revised 2026-11-23 (#212): one hash per page grew the header towards the limit (1,652 of 1,783).
   The build now moves every inline script into a same-origin file named by its SHA-256
   (`/_next/static/inline/<hash>.js`) and loads it with `<script src>` in the same place, so
