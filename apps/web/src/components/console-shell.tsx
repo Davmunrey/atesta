@@ -4,16 +4,16 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { type ReactNode, useDeferredValue, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import { AccountMenu, AppShell, type NavGroup, Notice, isDesktop, subscribeMedia } from "@atesta/ui/app-shell";
 import { useOverview, useTrial } from "@/lib/api/hooks";
 import { useSearch } from "@/lib/api/register-hooks";
 import { LOGOUT_URL } from "@/lib/auth";
 import { type Membership, orgAccessReviews, orgActivity, orgConnections, orgFramework, orgFrameworks, orgHome, orgInvitations, orgMembers, orgIncidents, orgIntegrations, orgMyWork, orgNotifications, orgPolicies, orgReport, orgSettings, orgTraining, selectOrg } from "@/lib/org";
 import { canInvite, canReviewControls, isContributor } from "@/lib/permissions";
 import { useMe } from "./auth-gate";
-import { Icon, type IconName } from "@atesta/ui/icons";
+import { Icon } from "@atesta/ui/icons";
 import { LocaleSwitcher } from "@atesta/ui/locale-switcher";
 import { SiteFooter } from "./site-footer";
-import { BrandMark } from "./brand-mark";
 import { SuspendedView } from "./suspended-view";
 import { legalEntity } from "@/content/legal-entity";
 
@@ -26,27 +26,7 @@ const DETAIL_PAGES: Record<string, string> = {
   "/app/incident": "/app/incidents",
 };
 const ORG_PAGES = ["/app/org", "/app/framework", "/app/frameworks", "/app/members", "/app/invitations", "/app/activity", "/app/my-work", "/app/settings", "/app/access-reviews", "/app/access-review", "/app/policies", "/app/training-campaigns", "/app/training-campaign", "/app/incidents", "/app/incident", "/app/integrations", "/app/connections", "/app/notifications", "/app/dossier", "/app/report"];
-const DESKTOP = "(min-width: 64rem)";
-
-// The collapsed rail is a remembered preference; media and storage are read as external stores.
-const listeners = new Set<() => void>();
-const subscribeNav = (l: () => void) => { listeners.add(l); return () => { listeners.delete(l); }; };
-const readCollapsed = () => localStorage.getItem("atesta_nav") === "collapsed";
-function setCollapsed(value: boolean) {
-  localStorage.setItem("atesta_nav", value ? "collapsed" : "expanded");
-  for (const l of listeners) l();
-}
-// Without matchMedia (old engines, tests) the console behaves as on a desktop.
-const hasMedia = () => typeof window !== "undefined" && typeof window.matchMedia === "function";
-const subscribeMedia = (l: () => void) => {
-  if (!hasMedia()) return () => {};
-  const m = window.matchMedia(DESKTOP); m.addEventListener("change", l); return () => m.removeEventListener("change", l);
-};
-const isDesktop = () => !hasMedia() || window.matchMedia(DESKTOP).matches;
-
-type Section = { key: string; label: string; href: string; icon: IconName };
-
-export function useSections(org: Membership | null): { group: string; items: Section[] }[] {
+export function useSections(org: Membership | null): NavGroup[] {
   const t = useTranslations("org");
   const c = useTranslations("console");
   if (!org) return [];
@@ -78,11 +58,12 @@ export function useSections(org: Membership | null): { group: string; items: Sec
   return groups.filter((g) => g.items.length > 0);
 }
 
-/** The console frame (console-shell spec): top bar, grouped side navigation, notices, page. */
+/** The console frame (console-shell spec): the shared shell (@atesta/ui) with the organization's
+ *  navigation, switcher, search and notices. */
 export function ConsoleShell({ children }: { children: ReactNode }) {
-  const c = useTranslations("console");
-  const brand = useTranslations("brand");
-  const { memberships } = useMe();
+  const t = useTranslations("org");
+  const a = useTranslations("app");
+  const { memberships, email } = useMe();
   const pathname = usePathname();
   const org = selectOrg(memberships, useSearchParams().get("org"));
   const inOrg = org !== null && ORG_PAGES.includes(pathname);
@@ -91,54 +72,17 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
   const suspended = inOrg && Boolean(org.suspended);
   const navigable = inOrg && !suspended;
   const replaced = suspended && !(org.role === "owner" && pathname === "/app/settings");
-  const collapsed = useSyncExternalStore(subscribeNav, readCollapsed, () => false);
-  const desktop = useSyncExternalStore(subscribeMedia, isDesktop, () => true);
-  const [drawer, setDrawer] = useState(false);
-  const menuButton = useRef<HTMLButtonElement>(null);
-  const navId = useId();
-  const closeDrawer = () => { setDrawer(false); menuButton.current?.focus(); };
-  const expanded = desktop ? !collapsed : drawer;
-  return <div className="console" data-nav={navigable ? (collapsed ? "collapsed" : "expanded") : "none"} data-drawer={drawer ? "open" : "closed"}>
-    <a href="#main-content" className="skip-link">{c("skip")}</a>
-    <header className="topbar">
-      {navigable ? <button ref={menuButton} type="button" className="topbar-icon" aria-controls={navId} aria-expanded={expanded}
-        aria-label={c(expanded ? "menuHide" : "menuShow")} title={c(expanded ? "menuHide" : "menuShow")}
-        onClick={() => (desktop ? setCollapsed(!collapsed) : setDrawer(!drawer))}>
-        <Icon name="menu" />
-      </button> : null}
-      <Link href="/app" className="topbar-brand" aria-label={brand("name")}><BrandMark /><span>{brand("name")}</span></Link>
-      {org && inOrg ? <OrgSwitcher org={org} memberships={memberships} /> : null}
-      {org && navigable ? <GlobalSearch org={org} /> : <span className="topbar-spacer" />}
-      <div className="topbar-end"><LocaleSwitcher compact /><AccountMenu org={org && navigable && isContributor(org.role) ? org : null} /></div>
-    </header>
-    <div className="console-body">
-      {org && navigable ? <SideNav id={navId} org={org} pathname={pathname} collapsed={desktop && collapsed} onNavigate={() => !desktop && setDrawer(false)} onEscape={closeDrawer} /> : null}
-      {/* Pointer-only backdrop: keyboards close the drawer with Esc or the menu button. */}
-      {drawer && !desktop ? <div className="drawer-scrim" aria-hidden="true" onClick={closeDrawer} /> : null}
-      <div className="console-main">
-        {org && inOrg ? <Notices org={org} /> : null}
-        <main id="main-content" tabIndex={-1} className="console-page">{org && replaced ? <SuspendedView org={org} /> : children}</main>
-        <SiteFooter />
-      </div>
-    </div>
-  </div>;
-}
-
-function SideNav({ id, org, pathname, collapsed, onNavigate, onEscape }: { id: string; org: Membership; pathname: string; collapsed: boolean; onNavigate: () => void; onEscape: () => void }) {
-  const t = useTranslations("org");
-  const groups = useSections(org);
-  const current = DETAIL_PAGES[pathname] ?? pathname;
-  return <nav id={id} aria-label={t("sections")} className="sidenav" data-collapsed={collapsed ? "true" : "false"}
-    onKeyDown={(e) => { if (e.key === "Escape") onEscape(); }}>
-    {groups.map(({ group, items }) => <div key={group} className="sidenav-group">
-      <p className="sidenav-label" aria-hidden={collapsed}>{group}</p>
-      <ul>{items.map((s) => <li key={s.key}>
-        <Link href={s.href} aria-current={s.key === current ? "page" : undefined} title={collapsed ? s.label : undefined} onClick={onNavigate}>
-          <Icon name={s.icon} /><span className="sidenav-text">{s.label}</span>
-        </Link>
-      </li>)}</ul>
-    </div>)}
-  </nav>;
+  const groups = useSections(navigable ? org : null);
+  const account = org && navigable && isContributor(org.role) ? org : null;
+  return <AppShell home="/app" nav={navigable ? groups : null} navLabel={t("sections")} current={DETAIL_PAGES[pathname] ?? pathname}
+    topbar={<>{org && inOrg ? <OrgSwitcher org={org} memberships={memberships} /> : null}
+      {org && navigable ? <GlobalSearch org={org} /> : <span className="topbar-spacer" />}</>}
+    end={<><LocaleSwitcher compact /><AccountMenu email={email} signOutHref={LOGOUT_URL}>
+      {account ? <Link href={orgNotifications(account.organization_id)} className="account-link">{a("notificationsLink")}</Link> : null}
+    </AccountMenu></>}
+    notices={org && inOrg ? <Notices org={org} /> : null} footer={<SiteFooter />}>
+    {org && replaced ? <SuspendedView org={org} /> : children}
+  </AppShell>;
 }
 
 function OrgSwitcher({ org, memberships }: { org: Membership; memberships: Membership[] }) {
@@ -174,13 +118,12 @@ function Notices({ org }: { org: Membership }) {
   const trialEnded = trial?.ended && trial.ends_at ? trial.ends_at : null;
   if (!org.access_expires_on && !org.closure_erase_after && !trialRunning && !trialEnded) return null;
   return <div className="notices">
-    {trialRunning ? <p className="notice" role="note"><Icon name="pending" />{t("trialEnds", { date: day(trialRunning) })}</p> : null}
-    {trialEnded ? <p className="notice" data-severity="overdue" role="note"><Icon name="overdue" />
-      {t("trialEnded", { date: day(trialEnded), email: legalEntity.email })}</p> : null}
-    {org.access_expires_on ? <p className="notice" role="note"><Icon name="pending" />
-      {t("auditorUntil", { date: format.dateTime(new Date(`${org.access_expires_on}T00:00:00Z`), { dateStyle: "long", timeZone: "UTC" }) })}</p> : null}
-    {org.closure_erase_after ? <p className="notice" data-severity="overdue" role="note"><Icon name="overdue" />
-      {t("closing", { date: format.dateTime(new Date(org.closure_erase_after), { dateStyle: "long" }) })}</p> : null}
+    {trialRunning ? <Notice>{t("trialEnds", { date: day(trialRunning) })}</Notice> : null}
+    {trialEnded ? <Notice severity="overdue">{t("trialEnded", { date: day(trialEnded), email: legalEntity.email })}</Notice> : null}
+    {org.access_expires_on ? <Notice>
+      {t("auditorUntil", { date: format.dateTime(new Date(`${org.access_expires_on}T00:00:00Z`), { dateStyle: "long", timeZone: "UTC" }) })}</Notice> : null}
+    {org.closure_erase_after ? <Notice severity="overdue">
+      {t("closing", { date: format.dateTime(new Date(org.closure_erase_after), { dateStyle: "long" }) })}</Notice> : null}
   </div>;
 }
 
@@ -252,21 +195,4 @@ function GlobalSearch({ org }: { org: Membership }) {
         </li>)}
     </ul>
   </div>;
-}
-
-function AccountMenu({ org }: { org: Membership | null }) {
-  const t = useTranslations("app");
-  const me = useMe();
-  const id = useId();
-  const initial = (me.email.trim()[0] ?? "?").toLocaleUpperCase();
-  return <>
-    <button type="button" className="account-trigger" popoverTarget={id} aria-label={t("account")} title={me.email}>
-      <span aria-hidden="true">{initial}</span>
-    </button>
-    <div id={id} popover="auto" className="account-menu" aria-label={t("account")}>
-      <p className="account-email"><span className="text-muted">{t("signedInLabel")}</span> <strong>{me.email}</strong></p>
-      {org ? <Link href={orgNotifications(org.organization_id)} className="account-link">{t("notificationsLink")}</Link> : null}
-      <a href={LOGOUT_URL} className="account-signout">{t("signOut")}</a>
-    </div>
-  </>;
 }

@@ -4,7 +4,9 @@
   "type": "module",
   "exports": {
     "./api-error": "./src/api-error.ts",
+    "./app-shell": "./src/app-shell.tsx",
     "./badge": "./src/badge.tsx",
+    "./brand-mark": "./src/brand-mark.tsx",
     "./deadline": "./src/deadline.ts",
     "./error-message": "./src/error-message.tsx",
     "./fonts": "./src/fonts.ts",

@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import type { ComponentType } from "react";
 import { AssistantLauncher } from "@/components/assistant/launcher";
-import { BrandMark } from "@/components/brand-mark";
+import { BrandMark } from "@atesta/ui/brand-mark";
 import { ApiView, AssistantView, DossierView, IncidentView, MeasureView, RecordsView } from "@/components/landing/moment-views";
 import { PageIndex } from "@/components/public/page-index";
 import { legalEntity } from "@/content/legal-entity";

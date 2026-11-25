@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { createContext, type ReactNode, useContext } from "react";
-import { BrandMark } from "../brand-mark";
+import { BrandMark } from "@atesta/ui/brand-mark";
 
 /** A section that states "Datos de ejemplo" once for all its frames (A4) provides `true`. */
 export const SampleLabelled = createContext(false);
