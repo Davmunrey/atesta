@@ -112,13 +112,13 @@ the official sources on 2026-11-23:
   until the OAuth amendment lands. Clients that accept a header, and the local stdio server,
   can.
 
-## Amendment 1 (proposed 2026-11-24, issue 354, spec `docs/specs/mcp-oauth.md`)
+## Amendment 1 (accepted 2026-11-24, #484; issue 354, spec `docs/specs/mcp-oauth.md`)
 
-Status: proposed. The owner chose the substance on 2026-11-24, in the session that built it. The
+Status: accepted ("Aceptar todas (Recomendado)", owner, 2026-11-24, #484). The owner chose the substance on 2026-11-24, in the session that built it. The
 three recommendations put to the owner were "Cognito como servidor de autorización del MCP
 alojado", "Solo admins conectan agentes, con concesión revocable guardada en Atesta" and "Lista
-cerrada de clientes aprobados al principio", and the answer "sí a todo". Accepting the amendment
-is the owner's.
+cerrada de clientes aprobados al principio", and the answer "sí a todo". The owner
+accepted it on 2026-11-24 ("Aceptar todas (Recomendado)", #484).
 
 ### Context
 
