@@ -1,0 +1,24 @@
+[project]
+name = "atesta-operator"
+version = "0.0.0"
+description = "Atesta operator API: the staff service, organization metadata only (ADR-017)"
+requires-python = ">=3.13"
+dependencies = [
+    "atesta-api",  # module api.py functions and the shared platform kernel (ADR-008)
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "httpx>=0.27",
+    "pydantic>=2.9",
+    "sqlalchemy>=2.0.36",
+    "boto3>=1.40",  # the startup check of the staff pool's MFA settings
+]
+
+[tool.uv.sources]
+atesta-api = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atesta_operator"]

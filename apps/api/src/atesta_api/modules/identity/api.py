@@ -28,15 +28,22 @@ from atesta_api.modules.identity.api_tokens import (
     require_scope,
     token_labels,
 )
-from atesta_api.modules.identity.bff import SessionCrypto, SessionEndedError, session_ended_handler
+from atesta_api.modules.identity.bff import (
+    SessionCrypto,
+    SessionEndedError,
+    safe_return,
+    session_ended_handler,
+)
 from atesta_api.modules.identity.bff import router as auth_router
 from atesta_api.modules.identity.cognito import (
+    AccessToken,
     CognitoOAuth,
     CognitoSettings,
     CognitoUserInfo,
     ExpiredTokenError,
     InvalidTokenError,
     ProviderUnavailableError,
+    TokenSet,
     TokenVerifier,
     jwks_fetcher,
 )
@@ -59,8 +66,12 @@ from atesta_api.modules.identity.deps import (
 )
 from atesta_api.modules.identity.erasure_requests import (
     ApprovedErasure,
+    ErasureStatus,
+    ReceiptRow,
     approve_erasure,
     cancel_erasure,
+    erasure_receipts,
+    latest_erasure,
     request_erasure,
 )
 from atesta_api.modules.identity.for_operator import (
@@ -91,6 +102,14 @@ from atesta_api.modules.identity.org_profile import (
     recipients,
 )
 from atesta_api.modules.identity.routes import router
+from atesta_api.modules.identity.staff import (
+    STAFF_ROLES,
+    StaffMember,
+    StaffRole,
+    change_staff,
+    enabled_staff,
+    staff_list,
+)
 from atesta_api.modules.identity.standing import is_suspended
 
 
@@ -169,6 +188,28 @@ def install_identity(app: FastAPI) -> None:
 __all__ = [
     "AgentOAuth",
     "AgentToken",
+    # the operator service's staff sign-in (ADR-017, "Staff identity")
+    "STAFF_ROLES",
+    "AccessToken",
+    "CognitoOAuth",
+    "CognitoSettings",
+    "ExpiredTokenError",
+    "InvalidTokenError",
+    "ProviderUnavailableError",
+    "SessionCrypto",
+    "StaffMember",
+    "StaffRole",
+    "TokenSet",
+    "TokenVerifier",
+    "enabled_staff",
+    "change_staff",
+    "staff_list",
+    "ErasureStatus",
+    "ReceiptRow",
+    "erasure_receipts",
+    "latest_erasure",
+    "jwks_fetcher",
+    "safe_return",
     "PAGE_SIZE",
     "SUSPENSION_REASONS",
     "USAGE_RETENTION",

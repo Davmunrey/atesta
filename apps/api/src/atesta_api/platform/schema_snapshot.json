@@ -858,6 +858,18 @@
    "INSERT,SELECT"
   ],
   [
+   "service_notices",
+   "",
+   "atesta_app",
+   "SELECT"
+  ],
+  [
+   "service_notices",
+   "sent_at",
+   "atesta_app",
+   "UPDATE"
+  ],
+  [
    "subscriptions",
    "",
    "atesta_app",
@@ -1260,6 +1272,24 @@
    "status",
    "atesta_operator",
    "SELECT"
+  ],
+  [
+   "service_notices",
+   "id",
+   "atesta_operator",
+   "INSERT"
+  ],
+  [
+   "service_notices",
+   "kind",
+   "atesta_operator",
+   "INSERT"
+  ],
+  [
+   "service_notices",
+   "organization_id",
+   "atesta_operator",
+   "INSERT"
   ],
   [
    "subscriptions",

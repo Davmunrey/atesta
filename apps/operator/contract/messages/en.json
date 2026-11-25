@@ -1,0 +1,27 @@
+{
+  "errors": {
+    "operator": {
+      "already_suspended": "This organization is already suspended.",
+      "closure_by_owner": "An owner requested this closure: only they can cancel it.",
+      "closure_exists": "This organization already has a closure in progress.",
+      "cooling_off": "As the only admin, you can approve your own request 72 hours after creating it.",
+      "erasure_approved": "This erasure request is already approved.",
+      "erasure_cancelled": "This erasure request is cancelled.",
+      "erasure_executed": "This erasure has already run and cannot be cancelled.",
+      "erasure_expired": "This erasure request has expired: more than 7 days have passed. Create a new one.",
+      "erasure_pending": "This organization already has an open erasure request.",
+      "forbidden": "Your role does not allow this action.",
+      "invalid_field": "Check the marked field: its format is not valid.",
+      "invalid_plan": "The plan or one of the add-ons does not exist.",
+      "last_admin": "At least one active admin must remain.",
+      "name_mismatch": "The name does not match. Type the organization's exact name.",
+      "no_billing_profile": "This organization has no billing details yet.",
+      "no_closure": "Start the organization's closure first.",
+      "not_found": "We could not find that organization or request.",
+      "not_suspended": "This organization is not suspended.",
+      "recent_auth_required": "For security, sign in again: this action needs a sign-in from the last 15 minutes.",
+      "same_approver": "Another admin must approve the erasure you requested.",
+      "self_change": "You cannot change your own role or disable yourself."
+    }
+  }
+}

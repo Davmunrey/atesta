@@ -1,0 +1,27 @@
+{
+  "errors": {
+    "operator": {
+      "already_suspended": "Esta organización ya está suspendida.",
+      "closure_by_owner": "El cierre lo pidió una persona propietaria: solo ella puede cancelarlo.",
+      "closure_exists": "Esta organización ya tiene un cierre en curso.",
+      "cooling_off": "Como única administradora, solo puedes aprobar tu propia solicitud 72 horas después de crearla.",
+      "erasure_approved": "Esta solicitud de borrado ya está aprobada.",
+      "erasure_cancelled": "Esta solicitud de borrado está cancelada.",
+      "erasure_executed": "Este borrado ya se ha ejecutado y no se puede cancelar.",
+      "erasure_expired": "Esta solicitud de borrado ha caducado: han pasado más de 7 días. Crea una nueva.",
+      "erasure_pending": "Ya hay una solicitud de borrado abierta para esta organización.",
+      "forbidden": "Tu rol no permite esta acción.",
+      "invalid_field": "Revisa el campo marcado: su formato no es válido.",
+      "invalid_plan": "El plan o algún complemento no existe.",
+      "last_admin": "Debe quedar al menos una persona administradora activa.",
+      "name_mismatch": "El nombre no coincide. Escribe el nombre exacto de la organización.",
+      "no_billing_profile": "Esta organización aún no tiene datos de facturación.",
+      "no_closure": "Primero hay que iniciar el cierre de la organización.",
+      "not_found": "No encontramos esa organización o solicitud.",
+      "not_suspended": "Esta organización no está suspendida.",
+      "recent_auth_required": "Por seguridad, vuelve a iniciar sesión: esta acción necesita un inicio de sesión de los últimos 15 minutos.",
+      "same_approver": "Otra persona administradora debe aprobar el borrado que pediste.",
+      "self_change": "No puedes cambiar tu propio rol ni desactivarte."
+    }
+  }
+}

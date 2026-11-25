@@ -246,6 +246,117 @@ Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
 - **Activity:** `actor_kind` is `atesta` for an `operator.*` action, `member` when the event
   names a person, `system` otherwise.
 
+### Operator service as built (build step 4, #470 to #474)
+
+Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
+- **Entry point and settings:** `uvicorn atesta_operator.main:app`. It reads
+  `ATESTA_OPERATOR_DATABASE_URL` and `ATESTA_STAFF_COGNITO_REGION`, `_USER_POOL_ID`,
+  `_APP_CLIENT_ID` and `_DOMAIN`; issuer and base URL overrides (`ATESTA_STAFF_COGNITO_ISSUER`,
+  `_BASE_URL`) only in a dev `ATESTA_ENV`. Startup refuses the customer pool's id or app client.
+- **MFA:** Cognito access tokens carry no claim naming the factors used, and a pre token
+  generation trigger cannot add or change `amr` (AWS Cognito developer guide, "Understanding the
+  access token" and "Pre token generation Lambda trigger", read 2026-11-24). So "MFA required"
+  is held by the pool, checked twice:
+  - **at startup**, outside dev environments, `GetUserPoolMfaConfig` must report
+    `MfaConfiguration` `ON`, no SMS configuration, and passkeys (if any) with
+    `UserVerification` `required`; otherwise the service does not start. The task role needs
+    `cognito-idp:GetUserPoolMfaConfig` on the staff pool (build step 6);
+  - **per request**, only the staff pool's issuer and app client are accepted.
+  - **Candidate:** the response for a pool built by step 6's HCL is not yet seen; that pull
+    request runs the check against it.
+- **`auth_time`:** required in every staff token (401 `auth.invalid_token` without it). Recent
+  sign-in is `auth_time` within 15 minutes. It also guards creating an erasure request, not only
+  approving it (coordinator, 2026-11-24: recent sign-in "for suspend, close and erase").
+- **Matrix in one place:** `atesta_operator.policy.POLICY` maps each method and path template to
+  its roles and the recent sign-in flag; one dependency applies it to the matched route and
+  refuses any route not listed. A test walks it for every route and role, and holds it equal to
+  the table above.
+- **Imports:** the list above named `platform.db` and `platform.audit` only, but the service also
+  needs the startup guard (amendment 8), the error envelope, response headers and log redaction.
+  It may import the shared kernel except `platform.tenancy`, `platform.context` and
+  `platform.queue`, plus modules' `api.py`; import-linter holds both directions.
+- **Contract:** `apps/operator/contract/` holds `openapi.json`, `error-codes.json` and
+  `messages/es.json` and `en.json`, the texts of every `operator.*` code, kept complete by tests.
+  `apps/operator-web` (step 5) generates its client from there.
+- **Images:** the customer API image holds no `atesta_operator` (a Dockerfile test and CI's
+  built-image check). The operator image itself comes with build step 6.
+- **Staff session (#471):** `/auth/login`, `/auth/callback` and `/auth/logout`, the console's
+  BFF pattern with its own key (`ATESTA_OPERATOR_SESSION_KEY`, refused when equal to
+  `ATESTA_SESSION_KEY`), origin (`ATESTA_OPERATOR_WEB_ORIGIN`) and cookie names (`atesta_op_*`).
+  Session cookies are host-only, HttpOnly, Secure and `SameSite=Strict`. The pending sign-in
+  cookie (state, nonce, PKCE verifier; no token) is `Lax` on `/auth` only, because the staff
+  pool's redirect back is a cross-site navigation that would not carry a Strict cookie. A third
+  sealed cookie holds the sign-in and last-use times: 30 minutes idle or 8 hours in total ends
+  the session (401 `auth.invalid_token`, cookies cleared). A bearer token is still accepted, for
+  tests and tools; its own expiry, set on the staff app client, bounds it.
+- **Organizations and the trails (#472):**
+  - **List:** `health=attention` and `billing=missing` are the two filter values; `plan=default`
+    is the organizations with no `subscriptions` row. Rows carry `plan` and `plan_default`.
+  - **Detail:** `billing` is `{"view": "full", ...}` for admin and billing and
+    `{"view": "summary", "legal_name", "complete"}` for support, so the full fields are absent
+    from support's response; null when there is no row. `trial_ended` is computed as above.
+  - **Reads in the trail:** `organizations.searched` and `organization.viewed`, with
+    no reason and no search text.
+  - **Customer events from the operator role** go through `platform.audit.record_by_atesta`,
+    which names no actor column (the role has no grant on it), and the operator trail through
+    `record_operator`, both in the request's transaction with the same request id.
+- **Plan and billing details (#477):**
+  - **`GET /plans`** (admin, billing) is added: the plan editor's plans, their connector limits
+    and features, and every known add-on. The frameworks gained or lost in the editor's preview
+    are not in it yet (open for build step 5).
+  - **Plan note:** `PUT .../subscription` takes an optional `note` (at most 500 characters),
+    stored in `subscriptions.note`. The note is separate from the reason: `subscriptions` is the
+    customer's own row, so the note must hold nothing internal; the reason stays in the
+    operator trail.
+  - **Billing formats:** every field but `address_line2` is required; no leading or trailing
+    space and no control character; the table's length limits; `country` two capital letters.
+    For `country` ES, the tax ID follows Orden EHA/451/2008 (arts. 2 to 5) and RD 1065/2007
+    (arts. 19 and 20), with spaces, dots and hyphens ignored; no check digit is verified, as
+    those texts do not give the algorithm. The DNI's eight digits and the NIE's X, Y or Z plus
+    seven digits are candidates, not in those texts. Other countries: 2 to 20 letters or
+    digits. A bad field is 422 `operator.invalid_field` with `field`.
+  - **Reads:** `GET .../billing-profile` writes `billing_profile.viewed` to the operator trail.
+  - **No change, no event:** a billing write that changes no field records nothing.
+- **Suspension, closure and erasure (#473):**
+  - **Typed name:** `confirm_name` must equal `organizations.name` exactly (case, spaces); else
+    422 `operator.name_mismatch` and nothing changes.
+  - **Approval body:** `{confirm_name, reason}`, since every write takes a reason. The request's
+    organization is known only once the request is found, so the name is checked after the
+    approval is written; a mismatch fails the request and its transaction rolls the approval
+    back. The path parameter is `{erasure_id}` (`request_id` is the trail's request id).
+  - **Detail:** `erasure` is the organization's latest request (`pending`, `approved`,
+    `cancelled` or `executed`, with `requested_by_me` and the receipt id), for screen 8.
+- **Staff, trail and receipts (#480):**
+  - **Staff:** `PATCH /staff/{staff_id}` can also re-enable (`disabled: false`), recorded as
+    `staff.enabled`. Staff changes go to the operator trail only, with `role` and
+    `previous_role`. Through the API `operator.last_admin` cannot arise alone (the acting admin
+    is enabled and cannot change their own row), but `identity.api.change_staff` locks the
+    enabled admins and refuses it, for two admins demoting each other at once.
+  - **Trail and receipts:** `GET /operator-events` returns each row's reason and metadata;
+    `GET /erasure-receipts` returns ids, dates and the total rows erased, 50 per page.
+- **Service notices, export request and invitations (#474):**
+  - **Outbox:** ADR-012 amendment 12. Suspend, reactivate, the operator closure and
+    `POST .../export-request` queue `organization_suspended`, `organization_reactivated`,
+    `closure_started_by_operator` and `export_requested`. A refused action queues nothing.
+  - **Sending:** delivery kind `service_notice`, claimed once per person per notice; owners and
+    admins for suspension and reactivation, owners for the other two; in the organization's
+    language; never a preference and never an unsubscribe link (a footer says it cannot be
+    turned off); sent even while the organization is suspended. The texts name the contact
+    address `hello@atesta.cloud` (owner answer 9). A notice is dropped, unsent, when its
+    organization was erased or what it announces no longer holds (a suspension lifted, or a
+    closure cancelled, before the worker ran); the reactivation notice still goes.
+  - **Export request:** 204 with no body; staff receive nothing.
+  - **Invitations (owner decision, 2026-11-24):** accepting an invitation to a suspended
+    organization answers 403 `identity.organization_suspended`, which the console shows as the
+    suspension notice, and the invitation stays open for after reactivation. After the trial
+    ends, acceptance succeeds and the new member is read-only like everyone else
+    (`billing.trial_ended` on writes).
+- **Local sign-in:** `uv run python apps/api/devtools/fake_cognito.py --staff` serves a fake staff
+  pool on port 9001 with client id `local-operator`. Both fakes now put `auth_time` in access
+  tokens and keep it across a refresh: Cognito documents it as the time the user "completed
+  authentication". That a refresh keeps it is a candidate, checked against the real pool in
+  step 6.
+
 ## Permissions matrix
 
 | Action | admin | billing | support |
@@ -616,10 +727,10 @@ answered from the law below and stays open for the owner's tax adviser.
     (`suspended_at`, the erase date, the previous plan, the changed billing field names), and
     the operator service writes the customer event and the operator trail row in the same
     transaction.
-  - **Open: `notifications.queue_service_notice` is not built.** Deferring a job inserts into
-    the Procrastinate tables, and ADR-012 amendment 8's closed list gives `atesta_operator` no
-    privilege on them. Service notices need either an amendment granting the role the defer
-    path for one queue, or another trigger; the owner decides.
+  - **`notifications.queue_service_notice` (resolved, #474):** the owner chose an outbox
+    ("Bandeja de salida (Recomendado)", 2026-11-24; ADR-012 amendment 12). The operator service
+    inserts a `service_notices` row in the transaction of the action that owes it; the worker's
+    `send_service_notices` job, every minute, sends it through the notifications module.
 - **Composition:** the operator service composes these results per page of 50 organizations. At
   the expected number of organizations, this is a handful of grouped queries per page, not one
   per organization.

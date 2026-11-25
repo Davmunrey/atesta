@@ -17,7 +17,7 @@ from datetime import date, timedelta
 from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-from atesta_api.modules.notifications.kinds import CRITICAL, Kind
+from atesta_api.modules.notifications.kinds import OPTIONAL, Kind
 
 NAME = b"unsubscribe"
 LIFETIME = timedelta(days=60)
@@ -49,7 +49,7 @@ class UnsubscribeTokens:
     def issue(
         self, organization_id: uuid.UUID, user_id: uuid.UUID, kind: Kind, *, today: date
     ) -> str:
-        if kind in CRITICAL:
+        if kind not in OPTIONAL:
             raise ValueError(f"no unsubscribe token for the critical type {kind}")
         payload = {
             "o": str(organization_id),
@@ -69,6 +69,6 @@ class UnsubscribeTokens:
             opened = Unsubscribe(uuid.UUID(data["o"]), uuid.UUID(data["u"]), Kind(data["k"]))
         except (InvalidTag, ValueError, KeyError, TypeError, binascii.Error):
             raise TokenError("invalid unsubscribe token") from None
-        if opened.kind in CRITICAL or not issued <= today <= issued + LIFETIME:
+        if opened.kind not in OPTIONAL or not issued <= today <= issued + LIFETIME:
             raise TokenError("expired or not optional")
         return opened

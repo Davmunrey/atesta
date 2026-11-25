@@ -34,3 +34,20 @@ def org_session(organization_id: str, isolation_level: str | None = None) -> Ite
         raise
     finally:
         session.close()
+
+
+@contextmanager
+def outbox_session() -> Iterator[Session]:
+    """A transaction with no organization context, for the service notice outbox only: it has no
+    RLS and holds ids and kinds (ADR-012 amendment 12), like the queue tables. Commit on success."""
+    if _factory is None:
+        raise RuntimeError("worker database not configured")
+    session = _factory()
+    try:
+        yield session
+        session.commit()
+    except BaseException:
+        session.rollback()
+        raise
+    finally:
+        session.close()

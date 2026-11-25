@@ -39,6 +39,14 @@ from atesta_api.modules.notifications.mail import (
     compose,
 )
 from atesta_api.modules.notifications.routes import public_router, router
+from atesta_api.modules.notifications.service import (
+    SUPPORT_ADDRESS,
+    PendingNotice,
+    ServiceNoticeKind,
+    pending_service_notices,
+    queue_service_notice,
+    send_service_notice,
+)
 from atesta_api.modules.notifications.tokens import TokenError, Unsubscribe, UnsubscribeTokens
 
 
@@ -50,6 +58,12 @@ def install_notifications(app: FastAPI) -> None:
 
 
 __all__ = [
+    "SUPPORT_ADDRESS",
+    "PendingNotice",
+    "ServiceNoticeKind",
+    "pending_service_notices",
+    "queue_service_notice",
+    "send_service_notice",
     "CRITICAL",
     "DAILY_TASK",
     "DueItem",

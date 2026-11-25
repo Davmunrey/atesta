@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Protocol
 from urllib.parse import urlencode
 
-from atesta_api.modules.notifications.kinds import CRITICAL, Kind
+from atesta_api.modules.notifications.kinds import OPTIONAL, SERVICE, Kind
 from atesta_api.platform.i18n import Locale, message
 
 
@@ -66,16 +66,18 @@ def compose(  # noqa: PLR0913 - one call site per notification type, each field 
     unsubscribe: UnsubscribeLinks | None,
 ) -> Message:
     """A message in the recipient's language; optional types must offer the way out."""
-    if kind not in CRITICAL and unsubscribe is None:
+    if kind in OPTIONAL and unsubscribe is None:
         raise ValueError(f"{kind} is optional and needs an unsubscribe link")
     headers: dict[str, str] = {}
     footer = [message(locale, "notifications.footer.why")]
-    if unsubscribe is not None and kind not in CRITICAL:
+    if unsubscribe is not None and kind in OPTIONAL:
         one_click = _one_line(unsubscribe.one_click, "the one-click URL")
         headers["List-Unsubscribe"] = f"<{one_click}>"
         headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
         page = _one_line(unsubscribe.page, "the unsubscribe page")
         footer.append(message(locale, "notifications.footer.optional").format(url=page))
+    elif kind in SERVICE:
+        footer.append(message(locale, "notifications.footer.service"))
     else:
         footer.append(message(locale, "notifications.footer.critical"))
     body = "\n".join([*lines, "", "--", *footer]) + "\n"

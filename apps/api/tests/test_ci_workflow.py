@@ -382,3 +382,24 @@ def test_python_is_one_minor_everywhere() -> None:
     ):
         header = (root / lock).read_text().splitlines()[1]
         assert f"--python-version {PYTHON} " in header, lock
+
+
+def test_every_workspace_app_is_typed_and_tested_in_ci() -> None:
+    """CI runs `uv run mypy` and `uv run pytest`, which read pyproject: each app under apps/ is
+    in the workspace, its sources in mypy's files and its tests in pytest's paths (ADR-017)."""
+    root = WORKFLOWS.parents[1]
+    config = tomllib.loads((root / "pyproject.toml").read_text())
+    members = set(config["tool"]["uv"]["workspace"]["members"])
+    files = set(config["tool"]["mypy"]["files"])
+    testpaths = set(config["tool"]["pytest"]["ini_options"]["testpaths"])
+    apps = {p.parent.relative_to(root).as_posix() for p in root.glob("apps/*/pyproject.toml")}
+    assert "apps/operator" in apps and apps <= members
+    assert {f"{a}/src" for a in apps} <= files
+    assert {f"{a}/tests" for a in apps} <= testpaths
+    ci = yaml.safe_load((WORKFLOWS / "ci.yml").read_text())
+    python = [
+        line.strip()
+        for s in ci["jobs"]["python"]["steps"]
+        for line in s.get("run", "").splitlines()
+    ]
+    assert "uv run mypy" in python and "uv run pytest -q" in python

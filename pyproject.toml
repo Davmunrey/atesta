@@ -10,7 +10,7 @@ package = false
 exclude-newer = "7 days"
 
 [tool.uv.workspace]
-members = ["apps/api", "apps/mcp", "apps/worker", "packages/core", "scanner"]
+members = ["apps/api", "apps/mcp", "apps/operator", "apps/worker", "packages/core", "scanner"]
 
 [dependency-groups]
 dev = [
@@ -42,18 +42,27 @@ files = [
     "apps/api/src",
     "apps/api/devtools",
     "apps/mcp/src",
+    "apps/operator/src",
     "apps/worker/src",
     "packages/core/src",
     "scanner/atesta_scanner",
     "scanner/tools",
 ]
-mypy_path = ["apps/api/src", "apps/mcp/src", "apps/worker/src", "packages/core/src", "scanner"]
+mypy_path = [
+    "apps/api/src",
+    "apps/mcp/src",
+    "apps/operator/src",
+    "apps/worker/src",
+    "packages/core/src",
+    "scanner",
+]
 explicit_package_bases = true
 
 [tool.pytest.ini_options]
 testpaths = [
     "apps/api/tests",
     "apps/mcp/tests",
+    "apps/operator/tests",
     "apps/worker/tests",
     "packages/core/tests",
     "scanner/tests",
@@ -63,7 +72,7 @@ testpaths = [
 filterwarnings = ["error::sqlalchemy.exc.SADeprecationWarning"]
 
 [tool.importlinter]
-root_packages = ["atesta_api", "atesta_worker"]
+root_packages = ["atesta_api", "atesta_operator", "atesta_worker"]
 
 [[tool.importlinter.contracts]]
 name = "Modules talk only through their public api.py"
@@ -96,3 +105,28 @@ name = "Only identity sets tenant context (ADR-012)"
 type = "protected"
 protected_modules = ["atesta_api.platform.tenancy"]
 allowed_importers = ["atesta_api.modules.identity"]
+
+# ADR-017, "Code boundaries": the operator service is a third entrypoint. It reaches modules only
+# through their api.py and the shared kernel, never tenancy (it never sets a tenant context), the
+# queue (its role has no privilege on it) or the customer API's entry points.
+[[tool.importlinter.contracts]]
+name = "The operator service calls modules only through their api.py (ADR-017)"
+type = "forbidden"
+source_modules = ["atesta_operator"]
+forbidden_modules = [
+    "atesta_api.modules",
+    "atesta_api.main",
+    "atesta_api.contract",
+    "atesta_api.platform.tenancy",
+    "atesta_api.platform.context",
+    "atesta_api.platform.queue",
+]
+allow_indirect_imports = "True"
+ignore_imports = ["atesta_operator.** -> atesta_api.modules.*.api"]
+unmatched_ignore_imports_alerting = "none"
+
+[[tool.importlinter.contracts]]
+name = "The customer API and the worker never import the operator service (ADR-017)"
+type = "forbidden"
+source_modules = ["atesta_api", "atesta_worker"]
+forbidden_modules = ["atesta_operator"]
