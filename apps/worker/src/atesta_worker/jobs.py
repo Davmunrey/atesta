@@ -16,8 +16,10 @@ from atesta_api.modules.notifications.api import (
     handle_event,
     is_send_slot,
     notice_days,
+    pending_service_notices,
     send_clock_notices,
     send_due_digest,
+    send_service_notice,
     send_weekly_summary,
 )
 from atesta_api.modules.scanning.api import (
@@ -37,7 +39,7 @@ from procrastinate import Blueprint, JobContext, RetryStrategy
 from sqlalchemy.exc import OperationalError
 
 from atesta_worker import file_scans
-from atesta_worker.context import org_session
+from atesta_worker.context import org_session, outbox_session
 from atesta_worker.scans import scan_config
 
 MADRID = ZoneInfo("Europe/Madrid")
@@ -195,6 +197,16 @@ def poll_file_scans(timestamp: int) -> None:
         file_scan_events.info(json.dumps({"event": "file_scans.polled", **counts}, sort_keys=True))
 
 
+def send_service_notices(timestamp: int) -> None:
+    """Drain the service notice outbox (ADR-012 amendment 12): each notice in its organization's
+    own transaction, so one failure leaves the others sent and itself pending for the next run."""
+    with outbox_session() as session:
+        pending = pending_service_notices(session)
+    for notice in pending:
+        with org_session(str(notice.organization_id)) as session:
+            send_service_notice(session, notice, now=datetime.now(UTC))
+
+
 def make_blueprint() -> Blueprint:
     """A fresh blueprint per app: Procrastinate renames task objects when an app adds them.
 
@@ -228,4 +240,7 @@ def make_blueprint() -> Blueprint:
     # Every minute; an unfinished message stays in SQS, so the job itself is never retried.
     poll = blueprint.task(name="poll_file_scans", queue="files")
     blueprint.periodic(cron="* * * * *")(poll(poll_file_scans))
+    # Every minute; an unsent notice stays in the outbox, so the job itself is never retried.
+    notices = blueprint.task(name="send_service_notices", queue="notifications")
+    blueprint.periodic(cron="* * * * *")(notices(send_service_notices))
     return blueprint

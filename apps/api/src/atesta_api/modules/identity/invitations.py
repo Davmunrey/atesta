@@ -32,6 +32,7 @@ from atesta_api.modules.identity.deps import (
     require_role,
 )
 from atesta_api.modules.identity.models import Invitation, Membership, Role, User
+from atesta_api.modules.identity.standing import is_suspended
 from atesta_api.platform.audit import record
 from atesta_api.platform.db import DbSession
 
@@ -235,6 +236,8 @@ def accept_invitation(
         raise error(403, "identity.email_mismatch")
     org_id, role = invitation.organization_id, Role(invitation.role)
     enter_org_context(session, org_id, ContextReason.INVITATION)
+    if is_suspended(session, org_id):  # the person sees the suspension notice (owner, 2026-11-24)
+        raise error(403, "identity.organization_suspended")
     roles = dict(
         session.execute(
             select(Membership.user_id, Membership.role).where(

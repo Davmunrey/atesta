@@ -289,3 +289,37 @@ three choices. Accepting the amendment is the owner's.
   and the organization is then entered with the reason `api_token`.
 - **Grants and policies snapshot:** unchanged. `atesta_app` already holds SELECT, INSERT and
   UPDATE on `api_tokens`.
+
+## Amendment 12 (accepted 2026-11-24, operator-portal spec, issue 474)
+
+Status: accepted. The owner chose the substance on 2026-11-24, relayed by the coordinator, from
+the options put to them: "Bandeja de salida (Recomendado)". The coordinator instructed that this
+amendment be written as accepted.
+
+- **The problem:** four service notices (organization suspended or reactivated, export
+  requested, closure started by Atesta) are owed by actions of the operator service. Deferring a
+  job writes the queue tables, on which `atesta_operator` has no privilege (amendment 8), and
+  granting it the defer path would let it read every job's ids.
+- **New class, "outbox tables":** `service_notices`. Columns: `id`, `organization_id`, `kind`
+  (a closed list of the four notices), `created_at`, `sent_at`. No other column, and no customer
+  content.
+  - **No RLS and no organization foreign key,** like the queue tables (amendment 2): the rows
+    hold ids and a kind only, and a row outlives the organization it names; the worker drops a
+    notice whose organization no longer exists.
+  - **`atesta_operator`:** INSERT of `id`, `organization_id` and `kind` only, through
+    `operator_v1.grant()`. No SELECT, UPDATE or DELETE: it cannot read what it queued, change it
+    or remove it.
+  - **`atesta_app`:** SELECT, and UPDATE of `sent_at` only. The worker reads the pending rows
+    with no tenant context, as it reads the queue tables, then sends each notice in its
+    organization's context with the reason `job` and marks the row sent in that transaction.
+- **When a row is written:** in the transaction of the action that owes it, so a refused or
+  rolled-back action queues nothing.
+- **How it is sent:** through the notifications module, as the new delivery kind
+  `service_notice`, claimed once per person. It is not a preference: nobody can turn it off, and
+  it reaches a suspended organization.
+- **No new policy, setting or context reason.** `notification_deliveries.kind` gains the value
+  `service_notice`. The grants are in both snapshots, and a test asserts the operator role's
+  insert-only access.
+- **Why not grant the defer path:** Procrastinate's tables hold every job's arguments across
+  all organizations; the outbox holds only what the operator itself queued, and the operator
+  cannot read even that.

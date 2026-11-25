@@ -60,8 +60,8 @@ def test_the_policy_is_the_spec_table() -> None:
     assert {k: (r.roles, r.recent_sign_in) for k, r in POLICY.items()} == SPEC
 
 
-def test_every_api_route_has_a_rule() -> None:
-    assert set(routes()) <= set(POLICY)
+def test_every_api_route_has_a_rule_and_every_rule_a_route() -> None:
+    assert set(routes()) == set(POLICY)
 
 
 @pytest.mark.parametrize("route", routes())

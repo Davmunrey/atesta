@@ -334,6 +334,23 @@ Amended 2026-11-24 where the text above was ambiguous or did not fit the code:
     enabled admins and refuses it, for two admins demoting each other at once.
   - **Trail and receipts:** `GET /operator-events` returns each row's reason and metadata;
     `GET /erasure-receipts` returns ids, dates and the total rows erased, 50 per page.
+- **Service notices, export request and invitations (#474):**
+  - **Outbox:** ADR-012 amendment 12. Suspend, reactivate, the operator closure and
+    `POST .../export-request` queue `organization_suspended`, `organization_reactivated`,
+    `closure_started_by_operator` and `export_requested`. A refused action queues nothing.
+  - **Sending:** delivery kind `service_notice`, claimed once per person per notice; owners and
+    admins for suspension and reactivation, owners for the other two; in the organization's
+    language; never a preference and never an unsubscribe link (a footer says it cannot be
+    turned off); sent even while the organization is suspended. The texts name the contact
+    address `hello@atesta.cloud` (owner answer 9). A notice is dropped, unsent, when its
+    organization was erased or what it announces no longer holds (a suspension lifted, or a
+    closure cancelled, before the worker ran); the reactivation notice still goes.
+  - **Export request:** 204 with no body; staff receive nothing.
+  - **Invitations (owner decision, 2026-11-24):** accepting an invitation to a suspended
+    organization answers 403 `identity.organization_suspended`, which the console shows as the
+    suspension notice, and the invitation stays open for after reactivation. After the trial
+    ends, acceptance succeeds and the new member is read-only like everyone else
+    (`billing.trial_ended` on writes).
 - **Local sign-in:** `uv run python apps/api/devtools/fake_cognito.py --staff` serves a fake staff
   pool on port 9001 with client id `local-operator`. Both fakes now put `auth_time` in access
   tokens and keep it across a refresh: Cognito documents it as the time the user "completed
@@ -710,10 +727,10 @@ answered from the law below and stays open for the owner's tax adviser.
     (`suspended_at`, the erase date, the previous plan, the changed billing field names), and
     the operator service writes the customer event and the operator trail row in the same
     transaction.
-  - **Open: `notifications.queue_service_notice` is not built.** Deferring a job inserts into
-    the Procrastinate tables, and ADR-012 amendment 8's closed list gives `atesta_operator` no
-    privilege on them. Service notices need either an amendment granting the role the defer
-    path for one queue, or another trigger; the owner decides.
+  - **`notifications.queue_service_notice` (resolved, #474):** the owner chose an outbox
+    ("Bandeja de salida (Recomendado)", 2026-11-24; ADR-012 amendment 12). The operator service
+    inserts a `service_notices` row in the transaction of the action that owes it; the worker's
+    `send_service_notices` job, every minute, sends it through the notifications module.
 - **Composition:** the operator service composes these results per page of 50 organizations. At
   the expected number of organizations, this is a handful of grouped queries per page, not one
   per organization.

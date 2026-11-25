@@ -53,7 +53,8 @@
     "footer": {
       "why": "Atesta te envía este aviso por tu papel en la organización. Solo incluye títulos, fechas y enlaces; los detalles están en la aplicación.",
       "optional": "Para dejar de recibir este tipo de aviso: {url}",
-      "critical": "Es un aviso de seguridad para propietarios y administradores; no se puede desactivar."
+      "critical": "Es un aviso de seguridad para propietarios y administradores; no se puede desactivar.",
+      "service": "Es un aviso sobre tu servicio de Atesta para las personas propietarias y administradoras; no se puede desactivar."
     },
     "open": "Ábrelo en Atesta: {url}",
     "connection_alert": {
@@ -103,6 +104,24 @@
       "connections": "Conexiones que no están activas: {count}.",
       "due": "Vencimientos en los próximos 7 días: {soon}. Vencidos: {overdue}.",
       "report": "El informe mensual ya está disponible: {url}"
+    },
+    "service": {
+      "organization_suspended": {
+        "subject": "Atesta: {org} está suspendida",
+        "body": "El acceso a {org} está en pausa desde el {date}. Tus datos se conservan: no se ha borrado ni cambiado nada. Para saber más o reactivarla, escribe a {email}."
+      },
+      "organization_reactivated": {
+        "subject": "Atesta: {org} vuelve a estar activa",
+        "body": "El acceso a {org} se ha restablecido. Todo sigue como estaba antes de la suspensión."
+      },
+      "export_requested": {
+        "subject": "Atesta te pide que exportes los datos de {org}",
+        "body": "Atesta te pide que exportes los datos de {org}. Puedes hacerlo en Ajustes, Exportar los datos. El equipo de Atesta no recibe ninguna copia. Si tienes dudas, escribe a {email}."
+      },
+      "closure_started_by_operator": {
+        "subject": "Atesta: se ha iniciado el cierre de {org}",
+        "body": "Atesta ha iniciado el cierre de {org}. Los datos se borrarán a partir del {date}; hasta entonces puedes exportarlos en Ajustes. Si no esperabas este cierre, escribe a {email}."
+      }
     }
   },
   "standing": {

@@ -8,15 +8,16 @@ import uuid
 from collections.abc import Iterator
 
 import pytest
-from atesta_api.platform.tables import OPERATOR_OWN, OPERATOR_READ, table_classes
+from atesta_api.platform.tables import OPERATOR_OWN, OPERATOR_READ, OUTBOX, table_classes
 from sqlalchemy import Connection, Engine, column, delete, insert, literal, select, table, text
 from sqlalchemy.exc import DBAPIError
 
 from .conftest import ORG_A, ORG_B
 
 OP = "atesta_operator"
-# Every tenant, global, catalog, queue and operator table outside the closed list.
-NOT_LISTED = sorted(set(table_classes()) - set(OPERATOR_READ) - OPERATOR_OWN)
+# Every tenant, global, catalog, queue and operator table outside the closed list; the outbox,
+# where the role may only insert, has its own tests below (ADR-012 amendment 12).
+NOT_LISTED = sorted(set(table_classes()) - set(OPERATOR_READ) - OPERATOR_OWN - OUTBOX)
 ALL_PRIVILEGES = "SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER"
 
 
@@ -396,3 +397,36 @@ def test_the_app_role_updates_only_customer_columns_of_organizations(
             )
             is allowed
         )
+
+
+# --- the service notice outbox (ADR-012 amendment 12): insert only -----------------------------
+
+
+def test_the_outbox_takes_inserts_of_three_columns_and_nothing_else(superuser: Engine) -> None:
+    with superuser.connect() as conn:
+        inserts = _privileged_columns(conn, "INSERT").get("service_notices", set())
+        others = conn.execute(
+            text(
+                "SELECT has_table_privilege(:r, 'service_notices', 'SELECT, UPDATE, DELETE,"
+                " TRUNCATE, REFERENCES, TRIGGER'), has_any_column_privilege(:r,"
+                " 'service_notices', 'SELECT, UPDATE, REFERENCES')"
+            ),
+            {"r": OP},
+        ).one()
+    assert inserts == {"id", "organization_id", "kind"}
+    assert tuple(others) == (False, False)
+
+
+def test_the_operator_inserts_a_notice_but_cannot_read_change_or_delete_it(
+    op: Connection,
+) -> None:
+    notices = table("service_notices", column("id"), column("organization_id"), column("kind"))
+    notice = uuid.uuid4()
+    op.execute(insert(notices).values(id=notice, organization_id=ORG_A, kind="export_requested"))
+    for statement in (
+        select(notices.c.id),
+        notices.update().values(kind="organization_reactivated"),
+        delete(notices),
+    ):
+        with pytest.raises(DBAPIError, match="permission denied"), op.begin_nested():
+            op.execute(statement)

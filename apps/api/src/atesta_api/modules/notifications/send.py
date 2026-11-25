@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 from atesta_api.modules.identity.api import OrganizationProfile, Recipient, is_suspended
 from atesta_api.modules.notifications.config import mail_config
 from atesta_api.modules.notifications.deliveries import claim_delivery
-from atesta_api.modules.notifications.kinds import CRITICAL, Kind
+from atesta_api.modules.notifications.kinds import OPTIONAL, SERVICE, Kind
 from atesta_api.modules.notifications.mail import UnsubscribeLinks, compose
 from atesta_api.modules.notifications.models import NotificationDelivery, NotificationPreference
 
@@ -26,7 +26,7 @@ _log = logging.getLogger("atesta.notifications")
 
 
 def enabled(session: Session, organization_id: uuid.UUID, user_id: uuid.UUID, kind: Kind) -> bool:
-    if kind in CRITICAL:
+    if kind not in OPTIONAL:
         return True
     stored = session.scalar(
         select(NotificationPreference.enabled).where(
@@ -79,15 +79,15 @@ def deliver(  # noqa: PLR0913 - one notice: who, what, where and its words
 ) -> str:
     """`sent`, `suppressed`, `failed`, or `duplicate` when this one was already claimed.
 
-    Nothing goes to a suspended organization (operator-portal spec), and nothing is claimed, so a
-    notice still due once it is reactivated can go then."""
-    if is_suspended(session, organization_id):
+    Nothing goes to a suspended organization but a service notice (operator-portal spec), and
+    nothing is claimed, so a notice still due once it is reactivated can go then."""
+    if kind not in SERVICE and is_suspended(session, organization_id):
         return "suppressed"
     delivery = claim_delivery(session, organization_id, recipient.user_id, kind, dedupe_key)
     if delivery is None:
         return "duplicate"
     config = mail_config()
-    optional = kind not in CRITICAL
+    optional = kind in OPTIONAL
     if not enabled(session, organization_id, recipient.user_id, kind):
         return _finish(session, organization_id, delivery, "suppressed")
     if config is None or (optional and config.tokens is None):
