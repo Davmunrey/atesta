@@ -212,10 +212,10 @@ relayed by the coordinator (ADR-017, "Owner decisions"; #405).
 - **Why column grants and not SECURITY DEFINER functions or views:** the ban on SECURITY
   DEFINER functions above stands. ADR-017, "Database", gives the reasons.
 
-## Amendment 9 (proposed 2026-11-24, api-keys-v2 spec, issue 353)
+## Amendment 9 (accepted 2026-11-24, #484; api-keys-v2 spec, issue 353)
 
-Status: proposed. The owner chose the substance on 2026-11-24, in the session that built it:
-"Job del worker, limitado por la BD". Accepting the amendment is the owner's.
+Status: accepted. The owner chose the substance on 2026-11-24, in the session that built it:
+"Job del worker, limitado por la BD". The owner accepted it on 2026-11-24 ("Aceptar todas (Recomendado)", #484).
 
 - **A third write class for tenant tables: retention tables.** Until now a tenant table was
   either writable or append-only. A retention table is insert-only while a row is young, and
@@ -247,12 +247,12 @@ Status: proposed. The owner chose the substance on 2026-11-24, in the session th
   RLS on every table. A narrow grant plus a restrictive policy keeps the worker on the runtime
   role and gives it one new ability: deleting its organization's old usage rows.
 
-## Amendment 10 (proposed 2026-11-24, consultancy-portfolio spec, issue 228)
+## Amendment 10 (accepted 2026-11-24, #484; consultancy-portfolio spec, issue 228)
 
-Status: proposed. The owner chose the substance on 2026-11-24, in the session that built it. The
+Status: accepted. The owner chose the substance on 2026-11-24, in the session that built it. The
 recommendation put to the owner was "Resumen de portfolio recorriendo las organizaciones una a
-una, sin consulta global", and the answer "sí a todo, empieza por #228". Accepting the amendment
-is the owner's.
+una, sin consulta global", and the answer "sí a todo, empieza por #228". The owner
+accepted it on 2026-11-24 ("Aceptar todas (Recomendado)", #484).
 
 - **One request may read several organizations, one transaction each.** "Every request runs in
   one transaction" (Consequences) gains one exception: the portfolio summary. After the request's
@@ -275,10 +275,10 @@ is the owner's.
   DEFINER function, which this ADR bans. Both widen what a forgotten filter can leak. The walk
   costs more queries and keeps "a forgotten filter returns nothing".
 
-## Amendment 11 (proposed 2026-11-24, ADR-016 amendment 1, mcp-oauth spec, issue 354)
+## Amendment 11 (accepted 2026-11-24, #484; ADR-016 amendment 1, mcp-oauth spec, issue 354)
 
-Status: proposed with ADR-016 amendment 1; the owner's "sí a todo" of 2026-11-24 covers its
-three choices. Accepting the amendment is the owner's.
+Status: accepted with ADR-016 amendment 1; the owner's "sí a todo" of 2026-11-24 covers its
+three choices. The owner accepted it on 2026-11-24 ("Aceptar todas (Recomendado)", #484).
 
 - **No new table, policy, setting or context reason.** An OAuth grant for an AI agent is a row
   of the tenant table `api_tokens`, which gains two columns: `kind` (`key` or `oauth`) and
